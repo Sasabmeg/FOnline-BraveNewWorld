@@ -1,0 +1,173 @@
+[comment]
+
+
+[data]
+lang=engl
+
+[dialog]
+&
+1 1000 None 1 #
+1000 1010 D _script map_tent@d_IsTentOwner 0  D _param p ST_VAR9 = 1 #
+5 1020 @
+5 2000 None 0 #
+13 2010 D _param p SK_OUTDOORSMAN } 50 #
+12 2020 D _param p SK_OUTDOORSMAN < 50 #
+10 2030 D _script map_tent@d_IsTentOwner 0  #
+5 2040 R _script map_tent@r_ThrowSomething 0  #
+6 2050 D _script map_tent@d_IsKnownLocation 0  D _script map_tent@d_IsNotTentOwner 0  R _script map_tent@r_ForgetLocation 0  #
+0 2060 @
+6 3000 None 0 #
+0 3010 @
+10 4000 None 1 #
+10 4010 D _script map_tent@d_IsTentOwner 0  R _script map_tent@r_TentName 0  #
+10 4020 D _script map_tent@d_IsTentOwner 0  R _script map_tent@r_CreateMap 0  #
+11 4030 D _script map_tent@d_IsUpgradeAvailable 1 571 #
+0 4040 D _script map_tent@d_IsTentOwner 0  R _script map_tent@r_AbandonTent 0  #
+0 4050 @
+11 5000 None 0 #
+110 5010 D _script map_tent@d_IsTentOwner 0  D _script map_tent@d_IsUpgradeAvailable 1 571 #
+10 5020 @
+110 6000 None 1 #
+10 6010 D _script map_tent@d_IsTentOwner 0  D _script map_tent@d_IsUpgradeAvailable 1 571 D _item p PID_FIREWOOD } 2 D _item p PID_MULTI_TOOL } 1 R _script map_tent@r_InstallUpgrade 1 571 R _item p PID_FIREWOOD - 2 R _item p PID_MULTI_TOOL - 1 #
+11 6020 @
+1000 7000 None 1 #
+0 7010 D _script map_tent@d_IsTentOwner 0  R _script map_tent@r_AbandonTent 0  #
+0 7020 @
+220 8000 None 0 #
+251 8010 D _item p PID_FLINT > 0 R _item p PID_FLINT - 1 @
+230 9000 None 0 #
+251 9010 D _item p PID_METAL_ORE > 0 R _item p PID_METAL_ORE - 1 @
+240 10000 None 0 #
+251 10010 D _item p PID_PUMP_PARTS > 0 R _item p PID_PUMP_PARTS - 1 @
+254 11000 None 0 #
+255 11010 D _item p PID_BRAHMIN_HIDE < 0 #
+256 11020 D _item p PID_BRAHMIN_HIDE > 0 @
+255 12000 None 0 @
+260 13000 None 0 #
+291 13010 D _item p PID_FLINT > 0 R _item p PID_FLINT - 1 @
+270 14000 None 0 #
+291 14010 D _item p PID_METAL_ORE > 0 R _item p PID_METAL_ORE - 1 @
+280 15000 None 0 #
+291 15010 D _item p PID_PUMP_PARTS > 0 R _item p PID_PUMP_PARTS - 1 @
+290 16000 None 0 #
+291 16010 D _item p PID_FIREWOOD > 0 R _item p PID_FIREWOOD - 1 @
+291 17000 None 0 #
+292 17010 @
+293 18000 None 0 @
+12 19000 None 0 @
+13 20000 None 0 #
+14 20010 D _item p PID_MEAT > 2 D _item p PID_FIREWOOD > 0 R _item p PID_MEAT - 3 R _item p PID_FIREWOOD - 1 #
+5 20020 @
+14 21000 None 0 #
+15 21010 #
+16 21020 @
+15 22000 None 0 #
+17 22010 D _item p PID_XANDER_ROOT > 0 D _item p PID_BROC_FLOWER > 0 R _item p PID_XANDER_ROOT - 1 R _item p PID_BROC_FLOWER - 1 R _script dialog@r_Roll 4 1 2 2 20 #
+17 22020 D _item p PID_FLOWER > 0 R _item p PID_FLOWER - 1 R _script dialog@r_Roll 4 1 2 2 21 #
+17 22030 D _item p PID_MUTATED_FRUIT > 0 R _item p PID_MUTATED_FRUIT - 1 R _script dialog@r_Roll 4 1 2 2 19 #
+17 22040 D _item p PID_BARLEY > 0 R _item p PID_BARLEY - 1 R _script dialog@r_Roll 4 1 2 2 22 #
+17 22050 D _item p PID_WATERBAG > 0 R _item p PID_WATERBAG - 1 R _script dialog@r_Roll 4 1 2 2 23 #
+16 22060 @
+16 23000 None 0 #
+17 23010 R _script dialog@r_Roll 4 1 4 4 18 @
+17 24000 None 0 @
+18 25000 None 0 #
+213 25010 R _param p ST_EXPERIENCE + 30 R _item p PID_MEAT_ON_A_STICK + 1 @
+19 26000 None 0 #
+213 26010 R _param p ST_EXPERIENCE + 40 R _item p PID_MEAT_ON_A_STICK + 1 @
+20 27000 None 0 #
+213 27010 R _param p ST_EXPERIENCE + 45 R _item p PID_MEAT_ON_A_STICK + 1 @
+21 28000 None 0 #
+213 28010 R _param p ST_EXPERIENCE + 48 R _item p PID_MEAT_JERKY + 1 R _param p ST_POISONING_LEVEL - 5 R _param p ST_RADIATION_LEVEL - 5 @
+22 29000 None 0 #
+213 29010 R _param p ST_EXPERIENCE + 50 R _item p PID_IGUANA_ON_A_STICK + 1 R _param p ST_POISONING_LEVEL - 8 R _param p ST_RADIATION_LEVEL - 8 @
+23 30000 None 0 #
+213 30010 R _param p ST_EXPERIENCE + 55 R _item p PID_SMITTY_MEAL + 1 R _param p ST_POISONING_LEVEL - 15 R _param p ST_RADIATION_LEVEL - 15 &
+
+[engl]
+{100}{}{none}
+{1000}{}{Predialogue installations}
+{1010}{}{Special Tent Item}
+{1020}{}{Show}
+{2000}{}{[The campfire is warm and comfy. Maybe you can rest a little while]}
+{2010}{}{[Cooking]}
+{2020}{}{[Cooking]}
+{2030}{}{[Tent management]}
+{2040}{}{[Throw something into the fire]}
+{2050}{}{[Forget location]}
+{2060}{}{[Exit]}
+{3000}{}{[You no longer know the way to this location]}
+{3010}{}{[Exit]}
+{4000}{}{[You sit by the fire and decide what to do next with the place]}
+{4010}{}{[Change the name of the tent]}
+{4020}{}{[Create a map to this location]}
+{4030}{}{[Upgrades]}
+{4040}{}{[Abandon tent]}
+{4050}{}{[Exit]}
+{5000}{}{[You look around, seaching for any idea as to how to make this place more fitting towards your needs]}
+{5010}{}{[Build a Workbench]}
+{5020}{}{[Back]}
+{6000}{}{Primitive Workbench
+A wooden board which serves as a primitive workbench.
+
+Materials:
+- Firewood x2
+- Tools}
+{6010}{}{[Upgrade]}
+{6020}{}{[Back]}
+{7000}{}{[Due to recent changes, this location needs to be deleted. All items and non-player characters will be deleted, with no way to get them back; player characters will be moved to worldmap.
+
+Make sure you secure all items and move all followers to other place before you continue. There will be no refunds.]}
+{7010}{}{[Continue]}
+{7020}{}{[Exit]}
+{8000}{}{**Feed me Flint. As Fire, I crave a great spark**}
+{8010}{}{[Feed the Fire]}
+{9000}{}{**The Fire needs Ore to reconcile**}
+{9010}{}{[Feed the Fire]}
+{10000}{}{**Broken, like hearts; the Fire requires Junk**}
+{10010}{}{[Feed the Fire]}
+{11000}{}{[You sit back by the fire]}
+{11010}{}{OW! My ass! I really need a Leather Hide if I want to do this!}
+{11020}{}{[Lay your body down]}
+{12000}{}{**this fire burns for you**}
+{13000}{}{**Feed me Flint. As Fire, I crave a great spark**}
+{13010}{}{[Feed the fire]}
+{14000}{}{**The Fire needs Ore to reconcile**}
+{14010}{}{[Feed the fire]}
+{15000}{}{**Broken, like hearts; the Fire requires Junk**}
+{15010}{}{[Feed the fire]}
+{16000}{}{**NO! NOOO!!! The Wood craves Fire!**}
+{16010}{}{[Feed the fire]}
+{17000}{}{[YES! YES!!! Feed me. Feed the fire]}
+{17010}{}{I have so much more to offer you...}
+{18000}{}{**whispers in the darkness**}
+{19000}{}{**You couldn't cook anything even if you tried**}
+{20000}{}{[You take a good look at your cooking area, and see what you can come up with. Wood, Water Bags, Xander Root, Broc Flower, Flowers, Barley, and Fruit are all useful components for cooking, while Meat is the main ingredient]}
+{20010}{}{[Begin your dish]}
+{20020}{}{Nevermind.}
+{21000}{}{[You prepare a few cuts of assorted meat, and place them onto your makeshift grill]}
+{21010}{}{[Season the dish]}
+{21020}{}{[Do not season the dish]}
+{22000}{}{[What do you want to season it with?]}
+{22010}{}{Xander Root and Broc Flower.}
+{22020}{}{Exotic Flowers.}
+{22030}{}{Fruit.}
+{22040}{}{Barley.}
+{22050}{}{Watery Cream Sauce.}
+{22060}{}{[Do not season the dish]}
+{23000}{}{[You skip the seasoning, and simply cook the meat]}
+{23010}{}{[Flip the meat]}
+{24000}{}{*You've burnt the meat, and ruined this dish!*}
+{25000}{}{*You make a great meal, it looks lovely*}
+{25010}{}{[Complete the dish]}
+{26000}{}{*You make a great meal, it looks lovely*}
+{26010}{}{[Complete the dish]}
+{27000}{}{*You make a great meal, it looks lovely*}
+{27010}{}{[Complete the dish]}
+{28000}{}{*You make a great meal, it looks lovely*}
+{28010}{}{[Complete the dish]}
+{29000}{}{*You make a great meal, it looks lovely*}
+{29010}{}{[Complete the dish]}
+{30000}{}{*You make a great meal, it looks lovely*}
+{30010}{}{[Complete the dish]}
+

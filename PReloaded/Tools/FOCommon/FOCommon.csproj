@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{D53538FB-D9E6-4FE7-9E19-E2EF4330D81E}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>FOCommon</RootNamespace>
+    <AssemblyName>FOCommon</AssemblyName>
+    <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Cache.cs" />
+    <Compile Include="Controls\ColorComboBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Controls\ColorComboBox.Designer.cs">
+      <DependentUpon>ColorComboBox.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Critter\CritterProto.cs" />
+    <Compile Include="Critter\Perk.cs" />
+    <Compile Include="Dialog\Dialog.cs" />
+    <Compile Include="Dialog\Answer.cs" />
+    <Compile Include="Dialog\Demand.cs" />
+    <Compile Include="Dialog\Dynamic.cs" />
+    <Compile Include="Dialog\Item.cs" />
+    <Compile Include="Dialog\ListDialog.cs" />
+    <Compile Include="Dialog\Node.cs" />
+    <Compile Include="Dialog\Parameter.cs" />
+    <Compile Include="Dialog\Result.cs" />
+    <Compile Include="Dialog\FuncCall.cs" />
+    <Compile Include="Graphic\FalloutFrm.cs" />
+    <Compile Include="Maps\FOMap.cs" />
+    <Compile Include="Maps\LineTracer.cs" />
+    <Compile Include="Parsers\BagsParser.cs" />
+    <Compile Include="Parsers\EncounterGroupFormat.cs" />
+    <Compile Include="Parsers\FOMapParser.cs" />
+    <Compile Include="Parsers\ParseError.cs" />
+    <Compile Include="Parsers\VariableParser.cs" />
+    <Compile Include="Translation\Translate.cs" />
+    <Compile Include="Variable.cs" />
+    <Compile Include="ISelectable.cs" />
+    <Compile Include="Items\Item.cs" />
+    <Compile Include="Items\ItemProto.cs" />
+    <Compile Include="Items\SimpleItemProto.cs" />
+    <Compile Include="Location\EntryPoint.cs" />
+    <Compile Include="Location\Location.cs" />
+    <Compile Include="Location\Map.cs" />
+    <Compile Include="Parsers\DefineParser.cs" />
+    <Compile Include="Parsers\DialogListParser.cs" />
+    <Compile Include="Parsers\DialogParser.cs" />
+    <Compile Include="Parsers\EncounterGroupParser.cs" />
+    <Compile Include="Parsers\FOGAMEParser.cs" />
+    <Compile Include="Parsers\FOGMParser.cs" />
+    <Compile Include="Parsers\GWParser.cs" />
+    <Compile Include="Parsers\IniReader.cs" />
+    <Compile Include="Parsers\IParser.cs" />
+    <Compile Include="Parsers\LocationParser.cs" />
+    <Compile Include="Parsers\MapParser.cs" />
+    <Compile Include="Parsers\MSGParser.cs" />
+    <Compile Include="Parsers\ItemProtoParser.cs" />
+    <Compile Include="Parsers\ScriptListParser.cs" />
+    <Compile Include="Parsers\SimpleItemProtoParser.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Script\Script.cs" />
+    <Compile Include="Utils\Config.cs" />
+    <Compile Include="Utils\Utils.cs" />
+    <Compile Include="Win32\Const.cs" />
+    <Compile Include="Win32\WinAPI.cs" />
+    <Compile Include="WorldMap\EncounterGroup\EncounterGroup.cs" />
+    <Compile Include="WorldMap\EncounterGroup\EncounterItem.cs" />
+    <Compile Include="WorldMap\EncounterGroup\EncounterNpc.cs" />
+    <Compile Include="WorldMap\EncounterGroup\EncounterPerk.cs" />
+    <Compile Include="WorldMap\EncounterGroup\Faction.cs" />
+    <Compile Include="WorldMap\IWorldMapDrawable.cs" />
+    <Compile Include="WorldMap\IZoneProperty.cs" />
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

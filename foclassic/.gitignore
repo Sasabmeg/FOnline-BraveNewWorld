@@ -1,0 +1,39 @@
+##
+## General
+##
+
+# per-directory ignores
+.gitignore
+!/.gitignore
+
+# External SVN repositories
+.svn
+
+##
+## Developer files
+##
+
+# AutomatedBuild directories
+/SDK*
+
+# maintainers
+/*.dev
+/*.bat
+/*.cmd
+/*.pl
+/*.sh
+*.user
+
+# customization
+/CMakeFOClassic.txt
+
+##
+## CMake leftovers
+##
+
+# In-Source build
+/CMakeCache.txt
+/CMakeFiles
+
+# cmake --system-information
+/__cmake_systeminformation

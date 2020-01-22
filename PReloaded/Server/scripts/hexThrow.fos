@@ -1,0 +1,696 @@
+// shared client/server script for throwing objects
+#include "_macros.fos"
+#include "MsgStr.h"
+
+#ifdef __SERVER
+# define CritterMutual       Critter
+# define ItemMutual          Item
+
+#endif
+#ifdef __CLIENT
+#include "polygon_h.fos"
+# include "sprite.fos"
+# include "_colors.fos"
+# include "_client_defines.fos"
+# define CritterMutual       CritterCl
+# define ItemMutual          ItemCl
+#endif
+
+#define STR_THROWING_HIT     (10400)
+#define STR_THROWING_MISS    (10401)
+
+bool IsHexThrowingWeapon(ItemMutual@ item)
+{
+    if(!valid(item))
+        return false;
+    if(item.GetType() != ITEM_TYPE_WEAPON)
+        return false;
+    uint8 use = _WeaponModeUse(item.Mode);
+    return _WeaponSkill(item.Proto, use) == SK_THROWING;
+}
+
+uint HexThrowGetMaxRange(CritterMutual& cr, ItemMutual@ item)
+{
+    if(!valid(item))
+        return 0;
+    uint bonus = 6 * cr.Perk[PE_HEAVE_HO];
+    uint max = 3 * cr.Stat[ST_STRENGTH];
+    if(IsGrenade(item))
+    {
+        uint8 use = _WeaponModeUse(item.Mode);
+        return bonus + MIN(_WeaponMaxDist(item.Proto, use), max);
+    }
+    else
+    {
+        return 0;
+    }
+}
+
+bool IsHexThrowable(ProtoItem& weapon)
+{
+    if(!valid(weapon))
+        false;
+    return !(weapon.Type == ITEM_TYPE_WEAPON && weapon.Weapon_IsUnarmed);
+}
+
+int HexThrowingToHit(CritterMutual& cr, uint16 tx, uint16 ty, ProtoItem& weapon)
+{
+    if(!valid(weapon))
+        return 0;
+    if(weapon.Type == ITEM_TYPE_WEAPON && weapon.Weapon_IsUnarmed)
+        return 0;
+    if(!cr.IsLife())
+        return 0;
+
+    int dist = GetDistantion(cr.HexX, cr.HexY, tx, ty);
+
+    int toHit = int(cr.Skill[SK_THROWING]);
+    int weaponPerk = weapon.Weapon_Perk;
+    int blockers = 0;
+
+    // cr.Say(SAY_NETMSG, "Applying range modifiers.");
+    // ranged attack modifiers
+    int distmod1 = 2;   // used for initial weapon bonus
+    int distmod2 = 0;   // minimal distance
+
+    int perception = cr.Stat[ST_PERCEPTION];
+    int acc = dist;
+
+    if(dist < distmod2)
+        acc += distmod2;
+    else
+    {
+        if(cr.IsPlayer())
+            acc -= (perception - 2) * distmod1;                  // we want to keep it, because fo2238 might use it to display NPCs chance (via possessing)
+        else
+            acc -= perception * distmod1;
+    }
+
+    if(-2 * perception > acc)
+        acc = -2 * perception;
+
+    acc -= 2 * cr.Perk[PE_SHARPSHOOTER];
+
+    if(acc >= 0)
+    {
+        if(cr.Damage[DAMAGE_EYE] != 0)
+            acc *= -12;
+        else
+            acc *= -4;
+    }
+    else
+        acc *= -4;
+
+    toHit += acc;
+
+    #ifdef __SERVER
+    Map@ map = cr.GetMap();
+    blockers = map.GetCrittersPath(cr.HexX, cr.HexY, tx, ty, 0.0f, dist, FIND_LIFE, null);
+    #endif
+    #ifdef __CLIENT
+    blockers = GetCrittersPath(cr.HexX, cr.HexY, tx, ty, 0.0f, dist, FIND_LIFE, null);
+    #endif
+
+    toHit -= 10 * blockers;
+
+    if(cr.Damage[DAMAGE_EYE] != 0)
+        toHit -= 25;
+    toHit = CLAMP(toHit, 5, 95);
+
+    return toHit;
+}
+
+int HexThrowActionPointsCost(ItemMutual& item, CritterMutual& cr)
+{
+    if(IsGrenade(item))
+    {
+        uint8 use = _WeaponModeUse(item.Mode);
+        int apCost = (cr.Perk[PE_BONUS_RATE_OF_ATTACK]>0)?-1:0;
+        apCost += _WeaponApCost(item.Proto, use);
+
+        return apCost;
+    }
+    return 0;
+}
+
+bool IsHexThrowableThere(CritterMutual& cr, ItemMutual@ item, uint16 tx, uint16 ty)
+{
+    if(!valid(item) || !IsHexThrowable(item.Proto) || !cr.IsLife())
+        return false;
+    #ifdef __SERVER
+    if(cr.Stat[ST_CURRENT_AP] < HexThrowActionPointsCost(item, cr))
+        return false;
+    if(HexThrowActionPointsCost(item, cr) == 0)
+        return false;
+    #endif
+    if(cr.Damage[DAMAGE_RIGHT_ARM] != 0 && cr.Damage[DAMAGE_LEFT_ARM] != 0)
+        return false;
+    if(HexThrowGetMaxRange(cr, item) == 0 || GetDistantion(cr.HexX, cr.HexY, tx, ty) == 0)
+        return false;
+
+    // wallcheck
+    uint16 pbx = tx;
+    uint16 pby = ty;
+    uint16 bx = tx;
+    uint16 by = ty;
+
+    #ifdef __SERVER
+    Map@ map = cr.GetMap();
+    map.GetCrittersPath(cr.HexX, cr.HexY, tx, ty, 0.0f, 0, 0, null, pbx, pby, bx, by);
+    #endif
+    #ifdef __CLIENT
+    GetCrittersPath(cr.HexX, cr.HexY, tx, ty, 0.0f, 0, 0, null, pbx, pby, bx, by);
+    #endif
+
+    if(bx != tx || by != ty)
+        return false;
+
+    
+    return HexThrowGetMaxRange(cr, item) >= GetDistantion(cr.HexX, cr.HexY, tx, ty);
+    // todo: wall tracing on the client side
+}
+
+bool IsGrenade(ItemMutual& item)
+{
+    if(!IsHexThrowingWeapon(item))
+        return false;
+    uint8 use = _WeaponModeUse(item.Mode);
+    uint8 dmgType = _WeaponDmgType(item.Proto, use);
+    return dmgType == DAMAGE_TYPE_PLASMA || dmgType == DAMAGE_TYPE_EMP || dmgType == DAMAGE_TYPE_EXPLODE || dmgType == DAMAGE_TYPE_FIRE;
+}
+
+#ifdef __SERVER
+
+import void CommenceExplosionHexEx(Critter@ attacker, Map@ map, uint16 tx, uint16 ty, Critter@ target, uint weapPid, Item@ usedWeapon, uint ammoPid, bool isCritical, uint intentionallyId, bool isRocket, bool isExplodeRocket) from "combat";
+
+void unsafe_HexThrow(Critter& player, int px, int py, int p2, string@ param3, array<int>@ param4)
+{
+    if(!player.IsLife())
+    {
+        player.RunClientScript("hexThrow@_UpdateWeapons", 0, 0, 0, null, null);
+        return;
+    }
+    Map@ map = player.GetMap();
+    if(!valid(map))
+    {
+        player.RunClientScript("hexThrow@_UpdateWeapons", 0, 0, 0, null, null);
+        return;
+    }
+    if(px < 0 || px >= int(map.GetWidth()) || py < 0 || py >= int(map.GetHeight()))
+    {
+        player.RunClientScript("hexThrow@_UpdateWeapons", 0, 0, 0, null, null);
+        return;
+    }
+
+    Item@ item = player.GetItemById(p2);
+    if(!IsHexThrowableThere(player, item, px, py))
+    {
+        player.RunClientScript("hexThrow@_UpdateWeapons", 0, 0, 0, null, null);
+        return;
+    }
+
+    uint16 tx = px;
+    uint16 ty = py;
+
+    // wallcheck
+    uint16 pbx = tx;
+    uint16 pby = ty;
+    uint16 bx = tx;
+    uint16 by = ty;
+    if(IsGrenade(item))
+    {
+        map.GetCrittersPath(player.HexX, player.HexY, tx, ty, 0.0f, 0, FIND_LIFE_AND_KO, null, pbx, pby, bx, by);
+        tx = pbx;
+        ty = pby;
+    }
+    else
+    {
+        player.RunClientScript("hexThrow@_UpdateWeapons", 0, 0, 0, null, null);
+        return;
+    }
+
+    int tohit = HexThrowingToHit(player, tx, ty, item.Proto);
+    if(tohit >= Random(1, 100))
+    {
+        CommenceHexThrowing(player, map, item, tx, ty);
+    }
+    else
+    {
+        uint dist = GetDistantion(player.HexX, player.HexY, tx, ty) + 1;
+        map.MoveHexByDir(tx, ty, Random(0, 5), Random(1, dist / 2));
+        map.GetCrittersPath(player.HexX, player.HexY, tx, ty, 0.0f, 0, FIND_LIFE_AND_KO, null, pbx, pby, bx, by);
+        tx = pbx;
+        ty = pby;
+        CommenceHexThrowing(player, map, item, tx, ty);
+        player.Say(SAY_NETMSG, "You missed.");
+    }
+
+}
+
+void CommenceHexThrowing(Critter& cr, Map& map, Item& item, uint16 tx, uint16 ty)
+{    
+    uint16 pid = item.GetProtoId();
+    if(IsGrenade(item))
+    {
+        uint8 dir = GetDirection(cr.HexX, cr.HexY, tx, ty);
+        cr.SetDir(dir);
+        _CritAnimateThrow(cr);
+        if(cr.Mode[MODE_HIDE] != 0)
+        {
+            if(!cr.IsPlayer() || cr.GetAccess() == ACCESS_CLIENT)
+                cr.ModeBase[MODE_HIDE] = 0;
+        }
+        cr.Wait(__Breaktime);
+        cr.StatBase[ST_CURRENT_AP] -= 100 * HexThrowActionPointsCost(item, cr);
+
+        map.RunFlyEffect(item.GetProtoId(), cr, null, cr.HexX, cr.HexY, tx, ty);
+    
+        if(cr.Timeout[TO_BATTLE] < int(__TimeoutBattle))
+            _SetTimeout(cr, TO_BATTLE, __TimeoutBattle);
+        if(!map.IsTurnBased() && map.IsTurnBasedAvailability())
+            map.BeginTurnBased(cr);
+        
+        uint[] values = { map.Id, tx, ty, pid, cr.Id };
+        CreateTimeEvent(AFTER(REAL_SECOND(0)), "e_HexThrowExplode", values, false);
+        
+        cr.DeleteItem(item.GetProtoId(), 1);
+    }
+    else
+    {
+        cr.RunClientScript("hexThrow@_UpdateWeapons", 0, 0, 0, null, null);
+        return;
+    }
+}
+
+uint e_HexThrowExplode(array<uint>@ values)     // map id, tx, ty, pid, attacker id
+{
+    Map@ map = GetMap(values[0]);
+    Critter@ cr = GetCritter(values[4]);
+    if(!valid(map))
+    {
+        cr.RunClientScript("hexThrow@_UpdateWeapons", 0, 0, 0, null, null);
+        return 0;
+    }
+
+    Item@ usedWeapon = cr.GetItem(values[3], -1);
+
+    CommenceExplosionHexEx(GetCritter(values[4]), map, values[1], values[2], null, values[3], usedWeapon, 0, false, 0, false, false);
+    cr.RunClientScript("hexThrow@_UpdateWeapons", 0, 0, 0, null, null);
+    return 0;
+}
+#endif
+
+#ifdef __CLIENT
+
+bool Active = false;
+int  LastCursor = 0;
+int  itemPos = 0;
+uint availableCnt = 0;
+array<ItemCl@> availableItems;
+bool isPlasma, isFrag, isDynacord, isMolotov, isPulse, isFire;
+uint16 lastH = 0, lastM = 0, lastS = 0, lastMS = 0;
+
+void _UpdateWeapons(int param1, int param2, int param3, string@ param4, array<int>@ param5) 
+{
+    if(Active)
+        Active = FindAvailableWeapons();
+    else
+        FindAvailableWeapons();
+}
+
+bool FindAvailableWeapons()
+{
+    CritterCl@ chosen = GetChosen();
+    array<ItemCl@> allItems;
+
+    int count = chosen.GetItems(SLOT_INV, allItems);
+
+    isPlasma = isFrag = isDynacord = isMolotov = isPulse = false;
+    availableCnt = 0;
+    availableItems.resize(0);
+    // 6 = plasma, frag, dynacord, molotov, pulse, fire
+    availableItems.resize(6);
+    for(int i=0; i < count; ++i)
+    {
+        if(valid(allItems[i]))
+        {
+            switch(allItems[i].GetProtoId())
+            {
+            case PID_FAKE_PLASMA_GRENADE:
+            case PID_PLASMA_GRENADE:
+                isPlasma = true;
+                availableItems.removeAt(0);
+                availableItems.insertAt(0, allItems[i]);
+                ++availableCnt;
+            break;
+            case PID_FAKE_FRAG_GRENADE:
+            case PID_FRAG_GRENADE:
+                isFrag = true;
+                availableItems.removeAt(1);
+                availableItems.insertAt(1, allItems[i]);
+                ++availableCnt;
+            break;
+            case PID_DYNACORD:
+                isDynacord = true;
+                availableItems.removeAt(2);
+                availableItems.insertAt(2, allItems[i]);
+                ++availableCnt;
+            break;
+            case PID_MOLOTOV_COCKTAIL:
+                isMolotov = true;
+                availableItems.removeAt(3);
+                availableItems.insertAt(3, allItems[i]);
+                ++availableCnt;
+            break;
+            case PID_PULSE_GRENADE:
+                isPulse = true;
+                availableItems.removeAt(4);
+                availableItems.insertAt(4, allItems[i]);
+                ++availableCnt;
+            break;
+            case PID_FAKE_FIRE_GRENADE:
+            case PID_FIRE_GRENADE:
+                isFire = true;
+                availableItems.removeAt(5);
+                availableItems.insertAt(5, allItems[i]);
+                ++availableCnt;
+            break;
+            }
+        }
+    }
+
+    //Message("i "+availableCnt);
+    if(availableCnt > 0)
+    {
+        bool next = false;
+        do
+        {
+            switch(itemPos)
+            {
+            case 0:
+                next = isPlasma;
+            break;
+            case 1:
+                next = isFrag;
+            break;
+            case 2:
+                next = isDynacord;
+            break;
+            case 3:
+                next = isMolotov;
+            break;
+            case 4:
+                next = isPulse;
+            break;
+            case 5:
+                next = isFire;
+            break; 
+            }
+            if(!next)
+                itemPos = (itemPos+1)%6;
+        }while(!next);
+        return true;    
+    }
+    else
+        return false;
+}
+
+bool HexThrowingMouseDown(int click)
+{
+    if(!IsHexThrowingActive())
+        return false;
+    if(click == MOUSE_CLICK_RIGHT)
+    {
+        if(availableCnt > 0)
+        {
+            bool next = false;
+            do
+            {
+                itemPos = (itemPos+1)%6;
+                switch(itemPos)
+                {
+                    case 0:
+                        next = isPlasma;
+                    break;
+                    case 1:
+                        next = isFrag;
+                    break;
+                    case 2:
+                        next = isDynacord;
+                    break;
+                    case 3:
+                        next = isMolotov;
+                    break;
+                    case 4:
+                        next = isPulse;
+                    break;
+                    case 5:
+                        next = isFire;
+                    break;   
+                }
+            }while(!next);
+        }
+        else
+            itemPos = 0;
+        //Message("pos "+itemPos);
+    }
+    else
+    {
+        CritterCl@ chosen = GetChosen();
+
+        array<uint> actions;
+        uint        cnt = GetChosenActions(actions);
+
+        if(actions.length() > 0)
+        {
+            if(actions[0] == 1)
+                TryHexThrow();
+        }
+        else
+        {
+            if(!chosen.IsAnimPlaying())
+                TryHexThrow();
+        }
+    }
+
+    return true;
+}
+
+bool IsHexThrowingActive() // export?
+{
+    return Active;
+}
+
+void HexThrowingKeyDown(uint8 key)   // export
+{
+    if(key == DIK_LMENU && !__ConsoleActive)
+        SetHexThrowing(true);
+}
+
+void HexThrowingKeyUp(uint8 key)   // export
+{
+    if(key == DIK_LMENU)
+        SetHexThrowing(false);
+}
+
+void HexThrowingInputLost() // export
+{
+    SetHexThrowing(false);
+}
+
+void SetHexThrowing(bool enabled)
+{
+    if(enabled)
+    {
+        //Active = true;
+        LastCursor = ::GetCurrentCursor();
+        if(LastCursor == CURSOR_USE_WEAPON)
+        {
+            if(FindAvailableWeapons())
+                Active = true;
+            else
+                Active = false;
+        }
+        
+        //ChangeCursor(1);         // todo
+    }
+    else
+    {
+        Active = false;
+        //ChangeCursor(LastCursor);
+    }
+}
+
+void RenderHexThrowing() // export
+{
+    if(!IsHexThrowingActive())
+        return;
+    CritterCl@ chosen = GetChosen();
+    if(!valid(chosen))
+        return;
+
+    if(!Active)
+        return;
+
+    uint16 hx = 0, hy = 0;
+    if(!GetMonitorHex(__MouseX, __MouseY, hx, hy))
+        return;
+    // todo: check for sanity?
+
+    //throw indicator
+    ItemCl@ item = availableItems[itemPos];
+    int radius = HexThrowGetMaxRange(chosen, item);
+
+    array<uint16> radiusVert =
+    {
+        chosen.HexX, chosen.HexY,
+        chosen.HexX, chosen.HexY,
+        chosen.HexX, chosen.HexY,
+        chosen.HexX, chosen.HexY,
+        chosen.HexX, chosen.HexY,
+        chosen.HexX, chosen.HexY
+    };
+    MoveHexByDir(radiusVert[0], radiusVert[1], 0, radius);
+    MoveHexByDir(radiusVert[2], radiusVert[3], 1, radius);
+    MoveHexByDir(radiusVert[4], radiusVert[5], 2, radius);
+    MoveHexByDir(radiusVert[6], radiusVert[7], 3, radius);
+    MoveHexByDir(radiusVert[8], radiusVert[9], 4, radius);
+    MoveHexByDir(radiusVert[10], radiusVert[11], 5, radius);
+
+    #define RANGE_BORDER      (0x77FF7777)
+
+    DrawHexArea(radiusVert, false, RANGE_BORDER);
+
+    if(!IsHexThrowableThere(chosen, item, hx, hy))
+        return;
+
+    //splash indicator
+    uint splashRadius = 2;
+    if(item.GetProtoId() == PID_FIRE_GRENADE || item.GetProtoId() == PID_FAKE_FIRE_GRENADE)
+        splashRadius = 3; 
+    else if(item.GetProtoId() == PID_DYNACORD)
+        splashRadius = 4;
+
+    array<uint16> splashRadiusVert =
+    {
+        hx, hy,
+        hx, hy,
+        hx, hy,
+        hx, hy,
+        hx, hy,
+        hx, hy
+    };
+    MoveHexByDir(splashRadiusVert[0], splashRadiusVert[1], 0, splashRadius);
+    MoveHexByDir(splashRadiusVert[2], splashRadiusVert[3], 1, splashRadius);
+    MoveHexByDir(splashRadiusVert[4], splashRadiusVert[5], 2, splashRadius);
+    MoveHexByDir(splashRadiusVert[6], splashRadiusVert[7], 3, splashRadius);
+    MoveHexByDir(splashRadiusVert[8], splashRadiusVert[9], 4, splashRadius);
+    MoveHexByDir(splashRadiusVert[10], splashRadiusVert[11], 5, splashRadius);
+
+    #define SPLASH_RADIUS_BORDER      (0x77FF0000)
+
+    DrawHexArea(splashRadiusVert, false, SPLASH_RADIUS_BORDER);
+
+    // now we actually render the info
+    int x = 0, y = 0;
+    if(!GetHexPos(hx, hy, x, y))
+        return;                           // should not happen
+
+    uint tohit = ::HexThrowingToHit(chosen, hx, hy, item.Proto);
+    int  ap = ::HexThrowActionPointsCost(item, chosen);
+    bool hasAp = ap <= chosen.Stat[ST_CURRENT_AP];
+
+    // todo: adjust offsets
+    int sprite = LoadSprite(item.Proto.PicInv, 0);
+    ::DrawSprite(sprite, -1, x - 50, y - 15, 30, 30, false, false, COLOR_WHITE);
+    DrawText(tohit + "%", x + 20, y - 10, 40, 20, hasAp ? COLOR_GREEN : COLOR_RED, FONT_TYPE_DEFAULT, FONT_FLAG_BORDERED);
+    DrawText(ap + " AP", x + 20, y, 40, 20, hasAp ? COLOR_LGRAY : COLOR_RED, FONT_TYPE_DEFAULT, FONT_FLAG_BORDERED);
+    DrawText(item.GetCount()+"", x - 30, y-10, 40, 20, hasAp ? COLOR_LGRAY : COLOR_RED, FONT_TYPE_DEFAULT, FONT_FLAG_BORDERED);
+       
+}
+
+void TryHexThrow()
+{
+    // sanity check
+    if(!IsHexThrowingActive())
+        return;
+    CritterCl@ chosen = GetChosen();
+    if(!valid(chosen))
+        return;
+
+    uint16 hx = 0, hy = 0;
+    if(!GetMonitorHex(__MouseX, __MouseY, hx, hy))
+        return;
+    // todo: check for sanity?
+
+    ItemCl@ item = availableItems[itemPos];
+
+    if(!IsHexThrowableThere(chosen, item, hx, hy))
+        return;
+
+    if(::HexThrowActionPointsCost(item, chosen) > chosen.Stat[ST_CURRENT_AP])
+    {
+        array<uint> actions;
+        uint        cnt = GetChosenActions(actions);
+        if(actions.length() > 0 && actions[0] == CHOSEN_MOVE)
+        {
+            uint[] action = { CHOSEN_NONE, 0, 0, 0, 0, 0, 0 };
+            SetChosenActions(action);
+        }
+        return;
+    }
+
+    // throw
+    if(CheckTimeDiff(lastH, lastM, lastS, lastMS))
+        RunServerScriptUnsafe("hexThrow@unsafe_HexThrow", hx, hy, item.Id, null, null);
+}
+
+bool CheckTimeDiff(uint16 lh, uint16 lm, uint16 ls, uint16 lms)
+{
+    uint16 undef;
+    uint16 hour = 0;
+    uint16 second = 0;
+    uint16 msecond = 0;
+    uint16 minute = 0;
+
+    GetTime(undef, undef, undef, undef, hour, minute, second, msecond);
+
+    lastH = hour;
+    lastM = minute;
+    lastS = second;
+    lastMS = msecond;
+
+    if(lh > hour)
+        hour += 24;
+    if(lm > minute)
+    {
+        minute += 60;
+        hour--;
+    }
+    if(ls > second)
+    {
+        second += 60;
+        minute--;
+    }
+    if(lms > msecond)
+    {
+        msecond += 1000;
+        second--;
+    }
+
+    uint td = (second-ls)*1000;
+    td = (msecond-lms+td);
+
+    if(td >= __Breaktime || lh != hour || lm != minute)
+        return true;
+    else
+    {
+        lastH = lh;
+        lastM = lm;
+        lastS = ls;
+        lastMS = lms;
+        return false;
+    }
+}
+
+#endif

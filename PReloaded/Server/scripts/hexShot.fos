@@ -1,0 +1,528 @@
+#include "_macros.fos"
+#include "MsgStr.h"
+
+#ifdef __SERVER
+# define CritterMutual       Critter
+# define ItemMutual          Item
+
+import void WearItem(Critter& cr, Item& item, int wearCount) from "repair";
+
+#endif
+#ifdef __CLIENT
+#include "polygon_h.fos"
+# include "sprite.fos"
+# include "_colors.fos"
+# include "_client_defines.fos"
+# define CritterMutual       CritterCl
+# define ItemMutual          ItemCl
+#endif
+
+
+int SelectWeaponBonus(ItemMutual@ RealWeapon, int Int_Val_WeaponBonus)
+{
+    if(valid(RealWeapon))
+    {
+        if(RealWeapon.Val0 == Int_Val_WeaponBonus) return  RealWeapon.Val5;
+        if(RealWeapon.Val1 == Int_Val_WeaponBonus) return  RealWeapon.Val6;
+        if(RealWeapon.Val2 == Int_Val_WeaponBonus) return  RealWeapon.Val7;
+        if(RealWeapon.Val3 == Int_Val_WeaponBonus) return  RealWeapon.Val8;
+        if(RealWeapon.Val4 == Int_Val_WeaponBonus) return  RealWeapon.Val9;
+        return 0;
+    }
+    else return 0;
+}   
+
+bool IsHexShotWeapon(ItemMutual@ item)
+{
+    if(!valid(item))
+        return false;
+    if(item.GetType() != ITEM_TYPE_WEAPON)
+        return false;
+
+    return (item.GetProtoId() == PID_ROCKET_LAUNCHER
+            || item.GetProtoId() == PID_GRENADE_PISTOL
+            || item.GetProtoId() == PID_GRENADE_LAUNCHER);
+}
+
+uint HexShotGetMaxRange(CritterMutual& cr, ItemMutual@ item)
+{
+    if(!valid(item))
+        return 0;
+    uint viewRange = 20 + 3 * cr.Stat[ST_PERCEPTION] + 6 * cr.Perk[PE_SHARPSHOOTER];
+    if(IsHexShotWeapon(item))
+    {
+        uint8 use = _WeaponModeUse(item.Mode);
+        uint bonusRange = SelectWeaponBonus(item, BONUS_WEAPON_MAX_RANGE);
+        return MIN(_WeaponMaxDist(item.Proto, use) + bonusRange, viewRange);
+    }
+    else
+    {
+        return 0;
+    }
+}
+
+bool IsHexShotable(ProtoItem& weapon)
+{
+    if(!valid(weapon))
+        false;
+    return true;
+}
+
+int HexShotingToHit(CritterMutual& cr, uint16 tx, uint16 ty, ProtoItem& weapon, ItemMutual& realWeapon)
+{
+    if(!valid(weapon))
+        return 0;
+    if(!cr.IsLife())
+        return 0;
+
+    int weaponPerk = weapon.Weapon_Perk;
+    int skillNum = _WeaponSkill(weapon, 0);
+    int toHit = int(cr.Skill[skillNum]);
+    
+    if(cr.Damage[DAMAGE_EYE] != 0)
+        toHit -= 25;
+    
+    //weapon handling modifiers
+    if(cr.Trait[TRAIT_ONE_HANDER] != 0)
+        toHit += (FLAG(weapon.Flags, ITEM_FLAG_TWO_HANDS) ? -40 : 20);
+    int handlingStrength = cr.Stat[ST_STRENGTH];
+    int reqStrength = weapon.Weapon_MinStrength;
+    if(cr.Perk[PE_WEAPON_HANDLING] != 0)
+        handlingStrength += 2;
+    if(handlingStrength < reqStrength)
+        toHit -= (reqStrength - handlingStrength) * 20;
+
+    if(weaponPerk == WEAPON_PERK_ACCURATE)
+        toHit += 20;
+
+    toHit += SelectWeaponBonus(realWeapon, BONUS_WEAPON_ACCURACY);
+
+    // ranged attack modifiers
+    int distmod1 = 2;   // used for initial weapon bonus
+    int distmod2 = 0;   // minimal distance
+    if(weaponPerk == WEAPON_PERK_LONG_RANGE)
+        distmod1 = 4;
+
+    int perception = cr.Stat[ST_PERCEPTION];
+    int dist = GetDistantion(cr.HexX, cr.HexY, tx, ty);
+
+    int acc = dist;
+
+    if(dist < distmod2)
+        acc += distmod2;
+    else
+        acc -= (perception - 2) * distmod1; 
+
+    if(-2 * perception > acc)
+        acc = -2 * perception;
+
+    acc -= 2 * cr.Perk[PE_SHARPSHOOTER];
+
+    if(acc >= 0 && cr.Damage[DAMAGE_EYE] != 0)
+        acc *= -12;
+    else
+        acc *= -4;
+    
+    toHit += acc;
+
+    int blockers = 0;
+
+    #ifdef __SERVER
+    Map@ map = cr.GetMap();
+    blockers = map.GetCrittersPath(cr.HexX, cr.HexY, tx, ty, 0.0f, dist, FIND_LIFE, null);
+    #endif
+    #ifdef __CLIENT
+    blockers = GetCrittersPath(cr.HexX, cr.HexY, tx, ty, 0.0f, dist, FIND_LIFE, null);
+    #endif
+
+    toHit -= 10 * blockers;
+
+    toHit = CLAMP(toHit, 5, 95);
+
+    return toHit;
+}
+
+int HexShotActionPointsCost(ItemMutual& item, CritterMutual& cr)
+{
+    if(IsHexShotWeapon(item))
+    {
+        uint8 use = _WeaponModeUse(item.Mode);
+        int apCost = (cr.Perk[PE_BONUS_RATE_OF_ATTACK]>0)?-1:0;
+        apCost += _WeaponApCost(item.Proto, use);
+        // -AP cost bonus changed to +AP bonus BONUS_WEAPON_MAX_AP
+        //apCost -= SelectWeaponBonus(item, BONUS_WEAPON_AP_COST);
+
+        return apCost;
+    }
+    return 0;
+}
+
+bool IsHexShotableThere(CritterMutual& cr, ItemMutual@ item, uint16 tx, uint16 ty)
+{
+    if(!valid(item) || !IsHexShotable(item.Proto) || !cr.IsLife())
+        return false;
+    #ifdef __SERVER
+    if(cr.Stat[ST_CURRENT_AP] < HexShotActionPointsCost(item, cr))
+        return false;
+    if(HexShotActionPointsCost(item, cr) == 0)
+        return false;
+    #endif
+    if(cr.Damage[DAMAGE_RIGHT_ARM] != 0 || cr.Damage[DAMAGE_LEFT_ARM] != 0)
+        return false;
+    if(HexShotGetMaxRange(cr, item) == 0 || GetDistantion(cr.HexX, cr.HexY, tx, ty) == 0)
+        return false;
+
+    // wallcheck
+    uint16 pbx = tx;
+    uint16 pby = ty;
+    uint16 bx = tx;
+    uint16 by = ty;
+
+    #ifdef __SERVER
+    Map@ map = cr.GetMap();
+    map.GetCrittersPath(cr.HexX, cr.HexY, tx, ty, 0.0f, 0, 0, null, pbx, pby, bx, by);
+    #endif
+    #ifdef __CLIENT
+    GetCrittersPath(cr.HexX, cr.HexY, tx, ty, 0.0f, 0, 0, null, pbx, pby, bx, by);
+    #endif
+
+    if(bx != tx || by != ty)
+        return false;
+
+    return (HexShotGetMaxRange(cr, item) >= GetDistantion(cr.HexX, cr.HexY, tx, ty));
+    // todo: wall tracing on the client side
+}
+
+#ifdef __SERVER
+
+import void CommenceExplosionHexEx(Critter@ attacker, Map@ map, uint16 tx, uint16 ty, Critter@ target, uint weapPid, Item@ usedWeapon, uint ammoPid, bool isCritical, uint intentionallyId, bool isRocket, bool isExplodeRocket) from "combat";
+
+void unsafe_HexShot(Critter& player, int px, int py, int p2, string@ param3, array<int>@ param4)
+{
+    if(!player.IsLife())
+        return;
+
+    Map@ map = player.GetMap();
+    if(!valid(map))
+        return;
+
+    if(px < 0 || px >= int(map.GetWidth()) || py < 0 || py >= int(map.GetHeight()))
+        return;
+
+    Item@ item = player.GetItem(0, SLOT_HAND1);
+    if(!IsHexShotableThere(player, item, px, py))
+        return;
+
+    if(item.AmmoCount <= 0)
+        return;
+
+    if(FLAG(item.BrokenFlags, BI_ETERNAL) || FLAG(item.BrokenFlags, BI_NOTRESC))
+    {
+        player.Say(SAY_NETMSG, "Your weapon is broken.");
+        return;
+    }
+
+    uint16 tx = px;
+    uint16 ty = py;
+
+    // wallcheck
+    uint16 pbx = tx;
+    uint16 pby = ty;
+    uint16 bx = tx;
+    uint16 by = ty;
+
+    map.GetCrittersPath(player.HexX, player.HexY, tx, ty, 0.0f, 0, 0, null, pbx, pby, bx, by);
+
+    int tohit = HexShotingToHit(player, pbx, pby, item.Proto, item);
+    if(tohit >= Random(1, 100))
+    {
+        CommenceHexShoting(player, map, item, pbx, pby);
+    }
+    else
+    {
+        uint dist = GetDistantion(player.HexX, player.HexY, tx, ty) + 1;
+        map.MoveHexByDir(tx, ty, Random(0, 5), Random(1, dist / 2));
+        map.GetCrittersPath(player.HexX, player.HexY, tx, ty, 0.0f, 0, FIND_LIFE_AND_KO, null, pbx, pby, bx, by);
+        tx = pbx;
+        ty = pby;
+        CommenceHexShoting(player, map, item, tx, ty);
+        player.Say(SAY_NETMSG, "You missed.");
+    }
+
+}
+
+void CommenceHexShoting(Critter& cr, Map& map, Item& item, uint16 tx, uint16 ty)
+{
+    uint8 dir = GetDirection(cr.HexX, cr.HexY, tx, ty);
+    cr.SetDir(dir);
+    _CritAnimateSingle(cr);
+    if(cr.Mode[MODE_HIDE] != 0)
+    {
+        if(!cr.IsPlayer() || cr.GetAccess() == ACCESS_CLIENT)
+            cr.ModeBase[MODE_HIDE] = 0;
+    }
+    cr.Wait(__Breaktime);
+    cr.StatBase[ST_CURRENT_AP] -= 100 * HexShotActionPointsCost(item, cr);
+
+    map.RunFlyEffect(_WeaponEffect(item.Proto, item.Mode), cr, null, cr.HexX, cr.HexY, tx, ty);
+    
+    uint16 pid = item.GetProtoId();
+
+    if(cr.Timeout[TO_BATTLE] < int(__TimeoutBattle))
+        _SetTimeout(cr, TO_BATTLE, __TimeoutBattle);
+    if(!map.IsTurnBased() && map.IsTurnBasedAvailability())
+        map.BeginTurnBased(cr);
+    uint[] values = { map.Id, tx, ty, pid, cr.Id, item.AmmoPid};
+    CreateTimeEvent(AFTER(REAL_SECOND(0)), "e_HexShotExplode", values, false);
+    item.AmmoCount -= 1;
+    item.Update();
+}
+
+uint e_HexShotExplode(array<uint>@ values)     // map id, tx, ty, pid, attacker id, ammo pid
+{
+    Map@ map = GetMap(values[0]);
+    Critter@ cr = GetCritter(values[4]);
+    if(!valid(map) || !valid(cr))
+        return 0;
+
+    bool isRocket = (values[5] == PID_ROCKET_AP
+                    || values[5] == PID_EXPLOSIVE_ROCKET
+                    || values[5] == PID_40MM_GRENADE);
+    bool isExplodeRocket = (values[5] == PID_EXPLOSIVE_ROCKET) || (values[5] == PID_40MM_GRENADE);
+
+    Item@ usedWeapon = _CritGetItemHand(cr);
+    if(!valid(usedWeapon))
+        return 0;
+    int   skillVal = cr.Skill[_WeaponSkill(usedWeapon.Proto, 0)];
+
+    if(usedWeapon.IsDeteriorable() && !_CritHasExtMode(cr, MODE_EXT_NO_DETERIORATION))
+        WearItem(cr, usedWeapon, (MAX_SKILL_VAL - MIN(skillVal,200)) / 6);
+
+    CommenceExplosionHexEx(cr, map, values[1], values[2], null, values[3], usedWeapon, values[5], false, 0, isRocket, isExplodeRocket);
+    return 0;
+}
+
+#endif
+
+#ifdef __CLIENT
+
+bool Active = false;
+int  LastCursor = 0;
+uint16 lastH = 0, lastM = 0, lastS = 0, lastMS = 0;
+
+bool HexShotingMouseDown(int click)
+{
+    if(!IsHexShotingActive())
+        return false;
+
+    if(click != MOUSE_CLICK_LEFT)
+    {
+        SetHexShoting(false);
+        return false;
+    }
+
+    CritterCl@ chosen = GetChosen();
+
+    array<uint> actions;
+    uint        cnt = GetChosenActions(actions);
+
+    if(actions.length() > 0)
+    {
+        if(actions[0] == 1)
+            TryHexShot();
+    }
+    else
+    {
+        if(!chosen.IsAnimPlaying())
+            TryHexShot();
+    }
+
+    return true;
+}
+
+bool IsHexShotingActive() // export?
+{
+    return Active;
+}
+
+void HexShotingKeyDown(uint8 key)   // export
+{
+    if(key == DIK_LCONTROL && !__ConsoleActive)
+        SetHexShoting(true);
+}
+
+void HexShotingKeyUp(uint8 key)   // export
+{
+    if(key == DIK_LCONTROL)
+        SetHexShoting(false);
+}
+
+void HexShotingInputLost() // export
+{
+    SetHexShoting(false);
+}
+
+void SetHexShoting(bool enabled)
+{
+    if(enabled)
+    {
+        //Active = true;
+        LastCursor = ::GetCurrentCursor();
+        if(LastCursor == CURSOR_USE_WEAPON)
+            Active = true;
+        //ChangeCursor(CURSOR_USE_WEAPON);      
+    }
+    else
+    {
+        Active = false;
+        //ChangeCursor(LastCursor);
+    }
+}
+
+void RenderHexShoting() // export
+{
+    if(!IsHexShotingActive())
+        return;
+    CritterCl@ chosen = GetChosen();
+    if(!valid(chosen))
+        return;
+
+    uint16 hx = 0, hy = 0;
+    if(!GetMonitorHex(__MouseX, __MouseY, hx, hy))
+        return;
+    // todo: check for sanity?
+    ItemCl@ item = chosen.GetItem(0, SLOT_HAND1);
+    if(!IsHexShotableThere(chosen, item, hx, hy))
+        return;
+
+    // now we actually render the info
+    int x = 0, y = 0;
+    if(!GetHexPos(hx, hy, x, y))
+        return;                           // should not happen
+
+    int radius = (item.AmmoPid == PID_ROCKET_AP)?3:4; 
+
+    uint tohit = ::HexShotingToHit(chosen, hx, hy, item.Proto, item);
+    int  ap = ::HexShotActionPointsCost(item, chosen);
+    bool hasAp = ap <= chosen.Stat[ST_CURRENT_AP];
+    bool hasAmmo = item.AmmoCount > 0;
+
+    array<uint16> radiusVert =
+    {
+        hx, hy,
+        hx, hy,
+        hx, hy,
+        hx, hy,
+        hx, hy,
+        hx, hy
+    };
+    MoveHexByDir(radiusVert[0], radiusVert[1], 0, radius);
+    MoveHexByDir(radiusVert[2], radiusVert[3], 1, radius);
+    MoveHexByDir(radiusVert[4], radiusVert[5], 2, radius);
+    MoveHexByDir(radiusVert[6], radiusVert[7], 3, radius);
+    MoveHexByDir(radiusVert[8], radiusVert[9], 4, radius);
+    MoveHexByDir(radiusVert[10], radiusVert[11], 5, radius);
+
+    #define RADIUS_BORDER      (0x77FF0000)
+
+    DrawHexArea(radiusVert, false, RADIUS_BORDER);
+
+    if(hasAp && hasAmmo)
+        DrawText(tohit + "%", x + 20, y - 10, 40, 20, COLOR_GREEN, FONT_TYPE_DEFAULT, FONT_FLAG_BORDERED);
+    else
+    {
+        if(hasAmmo)
+            DrawText(tohit + "%", x + 20, y - 10, 40, 20, COLOR_RED, FONT_TYPE_DEFAULT, FONT_FLAG_BORDERED);
+        else
+            DrawText("Reload", x + 20, y - 10, 40, 20, COLOR_RED, FONT_TYPE_DEFAULT, FONT_FLAG_BORDERED);
+    }
+    
+}
+
+void TryHexShot()
+{
+    // sanity check
+    if(!IsHexShotingActive())
+        return;
+    CritterCl@ chosen = GetChosen();
+    if(!valid(chosen))
+        return;
+
+    uint16 hx = 0, hy = 0;
+    if(!GetMonitorHex(__MouseX, __MouseY, hx, hy))
+        return;
+    // todo: check for sanity?
+    ItemCl@ item = chosen.GetItem(0, SLOT_HAND1);
+    if(!IsHexShotableThere(chosen, item, hx, hy))
+        return;
+
+    if(item.AmmoCount <= 0)
+        PlaySound('W', SOUND_WEAPON_EMPTY, item.Proto.Weapon_SoundId_0, '1');
+
+    if(item.AmmoCount <= 0 || (::HexShotActionPointsCost(item, chosen) > chosen.Stat[ST_CURRENT_AP]))
+    {
+        array<uint> actions;
+        uint        cnt = GetChosenActions(actions);
+        if(actions.length() > 0 && actions[0] == CHOSEN_MOVE)
+        {
+            uint[] action = { CHOSEN_NONE, 0, 0, 0, 0, 0, 0 };
+            SetChosenActions(action);
+        }
+        return;
+    }
+
+    // shot
+    if(CheckTimeDiff(lastH, lastM, lastS, lastMS))
+        RunServerScriptUnsafe("hexShot@unsafe_HexShot", hx, hy, 0, null, null);
+
+}
+
+bool CheckTimeDiff(uint16 lh, uint16 lm, uint16 ls, uint16 lms)
+{
+    uint16 undef;
+    uint16 hour = 0;
+    uint16 second = 0;
+    uint16 msecond = 0;
+    uint16 minute = 0;
+
+    GetTime(undef, undef, undef, undef, hour, minute, second, msecond);
+
+    lastH = hour;
+    lastM = minute;
+    lastS = second;
+    lastMS = msecond;
+
+    if(lh > hour)
+        hour += 24;
+    if(lm > minute)
+    {
+        minute += 60;
+        hour--;
+    }
+    if(ls > second)
+    {
+        second += 60;
+        minute--;
+    }
+    if(lms > msecond)
+    {
+        msecond += 1000;
+        second--;
+    }
+
+    uint td = (second-ls)*1000;
+    td = (msecond-lms+td);
+
+    if(td >= __Breaktime || lh != hour || lm != minute)
+        return true;
+    else
+    {
+        lastH = lh;
+        lastM = lm;
+        lastS = ls;
+        lastMS = lms;
+        return false;
+    }
+}
+
+#endif

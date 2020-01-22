@@ -1,0 +1,175 @@
+//
+// FOnline: 2238
+// Rotators
+//
+// broadcast_h.fos
+//
+
+#ifndef __BROADCAST_H__
+#define __BROADCAST_H__
+
+// shared
+
+// type
+#define BROADCAST_NONE                     (0)
+#define BROADCAST_MESSAGE                  (1)      // server messages
+#define BROADCAST_REQUESTHELP              (2)      // +requesthelp
+#define BROADCAST_TOWN_CONTROL             (3)      // town  contol countdowns
+#define BROADCAST_TC                       (BROADCAST_TOWN_CONTROL)
+#define BROADCAST_INFLUENCE                (4)
+#define BROADCAST_GMCHAT                   (5)
+#define BROADCAST_BASE_CONTROL             (6)
+#define BROADCAST_BASE_RADIO               (7)
+#define BROADCAST_SERVER_EVENT_MSG         (8)
+#define BROADCAST_SERVER_EVENT_COUNTDOWN   (9)
+
+// setup
+#define BROADCAST_SETUP_TC_STOP            (0)
+#define BROADCAST_SETUP_TC_SET             (1)
+#define BROADCAST_EVENT_CT_STOP            (BROADCAST_SETUP_TC_STOP)
+#define BROADCAST_EVENT_CT_SET             (BROADCAST_SETUP_TC_SET)
+
+// separators
+#define BROADCAST_SEPARATOR_MAIN           "|"
+#define BROADCAST_SEPARATOR_ARGS           "&"
+#define BROADCAST_SEPARATOR_DATA           "^"
+
+// events types
+#define EVENT_TYPE_TOWN_REINFORCEMENTS_1    (1)
+#define EVENT_TYPE_TOWN_REINFORCEMENTS_2    (2)
+#define EVENT_TYPE_TOWN_REINFORCEMENTS_3    (3)
+#define EVENT_TYPE_TOWN_REINFORCEMENTS_4    (4)
+#define EVENT_TYPE_TOWN_REINFORCEMENTS_5    (5)
+#define EVENT_TYPE_TOWN_REINFORCEMENTS_6    (6)
+#define EVENT_TYPE_TOWN_REINFORCEMENTS_7    (7)
+#define EVENT_TYPE_TOWN_REINFORCEMENTS_8    (8)
+#define EVENT_TYPE_TOWN_REINFORCEMENTS_9    (9)
+#define EVENT_TYPE_TOWN_REINFORCEMENTS_10   (10)
+
+// Location events
+#define EVENT_TYPE_V13_IS_OPEN              (11)
+#define EVENT_TYPE_SIERRA_IS_OPEN           (EVENT_TYPE_V13_IS_OPEN)
+#define EVENT_TYPE_FLC_CONVOY               (12)
+#define EVENT_TYPE_BASECONTROL              (13)
+#define EVENT_TYPE_FLC_SECURITY             (14)
+#define EVENT_TYPE_TOWN_RAIDERS             (15)
+
+// Trader events
+#define EVENT_TYPE_TRADER_1                 (21)
+#define EVENT_TYPE_TRADER_2                 (22)
+#define EVENT_TYPE_TRADER_3                 (23)
+#define EVENT_TYPE_TRADER_4                 (24)
+#define EVENT_TYPE_TRADER_5                 (25)
+#define EVENT_TYPE_TRADER_6                 (26)
+#define EVENT_TYPE_TRADER_UNKNOWN           (27)
+
+// GM events - Multi XP types
+#define GM_EVENT_MULTIEXP_GLOBAL            (100)
+#define GM_EVENT_MULTIEXP_KILL              (101)
+#define GM_EVENT_MULTIEXP_CARAVANS          (102)
+
+#ifdef __CLIENT
+//
+#endif /* __CLIENT */
+
+#ifdef __SERVER
+# define BROADCAST_FILTER_NONE             (0)
+# define BROADCAST_FILTER_TESTER           (0x00000001)
+# define BROADCAST_FILTER_MODER            (0x00000002)
+# define BROADCAST_FILTER_ADMIN            (0x00000004)
+# define BROADCAST_FILTER_AUTHENTICATED    (BROADCAST_FILTER_TESTER)
+# define BROADCAST_FILTER_GOD              (0x00000008)
+# define BROADCAST_FILTER_MORTAL           (0x00000010)
+# define BROADCAST_FILTER_FEMALE           (0x00000020)
+# define BROADCAST_FILTER_MALE             (0x00000040)
+# define BROADCAST_FILTER_WORLDMAP         (0x00000080) // send only to players on worldmap
+# define BROADCAST_FILTER_ANYMAP           (0x00000100) // send only to players in cities/encounters/etc.
+# define BROADCAST_FILTER_LEVEL            (0x00000200) // minimum level to see message
+# define BROADCAST_FILTER_LOCATION         (0x00000400) // send only to players in specific location
+# define BROADCAST_FILTER_NOTLOCATION      (0x00000800) // send only to players outside specific location
+# define BROADCAST_FILTER_MAP              (0x00001000) // send only to players in specific map
+# define BROADCAST_FILTER_FACTION          (0x00002000) // send only to players in given faction
+
+shared interface IBroadcastBuffer
+{
+    string GetString();
+
+    void   SetType(int type);
+    int    GetType();
+    void   SetTime(int time);
+    int    GetTime();
+    void   SetSetup(int setup);
+    int    GetSetup();
+    void   SetMessage(string message);
+    void   AppendMessage(string message);
+    string GetMessage();
+    void   SetData(array<int> data);
+
+    void SetStart(int time);
+    void ResetStart();
+
+    void SetLifetime(int lifetime);
+
+    void SetFilters(int filters);
+    void SetFilter(int filter);
+    void SetFilter(int filter, int data);
+    void UnsetFilter(int filter);
+    bool Filter(int filter);
+    bool CheckFilters(Critter@ player);
+
+    bool Send(Critter@ player);
+    uint SendToAll();
+
+    void SetGM(int id);
+    void UnsetGM();
+
+    void ToDelete();
+};
+
+# ifndef __BROADCAST__
+
+import void UpdateBroadcast() from "broadcast";
+
+import IBroadcastBuffer@ AddBroadcastBuffer(int type, int time, int setup, string& message, array<int>& data, int lifetime, int flags) from "broadcast";
+import void              DumpBroadcastBuffer(Critter@ player) from "broadcast";
+import uint              FindBroadcastBufferByType(int type, array<IBroadcastBuffer@>& buf) from "broadcast";
+import uint              FindBroadcastBufferByGM(int id, array<IBroadcastBuffer@>& buf) from "broadcast";
+
+// `broadcast
+import IBroadcastBuffer@ Broadcast_Message(string& message, int time, int filters, bool send) from "broadcast";
+import IBroadcastBuffer@ Broadcast_Message(string& message, int time, int filters) from "broadcast";
+import IBroadcastBuffer@ Broadcast_Message(string& message, int& time) from "broadcast";
+import IBroadcastBuffer@ Broadcast_Message(string& message, bool send) from "broadcast";
+import IBroadcastBuffer@ Broadcast_Message(string& message) from "broadcast";
+
+// town control
+import void Broadcast_TownControl_Set(string& message, int location, int time, int faction) from "broadcast";
+import void Broadcast_TownControl_Set(int location, int time, int faction) from "broadcast";
+import void Broadcast_TownControl_Stop(int location) from "broadcast";
+
+// influence
+import IBroadcastBuffer@ Broadcast_Influence(int location, int time, string& message) from "broadcast";
+
+// +requesthelp
+import uint Broadcast_RequestHelp(Critter@ player, string& message) from "broadcast";
+import void Broadcast_CheckRequestHelpBuffer(Critter@ gm) from "broadcast";
+import void Broadcast_DumpRequestHelpBuffer(Critter @gm) from "broadcast";
+
+// base control
+import void baseControl(string msg, int mapId, uint time) from "broadcast";
+import void baseControlLocal(string msg, int mapId, uint time) from "broadcast";
+import void baseControlRadio(string msg, uint time, int mapId, uint factionId) from "broadcast";
+
+// Server Events Notifications, f.ex. FLC Robbery
+import void ServerEventMSG(uint time, string msg) from "broadcast";
+
+// Server Events - types for locations, with countdown, f.ex. V13 event or Town Ride!
+import IBroadcastBuffer@ GetEventCountDownBuffer(int location, int type) from "broadcast";
+import void ServerEventCNTSet(string message, uint location, uint type, uint time) from "broadcast";
+import void ServerEventCNTSet(uint location, uint type, uint time) from "broadcast";
+import void ServerEventCNTStop(uint location, uint type) from "broadcast";
+
+
+# endif
+#endif /* __SERVER */
+#endif /* __BROADCAST_H__ */

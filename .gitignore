@@ -1,0 +1,71 @@
+##
+## General
+##
+
+# per-directory ignores
+.gitignore
+!/.gitignore
+
+# External SVN repositories
+.svn
+
+##
+## Developer files
+##
+
+# AutomatedBuild directories
+/foclassic/SDK*
+
+# maintainers
+/foclassic/*.dev
+/foclassic/*.bat
+/foclassic/*.cmd
+/foclassic/*.pl
+/foclassic/*.sh
+*.user
+
+# customization
+/foclassic/CMakeFOClassic.txt
+
+##
+## CMake leftovers
+##
+
+# In-Source build
+/foclassic/CMakeCache.txt
+/foclassic/CMakeFiles
+
+# cmake --system-information
+/foclassic/__cmake_systeminformation
+
+##
+##	PReloaded
+##
+
+CrashDump*.txt
+
+/PReloaded/Client/*.log
+/PReloaded/Client/data/cache/
+/PReloaded/Client/fallout.dat
+/PReloaded/Client/Mapper/*.log
+
+/PReloaded/Mapper/*.log
+
+/PReloaded/Server/config/**/*.bak
+/PReloaded/Server/dumps/
+/PReloaded/Server/logs/
+/PReloaded/Server/maps/**/*.fomapb
+/PReloaded/Server/save/
+/PReloaded/Server/scripts/**/*.fosb
+/PReloaded/Server/scripts/**/*.fosp
+/PReloaded/Server/cache_fail
+
+/PReloadedServer/extensions/Debug/
+/PReloadedServer/extensions/Release/
+/PReloadedServer/extensions/**/Debug/
+/PReloadedServer/extensions/**/Release/
+.vs
+*.opensdf
+*.sdf
+*.suo
+*.vcxproj.user

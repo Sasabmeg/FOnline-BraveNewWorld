@@ -1,0 +1,57 @@
+# default line endings
+* text eol=lf
+
+# git
+.gitignore     text eol=lf
+.gitattributes text eol=lf
+
+# intellisense creator
+intellisense*.h text eol=lf
+
+# binary
+*.acm  binary
+*.ACM  binary
+*.dat  binary
+*.DAT  binary
+*.exe  binary
+*.EXE  binary
+*.dll  binary
+*.DLL  binary
+*.fosb binary
+*.FOSB binary
+*.frm  binary
+*.FRM  binary
+*.fr0  binary
+*.FR0  binary
+*.fr1  binary
+*.FR1  binary
+*.fr2  binary
+*.FR2  binary
+*.fr3  binary
+*.FR3  binary
+*.fr4  binary
+*.FR4  binary
+*.fr5  binary
+*.FR5  binary
+*.ico  binary
+*.ico  binary
+*.jpg  binary
+*.JPG  binary
+*.msk  binary
+*.MSK  binary
+*.ogg  binary
+*.OGG  binary
+*.pdb  binary
+*.pal  binary
+*.PAL  binary
+*.PDB  binary
+*.png  binary
+*.PNG  binary
+*.so   binary
+*.SO   binary
+*.xcf  binary
+*.XCF  binary
+*.xlsx binary
+*.XLSX binary
+*.zip filter=lfs diff=lfs merge=lfs -text
+*.ZIP filter=lfs diff=lfs merge=lfs -text

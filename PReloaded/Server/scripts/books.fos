@@ -1,0 +1,100 @@
+// Author: cvet
+// Edited by: Kilgore
+#include "_macros.fos"
+#include "msgstr.h"
+#include "_vars.fos"
+
+bool IsReadableBook(uint16 pid) // Export
+{
+	switch(pid)
+	{
+	case PID_BIG_BOOK_OF_SCIENCE: // Science
+	case PID_DEANS_ELECTRONICS: // Repair
+	case PID_FIRST_AID_BOOK: // First Aid
+	case PID_SCOUT_HANDBOOK: // Outdoorsman
+	case PID_BARTER_BOOK:
+	case PID_GUNS_AND_BULLETS: // Small Guns
+	// case PID_CATS_PAW_ISSUE_5: // Energy Weapons
+	// case PID_CHEMISTRY_MANUAL:
+	// case PID_TECHNICAL_MANUAL:
+	// case PID_ACCOUNT_BOOK:
+	// case PID_BECKY_BOOK:
+		return true;
+	default: break;
+	}
+	return false; // Not a book
+}
+
+void TryReadBook(Critter& cr, Item& book) // Export
+{
+	int skillNum;
+	uint strNum;
+	uint readAlready;
+
+	switch(book.GetProtoId())
+	{
+	case PID_BIG_BOOK_OF_SCIENCE: skillNum=SK_SCIENCE; strNum=STR_BOOK_READ_SCIENCE; readAlready=LVAR_Book_Science; break; // Science
+	case PID_DEANS_ELECTRONICS: skillNum=SK_REPAIR; strNum=STR_BOOK_READ_REPAIR; readAlready=LVAR_Book_Repair; break; // Repair
+	case PID_FIRST_AID_BOOK: skillNum=SK_FIRST_AID; strNum=STR_BOOK_READ_FISRT_AID; readAlready=LVAR_Book_FirstAid; break; // First Aid
+	case PID_SCOUT_HANDBOOK: skillNum=SK_OUTDOORSMAN; strNum=STR_BOOK_READ_OUTDOORSMAN; readAlready=LVAR_Book_Outdoorsman; break; // Outdoorsman
+	case PID_BARTER_BOOK: skillNum=SK_BARTER; strNum=10458; readAlready=LVAR_Book_Barter; break;
+	case PID_GUNS_AND_BULLETS: skillNum=SK_SMALL_GUNS; strNum=STR_BOOK_READ_SMALL_GUNS; readAlready=LVAR_Book_SmallGuns; break; // Small Guns
+	//case PID_CATS_PAW_ISSUE_5: skillNum=SK_ENERGY_WEAPONS; strNum=STR_BOOK_READ_ENERGY_WEAPONS; readAlready=LVAR_FO2077_Book_EnergyWeapons; break; // Energy Weapons
+	//case PID_CHEMISTRY_MANUAL: cr.SayMsg(SAY_NETMSG,TEXTMSG_GAME,STR_BOOK_READ_FAIL);return;
+	//case PID_TECHNICAL_MANUAL: cr.SayMsg(SAY_NETMSG,TEXTMSG_GAME,STR_BOOK_READ_FAIL);return;
+	//case PID_ACCOUNT_BOOK: cr.SayMsg(SAY_NETMSG,TEXTMSG_GAME,STR_BOOK_READ_FAIL);return;
+	//case PID_BECKY_BOOK: cr.SayMsg(SAY_NETMSG,TEXTMSG_GAME,STR_BOOK_READ_FAIL);return;
+	default: return;
+	}
+
+	GameVar@ readAlreadyVar=GetLocalVar(readAlready, cr.Id);
+	if(valid(readAlreadyVar) && readAlreadyVar.GetValue()<10)
+	{
+	
+	//int sp=6;
+	
+	//if(cr.Stat[ST_INTELLECT]<=4) sp=8;
+	//else if(cr.Stat[ST_INTELLECT]==5 || cr.Stat[ST_INTELLECT]==6) sp=Random(9,10);
+	//else if(cr.Stat[ST_INTELLECT]==7 || cr.Stat[ST_INTELLECT]==8) sp=Random(10,11);
+	//else if(cr.Stat[ST_INTELLECT]==9 || cr.Stat[ST_INTELLECT]==10) sp=Random(11,12);
+	
+	for(int sp=6;sp>0;)
+	{
+	if(cr.Skill[skillNum]>150 && sp>3) 
+		if(_CritIsTagSkill(cr,skillNum)) 	{cr.SkillBase[skillNum]+=2;sp=0;}
+		else {cr.SkillBase[skillNum]+=1;sp=0;}
+	else if(cr.Skill[skillNum]>125 && sp>2)
+		if(_CritIsTagSkill(cr,skillNum)) 	{cr.SkillBase[skillNum]+=2;sp-=3;}
+		else {cr.SkillBase[skillNum]+=1;sp-=3;}	
+	else if(cr.Skill[skillNum]>100 && sp>1)
+		if(_CritIsTagSkill(cr,skillNum)) 	{cr.SkillBase[skillNum]+=2;sp-=2;}
+		else {cr.SkillBase[skillNum]+=1;sp-=2;}
+	else if(cr.Skill[skillNum]<=100 && sp>0)
+		if(_CritIsTagSkill(cr,skillNum)) 	{cr.SkillBase[skillNum]+=2;sp-=1;}
+		else {cr.SkillBase[skillNum]+=1;sp-=1;}	
+	else sp=0;
+	}
+
+	cr.SayMsg(SAY_NETMSG,TEXTMSG_GAME,strNum);
+	readAlreadyVar+=1;
+	_SubItem(book,1);
+	
+	// validate skill
+	if(cr.Skill[SK_OUTDOORSMAN]>175) cr.SkillBase[SK_OUTDOORSMAN]=175;
+	if(cr.Skill[SK_SCIENCE]>125) cr.SkillBase[SK_SCIENCE]=125;
+	if(cr.Skill[SK_REPAIR]>125) cr.SkillBase[SK_REPAIR]=125;
+	if(cr.Skill[SK_BARTER]>150) cr.SkillBase[SK_BARTER]=150;
+	if(cr.Skill[SK_FIRST_AID]>200) cr.SkillBase[SK_FIRST_AID]=200;
+	if(cr.Skill[SK_SMALL_GUNS]>300) cr.SkillBase[SK_SMALL_GUNS]=300;
+	}
+	else cr.SayMsg(SAY_NETMSG,TEXTMSG_GAME,STR_BOOK_READ_FAIL);
+}
+
+
+
+
+
+
+
+
+

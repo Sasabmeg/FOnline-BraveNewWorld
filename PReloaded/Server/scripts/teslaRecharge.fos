@@ -1,0 +1,64 @@
+#include "_macros.fos"
+#include "MsgStr.h"
+
+#define MFC_RECHARGE_VAL 5
+#define SEC_RECHARGE_VAL 2
+
+
+bool TryRechargeItem(Critter& cr, Item& item)    //export
+{
+    if(item.Charge == item.Proto.Misc_ChargeMax)
+    {
+        cr.Say(SAY_NETMSG, "Item is fully charged already.");
+        return true;
+    }
+
+    cr.RunClientScript("client_interface@_RechargeSession", item.GetProtoId(), item.Id, 0, null, null);
+    cr.StatBase[ST_VAR0] = item.Id;
+    cr.ShowScreen(SHOW_SCREEN_BAG, 0, "RechargeCallback");
+
+    return true;
+}
+
+void RechargeCallback(Critter& cr, uint n, string& s)
+{
+    Item@ item = GetItem(cr.Stat[ST_VAR0]);
+    Item@ with_item = GetItem(n);
+    #ifdef __DEBUG__
+    cr.Say(SAY_NETMSG, "items " + cr.Stat[ST_VAR0] + " and " + n);
+    #endif
+    if(!valid(item) || !valid(with_item))
+        return;
+
+    if(/*item.Accessory != ACCESSORY_CRITTER ||*/ with_item.Accessory != ACCESSORY_CRITTER || /*item.CritId != cr.Id ||*/ with_item.CritId != cr.Id)
+        return;
+
+    if(!RechargeArmor(item, cr, with_item))
+    {
+        cr.SayMsg(SAY_NETMSG, TEXTMSG_GAME, STR_USE_NOTHING);
+    }
+}
+
+bool RechargeArmor(Item& item, Critter& cr, Item@ usedItem)
+{
+    if(!valid(usedItem))
+        return false;
+    uint16 itemPid = usedItem.GetProtoId();
+    if((int(itemPid) == PID_SMALL_ENERGY_CELL || int(itemPid) == PID_MICRO_FUSION_CELL) && item.Charge < item.Proto.Misc_ChargeMax)
+    {
+        uint needCharge = item.Proto.Misc_ChargeMax - item.Charge;
+        uint charge = (itemPid == PID_SMALL_ENERGY_CELL ? SEC_RECHARGE_VAL : MFC_RECHARGE_VAL);
+        uint needItems = needCharge / charge;
+        if((needCharge % charge) != 0)
+            needItems++;
+        if(needItems > usedItem.GetCount())
+            needItems = usedItem.GetCount();
+        item.Charge += CLAMP(needItems * charge, 0, item.Proto.Misc_ChargeMax - item.Charge);
+        item.Update();
+        _SubItem(usedItem, needItems);
+        cr.Say(SAY_NETMSG, "Armor recharged.");
+        cr.Say(SAY_NETMSG, "Charges: "+item.Charge+"/"+item.Proto.Misc_ChargeMax+".");
+        return true;
+    }
+    return false;
+}

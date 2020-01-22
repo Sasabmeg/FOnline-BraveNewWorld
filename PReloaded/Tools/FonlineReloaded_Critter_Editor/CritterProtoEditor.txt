@@ -1,0 +1,162 @@
+Fonline Critter Proto Editor v0.54.0
+by Cubik (2077 Team)
+
+#############################################################################################################
+############################################### IMPORTANT: ##################################################
+################ This editor works with any Russian SDK revision (older, 141 and later). ####################
+#############################################################################################################
+#############################################################################################################
+
+
+Changes v0.54.0:
+- Added "New" button for create new *.fopro file from tool level, it adds the name of new file to critters.lst,
+- WIP: fixed and modified calculating PID number of new append critter. 
+Read about the bug here: http://www.fonline.ru/forum/showpost.php?p=526794&postcount=23 
+and here: http://www.fonline.ru/forum/showpost.php?p=526832&postcount=24
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!ATTENTION!!!ATTENTION!!!ATTENTION!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+Calculating PID number works in two ways:
+a) when file is empty (new file) then PID number of new added critter is calculated depend on last PID number 
+readed from FODLG.MSG file. The critters name will be "new critter",
+b) when file is not empty (contains proto critters) then PID number is calculated depend on last PID number 
+readed from last position in ListView of loaded proto critters.
+
+Newly created entry of critter has default name: "new critter". But when there is any name entry in FODLG.MSG 
+file with PID number equal to PID number of new added critter, then the name is taken from FODLG.MSG. This is 
+a signal about two facts:
+a) there is existed a proto with that PID number in other *.fopro file, check manually other files for 
+this PID number or load them to editor to see. Don't use this PID and name for avoid to overwrite existed in 
+other *.fopro files,
+b) there is not such proto in any *.fopro file, but only entries existed in FODLG.MSG. In this situation you 
+can safe use it.
+
+When press upper SAVE button for saving List to file, the entries with name: "new critter" will be not saved 
+to FODLG.MSG and entries will be deleted from a List.
+This is for better organise and prevent to make empty entries in FODLG.MSG. 
+Remember, if you want to save your new critter first change default name ("new critter") to any other before 
+press upper Save button.
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!ATTENTION!!!ATTENTION!!!ATTENTION!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+
+Changes v0.53.3:
+- fixed bug "List index out of bounds" after clicking button "Append" (it happen of my tiredness and mistake),
+
+
+Changes v0.53.2:
+- added ST_LEVEL, ST_WALK_TIME and ST_RUN_TIME,
+
+
+Changes v0.53.1:
+- fixed bug with open an empty file *.fopro and click "Append",
+
+
+Changes v0.53.0:
+- fixed bug with not released file _team.fos during working of editor,
+- increased max range of DIALOG ID (9999999) and BAG ID (9999) number,
+- fixed work of button "Append", it correct calculate new PID number,
+- button Append will create new critter with every stats copied from actual selected critter, except PID, name and description,
+- selecting any armor will set Armor Class to additional AC modification; it overwrites value written manually,
+- small visual changes (images has enabled property transparent for better appearance).
+
+
+Changes v0.52.0:
+- fixed minor bugs (sometimes there was a bug with reading DIALOG_ID),
+- changes to set values for skills. Value can be set by pressing UpDown button with possibility 10x increment for faster writing bigger numbers. It fixes rarely ugly bug with lost/mess values during writing to listview.
+
+
+Changes v0.51.0:
+- fixed bug with DIALOG_ID and BAG_ID messed values,
+
+
+Changes v0.50.0:
+- support for Russian SDK rev 141+. Editor works with older revisions too,
+- fixed bug with not correct displaying Hit Points and Action Points of selected critter,
+- fixed bug with writing unnecessary empty name lines: {xx00}{}{} to fodlg.msg file,
+- fixed bug with missed Age, Scale Factor, Toxic, Radioactive, Radiation resistance, Poison resistance values (values was equal to zero after first selecting any prot from list) in [MODE and ARMOR tabs],
+- support for max 999 numbers of critter types readed from CritterType.cfg,
+- Russian font for status bar,
+- removed checking of server revision made in Critter Proto Editor ver 0.44.0.
+
+
+Changes v0.44.0:
+- fixed bug with messed values in ST_DIALOG_ID and ST_TEAM_ID,
+- fixed bug with missed skill's values (values was equal to zero) in [Skills tab],
+- fixed bug with writing unnecessary empty description lines: {xx11}{}{} to fodlg.msg file,
+- improved listing of _teams.fos file. Editor will read new TEAM_ added/changed to _teams.fos,
+- improved reading picture names from CritterType.cfg,
+- saving changes to file is more safe now,
+- added simple checking of server revision based on "all.fopro" file. The editor checks if all.fopro exists. If not, then editor doesn't run.
+
+
+Changes v0.43.0:
+- possibility to resize the form with minimum resolution 1024x768,
+- added support for third language of msg file (it must be 4 letter like: engl, russ),
+- after selecting: Body Type, AI ID, Team ID there will be shown the index number in bottom Bar,
+- several changes and fixes in code of the tool,
+- visual changes (buttons, icons and other),
+
+
+DESCRIPTION:
+This program is for easy edit and create proto critter in TLA Fonline. 
+
+It uses files from SDK:
+*.fopro
+CritterTypes.cfg
+FODLG.MSG  (any language, but engl is default)
+
+There is a file "critter_editor.dat". This is a pack of critters *.frm pictures converted to *.png.
+
+
+
+ATTENTION! 
+It works with any language "fodlg.msg" file. Default is English (engl). The tool supports Russian language too (russ).
+
+Setup third language:
+To add third language, run first time the tool. It create an *.ini file. There are three vars named lang%.
+First two are default: engl, russ. Third is empty. Use 4-letter name of the new Directory of *.msg files in your language.
+
+
+Make BACKUP	of files:
+*.fopro
+fodlg.msg
+
+You can do it manually or use button [Backup] in program. 
+It creates a zip archive of *.fopro and fodlg.msg (for each language).
+
+
+
+
+The tool is not perfect and it is possible to lost your changes. So always remember about the button "SAVE" in right lower corner.
+It saves all changes made in current edited/viewed critter, but not save's to file. If you are going to select (or add, delete) 
+another critter to view/edit from critters list, press SAVE for saving your changes (if you did any) in current critter. 
+
+##########################################################################
+In other words: before you select next critter from left list, press SAVE.
+##########################################################################
+
+
+To save to file all your changes made in any critter press button "Save". It calls automatically on exit from program too.
+
+
+
+
+OTHER INFO:
+The tool is freware for non commercial uses (for viewing/editing fonline files 
+only) and you can't earn money using this tool.
+
+There are not ANY WARRANTY it works good, so make backups of files.
+
+You can redistribute the tool with this readme file only.
+
+ 
+
+contact:
+PM on russian Fonline forum http://www.fonline.ru/forum
+or
+cubik2k@gmail.com
+
+Cubik (2077 Team)
+07 April 2011

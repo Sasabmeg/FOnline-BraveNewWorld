@@ -1,0 +1,151 @@
+#ifndef __FEF__
+#define __FEF__
+
+#include "_defines.fos"
+#include "_client_defines.fos"
+#include "_macros.fos"
+#include "_colors.fos"
+#include "lexems_h.fos"
+#include "MsgStr.h"
+#include "_basetypes.fos"
+#include "sprite.fos" 
+#include "buffer_h.fos"
+
+#define ZONE_IDX                           # (zx, zy)((zy) * __GlobalMapWidth + (zx))
+#define CARAVAN_ENC_MIN 135
+#define CARAVAN_ENC_MAX 144
+
+string GmapEncStr;
+int[] coords = { 190, 25, 500, 10 };
+
+bool isInitialized = false;
+array<array<uint8>> groups;
+void InitDrawEncounters()
+{
+    if(!isInitialized)
+    {
+        //reading ecnounter groups from file
+        file f;
+
+        if( f.open( "data/Encounters.dat", "r" ) >= 0 )
+        {
+            array<uint8> data;
+
+            f.readData( 0, data );
+            f.close();
+
+            Buffer@ buff = NewBuffer( data );
+            buff >> groups;
+        }
+        else
+            return;
+
+        isInitialized = true;
+
+        //reading window draw coords from default.ini
+        GmapEncStr = GetIfaceIniStr("GmapEncounters");
+        if(@GmapEncStr == null || GmapEncStr == "")
+            return;
+        array<string@>@ valuesStr = splitEx(GmapEncStr, " ");
+        if(valuesStr.length() < 4)
+            return;
+
+        if(!StrToInt(valuesStr[0], coords[0]))
+            return;
+        if(!StrToInt(valuesStr[1], coords[1]))
+            return;
+        if(!StrToInt(valuesStr[2], coords[2]))
+            return;
+        if(!StrToInt(valuesStr[3], coords[3]))
+            return;
+    }
+}
+
+uint mzxOld = uint(-1), mzyOld = uint(-1);
+array<array<string>> encounters;
+
+void EncountersProcess()
+{
+    if( !valid(GetChosen()) || !__WorldmapActive || !isInitialized )
+    {
+        __HideCursor = false;
+        return;
+    }
+
+    if(GetChosen().Perk[PE_SCOUT] == 0)
+        return;
+
+    // coords under cursor
+    int mx = int((__MouseX - __WorldmapOffsetX) * __WorldmapZoom);
+    int my = int((__MouseY - __WorldmapOffsetY) * __WorldmapZoom);
+
+    // zone under cursor
+    uint mzx = mx / __GlobalMapZoneLength;
+    uint mzy = my / __GlobalMapZoneLength;
+
+    if( mzx == mzxOld && mzy == mzyOld )
+        return;
+
+    encounters.resize(0);
+
+    mzxOld = mzx;
+    mzyOld = mzy;
+
+    // fog under cursor
+    int mfog = (mzx < __GlobalMapWidth && mzy < __GlobalMapHeight ? GetFog( mzx, mzy ) : 0);
+
+    if( mfog == WORLDMAP_FOG_NONE )
+    {
+        encounters.resize( 2 );
+        for( uint i=0, j=groups[ZONE_IDX(mzx, mzy)].length; i<j; i++ )
+        {
+            uint8 group = groups[ZONE_IDX(mzx, mzy)][i];
+            string descr = GetMsgStr( TEXTMSG_GM, 20000000 + (group == uint8(-1) ? (-1) : group ));
+            if( group >= CARAVAN_ENC_MIN && group <= CARAVAN_ENC_MAX && encounters[1].find( descr ) < 0 )
+                encounters[1].insertLast( descr );
+            else if( encounters[0].find( descr ) < 0 )
+                encounters[0].insertLast( descr );
+        }
+
+        encounters[0].sortAsc();
+        encounters[1].sortAsc();
+    }
+}
+
+void EncountersDraw()
+{
+    if( !__WorldmapActive || encounters.length() != 2 )
+        return;
+
+    if(!valid(GetChosen()) || GetChosen().Perk[PE_SCOUT] == 0)
+        return;
+
+    uint8 encountersNormal  = encounters[0].length;
+    uint8 encountersCaravan = encounters[1].length;
+    uint yy = 0;
+
+    if( encountersNormal > 0 )
+    {
+        DrawText( "Encounters in zone "+mzxOld+":"+mzyOld, coords[0], coords[1]+yy, coords[2], coords[3], COLOR_LGREEN, FONT_TYPE_DEFAULT, FONT_FLAG_BORDERED );
+        for( uint i=0; i<encountersNormal; i++ )
+        {
+            yy += 10;
+            DrawText( encounters[0][i], coords[0], coords[1]+yy, coords[2], coords[3], COLOR_LGREEN, FONT_TYPE_DEFAULT, 0 );
+        }
+    }
+
+    if( encountersCaravan > 0 )
+    {
+        if( encountersNormal > 0 )
+            yy += 15;
+
+        DrawText( "Caravan encounters"+(encountersNormal == 0 ? " in zone "+mzxOld+":"+mzyOld : ""), coords[0], coords[1]+yy, coords[2], coords[3], COLOR_LGREEN, FONT_TYPE_DEFAULT, FONT_FLAG_BORDERED );
+        for( uint i=0; i<encountersCaravan; i++ )
+        {
+            yy+=10;
+            DrawText( encounters[1][i], coords[0], coords[1]+yy, coords[2], coords[3], COLOR_LGREEN, FONT_TYPE_DEFAULT, 0 );
+        }
+    }
+}
+
+#endif

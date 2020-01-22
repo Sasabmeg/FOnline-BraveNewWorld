@@ -1,0 +1,257 @@
+/*
+    !!! IMPORTANT !!!
+    change PROD_REGEN_TIME value after tests
+*/
+
+#include "_macros.fos"
+#include "mapdata_h.fos"
+#include "utils_h.fos"
+
+import void TC_ScavengeReward(Critter& player, uint pid, uint cnt) from "town";
+
+#define MSG_SCAVENGING_SUCCESS    (3200)
+#define MSG_SCAVENGING_FAIL       (3201)
+#define MSG_SCAVENGING_NOTHING    (3202)
+#define MSG_SCAVENGING_TOOL       (3203)
+#define MSG_SCAVENGING_USE        (3204)
+
+#define PROD_REGEN_TIME           (REAL_MINUTE(Random(1, 15)))
+#define SCAVENGING_CAP            (100)
+#define PROD_REGEN_TIME_NC        (REAL_MINUTE(Random(1, 3)))
+#define SCAVENGING_CAP_NC         (20)
+#define OBJECT_USE_TIMES          (2)       
+
+//chance with max Scavenging skill = max, chance with 0 Scavenging skill = 2/5 max
+#define _ChanceToScavenge         # (skill, max) ( ((max/5)*2) + ( ((max/5)*3) * skill )/SCAVENGING_CAP )
+
+void AddScavengedItem(Critter& player, uint pid, uint cnt)
+{
+	player.AddItem(pid, cnt);
+	if (Random(0, 100) < 25)
+		TC_ScavengeReward(player, pid, cnt);
+}
+
+bool Scavenge(Critter@ scavenger, Item@ tool, Item@ junk, uint type)
+{
+    Map@ map = scavenger.GetMap();
+    if(!valid(map))
+        return false;
+
+    bool isNoobCamp = false;
+
+    int cap = isNoobCamp ? SCAVENGING_CAP_NC : SCAVENGING_CAP;
+    int skill = CLAMP(scavenger.SkillBase[SK_SCAVENGING], 0, cap);
+    uint16 junkPid = junk.GetProtoId();
+    uint16 toolPid = tool.GetProtoId();
+    if(toolPid == PID_MULTI_TOOL)
+    {
+        //scavenger.Say(SAY_NETMSG, "scavenging type "+type+" item pid "+junkPid);
+
+        if(junk.Val0 == 0)
+        {
+            scavenger.SayMsg(SAY_NETMSG, TEXTMSG_TEXT, MSG_SCAVENGING_NOTHING);
+            return true;
+        }
+
+        bool res = false;
+        uint exp = 0;
+        switch(type)
+        {
+            case 0: // wooden junk
+                if(Random(0, 100) < _ChanceToScavenge( skill, 40 ))
+                {
+					AddScavengedItem(scavenger, PID_FIREWOOD, Random(1,3));
+                    res = true;
+                    exp += 10;
+                }
+                if(Random(0, 100) < _ChanceToScavenge( skill, 40 ))
+                {
+					AddScavengedItem(scavenger, PID_FIBER, Random(1,3));
+                    res = true;
+                    exp += 10;
+                }
+                if(Random(0, 100) < _ChanceToScavenge( skill, 40 ))
+                {
+					AddScavengedItem(scavenger, PID_PUMP_PARTS, 1);
+                    res = true;
+                    exp += 10;
+                }
+                if(Random(0, 100) < _ChanceToScavenge( skill, 35 ))
+                {
+					AddScavengedItem(scavenger, PID_METAL_PARTS, 1);
+                    res = true;
+                    exp += 20;
+                }
+            break;
+
+            case 1: // metal junk
+                if(Random(0, 100) < _ChanceToScavenge( skill, 35 ))
+                {
+					AddScavengedItem(scavenger, PID_METAL_PARTS, Random(1,3));
+                    res = true;
+                    exp += 20;
+                }
+                if(Random(0, 100) < _ChanceToScavenge( skill, 40 ))
+                {
+					AddScavengedItem(scavenger, PID_PUMP_PARTS, Random(1,3));
+                    res = true;
+                    exp += 10;
+                }
+                if(Random(0, 100) < _ChanceToScavenge( skill, 20 ))
+                {
+					AddScavengedItem(scavenger, PID_ALLOYS, Random(1,2));
+                    res = true;
+                    exp += 50;
+                }
+                if(Random(0, 100) < _ChanceToScavenge( skill, 5 ))
+                {
+					AddScavengedItem(scavenger, PID_METAL_PARTS2, 1);
+                    res = true;
+                    exp += 300;
+                }
+                if(Random(0, 100) < _ChanceToScavenge( skill, 5 ))
+                {
+					AddScavengedItem(scavenger, PID_ALLOYS2, 1);
+                    res = true;
+                    exp += 300;
+                }
+            break;
+
+            case 2: // paper junk
+                if(Random(0, 100) < _ChanceToScavenge( skill, 15 ))
+                {
+					AddScavengedItem(scavenger, PID_CATS_PAW, 1);
+                    res = true;
+                    exp += 100;
+                }
+                if(Random(0, 100) < _ChanceToScavenge( skill, 15 ))
+                {
+					AddScavengedItem(scavenger, PID_BOTTLE_CAPS, Random(5,25));
+                    res = true;
+                    exp += 100;
+                }
+                if(Random(0, 100) < _ChanceToScavenge( skill, 40 ))
+                {
+					AddScavengedItem(scavenger, PID_ELECTRONIC_PARTS, Random(1,2));
+                    res = true;
+                    exp += 10;
+                }
+            break;
+
+            case 3: // junk barrel
+                if(Random(0, 100) < _ChanceToScavenge( skill, 40 ))
+                {
+					AddScavengedItem(scavenger, PID_PUMP_PARTS, Random(1,3));
+                    res = true;
+                    exp += 10;
+                }
+            break;
+        }
+
+        if(res) //got something
+        {
+            scavenger.SayMsg(SAY_NETMSG, TEXTMSG_TEXT, MSG_SCAVENGING_SUCCESS);
+            scavenger.StatBase[ST_EXPERIENCE] += exp;
+            //Log("chance to increase skill: " + (95 - 2*skill/3));
+            if(skill < SCAVENGING_CAP && Random(0, 100) < (95 - 2*skill/3))
+                 scavenger.SkillBase[SK_SCAVENGING] =  skill + 1;
+        }
+        else
+        {
+            scavenger.SayMsg(SAY_NETMSG, TEXTMSG_TEXT, MSG_SCAVENGING_FAIL);
+        }
+
+        --junk.Val0;
+        if(junk.Val0 == 0 && !IsEncounterMap(map))
+            CreateTimeEvent(__FullSecond + (isNoobCamp ? PROD_REGEN_TIME_NC : PROD_REGEN_TIME), "e_Regen", junk.Id, true);
+    }
+    else
+        scavenger.SayMsg(SAY_NETMSG, TEXTMSG_TEXT, MSG_SCAVENGING_TOOL);
+
+    return true;
+}
+
+uint e_Regen(array<uint>@ values)
+{
+    Item@ item = GetItem(values[0]);
+    if(!valid(item))
+        return 0;
+    item.Val0 = OBJECT_USE_TIMES;
+    return 0;
+}
+
+void _InitWoodenJunk(Item& item, bool firstTime)
+{
+    if(firstTime)
+        item.Val0 = OBJECT_USE_TIMES;
+    item.SetEvent(ITEM_EVENT_USE_ON_ME, "_UseWoodenJunk");
+    item.SetEvent(ITEM_EVENT_SKILL, "_SkillWoodenJunk");
+}
+
+void _InitMetalJunk(Item& item, bool firstTime)
+{
+    if(firstTime)
+        item.Val0 = OBJECT_USE_TIMES;
+    item.SetEvent(ITEM_EVENT_USE_ON_ME, "_UseMetalJunk");
+    item.SetEvent(ITEM_EVENT_SKILL, "_SkillMetalJunk");
+}
+
+void _InitPaperMachine(Item& item, bool firstTime)
+{
+    if(firstTime)
+        item.Val0 = OBJECT_USE_TIMES;
+    item.SetEvent(ITEM_EVENT_USE_ON_ME, "_UsePaperMachine");
+    item.SetEvent(ITEM_EVENT_SKILL, "_SkillPaperMachine");
+}
+
+void _InitJunkBarrel(Item& item, bool firstTime)
+{
+    if(firstTime)
+        item.Val0 = OBJECT_USE_TIMES;
+    item.SetEvent(ITEM_EVENT_USE_ON_ME, "_UseJunkBarrel");
+    item.SetEvent(ITEM_EVENT_SKILL, "_SkillJunkBarrel");
+}
+
+bool _UseWoodenJunk(Item& item, Critter& cr, Item@ usedItem)
+{
+    return Scavenge(cr, usedItem, item, 0);
+}
+
+bool _UseMetalJunk(Item& item, Critter& cr, Item@ usedItem)
+{
+    return Scavenge(cr, usedItem, item, 1);
+}
+
+bool _UsePaperMachine(Item& item, Critter& cr, Item@ usedItem)
+{
+    return Scavenge(cr, usedItem, item, 2);
+}
+
+bool _UseJunkBarrel(Item& item, Critter& cr, Item@ usedItem)
+{
+    return Scavenge(cr, usedItem, item, 3);
+}
+
+bool _SkillWoodenJunk(Item& item, Critter& cr, int skill)
+{
+    cr.SayMsg(SAY_NETMSG, TEXTMSG_TEXT, MSG_SCAVENGING_USE);
+    return true;
+}
+
+bool _SkillMetalJunk(Item& item, Critter& cr, int skill)
+{
+    cr.SayMsg(SAY_NETMSG, TEXTMSG_TEXT, MSG_SCAVENGING_USE);
+    return true;
+}
+
+bool _SkillPaperMachine(Item& item, Critter& cr, int skill)
+{
+    cr.SayMsg(SAY_NETMSG, TEXTMSG_TEXT, MSG_SCAVENGING_USE);
+    return true;
+}
+
+bool _SkillJunkBarrel(Item& item, Critter& cr, int skill)
+{
+    cr.SayMsg(SAY_NETMSG, TEXTMSG_TEXT, MSG_SCAVENGING_USE);
+    return true;
+}

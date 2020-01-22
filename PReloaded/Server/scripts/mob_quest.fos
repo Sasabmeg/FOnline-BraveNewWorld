@@ -1,0 +1,148 @@
+#include "_macros.fos"
+#include "_vars.fos"
+#include "messages_h.fos"
+#include "npc_common_h.fos"
+#include "npc_planes_h.fos"
+#include "utils_h.fos"
+
+// npc roles (defines distance mob will attack from))
+#define ROLE_DEFAULT    	    (0)
+#define ROLE_AGRESSIVE	    	(1)
+#define ROLE_AGRESSIVE_NO_MOVE  (2)
+#define ROLE_PASSIVE			(3)
+#define ROLE_PASSIVE_NO_MOVE 	(4)
+
+// idle time in milseconds (normal is slower for performance issues)
+#define IDLE_NORMAL       (5000)
+#define IDLE_ALERTED      (1000)
+
+#define ITEM_DROP_CHANCE 	20
+
+void _MobInit(Critter& mob, bool firstTime)
+{
+    _CritSetExtMode(mob, MODE_EXT_MOB);
+    mob.SetEvent(CRITTER_EVENT_IDLE, "_MobIdle");
+    mob.SetEvent(CRITTER_EVENT_DEAD, "_MobDead");
+    mob.SetEvent(CRITTER_EVENT_ATTACKED, "_MobAttacked");
+    mob.SetEvent(CRITTER_EVENT_ATTACK, "_MobAttacking");
+    mob.SetEvent(CRITTER_EVENT_MESSAGE, "_MobOnMessage");
+    mob.SetEvent(CRITTER_EVENT_SMTH_DEAD, "_MobSmthDead");
+}
+
+void _MobInitNoLoot(Critter& mob, bool firstTime)
+{
+    _CritSetExtMode(mob, MODE_EXT_MOB);
+    _CritSetMode(mob, MODE_NO_DROP);
+    _CritSetMode(mob, MODE_NO_LOOT);
+    _CritSetMode(mob, MODE_NO_STEAL);
+    _CritSetMode(mob, MODE_UNLIMITED_AMMO);
+    _CritSetExtMode(mob, MODE_EXT_NO_DETERIORATION);
+    mob.SetEvent(CRITTER_EVENT_IDLE, "_MobIdle");
+    mob.SetEvent(CRITTER_EVENT_DEAD, "_MobDead");
+    mob.SetEvent(CRITTER_EVENT_ATTACKED, "_MobAttacked");
+    mob.SetEvent(CRITTER_EVENT_ATTACK, "_MobAttacking");
+    mob.SetEvent(CRITTER_EVENT_MESSAGE, "_MobOnMessage");
+    mob.SetEvent(CRITTER_EVENT_SMTH_DEAD, "_MobSmthDead");
+}
+
+
+void _MobIdle(Critter& mob)
+{
+    // the great optimizer
+    if(!mob.IsLife())
+    {
+        mob.Wait(IDLE_NORMAL);
+        return;
+    }
+
+    array<Critter@> crits;
+    uint            num = mob.GetCritters(false, FIND_ONLY_PLAYERS | FIND_LIFE, crits);
+
+    uint dist = GetDistance(mob);
+    for(uint i = 0; i < num; i++)
+    {
+        uint curDist = GetCrittersDistantion(mob, crits[i]);
+        if(curDist > dist)
+        {
+            continue;
+        }
+        else
+        {
+            // attack
+            if(crits[i].Mode[MODE_HIDE] != 0 || curDist < 5 || (mob.Stat[ST_NPC_ROLE] == ROLE_AGRESSIVE && curDist < 16))
+            {
+                AttackCritter(mob, crits[i]);
+            }
+            else
+            {
+                mob.AddEnemyInStack(crits[i].Id);
+            }
+            return;
+        }
+    }
+
+    if(crits.length() > 0)
+    {
+        mob.Wait(IDLE_ALERTED);
+    }
+    else
+    {
+        if(Random(0, 5) == 0 && mob.Stat[ST_NPC_ROLE] != ROLE_PASSIVE_NO_MOVE && mob.Stat[ST_NPC_ROLE] != ROLE_AGRESSIVE_NO_MOVE)
+            mob.MoveRandom();
+        mob.Wait(IDLE_NORMAL);
+    }
+}
+
+uint GetDistance(Critter& cr)
+{
+    uint base = __LookNormal + 3 * cr.Stat[ST_PERCEPTION];
+
+    if(cr.Stat[ST_NPC_ROLE] == ROLE_AGRESSIVE || cr.Stat[ST_NPC_ROLE] == ROLE_AGRESSIVE_NO_MOVE)
+        return base / 2;
+    else if(cr.Stat[ST_NPC_ROLE] == ROLE_PASSIVE || cr.Stat[ST_NPC_ROLE] == ROLE_PASSIVE_NO_MOVE)
+    	return base / 4;
+    else
+        return base / 3;
+}
+
+bool _MobAttacked(Critter& cr, Critter& attacker)
+{
+    cr.SendMessage(MSG_IM_ATTACKED, attacker.Id, SENDMESSAGE_TO_WHO_SEES_ME);
+    return false;
+}
+
+bool _MobAttacking(Critter& cr, Critter& attacker)
+{
+    cr.SendMessage(MSG_GUARD_ATTACKING, attacker.Id, SENDMESSAGE_TO_WHO_SEES_ME);
+    return false;
+}
+
+void _MobOnMessage(Critter& cr, Critter& fromCr, int message, int value)
+{
+    if(message == MSG_IM_ATTACKED || message == MSG_GUARD_ATTACKING)
+    {
+    	if(cr.Stat[ST_NPC_ROLE] != ROLE_PASSIVE_NO_MOVE && cr.Stat[ST_NPC_ROLE] != ROLE_AGRESSIVE_NO_MOVE)
+    	{
+        	uint dist = GetDistance(cr);
+        	if(GetCrittersDistantion(cr, fromCr) <= dist / 2)
+        	    AttackCritter(cr, GetCritter(value));
+        }
+    }
+}
+
+void _MobDead(Critter& cr, Critter@ killer)
+{	
+	if(cr.ModeBase[MODE_NO_LOOT] == 0)
+	{
+	    array<Item@> items;
+	    uint nItems = cr.GetItems(-1, items);
+	    for(uint i = 0; i < nItems; i++)
+	        if(Random(0, 100) > ITEM_DROP_CHANCE)
+	            DeleteItem(items[i]);
+    }
+}
+
+void _MobSmthDead(Critter& cr, Critter& killed, Critter@ killer)
+{
+    cr.EraseEnemyFromStack(killed.Id);
+}
