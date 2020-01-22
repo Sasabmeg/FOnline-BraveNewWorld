@@ -1,0 +1,141 @@
+//
+// FOnline: 2238
+// Rotators
+//
+// cave_items.fos
+//
+
+// Items that can appear in caves
+
+// Parameters:
+// Chance: 0 - 100
+// LuckRequirement is how much LU is required of the player(s) entering the cave to be able to find the item
+
+// AddCaveItem(PID, Chance, LuckRequirement)
+
+SetGroup(CAVE_ITEM_GROUP_JUNK);
+AddCaveItem(PID_ROCK, 95, 1);
+AddCaveItem(PID_ROPE, 75, 2);
+AddCaveItem(PID_BOTTLE_CAPS, 50, 1);
+AddCaveItem(PID_FLINT, 75, 1);
+AddCaveItem(PID_HYPODERMIC_NEEDLE, 5, 1);
+AddCaveItem(PID_EMPTY_JET, 10, 1);
+AddCaveItem(PID_SHOVEL, 25, 1);
+AddCaveItem(PID_LIGHTER, 10, 1);
+AddCaveItem(PID_RED_CONDOM, 10, 1);
+AddCaveItem(PID_GREEN_CONDOM, 10, 1);
+AddCaveItem(PID_BLUE_CONDOM, 10, 1);
+AddCaveItem(PID_FLOWER, 10, 1);
+AddCaveItem(PID_FLARE_GREEN, 3,1);
+AddCaveItem(PID_FLARE_WHITE, 3,1); 
+AddCaveItem(PID_FLARE_YELLOW, 3,1);
+AddCaveItem(PID_FLARE, 3,1);
+
+SetGroup(CAVE_ITEM_GROUP_DRUGS);
+AddCaveItem(PID_STIMPAK, 85, 1);
+AddCaveItem(PID_MENTATS,15,1);                                                  
+AddCaveItem(PID_BUFFOUT,15,1);                                                  
+AddCaveItem(PID_JET,15,1);                                                     
+AddCaveItem(PID_RADAWAY,15,1);                                                    
+AddCaveItem(PID_ANTIDOTE,15,1);                                            
+AddCaveItem(PID_RAD_X,15,1);                                                      
+AddCaveItem(PID_SUPER_STIMPAK,35,1);                                                                          
+AddCaveItem(PID_HYPO, 15, 1);
+AddCaveItem(PID_JET_ANTIDOTE,5,1);
+AddCaveItem(PID_COOKIE,3,1);
+
+SetGroup(CAVE_ITEM_GROUP_MELEE);
+AddCaveItem(PID_KNIFE, 50, 1);
+AddCaveItem(PID_COMBAT_KNIFE, 40, 1);
+AddCaveItem(PID_SHIV, 60, 1);
+AddCaveItem(PID_SPEAR, 50, 1);
+AddCaveItem(PID_SHARPENED_POLE, 75, 1);
+AddCaveItem(PID_CLUB, 85, 1);
+AddCaveItem(PID_CROWBAR, 35, 1);
+AddCaveItem(PID_SLEDGEHAMMER, 25, 1);
+AddCaveItem(PID_SUPER_SLEDGE, 10, 1);
+//AddCaveItem(PID_LOUISVILLE_SLUGGER, 5, 1);
+//AddCaveItem(PID_LIL_JESUS_WEAPON,1,1);
+AddCaveItem(PID_PLATED_BOXING_GLOVES,1,1);
+
+SetGroup(CAVE_ITEM_GROUP_PISTOLS);
+AddCaveItem(PID_ZIP_GUN, 30, 1);
+AddCaveItem(PID_9MM_MAUSER, 20, 1);
+AddCaveItem(PID_10MM_PISTOL, 30, 1);
+AddCaveItem(PID_14MM_PISTOL, 20, 1);
+AddCaveItem(PID_DESERT_EAGLE, 20, 1);
+AddCaveItem(PID_223_PISTOL, 20, 1);
+AddCaveItem(PID_44_MAGNUM_REVOLVER, 20, 1);
+AddCaveItem(PID_NEEDLER_PISTOL, 40, 1);
+//AddCaveItem(PID_SOLAR_SCORCHER,1,1);
+//AddCaveItem(PID_ALIEN_LASER_PISTOL,1,1);
+//AddCaveItem(PID_YK32_PULSE_PISTOL,1,1);
+
+SetGroup(CAVE_ITEM_GROUP_RIFLES);
+AddCaveItem(PID_HUNTING_RIFLE, 25, 1);
+AddCaveItem(PID_SCOPED_HUNTING_RIFLE, 25, 1);
+AddCaveItem(PID_SPRINGER_RIFLE, 25, 1);
+AddCaveItem(PID_ASSAULT_RIFLE, 25, 1);
+AddCaveItem(PID_SNIPER_RIFLE, 15, 1);
+AddCaveItem(PID_RED_RYDER_LE_BB_GUN,1,1);
+AddCaveItem(PID_FN_FAL,1,1);
+
+SetGroup(CAVE_ITEM_GROUP_SHOTGUNS);
+AddCaveItem(PID_SHOTGUN, 25, 1);
+AddCaveItem(PID_SAWED_OFF_SHOTGUN, 25, 1);
+AddCaveItem(PID_COMBAT_SHOTGUN, 15, 1);
+AddCaveItem(PID_HK_CAWS, 15, 1);
+// Pistol-machine gun
+AddCaveItem(PID_10MM_SMG, 15, 1);
+AddCaveItem(PID_HK_P90C, 10, 1);
+AddCaveItem(PID_TOMMY_GUN, 15, 1);
+AddCaveItem(PID_HK_G11, 1, 1);
+AddCaveItem(PID_GREASE_GUN, 15, 1);
+
+SetGroup(CAVE_ITEM_GROUP_ARMOR);
+AddCaveItem(PID_LEATHER_JACKET, 30, 1);
+AddCaveItem(PID_LEATHER_ARMOR, 30, 1);
+AddCaveItem(PID_METAL_ARMOR, 30, 1);
+AddCaveItem(PID_COMBAT_ARMOR, 15, 1);
+AddCaveItem(PID_PURPLE_ROBE, 30, 1);
+AddCaveItem(PID_METAL_HELMET_MK2, 15,1);                         
+AddCaveItem(PID_TESLA_HELMET, 15,1);
+//AddCaveItem(PID_COMBAT_HELMET_MK_II,5,1);
+AddCaveItem(PID_TESLA_ARMOR,15,1);
+AddCaveItem(PID_METAL_ARMOR_MK_II,15,1);
+//AddCaveItem(PID_COMBAT_ARMOR_MK_II,5,1);
+//AddCaveItem(PID_ENCLAVE_COMBAT_HELMET,1,1);
+//AddCaveItem(PID_BRIDGEKEEPER_ROBE,1,1); 
+//AddCaveItem(PID_BROTHERHOOD_COMBAT_ARMOR,1,1);
+//AddCaveItem(PID_ENCLAVE_COMBAT_ARMOR,1,1);
+//AddCaveItem(PID_NCR_ARMOR,1,1);
+//AddCaveItem(PID_NCR_HELMET,1,1);
+AddCaveItem(PID_MIRROR_SHADES,1,1);
+
+
+SetGroup(CAVE_ITEM_GROUP_FUN);
+AddCaveItem(PID_ALIEN_SIDE, 1, 1);
+AddCaveItem(PID_ALIEN_FORWARD, 1, 1);
+AddCaveItem(PID_ACCESS_CARD, 1, 1);
+//AddCaveItem(PID_BLUE_ROBE, 3, 1);                                        
+//AddCaveItem(PID_BROWN_ROBE, 3, 1);                                           
+//AddCaveItem(PID_GRAY_ROBE, 3, 1);                                         
+//AddCaveItem(PID_MOBSTER_BLUE, 3, 1);                                      
+//AddCaveItem(PID_MOBSTER_GRAY, 3, 1);                                        
+//AddCaveItem(PID_CLOTHES_POLICE, 3, 1);                                      
+//AddCaveItem(PID_CLOTHES_GENERIC1, 3, 1);                           
+//AddCaveItem(PID_CLOTHES_GENERIC2, 3, 1);                          
+//AddCaveItem(PID_CLOTHES_SCIENTIST1, 3, 1);                          
+//AddCaveItem(PID_CLOTHES_SCIENTIST2, 3, 1);                         
+//AddCaveItem(PID_CLOTHES_ELEGANT_SUIT, 3, 1);                        
+//AddCaveItem(PID_CLOTHES_RAGS, 3, 1);                                       
+//AddCaveItem(PID_CLOTHES_DWARF, 3, 1);                                      
+//AddCaveItem(PID_CLOTHES_RED_SHIRT, 3, 1);                           
+//AddCaveItem(PID_CLOTHES_DOCTOR, 3, 1);                                     
+//AddCaveItem(PID_CLOTHES_CHILD, 3, 1);                                     
+//AddCaveItem(PID_CLOTHES_GRAY_SHIRT, 3, 1);                         
+//AddCaveItem(PID_CLOTHES_FAT1, 3, 1);                                       
+//AddCaveItem(PID_CLOTHES_BOXER, 3, 1);                                      
+//AddCaveItem(PID_SF_COMBAT_JACKET, 3, 1);                           
+//AddCaveItem(PID_MORDINO_METAL_JACKET, 3, 1);                       
+//AddCaveItem(PID_CLOTHES_GENERIC3, 3, 1);

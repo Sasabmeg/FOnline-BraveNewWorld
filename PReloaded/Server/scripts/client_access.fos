@@ -1,0 +1,60 @@
+// Author: JohnPL
+// Client access control
+
+#include "_defines.fos"
+#include "client_access_h.fos"
+
+//Global varibles
+IClientAccessLevelOpt @accessControl;
+
+class ClientAccessLevel : IClientAccessLevelOpt
+{
+	ClientAccessLevel(){
+		accessLevel = ACCESS_CLIENT; 
+		gender = GENDER_MALE;
+		@accessControl = this;
+	}
+
+	void setAccessLevel(int level){
+		accessLevel = level;
+		Message("Access level changed to: "+ accessLevel+"."); 
+	}
+	
+	void setPlayerGender(int g){
+		gender = g;
+	}
+
+	int getAccessLevel(){
+		return accessLevel;
+	}
+	
+	int getPlayerGender(){
+		return gender;
+	}
+
+	int accessLevel;
+	int gender;
+}
+
+// Inicialization function
+IClientAccessLevelOpt@ InitAccessControl(){
+	if(@accessControl!=null)
+	{
+		return @accessControl;
+	}
+	else
+	{
+		return ClientAccessLevel();
+	}
+}
+
+// Server call back function
+void SetAccessLevel(int param0, int param1, int param2, string@ param3, int[]@ param4){
+	if(@accessControl!=null) accessControl.setAccessLevel(param0);
+}
+
+void SetGender(int param0, int param1, int param2, string@ param3, int[]@ param4){
+	if(@accessControl==null) ClientAccessLevel();
+	accessControl.setPlayerGender(param0);
+}
+

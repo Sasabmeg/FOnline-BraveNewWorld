@@ -1,0 +1,1196 @@
+//
+// FOnline: 2238
+// Rotators
+//
+// _vars.fos
+//
+
+#ifndef __VARS__
+#define __VARS__
+/*************************************************************************************
+***  VARS  *****  COUNT: 00000396  ***************************************************
+*************************************************************************************/
+
+
+#define GVAR_car_id                             (1)
+#define GVAR_is_first_time                      (2)
+#define LVAR_bos_trainer                        (13)
+#define LVAR_faction_bos_home                   (14)
+#define UVAR_guard_illegal_flag                 (15)
+#define UVAR_town_policies                      (16)
+#define LVAR_q_bos_hummer                       (17)
+#define UVAR_faction_rank                       (21)
+#define UVAR_faction_status                     (22)
+#define UVAR_faction                            (23)
+#define LLVAR_faction_base_rank_allowed         (24)
+#define LLVAR_faction_base_status_allowed       (25)
+
+#define LVAR_factions_points_bos                (201)
+#define LVAR_factions_points_enclave            (202)
+#define LVAR_factions_points_ncr                (203)
+#define LVAR_factions_points_raiders            (204)
+#define LVAR_factions_points_unity              (205)
+#define LVAR_factions_points_vc                 (206)
+#define LVAR_q_se_nomad_quest                   (299)
+#define GVAR_train_station                      (300)
+#define GVAR_train_conductor1                   (301)
+#define GVAR_train_conductor2                   (302)
+#define GVAR_train_conductor3                   (303)
+#define LVAR_q_sidewinder                       (400)
+#define LVAR_q_hub_sidewinder                   (401)
+#define LVAR_duel_status                        (500)
+#define LVAR_current_task                       (501)
+
+#define GVAR_sierra_backup_power                (1150)
+#define LVAR_killer_admin                       (1207)
+#define GVAR_event_status                       (1234)
+#define LVAR_event_outfitted                    (1235)
+#define LVAR_extra_speed                        (1337)
+#define UVAR_reputation                         (2000)
+#define UVAR_loyality                           (2010)
+#define UVAR_name_mem_npc_player                (2015)
+#define UVAR_name_mem_player_npc                (2016)
+#define UVAR_interacted                         (2017)
+#define UVAR_acquaintance                       (2018)
+#define UVAR_bounty                             (2019)
+#define UVAR_dung_cleaned                       (2021)
+#define LVAR_mod_q_meat_jerky                   (2022)
+#define UVAR_quest_timeout                      (2023)
+#define UVAR_enc_timeout                        (2024)
+#define LVAR_common_timeout                     (2025)
+#define UVAR_questpool_quest                    (2030)
+#define UVAR_factions_q_vc_questionnaire_u      (2203)
+#define LVAR_cutscene_flags                     (2222)
+#define GVAR_trader_zaius_ore                   (2500)
+#define LVAR_tracking_id                        (3001)
+#define LVAR_renting_id                         (3002)
+#define LVAR_renting_balance                    (3003)
+#define LVAR_renting_period                     (3004)
+#define LVAR_tent_id                            (3005)
+#define LVAR_caravan_id                         (3006)
+#define LVAR_renting_event                      (3007)
+#define LVAR_mine_id                            (3008)
+#define LVAR_mine_bought_time                   (3009)
+#define LVAR_zone_x                             (3010)
+#define LVAR_zone_y                             (3011)
+#define LVAR_zone_world                         (3012)
+#define LVAR_workbench                          (3020)
+#define LVAR_terminal_current                   (3029)
+#define LVAR_sex_exp                            (3030)
+#define LVAR_alco_cnt                           (3031)
+#define LVAR_bank_money                         (3099)
+#define LVAR_tent_id1                           (3100)
+#define LVAR_tent_id2                           (3101)
+#define LVAR_tent_id3                           (3102)
+#define LVAR_tent_id4                           (3103)
+#define LVAR_tent_id5                           (3104)
+#define LVAR_tent_id6                           (3105)
+#define LVAR_tent_id7                           (3106)
+#define LVAR_tent_id8                           (3107)
+#define LVAR_tent_id9                           (3108)
+#define LVAR_tent_id10                          (3109)
+#define LLVAR_tent_owner                        (3110)
+#define LLVAR_tent_version                      (3111)
+#define LVAR_den_narc_comm_member               (3147)
+#define LVAR_klam_sally_pay                     (3200)
+#define LVAR_klam_bakner_beer                   (3202)
+#define LVAR_klam_gold_beer                     (3203)
+#define LVAR_nr_catspaw_paid                    (3707)
+#define GVAR_bank_interest_event                (4000)
+#define GVAR_economy_event                      (4005)
+#define LVAR_economy_prices                     (4006)
+#define LVAR_economy_prices_count               (4007)
+#define LVAR_economy_prices_last_count          (4008)
+#define LVAR_virtual_money                      (4050)
+#define LVAR_factions_player_faction            (4101)
+#define LVAR_factions_player_rank               (4102)
+#define LVAR_factions_player_score              (4103)
+#define LVAR_factions_npc_gave_leadership       (4105)
+#define LVAR_base_buildsite                     (4110)
+#define LVAR_gm_reportevent                     (4119)
+#define LVAR_auth_level                         (4120)
+#define LVAR_gm_credit                          (4121)
+#define LVAR_gm_npc                             (4122)
+#define LVAR_gm_help_timeout                    (4123)
+#define LVAR_command_tracking                   (4124)
+#define LVAR_authed_char                        (4125)
+#define LVAR_factions_q_vc_parts                (4201)
+#define LVAR_factions_q_vc_scoutsf              (4202)
+#define LVAR_factions_q_vc_questionnaire        (4203)
+#define LVAR_factions_q_vc_exam                 (4204)
+#define LVAR_factions_q_vc_skill                (4205)
+#define LVAR_factions_q_vc_kohl_books           (4206)
+#define LVAR_factions_q_nav_mfc                 (4207)
+#define LVAR_hub_arena_inside                   (4212)
+#define LVAR_redding_morton_brothers            (5386)
+
+
+#define LVAR_free_slave                         (7053)
+#define LVAR_faction_farmer                     (7085)
+#define LVAR_ncr_gold_exchange                  (7119)
+#define LVAR_q_nr_corsican_tattoo               (7301)
+#define LVAR_blood_type                         (9001)
+#define LVAR_birth_year                         (9002)
+#define LVAR_birth_day                          (9003)
+#define LVAR_birth_month                        (9004)
+#define LVAR_npc_name_first                     (9005)
+#define LVAR_npc_name_nick                      (9006)
+#define LVAR_npc_name_nicktype                  (9007)
+#define LVAR_npc_name_surname                   (9008)
+#define GVAR_last_registered                    (9009)
+#define LIVAR_npc_wpn_owner                     (9010)
+
+#define LVAR_Book_Science                     (9946)
+#define LVAR_Book_Repair                      (9947)
+#define LVAR_Book_Outdoorsman                 (9949)
+#define LVAR_Book_Barter	                  (9950)
+#define LVAR_Book_FirstAid	                  (9951)
+#define LVAR_Book_SmallGuns	                  (9952)
+#define LVAR_current_followers                  (10010)
+#define LVAR_patrol_currentnode                 (10100)
+
+#define UVAR_proximity_check                    (11200)
+
+
+
+#define GVAR_merc_prices_init                   (12000)
+#define GVAR_merc_prices_event                  (12002)
+#define LVAR_influence_buffer                   (12003)
+#define LVAR_arena_gear_count                   (12010)
+#define LVAR_arena_gear_timeout                 (12011)
+#define LVAR_warzone_terminal_destination       (12012)
+#define LVAR_warzone_terminal_policy            (12013)
+#define LVAR_trigger_antiblock                  (12100)
+#define LIVAR_tool_supplies_count               (15000)
+#define UVAR_q_rq_fetcher_status                (20000)
+#define UVAR_q_rq_fetcher_pid                   (20001)
+#define UVAR_q_rq_fetcher_count                 (20002)
+#define UVAR_q_rq_fetcher_node                  (20003)
+#define UVAR_q_rq_cave_status                   (20010)
+#define UVAR_q_rq_cave_pid                      (20011)
+#define UVAR_q_rq_cave_node                     (20012)
+#define UVAR_q_rq_cave_loc                      (20013)
+#define LVAR_domination_role                    (20020)
+#define LIVAR_bos_hummer                        (30000)
+#define LIVAR_car_owner_id                      (30020)
+#define LIVAR_mhex_id                           (30040)
+#define LVAR_greet_ncr                          (50000)
+#define LVAR_greet_redding                      (50001)
+#define LVAR_greet_train1                       (50002)
+#define LVAR_greet_train2                       (50003)
+#define LVAR_greet_train3                       (50004)
+#define LVAR_greet_train4                       (50005)
+#define LVAR_greet_q_ncr_brahmin                (50006)
+#define LVAR_greet_hub                          (50007)
+#define LVAR_greet_gunrunner                    (50008)
+#define LVAR_greet_adytum                       (50009)
+#define LVAR_greet_library                      (50010)
+#define GVAR_madness                            (54321)
+#define LVAR_online_stats                       (60000)
+#define LVAR_drug_fix                           (60001)
+#define LVAR_kamikaze_fix                       (60002)
+#define LVAR_wm_idle                            (60003)
+#define LVAR_wm_idle_chance                     (60004)
+#define LLVAR_combat_zone                       (60005)
+#define LVAR_tb_turn_time                       (60006)
+
+
+
+#define GVAR_modoc_score	                    (61001)
+#define GVAR_klamath_score                      (61002)
+#define GVAR_gecko_score	                    (61003)
+#define GVAR_brokenhills_score                  (61004)
+#define GVAR_den_score		                    (61005)
+#define GVAR_redding_score                      (61006)
+
+
+/*************************************************************************************
+        Id	Type	Name		Start	Min	Max	Flags
+**************************************************************************************
+
+   $	1	0	car_id	0	0	0	4
+**********
+   Number of next key id used when buying a car.
+**********
+
+   $	2	0	is_first_time	1	0	0	0
+**********
+   1 = game was never initialized before (after wipe)
+   0 = it was
+**********
+
+   $	13	1	bos_trainer	0	0	3	0
+**********
+   1 if player starts in NCR
+   2 if player starts in SF
+   3 if player starts in Den
+**********
+
+   $	14	1	faction_bos_home	0	0	3	0
+**********
+   Set to 1, 2, or 3 depending on location after speaking to bos trainer
+
+   1- Den
+   2-NCR
+   3-SF
+**********
+
+   $	15	2	guard_illegal_flag	0	0	0	4
+**********
+   Players can get flagged for illegal behavior in certain towns, they are then free to kill
+   0 = Not flagged
+   1 = Flagged (Guards won't kill if player is attacked)
+**********
+
+   $	16	2	town_policies	0	0	0	4
+**********
+   UVAR for keeping track of policies in all Town Controllable towns. Key = Town ID.
+
+   A value of 1 means that the mode is enabled.
+
+   0 = Attacking others is illegal
+   1 = Stealing is illegal
+   2 = Carrying weapons is illegal
+   3 = Attack flagged people on sight
+**********
+
+   $	17	1	q_bos_hummer	0	0	10	1
+**********
+   For BoS Hummer Encounter
+**********
+
+   $	21	2	faction_rank	0	0	0	4
+**********
+   The rank of the player as seen in given faction: (playerid, factionid, rank).
+**********
+
+   $	22	2	faction_status	0	0	0	4
+**********
+   The status of the player as seen by given faction: (playerid, factionid, status).
+**********
+
+   $	23	2	faction	0	0	0	4
+**********
+   The faction id of the player as seen by given faction: (playerid, factionid, faction2id).
+**********
+
+   $	24	3	faction_base_rank_allowed	0	0	0	4
+**********
+   If rank is allowed to access the base. Each rank occupies one bit.
+**********
+
+   $	25	3	faction_base_status_allowed	0	0	0	4
+**********
+   If player with given status is allowed to access the base. Each status occupies one bit.
+**********
+
+   $	201	1	factions_points_bos	0	0	0	4
+**********
+   Brotherhood of Steel faction point
+**********
+
+   $	202	1	factions_points_enclave	0	0	0	4
+**********
+   Enclave faction points
+**********
+
+   $	203	1	factions_points_ncr	0	0	0	4
+**********
+   NCR faction points
+**********
+
+   $	204	1	factions_points_raiders	0	0	0	4
+**********
+   Raider faction points
+**********
+
+   $	205	1	factions_points_unity	0	0	0	4
+**********
+   Unity faction points
+**********
+
+   $	206	1	factions_points_vc	0	0	0	4
+**********
+   Vault City faction points
+**********
+
+   $	299	1	q_se_nomad_quest	0	0	1	0
+**********
+
+**********
+
+   $	300	0	train_station	0	0	0	4
+**********
+   Current station of a train.
+**********
+
+   $	301	0	train_conductor1	0	0	0	4
+**********
+   Conductor for a train wagon.
+**********
+
+   $	302	0	train_conductor2	0	0	0	4
+**********
+   Conductor for a train wagon.
+**********
+
+   $	303	0	train_conductor3	0	0	0	4
+**********
+   Conductor for a train wagon.
+**********
+
+   $	400	1	q_sidewinder	0	0	100	1
+**********
+   General var for delivery jobs.
+**********
+
+   $	401	1	q_hub_sidewinder	0	0	100	1
+**********
+   Var for Hub Sidewinder jobs.
+**********
+
+   $	500	1	duel_status	0	0	0	4
+**********
+   0 = Not in a duel
+   1 = In a duel
+**********
+
+   $	501	1	current_task	0	0	0	4
+**********
+   Stores the current task the NPC is at.
+**********
+
+   $	1150	0	sierra_backup_power	0	0	3	0
+**********
+   Gvar controlling the power supply in Sierra Army Depot
+   0==off, 1==on(not-redirected), 2==redirected to med lab, 3==redirected to ammo facility
+**********
+
+   $	1207	1	killer_admin	0	0	9999	0
+**********
+
+**********
+
+   $	1234	0	event_status	0	0	0	4
+**********
+   Variable for checking if game event is in progress, if so, spawned items and critters will be marked for deletion.
+**********
+
+   $	1235	1	event_outfitted	0	0	1	0
+**********
+
+**********
+
+   $	1337	1	extra_speed	0	0	0	4
+**********
+   I'm so speed
+   Big bug in aleatory encounter
+**********
+
+$ 1800 1 q_jt_talked 0 0 3 1
+*****************
+ Ford quest 
+ 0 = not taken
+ 1 = taken
+ 2= talked
+ 3= completed
+*****************
+
+   $	2000	2	reputation	0	0	0	4
+**********
+   Describes the reputation of the player as viewed by other player/npc/faction.
+**********
+
+   $	2010	2	loyality	0	-50	20	0
+**********
+   Eniieucoaony aey oiai, ?oiau ii?aaaeeou ioiioaiea Iio e Ea?ieo, eioi?ia nei?eeinu o iaai a iineaanoaee ?acaiai?a n Ea?ieii.
+
+   5 yoi n?aaiyy eiyeuiinou. 0 - Iio e Ea?ieo iaeiaiaa eiyeai. 10 - iaeaieaa.
+
+   Ia iaycaoaeuii caaaenoaiaaou a aeaeiaa ana 11 ninoiyiee ia?aiaiiie. Ii?ii aaanoe e i?eia?o i?iaa?eo oieuei ia <3 e >7 eee <5 e >5, a ii?ii e ana 11 ?anienaou.
+**********
+
+   $	2015	2	name_mem_npc_player	0	0	1	0
+**********
+
+**********
+
+   $	2016	2	name_mem_player_npc	0	0	1	0
+**********
+
+**********
+
+   $	2017	2	interacted	0	0	0	4
+**********
+   0 - player hasn't interacted with NPC>0 - time when player interacted witn NPC last time(it is for various scripts that has to remember something)
+**********
+
+   $	2018	2	acquaintance	0	-1	10	0
+**********
+   player's acquaintance with a NPC; this is used by some scripts to determine the degree of an acquaintance
+**********
+
+   $	2019	2	bounty	0	0	0	4
+**********
+   0 - nothing special
+   Player-player:
+   1 - player X knows about bounty for player Y
+   //2 - player X was bountied by player Y
+   player-Npc:
+   <id> - player X set bounty for player <id> at npc
+   Npc-player:
+   <id> - player <id> collected bounty that was set for player X at npc.
+**********
+
+   $	2021	2	dung_cleaned	0	0	0	4
+**********
+   Number of brahmin dung player cleaned for that npc.
+**********
+
+   $	2022	1	mod_q_meat_jerky	0	0	2	5
+**********
+   This is quest to deliver meat jerkys from Grishem in modoc to the kebab stance in NCR.
+
+   Reward: 150 caps and 50 xp
+
+   0 - Quest has not been initiated.
+   1 - Quest under way.
+   2 - Quest completed.
+**********
+
+   $	2023	2	quest_timeout	0	0	0	4
+**********
+   Stores time after which npc may decide to give certain quest again.
+**********
+
+   $	2024	2	enc_timeout	0	0	0	4
+**********
+   Stores time after which player may encounter given group again.
+**********
+
+   $	2025	1	common_timeout	0	0	0	4
+**********
+   In similar fashion to quest_timeout, but without player
+**********
+
+   $	2030	2	questpool_quest	0	0	0	4
+**********
+   Stores quest actually chosen for player in the NPCs questpool.
+**********
+
+   $	2203	2	factions_q_vc_questionnaire_u	0	0	1	0
+**********
+   Questionnaire quest UVAR. 1L VC faction quest, given by Lilly in VC HQ. The player must give away questionnaires to VC citizens.
+**********
+
+   $	2222	1	cutscene_flags	0	0	0	4
+**********
+
+**********
+
+   $	2500	0	trader_zaius_ore	0	0	0	4
+**********
+   The amount of ore that zaius has in stock
+**********
+
+   $	3001	1	tracking_id	0	0	0	4
+**********
+   Id of the leader of group that is tracked by player.
+**********
+
+   $	3002	1	renting_id	0	0	0	4
+**********
+   Id of the hotel where player rents his domicile.
+**********
+
+   $	3003	1	renting_balance	0	0	0	4
+**********
+   Amount of money player paid for a rent.
+**********
+
+   $	3004	1	renting_period	0	0	0	4
+**********
+   Time period room has been rent for.
+**********
+
+   $	3005	1	tent_id	0	0	0	4
+**********
+   Location ID of a players constructed tent camp location
+**********
+
+   $	3006	1	caravan_id	0	0	0	4
+**********
+   Index to the caravan critter belongs to.
+**********
+
+   $	3007	1	renting_event	0	0	0	4
+**********
+   Timeevent for rent expiration.
+**********
+
+   $	3008	1	mine_id	0	0	0	4
+**********
+   Id of the player mine location.
+**********
+
+   $	3009	1	mine_bought_time	0	0	0	4
+**********
+   Time when the player mine was bought.
+**********
+
+   $	3010	1	zone_x	0	0	0	4
+**********
+   Keeps track of player world x-coordinate.
+**********
+
+   $	3011	1	zone_y	0	0	0	4
+**********
+   Keeps track of player world y-coordinate.
+**********
+
+   $	3012	1	zone_world	0	0	0	4
+**********
+   >0 if on worldmap, <0 otherwise - time (FullMinute) when player entered/left worldmap
+**********
+
+   $	3020	1	workbench	0	0	0	4
+**********
+   Used to determine if player is at workbench. OBSOLETE
+**********
+
+   $	3029	1	terminal_current	0	0	0	4
+**********
+
+**********
+
+   $	3030	1	sex_exp	0	0	501	0
+**********
+   Used in Miss Kitty + Kama Sutra Master support perk
+**********
+
+   $    3031    1   alco_cnt    0 	0 	51 	0
+**********
+   Used in Alcohol Raised HP support perk
+**********
+
+   $	3099	1	bank_money	0	0	999999	0
+**********
+**********
+
+
+   $	3100	1	tent_id1	0	0	0	4
+**********
+   Location ID of a players constructed tent camp location
+**********
+
+   $	3101	1	tent_id2	0	0	0	4
+**********
+   Location ID of a players constructed tent camp location
+**********
+
+   $	3102	1	tent_id3	0	0	0	4
+**********
+   Location ID of a players constructed tent camp location
+**********
+
+   $	3103	1	tent_id4	0	0	0	4
+**********
+   Location ID of a players constructed tent camp location
+**********
+
+   $	3104	1	tent_id5	0	0	0	4
+**********
+   Location ID of a players constructed tent camp location
+**********
+
+   $	3105	1	tent_id6	0	0	0	4
+**********
+   Location ID of a players constructed tent camp location
+**********
+
+   $	3106	1	tent_id7	0	0	0	4
+**********
+   Location ID of a players constructed tent camp location
+**********
+
+   $	3107	1	tent_id8	0	0	0	4
+**********
+   Location ID of a players constructed tent camp location
+**********
+
+   $	3108	1	tent_id9	0	0	0	4
+**********
+   Location ID of a players constructed tent camp location
+**********
+
+   $	3109	1	tent_id10	0	0	0	4
+**********
+   Location ID of a players constructed tent camp location
+**********
+
+   $	3110	3	tent_owner	0	0	0	4
+**********
+   ID of tent location owner
+**********
+
+   $	3111	3	tent_version	0	0	0	4
+**********
+   Version of tent location
+**********
+
+   $	3147	1	den_narc_comm_member	0	0	5	0
+**********
+
+**********
+
+   $	3200	1	klam_sally_pay	0	0	10	0
+**********
+
+**********
+
+   $	3202	1	klam_bakner_beer	0	0	1	0
+**********
+
+**********
+
+   $	3203	1	klam_gold_beer	0	0	1	0
+**********
+
+**********
+
+   $	3707	1	nr_catspaw_paid	0	0	0	4
+**********
+
+**********
+
+   $	4000	0	bank_interest_event	0	0	1	0
+**********
+   This is simply a variable to make sure there is only one bank interest event running at the same time
+   0 = Event not created
+   1 = Event created
+**********
+
+   $	4005	0	economy_event	0	0	0	4
+**********
+
+**********
+
+   $	4006	1	economy_prices	0	0	0	4
+**********
+
+**********
+
+   $	4007	1	economy_prices_count	0	0	0	4
+**********
+
+**********
+
+   $	4008	1	economy_prices_last_count	0	0	0	4
+**********
+
+**********
+
+   $	4050	1	virtual_money	0	0	0	4
+**********
+   Virtual money buffer for shitcleaning and quests etc.
+**********
+
+   $	4101	1	factions_player_faction	1	1	8191	0
+**********
+   Denotes the faction player belongs to.
+   Supporting variable which is used to update teamid if player wasn't online when the change occured.
+**********
+
+   $	4102	1	factions_player_rank	1	1	5	0
+**********
+   Denotes the rank of the player within a faction. For more info check "scripts/_factions.fos"
+   Supporting variable which is used to update teamid if player wasn't online when the change occured.
+**********
+
+   $	4103	1	factions_player_score	1	1	100	0
+**********
+   This lvar controlls the faction score of the player. The score can't be higher than 100, no matter how active the player is. Also, it can't be lower than 1, which is the standard value for the newcomers (we might need to divide with this value later, so it's better not to be 0).
+
+   Will be changed to player's reputation I think (scyp)
+**********
+
+   $	4105	1	factions_npc_gave_leadership	0	0	1	0
+**********
+   Denotes whether NPC gave the faction leadership to some player (it's lvar for npcs).
+   It should be used for npc factions which are in fact player-driven factions with some not-important npcs (like tanker vagrants).
+**********
+
+   $	4110	1	base_buildsite	0	0	0	4
+**********
+   Location pid for the base that is being built on site.
+**********
+
+   $	4119	1	gm_reportevent	0	0	1	0
+**********
+   0 = Don't report anything
+   1 = Report all available
+**********
+
+   $	4120	1	auth_level	0	0	0	4
+**********
+   Specifies if player is allowed to use 'cheat' commands:
+   0 - no priviledges
+   1 - Game Master
+   2 - Admin
+**********
+
+   $	4121	1	gm_credit	0	0	0	4
+**********
+   Points GM can spend on various commands.
+**********
+
+   $	4122	1	gm_npc	0	0	0	4
+**********
+   Id of the NPC given GM plays. (Such NPC is bound to him)
+**********
+
+   $	4123	1	gm_help_timeout	0	0	0	4
+**********
+
+**********
+
+   $	4124	1	command_tracking	0	0	0	4
+**********
+   Critter Id of admin/gm that is "tracking" player (i.e will receive information of when he enters/leaves some map or some other events occur)
+**********
+
+   $	4125	1	authed_char	0	0	1	0
+**********
+
+**********
+
+   $	4201	1	factions_q_vc_parts	0	0	3	1
+**********
+   The is one of the initiation quests for the Vault City faction. The quest objective is to retrieve some parts and bring them back to the guards at the gate in VC.
+**********
+
+   $	4202	1	factions_q_vc_scoutsf	0	0	1111	1
+**********
+   Scout San Francisco quest Lvar. 1L VC faction quest, given by Lilly in the VC HQ. The player must visit three maps in SF - Chinatown, Shi Temple and the Docks.
+**********
+
+   $	4203	1	factions_q_vc_questionnaire	0	0	181	1
+**********
+   Questionnaire quest LVAR. 1L VC faction quest, given by Lilly in VC HQ. The player must give away questionnaires to VC citizens.
+**********
+
+   $	4204	1	factions_q_vc_exam	0	0	11	1
+**********
+   The is one of the initiation quests for the Vault City faction. Player must pass the citizenship test to become citizen.
+**********
+
+   $	4205	1	factions_q_vc_skill	0	0	11	1
+**********
+   The is one of the initiation quests for the Vault City faction. Player must persuade the guard he is skilled enough to become citizen.
+**********
+
+   $	4206	1	factions_q_vc_kohl_books	0	0	11111	1
+**********
+   Get books for Kohl quest LVAR. 1L VC faction quest, given by Lilly in VC HQ. Player should bring 4 books to Kohl.
+**********
+
+   $	4207	1	factions_q_nav_mfc	0	0	65535	1
+**********
+   Produce as many as possible Micro Fusion Cells in Mariposa and bring them back to Navarro, to Commander's Assistant
+**********
+
+   $	4212	1	hub_arena_inside	0	0	1	0
+**********
+   Is/was inside Hub arena?
+**********
+
+   $	5386	1	redding_morton_brothers	0	0	0	4
+**********
+   GVAR_REDDING_MORTON_BROTHERS            :=0;    //      (386)
+**********
+
+   $	7053	1	free_slave	0	0	1	0
+**********
+   Variable is set to 1, if player frees the slave.
+**********
+
+   $	7085	1	faction_farmer	0	0	0	4
+**********
+
+**********
+
+   $	7119	1	ncr_gold_exchange	0	0	1	0
+**********
+   var for dialog, nothing big.
+**********
+
+   $	7301	1	q_nr_corsican_tattoo	0	0	3	1
+**********
+
+**********
+
+   $	9001	1	blood_type	0	0	0	4
+**********
+   Randomly chosen blood type, valid for all critters
+**********
+
+   $	9002	1	birth_year	0	0	0	4
+**********
+   Year of birth, valid for all critters
+**********
+
+   $	9003	1	birth_day	0	0	0	4
+**********
+   Randomly chosen day of birth, valid for all critters
+**********
+
+   $	9004	1	birth_month	0	0	0	4
+**********
+   Randomly chosen month of birth, valid for all critters
+**********
+
+   $	9005	1	npc_name_first	-1	-1	0	4
+**********
+
+**********
+
+   $	9006	1	npc_name_nick	-1	-1	0	4
+**********
+
+**********
+
+   $	9007	1	npc_name_nicktype	0	0	1	0
+**********
+   1 == gender nick
+**********
+
+   $	9008	1	npc_name_surname	-1	-1	0	4
+**********
+
+**********
+
+   $	9009	0	last_registered	0	0	0	4
+**********
+   Last registered character ID
+**********
+
+   $	9010	5	npc_wpn_owner	0	0	0	4
+**********
+   ID of npc that dropped the weapon in combat.
+**********
+
+$	9946	1	LVAR_FO2077_Book_Science  0	0	10	0
+************
+0 - ksiazka nie zostala jeszcze przeczytana
+1 - ksiazka zostala przeczytana
+
+Added by Kilgore 28.01.2011
+************
+
+$	9947	1	LVAR_FO2077_Book_Repair   0	0	10	0
+************
+
+************
+
+$	9949	1	LVAR_FO2077_Book_Outdoorsman  0	0	10	0
+************
+
+************
+
+$	9950	1	LVAR_FO2077_Book_Barter  0	0	10	0
+************
+
+************
+
+$	9951	1	LVAR_FO2077_Book_FirstAid  0	0	10	0
+************
+
+************
+
+$	9952	1	LVAR_FO2077_Book_SmallGuns  0	0	10	0
+************
+
+************
+
+   $	10010	1	current_followers	0	0	0	4
+**********
+   The amount of followers that a player currently has in his party.
+**********
+
+   $	10100	1	patrol_currentnode	0	0	0	4
+**********
+   Current patrolnode in the patrolroute that the critter is on. This variable is only used in the patrol script
+**********
+
+   $	11200	2	proximity_check	0	0	1	0
+**********
+
+**********
+
+   $	12000	0	merc_prices_init	0	0	0	4
+**********
+
+**********
+
+   $	12002	0	merc_prices_event	0	0	0	4
+**********
+
+**********
+
+   $	12003	1	influence_buffer	0	0	0	4
+**********
+   Buffer of influence bonus to give controlling TC faction for certain tasks. Flushed on leaving of TC location (not map).
+   value is divided by 1000 to calculate actual influence point (0,001*value)
+**********
+
+   $	12010	1	arena_gear_count	0	0	0	4
+**********
+
+**********
+
+   $	12011	1	arena_gear_timeout	0	0	0	4
+**********
+
+**********
+
+   $	12012	1	warzone_terminal_destination	0	0	0	4
+**********
+
+**********
+
+   $	12013	1	warzone_terminal_policy	0	0	0	4
+**********
+
+**********
+
+   $	12100	1	trigger_antiblock	0	0	0	4
+**********
+   AntiBlock trigger event identifier
+**********
+
+   $	15000	5	tool_supplies_count	20	0	20	0
+**********
+
+**********
+
+   $	20000	2	q_rq_fetcher_status	0	0	0	4
+**********
+
+**********
+
+   $	20001	2	q_rq_fetcher_pid	0	0	0	4
+**********
+
+**********
+
+   $	20002	2	q_rq_fetcher_count	0	0	0	4
+**********
+
+**********
+
+   $	20003	2	q_rq_fetcher_node	0	0	0	4
+**********
+
+**********
+
+   $	20010	2	q_rq_cave_status	0	0	0	4
+**********
+
+**********
+
+   $	20011	2	q_rq_cave_pid	0	0	0	4
+**********
+
+**********
+
+   $	20012	2	q_rq_cave_node	0	0	0	4
+**********
+
+**********
+
+   $	20013	2	q_rq_cave_loc	0	0	0	4
+**********
+
+**********
+
+   $	20020	1	domination_role	0	0	3	0
+**********
+
+**********
+
+   $	30000	5	bos_hummer	0	0	0	4
+**********
+
+**********
+
+   $	30020	5	car_owner_id	0	0	0	4
+**********
+
+**********
+
+   $	30040	5	mhex_id	0	0	0	4
+**********
+   Id of the first mHex of a multihex item.
+**********
+
+   $	50000	1	greet_ncr	0	0	1	0
+**********
+
+**********
+
+   $	50001	1	greet_redding	0	0	1	0
+**********
+
+**********
+
+   $	50002	1	greet_train1	0	0	1	0
+**********
+
+**********
+
+   $	50003	1	greet_train2	0	0	1	0
+**********
+
+**********
+
+   $	50004	1	greet_train3	0	0	1	0
+**********
+
+**********
+
+   $	50005	1	greet_train4	0	0	1	0
+**********
+
+**********
+
+   $	50006	1	greet_q_ncr_brahmin	0	0	1	0
+**********
+
+**********
+
+   $	50007	1	greet_hub	0	0	1	0
+**********
+
+**********
+
+   $	50008	1	greet_gunrunner	0	0	1	0
+**********
+
+**********
+
+   $	50009	1	greet_adytum	0	0	1	0
+**********
+
+**********
+
+   $	50010	1	greet_library	0	0	1	0
+**********
+
+**********
+
+   $	54321	0	madness	0	1	0	0
+**********
+
+**********
+
+   $	60000	1	online_stats	0	0	0	4
+**********
+   WHINE Team Vault-Tec DB
+**********
+
+   $	60001	1	drug_fix	0	0	0	4
+**********
+
+**********
+
+   $	60002	1	kamikaze_fix	0	0	0	4
+**********
+
+**********
+
+   $	60003	1	wm_idle	0	0	0	4
+**********
+
+**********
+
+   $	60004	1	wm_idle_chance	0	0	0	4
+**********
+
+**********
+
+   $	60005	3	combat_zone	0	0	0	4
+**********
+
+**********
+
+   $	60006	1	tb_turn_time	0	0	0	4
+**********
+
+**********
+
+	$	61001	0	modoc_score	0	0	10000000	0
+**********
+
+**********
+
+	$	61002	0	klamath_score	0	0	10000000	0
+**********
+
+**********
+
+	$	61003	0	gecko_score	0	0	10000000	0
+**********
+
+********** 
+
+	$	61004	0	brokenhills_score	0	0	10000000	0
+**********
+
+**********	
+
+	$	61005	0	den_score	0	0	10000000	0
+**********
+
+**********	   
+
+	$	61006	0	redding_score	0	0	10000000	0
+**********
+
+**********
+
+   $	7154	1	qe_injbrahmin	0	0	10	4
+**********   
+   Mapka special enco qe_injbrahmin. Special Enco zadanie lokalne: Injured Brahmin
+   Cubik: 28-02-2015
+**********
+ 
+   $	7155	1	qe_injcaravan	0	0	10	4
+**********
+   Mapka special enco qe_injcaravan. Special Enco zadanie lokalne: Injured Caravan
+   Cubik: 28-02-2015
+**********
+
+   $	7156	1	qe_splants	0	0	10	4
+**********
+   Mapka special enco qe_splants. Special Enco zadanie lokalne: Spore Plants
+   Cubik: 28-02-2015
+**********
+
+   $	7157	1	qe_well	0	0	10	4
+**********
+   Mapka special enco qe_well. Special Enco zadanie lokalne: Broken Well
+   Cubik: 28-02-2015
+**********
+
+   $	7158	1	qe_wood	0	0	10	4
+**********
+   Mapka special enco qe_wood. Special Enco zadanie lokalne: Woodsman
+   Cubik: 28-02-2015
+**********
+
+
+
+**************************************************************************************
+**************************************************************************************
+*************************************************************************************/
+#endif

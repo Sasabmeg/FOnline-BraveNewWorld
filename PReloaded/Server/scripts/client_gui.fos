@@ -1,0 +1,1658 @@
+//
+// FOnline: 2238
+// Rotators
+//
+// client_gui.fos
+//
+
+// Client GUI
+
+#define CLIENT_GUI
+#include "client_gui_h.fos"
+#include "_client_defines.fos"
+#include "sprite.fos"
+#include "_colors.fos"
+
+#define REMOVE_FROM_ARRAY                                           \
+    # (a, idx)       { if(a.length() > 0 && uint(idx) < a.length()) \
+                           for(uint iter = idx; iter < a.length() - 1; iter++) { a[iter] = a[iter + 1]; }; a.resize(a.length() - 1); }
+#define IS_COLLISION    # (x1, y1, x2, y2, w, h)((x1) >= (x2) && (x1) <= (x2) + (w) && (y1) >= (y2) && (y1) <= (y2) + (h))
+
+import void SetupFixboyAddons() from "client_fixboy";
+
+array<GUIScreen@> AllScreens;
+array<GUIScreen@> ActiveScreens;
+array<bool>       KeyPressed;
+IGUIScreenOpt@    LastScreenOpt = null;
+// IGUIElementOpt@ LastElementOpt=null;
+
+bool GUI_IsKeyPressed(uint8 key)
+{
+    return KeyPressed[key];
+}
+
+/*
+uint8 GUI_GetCharacter(uint8 key)
+{
+    KeybData@ k = KbData[key];
+    if(!(k is null))
+    {
+        bool shiftDown = (GUI_IsKeyPressed(DIK_LSHIFT) || GUI_IsKeyPressed(DIK_RSHIFT));
+        return k.Char[::GetKeybLang() * 2 + (shiftDown ? 1 : 0)];
+    }
+    else
+        return 0;
+}
+
+uint8 GUI_GetCharacterShift(uint8 key, bool shiftDown)
+{
+    KeybData@ k = KbData[key];
+    if(!(k is null))
+    {
+        return k.Char[::GetKeybLang() * 2 + (shiftDown ? 1 : 0)];
+    }
+    else
+        return 0;
+}
+*/
+
+void GUI_GetIniCoords(string& ini, int& left, int& top, int& right, int& bottom)
+{
+    array<string@>@ values = split(::GetIfaceIniStr(ini), " ");
+    if(values.length() < 4)
+    {
+        Message("Wrong ini data for entry: " + ini + ".");
+        left = top = right = bottom = 0;
+        return;
+    }
+    StrToInt(values[0], left);
+    StrToInt(values[1], top);
+    StrToInt(values[2], right);
+    StrToInt(values[3], bottom);
+}
+
+class GUIScreen : IGUIScreenOpt
+{
+    GUIScreen(string@ sprName, int path)
+    {
+        if(@sprName != null)
+            Surface.Load(sprName, path);
+        Index = 0;
+        IsCanMove = true;
+        IsModal = true;
+        IsMultiinstance = false;
+        IsIgnoreBorders = false;
+        IsCloseOnMiss = false;
+        IsAutoCursor = false;
+        IsHardcoded = false;
+        IsLMouseDown = false;
+
+        AutoCursorType = CURSOR_DEFAULT;
+        AutoCursorPrev = CURSOR_DEFAULT;
+
+        PosX = __ScreenWidth / 2 - Surface.Width / 2;
+        PosY = __ScreenHeight / 2 - Surface.Height / 2;
+        width = height = 0;
+        // LastX=0;
+        // LastY=0;
+        @CallbackShow = null;
+        @CallbackHide = null;
+        @CallbackMove = null;
+        @CallbackFocus = null;
+        @CallbackMouseDown = null;
+	     @CallbackKeyPress = null;
+    }
+
+    void Draw()
+    {
+        if(IsHardcoded)
+        {
+            ::DrawHardcodedScreen(Index);
+            ::GetHardcodedScreenPos(Index, PosX, PosY);
+        }
+
+        if(Surface.Id != 0)
+            DrawSprite(Surface.Id, -1, PosX, PosY, 0);
+
+        if(valid(screenControl))
+            screenControl.Draw();
+
+         //brzydki tymczasowy merg z gui z w2155
+         for(uint i=0,j=elements.length();i<j;i++)
+         {
+            elements[i].Draw(PosX,PosY);
+         }
+    }
+    void Update(uint dt)
+    {
+        if(valid(screenControl))
+            screenControl.Update();
+
+         //brzydki tymczasowy merg z gui z w2155
+         for(uint i=0,j=elements.length();i<j;i++)
+         {
+            elements[i].Update(dt);
+         }
+    }
+
+    bool MouseDown(int x, int y, int click)
+    {
+        bool intercepted = false;
+        if(valid(screenControl))
+            intercepted = screenControl.MouseDown(x, y, click);
+
+        if(@CallbackMouseDown != null) CallbackMouseDown.OnMouseDown(click); 
+         
+        if(!intercepted)
+        {
+            if(!IsHardcoded && click == MOUSE_CLICK_LEFT && IS_COLLISION(x, y, PosX, PosY, GetWidth(), GetHeight()))
+            {
+                IsLMouseDown = true;
+                // LastX=x;
+                // LastY=y;
+                return true;
+            }
+            else if(IsCloseOnMiss)
+            {
+                ::HideScreen(0, 0, 0, 0);
+                return true;
+            }
+            // window loosing focus
+            if(!IsModal && !IsHardcoded && !IS_COLLISION(x, y, PosX, PosY, GetWidth(), GetHeight()))
+            {
+                if(!(CallbackFocus is null))
+                    CallbackFocus.OnLostFocus();
+            }
+        }
+        return intercepted;
+    }
+
+    bool MouseUp(int x, int y, int click)
+    {
+        IsLMouseDown = false;
+        if(valid(screenControl))
+            return screenControl.MouseUp(x, y, click);
+        else
+            return false;
+    }
+
+    void MouseMove(int fromX, int fromY, int toX, int toY)
+    {
+        if(IsCanMove && IsLMouseDown)
+        {
+            int lastPosX = PosX;
+            int lastPosY = PosY;
+            int offsX = toX - fromX;
+            int offsY = toY - fromY;
+            // LastX=fromX;
+            // LastY=fromY;
+            PosX += offsX;
+            PosY += offsY;
+
+            // Check screen borders
+            if(!IsIgnoreBorders)
+            {
+                int px = PosX;
+                int py = PosY;
+                if(PosX < 0)
+                    PosX = 0;
+                if(PosY < 0)
+                    PosY = 0;
+                if(PosX + GetWidth() > __ScreenWidth)
+                    PosX = __ScreenWidth - GetWidth();
+                if(PosY + GetHeight() > __ScreenHeight)
+                    PosY = __ScreenHeight - GetHeight();
+                // LastX+=PosX-px;
+                // LastY+=PosY-py;
+            }
+            if(lastPosX != PosX || lastPosY != PosY)
+            {
+                if(!(CallbackMove is null))
+                    CallbackMove.OnMove(PosX, PosY);
+                if(valid(screenControl))
+                    screenControl.Position(GetPosX(), GetPosY());
+            }
+        }
+
+        if(valid(screenControl))
+            screenControl.MouseMove(fromX, fromY, toX, toY);
+    }
+
+    bool KeyDown(uint8 key, string& keyText)
+    {
+        if(not (CallbackKeyPress is null)) CallbackKeyPress.OnKeyPress(key,keyText);
+
+        if(valid(screenControl))
+            return screenControl.KeyDown(key,keyText);
+        else
+            return false;
+    }
+
+    void InputLost()
+    {
+        IsLMouseDown = false;
+        // for(uint i=0,j=Elements.length();i<j;i++) Elements[i].InputLost();
+    }
+
+    /*GUIScreen@ GetNewInstance()
+       {
+            GUIScreen screen=this;
+            IGUIScreenCallbackShow@ newCallback=CallbackShow;
+            //for(uint i=0,j=controls.length();i<j;i++) @screen.controls[i]=controls[i].Clone();
+            return @screen;
+       }*/
+
+    IControl@ Control()
+    {
+        return(@screenControl);
+    }
+    void Control(IControl@ control)
+    {
+        @screenControl = control;
+        @LastScreenOpt = this;
+        control.Init();
+        control.Position(GetPosX(), GetPosY());
+        control.Width(GetWidth());
+        control.Height(GetHeight());
+        @LastScreenOpt = null;
+    }
+
+    // Options
+    void SetCallbackShow(IGUIScreenCallbackShow@ callback)   { @CallbackShow = callback;  }
+    void SetCallbackHide(IGUIScreenCallbackHide@ callback)   { @CallbackHide = callback;  }
+    void SetCallbackMove(IGUIScreenCallbackMove@ callback)   { @CallbackMove = callback;  }
+    void SetCallbackFocus(IGUIScreenCallbackFocus@ callback) { @CallbackFocus = callback;  }
+    void SetCallbackMouseDown(IGUIScreenCallbackMouseDown@ callback){@CallbackMouseDown=callback; }
+	void SetCallbackKeyPress(IGUIScreenCallbackKeyPress@ callback){@CallbackKeyPress=callback; }
+
+    void Position(int x, int y)                   { PosX = x; PosY = y;  }
+    void Size(int w, int h)                       { width = w; height = h;  }   // custom size, (in case there is no surface for example)
+    void CanMove(bool enabled)                    { IsCanMove = enabled;  }
+    void Modal(bool enabled)                      { IsModal = enabled;  }
+    void Multiinstance(bool enabled)              { IsMultiinstance = enabled;  }
+    void IgnoreBorders(bool enabled)              { IsIgnoreBorders = enabled;  }
+    void CloseOnMiss(bool enabled)                { IsCloseOnMiss = enabled;  }
+    void AutoCursor(bool enabled, int cursorType) { IsAutoCursor = enabled; AutoCursorType = cursorType;  }
+    void Hardcoded(bool enabled)                  { IsHardcoded = enabled;  }
+
+    // Info
+    int GetPosX()   { return PosX; }
+    int GetPosY()   { return PosY; }
+    int GetWidth()  { return width != 0 ? width : Surface.Width; }
+    int GetHeight() { return height != 0 ? height : Surface.Height; }
+    int GetIndex()  { return Index; }
+
+    // Data
+    int Index;
+    int PosX;
+    int PosY;
+    int width;
+    int height;
+    // int LastX;
+    // int LastY;
+    Sprite                   Surface;
+    bool                     IsCanMove;
+    bool                     IsModal;
+    bool                     IsMultiinstance;
+    bool                     IsIgnoreBorders;
+    bool                     IsCloseOnMiss;
+    bool                     IsAutoCursor;
+    bool                     IsHardcoded;
+    bool                     IsLMouseDown;
+
+    int                      AutoCursorType;
+    int                      AutoCursorPrev;
+
+    IGUIScreenCallbackShow@  CallbackShow;
+    IGUIScreenCallbackHide@  CallbackHide;
+    IGUIScreenCallbackMove@  CallbackMove;
+    IGUIScreenCallbackFocus@ CallbackFocus;
+    IGUIScreenCallbackMouseDown@ CallbackMouseDown; 
+	IGUIScreenCallbackKeyPress@ CallbackKeyPress;
+    // main control container for all screen child-controls
+    IControl@                screenControl;
+    //tymczasowy brzydki merg z guimodem:
+    IGUIElementOpt@[] elements;
+};
+
+//
+// API
+//
+
+// Create new screen
+IGUIScreenOpt@ GUI_CreateScreen(int screenIndex, string@ sprName)
+{
+    if(screenIndex == 0)
+        return null;
+    DeleteScreen(screenIndex);
+    return CreateScreen(screenIndex, sprName);
+}
+
+// Delete old screen, hardcoded screens included
+void GUI_DeleteScreen(int screenIndex)
+{
+    if(screenIndex == 0)
+        return;
+    DeleteScreen(screenIndex);
+}
+
+// Valid only on IGUIScreenCallbackShow::OnShow callback
+IGUIScreenOpt@ GUI_GetScreenOptions()
+{
+    return LastScreenOpt;
+}
+
+
+//
+// Engine callbacks
+//
+
+void GUI_Init()
+{
+    AllScreens.resize(0);
+    ActiveScreens.resize(0);
+    KeyPressed.resize(0x100);
+    for(uint i = 0, j = KeyPressed.length(); i < j; i++)
+        KeyPressed[i] = false;
+
+    // Register hardcoded screens
+    CreateScreen(CLIENT_MAIN_SCREEN_LOGIN, null);
+    CreateScreen(CLIENT_MAIN_SCREEN_REGISTRATION, null);
+    CreateScreen(CLIENT_MAIN_SCREEN_OPTIONS, null);
+    CreateScreen(CLIENT_MAIN_SCREEN_CREDITS, null);
+    CreateScreen(CLIENT_MAIN_SCREEN_GAME, null);
+    CreateScreen(CLIENT_MAIN_SCREEN_WORLDMAP, null);
+    CreateScreen(CLIENT_MAIN_SCREEN_WAIT, null);
+    CreateScreen(CLIENT_SCREEN_INVENTORY, null);
+    CreateScreen(CLIENT_SCREEN_PICKUP, null);
+    CreateScreen(CLIENT_SCREEN_MINIMAP, null);
+    CreateScreen(CLIENT_SCREEN_CHARACTER, null);
+    CreateScreen(CLIENT_SCREEN_DIALOG, null);
+    CreateScreen(CLIENT_SCREEN_BARTER, null);
+    CreateScreen(CLIENT_SCREEN_PIPBOY, null);
+    CreateScreen(CLIENT_SCREEN_FIXBOY, null);
+    CreateScreen(CLIENT_SCREEN_MENU, null);
+    CreateScreen(CLIENT_SCREEN_AIM, null);
+    CreateScreen(CLIENT_SCREEN_TEST, null);
+    CreateScreen(CLIENT_SCREEN_SPLIT, null);
+    CreateScreen(CLIENT_SCREEN_TIMER, null);
+    CreateScreen(CLIENT_SCREEN_DIALOGBOX, null);
+    CreateScreen(CLIENT_SCREEN_ELEVATOR, null);
+    CreateScreen(CLIENT_SCREEN_SAY, null);
+    CreateScreen(CLIENT_SCREEN_CHAR_NAME, null);
+    CreateScreen(CLIENT_SCREEN_CHAR_AGE, null);
+    CreateScreen(CLIENT_SCREEN_CHAR_SEX, null);
+    CreateScreen(CLIENT_SCREEN_WM_TOWN, null);
+    CreateScreen(CLIENT_SCREEN_INPUTBOX, null);
+    CreateScreen(CLIENT_SCREEN_SKILLBOX, null);
+    CreateScreen(CLIENT_SCREEN_USE, null);
+    CreateScreen(CLIENT_SCREEN_PERK, null);
+    CreateScreen(CLIENT_SCREEN_WM_TOWNVIEW, null);
+    CreateScreen(CLIENT_SCREEN_LOADSAVE, null);
+    for(uint i = 0, j = AllScreens.length(); i < j; i++)
+        AllScreens[i].IsHardcoded = true;
+}
+
+int GUI_GetActiveMainScreen()
+{
+    return ActiveScreens.length() > 0 ? ActiveScreens.first().Index : CLIENT_SCREEN_NONE;
+}
+
+int GUI_GetActiveScreen()
+{
+    return ActiveScreens.length() > 0 ? ActiveScreens.last().Index : CLIENT_SCREEN_NONE;
+}
+
+void GUI_GetActiveScreens(array<int>& result)
+{
+    result.resize(ActiveScreens.length());
+    for(uint i = 0, j = result.length(); i < j; i++)
+        result[i] = ActiveScreens[i].Index;
+}
+
+int GUI_GetMainScreen()
+{
+    int screenIndex = CLIENT_SCREEN_NONE;
+    if(ActiveScreens.length() > 0)
+        screenIndex = ActiveScreens[0].Index;
+    return screenIndex;
+}
+
+IGUIScreenOpt@ GUI_GetScreen(int screenIndex)
+{
+    return GetScreen(screenIndex);
+}
+
+void GUI_ShowScreen(int screenIndex, int p0, int p1, int p2)
+{
+    GUIScreen@ screen = GetScreen(screenIndex);
+    if(!(screen is null))
+    {
+        if(!screen.IsMultiinstance)
+        {
+            // Close all another instances
+            for(uint i = ActiveScreens.length(); i > 0;)         // From end
+            {
+                i--;
+                if(ActiveScreens[i].Index == screenIndex)
+                {
+                    ActiveScreens.removeAt(i);
+                    if(!(screen.CallbackHide is null))
+                        screen.CallbackHide.OnHide(p0, p1, p2);
+                }
+            }
+        }
+
+        // Create new instance
+        // @screen=screen.GetNewInstance(); <- currently we don't handle this
+        ActiveScreens.insertLast(screen);
+
+        // Set screen cursor
+        if(screen.IsAutoCursor)
+        {
+            if(screen.AutoCursorPrev < 0)
+                screen.AutoCursorPrev = ::GetCurrentCursor();
+            ::ChangeCursor(screen.AutoCursorType);
+        }
+
+        // Call init callbacks
+        if(!(screen.CallbackShow is null))
+        {
+            @LastScreenOpt = screen;
+            screen.CallbackShow.OnShow(p0, p1, p2);
+            @LastScreenOpt = null;
+        }
+        /*for(uint i=0,j=screen.Elements.length();i<j;i++)
+           {
+                GUIElement@ e=screen.Elements[i];
+                if(not (e.CallbackInit is null))
+                {
+                        @LastElementOpt=e;
+                        e.CallbackInit.OnInit();
+                        @LastElementOpt=e;
+                }
+           }*/
+
+        if(screenIndex == CLIENT_SCREEN_FIXBOY)
+            SetupFixboyAddons();
+    }
+}
+
+void GUI_HideScreen(int screenIndex, int p0, int p1, int p2)
+{
+    for(uint i = ActiveScreens.length(); i > 0;)   // From end
+    {
+        i--;
+        GUIScreen@ screen = ActiveScreens[i];
+        if(screen.Index == screenIndex)
+        {
+            ActiveScreens.removeAt(i);
+            if(!(screen.CallbackHide is null))
+                screen.CallbackHide.OnHide(p0, p1, p2);
+
+            // Restore cursor
+            if(screen.IsAutoCursor)
+            {
+                ::ChangeCursor(screen.AutoCursorPrev);
+            }
+            break;
+        }
+    }
+}
+
+void GUI_Render( bool mainScreen )
+{
+    if( mainScreen )
+    {
+        if( ActiveScreens.length() > 0 )
+        {
+            GUIScreen@ screen = ActiveScreens[0];
+            DrawHardcodedScreen( screen.Index );
+            GetHardcodedScreenPos( screen.Index, screen.PosX, screen.PosY );
+			screen.Draw();
+        }
+
+        return;
+    }
+
+    for(uint i = 1, j = ActiveScreens.length(); i < j; i++)
+    {
+        GUIScreen@ screen = ActiveScreens[i];
+        screen.Draw();
+    }
+}
+
+void GUI_Update(uint dt)
+{
+    for(uint i = 0, j = ActiveScreens.length(); i < j; i++)
+    {
+        GUIScreen@ screen = ActiveScreens[i];
+        screen.Update(dt);
+    }
+}
+
+bool GUI_MouseDown(int x, int y, int click)
+{
+    uint len = ActiveScreens.length();
+    if(len != 0)
+    {
+        GUIScreen@ screen = ActiveScreens[len - 1];
+        bool       result = screen.MouseDown(x, y, click);
+        if(result)
+            return true;
+
+        if(len > 1 && !screen.IsHardcoded && !screen.IsModal && click == MOUSE_CLICK_LEFT &&
+           !IS_COLLISION(x, y, screen.PosX, screen.PosY, screen.GetWidth(), screen.GetHeight()))
+        {
+            for(uint i = ActiveScreens.length() - 1; i > 0;)       // From end
+            {
+                i--;
+                GUIScreen@ nextScreen = ActiveScreens[i];
+                if(IS_COLLISION(x, y, nextScreen.PosX, nextScreen.PosY, nextScreen.Surface.Width, nextScreen.Surface.Height))
+                {
+                    // Swap screens
+                    GUIScreen@ tmpScreen = ActiveScreens[i];
+                    @ActiveScreens[i] = ActiveScreens[len - 1];
+                    @ActiveScreens[len - 1] = tmpScreen;
+                    return GUI_MouseDown(x, y, click);                    // Click new screen
+                }
+            }
+        }
+    }
+    return false;
+}
+
+bool GUI_MouseUp(int x, int y, int click)
+{
+    uint len = ActiveScreens.length();
+    if(len != 0)
+        return ActiveScreens[len - 1].MouseUp(x, y, click);
+    return false;
+}
+
+void GUI_MouseMove(int fromX, int fromY, int toX, int toY)
+{
+    uint len = ActiveScreens.length();
+    if(len != 0)
+        ActiveScreens[len - 1].MouseMove(fromX, fromY, toX, toY);
+}
+
+bool GUI_KeyDown(uint8 key,string& keyText)
+{
+    if(KeyPressed.length() != 0)
+        KeyPressed[key] = true;
+    uint len = ActiveScreens.length();
+    if(len != 0)
+         return ActiveScreens[len - 1].KeyDown(key,keyText);
+    return false;
+}
+
+bool GUI_KeyUp(uint8 key,string& keyText)
+{
+    if(KeyPressed.length() != 0)
+        KeyPressed[key] = false;
+    return false;
+}
+
+void GUI_InputLost()
+{
+    for(uint i = 0, j = KeyPressed.length(); i < j; i++)
+        KeyPressed[i] = false;
+    uint len = ActiveScreens.length();
+    if(len != 0)
+        ActiveScreens[len - 1].InputLost();
+}
+
+//
+// Internal
+//
+
+IGUIScreenOpt@ CreateScreen(int screenIndex, string@ sprName)
+{
+    GUIScreen screen(sprName, PATH_ART_INTRFACE);
+    screen.CanMove(true);
+    screen.Position(__ScreenWidth / 2 - screen.Surface.Width / 2, __ScreenHeight / 2 - screen.Surface.Height / 2);
+    screen.Index = screenIndex;
+    AllScreens.insertLast(screen);
+    return @screen;
+}
+
+void DeleteScreen(int screenIndex)
+{
+    for(uint i = 0; i < ActiveScreens.length();)
+    {
+        if(ActiveScreens[i].Index == screenIndex)
+        {
+            ActiveScreens.removeAt(i);
+            i = 0;
+        }
+        else
+        {
+            i++;
+        }
+    }
+
+    for(uint i = 0, j = AllScreens.length(); i < j; i++)
+    {
+        if(AllScreens[i].Index == screenIndex)
+        {
+            AllScreens.removeAt(i);
+            break;
+        }
+    }
+}
+
+GUIScreen@ GetScreen(int screenIndex)
+{
+    if(screenIndex == 0)
+        return null;
+    for(uint i = 0, j = AllScreens.length(); i < j; i++)
+        if(AllScreens[i].Index == screenIndex)
+            return @AllScreens[i];
+    return null;
+}
+
+GUIScreen@ GetActiveScreen(int screenIndex)
+{
+	if(screenIndex ==0 ) return null;
+	for(uint i=0,j=ActiveScreens.length(); i<j; i++) 
+	{
+		if(ActiveScreens[i].Index == screenIndex) return @ActiveScreens[i];
+	}
+	return null;
+}
+
+/*
+bool ProcessKey(uint8 key, string& text, uint8& letter)
+{
+    if(KeyPressed.length() == 0)
+        return false;
+
+    if(key == DIK_BACK)
+    {
+        if(text.length() > 0)
+            text.resize(text.length() - 1);
+        return true;
+    }
+
+    KeybData@ k = KbData[key];
+    if(!(k is null))
+    {
+        bool shiftDown = (KeyPressed[DIK_LSHIFT] || KeyPressed[DIK_RSHIFT]);
+        uint len = text.length();
+        text.resize(len + 1);
+        text[len] = k.Char[::GetKeybLang() * 2 + (shiftDown ? 1 : 0)];
+        letter = text[len];
+        return true;
+    }
+    return false;
+}
+*/
+bool ProcessKey(uint8 key, string& keyText, string& text)
+{
+    if(key == DIK_BACK)
+    {
+        if(text.length() > 0)
+            text[-1] = "";
+        return true;
+    }
+    if( keyText != "" )
+    {
+		text += keyText;
+        return true;
+    }
+    return false;
+}
+
+
+//stary guimod z w2155
+
+
+IGUIElementTextOpt@ GUI_AddText(int screenIndex)
+{
+	int zero = 0;
+	return GUI_AddText(screenIndex, "", zero, zero);
+}
+
+IGUIElementTextOpt@ GUI_AddText(int screenIndex, string@ text, int x, int y)
+{
+	if(screenIndex==0) return null;
+	if(GetScreen(screenIndex) is null) CreateScreen(screenIndex,null);
+	GUIScreen@ screen=GetScreen(screenIndex);
+	
+	IGUIElementOpt@ element;
+	@element = GUIElementText(text, x, y);  
+
+	screen.elements.insertLast(@element);
+
+	@screen=GetActiveScreen(screenIndex);
+	if(@screen!=null)
+	{
+		if(@screen.elements !=null)
+		{
+			screen.elements.insertLast(@element);
+		}
+	}
+	
+	return cast<IGUIElementTextOpt@>(element);
+}
+
+IGUIElementImageOpt@	GUI_AddImage(int screenIndex)
+{
+	int zero = 0;
+	return GUI_AddImage(screenIndex, null, zero, zero, zero);
+}
+
+IGUIElementImageOpt@ GUI_AddImage(int screenIndex, string@ sprName, int patch, int x, int y)
+{
+	if(screenIndex==0) return null;
+	if(GetScreen(screenIndex) is null) CreateScreen(screenIndex,null);
+	GUIScreen@ screen=GetScreen(screenIndex);
+	
+	IGUIElementOpt@ element;
+	@element = GUIElementImage(sprName, patch, x, y);  
+
+	screen.elements.insertLast(@element);
+
+	@screen=GetActiveScreen(screenIndex);
+	if(@screen!=null)
+	{
+		if(@screen.elements !=null)
+		{
+			screen.elements.insertLast(@element);
+		}
+	}
+
+	return cast<IGUIElementImageOpt@>(element);
+}
+
+IGUIElementButtonOpt@ GUI_AddButton(int screenIndex)
+{
+	int zero = 0;
+	return GUI_AddButton(screenIndex, zero, zero);
+}
+
+
+IGUIElementButtonOpt@ GUI_AddButton(int screenIndex, int x, int y)
+{
+	if(screenIndex==0) return null;
+	if(GetScreen(screenIndex) is null) CreateScreen(screenIndex,null);
+	GUIScreen@ screen=GetScreen(screenIndex);
+	
+	IGUIElementOpt@ element;
+	@element = GUIElementButton(x, y);  
+
+	screen.elements.insertLast(@element);
+
+	@screen=GetActiveScreen(screenIndex);
+	if(@screen!=null)
+	{
+		if(@screen.elements !=null)
+		{
+			screen.elements.insertLast(@element);
+		}
+	}
+
+	return cast<IGUIElementButtonOpt@>(element);
+}
+
+
+class GUIElement : IGUIElementOpt
+{
+
+	GUIElement(int width, int height)
+	{
+		InitGUIElement(0,0,width,height);
+	}
+
+	void InitGUIElement(int x, int y, int width, int height)
+	{
+		this.id=0;
+		this.posX=x;
+		this.posY=y;
+		this.elementWidth = width;
+		this.elementHeight = height;
+		this.isFocused=false;
+		this.absolutePosition = false;
+		this.collisionTransparent = false;
+		this.readyForClickEvent = false;
+		this.visible=true;
+		this.MousePressed.resize(MOUSE_CLICK_EXT4+1);
+		this.texts.resize(0);
+		this.images.resize(0);
+
+		
+		for(uint i=0,j=MousePressed.length();i<j;i++) 
+			MousePressed[i]=false;
+		
+		@callbackInit=null;
+		@callbackDraw=null;
+		@callbackMouseDown=null;
+		@callbackMouseClick=null;
+		@callbackKeyPress=null;
+		@callbackMouseMove=null;
+		@callbackValueChange=null;
+		@callbackStateChange=null;
+	}
+
+
+	void Draw(int screenX, int screenY)
+	{
+		if(visible)
+		{
+			this.screenX=screenX;
+			this.screenY=screenY;
+
+			if(not (callbackDraw is null)) callbackDraw.OnDraw(id);
+
+			for (uint i=0; i<images.length(); i++) 
+				images[i].Draw(screenX+posX, screenY+posY);
+
+			for (uint i=0; i<texts.length(); i++) 
+				texts[i].Draw(screenX+posX, screenY+posY);	
+		}
+	}
+
+	void Update(uint dt) 
+	{
+	}
+
+	void MouseDown(int click)
+	{
+		this.MousePressed[click]=true;
+		this.readyForClickEvent = true;
+
+		if(@callbackMouseDown != null) callbackMouseDown.OnMouseDown(click);
+	}
+
+	void MouseUp(int click, bool isCollision)
+	{
+		if(not (callbackMouseClick is null) && MousePressed[click] && isCollision && readyForClickEvent) 
+		{
+			callbackMouseClick.OnMouseClick(id, click);
+
+			for (uint i=0; i<images.length(); i++)
+			{
+				if(IS_COLLISION(mousePosX,mousePosY,screenX+posX+images[i].GetPosX(),screenY+posY+images[i].GetPosY(),images[i].GetWidth(),images[i].GetHeight()))
+				{
+					callbackMouseClick.OnMouseClick(images[i].GetId(), click);
+				}
+			}
+		
+			for (uint i=0; i<texts.length(); i++)
+			{
+				if(IS_COLLISION(mousePosX,mousePosY,screenX+posX+texts[i].GetPosX(),screenY+posY+texts[i].GetPosY(),texts[i].GetWidth(),texts[i].GetHeight()))
+				{
+					callbackMouseClick.OnMouseClick(texts[i].GetId(), click);
+				}
+			}
+		}
+		this.MousePressed[click]=false;
+		this.readyForClickEvent = false;
+	}
+
+	void MouseMove(int x, int y)
+	{
+		this.mousePosX=x;
+		this.mousePosY=y;
+		if(@callbackMouseMove!=null) callbackMouseMove.OnMouseMove(x, y);
+	}
+
+//   bool KeyPress(uint8 key)
+	bool KeyPress( uint8 key, string& keyText )
+	{
+		return false;
+	}
+
+	void KeyUp(uint8 key) 	
+	{
+	}
+
+	void InputLost()
+	{
+		for(uint i=0,j=MousePressed.length();i<j;i++)
+			MousePressed[i]=false;
+	}
+
+	IGUIElementOpt@ GetNewInstance()
+	{
+		IGUIElementOpt @newElement=this;
+		return @newElement;
+	}
+
+	// Options
+	void CallbackInit(IGUIElementCallbackInit@ callback) { @callbackInit=callback;  }
+	void CallbackDraw(IGUIElementCallbackDraw@ callback) { @callbackDraw=callback;  }
+	void CallbackMouseDown(IGUIElementCallbackMouseDown@ callback) { @callbackMouseDown=callback;  }
+	void CallbackMouseClick(IGUIElementCallbackMouseClick@ callback) { @callbackMouseClick=callback;  }
+	void CallbackKeyPress(IGUIElementCallbackKeyPress@ callback) { @callbackKeyPress=callback;  }
+	void CallbackMouseMove(IGUIElementCallbackMouseMove@ callback) { @callbackMouseMove=callback;  }
+
+	void Position(int x, int y)
+	{
+		posX=x;
+		posY=y;
+		
+	}
+
+	void Position(int x, int y, int w, int h)
+	{
+		elementWidth=w;
+		elementHeight=h;
+		Position(x, y);
+	}
+
+	void Position(string& iniKey)
+	{
+		posX=0;
+		posY=0;
+		elementWidth=0;
+		elementHeight=0;
+
+		// Parse four values from ini option
+		string@ str=GetIfaceIniStr(iniKey);
+		if(@str==null || str=="") return;
+
+		string@[]@ valuesStr=splitEx(str," ");
+		if(valuesStr.length()!=4) return;
+
+		int[] values(4);
+		for(int i=0;i<4;i++)
+			if(not StrToInt(valuesStr[i],values[i])) return;
+
+		posX=values[0];
+		posY=values[1];
+		elementWidth=values[2]-values[0]+1;
+		elementHeight=values[3]-values[1]+1;
+		return;
+	}
+
+	void Visible(bool visible)
+	{
+		this.visible = visible;
+		
+	}
+
+	void AbsolutePosition(bool absolutePosition) 
+	{
+		this.absolutePosition = absolutePosition;
+		
+	}
+
+	void AbsolutePosition(int x, int y)
+	{
+		this.absolutePosition = true;
+		Position(x, y);
+	}
+
+	void CollisionTransparent(bool collisionTransparent)
+	{
+		this.collisionTransparent = collisionTransparent;
+		
+	}
+
+	void AddText(int id, string@ text, int x, int y, int width, int height, int font, uint color, int flags)
+	{
+		uint textsLength = texts.length();
+		texts.resize(textsLength+1);
+		@texts[textsLength] = @GUIElementText(id, text, x, y, width, height, font, color, flags);
+		
+	}
+
+	void AddImage(int id, string@ sprName, int x, int y)
+	{
+		AddImage(id, PATH_ART_INTRFACE, sprName, x, y);
+	}
+
+	void AddImage(int id, int patch, string@ sprName, int x, int y)
+	{
+      Message("Warning: \"IGUIElementOpt@ AddImage(int id, int patch, string@ sprName, int x, int y)\" - Not implemented");
+		//uint imagesLength = images.length();
+		//images.resize(imagesLength+1);
+		//@images[imagesLength] = @GUIElementImage(id, patch, sprName, x, y);
+		
+	}
+
+	void SetFocused(bool state){
+		this.isFocused=state;
+	}
+
+	void SetVisible(bool visible){
+		this.visible = visible;
+	}
+
+	void SetAbsolutePosition(bool absolutePosition){
+		this.absolutePosition = absolutePosition;
+	}
+
+	void SetCollisionTransparent(bool collisionTransparent){
+		this.collisionTransparent = collisionTransparent;
+	}
+
+	IGUIElementCallbackInit@ GetCallbackInit(){
+		return @callbackInit;
+	}
+
+	
+
+	// Info
+	int GetId() { return id; }
+	int GetPosX() { return posX; }
+	int GetPosY() { return posY; }
+	int GetWidth() { return elementWidth; }
+	int GetHeight() { return elementHeight; }
+	bool IsFocused() { return isFocused; }
+	bool IsAbsolutePosition() { return absolutePosition; }
+	bool IsCollisionTransparent() { return collisionTransparent; }
+
+	bool IsCollision(int screenX, int screenY, int mouseX, int mouseY)
+	{
+		if(absolutePosition)
+		{
+			screenX = 0;
+			screenY = 0;
+		}
+		return ((mouseX)>=(screenX+posX) && (mouseX)<=(screenX+posX + elementWidth) && (mouseY)>=(screenY+posY) && (mouseY)<=(screenY+posY + elementHeight));
+	}
+
+	bool IsVisible()
+	{
+		return visible;
+	}
+	
+	// Data
+	int id;
+	uint elementWidth;
+	uint elementHeight;
+	int posX;
+	int posY;
+	int mousePosX;
+	int mousePosY;
+	int screenX;
+	int screenY;
+	
+	bool isFocused;
+	bool visible;
+	bool collisionTransparent;
+	bool absolutePosition; // Is Absolute position
+	bool readyForClickEvent;
+	bool[] MousePressed;
+
+	IGUIElementOpt@[] images;
+	IGUIElementOpt@[] texts;
+
+	IGUIElementCallbackInit@ callbackInit;
+	IGUIElementCallbackDraw@ callbackDraw;
+	IGUIElementCallbackMouseDown@ callbackMouseDown;
+	IGUIElementCallbackMouseClick@ callbackMouseClick;
+	IGUIElementCallbackKeyPress@ callbackKeyPress;
+	IGUIElementCallbackMouseMove@ callbackMouseMove;
+	IGUIElementCallbackValueChange@ callbackValueChange;
+	IGUIElementCallbackStateChange@ callbackStateChange;
+}
+
+
+class GUIElementText : GUIElement, IGUIElementTextOpt
+{
+	GUIElementText()
+	{
+		InitText(0, "", 0, 0, 50, 10, FONT_TYPE_DEFAULT, COLOR_TEXT, COLOR_TEXT, 0);
+	}
+	
+	GUIElementText(int id, string@ text, int x, int y)
+	{
+		InitText(id, text, x, y, 50, 10, FONT_TYPE_DEFAULT, COLOR_TEXT, COLOR_TEXT, 0);
+	}	
+
+	GUIElementText(string@ text, int x, int y)
+	{
+		InitText(0, text, x, y, 50, 10, FONT_TYPE_DEFAULT, COLOR_TEXT, COLOR_TEXT, 0);
+	}	
+
+	GUIElementText(string@ text, int x, int y, int width, int height)
+	{
+		InitText(0, text, x, y, width, height, FONT_TYPE_DEFAULT, COLOR_TEXT, COLOR_TEXT, 0);
+	}	
+
+	GUIElementText(int id, string@ text, int x, int y, int width, int height, int font, uint color, int flags)
+	{
+		InitText(id, text, x, y, width, height, font, color, color, flags);
+	}	
+
+	GUIElementText(int id, string@ text, int x, int y, int width, int height, int font, uint color, uint colorDown, int flags)
+	{
+		InitText(id, text, x, y, width, height, font, color, colorDown, flags);
+	}	
+
+	void InitText(int id, string@ text, int x, int y, int width, int height, int font, uint color, uint colorDown, int flags)
+	{
+
+		GUIElement::InitGUIElement(x, y, 0, 0);
+
+		this.id=id;
+		this.posX = x;
+		this.posY = y;
+		this.elementWidth = width;
+		this.elementHeight = height;
+
+		this.dX = 0;
+		this.dY = 0; 
+		this.upDX = 0;
+		this.upDY = 0; 
+		this.downDX = 0;
+		this.downDY = 0;
+
+		if(text is null) this.text="null";
+		else this.text=text; 
+
+		this.font = font;
+		this.textColor = color;
+		this.textColorUp = color;
+		this.textColorDown = colorDown;
+		this.textFlags = flags;
+		
+		collisionTransparent = true;
+		this.visible=true;
+	}
+
+	void Draw(int screenX, int screenY)
+	{
+		if(visible)
+		{
+			if(not absolutePosition)
+				DrawText(text, screenX+posX+dX, screenY+posY+dY, elementWidth, elementHeight, textColor, font, textFlags);
+			else 
+				DrawText(text, posX, posY, elementWidth, elementHeight, textColor, font, textFlags);
+		}
+	}
+
+	void Position(int x, int y)
+	{
+		GUIElement::Position(x, y);
+	}
+
+	void Position(int x, int y, int w, int h)
+	{
+		GUIElement::Position(x, y, w, h);
+	}
+
+	void Position(string& iniKey)
+	{
+		GUIElement::Position(iniKey);
+	}
+
+	void AbsolutePosition(int x, int y)
+	{
+		GUIElement::AbsolutePosition(x, y);
+	}
+
+	void AbsolutePosition(bool absolutePosition)
+	{
+		GUIElement::AbsolutePosition(absolutePosition);
+	}
+
+	void Visible(bool visible)
+	{
+		GUIElement::Visible(visible);
+	}
+ 
+	void Text(string@ text)
+	{
+		Text(text, font, textColor);
+	}
+
+	void Text(string@ text, int font, uint color)
+	{
+		Text(text, font, color, textFlags);
+	}
+
+	void Text(string@ text, int font, uint color, int flags)
+	{
+		Text(text, font, color, color, flags);
+	}
+
+	void Text(string@ text, int font, uint color, uint downColor, int flags)
+	{
+		if(text is null) this.text="";
+		else this.text=text; 
+
+		this.font = font;
+		this.textColor = color;
+		this.textColorUp = color;
+		this.textColorDown = downColor;
+		this.textFlags = flags;
+	}
+	
+	void TextBoxSize(int width, int height)
+	{
+		this.elementWidth = width;
+		this.elementHeight = height;
+	}
+
+	void TextOptions(int font, uint color)
+	{
+		TextOptions(font, color, color, 0);
+	}
+
+	void TextOptions(int font, uint color, int flags)
+	{
+		TextOptions(font, color, color, flags);
+	}
+
+	void TextOptions(int font, uint color, uint colorDown, int flags)
+	{
+		this.font = font;
+		this.textColor = color;
+		this.textColorUp = color;
+		this.textColorDown = colorDown;
+		this.textFlags = flags;
+	}
+
+	void TextColor(uint color)
+	{
+		this.textColor = color;
+	}
+	
+	
+	void SetTextShift(int deltaX, int deltaY, int deltaDownX, int deltaDownY) {
+		this.dX = deltaX;
+		this.dY = deltaY;
+		this.upDX = deltaX;
+		this.upDY = deltaY; 
+		this.downDX = deltaDownX;
+		this.downDY = deltaDownY;
+	}
+
+	void SetTextWidth(int width) 
+	{
+		this.elementWidth = width;
+	}
+
+	void SetTextDown(bool down) {
+		this.textColor = down?textColorDown:textColorUp;
+		this.dX =  down?(upDX+downDX):(upDX);
+		this.dY =  down?(upDY+downDY):(upDY);
+	}
+
+	void SetText(string& text)
+	{
+		this.text=text;
+	}
+
+	void SetVisible(bool visible){
+		GUIElement::SetVisible(visible);
+	}
+
+	void SetFocused(bool state){
+		GUIElement::SetFocused(state);
+	}
+
+	int GetId()
+	{
+		return id;
+	}
+
+	string@ GetText()
+	{
+		return text;
+	}
+
+	int GetFont()
+	{
+		return font;
+	}
+
+	uint GetTextColor()
+	{
+		return textColor;
+	}
+
+	bool IsVisible()
+	{
+		return GUIElement::IsVisible();
+	}
+
+	void CallbackMouseMove(IGUIElementCallbackMouseMove@ callback) { @callbackMouseMove=callback;  }
+	void CallbackInit(IGUIElementCallbackInit@ callback) { @callbackInit=callback;  }
+	void CallbackDraw(IGUIElementCallbackDraw@ callback) { @callbackDraw=callback;  }
+	void CallbackMouseDown(IGUIElementCallbackMouseDown@ callback) { @callbackMouseDown=callback;  }
+	void CallbackMouseClick(IGUIElementCallbackMouseClick@ callback) { @callbackMouseClick=callback;  }
+
+
+	string text;
+	int font;
+	
+	int dX;
+	int dY;
+	int upDX;
+	int upDY;
+	int downDX;
+	int downDY;
+	uint textColor;
+	uint textColorUp;
+	uint textColorFocused;
+	uint textColorDown;
+	int textFlags;
+}
+
+
+class GUIElementImage : GUIElement, IGUIElementImageOpt
+{
+	GUIElementImage()
+	{
+		this.id = -1;
+	}
+
+	GUIElementImage(int id, string@ sprName, int x, int y)
+	{
+		InitImage(id, sprName, PATH_ART_INTRFACE, x, y);
+	}
+
+	GUIElementImage(int id, int patch, string@ sprName, int x, int y)
+	{
+		InitImage(id, sprName, patch, x, y);
+	}	
+
+	GUIElementImage(string@ sprName, int patch, int x, int y)
+	{
+		InitImage(0, sprName, patch, x, y);
+	}	
+
+	void InitImage(int id, string@ sprName, int patch, int x, int y)
+	{
+		GUIElement::InitGUIElement(x, y, 0, 0);
+
+		this.id=id;
+		if(@sprName!=null){
+			this.patch = patch;
+			image.Load(sprName, patch);
+			this.elementWidth  = image.Width;
+			this.elementHeight = image.Height;
+			if(image.Id==0) Message("ERROR: Ubable to load: "+sprName+".");
+		}
+
+		this.posX = x;
+		this.posY = y;
+		
+		collisionTransparent = true;
+		this.visible=true;
+	}
+
+	void Draw(int screenX, int screenY)
+	{
+		if(absolutePosition) {
+			screenX = 0;
+			screenY = 0;
+		}
+
+		if(visible)
+		{
+			if(this.image.Id!=0) DrawSprite(this.image.Id,-1,screenX+posX,screenY+posY,0); 
+		}
+	}
+
+	void Position(int x, int y)
+	{
+		Position(x, y);
+	}
+
+	void Position(int x, int y, int w, int h)
+	{
+		GUIElement::Position(x, y, w, h);
+	}
+
+	void Position(string& iniKey)
+	{
+		GUIElement::Position(iniKey);
+	}
+
+	void AbsolutePosition(bool absolutePosition)
+	{
+		GUIElement::AbsolutePosition(absolutePosition);
+	}
+
+	void Visible(bool visible)
+	{
+		GUIElement::Visible(visible);
+	}
+
+	void SetPosX(int x)
+	{
+		this.posX = x;
+	}
+
+	void SetPosY(int y)
+	{
+		this.posY = y;
+	}
+
+	void SetVisible(bool visible){
+		GUIElement::SetVisible(visible);
+	}
+
+	void SetFocused(bool state){
+		GUIElement::SetFocused(state);
+	}
+
+
+	int GetPosX()
+	{
+		return posX;
+	}
+
+	int GetPosY()
+	{
+		return posY;
+	}
+
+	int GetImageWidth()
+	{
+		return image.Width;
+	}
+
+	int GetImageHeight()
+	{
+		return image.Height;
+	}
+
+	bool IsCollision(int screenX, int screenY, int mouseX, int mouseY)
+	{
+		return GUIElement::IsCollision(screenX, screenY, mouseX, mouseY);
+	}
+
+	bool IsVisible()
+	{
+		return GUIElement::IsVisible();
+	}
+
+	void CallbackInit(IGUIElementCallbackInit@ callback) { @callbackInit=callback;  }
+	void CallbackDraw(IGUIElementCallbackDraw@ callback) { @callbackDraw=callback;  }
+	void CallbackMouseDown(IGUIElementCallbackMouseDown@ callback) { @callbackMouseDown=callback;  }
+	void CallbackMouseClick(IGUIElementCallbackMouseClick@ callback) { @callbackMouseClick=callback;  }
+
+
+	Sprite image;
+	int patch;
+}
+
+
+class GUIElementButton : GUIElement, IGUIElementButtonOpt
+{
+	void CallbackInit(IGUIElementCallbackInit@ callback) { @callbackInit=callback;  }
+	void CallbackDraw(IGUIElementCallbackDraw@ callback) { @callbackDraw=callback;  }
+	void CallbackMouseDown(IGUIElementCallbackMouseDown@ callback) { @callbackMouseDown=callback;  }
+	void CallbackMouseClick(IGUIElementCallbackMouseClick@ callback) { @callbackMouseClick=callback;  }
+
+
+	GUIElementButton(int x, int y)
+	{
+		@ButtonText = GUIElementText();
+		InitGUIElement(x, y, 0, 0);
+	}
+
+	void Draw(int screenX, int screenY)
+	{
+		if(absolutePosition) {
+			screenX = 0;
+			screenY = 0;
+		}
+
+		if(visible)
+		{
+			isDown=MousePressed[MOUSE_CLICK_LEFT];
+
+			if(isDown)
+			{
+				if(not (downSprite is null)) downSprite.Draw(screenX, screenY);
+				ButtonText.SetTextDown(true);
+			}
+			else 
+			{
+				if(not (upSprite is null)) upSprite.Draw(screenX, screenY);
+				ButtonText.SetTextDown(false);
+			}
+			ButtonText.Draw(screenX, screenY);
+
+			if(not (callbackDraw is null)) callbackDraw.OnDraw(this.id);
+		}
+	}
+
+	void Position(int x, int y)
+	{
+		GUIElement::Position(x, y);
+		UpdateelementsPositions();
+		
+	}
+
+	void Position(int x, int y, int w, int h)
+	{
+		GUIElement::Position(x, y, w, h);
+		UpdateelementsPositions();
+		
+	}
+
+	void Position(string& iniKey)
+	{
+		GUIElement::Position(iniKey);
+		UpdateelementsPositions();
+		
+	}
+
+	void AbsolutePosition(bool absolutePosition)
+	{
+		GUIElement::AbsolutePosition(absolutePosition);
+	}
+
+	void Visible(bool visible)
+	{
+		GUIElement::Visible(visible);
+	}
+
+	void Text(string@ text)
+	{
+		int font = FONT_TYPE_DEFAULT;
+		uint color = COLOR_SAND;
+		uint downColor = COLOR_DRED;
+		int flags = FONT_FLAG_CENTERY | FONT_FLAG_CENTERX;
+		Text(text, font, color, downColor, flags);
+	}
+
+	void Text(string@ text, int font, uint color)
+	{
+		Text(text, font, color, color, FONT_FLAG_CENTERX|FONT_FLAG_CENTERY);
+	}
+
+	void Text(string@ text, int font, uint color, int flags)
+	{
+		uint downColor = COLOR_DRED;
+		Text(text, font, color, downColor, flags);
+	}
+
+	void Text(string@ text, int font, uint color, uint downColor, int flags)
+	{
+		@ButtonText = GUIElementText(0, text, posX, posY, elementWidth, elementHeight, font, color, downColor, flags);
+		 
+	}
+
+	void TextShift(int deltaX, int deltaY, int deltaDownX, int deltaDownY)
+	{
+		ButtonText.SetTextShift(deltaX,deltaY,deltaDownX,deltaDownY);
+		
+	}
+
+	void TextWidth(int width)
+	{
+		ButtonText.SetTextWidth(width);
+		
+	}
+
+	void UpPic(string@ sprName)
+	{
+		@upSprite = @GUIElementImage(id, sprName, posX, posY);
+		this.elementWidth = upSprite.image.Width;
+		this.elementHeight = upSprite.image.Height;
+	}	
+
+	void DownPic(string@ sprName)
+	{
+		@downSprite = @GUIElementImage(id, sprName, posX, posY);
+		this.elementWidth = downSprite.image.Width;
+		this.elementHeight = downSprite.image.Height;
+	}
+
+	void ClickableZone(int width, int height)
+	{
+		this.elementWidth = width;
+		this.elementHeight = height;
+	}
+
+	void ClickableZone(int x, int y, int width, int height)
+	{
+		this.posX = x;
+		this.posY = y;
+
+		this.elementWidth = width;
+		this.elementHeight = height;
+	}
+
+	void SetVisible(bool visible){
+		GUIElement::SetVisible(visible);
+	}
+
+	void SetFocused(bool state){
+		GUIElement::SetFocused(state);
+	}
+
+	// private functions
+	void UpdateelementsPositions()
+	{
+		if(@upSprite!= null)
+		{
+			upSprite.posX = posX;
+			upSprite.posY = posY;
+		}
+		if(@downSprite!= null)
+		{
+			downSprite.posX = posX;
+			downSprite.posY = posY;
+		}
+		if(@ButtonText!= null)
+		{
+			ButtonText.posX = posX;
+			ButtonText.posY = posY;
+		}
+	}
+
+
+
+	bool IsVisible()
+	{
+		return GUIElement::IsVisible();
+	}
+
+	GUIElementImage @upSprite;
+	GUIElementImage @downSprite;
+	GUIElementText @ButtonText;
+	bool isDown;
+}
+

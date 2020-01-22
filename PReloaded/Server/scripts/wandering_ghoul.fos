@@ -1,0 +1,49 @@
+//
+// FOnline: 2238
+// Rotators
+//
+// wandering_ghoul.fos
+//
+
+#include "_macros.fos"
+#include "npc_common_h.fos"
+
+// NPC will wander around like some mindless Ghoul.
+
+void critter_init(Critter& npc, bool firstTime)
+{
+    //npc.SetEvent(CRITTER_EVENT_IDLE, "_Idle");)
+	
+	if(firstTime) CreateTimeEvent(AFTER(REAL_MS(Random(500, 20000))), "e_Idle", npc.Id, true);
+}
+
+/*void _Idle(Critter& npc)
+{
+    if(npc.GetTalkedPlayers(null) > 0)
+        return;
+
+    if(Random(0, 2) == 0)
+        MoveRandom(npc, 6);
+    // till next move
+    npc.Wait(Random(500, 20000));
+}*/
+
+uint e_Idle(array<uint>@ justnpcId)
+{
+    Critter@ npc = GetCritter(justnpcId[0]);
+	if(!valid(npc)) return 0;
+	
+	if(npc.GetTalkedPlayers(null) > 0)
+        return REAL_MS(Random(500, 20000));
+		
+	array<NpcPlane@> planes;
+    npc.GetPlanes(planes);
+	if(planes.length() > 0)
+        return REAL_MS(Random(500, 20000));
+
+    if(Random(0, 2) == 0)
+        MoveRandom(npc, 6);
+    
+	// till next move
+    return REAL_MS(Random(500, 20000));
+}

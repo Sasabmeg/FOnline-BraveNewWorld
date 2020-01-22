@@ -1,0 +1,41 @@
+//
+// FOnline: 2238, FOnline2, Reloaded
+// pdata_h.fos
+//
+#ifndef __PDATA_H__
+#define __PDATA_H__
+
+#ifndef __PDATA__
+
+import void StartPersonalDataCleanup() from "pdata";
+
+#define IMPORT_PERSONAL_DATA_RAW#(_gameType) \
+	import bool GetPersonalData(_gameType obj, string& name, array<uint8>& value) from "pdata";					\
+	import uint GetPersonalData(_gameType obj, array<string>& names, array<array<uint8>>& values) from "pdata";	\
+	import bool IsPersonalData(_gameType obj, string& name) from "pdata";											\
+	import bool SetPersonalData(_gameType obj, string& name, array<uint8>& value) from "pdata";					\
+	import bool UnsetPersonalData(_gameType obj, string& name) from "pdata";										\
+	import uint UnsetPersonalDataWithPrefix(_gameType obj, string& prefix) from "pdata";
+
+#define IMPORT_PERSONAL_DATA_LIST#(_gameType) \
+	import void AddToPersonalDataList( _gameType obj, string& pdata, uint value ) from "pdata";		\
+	import uint GetPersonalDataList( _gameType obj, string& pdata, array<uint>& list ) from "pdata";	\
+	import uint GetPersonalDataListSize( _gameType obj, string& pdata ) from "pdata";					\
+	import bool IsInPersonalDataList( _gameType obj, string& pdata, uint value ) from "pdata";			\
+	import void RemoveFromPersonalDataList( _gameType obj, string& pdata, uint value ) from "pdata";	\
+
+#define IMPORT_PERSONAL_DATA#(_gameType) \
+	IMPORT_PERSONAL_DATA_RAW(_gameType)		\
+	IMPORT_PERSONAL_DATA_LIST(_gameType)	\
+
+IMPORT_PERSONAL_DATA(Location&)
+IMPORT_PERSONAL_DATA(Map&)
+IMPORT_PERSONAL_DATA(Critter&)
+IMPORT_PERSONAL_DATA(Item&)
+
+// Critter need extra wrappers to work on lists attached to offline characters
+IMPORT_PERSONAL_DATA_LIST(uint)
+
+#endif // __PDATA__
+
+#endif // __PDATA_H__ //

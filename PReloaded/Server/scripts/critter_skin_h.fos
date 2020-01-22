@@ -1,0 +1,56 @@
+#ifndef __CRITTER_SKIN_H__
+#define __CRITTER_SKIN_H__
+
+shared enum SkinEffect
+{
+	SKIN_EFFECT_NORUN = 0x01	// needs special treatment in critter_init()
+};
+
+shared enum SkinInfo
+{
+	SKIN_INFO_UNKNOWN,
+	SKIN_INFO_YES,
+	SKIN_INFO_LIMITED,
+	SKIN_INFO_NO = -1,
+};
+
+shared interface Skin
+{
+	// basic info
+	string Name { get; }
+	uint16 Base { get; }
+	uint8 Gender { get; }
+	bool Locked { get; }
+	uint Effects { get; }
+
+	// weapon restrictions
+	SkinInfo Pistol { get; }
+	SkinInfo SMG { get; }
+	SkinInfo Shotgun { get; }
+	SkinInfo Rifle { get; }
+	SkinInfo Flamer { get; }
+	SkinInfo Minigun { get; }
+	SkinInfo RocketLauncher { get; }
+	SkinInfo HeavyBG { get; }
+	SkinInfo HeavyEW { get; }
+	SkinInfo Unarmed { get; }
+	SkinInfo Knife { get; }
+	SkinInfo Club { get; }
+	SkinInfo Spear { get; }
+	SkinInfo Hammer { get; }
+	SkinInfo Throwing { get; }
+	SkinInfo Running { get; }
+
+	uint16 get_opIndex( uint16 crType );
+};
+
+#ifndef __CRITTER_SKIN__
+
+import void InitSkins() from "critter_skin";
+import bool ValidateSkins() from "critter_skin";
+import Skin@ GetSkin( Critter& cr ) from "critter_skin";
+import Skin@ GetSkin( uint16 crType ) from "critter_skin";
+
+#endif
+
+#endif // __CRITTER_SKIN_H__ //

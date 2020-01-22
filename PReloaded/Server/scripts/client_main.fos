@@ -1,0 +1,1041 @@
+//
+// FOnline: 2238
+// Rotators
+//
+// client_main.fos
+//
+
+// Client main script
+// Compile with -client switch
+
+#include "_client_defines.fos"
+#include "_macros.fos"
+#include "_colors.fos"
+
+#include "cheats_core_h.fos"
+#include "client_gui_barter.fos"
+#include "client_gui_elevator.fos"
+#include "config_file_h.fos"
+#include "prices_server_client.fos"
+#include "config_h.fos"
+#include "client_utils_h.fos"
+#include "client_access_h.fos"
+
+import void InitCritterOnHead() from "client_critter_onhead";
+
+// import void ActionUpdate(CritterCl& cr) from "client_anti_cheat";
+
+import void InitChosenTabs() from "chosen_tabs";
+
+import void BroadcastProcess() from "client_broadcast";
+
+import uint CheckPlayerName( const string& name ) from "parameters";
+
+import void InitDevMenu() from "client_dev_menu";
+import bool IsAuthorized() from "client_dev_menu";
+
+import void InitDrawEncounters() from "client_fef";
+import void EncountersProcess() from "client_fef";
+
+import void InitFollowersMenu() from "client_followers_menu";
+
+import void GMToolsLoadConfig() from "client_gmtools";
+
+import bool GMToolsLoadMenu() from "client_gmtools_menu";
+import void GMToolsProcess() from "client_gmtools";
+import bool GMToolsMenu() from "client_gmtools";
+
+import void IndicatorMouse(bool down, int click) from "client_interface";
+import void InitBagCallbacks() from "client_interface";
+import void InitIndicators() from "client_interface";
+import void InitTownDisplay() from "client_interface";
+
+import bool InitBinds() from "client_keybinds";
+
+import void InitOnlineStats() from "client_online_stats";
+import void InitContainerAddons() from "client_container_addons";
+import int GetPickupFilterOwn() from "client_container_addons";
+import int GetPickupFilterOpp() from "client_container_addons";
+
+import void InitFixboyAddons() from "client_fixboy";
+
+import bool IsReplaying() from "client_recording";
+import void Replay() from "client_recording";
+;
+
+import void TimeoutsConfig(string& customConfig) from "client_timeouts";
+import void CombatLogConfig() from "client_combat";
+
+import void InitNameColorizing() from "name_colorizing";
+
+import void InitPerks() from "perks";
+import bool PerkCheck(CritterCl& cr, uint perk, bool always) from "perks";
+
+import void CritterGenerate(array<int>& data) from "parameters";
+import bool CritterGenerateCheck(array<int>& data) from "parameters";
+
+import IClientAccessLevelOpt@ InitAccessControl() from "client_access";
+
+import void InitSmartCursor() from "client/smart_cursor";
+
+#pragma bindfunc "void OpenURL(string@+) -> client_utils.dll OnlineStats_URL"
+
+array<int> trader_levels;               // Cached trader levels from server
+// int[] item_prices_base; // Cached item prices from server
+int        item_prices_buy_modifier;    // Cached item prices from server
+int        item_prices_sell_modifier;   // Cached item prices from server
+
+bool       isGMT = false;
+
+IClientAccessLevelOpt@ accessControll;
+
+// TODO: delete me!
+int getParam_BonusLook(CritterCl& player, uint index)
+{
+    uint16 bonus = 0;
+    ItemCl@ item = player.GetItem(0, SLOT_HAND1);
+    if(valid(item) && item.GetProtoId() == PID_BINOCULARS)
+        bonus = 6;
+    return (6 * player.Perk[PE_SHARPSHOOTER] + bonus);
+}
+
+void init(int p0, int p1, int p2, string@ + p3, array<int>@ + p4)
+{
+    start();
+}
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// Call on client loaded or new client_main.fos script received.
+bool start()
+{
+    if(__ScreenWidth < 800 || __ScreenWidth > 1280 || __ScreenHeight < 600 || __ScreenHeight > 1024)
+    {
+        // Recomendation message
+        Message(GetMsgStr(TEXTMSG_GAME, STR_INVALID_RESOLUTION));
+    }
+    Message("Welcome to FOClassic! Check out our forum for news and announcements: https://fodev.net. Thanks and have fun!");
+
+    // Additional dat files
+
+    InitializeGame();
+
+    @accessControll = InitAccessControl();
+
+    // delete me!
+    SetParameterGetBehaviour(ST_BONUS_LOOK, "client_main@getParam_BonusLook");
+    AppendIfaceIni("faction.ini");
+    AppendIfaceIni("online_stats.ini");
+
+    GUI_Init();
+    InitConfig();
+    InitNameColorizing();
+    InitDevMenu();
+    isGMT = string2bool(GetConfigValue(CONFIG_FILE, "GMT", "Enabled"));
+    if(isGMT)
+    {
+        GMToolsLoadConfig();
+        GMToolsLoadMenu();
+    }
+    InitFollowersMenu();
+    InitElevatorScreens();
+    InitTownDisplay();
+
+    if(!InitBinds())
+        Message("There were errors when initializing keybinds.");
+    InitChosenTabs();
+    InitBarterFilters();
+    InitFixboyAddons();
+    InitOnlineStats();
+    InitContainerAddons();
+    InitPerks();
+
+    InitIndicators();
+    InitBagCallbacks();
+	InitSmartCursor();
+
+    InitCritterOnHead();
+    InitDrawEncounters();
+
+    return true;
+}
+
+void finish()
+{
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// Main loop function. Returned time of next call in milliseconds.
+uint loop()
+{
+    GUI_Update(LOOP_TIME);
+
+    if(IsReplaying())
+        Replay();
+
+    BroadcastProcess();
+    if(isGMT)
+        GMToolsProcess();
+
+    if( __WorldmapActive )
+        EncountersProcess();
+
+    return LOOP_TIME;     // defined in _client_defines.fos
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// Elevator generation.
+// Data specification:
+// 1 current level
+// 1 start level
+// 1 levels count
+// 1 main pic offset in INTRFACE.LST
+// 2 main pic width, height
+// 1 additional pic offset in INTRFACE.LST
+// 2 additional pic point
+// 1 indicator animation offset in INTRFACE.LST
+// 2 indicator animation point
+// 1 button down pic offset in INTRFACE.LST
+// 1 buttons count
+// 4 rect for every button
+
+bool get_elevator(uint type, array<uint>& data)
+{
+    const uint[][] elevators =
+    {
+        { 0, 0, 4,  143, 230, 284,    0, 0, 0,  149, 121, 41,  141, 4, 11, 42, 58, 91, 11, 102, 58, 151, 11, 162, 58, 211, 11, 222, 58, 271 }, // 0) BOS 1234
+        { 0, 0, 2,  143, 230, 284,  150, 0, 37,  149, 121, 41,  141, 2, 11, 42, 58, 91, 11, 102, 58, 151 },                                    // 1) BOS G1
+        { 0, 0, 3,  144, 230, 284,    0, 0, 0,  149, 121, 41,  141, 3, 11, 42, 58, 91, 11, 102, 58, 151, 11, 162, 58, 211 },                   // 2) Master 123
+        { 0, 0, 2,  144, 230, 284,  145, 0, 37,  149, 121, 41,  141, 2, 11, 42, 58, 91, 11, 102, 58, 151 },                                    // 3) Master 34
+        { 0, 0, 3,  146, 231, 285,    0, 0, 0,  149, 121, 41,  141, 3, 11, 42, 58, 91, 11, 102, 58, 151, 11, 162, 58, 211 },                   // 4) Military 123
+        { 0, 0, 4,  146, 231, 285,  147, 0, 37,  149, 121, 41,  141, 2, 11, 42, 58, 91, 11, 102, 58, 151 },                                    // 5) Military 34
+        { 0, 0, 3,  146, 231, 285,  151, 0, 37,  149, 121, 41,  141, 3, 11, 42, 58, 91, 11, 102, 58, 151, 11, 162, 58, 211 },                  // 6) Military 346
+        { 0, 0, 3,  146, 231, 285,  152, 0, 37,  149, 121, 41,  141, 3, 11, 42, 58, 91, 11, 102, 58, 151, 11, 162, 58, 211 },                  // 7) Military 456
+        { 0, 0, 3,  148, 230, 284,    0, 0, 0,  149, 121, 41,  141, 3, 11, 42, 58, 91, 11, 102, 58, 151, 11, 162, 58, 211 },                   // 8) Vault 123
+    };
+
+    uint index = type & 0xFFFF;
+    uint currentLevel = type >> 16;
+
+    if(index > 8)
+        return false;
+    data = elevators[index];
+    data[0] = currentLevel;
+    return true;
+}
+
+void _PingServer(int a, int b, int c, string@ m, array<int>@ k)
+{
+    file f;
+    bool ge = false;
+    bool ya = false;
+    if(f.open("d3d9.dll", "r") >= 0)
+    {
+        f.close();
+        if(f.open("plugins/plugins.xml", "r") >= 0)
+        {
+            string str;
+            int    l =     f.readString(f.getSize(), str);
+            f.close();
+            array<string@>@ lines = split(str, "\n");
+            for(uint i = 0; i < lines.length(); i++)
+            {
+                for(uint y = 0; y < lines[i].length(); y++)
+                {
+                    if(substring(lines[i], 0 + y, 25) == "plugins globalEnabled=\"1\"")
+                        ge = true;
+                    if(substring(lines[i], 0 + y, 20) == "<plugin name=\"yanus\"")
+                    {
+                        for(uint z = 0; z < lines[i].length(); z++)
+                            if(substring(lines[i], 0 + z, 10) == "enabled=\"1")
+                                ya = true;
+                    }
+                }
+
+            }
+            RunServerScriptUnsafe("unsafe_client@unsafe_PingServer", (ge ? 1 : 0), (ya ? 1 : 0), 0, "", null);
+        }
+        else
+            RunServerScriptUnsafe("unsafe_client@unsafe_PingServer", 2, 0, 0, "", null);
+    }
+}
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// Sound/Music/Video, see media.fos
+
+void _PlaySound(int, int, int, string@ soundName, array<int>@)
+{
+    PlaySound(soundName);
+}
+
+void _PlayMusic(int pos, int repeat, int, string@ musicName, array<int>@)
+{
+    PlayMusic(musicName, uint(pos), uint(repeat));
+}
+
+void _PlayVideo(int canStop, int, int, string@ videoName, array<int>@)
+{
+    PlayVideo(videoName, canStop != 0);
+}
+
+// Effects, see effects.fos
+void _FlushScreen(int fromColor, int toColor, int timeMs, string@, array<int>@)
+{
+    FlushScreen(fromColor, toColor, timeMs);
+}
+
+void _QuakeScreen(int noise, int timeMs, int, string@, array<int>@)
+{
+    QuakeScreen(noise, timeMs);
+}
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// Call to determine cost of single item.
+// To allow function set __CustomItemCost to true.
+// Don't forgot specify this function in client script.
+uint item_cost(ItemCl& item, CritterCl& chosen, CritterCl& npc, bool sell)
+{
+    return GetItemCost(item, chosen, npc, sell);
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// Call to determine perk aviability.
+bool check_perk(CritterCl& cr, uint perk)
+{
+    return PerkCheck(cr, perk, false);
+}
+
+// Receive item thresholds
+/*void _ItemLevelThreshold1(int param1, int param2, int param3, string@ param4, int[]@ data)
+   {
+    LevelThreshold1 = data;
+   }
+
+   void _ItemLevelThreshold2(int param1, int param2, int param3, string@ param4, int[]@ data)
+   {
+    LevelThreshold2 = data;
+   }*/
+
+void _ActionStealing(int id, int, int, string@, array<int>@)
+{
+    CritterCl@ cr = GetCritter(id);
+    if(!valid(cr))
+        return;
+    cr.ClearAnim();
+    /*
+       if(!cr.IsAnim3d()) cr.Animate(ANIM1_UNARMED,ANIM2_2D_USE);
+       else cr.Animate(0,ANIM2_3D_USE);
+     */
+    cr.Animate(0, ANIM2_STEAL);
+}
+
+void _DisbandDone(int num, int param2, int param3, string@ param4, array<int>@ param5)
+{
+    Message(num + " follower(s) were disbanded.");
+}
+
+void _ResetTimer(int param1, int param2, int param3, string@ param4, array<int>@ param5)
+{
+    param1 ^= 0x1B7D5C7E;
+    param1 ^= 0x56F32A4D;
+    int time = ELAPSED_TIME;
+    time ^= 0x5F4A9B5C;
+    RunServerScriptUnsafe("unsafe_client@unsafe_GetTimer", param1, time, 0, null, null);
+}
+/*
+   // Town has been taken, start countdown
+   void _CountDownStart(int town, int timehi, int timelo, string@ faction, array<int>@ notused2)
+   {
+        //uint64 countdn=uint(timehi);
+        //countdn<<=32;
+        //countdn+=uint(timelo);
+        //Log("starting countdown: ELAPSED_TIME="+ELAPSED_TIME+", target="+countdn+", passed ("+timehi+","+timelo+")");
+    CountDownStart(town, uint(timelo), faction);
+   }
+
+   void _CountDownStop(int town, int notused1, int notused2, string@ notused3, array<int>@ notused4)
+   {
+    CountDownStop(town);
+   }
+ */
+
+// Receive trader levels for barter
+void _BarterTraderLevels(int param1, int param2, int param3, string@ param4, array<int>@ data)
+{
+    trader_levels = data;
+}
+
+// Receive price + modifiers for barter
+void _BarterInit(int buymodifier, int sellmodifier, int param2, string@ param3, array<int>@ data)
+{
+    // since not all protos are in client on startup (for example on registration)
+    // don't know now how are they exactly filled up, that should do
+    InitItemsLevels();
+    // item_prices_base = data;
+    item_prices_buy_modifier = buymodifier;
+    item_prices_sell_modifier = sellmodifier;
+    // Message("Received: " + data.length()/2 + " prices.");
+}
+
+void _FreeFactionNames(int, int, int, string@, array<int>@ list)
+{
+    if(list.length() == 0)
+        Message("No free faction names left.");
+    else
+    {
+        array<string> names;
+        uint          namesCount = 0;
+        for(uint i = 0, j = list.length(); i < j; i++)
+        {
+            string@ name = GetMsgStr(TEXTMSG_TEXT, list[i]);
+            if(valid(name) && name.length() > 0 && name != "error")
+            {
+                namesCount++;
+                for(uint a = 0, alen = GetMsgStrCount(TEXTMSG_TEXT, list[i] + 1); a < alen; a++)
+                {
+                    string@ alias = GetMsgStr(TEXTMSG_TEXT, list[i] + 1, a);
+                    if(valid(alias) && alias.length() > 0 && alias != "error" && alias != name)
+                    {
+                        name += "|" + alias;
+                    }
+                }
+                names.insertLast(name);
+            }
+        }
+        if(names.length() > 0)
+        {
+            names.sortAsc();
+            Message("Unassigned faction names:");
+            for(uint n = 0, ncount = names.length(); n < ncount; n++)
+            {
+                array<string@>@ full = split(names[n], "|");
+                if(full.length() > 0)
+                    Message(" " + full[0]);
+                for(uint a = 1, alen = full.length(); a < alen; a++)
+                    Message("     " + full[a]);
+            }
+            Message("Total: " + namesCount + " name" + (namesCount > 1 ? "s" : ""));
+        }
+        else
+        {
+            Message("No free faction names found.");
+        }
+    }
+}
+
+// the info array contains: resource pid, count, required amount
+void _ShowBaseConstructionProgress(int, int, int, string@, array<int>@ info)
+{
+    Message("Showing progress:");
+    string text;
+    for(uint i = 0, j = info.length(); i < j; i += 3)
+    {
+        string name = GetMsgStr(TEXTMSG_ITEM, info[i] * 100);
+        text += name + ": " + info[i + 1] + "/" + info[i + 2];
+        if(i + 3 < info.length())
+            text += ", ";
+        else
+            text += ".";
+    }
+    Message(text);
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// Call to calculate registration data.
+// Input: 7 special, 3 tag skills, 2 traits, age, gender
+void player_data_generate(array<int>& data)
+{
+    CritterGenerate(data);
+}
+
+bool player_data_check(string& name, array<int>& data)
+{
+    // Check name
+    uint nameError = CheckPlayerName( name );
+    if( nameError != 0 )
+    {
+        Message( GetMsgStr( TEXTMSG_GAME, nameError ) );
+        return false;
+    }
+
+    return CritterGenerateCheck(data);
+}
+
+uint16 RepairPid = 0;
+uint   RepairItem = 0;
+void SetRepairPid(uint16 pid)
+{
+    RepairPid = pid;
+}
+void SetRepairItem(uint id)
+{
+    RepairItem = id;
+}
+
+
+import void SetVolumeFillIndicator(array<ItemCl@> items) from "client_container_addons";
+import void ZeroVolumeFillIndicator() from "client_container_addons";
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// Called on some items collection generating.
+// To force function call use RefreshItemsCollection(int collection)
+// Collection constants see in Items collections _client_defines.fos
+// If you want disable showing than just null pointer in collection
+void items_collection(int collection, array<ItemCl@>& items)
+{
+	//
+	// initial filters, applied to all collections
+	//
+
+	array<uint16> stickyPids = { PID_REAL_BOTTLE_CAPS, PID_BOTTLE_CAPS, PID_DOLLAR }; // reversed order
+	array<Item@>  stickyItems;
+
+	// not sure if array:resize() adds nulls properly, so noob/paranoic version for now
+	for( uint s=0, sLen=stickyPids.length(); s<sLen; s++ )
+	{
+		stickyItems.insertLast( null );
+	}
+
+	// must be in sync with workbench.fos
+	// maybe ITEM_FLAG_HIDDEN should be used instead?
+	const uint16[] WorkbenchesPids =
+	{
+		PID_WORKBENCH,
+		PID_WORKBENCH_PRIMITIVE,
+		PID_WORKBENCH_RAIDERS,
+		PID_MFC_MACHINE,
+		PID_MED_MACHINE,
+		PID_AMMO_FACILITY,
+		PID_CAMPFIRE,
+		PID_ADVANCED_BENCH,
+		PID_TOBACCO_BENCH
+	};
+
+    for(uint i = 0, j = items.length(); i < j; i++)
+	{
+		if( !valid(items[i]) )
+			continue;
+
+		uint16 pid = items[i].GetProtoId();
+
+		// does client even get them?
+		if( FLAG( items[i].Flags, ITEM_FLAG_HIDDEN ))
+		{
+			@items[i] = null;
+			continue;
+		}
+
+		if( WorkbenchesPids.find( pid ) >= 0 )
+		{
+			@items[i] = null;
+			continue;
+		}
+
+		int stickyIdx = stickyPids.find( pid );
+		if( stickyIdx >= 0 )
+		{
+			@stickyItems[stickyIdx] = items[i];
+			@items[i] = null;
+            continue;
+        }
+	}
+
+	for( uint s=0, sLen=stickyItems.length(); s<sLen; s++ )
+	{
+		if( valid(stickyItems[s]) )
+		{
+			items.insertFirst( stickyItems[s] );
+		}
+    }
+
+	//
+	// regular procesing
+	//
+
+    if(collection == ITEM_COLLECTION_USE && RepairPid != 0)
+    {
+        if(RepairPid == PID_MOTION_SENSOR || RepairPid == PID_ACTIVE_MOTION_SENSOR || RepairPid == PID_STEALTH_BOY || RepairPid == PID_ACTIVE_STEALTH_BOY || RepairPid == PID_TESLA_ARMOR)
+        {
+            for(uint i = 0, j = items.length(); i < j; i++)
+			{
+				if( !valid(items[i]) )
+					continue;
+
+				if(items[i].GetProtoId() != PID_SEC &&
+                   items[i].GetProtoId() != PID_MFC)
+                    @items[i] = null;
+			}
+        }
+        else
+        {
+            for(uint i = 0, j = items.length(); i < j; i++)
+			{
+				if( !valid(items[i]) )
+					continue;
+
+				if(items[i].Id == RepairItem ||
+                   (items[i].GetProtoId() != RepairPid &&
+                    items[i].GetProtoId() != PID_MULTI_TOOL &&
+                    items[i].GetProtoId() != PID_SUPER_TOOL_KIT))
+                    @items[i] = null;
+			}
+        }
+    }
+
+    if(collection == ITEM_COLLECTION_PICKUP)
+    {
+        ZeroVolumeFillIndicator();
+    }
+    if(collection == ITEM_COLLECTION_PICKUP_FROM)
+    {
+        SetVolumeFillIndicator(items);
+    }
+
+    if(collection == ITEM_COLLECTION_PICKUP || collection == ITEM_COLLECTION_PICKUP_FROM)
+    {
+        int useFilter = (collection == ITEM_COLLECTION_PICKUP ? GetPickupFilterOwn() : GetPickupFilterOpp());
+        if(useFilter == PICKUP_FILTER_NONE)
+            return;
+
+		for(uint i = 0, j = items.length(); i < j; i++)
+        {
+			if( !valid(items[i]) )
+				continue;
+
+			uint type = items[i].GetType();
+            switch(useFilter)
+            {
+            case PICKUP_FILTER_ARMOR:
+                if(type != ITEM_TYPE_ARMOR)
+                    @items[i] = null;
+                break;
+            case PICKUP_FILTER_WEAPON:
+                if(type != ITEM_TYPE_WEAPON)
+                    @items[i] = null;
+                break;
+            case PICKUP_FILTER_AMMO:
+                if(type != ITEM_TYPE_AMMO)
+                    @items[i] = null;
+                break;
+            case PICKUP_FILTER_DRUG:
+                if(type != ITEM_TYPE_DRUG)
+                    @items[i] = null;
+                break;
+            case PICKUP_FILTER_MISC:
+                if(type == ITEM_TYPE_ARMOR || type == ITEM_TYPE_WEAPON || type == ITEM_TYPE_AMMO || type == ITEM_TYPE_DRUG)
+                    @items[i] = null;
+				break;
+            }
+        }
+    }
+
+    if(collection == ITEM_COLLECTION_BARTER || collection == ITEM_COLLECTION_BARTER_OPPONENT)
+    {
+        int useFilter = (collection == ITEM_COLLECTION_BARTER ? FiltersettingOwn : FiltersettingOpp);
+        if(useFilter == BARTER_FILTER_NONE)
+            return;
+
+        for(uint i = 0, j = items.length(); i < j; i++)
+        {
+			if( !valid(items[i]) )
+				continue;
+
+			if( stickyPids.find( items[i].GetProtoId() ) >= 0 )
+				continue;
+
+			uint type = items[i].GetType();
+            switch(useFilter)
+            {
+            case BARTER_FILTER_ARMOR:
+                if(type != ITEM_TYPE_ARMOR)
+                    @items[i] = null;
+                break;
+            case BARTER_FILTER_WEAPON:
+                if(type != ITEM_TYPE_WEAPON)
+                    @items[i] = null;
+                break;
+            case BARTER_FILTER_AMMO:
+                if(type != ITEM_TYPE_AMMO)
+                    @items[i] = null;
+                break;
+            case BARTER_FILTER_DRUG:
+                if(type != ITEM_TYPE_DRUG)
+                    @items[i] = null;
+                break;
+            case BARTER_FILTER_MISC:
+                if(type == ITEM_TYPE_ARMOR || type == ITEM_TYPE_WEAPON || type == ITEM_TYPE_AMMO || type == ITEM_TYPE_DRUG)
+                    @items[i] = null;
+				break;
+            }
+        }
+    }
+    // Example
+    // Disable showing of all weapons in USE mode:
+    /*if(collection==ITEM_COLLECTION_USE)
+       {
+            for(uint i=0,j=items.length();i<j;i++)
+                    if(items[i].GetType()==ITEM_TYPE_WEAPON)
+                            @items[i]=null;
+       }*/
+}
+
+void InitConfig()
+{
+    LoadConfig(CONFIG_FILE);
+    IConfigSection@ section;
+
+    // some defaults
+    __ConfigDamageHitColor          = COLOR_RGB(200, 0, 0);
+    __ConfigVerboseActionColor      = COLOR_RGB(58, 137, 133);
+    __ConfigFogColor                = COLOR_RGBA(0, 0, 0, 160);
+    __ConfigCustomBorderColor       = COLOR_RGB(30, 30, 90);
+
+    TimeoutsConfig("");
+    CombatLogConfig();
+
+    // [2238] part 1/2
+    @section = GetConfigSection(CONFIG_FILE, CONFIG_RELOADED);
+    if(valid(section))
+    {
+        string@ val;
+
+        // Awareness
+        @val = GetConfigValue(CONFIG_FILE, CONFIG_RELOADED, "Awareness");
+        if(valid(val) && val.length() > 0)
+        {
+            __ConfigAwareness = string2bool(val);
+        }
+
+        // CombatMode
+        @val = GetConfigValue(CONFIG_FILE, CONFIG_RELOADED, "CombatMode");
+        if(valid(val) && val.length() > 0)
+        {
+            __DefaultCombatMode = CLAMP(string2uint(val), 0, 2);
+        }
+
+        // (unknown)
+        @val = GetConfigValue(CONFIG_FILE, CONFIG_RELOADED, "DisplayAchievements");
+        if(valid(val) && val.length() > 0)
+        {
+            __ConfigDisplayAchievements = CLAMP(string2uint(val), 0, 2);
+        }
+
+        // Fog
+        @val = GetConfigValue(CONFIG_FILE, CONFIG_RELOADED, "Fog");
+        if(valid(val) && val.length() > 0)
+        {
+            __ConfigFog = string2bool(val);
+        }
+
+        // FogColor
+        @val = GetConfigValue(CONFIG_FILE, CONFIG_RELOADED, "FogColor");
+        if(valid(val) && val.length() > 0)
+        {
+            __ConfigFogColor = rgba_string2uint(val);
+        }
+
+        // IgnoreLangChange
+        @val = GetConfigValue(CONFIG_FILE, CONFIG_RELOADED, "IgnoreLangChange");
+        if(valid(val) && val.length() > 0)
+        {
+            __ConfigIgnoreLangChange = string2bool(val);
+        }
+
+        // Fx config, keep them as last
+
+        // F6
+        @val = GetConfigValue(CONFIG_FILE, CONFIG_RELOADED, "DisplayNames");
+        if(valid(val) && val.length() > 0)
+        {
+            __ShowPlayerNames = string2bool(val);
+        }
+
+        // F8
+        @val = GetConfigValue(CONFIG_FILE, CONFIG_RELOADED, "MouseScroll");
+        if(valid(val) && val.length() > 0)
+        {
+            __MouseScroll = string2bool(val);
+        }
+
+        // F10
+        @val = GetConfigValue(CONFIG_FILE, CONFIG_RELOADED, "DisplayTCZones");
+        if(valid(val) && val.length() > 0)
+        {
+            __ConfigDisplayTCZones = CLAMP(string2uint(val), 0, 2);
+        }
+
+        // F11
+        @val = GetConfigValue(CONFIG_FILE, CONFIG_RELOADED, "DisplayTC");
+        if(valid(val) && val.length() > 0)
+        {
+            __ConfigDisplayTC = string2bool(val);
+        }
+
+        // ShowMsFov
+        @val = GetConfigValue(CONFIG_FILE, CONFIG_RELOADED, "ShowMsFov");
+        if(valid(val) && val.length() > 0)
+        {
+            __ConfigMsFov = string2bool(val);
+        }
+
+        // OnHeadAwareness type 0 - off, 1 - numbers, 2 - stars
+        @val = GetConfigValue(CONFIG_FILE, CONFIG_RELOADED, "OnHeadAwareness");
+        if(valid(val) && val.length() > 0)
+        {
+            __ConfigOnHeadAwareness = CLAMP(string2uint(val), 0, 2);
+        }
+
+        // ShowNpcAwareness
+        @val = GetConfigValue(CONFIG_FILE, CONFIG_RELOADED, "ShowNpcAwareness");
+        if(valid(val) && val.length() > 0)
+        {
+            __ConfigShowNpcAwareness = string2bool(val);
+        }
+
+        // ShowPlayerAwareness
+        @val = GetConfigValue(CONFIG_FILE, CONFIG_RELOADED, "ShowPlayerAwareness");
+        if(valid(val) && val.length() > 0)
+        {
+            __ConfigShowPlayerAwareness = string2bool(val);
+        }
+
+        // Faction Emblems
+        @val = GetConfigValue(CONFIG_FILE, CONFIG_RELOADED, "ShowFactionEmblems");
+        if(valid(val) && val.length() > 0)
+        {
+            __ConfigShowFactionEmblems = string2bool(val);
+        }
+
+        // CustomBorder
+        @val = GetConfigValue(CONFIG_FILE, CONFIG_RELOADED, "CustomBorder");
+        if(valid(val) && val.length() > 0)
+        {
+            __ConfigCustomBorder = string2bool(val);
+        }
+
+        // CustomBorderRange
+        @val = GetConfigValue(CONFIG_FILE, CONFIG_RELOADED, "CustomBorderRange");
+        if(valid(val) && val.length() > 0)
+        {
+            __ConfigCustomBorderRange = CLAMP(string2uint(val), 0, 100);
+        }
+
+        // CustomBorderColor
+        @val = GetConfigValue(CONFIG_FILE, CONFIG_RELOADED, "CustomBorderColor");
+        if(valid(val) && val.length() > 0)
+        {
+            __ConfigCustomBorderColor = rgb_string2uint(val);
+        }
+
+        // WallRoofTransparency
+        @val = GetConfigValue(CONFIG_FILE,CONFIG_RELOADED, "WallRoofTransparency");
+        if(valid(val) && val.length() > 0)
+        {
+            // percent -> alpha
+            __ConfigWallRoofAlpha = CLAMP(string2uint(val), 0, 100);
+            if(__ConfigWallRoofAlpha > 0)
+                __ConfigWallRoofAlpha = (255 * (100 - __ConfigWallRoofAlpha)) / 100;
+        }
+
+        // Most Important Feature Ever Made By Human Race For FOnline Game
+        @val = GetConfigValue(CONFIG_FILE, CONFIG_RELOADED, "GameInfo");
+        if (valid(val) && val.length() > 0)
+        {
+            __ConfigGameInfo = CLAMP(string2uint(val), 0, 3);
+        }
+    }
+
+    // [Messages]
+    @section = GetConfigSection(CONFIG_FILE, CONFIG_MESSAGES);
+    if(valid(section))
+    {
+        string@ val;
+
+        @val = GetConfigValue(CONFIG_FILE, CONFIG_MESSAGES, "DamageOffsetX");
+        if(valid(val) && val.length() > 0)
+        {
+            int from = 0, to = 0,
+                result = range_string2int(val, from, to);
+
+            from = CLAMP(from, -100, 100);
+            to = CLAMP(to, -100, 100);
+
+            __ConfigDamageHitOffXfrom = from;
+            __ConfigDamageHitOffXto   = to;
+        }
+
+        @val = GetConfigValue(CONFIG_FILE, CONFIG_MESSAGES, "DamageOffsetY");
+        if(valid(val) && val.length() > 0)
+        {
+            int from = 0, to = 0,
+                result = range_string2int(val, from, to);
+
+            from = CLAMP(from, -100, 100);
+            to = CLAMP(to, -100, 100);
+
+            __ConfigDamageHitOffYfrom = from;
+            __ConfigDamageHitOffYto   = to;
+        }
+
+        @val = GetConfigValue(CONFIG_FILE, CONFIG_MESSAGES, "DamageColor");
+        if(valid(val) && val.length() > 0)
+        {
+            __ConfigDamageHitColor = rgb_string2uint(val);
+        }
+
+        @val = GetConfigValue(CONFIG_FILE, CONFIG_MESSAGES, "ActionVisible");
+        if(valid(val) && val.length() > 0)
+        {
+            vis_string2bool(val,
+                            __ConfigVerboseActionHead,
+                            __ConfigVerboseActionBox
+                            );
+        }
+
+        @val = GetConfigValue(CONFIG_FILE, CONFIG_MESSAGES, "ActionOffsetX");
+        if(valid(val) && val.length() > 0)
+        {
+            int from = 0, to = 0,
+                result = range_string2int(val, from, to);
+
+            from = CLAMP(from, -100, 100);
+            to = CLAMP(to, -100, 100);
+
+            __ConfigVerboseActionOffXfrom = from;
+            __ConfigVerboseActionOffXto   = to;
+        }
+
+        @val = GetConfigValue(CONFIG_FILE, CONFIG_MESSAGES, "ActionOffsetY");
+        if(valid(val) && val.length() > 0)
+        {
+            int from = 0, to = 0,
+                result = range_string2int(val, from, to);
+
+            from = CLAMP(from, -100, 100);
+            to = CLAMP(to, -100, 100);
+
+            __ConfigVerboseActionOffYfrom = from;
+            __ConfigVerboseActionOffYto   = to;
+        }
+
+        @val = GetConfigValue(CONFIG_FILE, CONFIG_MESSAGES, "ActionColor");
+        if(valid(val) && val.length() > 0)
+        {
+            __ConfigVerboseActionColor = rgb_string2uint(val);
+        }
+
+        @val = GetConfigValue(CONFIG_FILE, CONFIG_MESSAGES, "FollowerExperience");
+        if(valid(val) && val.length() > 0)
+        {
+            __ConfigFollowerExperience = string2bool(val);
+        }
+    }
+
+
+    // [DataFiles]
+    @section = GetConfigSection(CONFIG_FILE, CONFIG_DATAFILES);
+    if(valid(section))
+    {
+        array<string> vars;
+        section.GetVars(vars);
+
+        for(uint v = 0; v < vars.length(); v++)
+        {
+            string val = GetConfigValue(CONFIG_FILE, CONFIG_DATAFILES, vars[v]);
+
+            string this = vars[v];
+            this = ReplaceText(this, "_", " ");
+            if(!LoadDataFile(val))
+            {
+                Message("DataFiles: Can't load " + val + " (" + this + ")");
+            }
+            else
+            {
+                Message("DataFiles: Loaded " + this);
+            }
+        }
+    }
+    // [2238] part 2/2
+    // needs to be done *after* datafiles loading
+    @section = GetConfigSection(CONFIG_FILE, CONFIG_RELOADED);
+    if(valid(section))
+    {
+        string@ val = GetConfigValue(CONFIG_FILE, CONFIG_RELOADED, "CustomIni");
+        if(valid(val) && val.length() > 0)
+        {
+            array<string@>@ ini = split(val, "|");
+
+            for(uint i = 0; i < ini.length(); i++)
+            {
+                if(ini[i].length() > 0)
+                {
+                    #ifdef __DEBUG__
+                    Message("Custom ini: " + ini[i]);
+                    #endif
+                    AppendIfaceIni(ini[i]);
+                }
+            }
+        }
+    }
+}
+
+void _CC(int c, int, int, string@, array<int>@)
+{
+    GET_CORECHEAT(c, __ShowTile,           CC_TILE);
+    GET_CORECHEAT(c, __ShowRoof,           CC_ROOF);
+    GET_CORECHEAT(c, __ShowWall,           CC_WALL);
+    GET_CORECHEAT(c, __ShowItem,           CC_ITEM);
+    GET_CORECHEAT(c, __ShowScen,           CC_SCEN);
+    GET_CORECHEAT(c, __ShowFast,           CC_FAST);
+    GET_CORECHEAT(c, __ShowNpcNames,       CC_NPCNAMES);
+    GET_CORECHEAT(c, __ShowCritId,         CC_CRITID);
+}
+
+void _SetChosenActions(int, int, int, string@, array<int>@ data)
+{
+    array<uint> actions;
+    for(uint a = 0, aLen = data.length(); a < aLen; a++)
+    {
+        if(data[a] < 0)
+            return;
+        else
+            actions.insertLast(data[a]);
+    }
+    SetChosenActions(actions);
+}
+
+bool IsGMTEnabled()
+{
+    return(isGMT);
+}
+
+void _OpenURL(int, int, int, string@ url, array<int>@)
+{
+    if(!valid(url) || url.length() == 0)
+        return;
+
+    array<string> allowed;
+    allowed.insertLast("http://fonline2238.net");
+    allowed.insertLast("http://dev.fonline2238.net");
+    allowed.insertLast("http://donate.fonline2238.net");
+
+    bool can = false;
+    for(uint a = 0, aLen = allowed.length(); a < aLen; a++)
+    {
+        if(url.length() < allowed.length())
+            return;
+
+        if(substring(url, 0, allowed[a].length()) == allowed[a])
+        {
+            can = true;
+            break;
+        }
+    }
+
+    if(!can)
+        return;
+
+    Log("Opening URL: " + url);
+    Message("Opening URL: " + url);
+    OpenURL(url);
+}

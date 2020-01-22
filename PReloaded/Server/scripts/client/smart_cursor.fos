@@ -1,0 +1,423 @@
+#ifndef __SMARTCURSOR__
+#define __SMARTCURSOR__
+
+// SmartCursor class for FOnline games
+// Wipe/Rotators
+
+// based on script for FOnline: 2238, by JovankaB
+// https://github.com/rotators/fo2238/blob/master/Server/scripts/client_smart_cursor.fos
+
+#include "../_defines.fos"
+#include "../_macros.fos"
+
+// AngelScript doesn't allow defines with brackets for default arguments
+
+#ifdef FONT_TYPE_DEFAULT
+ #undef FONT_TYPE_DEFAULT
+ #define FONT_TYPE_DEFAULT  5
+#endif
+
+#ifdef FONT_FLAG_BORDERED
+ #undef FONT_FLAG_BORDERED
+ #define FONT_FLAG_BORDERED 0x0200
+#endif
+
+#if ANGELSCRIPT_VERSION >= 22900
+funcdef bool SmartValidate( ItemCl& item, ItemCl@ tool );
+#endif
+class SmartCollection
+{
+    array<uint16>  Items;
+    array<uint16>  Tools;
+    array<uint8>   Slots;
+    string         Text;
+#if ANGELSCRIPT_VERSION >= 22900
+    SmartValidate@ FuncValidate = null;
+#endif
+
+    // tool not required
+    SmartCollection( array<uint16>& items, array<uint8>& slots, string@ text, uint msg, uint idx )
+    {
+        Items = items;
+        Tools.resize( 0 );
+        Slots = slots;
+
+        if( valid(text) )
+            Text = text;
+        else
+            Text = GetMsgStr( msg, idx );
+    }
+
+    // tool required
+    SmartCollection( array<uint16>& items, array<uint16>& tools, array<uint8>& slots, string@ text, uint msg, uint idx )
+    {
+        Items = items;
+        Tools = tools;
+        Slots = slots;
+
+        if( valid(text) )
+            Text = text;
+        else
+            Text = GetMsgStr( msg, idx );
+    }
+}
+
+class SmartCursor
+{
+    uint drawLayer;
+
+    // configurable via DrawInfo()
+    bool drawInfo;
+    bool drawInfoTool;
+    int drawInfoOffsetX;
+    int drawInfoOffsetY;
+    uint drawInfoColor;
+    int drawInfoFont;
+    int drawInfoFlags;
+
+    // configurable via DrawTool()
+    bool drawTool;
+    int drawToolOffsetX;
+    int drawToolOffsetY;
+    uint drawToolSize;
+
+    // collections
+    array<SmartCollection> collections;
+
+    // internal data
+    private uint   clickTargetId;
+    private uint   clickTargetPid;
+    private uint16 clickTargetHexX;
+    private uint16 clickTargetHexY;
+    private bool   clickTool;
+    private uint   clickToolId;
+    private uint16 clickToolPid;
+
+    SmartCursor()
+    {
+        this.drawLayer = 3;
+        this.DrawInfo( true );
+        this.DrawTool( true );
+
+        this.ClickReset();
+    }
+
+/*********
+ * SETUP *
+ *********/
+
+    void DrawInfo( bool enable, bool toolName = true, int offsetX = 2, int offsetY = -12, uint color = 0, int font = FONT_TYPE_DEFAULT, int flags = FONT_FLAG_BORDERED )
+    {
+        this.drawInfo = enable;
+        this.drawInfoTool = toolName;
+        this.drawInfoOffsetX = offsetX;
+        this.drawInfoOffsetY = offsetY;
+        this.drawInfoColor = color;
+        this.drawInfoFont = font;
+        this.drawInfoFlags = flags;
+    }
+
+    void DrawTool( bool enable, int offsetX = 3, int offsetY = 5, uint size = 45 )
+    {
+        this.drawTool = enable;
+        this.drawToolOffsetX = offsetX;
+        this.drawToolOffsetY = offsetY;
+        this.drawToolSize = size;
+    }
+
+/***************
+ * COLLECTIONS *
+ ***************/
+
+    void Add( SmartCollection& collection ) final
+    {
+        this.collections.insertLast( collection );
+
+        if( this.collections.last().Text == "error" )
+            this.collections.last().Text = "";
+    }
+
+
+    // helper,
+    // finds item with given pid in specified slots
+    private ItemCl@ FindTool( CritterCl& chosen, SmartCollection& collection )
+    {
+        uint slotsLength = collection.Slots.length();
+
+        if( slotsLength == 0 )
+            return null;
+
+        for( uint s=0; s<slotsLength; s++ )
+        {
+            array<ItemCl@> items;
+            uint count = chosen.GetItems( collection.Slots[s], items );
+
+            // we need a loop here for SLOT_INV...
+            for( uint i=0; i<count; i++ )
+            {
+                if( collection.Tools.find( items[i].Proto.ProtoId ) >= 0 )
+                    return items[i];
+            }
+        }
+
+        return null;
+    }
+
+/********
+ * WORK *
+ ********/
+
+//
+// Draw()
+// called from render_iface(uint)
+//
+
+    void Draw( uint layer ) // just a fast shortcut for scripts which doesn't collect chosen inside render_iface()
+    {
+        CritterCl@ chosen = GetChosen();
+        if( valid(chosen) )
+            this.Draw( layer, chosen );
+    }
+
+    void Draw( uint layer, CritterCl& chosen )
+    {
+        // collect informations only once per rendering cycle
+        if( layer != this.drawLayer )
+            return;
+
+        // clear previous setting
+        this.ClickReset();
+
+        if( this.drawTool )
+            __HideCursor = false;
+
+        if( GetCurrentMapPid() > 0 && GetCurrentCursor() == CURSOR_DEFAULT )
+        {
+            // if there's no item under cursor, no magick can be done
+            ItemCl@ item = GetMonitorItem( __MouseX, __MouseY, false );
+            if( valid(item) && FLAG(item.Flags, ITEM_FLAG_CAN_USE) )
+            {
+                // player found usuable item, check if it's anything interesting
+                uint itemPid = item.Proto.ProtoId;
+                for( uint c=0, cLen=this.collections.length(); c<cLen; c++ )
+                {
+                    SmartCollection collection = this.collections[c];
+                    if( collection.Items.find( itemPid ) >= 0 )
+                    {
+                        // current item is using smart cursor,
+                        // check if chosen have proper tool (if needed)
+                        bool needTool = (collection.Tools.length() > 0);
+                        ItemCl@ tool;
+                        if( needTool )
+                            @tool = this.FindTool( chosen, collection );
+
+                        if( !needTool || (needTool && valid(tool)) )
+                        {
+#if ANGELSCRIPT_VERSION >= 22900
+                            if( valid(collection.FuncValidate) && !collection.FuncValidate( item, tool ))
+                                continue;
+#endif
+
+                            // everything is ready,
+                            // let the player know that we're using fancy features :)
+
+                            // text
+                            if( this.drawInfo )
+                            {
+                                string txt = collection.Text;
+
+                                if( txt.length() > 0 )
+                                {
+                                    if( needTool && this.drawInfoTool )
+                                    {
+                                        string txtTool = GetMsgStr( TEXTMSG_ITEM, tool.Proto.ProtoId*100+tool.Info );
+                                        if( txtTool != "error" )
+                                            txt += " ("+txtTool+")";
+                                    }
+
+                                    DrawText( txt, __MouseX + this.drawInfoOffsetX, __MouseY + this.drawInfoOffsetY, 0, 0, this.drawInfoColor, this.drawInfoFont, this.drawInfoFlags );
+                                }
+                            }
+
+                            // graphic
+                            if( needTool && this.drawTool )
+                            {
+                                uint spriteId = LoadSprite( tool.PicInv > 0 ? tool.PicInv : tool.Proto.PicInv, tool.Dir );
+                                if( spriteId > 0 )
+                                {
+                                    __HideCursor = true;
+                                    DrawSprite( spriteId, -1, __MouseX + this.drawToolOffsetX, __MouseY + this.drawToolOffsetY, this.drawToolSize, this.drawToolSize, true, false, 0 );
+                                }
+                            }
+
+                            // no need to recheck everything again when player bravely press the mouse button,
+                            // just save required data and get the hell out of here
+                            if( needTool )
+                            {
+                                this.clickTool    = true;
+                                this.clickToolId  = tool.Id;
+                                this.clickToolPid = tool.Proto.ProtoId;
+                            }
+                            this.clickTargetId   = item.Id;
+                            this.clickTargetPid  = item.Proto.ProtoId;
+                            this.clickTargetHexX = item.HexX;
+                            this.clickTargetHexY = item.HexY;
+
+                            return;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+//
+// ClickReset()
+//
+
+    void ClickReset()
+    {
+        this.clickTool = false;
+        this.clickTargetId = this.clickTargetPid = this.clickTargetHexX = this.clickTargetHexY = 0;
+        this.clickToolId = this.clickToolPid = 0;
+    }
+
+//
+// Click()
+// called from mouse_down(int)
+//
+
+    bool Click( int click )
+    {
+        if( GetCurrentCursor() == CURSOR_DEFAULT && click == MOUSE_CLICK_LEFT && this.clickTargetId > 0 )
+        {
+            if( this.clickTool )
+            {
+                if( this.clickToolId > 0 && this.clickToolPid > 0 )
+                {
+                    array<uint> click = { CHOSEN_USE_ITEM, this.clickToolId, this.clickToolPid, TARGET_ITEM, this.clickTargetId, USE_USE, 0 };
+                    SetChosenActions( click );
+                }
+            }
+            else
+            {
+                array<uint> click = { CHOSEN_PICK_ITEM, this.clickTargetPid, this.clickTargetHexX, this.clickTargetHexY };
+                SetChosenActions( click );
+            }
+            return( true );
+        }
+
+        return( false );
+    }
+};
+
+// GAME-SPECIFIC //
+
+#include "../ITEMPID.H"
+
+#define SMART_TEXT              (TEXTMSG_TEXT)
+#define SMART_EXTRACT_ORE       (1801)
+#define SMART_EXTRACT_ORE2      (1802)
+#define SMART_EXTRACT_MINERALS  (1803)
+#define SMART_EXTRACT_MINERALS2 (1804)
+#define SMART_EXTRACT_URANIUM   (1805)
+#define SMART_EXTRACT_GOLD      (1806)
+#define SMART_EXTRACT_FIBRES    (1807)
+#define SMART_SHOVEL_DUNG       (1808)
+#define SMART_CHOP_WOOD         (1809)
+#define SMART_DIG_GRAVE         (1810)
+#define SMART_MEAT              (1811)
+#define SMART_SCAVENGE          (1812)
+
+SmartCursor smart_cursor();
+
+#if ANGELSCRIPT_VERSION >= 22900
+bool ValidateGrave( ItemCl& item, ItemCl@ tool )
+{
+    return _LockerIsClose( item );
+}
+#endif
+
+void InitSmartCursor() // EXPORT
+{
+    smart_cursor.drawLayer = 2; // ugh
+
+    ///// slots /////
+    
+    array<uint8> slot_all    = { SLOT_HAND1, SLOT_HAND2, SLOT_INV };
+    array<uint8> slot_hands  = { SLOT_HAND1, SLOT_HAND2 };
+    array<uint8> slot_active = { SLOT_HAND1 };
+
+    ///// tools /////
+
+    array<uint16> tool_knife  = { PID_SWITCHBLADE, PID_KNIFE, PID_THROWING_KNIFE, PID_COMBAT_KNIFE, PID_LIL_JESUS_WEAPON, PID_WAKIZASHI_BLADE };
+    array<uint16> tool_axe    = { PID_PRIMITIVE_TOOL, PID_AXE };
+    array<uint16> tool_mine_1 = { PID_PRIMITIVE_TOOL, PID_SLEDGEHAMMER, PID_SUPER_SLEDGE };
+    array<uint16> tool_mine_2 = { PID_SLEDGEHAMMER, PID_SUPER_SLEDGE };
+    array<uint16> tool_mine_3 = { PID_SUPER_SLEDGE };
+    array<uint16> tool_junk   = { PID_MULTI_TOOL };
+    array<uint16> tool_shovel = { PID_OLD_SHOVEL, PID_SHOVEL };
+
+    ///// targets /////
+
+    array<uint16> fibers = { PID_PLANT_FIBER };
+
+    // Should be merged into one pid with different Dir...
+    array<uint16> graves = { PID_GRAVESITE_V, PID_GRAVESITE_H };
+
+    array<uint16> junk_metal  = { 22100, 22101, 22102, 22103, 22104, 22105, 22106, 22107, 22108, 22109, 22110, 22111 };
+    array<uint16> junk_wooden = { 22200, 22201, 22202, 22203, 22204, 22205 };
+    array<uint16> junk_paper  = { 22300, 22301, 22302, 22303 };
+    array<uint16> junk_barrel = { 22304, 22305, 22306, 22307, 22308 };
+
+    array<uint16> meat_table = { PID_TABLE_BRAHMIN };
+
+    // Should be merged into one pid...
+    array<uint16> poo = { PID_BRAHMIN_SHIT_1, PID_BRAHMIN_SHIT_2, PID_BRAHMIN_SHIT_3, PID_BRAHMIN_SHIT_4 };
+
+    array<uint16> vein_iron_1     = { PID_VEIN_IRON };
+    array<uint16> vein_iron_2     = { PID_VEIN_IRON2 };
+    array<uint16> vein_minerals_1 = { PID_VEIN_MINERALS };
+    array<uint16> vein_minerals_2 = { PID_VEIN_MINERALS2 };
+    array<uint16> vein_uranium    = { PID_VEIN_URANIUM };
+    array<uint16> vein_gold       = { PID_VEIN_GOLD };
+
+    // Should be merged into one pid...
+    array<uint16> wood = { PID_TREE1_FIREWOOD, PID_TREE2_FIREWOOD, PID_TREE3_FIREWOOD };
+
+    ///// configuration /////
+
+    SmartCollection scGraves(          graves,          tool_shovel, slot_all, null, SMART_TEXT, SMART_DIG_GRAVE );
+#if ANGELSCRIPT_VERSION >= 22900
+    @scGraves.FuncValidate = ValidateGrave;
+#endif
+
+    smart_cursor.Add( SmartCollection( fibers,          tool_knife,  slot_all, null, SMART_TEXT, SMART_EXTRACT_FIBRES ));
+    smart_cursor.Add( scGraves );
+    smart_cursor.Add( SmartCollection( junk_metal,      tool_junk,   slot_all, null, SMART_TEXT, SMART_SCAVENGE ));
+    smart_cursor.Add( SmartCollection( junk_wooden,     tool_junk,   slot_all, null, SMART_TEXT, SMART_SCAVENGE ));
+    smart_cursor.Add( SmartCollection( junk_paper,      tool_junk,   slot_all, null, SMART_TEXT, SMART_SCAVENGE ));
+    smart_cursor.Add( SmartCollection( junk_barrel,     tool_junk,   slot_all, null, SMART_TEXT, SMART_SCAVENGE ));
+    smart_cursor.Add( SmartCollection( meat_table,      tool_knife,  slot_all, null, SMART_TEXT, SMART_MEAT ));
+    smart_cursor.Add( SmartCollection( poo,             tool_shovel, slot_all, null, SMART_TEXT, SMART_SHOVEL_DUNG ));
+    smart_cursor.Add( SmartCollection( wood,            tool_axe,    slot_all, null, SMART_TEXT, SMART_CHOP_WOOD ));
+
+    smart_cursor.Add( SmartCollection( vein_iron_1,     tool_mine_1, slot_all, null, SMART_TEXT, SMART_EXTRACT_ORE ));
+    smart_cursor.Add( SmartCollection( vein_minerals_1, tool_mine_1, slot_all, null, SMART_TEXT, SMART_EXTRACT_MINERALS ));
+    smart_cursor.Add( SmartCollection( vein_iron_2,     tool_mine_2, slot_all, null, SMART_TEXT, SMART_EXTRACT_ORE2 ));
+    smart_cursor.Add( SmartCollection( vein_minerals_2, tool_mine_2, slot_all, null, SMART_TEXT, SMART_EXTRACT_MINERALS2 ));
+    smart_cursor.Add( SmartCollection( vein_uranium,    tool_mine_3, slot_all, null, SMART_TEXT, SMART_EXTRACT_URANIUM ));
+    smart_cursor.Add( SmartCollection( vein_gold,       tool_mine_3, slot_all, null, SMART_TEXT, SMART_EXTRACT_GOLD ));
+}
+
+void SmartCursorDraw( uint layer ) // EXPORT
+{
+    smart_cursor.Draw( layer );
+}
+
+bool SmartCursorClick( int click ) // EXPORT
+{
+    return smart_cursor.Click( click );
+}
+
+#endif // __SMARTCURSOR__ //

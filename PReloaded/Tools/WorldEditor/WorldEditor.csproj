@@ -1,0 +1,458 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.30729</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{30C07BBE-59EA-4D16-ADFE-B73061CD78B8}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>WorldEditor</RootNamespace>
+    <AssemblyName>WorldEditor</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <OldToolsVersion>3.5</OldToolsVersion>
+    <UpgradeBackupLocation />
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <TargetFrameworkProfile>
+    </TargetFrameworkProfile>
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>.\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>.\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject />
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Microsoft.VisualBasic" />
+    <Reference Include="ObjectListView">
+      <HintPath>..\3rdParty\ObjectListView\ObjectListView.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\scripts\sdk.cs">
+      <Link>Scripting\sdk.cs</Link>
+    </None>
+    <None Include="..\scripts\template.cs">
+      <Link>Scripting\template.cs</Link>
+    </None>
+    <None Include="..\scripts\worldmap_only.cs">
+      <Link>Scripting\worldmap_only.cs</Link>
+    </None>
+    <None Include="..\scripts\trains.cs">
+      <Link>Scripting\trains.cs</Link>
+      <SubType>Form</SubType>
+    </None>
+    <None Include="..\scripts\weather.cs">
+      <Link>Scripting\weather.cs</Link>
+    </None>
+    <Compile Include="Commandline\Commandline.cs" />
+    <Compile Include="Compiler.cs" />
+    <Compile Include="Config.cs" />
+    <Compile Include="Controls\Console.cs" />
+    <Compile Include="DebugManager.cs" />
+    <Compile Include="Display.cs" />
+    <Compile Include="Drawing.cs" />
+    <Compile Include="EditorData.cs" />
+    <Compile Include="frmAbout.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmAbout.Designer.cs">
+      <DependentUpon>frmAbout.cs</DependentUpon>
+    </Compile>
+    <Compile Include="frmEditSpecialEncounter.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmEditSpecialEncounter.Designer.cs">
+      <DependentUpon>frmEditSpecialEncounter.cs</DependentUpon>
+    </Compile>
+    <Compile Include="frmAddMaps.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmAddMaps.Designer.cs">
+      <DependentUpon>frmAddMaps.cs</DependentUpon>
+    </Compile>
+    <Compile Include="frmEditTownMap.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmEditTownMap.Designer.cs">
+      <DependentUpon>frmEditTownMap.cs</DependentUpon>
+    </Compile>
+    <Compile Include="frmGenerateDefines.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmGenerateDefines.Designer.cs">
+      <DependentUpon>frmGenerateDefines.cs</DependentUpon>
+    </Compile>
+    <Compile Include="frmLocationEditor.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmLocationEditor.Designer.cs">
+      <DependentUpon>frmLocationEditor.cs</DependentUpon>
+    </Compile>
+    <Compile Include="frmScriptList.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmScriptList.Designer.cs">
+      <DependentUpon>frmScriptList.cs</DependentUpon>
+    </Compile>
+    <Compile Include="frmShell.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmShell.Designer.cs">
+      <DependentUpon>frmShell.cs</DependentUpon>
+    </Compile>
+    <Compile Include="frmSpecialEncounters.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmSpecialEncounters.Designer.cs">
+      <DependentUpon>frmSpecialEncounters.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ArmorProto.cs" />
+    <Compile Include="ProtoEditor\Consts.cs" />
+    <Compile Include="ProtoEditor\frmCritterProtoList.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ProtoEditor\frmCritterProtoList.designer.cs">
+      <DependentUpon>frmCritterProtoList.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ProtoEditor\frmProtoCritterEditor.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ProtoEditor\frmProtoCritterEditor.designer.cs">
+      <DependentUpon>frmProtoCritterEditor.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ProtoEditor\frmProtoCritterRawEditor.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ProtoEditor\frmProtoCritterRawEditor.designer.cs">
+      <DependentUpon>frmProtoCritterRawEditor.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ProtoEditor\ParamsDefines.cs" />
+    <Compile Include="ProtoEditor\ProtoCritter.cs" />
+    <Compile Include="ProtoEditor\ProtoManager.cs" />
+    <Compile Include="Scripting\Bindings.cs" />
+    <Compile Include="Scripting\ScriptManager.cs" />
+    <Compile Include="TableSerializer.cs" />
+    <Compile Include="WorldMap\Condition.cs" />
+    <Compile Include="WorldMap\Copy.cs" />
+    <Compile Include="WorldMap\EncounterGroup\Filtering.cs" />
+    <Compile Include="WorldMap\EncounterGroup\frmFilter.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="WorldMap\EncounterGroup\frmFilter.Designer.cs">
+      <DependentUpon>frmFilter.cs</DependentUpon>
+    </Compile>
+    <Compile Include="WorldMap\EncounterGroup\frmSelectObject.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="WorldMap\EncounterGroup\frmSelectObject.Designer.cs">
+      <DependentUpon>frmSelectObject.cs</DependentUpon>
+    </Compile>
+    <Compile Include="frmAddFlag.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmAddFlag.Designer.cs">
+      <DependentUpon>frmAddFlag.cs</DependentUpon>
+    </Compile>
+    <Compile Include="frmAddLocation.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmAddLocation.Designer.cs">
+      <DependentUpon>frmAddLocation.cs</DependentUpon>
+    </Compile>
+    <Compile Include="frmEditGroup.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmEditGroup.Designer.cs">
+      <DependentUpon>frmEditGroup.cs</DependentUpon>
+    </Compile>
+    <Compile Include="frmBrush.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmBrush.Designer.cs">
+      <DependentUpon>frmBrush.cs</DependentUpon>
+    </Compile>
+    <Compile Include="frmEditLocation.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmEditLocation.Designer.cs">
+      <DependentUpon>frmEditLocation.cs</DependentUpon>
+    </Compile>
+    <Compile Include="frmMapEditor.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmMapEditor.Designer.cs">
+      <DependentUpon>frmMapEditor.cs</DependentUpon>
+    </Compile>
+    <Compile Include="WorldMap\EncounterGroup\frmEncounterGroupEditor.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="WorldMap\EncounterGroup\frmEncounterGroupEditor.Designer.cs">
+      <DependentUpon>frmEncounterGroupEditor.cs</DependentUpon>
+    </Compile>
+    <Compile Include="frmAddGroup.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmAddGroup.Designer.cs">
+      <DependentUpon>frmAddGroup.cs</DependentUpon>
+    </Compile>
+    <Compile Include="frmMain.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmMain.Designer.cs">
+      <DependentUpon>frmMain.cs</DependentUpon>
+    </Compile>
+    <Compile Include="frmLocation.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmLocation.Designer.cs">
+      <DependentUpon>frmLocation.cs</DependentUpon>
+    </Compile>
+    <Compile Include="frmEditMap.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmEditMap.Designer.cs">
+      <DependentUpon>frmEditMap.cs</DependentUpon>
+    </Compile>
+    <Compile Include="frmSettingsCopying.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmSettingsCopying.Designer.cs">
+      <DependentUpon>frmSettingsCopying.cs</DependentUpon>
+    </Compile>
+    <Compile Include="frmSettingsGeneral.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmSettingsGeneral.Designer.cs">
+      <DependentUpon>frmSettingsGeneral.cs</DependentUpon>
+    </Compile>
+    <Compile Include="frmStringEditor.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmStringEditor.Designer.cs">
+      <DependentUpon>frmStringEditor.cs</DependentUpon>
+    </Compile>
+    <Compile Include="frmZoneValueDisplay.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmZoneValueDisplay.Designer.cs">
+      <DependentUpon>frmZoneValueDisplay.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ItemPid.cs" />
+    <Compile Include="WorldMap\EncounterZoneGroup.cs" />
+    <Compile Include="WorldMap\Filtering.cs" />
+    <Compile Include="Structs.cs" />
+    <Compile Include="WorldMap\EncounterZoneLocation.cs" />
+    <Compile Include="Message.cs" />
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="WorldMap\SpecialEncounter.cs" />
+    <Compile Include="WorldMap\ZoneStatistics.cs" />
+    <EmbeddedResource Include="frmAbout.resx">
+      <DependentUpon>frmAbout.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmAddMaps.resx">
+      <DependentUpon>frmAddMaps.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmEditSpecialEncounter.resx">
+      <DependentUpon>frmEditSpecialEncounter.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmEditTownMap.resx">
+      <DependentUpon>frmEditTownMap.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmGenerateDefines.resx">
+      <DependentUpon>frmGenerateDefines.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmLocationEditor.resx">
+      <DependentUpon>frmLocationEditor.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmScriptList.resx">
+      <DependentUpon>frmScriptList.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmShell.resx">
+      <DependentUpon>frmShell.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmSpecialEncounters.resx">
+      <DependentUpon>frmSpecialEncounters.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ProtoEditor\frmCritterProtoList.resx">
+      <DependentUpon>frmCritterProtoList.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ProtoEditor\frmProtoCritterEditor.resx">
+      <DependentUpon>frmProtoCritterEditor.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ProtoEditor\frmProtoCritterRawEditor.resx">
+      <DependentUpon>frmProtoCritterRawEditor.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="WorldMap\EncounterGroup\frmFilter.resx">
+      <DependentUpon>frmFilter.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="WorldMap\EncounterGroup\frmSelectObject.resx">
+      <DependentUpon>frmSelectObject.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmAddFlag.resx">
+      <DependentUpon>frmAddFlag.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmAddLocation.resx">
+      <DependentUpon>frmAddLocation.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmEditGroup.resx">
+      <DependentUpon>frmEditGroup.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmBrush.resx">
+      <DependentUpon>frmBrush.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmEditLocation.resx">
+      <DependentUpon>frmEditLocation.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmMapEditor.resx">
+      <DependentUpon>frmMapEditor.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="WorldMap\EncounterGroup\frmEncounterGroupEditor.resx">
+      <DependentUpon>frmEncounterGroupEditor.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmAddGroup.resx">
+      <DependentUpon>frmAddGroup.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmMain.resx">
+      <DependentUpon>frmMain.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmLocation.resx">
+      <DependentUpon>frmLocation.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmEditMap.resx">
+      <DependentUpon>frmEditMap.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmSettingsCopying.resx">
+      <DependentUpon>frmSettingsCopying.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmSettingsGeneral.resx">
+      <DependentUpon>frmSettingsGeneral.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmStringEditor.resx">
+      <DependentUpon>frmStringEditor.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmZoneValueDisplay.resx">
+      <DependentUpon>frmZoneValueDisplay.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <None Include="app.config" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+    <Compile Include="Utils.cs" />
+    <Compile Include="WorldMap\WorldMap.cs" />
+    <Compile Include="WorldMap\WorldMapFormat.cs" />
+    <Compile Include="WorldMap\Zone.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Windows.Installer.3.1">
+      <Visible>False</Visible>
+      <ProductName>Windows Installer 3.1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Graphics\1279826243_Floppy-64.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\FOCommon\FOCommon.csproj">
+      <Project>{D53538FB-D9E6-4FE7-9E19-E2EF4330D81E}</Project>
+      <Name>FOCommon</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ScriptHost\ScriptHost.csproj">
+      <Project>{C3A00B4A-96DC-436F-8F7B-C0D71D644545}</Project>
+      <Name>ScriptHost</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

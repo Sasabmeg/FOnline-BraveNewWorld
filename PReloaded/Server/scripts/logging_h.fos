@@ -1,0 +1,56 @@
+//
+// FOnline: 2238
+// Rotators
+//
+// logging_h.fos
+//
+
+#ifndef __LOGGING_H__
+#define __LOGGING_H__
+
+#ifndef __LOGGING__
+
+import void InitLogs() from "logging";
+import void FLog(uint logindex, string& text) from "logging";
+import void ILog(string& section, string& text) from "logging";
+import void GMLog(Critter& cr, string& text) from "logging";
+import void CloseLogs() from "logging";
+import uint AddLog(string& filename) from "logging";
+import uint AddLog(string& filename, uint index) from "logging";
+import void DynamicLocationAddLog(Critter& cr, Critter& npc, GameVar& var, string file) from "logging";
+import void DynamicLocationDelLog(Critter& cr, Critter& npc, GameVar& var, string file) from "logging";
+
+#endif
+
+// #define LOG_TO_SERVERLOG
+
+#define LOG_BANKS          (0)
+#define LOG_COMMANDS       (1)
+#define LOG_WEAPONS        (2)
+#define LOG_EXPLODE        (3)
+#define LOG_GM_HELP        (4)
+#define LOG_CRITTER        (5)
+#define LOG_GETACCESS      (6)
+#define LOG_CAR            (7)
+#define LOG_FOCD           (8)  // http://fonline.isgreat.org cheat detection
+#define LOG_DEBUG          (9)  // general debug dump
+#define LOG_FOLLOWER       (10) // Follower garbager log
+#define LOG_TRADERS        (11)
+#define LOG_PERKS          (12)
+#define LOG_FACTIONS       (13)
+#define LOG_WMLOCATIONS    (14)
+#define LOG_LOGIN		   (15)
+#define LOG_PERKS_PICKED   (16)
+#define LOG_CHARS_CREATED  (17)
+#define LOG_CHARS_DELETED  (18)
+#define LOG_CLIENT_MSG     (19)
+#define LOG_DIALOG_REWARD  (20)
+#define LOG_DIALOG_EXP     (21)
+#define LOG_SPECIAL_ENC    (22)
+#define LOG_DYNAMIC_LOC    (23)
+#define LOG_PVP_EXP		   (24)
+#define LOG_PLAYER_FARMS   (25)
+#define LOG_ILLEGAL	       (26)
+
+#define LOG_COUNT          (27)
+#endif

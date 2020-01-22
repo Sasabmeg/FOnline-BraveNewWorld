@@ -1,0 +1,3932 @@
+//
+// FOnline: 2238
+// Rotators
+//
+// main.fos
+//
+
+#include "_animation.fos"
+#include "_basetypes.fos"
+#include "_colors.fos"
+#include "_macros.fos"
+#include "_town.fos"
+#include "_vars.fos"
+#include "_npc_pids.fos"
+#include "_vals.fos"
+
+#include "broadcast_h.fos"
+#include "config_h.fos"
+#include "config_file_h.fos"
+#include "critter_age_h.fos"
+#include "critter_skin_h.fos"
+#include "debug_h.fos"
+#include "economy_h.fos"
+#include "factions_h.fos"
+#include "follower_capturing.fos"
+#include "follower_common_h.fos"
+#include "follower_h.fos"
+#include "groups_h.fos"
+#include "item_dogtags_h.fos"
+#include "item_perks_h.fos"
+#include "logging_h.fos"
+#include "lexems_h.fos"
+#include "map_tent_h.fos"
+#include "mapdata_h.fos"
+#include "messages_h.fos"
+#include "minigames_h.fos"
+#include "mob_wave_h.fos"
+#include "MsgStr.h"
+#include "npc_common_h.fos"
+#include "npc_planes_h.fos"
+#include "online_stats_h.fos"
+#include "pdata_h.fos"
+#include "recycler_h.fos"
+#include "reinforcements_h.fos"
+#include "reputations_h.fos"
+#include "town_h.fos"
+#include "utils_h.fos"
+//#include "weather_h.fos"
+#include "world_common_h.fos"
+#include "worldmap_h.fos"
+
+// Imports
+import void DropDrugEffects(Critter& cr) from "drugs";
+import bool FindBaseEncounter(array<Critter@>& group, Item@ car, uint x, uint y, uint& encounterDescriptor, bool& waitForAnswer) from "factions_player";
+import bool IsCarTrunk(Item@ item) from "car";
+import bool OnUseExplode(Critter& cr, Item& explode, Critter@ targetCr, Item@ targetItem, Scenery@ targetScen, uint timer) from "explode";
+import bool PerkCheck(Critter& cr, uint perk, bool always) from "perks";
+import bool ReversableItem(Item& item) from "fix_boy";
+import bool ReverseItem(Critter& cr, Item& item) from "fix_boy";
+import uint GetItemRecipe(uint16 itemPid, array<uint16>& pids, array<uint>& cnt) from "fix_boy";
+import bool TryRepairItem(Critter& cr, Item& item) from "repair";
+import void SetMinWear(Item& item, int wearProcent) from "repair";
+import bool TryRechargeItem(Critter& cr, Item& item) from "teslaRecharge";
+import bool UseItemOnCar(Critter& cr, Item& car, Item& item) from "car";
+import bool UseProspectMap(Critter& cr, Item& map) from "prospects";
+import bool UseSkillOnCar(Critter& cr, Item& car, int skill) from "car";
+import bool UseSkillOnLocker(Critter& cr, Item& locker, int skill) from "lockers";
+//import bool WantedSignSet(Item& wantedSign, string& name, uint cost) from "wanted";
+import int    GetCarTrunkComplexity(Item@ item) from "car";
+import uint   GetRandomDeathAnimation() from "cheats";
+import void   AddCrittersKilled() from "cavelog";
+import void   AddPlayerDeaths() from "cavelog";
+import void   ApplyTimeout(array<Item@>& items, array<uint>& itemsCount, array<Item@>& resources, Critter& crafter) from "fix_boy";
+//import void   CheckBountyHunters(Critter& cr, Critter@ killer) from "bounties";
+import uint   CheckPlayerName( const string& name ) from "parameters";
+import void   CombatAttack(Critter& cr, Critter& target, ProtoItem& weapon, uint8 weaponMode, ProtoItem@ ammo) from "combat";
+import void   CritterGenerate(Critter& cr) from "parameters";
+import void   CritterDescription_Set(Critter& player, int& description1, int& description2) from "critter_description";
+import void   EditRadioSettings(Critter& player, Item& radio) from "radio";
+import void   FlushInfluenceBuffer(Critter& cr, ITown@ town) from "town";
+import uint   GMTrack(uint targetId, string@ message) from "cheats";
+import void   InitCheats(bool fromGame) from "cheats";
+import void   InitBrahminPens() from "brahmin_pens";
+import void   InitBrahminTraders() from "brahmin_traders";
+import void   InitCars() from "car_seller";
+import void   InitCaveLog() from "cavelog";
+import void   InitCaveRandomization() from "cave";
+import void   InitMercs() from "mercs";
+import void   InitReverseItem() from "fix_boy";
+import void   InitTowns() from "towns";
+import void   InitBlueprints() from "blueprints";
+import void   InitPerks() from "perks";
+import void   InitProduction() from "production";
+import void   InitShufflingSpawns() from "shuffling_spawner";
+import bool   IsPassiveSkill(int skill) from "parameters";
+import void   LogAction(Critter& cr, string& s) from "logging_critter";
+import void   NpcProcessLevel(Critter& cr) from "parameters";
+import void   PlaySound(Critter& cr, string& soundName) from "media";
+import string PrepareSound_Pick(Item& item) from "media";
+//import void   ProcessCrippling() from "crippling";
+import void   RemoveAuthed(uint id) from "cheats";
+import void   RemoveWorkbenches(Critter& player) from "workbench";
+import void   ReplicateCritter(Critter& cr) from "replication";
+import void   RemoveOnlinePlayer(Critter& cr) from "utils";
+import void   SaveBrahminPenData() from "brahmin_pens";
+import void   SaveEventSpawns() from "cheats";
+import void   SaveCarPriceData() from "car_seller";
+import void   SetReplicationTime(Critter& cr) from "replication";
+import void   SetSpectator(Critter& cr, bool on) from "utils";
+import void   SetStartLocation(Critter& cr) from "replication";
+import void   SetTimeoutForAll(Map& map, int timeout, int time) from "cheats";
+import void   UseDrug(Critter& cr, Item& drug) from "drugs";
+import void   UseDrugOn(Critter& cr, Critter& onCr, Item& drug) from "drugs";
+import void   WearItem(Critter& cr, Item& item, int wearCount) from "repair";
+import void   WorldmapInit() from "worldmap";
+import void   WorldmapUpdatePlayer(Critter@ player) from "worldmap_players";
+import void   WorldmapRemovePlayer(Critter@ player) from "worldmap_players";
+import void   TrackLocation(Critter& player) from "globalmap_group";
+import bool   UseFirstAidOnCritter(Critter& cr, Critter& targetCr, Item@ item) from "skills";
+import bool   UseDoctorOnCritter(Critter& cr, Critter& targetCr, Item@ item) from "skills";
+import array<Critter@> WorldmapGetPlayers(uint zx, uint zy) from "worldmap_players";
+
+import void FixDrugs(Critter& cr) from "utils";
+
+import bool GuardNotLegit(Critter@ cr, Item@ item, bool deleteItem) from "cheats";
+import void RemoveNotLegit(Critter@ cr) from "cheats";
+import bool IsReadableBook(uint16 pid) from "books";
+import void TryReadBook(Critter& cr, Item& book) from "books";
+import void AddBonuses(Item@ item, string@ crafter) from "item_bonus";
+import uint BonusNumber(Item@ item) from "item_bonus";
+
+import void UpdateDrugs(Critter& cr) from "drugs";
+
+import void TC_CraftCapsReward(Critter& player, int caps) from "town";
+import void TC_BarterReward(Critter& player, int caps) from "town";
+
+import string IntToIp(int d) from "utils";
+import string GetTimeString(uint fullsecond) from "time";
+
+dictionary    ItemPids;
+dictionary    VarIds;
+dictionary    BaseTypes;
+dictionary    MapData;
+dictionary    NpcProtoNameDescription;
+array<string> ItemNames;
+array<string> VarNames;
+
+//// Get the id of the item using identifiers
+// stored in ITEMPID.H file
+bool GetItemPid(const string& in identifier, int& out pid)
+{
+    return ItemPids.get(identifier, pid);
+}
+bool GetVarId(const string& in identifier, int& out id)
+{
+    return VarIds.get(identifier, id);
+}
+// void GetVarNames(const string& filter
+bool GetBaseType(const string& in identifier, int& out id)
+{
+    return BaseTypes.get(identifier, id);
+}
+
+bool GetBaseType(const int& in id, string& out name)
+{
+	array<string@> keys;
+	uint kLen = BaseTypes.keys( keys );
+	for( uint k=0; k<kLen; k++ )
+	{
+		int tmp = 0;
+		if( BaseTypes.get( keys[k], tmp ) && tmp == id )
+		{
+			name = keys[k];
+			return( true );
+		}
+	}
+
+	return( false );
+}
+
+bool GetMapData(const string& in identifier, int& out id)
+{
+    return MapData.get(identifier, id);
+}
+
+// returns name/description from FODLG.MSG
+
+bool GetNpcProtoName( uint16 protoId, string& name )
+{
+	return NpcProtoNameDescription.get( ""+STR_NPC_PROTO_NAME(protoId), name );
+}
+
+string GetNpcProtoName( uint16 protoId )
+{
+	string name = "error";
+	GetNpcProtoName( protoId, name );
+
+	return( name );
+}
+
+bool GetNpcProtoDescription( uint16 protoId, string& description )
+{
+	return NpcProtoNameDescription.get( ""+STR_NPC_PROTO_DESC(protoId), description );
+}
+
+string GetNpcProtoDescription( uint16 protoId )
+{
+	string description = "error";
+	GetNpcProtoDescription( protoId, description );
+
+	return( description );
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// Called before world generation.
+void init()
+{
+    InitLogs();     // Should be first
+    InitDebug();
+    InitializeGame();
+
+    ReadDefines("scripts/ITEMPID.H", ItemPids, ItemNames);
+    ReadDefines("scripts/_vars.fos", VarIds, VarNames);
+    ReadDefines("scripts/_basetypes.fos", BaseTypes, null);
+    ReadDefines("scripts/mapdata_h.fos", MapData, null);
+	ReadMsgStrings("text/engl/FODLG.MSG", NpcProtoNameDescription);
+
+	InitPerks();
+    InitBlueprints();
+
+	InitSkins();
+
+	FLog(LOG_WMLOCATIONS, "START");
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// Call on start server.
+bool start()
+{
+    // Send info about others critters
+    // Remember:
+    // - all this info can be hacked in client;
+    // - more parameters - more traffic.
+    SetSendParameter(ST_LEVEL, true);
+    SetSendParameter(ST_GENDER, true);
+    SetSendParameter(ST_AGE, true);
+    SetSendParameter(ST_FOLLOW_CRIT, true);
+    SetSendParameter(ST_PLAYER_KARMA, true);
+    // Armor class, uses Agility and Perks for runtime calc
+    SetSendParameter(ST_ARMOR_CLASS, true);
+    SetSendParameter(PE_LIVEWIRE, true);
+    //SetSendParameter(PE_HTH_EVADE, true);
+    //SetSendParameter(PE_HTH_EVADE_II, true);
+    // SetSendParameter(ST_TURN_BASED_AC,true);
+    // Perks for client_combat hit chance
+    SetSendParameter(PE_DODGER, true);
+    SetSendParameter(PE_IN_YOUR_FACE, true);
+    // Agility
+    SetSendParameter(ST_AGILITY, true);
+    // Hit points, uses Strenght and Endurance
+    SetSendParameter(ST_MAX_LIFE, true); //SetSendParameter(ST_MAX_LIFE, true, "Utils.dll@_AllowParameterIfAwareness");
+    SetSendParameter(ST_MAX_LIFE_EXT, true); //SetSendParameter(ST_MAX_LIFE_EXT, true, "Utils.dll@_AllowParameterIfAwareness");
+    SetSendParameter(ST_CURRENT_HP, true); //SetSendParameter(ST_CURRENT_HP, true, "Utils.dll@_AllowParameterIfAwareness");
+    SetSendParameter(ST_HEALTH_LEVEL, true);
+    //SetSendParameter(ST_TURN_BASED_AC, true);
+    // Strenght, uses battle timeout
+    SetSendParameter(ST_STRENGTH, true); //SetSendParameter(ST_STRENGTH, true, "Utils.dll@_AllowParameterIfAwareness");
+    // Battle timeout
+    SetSendParameter(TO_BATTLE, true);
+    // FA/Doc timeouts for Field Medic awareness info
+    SetSendParameter(TO_SK_FIRST_AID, true, "Utils.dll@_AllowParameterIfFieldMedic");
+    SetSendParameter(TO_SK_DOCTOR, true, "Utils.dll@_AllowParameterIfFieldMedic");
+    // Endurance
+    SetSendParameter(ST_ENDURANCE, true); //SetSendParameter(ST_ENDURANCE, true, "Utils.dll@_AllowParameterIfAwareness");
+    // Injures
+    SetSendParameter(DAMAGE_EYE, true);
+    SetSendParameter(DAMAGE_RIGHT_ARM, true);
+    SetSendParameter(DAMAGE_LEFT_ARM, true);
+    SetSendParameter(DAMAGE_RIGHT_LEG, true);
+    SetSendParameter(DAMAGE_LEFT_LEG, true);
+    // Item slots, passed with -
+    SetSendParameter(-SLOT_HAND1, true); //SetSendParameter(-SLOT_HAND1, true, "Utils.dll@_AllowSlotHand1");
+    SetSendParameter(-SLOT_HAND2, false);
+    SetSendParameter(-SLOT_ARMOR, true); //SetSendParameter(-SLOT_ARMOR, true, "Utils.dll@_AllowSlotHand1");
+    SetSendParameter(-SLOT_HEAD, true);
+
+    // Some flags for correct client working
+    SetSendParameter(MODE_HIDE, true, "cheats@AllowParameterIfModer");
+    SetSendParameter(MODE_NO_BARTER, true);
+    SetSendParameter(MODE_NO_LOOT, true);
+    SetSendParameter(MODE_NO_STEAL, true);
+    SetSendParameter(MODE_NO_FLATTEN, true);
+    SetSendParameter(MODE_NO_TALK, true);
+    SetSendParameter(ST_BODY_TYPE, true); //SetSendParameter(ST_BODY_TYPE, true, "Utils.dll@_AllowParameterIfAwareness");
+
+    // Npc talk distance
+    SetSendParameter(ST_TALK_DISTANCE, true);
+    // Dialog id
+    SetSendParameter(ST_DIALOG_ID, true);
+    // To see pid of unarmed attack
+    SetSendParameter(ST_HANDS_ITEM_AND_MODE, true);
+    // Scale factor
+    SetSendParameter(ST_SCALE_FACTOR, true);
+    SetSendParameter(ST_WALK_TIME, true);
+    SetSendParameter(ST_RUN_TIME, true);
+
+    // faction id, only for team mates
+    SetSendParameter(ST_TEAM_ID, true);
+	SetSendParameter(ST_FACTION_RANK, true);
+
+    // Critter description
+    SetSendParameter(ST_DESCRIPTION1, true); //SetSendParameter(ST_DESCRIPTION1, true, "Utils.dll@_AllowParameterIfAwareness");
+    SetSendParameter(ST_DESCRIPTION2, true); //SetSendParameter(ST_DESCRIPTION2, true, "Utils.dll@_AllowParameterIfAwareness");
+    SetSendParameter(KARMA_SLAVER, true);
+
+    // Minigames data (team, id, custom data)
+    SetSendParameter(ST_MINIGAME_DATA, true);
+	SetSendParameter(ST_VAR9,true);
+
+	// Alpha
+	SetSendParameter(ST_ALPHA, true);
+
+    // Look fields in fonline.h 'struct Item::ItemData'
+    //               SortValue  Info Indicator    PicMapHash       PicInvHash   AnimWaitBase AStay[2] AShow[2] AHide[2]      Flags      Rate LightDist Inten Flags  LightColor    ScriptId TrapValue       Count             Cost                ScriptValues[10]                                                                                                   Other 36 bytes
+    // ITEM_DATA_MASK_CHOSEN                                                                                           ITEM_DATA_MASK_CHOSEN                                                                                                ITEM_DATA_MASK_CHOSEN
+    int8[] mask0 = {  -1, -1,     -1,   -1,     -1, -1, -1, -1,  -1, -1, -1, -1,    0,  0,   0,  0,   0,  0,   0,  0,   -1, -1, -1, -1,  -1,    -1,    -1,    -1,  -1, -1, -1, -1,   0, 0,     0, 0,    -1, -1, -1, -1,  -1, -1, -1, -1,  -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,  -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 0, 0 };
+    // ITEM_DATA_MASK_CRITTER                                                                                          ITEM_DATA_MASK_CRITTER                                                                                               ITEM_DATA_MASK_CRITTER
+    int8[] mask1 = {   0,  0,     -1,    0,      0,  0,  0,  0,   0,  0,  0,  0,    0,  0,   0,  0,   0,  0,   0,  0,   -1, -1, -1, -1,  -1,    -1,    -1,    -1,  -1, -1, -1, -1,   0, 0,     0, 0,     0,  0,  0,  0,   0,  0,  0,  0,  -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,   0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0, 0, 0 };
+    // ITEM_DATA_MASK_CRITTER_EXT                                                                                      ITEM_DATA_MASK_CRITTER_EXT                                                                                           ITEM_DATA_MASK_CRITTER_EXT
+    int8[] mask2 = {   0,  0,     -1,   -1,      0,  0,  0,  0,   0,  0,  0,  0,    0,  0,   0,  0,   0,  0,   0,  0,   -1, -1, -1, -1,  -1,    -1,    -1,    -1,  -1, -1, -1, -1,   0, 0,     0, 0,    -1, -1, -1, -1,   0,  0,  0,  0,  -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,  -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 0, 0 };
+    // ITEM_DATA_MASK_CONTAINER                                                                                        ITEM_DATA_MASK_CONTAINER                                                                                             ITEM_DATA_MASK_CONTAINER
+    int8[] mask3 = {  -1, -1,     -1,   -1,      0,  0,  0,  0,  -1, -1, -1, -1,    0,  0,   0,  0,   0,  0,   0,  0,   -1, -1, -1, -1,  -1,    -1,    -1,    -1,  -1, -1, -1, -1,   0, 0,     0, 0,    -1, -1, -1, -1,  -1, -1, -1, -1,  -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,  -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 0, 0 };
+    // ITEM_DATA_MASK_MAP                                                                                              ITEM_DATA_MASK_MAP                                                                                                   ITEM_DATA_MASK_MAP
+    int8[] mask4 = {  -1, -1,     -1,   -1,     -1, -1, -1, -1,   0,  0,  0,  0,   -1, -1,  -1, -1,  -1, -1,  -1, -1,   -1, -1, -1, -1,  -1,    -1,    -1,    -1,  -1, -1, -1, -1,   0, 0,     0, 0,     0,  0,  0,  0,   0,  0,  0,  0,  -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,  -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 0, 0 };
+    SetItemDataMask(ITEM_DATA_MASK_CHOSEN, mask0);
+    SetItemDataMask(ITEM_DATA_MASK_CRITTER, mask1);
+    SetItemDataMask(ITEM_DATA_MASK_CRITTER_EXT, mask2);
+    SetItemDataMask(ITEM_DATA_MASK_CONTAINER, mask3);
+    SetItemDataMask(ITEM_DATA_MASK_MAP, mask4);
+
+    WorldmapInit();
+    // cheats init
+    InitCheats(true);
+
+    // factions!
+    InitFactions();
+    // register big factions
+    RegisterFaction(FACTION_BOS, "Brotherhood Of Steel", false);
+    RegisterFaction(FACTION_ENCLAVE, "Enclave", false);
+    RegisterFaction(FACTION_UNITY, "The Unity", false);
+    RegisterFaction(FACTION_NCR, "New California Republic", false);
+    RegisterFaction(FACTION_VAULT_CITY, "Vault City", false);
+    RegisterFaction(FACTION_RAIDERS, "Raiders", false);
+    RegisterFaction(FACTION_MORDINOS, "Mordinos", false);
+    // RegisterFaction(FACTION_GUNRUNNERS, "Gun Runners", false); <- screw it
+
+    // and some fixed playerdriven factions
+    RegisterFaction(FACTION_VAGRANTS, "The Tanker Vagrants", true);
+    RegisterFaction(FACTION_REDDING_GUTTERSNIPES, "The Redding Guttersnipes", true);
+
+    __TimeoutBattle = REAL_SECOND(10);   // do not move this to InitializeGame() - __TimeMultiplier is still 0 there!
+
+    InitTents();
+    InitCars();
+
+    // Initialize the script for improved economy
+    InitEconomy();
+    // radiation tables
+    // InitRadiationEffects();
+
+    // Mercenaries
+    InitMercs();
+
+    // Brahmin pens
+    InitBrahminPens();
+    // Bramin traders
+    InitBrahminTraders();
+    // Towns
+    InitTowns();
+
+    InitCaveRandomization();
+//    InitAmmoLog();
+    InitCaveLog();
+    // reputations, alliances
+    InitGroups();
+    // scenariooos
+    // InitScenarios();
+    InitAlertMaps();
+    //InitWeather();
+    InitReverseItem();
+    InitProduction();
+    InitShufflingSpawns();
+//    ProcessCrippling();
+
+    array<Map@> allMaps;
+    uint        allMapsCount = GetAllMaps(0, allMaps);
+    uint        noGridsMaps = 0;
+    for(uint m = 0; m < allMapsCount; m++)
+    {
+        if(!valid(allMaps[m]) || allMaps[m].IsNotValid)           // JIC
+            continue;
+
+        if(_MapHasMode(allMaps[m], MAP_MODE_NO_GRIDS))
+        {
+            // in case of changes, remember about editing cheats@ExecMapGrids
+            allMaps[m].SetEvent(MAP_EVENT_LOOP_3, "cheats@_LockMap");
+            allMaps[m].SetLoopTime(3, 500);
+            SetTimeoutForAll(allMaps[m], TO_TRANSFER, REAL_SECOND(2238));
+            noGridsMaps++;
+        }
+        // if()
+    }
+
+    if(noGridsMaps > 0)
+        Log("Exit grids disabled on " + noGridsMaps + " map" + (noGridsMaps > 1 ? "s" : ""));
+
+    StartPersonalDataCleanup();
+
+	if( !ValidateSkins() )
+		return( false );
+
+    SetGvar(GVAR_is_first_time, 0);
+    return true;
+}
+array<uint> Tents;
+void GotoTent(Critter& cr, int p0, int p1, int p2)
+{
+    cr.TransitToMap(Tents[p0], 0);
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// Call on world initialization.
+// Parameter         Min    Max
+// multiplier        1      99
+// year              1700   30000
+// month             1      12
+// day               1      31
+// hour              0      23
+// minute            0      59
+void get_start_time(uint16& multiplier, uint16& year, uint16& month, uint16& day, uint16& hour, uint16& minute)
+{
+    multiplier = 20;
+    year = 2254;
+    month = 1;
+    day = 9;
+    hour = 6;
+    minute = 3;
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// Call on finish server.
+void finish()
+{
+    FLog(LOG_WMLOCATIONS, "FINISH");
+    CloseLogs();
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// Call every returned value, in milliseconds.
+// Return next call in milliseconds or zero to disable loop.
+uint lastsecond = 0;
+uint last_os_save = 0;
+uint last_os_mod = 0;
+
+uint loop()
+{
+    // updates worldmap
+    // WorldmapUpdate(10000);
+
+    uint16 second = 0;
+    uint16 minute = 0;
+    uint16 hour = 0;
+    uint16 a, b, c, d, g;
+    GetTime(a, b, c, d, hour, minute, second, g);
+
+    if(minute%5 == 0 && second < 20)    // a time buffer to make sure that long cycles won't prevent updating
+    {
+        for(uint i = 1; i < TOWN_COUNT + 1; i++)
+        {
+            ITown@ town = GetTown(i);
+			if(minute == 0 || minute == 30 || town.GetVersion() == TOWN_VERSION_CONTROL)
+				town.Update(hour, minute);
+        }
+    }
+
+    for(uint i = 1; i < TOWN_COUNT + 1; i++)
+    {
+        ITown@ town = GetTown(i);
+        town.UpdateTick();
+        if(((second % 10) == 0) && lastsecond != second)
+        {
+			if (town.GetVersion() == TOWN_VERSION_INFLUENCE)
+				town.TownCheck();
+			else if (town.GetVersion() == TOWN_VERSION_CONTROL)
+				town.ControlCheck();
+			else
+                town.AreaCheck();
+        }
+    }
+
+    UpdateBroadcast();
+
+    if(last_os_save == 0)
+        last_os_save = ELAPSED_TIME;
+    else if(ELAPSED_TIME > last_os_save + OS_CYCLE_TIME)
+    {
+        array<Critter@> players;
+        uint            n = GetAllOnlinePlayers(players);
+        for(uint i = 0; i < n; i++)
+            if(players[i].Id % OS_MAX_MOD == last_os_mod)
+                OnlineStats_TrySave(players[i]);
+        last_os_save += OS_CYCLE_TIME;
+        last_os_mod++;
+        if(last_os_mod == OS_MAX_MOD)
+            last_os_mod = 0;
+    }
+
+    lastsecond = second;
+    return 500;
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// Call when critter attack another.
+void critter_attack(Critter& cr, Critter& target, ProtoItem& weapon, uint8 weaponMode, ProtoItem@ ammo)
+{
+    CombatAttack(cr, target, weapon, weaponMode, ammo);
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// Called when a critter is attacked by another.
+#define _CanHelp     # (npc, who)(_GroupMode(npc) == FACTION_MODE_NPC_ONLY ? _IsTrueNpc(who) : (_GroupMode(npc) == FACTION_MODE_PLAYER_ONLY ? !_IsTrueNpc(who) : true))
+#define _AnyGuard    # (npc)         (_GroupMode(npc) != 0 && _GroupMode(npc) != 4)
+// These macros are a nice example of code that can't be inlined function nor can be put in do{}while(false) (because of continue) :)
+#define _GenGuardTryHelpCr                         \
+    # (npc)        if(crHelpers == 0 && !override) \
+        continue; if(!_CanHelp(npc, cr))           \
+        continue; crHelpers--; AddAttackPlane(npc, 0, attacker); continue
+#define _GenGuardTryHelpAttacker                   \
+    # (npc)  if(attackerHelpers == 0 && !override) \
+        continue; if(!_CanHelp(npc, attacker))     \
+        continue; attackerHelpers--; AddAttackPlane(npc, 0, cr); continue
+#define _TryHelpCr                                                      \
+    # (npc)                if(!_CanHelp(npc, cr))                       \
+        continue; if(!_IsTrueNpc(cr)) { if(crHelpers == 0 && !override) \
+                                            continue; crHelpers--; } AddAttackPlane(npc, 0, attacker); continue
+#define _TryHelpAttacker                                                            \
+    # (npc)          if(!_CanHelp(npc, attacker))                                   \
+        continue; if(!_IsTrueNpc(attacker)) { if(attackerHelpers == 0 && !override) \
+                                                  continue; attackerHelpers--; } AddAttackPlane(npc, 0, cr); continue
+
+void critter_attacked(Critter& cr, Critter& attacker)
+{
+    if(attacker.Id == cr.Id)
+        return;
+
+    Map@ map = cr.GetMap();
+    if(IsDueling(attacker))
+        return;
+    uint crGroup = _GroupIndex(cr);
+    uint attackerGroup = _GroupIndex(attacker);
+
+    DPlayerLog(attacker, "" + attackerGroup + "vs" + crGroup);
+
+    if(crGroup == attackerGroup && _IsTrueNpc(cr) && _IsTrueNpc(attacker))
+        return;
+
+    if(attacker.IsPlayer() && !_GroupHasNoAffiliation(crGroup) && !IsFlaggedAsIllegal(cr))
+    {
+        if(IsTown(map))
+            SubReputation(attacker, crGroup, REP_ATK_PENALTY * MAX(1, _GroupRank(cr)));
+        else
+            TryReportOffense(cr, attacker, REP_ATK_PENALTY * MAX(1, _GroupRank(cr)));
+    }
+    if(!cr.IsPlayer() && (!_IsTrueNpc(attacker) || (crGroup != attackerGroup)))
+        AddAttackPlane(cr, 0, attacker);
+
+    // In similar fashion to vanilla, but only for general purpose guards (normal guards will react no matter what, unless the helped is player/follower)
+    uint crHelpers = 10 - attacker.Stat[ST_CHARISMA];
+    crHelpers = CLAMP(crHelpers, 2, 8);
+    if(_AnyGuard(cr))
+        crHelpers += 4;
+    uint attackerHelpers = 10 - cr.Stat[ST_CHARISMA];
+    attackerHelpers = CLAMP(attackerHelpers, 2, 4);
+    if(_AnyGuard(attacker))
+        attackerHelpers += 4;
+
+    // Reinforcements
+    bool override = GetAlertLevel(map) >= __AlertLevelReact;   // map is on high alert, don't use helpers number, everyone fights
+
+    // We say again: *Helpers are potential general purpose guards or faction-guards helping player/follower :)
+    // Put all critters that can see either the target or the attacker in critters
+    array<Critter@> critters;
+    uint            k = 0;
+
+    if(override)
+        k = map.GetCritters(0, FIND_LIFE_AND_KO | FIND_ONLY_NPC, critters);
+    else
+    {
+        uint n = cr.GetCritters(true, FIND_LIFE_AND_KO | FIND_ONLY_NPC, critters);
+        uint m = attacker.GetCritters(true, FIND_LIFE_AND_KO | FIND_ONLY_NPC, critters);
+        m += n;
+        if(m == 0)
+            return;
+
+        k = m;
+        if(n != 0 && m != n)       // union-find if necessary (usually it is)
+        {
+            k = n;
+            // Remove the doubled ones
+            m -= 1;
+            while(k != m)
+            {
+                if(critters[k].IsSee(cr))
+                {
+                    // Swap this guy with the last on the "probably ok" list
+                    Critter@ temp = critters[k];
+                    @critters[k] = critters[m];
+                    @critters[m] = temp;
+                    m--;
+                }
+                else
+                    k++;
+            }
+            if(!critters[k].IsSee(cr))
+                k++;
+        }
+    }
+
+    // Exclude those that are already busy helping, check if a general purpose guard is there and if the attacker should be flagged
+    // Flagging unflagged attacker when the target is unflagged and there's no extreme reputations combination
+
+    for(uint i = 0; i < k; i++)
+    {
+        if(!_IsTrueNpc(critters[i]) || critters[i].Id == cr.Id || critters[i].Id == attacker.Id)
+        {
+            @critters[i] = null;
+            continue;
+        }
+        if(_CritHasExtMode(critters[i], MODE_EXT_GUARD))
+        {
+            uint crRepIndex = _GroupIndex(critters[i]);
+            if(!_IsTrueNpc(attacker) &&
+               !IsFlaggedAsIllegal(attacker) &&
+               !IsFlaggedAsIllegal(cr) &&
+               (crRepIndex >= REPUTATION_COUNT || (attacker.Reputation[crRepIndex] < __ReputationLoved) ||
+                (cr.Reputation[crRepIndex] >= __ReputationHated))
+               )
+                SetCritterIllegalFlag(attacker, ILLEGAL_FLAG_ATTACKING);
+        }
+
+
+        NpcPlane@ plane = critters[i].GetCurPlane();
+        if(valid(plane) && plane.Type == AI_PLANE_ATTACK && plane.Attack_TargId == attacker.Id)
+        {
+            if(crHelpers > 0)
+                crHelpers--;
+            @critters[i] = null;           // Exclude this critter
+        }
+        if(valid(plane) && plane.Type == AI_PLANE_ATTACK && plane.Attack_TargId == cr.Id)
+        {
+            if(attackerHelpers > 0)
+                attackerHelpers--;
+            @critters[i] = null;           // Exclude this critter
+        }
+    }
+
+    int  crRep = 0;
+    int  attackerRep = 0;
+    uint npcGroup = 0;
+    int  crStatus = FACTION_NEUTRAL;
+    int  attackerStatus = FACTION_NEUTRAL;
+
+    // Global rule: always help a friend against a non-friend; always attack the enemy if against non-enemy
+    for(uint i = 0; i < k; i++)
+    {
+        if(!valid(critters[i]))
+            continue;                                        // Skip excluded
+        npcGroup = _GroupIndex(critters[i]);
+
+        if(_CritHasExtMode(critters[i], MODE_EXT_GUARD))     // General purpose guard
+        {
+            if(attackerHelpers == 0 && crHelpers == 0 && !override)
+                continue;
+            // Logic behind an all-purpose guard:
+            // Always ignore the attack if critter is flagged as illegal
+            // Help all npc members if they are attacking
+            // Help all npc members if they are attacked
+            // If neither of the above, check if the attacked is liked very much, and the target is not. help the attacker if this is the case.
+            // Otherwise, check if reputation difference is big enough, ignore the attack then
+            // If not, then proceed with the default action (help the target)
+
+            // Faction members npcs are ok, help them
+            if((npcGroup == attackerGroup) && _IsTrueNpc(attacker))
+            {
+                _GenGuardTryHelpAttacker(critters[i]);
+            }
+
+            // Always help a friend against a non-friend; always attack the enemy if against non-enemy
+            crStatus = GetGroupsStatus(cr, critters[i]);
+            attackerStatus = GetGroupsStatus(attacker, critters[i]);
+
+            if(crStatus == FACTION_ALLY)
+            {
+                if(attackerStatus != FACTION_ALLY)
+                {
+                    _GenGuardTryHelpCr(critters[i]);
+                }
+                else
+                    continue;
+            }
+            else if(crStatus == FACTION_NEUTRAL)
+            {
+                if(attackerStatus == FACTION_ALLY)
+                {
+                    _GenGuardTryHelpAttacker(critters[i]);
+                }
+            }
+            else if(crStatus == FACTION_ENEMY)
+            {
+                if(attackerStatus != FACTION_ENEMY)
+                {
+                    _GenGuardTryHelpAttacker(critters[i]);
+                }
+            }
+
+            // Is the critter illegal? then the attacker is ok
+            if(IsFlaggedAsIllegal(cr))
+                continue;
+
+            // Help the friendly npc
+            if((crGroup == npcGroup) && _IsTrueNpc(cr))
+            {
+                _GenGuardTryHelpCr(critters[i]);
+            }
+
+            // If the attacker is liked, and the target is not, actually help the attacker
+            crRep = npcGroup < REPUTATION_COUNT ? cr.Reputation[npcGroup] : 0;
+            attackerRep = npcGroup < REPUTATION_COUNT ? attacker.Reputation[npcGroup] : 0;
+            if((attackerRep >= __ReputationLoved) && (crRep < __ReputationHated))
+            {
+                _GenGuardTryHelpAttacker(critters[i]);
+            }
+
+            // Be neutral on medium difference
+            //if(attackerRep - crRep > REP_DIFF)
+            //    continue;
+
+            // Default behaviour
+            _GenGuardTryHelpCr(critters[i]);
+        }                                                                                                           // General purpose guard
+        else if(_GroupIndex(critters[i]) > 1 && _GroupMode(critters[i]) > 0 && _GroupMode(critters[i]) < 4)         // non-general guard
+        {
+            // General rules: target is in our team, npc attacker is in our team:     do nothing
+            //                target is in our team, player attacker is in our team:  kill the player
+            //                target is in our team, attacker not is in our team:     kill the attacker
+            //                target is not in our team, attacker is in our team:     kill the critter
+            //                target is not in our team, attacker is not in our team: help the side that has v. high reputation,
+            //                                                                        providing that the other side has v. low reputation
+
+
+            // Always help a friend against a non-friend; always attack the enemy if against non-enemy
+            crStatus = GetGroupsStatus(cr, critters[i]);
+            attackerStatus = GetGroupsStatus(attacker, critters[i]);
+
+            if(crStatus == FACTION_ALLY)
+            {
+                if(attackerStatus != FACTION_ALLY)
+                {
+                    _GenGuardTryHelpCr(critters[i]);                     // Act like a generic guard in this case
+                }
+            }
+            else if(crStatus == FACTION_NEUTRAL)
+            {
+                if(attackerStatus == FACTION_ALLY)
+                {
+                    _GenGuardTryHelpAttacker(critters[i]);                     // Act like a generic guard in this case
+                }
+            }
+            else if(crStatus == FACTION_ENEMY)
+            {
+                if(attackerStatus != FACTION_ENEMY)
+                {
+                    _GenGuardTryHelpAttacker(critters[i]);                     // Act like a generic guard in this case
+                }
+            }
+
+            if(npcGroup == crGroup)
+            {
+                if(npcGroup == attackerGroup)
+                {
+                    if(_IsTrueNpc(attacker))
+                        continue;
+                    else
+                    {
+                        _TryHelpCr(critters[i]);
+                    }
+                }
+                else
+                {
+                    if(_IsTrueNpc(attacker))
+                        continue;
+                    else
+                        _TryHelpCr(critters[i]);
+                }
+            }
+            else
+            {
+                if(npcGroup == attackerGroup)
+                {
+                    _TryHelpAttacker(critters[i]);
+                }
+                else
+                {
+                    crRep = npcGroup < REPUTATION_COUNT ? cr.Reputation[npcGroup] : 0;
+                    attackerRep = npcGroup < REPUTATION_COUNT ? attacker.Reputation[npcGroup] : 0;
+                    if((attackerRep >= __ReputationLoved) && (crRep < __ReputationHated))
+                    {
+                        _TryHelpAttacker(critters[i]);
+                    }
+                    else if((crRep >= __ReputationLoved) && (attackerRep < __ReputationHated))
+                    {
+                        _TryHelpCr(critters[i]);
+                    }
+                }
+            }
+        }                                             // Non-general purpose guard
+        else if(_GroupHasNoAffiliation(npcGroup))     // In encounters
+        {
+            if(npcGroup == crGroup)
+                AddAttackPlane(critters[i], 0, attacker);
+            else if(npcGroup == attackerGroup)
+                AddAttackPlane(critters[i], 0, cr);
+        }
+    }     // Main loop
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// Called after the critter gets any damage.
+void PostDamage(Critter& cr)
+{
+    if(valid(cr.GetMap()) && cr.GetMap().IsTurnBased())
+        return;
+    if(cr.IsPlayer() || !IsHumanoid(cr) || cr.Cond == CRITTER_CONDITION_DEAD)
+        return;
+    if(cr.IsInjured())
+    {
+        if(cr.Timeout[TO_SK_DOCTOR] <= 0)
+        {
+            if(cr.Stat[ST_INTELLECT] >= Random(1, 10))
+            {
+                array<NpcPlane@> planes;
+                cr.GetPlanes(PLANE_DOCTOR_CRITTER, planes);
+                if(planes.length() > 0)
+                    planes[0].IdentifierExt = cr.Id;
+                else
+                    AddDoctorCritterPlane(cr, valid(cr.GetCurPlane()) ? cr.GetCurPlane().Priority + 5 : 0, cr, false);     // self
+            }
+        }
+    }
+    if(cr.Stat[ST_CURRENT_HP] != cr.Stat[ST_MAX_LIFE])
+    {
+        if(cr.Timeout[TO_SK_FIRST_AID] <= 0 && cr.Timeout[TO_WEAKENED] <= 0)
+        {
+            if(cr.Stat[ST_INTELLECT] >= Random(1, 10))
+            {
+                if(cr.Stat[ST_CURRENT_HP] <= cr.Stat[ST_MAX_LIFE] / 2 || (cr.Stat[ST_MAX_LIFE] - cr.Stat[ST_CURRENT_HP] > cr.Skill[SK_FIRST_AID]))
+                {
+                    array<NpcPlane@> planes;
+                    cr.GetPlanes(PLANE_HEAL_CRITTER, planes);
+                    if(planes.length() > 0)
+                        planes[0].IdentifierExt = cr.Id;
+                    else
+                        AddHealCritterPlane(cr, valid(cr.GetCurPlane()) ? cr.GetCurPlane().Priority + 5 : 0, cr, false);     // self
+                }
+            }
+        }
+    }
+
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// Call when a critter steals from another.
+bool critter_stealing(Critter& cr, Critter& thief, Item& item, uint count)
+{
+    if(cr.IsDead() || cr.Timeout[TO_BATTLE] > 0 || thief.Timeout[TO_BATTLE] > 0)
+    {
+        thief.StatBase[ST_LAST_STEAL_CR_ID] = 0;
+        thief.StatBase[ST_STEAL_COUNT] = 0;
+        return false;
+    }
+
+    switch(item.GetProtoId())
+    {
+        case PID_WORKBENCH:
+        case PID_WORKBENCH_PRIMITIVE:
+        case PID_WORKBENCH_RAIDERS:
+        case PID_MFC_MACHINE:
+        case PID_MED_MACHINE:
+        case PID_AMMO_FACILITY:
+        case PID_CAMPFIRE:
+        case PID_ADVANCED_BENCH:
+        case PID_TOBACCO_BENCH:
+            //DeleteItem(item);
+            return false;
+    }
+
+    int dir1 = cr.Dir;
+    int dir2 = thief.Dir;
+    int kDir = MAX(dir1, dir2) - MIN(dir1, dir2);
+    if(kDir > 3)
+        kDir = 6 - kDir;
+
+    int steal = thief.Skill[SK_STEAL];
+    if(steal <= 0)
+        steal = 1;
+    int size = item.Proto.Volume;
+    if(size <= 0)
+        size = 1;
+
+    // Perk pickpocket, ignore size and facing --> now only halve
+    bool pickpocket = thief.Perk[PE_PICKPOCKET] != 0;
+
+    // Count modifier
+    int kCount = count / steal;
+    if(kCount <= 0)
+        kCount = 1;
+
+    // Check time of stealing
+    uint lastStealCrId = thief.Stat[ST_LAST_STEAL_CR_ID];
+    uint stealCount = thief.Stat[ST_STEAL_COUNT];
+    if(lastStealCrId == cr.Id && thief.Timeout[TO_SK_STEAL] > 0)
+        steal -= steal * stealCount * 10 / 100;
+
+    // Calc
+    int k = (steal - kDir * (pickpocket ? 5 : 10)) / MAX(1, (size * kCount) / (pickpocket ? 2 : 1));
+    k = CLAMP(k, 5, 95);
+
+    GameVar@ var = GetUnicumVar(UVAR_proximity_check, cr.Id, thief.Id);
+    if(var.GetValue() == 1)
+        k /= 2;
+
+    bool success = !(Random(1, 100) > k);
+
+    // flag critter if guards spot it
+    /*if (IsTown(thief.GetMap()) && !IsFlaggedAsIllegal(thief))
+            thief.SendMessage(MSG_IM_STEALING, cr.Id, SENDMESSAGE_TO_VISIBLE_ME);*/
+
+    if(success || cr.Perk[PE_THIEF] != 0 || Random(1, 50) <= cr.Stat[ST_LUCK])
+        _SetTimeout(thief, TO_SK_STEAL, STEAL_TIMEOUT(thief));
+
+    if(success)
+    {
+        // Add experience
+        // const int stealExp[12]={10,30,60,100,150,210,280,360,450,550,660,780};
+        // const int stealExp[12]={10,20,30,40,50,60,70,80,90,100,110,120};
+        const int[] stealExp = { 5, 10, 15, 25, 30, 40, 50, 60, 70, 100 };
+
+        if(lastStealCrId == cr.Id && thief.Timeout[TO_SK_STEAL] > 0)
+        {
+            stealCount++;
+            if(stealCount > 9)
+                stealCount = 9;
+            thief.StatBase[ST_STEAL_COUNT] = stealCount;
+        }
+        else
+        {
+            thief.StatBase[ST_LAST_STEAL_CR_ID] = cr.Id;
+            thief.StatBase[ST_STEAL_COUNT] = 0;
+        }
+
+        if(_IsFollower(cr) || IsBase(cr.GetMap()) || IsTent(cr.GetMap()))
+            return success;
+
+        if(cr.IsNpc())
+        {
+            thief.StatBase[ST_EXPERIENCE] += stealExp[stealCount];
+            AddScore(thief, SCORE_THIEF, 1);
+        }
+    }
+    else
+    {
+        if(IsTown(thief.GetMap()))
+            SetCritterIllegalFlag(thief, ILLEGAL_FLAG_STEALING);
+
+        thief.StatBase[ST_LAST_STEAL_CR_ID] = 0;
+        thief.StatBase[ST_STEAL_COUNT] = 0;
+
+        if(cr.IsNpc())
+        {
+            int thiefHp = thief.Stat[ST_CURRENT_HP];
+            if(!(_IsFollower(cr) && IsTown(thief.GetMap())))
+                AddAttackPlane(cr, 0, thief, thiefHp < 10 || Random(1, 10) > cr.Stat[ST_LUCK] ? __DeadHitPoints : Random(thiefHp / 4, thiefHp / 2));
+
+            uint crGroup = _GroupIndex(cr);
+            if(_ValidReputationIndex(crGroup))
+                SubReputation(thief, crGroup, REP_STEAL_PENALTY * MAX(1, _GroupRank(cr)));
+        }
+        else
+        {
+            cr.Say(SAY_NETMSG, "|4291317840 " + thief.Name + " failed to steal from you.");
+            cr.RunClientScript("_ActionStealing", thief.Id, 0, 0, null, null);       // send action
+        }
+    }
+
+    return success;
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// Call on something critter use item.
+bool critter_use_item(Critter& cr, Item& item, Critter@ targetCr, Item@ targetItem, Scenery@ targetScen, uint param)
+{
+    // scenario
+    bool   isPlayer = cr.IsPlayer();
+    uint16 pid = item.GetProtoId();
+    bool   useOnSelf = (!valid(targetCr) && !valid(targetItem) && !valid(targetScen));
+
+    DLog("Using item with pid: " + item.GetProtoId());
+
+    // Book reading
+    // disabled
+    /*
+       if(useOnSelf && IsReadableBook(pid))
+       {
+            TryReadBook(cr,item);
+            return true;
+       }
+     */
+
+    // Explosion
+    if(OnUseExplode(cr, item, targetCr, targetItem, targetScen, param))
+        return true;
+
+    // Use item on another item
+    //
+    if(valid(targetItem))
+    {
+        if(targetItem.GetType() == ITEM_TYPE_CAR && UseItemOnCar(cr, targetItem, item))
+        {
+            return true;
+        }
+    }
+
+    // Drugs
+	
+	if (pid==PID_CIGARETTES)
+	{
+        if(useOnSelf)
+            {
+			UseDrug(cr, item);
+			if(HasItem(cr, PID_LIGHTER)) cr.Animate(0, ANIM2_SMOKE , null, true, false);
+			}
+        else if(valid(targetCr))
+            UseDrugOn(cr, targetCr, item);
+        else
+            cr.SayMsg(SAY_NETMSG, TEXTMSG_GAME, STR_USE_NOTHING);
+		return true;
+	}
+	
+    if(item.GetType() == ITEM_TYPE_DRUG)
+    {
+		/* Smoking required a lighter during some dark times
+        if(item.GetProtoId() == PID_CIGARETTES && !HasItem(cr, PID_LIGHTER))
+        {
+            cr.Say(SAY_NETMSG, "You need a lighter to smoke.");
+            return true;
+        }
+		*/
+
+        if(useOnSelf)
+            UseDrug(cr, item);
+        else if(valid(targetCr))
+            UseDrugOn(cr, targetCr, item);
+        else
+            cr.SayMsg(SAY_NETMSG, TEXTMSG_GAME, STR_USE_NOTHING);
+        return true;
+    }
+	
+	// Need a light?
+	if (pid==PID_LIGHTER && valid(targetCr) && targetCr.IsPlayer())
+	{
+		Item@ cigs=targetCr.GetItem(0,SLOT_HAND1);
+		if(valid(cigs) && cigs.GetProtoId()==PID_CIGARETTES && !targetCr.IsKnockout() && !targetCr.IsDead()) 
+		{
+		UseDrug(targetCr, cigs);
+		targetCr.Animate(0, ANIM2_SMOKE , null, true, false);
+		}
+        else
+			cr.SayMsg(SAY_NETMSG, TEXTMSG_GAME, STR_USE_NOTHING);
+		return true;
+	}
+
+    // Tools (FA and doctor now)
+    if(!valid(targetScen) && !valid(targetItem) && item.GetType() == ITEM_TYPE_MISC)
+    {
+        if(item.Proto.Misc_ToolSkillNum == SK_FIRST_AID)
+        {
+            if(!valid(targetCr))
+                @targetCr = cr;
+            if(UseFirstAidOnCritter(cr, targetCr, item))
+                return true;
+        }
+        else if(item.Proto.Misc_ToolSkillNum == SK_DOCTOR)
+        {
+            if(!valid(targetCr))
+                @targetCr = cr;
+            if(UseDoctorOnCritter(cr, targetCr, item))
+                return true;
+        }
+    }
+
+    // Radio
+    if(FLAG(item.Flags, ITEM_FLAG_RADIO) && useOnSelf)
+    {
+        if(isPlayer)
+            EditRadioSettings(cr, item);
+        return true;
+    }
+
+    // capturing
+    if(pid == PID_ROPE && valid(targetCr))
+    {
+        bool sub = false;
+        if(CaptureBrahmin(cr, targetCr, sub))
+        {
+            if(sub)
+                cr.DeleteItem(PID_ROPE, 1);
+            return true;
+        }
+        if(CaptureSlave(cr, targetCr, sub))
+        {
+            if(sub)
+                cr.DeleteItem(PID_ROPE, 1);
+            return true;
+        }
+    }
+
+    // Play dice
+    if(pid == PID_DICE)
+    {
+        cr.SayMsg(SAY_EMOTE_ON_HEAD, TEXTMSG_TEXT, STR_DICE_THROW, "$result" + Random(1, 6));
+        return true;
+    }
+    if(pid == PID_LOADED_DICE)
+    {
+        cr.SayMsg(SAY_EMOTE_ON_HEAD, TEXTMSG_TEXT, STR_DICE_THROW, "$result" + uint((item.Id % 6) + 1));
+        return true;
+    }
+	
+	// Cards
+	if (pid==PID_MARKED_DECK_OF_CARDS)
+	{
+		if(Random(0,1)==0)
+		cr.SayMsg(SAY_EMOTE_ON_HEAD,TEXTMSG_TEXT,STR_CARD_QUEEN_HEARTS);
+		else
+		cr.SayMsg(SAY_EMOTE_ON_HEAD,TEXTMSG_TEXT,STR_CARD_QUEEN_DIAMONDS);
+		return true;
+	}
+	
+	if (pid==PID_DECK_OF_CARDS)
+	{
+		cr.SayMsg(SAY_EMOTE_ON_HEAD,TEXTMSG_TEXT,STR_SHOW_CARD+Random(0,51));
+		return true;
+	}
+	
+	if (pid==PID_BOTTLE_CAPS)
+	{
+		if(Random(0,1)==0) cr.Say(SAY_EMOTE_ON_HEAD, "Flips a bottle cap: top");
+		else cr.Say(SAY_EMOTE_ON_HEAD, "Flips a bottle cap: bottom");
+    return true;
+	}
+
+    // Magic ball
+	// Old Shit (Yes/No)
+	//if(pid == PID_MAGIC_8_BALL)
+    //{
+    //    cr.SayMsg(SAY_EMOTE_ON_HEAD, TEXTMSG_TEXT, Random(1, 2) == 1 ? STR_MAGIC_BALL_YES : STR_MAGIC_BALL_NO);
+    //    return true;
+    //}
+	// New Shit (Plenty of answers)
+	if (pid==PID_MAGIC_8_BALL)
+	{
+		cr.SayMsg(SAY_EMOTE_ON_HEAD,TEXTMSG_TEXT,STR_MAGIC_BALL+Random(0,19));
+		return true;
+	}
+
+    // Cosmetic
+    if(pid == PID_COSMETIC_CASE && cr.Stat[ST_GENDER] == GENDER_FEMALE)
+    {
+        cr.SayMsg(SAY_EMOTE_ON_HEAD, TEXTMSG_TEXT, STR_COSMETIC_USE);
+        return true;
+    }
+
+    // prospect map
+    if(item.GetProtoId() == PID_PROSPECT_MAP)
+    {
+        return UseProspectMap(cr, item);
+    }
+	
+	// Book reading
+	if(useOnSelf && IsReadableBook(pid))
+	{
+		TryReadBook(cr,item);
+		return true;
+	}
+
+    // Take process to engine
+    return false;
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+bool critter_use_skill(Critter& cr, int skill, Critter@ targetCr, Item@ targetItem, Scenery@ targetScen)
+{
+    bool isPlayer = cr.IsPlayer();
+
+    if(valid(targetItem))
+    {
+        if(GuardNotLegit(cr, targetItem, false))
+        {
+            cr.Say(SAY_NETMSG, "You can't do this with not legit item.");
+            return true;
+        }
+
+        // Cars
+        if(targetItem.GetType() == ITEM_TYPE_CAR && UseSkillOnCar(cr, targetItem, skill))
+            return true;
+
+        // Doors or containers
+        if((targetItem.GetType() == ITEM_TYPE_DOOR || targetItem.GetType() == ITEM_TYPE_CONTAINER) && UseSkillOnLocker(cr, targetItem, skill))
+            return true;
+    }
+
+    switch(skill)
+    {
+    case SKILL_PICK_ON_GROUND:     // Pick item or scenery on ground
+    {
+        // Stairs
+        // Scenery
+        if(valid(targetScen))
+        {
+            cr.SayMsg(SAY_NETMSG, TEXTMSG_GAME, STR_USE_NOTHING);
+            return true;
+        }
+
+        // Explosives
+        if(valid(targetItem) && (targetItem.GetProtoId() == PID_ACTIVE_MINE || targetItem.GetProtoId() == PID_ACTIVE_PERSONNEL_MINE) && OnUseExplode(cr, targetItem, null, null, null, 0))
+            return true;
+
+        // Pick some item
+        if(valid(targetItem))
+        {
+            Item@ item = targetItem;
+            if(!FLAG(item.Flags, ITEM_FLAG_CAN_PICKUP))
+            {
+                cr.SayMsg(SAY_NETMSG, TEXTMSG_GAME, STR_USE_NOTHING);
+                break;
+            }
+
+            bool picked = true;
+            int  freeWeight = cr.Stat[ST_CARRY_WEIGHT]*2 - cr.ItemsWeight();
+            if(freeWeight >= int(item.Proto.Weight * item.GetCount()))
+            {
+                // Pick full
+                MoveItem(item, 0, cr);
+                if(cr.Mode[MODE_HIDE] != 0 && cr.GetAccess() < ACCESS_TESTER)
+                {
+                    int sk = cr.Skill[SK_STEAL] - 10 * GRAMM_TO_LBS(item.Proto.Weight * item.GetCount());
+                    sk = CLAMP(sk, 5, 95);
+                    if(sk < Random(1, 100))
+                        cr.ModeBase[MODE_HIDE] = 0;
+                }
+            }
+            else
+            {
+                // Pick half
+                if(item.IsStackable() && freeWeight >= int(item.Proto.Weight))
+                {
+                    MoveItem(item, freeWeight / item.Proto.Weight, cr);
+                    if(cr.Mode[MODE_HIDE] != 0 && cr.GetAccess() < ACCESS_TESTER)
+                    {
+                        int sk = cr.Skill[SK_STEAL] - 10 * GRAMM_TO_LBS(item.Proto.Weight * MAX(int(freeWeight / item.Proto.Weight), int(item.GetCount())));
+                        sk = CLAMP(sk, 5, 95);
+                        if(sk < Random(1, 100))
+                            cr.ModeBase[MODE_HIDE] = 0;
+                    }
+                }
+                // Overweight
+                else
+                {
+                    cr.SayMsg(SAY_NETMSG, TEXTMSG_GAME, STR_OVERWEIGHT);
+                    picked = false;
+                }
+            }
+            if(picked)
+            {
+                string sound = PrepareSound_Pick(item);
+                if(sound.length() > 4)                           // .ext
+                    cr.PlaySound(sound, true);
+            }
+        }
+    }
+    break;
+    case SKILL_PUT_CONT:     // Put item in container, only targetItem is valid
+    case SKILL_TAKE_CONT:    // Take item from container, only targetItem is valid
+    {
+        switch(targetItem.GetProtoId())
+        {
+            case PID_WORKBENCH:
+            case PID_WORKBENCH_PRIMITIVE:
+            case PID_WORKBENCH_RAIDERS:
+            case PID_MFC_MACHINE:
+            case PID_MED_MACHINE:
+            case PID_AMMO_FACILITY:
+            case PID_CAMPFIRE:
+            case PID_ADVANCED_BENCH:
+            case PID_TOBACCO_BENCH:
+                DeleteItem(targetItem);
+                return true;
+        }
+
+        if(cr.Mode[MODE_HIDE] != 0 && cr.GetAccess() < ACCESS_TESTER)
+        {
+            int sk = cr.Skill[SK_STEAL] - 10 * GRAMM_TO_LBS(targetItem.Proto.Weight * targetItem.GetCount());
+            sk = CLAMP(sk, 5, 95);
+            if(sk < Random(1, 100))
+                cr.ModeBase[MODE_HIDE] = 0;
+        }
+        return false;
+    }
+    case SKILL_TAKE_ALL_CONT:     // Take all items from critter or item container
+    {
+        if(cr.Mode[MODE_HIDE] != 0 && cr.GetAccess() < ACCESS_TESTER)
+            cr.ModeBase[MODE_HIDE] = 0;
+        
+        return true;                     // Don't allow - hardcoded take all is replaced by unsafe_TakeAll called from button injected at position of original one
+        //return false;                  // Allow transactions
+    }
+    case SKILL_LOOT_CRITTER:           // Loot critter, only targetCr is valid
+    {
+        // NO DROP MODE FOR PLAYERS
+        if(targetCr.IsPlayer() && !_PlayerDropEnabled(targetCr, targetCr.GetMap()))
+            return true;
+
+        CritterTrophy(targetCr, cr);   // Critters like brahmins should drop meat, skin etc		cr.ShowContainer(targetCr,null,TRANSFER_CRIT_LOOT);
+        cr.Action(CRITTER_ACTION_PICK_CRITTER, 0, null);
+        cr.ShowContainer(targetCr, null, TRANSFER_CRIT_LOOT);
+        if(cr.Mode[MODE_HIDE] != 0 && Random(0, 1) == 1 && cr.GetAccess() < ACCESS_TESTER)
+            cr.ModeBase[MODE_HIDE] = 0;
+        return true;
+    }
+    case SKILL_PUSH_CRITTER:     // Push critter, only targetCr is valid
+        cr.Action(CRITTER_ACTION_PICK_CRITTER, 2, null);
+        if((cr.Timeout[TO_BATTLE] == 0 && targetCr.Timeout[TO_BATTLE] == 0) && (targetCr.IsPlayer() || (targetCr.IsNoPlanes() && targetCr.GetTalkedPlayers(null) == 0)))
+        {
+            targetCr.MoveRandom();
+            if(targetCr.IsPlayer()) targetCr.Wait(450);
+            CreateTimeEvent(AFTER(REAL_MS(500)), "e_CritterMove", cr.Id, false);
+        }
+        return true;
+    case SK_SCIENCE:     //////////////////////////////////////////////////
+    {
+        if(valid(targetItem) && (!FLAG(targetItem.Flags, ITEM_FLAG_CAN_PICKUP)))
+        {
+            cr.SayMsg(SAY_NETMSG, TEXTMSG_GAME, STR_USE_NOTHING);
+            return true;
+        }
+
+        if(valid(targetItem) && ReversableItem(targetItem))
+        {
+            if(_IsNotLegit(targetItem.Val9))
+            {
+                cr.Say(SAY_NETMSG, "You can't disassemble not legit items.");
+                return true;
+            }
+
+            Map@ map = cr.GetMap();
+            if(valid(map) && _MapHasMode(map, MAP_MODE_NO_DISMANTLING))
+            {
+                cr.SayMsg(SAY_NETMSG, TEXTMSG_GAME, STR_USE_NOTHING);
+                return(true);
+            }
+
+            // disassembling
+            if(cr.Timeout[TO_BATTLE] > 0)
+            {
+                cr.SayMsg(SAY_NETMSG, TEXTMSG_GAME, STR_TIMEOUT_BATTLE_WAIT);
+                return true;
+            }
+            if(ReverseItem(cr, targetItem))
+            {
+                if(_IsSneaking(cr) && _IsRealPlayer(cr))
+                {
+                    _DisableSneak(cr);
+                }
+                return true;
+            }
+        }
+
+        cr.SayMsg(SAY_NETMSG, TEXTMSG_GAME, STR_USE_NOTHING);   // todo "You fail to learn anything."
+    }
+    break;
+    case SK_REPAIR:                                             ///////////////////////////////////////////////////
+    {
+        // Generic repair
+        if(valid(targetItem) && targetItem.Accessory == ACCESSORY_CRITTER && targetItem.IsDeteriorable())
+        {
+            TryRepairItem(cr, targetItem);
+            return true;
+        }
+
+        cr.SayMsg(SAY_NETMSG, TEXTMSG_GAME, STR_USE_NOTHING);
+    }
+    break;
+    case SK_SNEAK:     ////////////////////////////////////////////////////
+    {
+        if(cr.Mode[MODE_HIDE] != 0)
+            cr.ModeBase[MODE_HIDE] = 0;
+        else if(!isPlayer)
+            cr.ModeBase[MODE_HIDE] = 1;
+        else
+        {
+            if(cr.Timeout[TO_SNEAK] > 0)
+                cr.SayMsg(SAY_NETMSG, TEXTMSG_GAME, STR_TIMEOUT_SNEAK_WAIT);
+            else if(IS_TURN_BASED_TIMEOUT(cr))
+                cr.SayMsg(SAY_NETMSG, TEXTMSG_GAME, STR_TIMEOUT_BATTLE_WAIT);
+            else if(_IsRealPlayer(cr))
+            {
+                // heavy armors = no sneak
+                Item@ armor = _CritGetItemArmor(cr);
+                if(valid(armor))
+                {
+                    switch(armor.GetProtoId())
+                    {
+                        case PID_POWERED_ARMOR:
+                        case PID_HARDENED_POWER_ARMOR:
+                        case PID_ADVANCED_POWER_ARMOR:
+                        case PID_ADVANCED_POWER_ARMOR_MK2:
+                        case PID_METAL_ARMOR:
+                        case PID_METAL_ARMOR_MK_II:
+                        case PID_TESLA_ARMOR:
+                        case PID_COMBAT_ARMOR:
+                        case PID_COMBAT_ARMOR_MK_II:
+                        case PID_BROTHERHOOD_COMBAT_ARMOR:
+                        case PID_NCR_ARMOR:
+                        case PID_ENCLAVE_COMBAT_ARMOR:
+                        case PID_DESERT_COMBAT_ARMOR:
+                        case PID_BRIDGEKEEPER_ROBE:
+                        case PID_CLOTHES_POLICE:
+                        {
+                            cr.Say(SAY_NETMSG, "You can't sneak while wearing this armor.");
+                            return true;
+                        }
+                    }
+                }
+
+                array<Critter@> critters;
+                uint            num = cr.GetCritters(true, FIND_LIFE | FIND_ONLY_PLAYERS, critters);
+
+                for(uint i = 0; i < num; i++)
+                {
+                    // You can sneak in front of...
+
+                    if(critters[i].Mode[MODE_HIDE] != 0)   // ...other sneaking players
+                        continue;
+
+                    if(_IsOffline(critters[i]))            // ...disconnected players
+                        continue;
+
+                    if(!_IsRealPlayer(critters[i]))        // ...server staff
+                        continue;
+
+                    if(_hasMinigame(cr))                   // ...if you have a minigame team, players with the same minigame team
+                    {
+                        if(_getMinigameTeamAndId(_minigame(cr)) == _getMinigameTeamAndId(_minigame(critters[i])))
+                            continue;
+                    }
+                    else     // If you don't have a minigame team, you can sneak in front of...
+                    {
+                        if(_GroupIndex(critters[i]) > 1 && IsGang(_GroupIndex(critters[i])))
+                        {
+                            if(_GroupIndex(critters[i]) == _GroupIndex(cr))                       // ...players from the same player faction
+                                continue;
+                            if(GetStatus(_GroupIndex(critters[i]), cr.Id) == STATUS_FRIEND)       // ...players from a faction where you are a friend
+                                continue;
+                        }
+
+                        if(critters[i].Stat[ST_FOLLOW_CRIT] > 0)
+                        {
+                            if(uint(critters[i].Stat[ST_FOLLOW_CRIT]) == cr.Id)      // ...players who tagged you
+                                continue;
+
+                            Critter@ taggedCr = GetCritter(critters[i].Stat[ST_FOLLOW_CRIT]);
+                            if(valid(taggedCr) && uint(taggedCr.Stat[ST_FOLLOW_CRIT]) == cr.Id)       // ...players who tagged another player in the game who tagged you
+                                continue;
+                        }
+                    }
+                    cr.Say(SAY_NETMSG, "You can't enter sneak while being seen by players who aren't in your team, unless they are sneaking.");
+                    return true;
+                }
+                cr.ModeBase[MODE_HIDE] = 1;
+            }
+            else
+            {
+                cr.ModeBase[MODE_HIDE] = 1;
+            }
+        }
+    }
+    break;
+    case SK_STEAL:     ////////////////////////////////////////////////////
+    {
+        if(valid(targetItem))
+        {
+            cr.SayMsg(SAY_NETMSG, TEXTMSG_GAME, STR_USE_NOTHING);
+        }
+        else if(valid(targetCr) && valid(cr.GetMap()))
+        {
+            // Loot
+            if(targetCr.IsPlayer() && targetCr.Mode[MODE_KILLER_ADMIN] > 0)
+            {
+                if(cr.GetAccess() >= ACCESS_TESTER)
+                {
+                    // we need to block auth->auth stealing, accidental unsetting NO_LOOT/NO_STEAL is evil
+                    cr.Say(SAY_NETMSG, "You sense a bad aura around " + targetCr.Name + " and decided to not steal anything.");
+                }
+                else
+                {
+                    SetLvar(cr, LVAR_killer_admin, cr.StatBase[ST_CURRENT_HP]);
+                    _CritSetMode(cr, MODE_NO_LOOT);
+                    _CritSetMode(cr, MODE_NO_STEAL);
+                    int deathAnim = ANIM2_DEAD_PULSE;
+                    if(targetCr.Mode[MODE_KILLER_ADMIN] == 2)
+                    {
+                        deathAnim = GetRandomDeathAnimation();
+                    }
+                    else if(targetCr.Mode[MODE_KILLER_ADMIN] >= ANIM2_DEAD_BEGIN &&
+                            targetCr.Mode[MODE_KILLER_ADMIN] < ANIM2_DEAD_END)
+                    {
+                        deathAnim = targetCr.Mode[MODE_KILLER_ADMIN];
+                    }
+                    cr.ToDead(deathAnim, null);
+                }
+            }
+            // NO DROP MODE FOR PLAYERS
+            else if(targetCr.IsPlayer() && !_PlayerDropEnabled(targetCr, targetCr.GetMap()))
+            {
+                cr.SayMsg(SAY_NETMSG, TEXTMSG_GAME, STR_USE_NOTHING);
+            }
+            else if(targetCr.Cond == CRITTER_CONDITION_DEAD)
+            {
+                CritterTrophy(targetCr, cr);
+                cr.Action(CRITTER_ACTION_PICK_CRITTER, 0, null);
+                if(cr.Mode[MODE_HIDE] != 0 && Random(0, 1) == 1 && cr.GetAccess() < ACCESS_TESTER)
+                    cr.ModeBase[MODE_HIDE] = 0;
+                cr.ShowContainer(targetCr, null, TRANSFER_CRIT_LOOT);
+            }
+            else if(targetCr.Stat[ST_CURRENT_HP] <= 0 || targetCr.Cond == CRITTER_CONDITION_KNOCKOUT)
+            {
+                cr.Action(CRITTER_ACTION_PICK_CRITTER, 0, null);
+                if(cr.Mode[MODE_HIDE] != 0 && Random(0, 1) == 1 && cr.GetAccess() < ACCESS_TESTER)
+                    cr.ModeBase[MODE_HIDE] = 0;
+                cr.ShowContainer(targetCr, null, TRANSFER_CRIT_LOOT);
+            }
+            // Steal
+            else
+            {
+                if(isPlayer && cr.Timeout[TO_SK_STEAL] > 0)
+                    cr.SayMsg(SAY_NETMSG, TEXTMSG_GAME, STR_SKILL_WEARINESS);
+                else
+                {
+                    cr.Action(CRITTER_ACTION_PICK_CRITTER, 1, null);
+                    cr.ShowContainer(targetCr, null, TRANSFER_CRIT_STEAL);
+                    _SetTimeout(cr, TO_SK_STEAL, STEAL_TIMEOUT(cr));
+                    cr.StatBase[ST_LAST_STEAL_CR_ID] = 0;
+                    cr.StatBase[ST_STEAL_COUNT] = 0;
+                }
+            }
+        }
+        else
+        {
+            cr.SayMsg(SAY_NETMSG, TEXTMSG_GAME, STR_USE_NOTHING);
+        }
+    }
+    break;
+    case SK_FIRST_AID:     ////////////////////////////////////////////////
+    {
+        if(valid(targetItem) || valid(targetScen))
+        {
+            cr.SayMsg(SAY_NETMSG, TEXTMSG_GAME, STR_USE_NOTHING);
+            break;
+        }
+
+        if(!valid(targetCr))
+            @targetCr = cr;
+        if(UseFirstAidOnCritter(cr, targetCr, null))
+            return true;
+    }
+    break;
+    case SK_DOCTOR:     ///////////////////////////////////////////////////
+    {
+        if(valid(targetItem) || valid(targetScen))
+        {
+            cr.SayMsg(SAY_NETMSG, TEXTMSG_GAME, STR_USE_NOTHING);
+            break;
+        }
+
+        if(!valid(targetCr))
+            @targetCr = cr;
+        if(UseDoctorOnCritter(cr, targetCr, null))
+            return true;
+    }
+    break;
+    case SK_LOCKPICK:     /////////////////////////////////////////////////
+    {
+        // Lockers processed in lockers.fos
+    }
+    break;
+    case SK_TRAPS:     /////////////////////////////////////////////////
+    {
+        // Explosion
+        if(valid(targetItem))
+        {
+            uint16 pid = targetItem.GetProtoId();
+            if((pid == PID_ACTIVE_DYNAMITE || pid == PID_ACTIVE_PLASTIC_EXPLOSIVE || pid == PID_ACTIVE_MINE || pid == PID_ACTIVE_PERSONNEL_MINE) &&
+               OnUseExplode(cr, targetItem, null, null, null, 0))
+                return true;
+
+            if(pid == PID_TESLA_ARMOR)
+            {
+                TryRechargeItem(cr, targetItem);
+                return true;
+            }
+        }
+
+        cr.SayMsg(SAY_NETMSG, TEXTMSG_GAME, STR_USE_NOTHING);
+    }
+    break;
+    default:     //////////////////////////////////////////////////////////
+    {
+        cr.SayMsg(SAY_NETMSG, TEXTMSG_GAME, STR_USE_NOTHING);
+    }
+    break;
+    }
+
+    return true;
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// Call on something critter reload weapon.
+// If ammo is not valid than only unload.
+void critter_reload_weapon(Critter& cr, Item& weapon, Item@ ammo)
+{
+    // Special weapons
+    if(weapon.Proto.Weapon_Caliber == 0)
+    {
+        if(weapon.GetProtoId() == PID_SOLAR_SCORCHER)
+        {
+            if(IS_NIGHT(__Hour))
+                cr.SayMsg(SAY_NETMSG, TEXTMSG_GAME, STR_SOLAR_SCORCHER_NO_LIGHT);
+            else
+            {
+                weapon.AmmoCount = weapon.Proto.Weapon_MaxAmmoCount;
+                if(cr.Param[MODE_LAST_WPN_MODE] != 0)
+                {
+                    weapon.SetMode(cr.Param[MODE_LAST_WPN_MODE]);
+                    cr.ParamBase[MODE_LAST_WPN_MODE] = 0;
+                }
+                weapon.Update();
+            }
+        }
+
+        return;
+    }
+
+    // Other weapons
+    // Unload
+    if(!valid(ammo) || (weapon.AmmoCount > 0 && weapon.AmmoPid != ammo.GetProtoId()))
+    {
+        if(weapon.AmmoPid != 0)
+        {
+            Item@ existAmmo = cr.GetItem(weapon.AmmoPid, -1);
+            if(!valid(existAmmo))
+                cr.AddItem(weapon.AmmoPid, weapon.AmmoCount);
+            else
+                _IncItem(existAmmo, weapon.AmmoCount);
+        }
+        weapon.AmmoCount = 0;
+    }
+
+    // Load
+    if(valid(ammo))
+    {
+        uint count = MIN(ammo.GetCount(), weapon.Proto.Weapon_MaxAmmoCount - weapon.AmmoCount);
+        weapon.AmmoCount += count;
+        weapon.AmmoPid = ammo.GetProtoId();
+        _SubItem(ammo, count);
+        if(cr.Param[MODE_LAST_WPN_MODE] != 0)
+        {
+            weapon.SetMode(cr.Param[MODE_LAST_WPN_MODE]);
+            cr.ParamBase[MODE_LAST_WPN_MODE] = 0;
+        }
+    }
+
+    weapon.Update();
+}
+
+uint e_CritterInitRun(array<uint>@ values)
+{
+    Critter@ cr = GetCritter(values[0]);
+    if(!valid(cr))
+        return 0;
+    cr.RunClientScript("_PingServer", 0, 0, 0, null, null);   // check for FOCD
+
+    if(GetLvar(cr, LVAR_authed_char) == 1)
+    {
+        cr.RunClientScript("client_messages@_Listen", 0, 0, 0, null, null);
+        SetCritterEvents(cr);
+    }
+
+    return 0;
+}
+
+uint e_CritterMove(array<uint>@ values)
+{
+    Critter@ cr = GetCritter(values[0]);
+    if(valid(cr)) cr.MoveToDir(cr.Dir);
+    return 0;
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// Call on player register or login in game.
+// Default start position for players is center of global map.
+import void AddOnlinePlayer(Critter& cr) from "utils";
+import void SetCritterEvents(Critter& cr) from "logging_critter";
+
+void critter_init(Critter& cr, bool firstTime)
+{
+    cr.ClearExtEvents();
+
+    FixDrugs(cr);
+	if( cr.Stat[ST_ALPHA] == 0 )
+		cr.StatBase[ST_ALPHA] = 255;
+
+    if(firstTime)
+    {
+        GameVar@ var = GetLocalVar(LVAR_kamikaze_fix, cr.Id);
+        var = 1;
+    }
+    if(cr.Trait[TRAIT_KAMIKAZE] != 0)
+    {
+        GameVar@ var = GetLocalVar(LVAR_kamikaze_fix, cr.Id);
+        if(var.GetValue() == 0)
+        {
+            for(uint i = ST_NORMAL_RESIST; i <= ST_EXPLODE_RESIST; i++)
+                cr.StatBase[i] -= 10;
+            for(uint i = ST_NORMAL_ABSORB; i <= ST_EXPLODE_ABSORB; i++)
+                cr.StatBase[i] += 10;
+            var = 1;
+        }
+    }
+
+
+    if(cr.IsNpc())
+    {
+        cr.SetEvent(CRITTER_EVENT_BARTER, "trader@_OnBarter");
+        if(_IsFollower(cr))
+        {
+            cr.SetBagRefreshTime((uint(-1)));
+        }
+    }
+
+    if(cr.IsPlayer())
+    {
+		if((GetGroupIndex(cr)<200) && IsLexem(cr,"$faction")) UnsetLexem(cr, "$faction");
+		
+        AddOnlinePlayer(cr);
+        CreateTimeEvent(AFTER(REAL_SECOND(5)), "e_CritterInitRun", cr.Id, false);
+        if(GetLvar(cr, LVAR_authed_char) == 0)
+            SetSpectator(cr, false);
+
+        // such paranoic i am!
+        CreateTimeEvent(AFTER(REAL_SECOND(5)), "e_CritterInit_Broadcast", cr.Id, false);
+        CreateTimeEvent(AFTER(REAL_SECOND(6)), "e_CritterInit_OnlineStats", cr.Id, false);
+
+        int   modeRun = 0;
+        Item@ weap = cr.GetItem(0, SLOT_HAND1);
+        if(valid(weap) && weap.GetType() == ITEM_TYPE_WEAPON && weap.Proto.Weapon_NoRunning)
+            modeRun++;
+        @weap = cr.GetItem(0, SLOT_HAND2);
+        if(valid(weap) && weap.GetType() == ITEM_TYPE_WEAPON && weap.Proto.Weapon_NoRunning)
+            modeRun++;
+		if( FLAG( cr.SkinEffects, SKIN_EFFECT_NORUN ))
+			modeRun++;
+
+        cr.ModeBase[MODE_NO_RUN] = modeRun;
+
+		if( cr.Mode[MODE_DEFAULT_COMBAT] == COMBAT_MODE_ANY )
+			cr.ModeBase[MODE_DEFAULT_COMBAT] = COMBAT_MODE_REAL_TIME;
+
+        UpdateFactionsInfo(cr);
+    }
+
+    if(firstTime)
+    {
+        // INITIALIZE PARAMS
+        if(cr.IsPlayer())
+        {
+            if(int(cr.Id) > GetGvar(GVAR_last_registered))
+                SetGvar(GVAR_last_registered, cr.Id);
+
+            GameVar@ var = GetLocalVar(LVAR_factions_player_faction, cr.Id);
+            var = _GroupIndex(cr);
+            GameVar@ var2 = GetLocalVar(LVAR_factions_player_rank, cr.Id);
+            var2 = _GroupRank(cr);
+
+            // Input: 7 special, 3 tag skills, 2 traits, age, gender,
+            // body type, some 3d layers
+            uint traits = 0;
+            for(uint i = TRAIT_BEGIN; i <= TRAIT_END; i++)
+            {
+                if(cr.ParamBase[i] != 0 && traits < 2)
+                {
+                    cr.ParamBase[i] = 1;
+                    traits++;
+                }
+                else
+                    cr.ParamBase[i] = 0;
+            }
+
+            if(cr.StatBase[ST_GENDER] < 0 || cr.StatBase[ST_GENDER] > 1)
+                cr.StatBase[ST_GENDER] = 0;
+            if(cr.StatBase[ST_AGE] < 14 || cr.StatBase[ST_AGE] > 80)
+                cr.StatBase[ST_AGE] = 25;
+            for(uint i = ST_STRENGTH; i <= ST_LUCK; i++)
+                cr.StatBase[i] = CLAMP(cr.StatBase[i], 1, 10);
+
+            if((cr.StatBase[ST_STRENGTH] + cr.StatBase[ST_PERCEPTION] + cr.StatBase[ST_ENDURANCE] +
+                cr.StatBase[ST_CHARISMA] + cr.StatBase[ST_INTELLECT] + cr.StatBase[ST_AGILITY] + cr.StatBase[ST_LUCK]) != __StartSpecialPoints)
+            {
+                for(uint i = ST_STRENGTH; i <= ST_LUCK; i++)
+                    cr.StatBase[i] = 5;
+            }
+
+            cr.StatBase[ST_EMP_RESIST] = 500;
+            cr.StatBase[ST_MAX_MOVE_AP] += 2;
+            cr.StatBase[ST_SEQUENCE] += 2;
+
+            cr.StatBase[ST_BASE_CRTYPE] = (cr.Stat[ST_GENDER] == GENDER_MALE ? CRTYPE_MALE_DEFAULT : CRTYPE_FEMALE_DEFAULT);
+            cr.ChangeCrType(cr.StatBase[ST_BASE_CRTYPE]);
+
+            cr.StatBase[ST_FIXBOY_COUNTER] = 1;
+            cr.StatBase[ST_FIXBOY_FILTER] = 0;
+            cr.StatBase[ST_FIXBOY_FIXALL] = 0;
+        }
+
+        if(cr.TagSkill[TAG_SKILL1] < int(SKILL_BEGIN) || cr.TagSkill[TAG_SKILL1] > int(SKILL_END))
+            cr.TagSkillBase[TAG_SKILL1] = 0;
+        if(cr.TagSkill[TAG_SKILL2] < int(SKILL_BEGIN) || cr.TagSkill[TAG_SKILL2] > int(SKILL_END))
+            cr.TagSkillBase[TAG_SKILL2] = 0;
+        if(cr.TagSkill[TAG_SKILL3] < int(SKILL_BEGIN) || cr.TagSkill[TAG_SKILL3] > int(SKILL_END))
+            cr.TagSkillBase[TAG_SKILL3] = 0;
+        if(cr.TagSkill[TAG_SKILL1] == cr.TagSkill[TAG_SKILL2])
+            cr.TagSkillBase[TAG_SKILL1] = 0;
+        if(cr.TagSkill[TAG_SKILL2] == cr.TagSkill[TAG_SKILL3])
+            cr.TagSkillBase[TAG_SKILL2] = 0;
+        if(cr.TagSkill[TAG_SKILL3] == cr.TagSkill[TAG_SKILL1])
+            cr.TagSkillBase[TAG_SKILL3] = 0;
+
+        CritterGenerate(cr);
+        cr.StatBase[ST_CURRENT_HP] = cr.Stat[ST_MAX_LIFE];
+        cr.StatBase[ST_CURRENT_AP] = cr.Stat[ST_ACTION_POINTS] * 100;
+
+		for( uint t=TAG_BEGIN; t<=TAG_END; t++ )
+		{
+			int skill = cr.TagSkill[t];
+
+			if( IsPassiveSkill( skill ))
+			{
+				cr.SkillBase[skill] = int(0x80000000);
+				cr.TagSkillBase[t] = 0;
+			}
+		}
+
+		for(uint i = REPUTATION_BEGIN; i <= REPUTATION_END; i++)
+            cr.ParamBase[i] = int(0x80000000);
+        ReputationsInit(cr);
+
+		cr.StatBase[ST_ALPHA] = 255;
+		//cr.ModeBase[MODE_HIDE] = Random( 0, 1 );
+		
+
+        if(cr.IsPlayer())
+        {
+            string charSpecialStr = cr.StatBase[ST_STRENGTH] +" "+ cr.StatBase[ST_PERCEPTION] +" "+ cr.StatBase[ST_ENDURANCE] +" "+ cr.StatBase[ST_CHARISMA] +" "+ cr.StatBase[ST_INTELLECT] +" "+ cr.StatBase[ST_AGILITY] +" "+ cr.StatBase[ST_LUCK];
+            string charTagsStr =  cr.TagSkill[TAG_SKILL1]+" "+cr.TagSkill[TAG_SKILL2]+" "+cr.TagSkill[TAG_SKILL3];
+            string charTraitsStr;
+            for(uint i = TRAIT_BEGIN; i <= TRAIT_END; i++)
+                if(cr.ParamBase[i] != 0)
+                    charTraitsStr += " "+i;
+                    
+            FLog(LOG_CHARS_CREATED, cr.Name+"("+cr.Id+") special: "+charSpecialStr+" traits:"+charTraitsStr+" tags: "+charTagsStr);
+        }
+
+        // FURTHER INITIALIZATION
+        if(cr.IsPlayer())
+        {
+            for(uint i = ST_STRENGTH; i <= ST_LUCK; i++)
+                cr.StatBase[i] = CLAMP(cr.StatBase[i], 1, 10);
+            cr.StatBase[ST_DAMAGE_TYPE] = DAMAGE_TYPE_NORMAL;
+			cr.ModeBase[MODE_NO_STEAL] = 1; // PvP steal disabled
+            
+			SetStartLocation(cr);
+            // if(_CritCountItem(cr,PID_RADIO)==0) _CritAddItem(cr,PID_RADIO,1);
+
+			/* Disabled starter items
+            array<uint16> pids;
+            array<uint>   minCounts;
+            array<uint>   maxCounts;
+            array<int>    slots;
+
+            uint          bagId = 2;
+            uint          num = 0;
+            uint[] bags = { 131, 132, 133, 134, 135, 136, 137, 138, 139, 144, 145 };
+            bagId = 145;
+            num = GetBagItems(bagId, pids, minCounts, maxCounts, slots);
+
+            // cr.Say(SAY_NETMSG, "Free stuff!");
+            for(uint i = 0; i < num; i++)
+            {
+                Item@ it = cr.AddItem(pids[i], Random(minCounts[i], maxCounts[i]));
+                it.Cost = 1;
+            }
+			*/
+			
+            SetGroupIndex(cr, FACTION_NONE);
+        }
+        else
+        {
+            cr.ChangeCrType(cr.StatBase[ST_BASE_CRTYPE]);
+
+            if(cr.Stat[ST_DEFAULT_ARMOR_PID] != 0)
+            {
+                Item@ armor = cr.AddItem(cr.Stat[ST_DEFAULT_ARMOR_PID], 1);
+                if(valid(armor))
+                {
+                    cr.MoveItem(armor.Id, 1, SLOT_ARMOR);
+                    if(cr.Stat[ST_OVERRIDE_CRTYPE] > 0)
+                        cr.ChangeCrType(cr.StatBase[ST_OVERRIDE_CRTYPE]);
+                }
+                cr.SetFavoriteItem(SLOT_ARMOR, cr.Stat[ST_DEFAULT_ARMOR_PID]);
+            }
+
+            if(cr.Stat[ST_DEFAULT_HELMET_PID] != 0)
+            {
+                Item@ helmet = cr.AddItem(cr.Stat[ST_DEFAULT_HELMET_PID], 1);
+                if(valid(helmet))
+                    cr.MoveItem(helmet.Id, 1, SLOT_HEAD);
+                // cr.SetFavoriteItem(SLOT_HEAD,cr.Stat[ST_DEFAULT_HELMET_PID]);
+            }
+
+            #define _AddTrophy                                                                                               \
+                # (__critter, __pid, __count, __buffer) { Item@__item = __critter.AddItem(__pid, __count); if(valid(__item)) \
+                                                              __buffer.insertLast(__item);                                   \
+                }
+
+            if(valid(cr.GetMap()) && !cr.GetMap().GetLocation().IsInstancedQuest())
+            {
+                array<Item@> trophies;
+                switch(cr.Stat[ST_BASE_CRTYPE])
+                {
+                case CRTYPE_BRAHMIN:
+                {
+                    _AddTrophy(cr, PID_BRAHMIN_HIDE_TROPHY, 1, trophies);
+                    break;
+                }
+                case CRTYPE_SCORPION:
+                case CRTYPE_SCORPION_SMALL:
+                    _AddTrophy(cr, PID_SCORPION_TAIL, 1, trophies);
+                    break;
+                case CRTYPE_GECKO_SMALL:
+                    _AddTrophy(cr, PID_GECKO_PELT, 1, trophies);
+                    break;
+                case CRTYPE_GECKO:
+                    _AddTrophy(cr, PID_GOLDEN_GECKO_PELT, 1, trophies);
+                    break;
+                case CRTYPE_GECKO_FIRE:
+                    _AddTrophy(cr, PID_FIREGECKO_PELT, 1, trophies);
+                    break;
+				case CRTYPE_MOLERAT:
+                    _AddTrophy(cr, PID_MEAT, 4, trophies);
+                    break;
+                }
+                for(uint t = 0, tlen = trophies.length(); t < tlen; t++)
+                {
+                    cr.MoveItem(trophies[t].Id, trophies[t].GetCount(), SLOT_TROPHY);
+                }
+            }
+
+            if(cr.Stat[ST_LEVEL] != 0)
+                NpcProcessLevel(cr);
+            // TODO: npcprocessbag ?
+        }
+        SetBloodType(cr);        // arrr
+        SetBirthDate(cr);
+
+        #ifdef __DEBUG__         // WIPENIGHT: starter item, dogtag
+        // need to be after setting birth date/blood type
+        if(cr.IsPlayer())
+        {
+            Item@ dogtag = DogTag(cr);
+            if(valid(dogtag))
+            {
+                dogtag.Cost = 50;
+                for(uint s = SLOT_HEAD; s >= SLOT_HAND1; s--)
+                {
+                    if(s == SLOT_ARMOR)
+                        continue;
+
+                    if(!valid(cr.GetItem(0, s)))
+                    {
+                        if(cr.MoveItem(dogtag.Id, dogtag.GetCount(), s))
+                            break;
+                    }
+                }
+            }
+        }
+        #endif
+
+        #ifdef __DEBUG__         // WIPENIGHT: SPECIAL-based description
+        int description1 = 0, description2 = 0;
+        CritterDescription_Set(cr, description1, description2);
+        if(description1 > 0 && description2 > 0)
+        {
+            WLog("special_description", "SPECIAL description : " + description1 + "," + description2);
+            cr.ParamBase[ST_DESCRIPTION1] = description1;
+            cr.ParamBase[ST_DESCRIPTION2] = description2;
+        }
+        #endif
+
+        // selected NPCs can call it inside own init function
+        if(cr.IsPlayer())
+            CritterAgeInit(cr);
+    }
+    else     // not first time
+    {
+        CheckBirthDate(cr);
+
+        // selected NPCs can call it inside own init function
+        if(cr.IsPlayer())
+            CritterAgeInit(cr);
+
+        if(cr.Trait[TRAIT_FAST_SHOT] != 0)
+            cr.ModeBase[MODE_NO_AIM] = 1;
+
+        // Erase zero time events
+        cr.EraseTimeEvents(0);
+
+        // Current skin validation
+        Item@ armor = cr.GetItem(0, SLOT_ARMOR);
+        if(!valid(armor))           // Restore
+        {
+            uint crType = cr.Stat[ST_BASE_CRTYPE];
+            if(crType == 0)
+                crType = (cr.Stat[ST_GENDER] == GENDER_MALE ? CRTYPE_MALE_DEFAULT : CRTYPE_FEMALE_DEFAULT);
+            if(cr.CrType != crType)
+                cr.ChangeCrType(crType);
+        }
+
+        int[] slots = { SLOT_ARMOR, ITEM_PERK_ARMOR, SLOT_HEAD, ITEM_PERK_HELMET };
+        for(uint s = 0, slen = slots.length(); s < slen; s += 2)
+        {
+            // fix for bugged stats after rollback or some other weird armor replacement stuff
+
+            uint perkTypeParam = ItemPerkTypeParam(slots[s + 1]);
+            if (perkTypeParam == 0)
+                continue;
+
+            Item@ item = cr.GetItem(0, slots[s]);
+            //naked char with extra stats
+            if(!valid(item) && cr.Stat[perkTypeParam] != 0)
+                DisableItemPerk(cr, slots[s + 1]);
+
+            //char in armor but with different stats
+            if(valid(item) && cr.Stat[perkTypeParam] != 0 && cr.Stat[perkTypeParam] != int(item.Proto.Armor_Perk))
+                DisableItemPerk(cr, slots[s + 1]);
+            //char in armor with stats
+            if(valid(item) && cr.Stat[perkTypeParam] == 0 && cr.Stat[perkTypeParam] != int(item.Proto.Armor_Perk))
+                EnableItemPerk(cr, item, slots[s + 1]);
+        }
+
+        // group index/rank sync if player
+        if(cr.IsPlayer())
+        {
+            UpdateGroupVars(cr);
+        }
+        // locations visibility
+        if(cr.IsPlayer())
+        {
+            if(GetLvar(cr, LVAR_tent_id) != 0)
+            {
+                Location@ loc = GetLocation(GetLvar(cr, LVAR_tent_id));
+                if(valid(loc))
+                    cr.SetKnownLoc(true, loc.Id);
+                Map@ map;
+                if(valid(loc))
+                    @map = loc.GetMapByIndex(0);
+                if(valid(map))
+                    map.SetData(MAP_DATA_LAST_ENTERED, ELAPSED_TIME);
+            }
+        }
+        // Clear timeouts if too long (happens when saves got removed)
+        for(uint i = TIMEOUT_BEGIN; i <= TIMEOUT_END; i++)
+            if(i != TO_BATTLE && cr.Timeout[i] > MAXIMUM_TIMEOUT)
+                cr.TimeoutBase[i] = ELAPSED_TIME;
+
+        if(_IsTrueNpc(cr) && _GroupIndex(cr) > 0 && _GroupIndex(cr) < 200 && FACTION_MODE_PASSIVE < _GroupMode(cr) && _GroupMode(cr) < FACTION_MODE_NEVER && cr.GetScriptId() == 0)
+        {
+            // Scriptless guard; fill with default events
+            if(IsTown(cr.GetMap()))
+                cr.SetScript("generic_guard@_FactionGuard");
+            else
+                cr.SetScript("encounter_guard@critter_init");
+        }
+
+        // Rejoin group
+        if(cr.IsPlayer() && cr.GetMapId() == 0)
+        {
+            array<Critter@> followers;
+            uint            n = GetFollowers(cr, true, followers);
+            for(uint i = 0; i < n; i++)
+                if(followers[i].GetMapId() == 0)
+                {
+                    followers[i].LeaveGlobalGroup();
+                    TransferToNPCMap(followers[i]);             // Can't transfer directly to group when on global
+                    followers[i].TransitToGlobalGroup(cr.Id);
+                    followers[i].FollowerVarBase[FV_WM_IDLE] = 0;
+                }
+        }
+    }
+
+}
+
+uint e_CritterInit_Broadcast(array<int>@ data)
+{
+    Critter@ cr = GetCritter(data[0]);
+    if(valid(cr) && cr.IsPlayer())
+        DumpBroadcastBuffer(cr);
+
+    return(0);
+}
+
+uint e_CritterInit_OnlineStats(array<int>@ data)
+{
+    Critter@ cr = GetCritter(data[0]);
+    if(valid(cr) && cr.IsPlayer())
+        OnlineStats_SendSetup(cr);
+
+    return(0);
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// Call on critter exit from game.
+
+void critter_finish(Critter& cr, bool toDelete)
+{
+    if(!(FLAG(_getMinigameFlags(cr.Param[ST_MINIGAME_DATA]), MINIGAME_PERSISTENT)))
+        UnsetMinigame(cr, false);     // Minigames end along with gaming session IF the minigame team isn't persistent
+
+    if(cr.IsPlayer())
+    {
+        if(_IsRealPlayer(cr))
+            RemoveNotLegit(cr);
+        RemoveOnlinePlayer(cr);
+        WorldmapRemovePlayer(cr);
+        RemoveWorkbenches(cr);
+        RemoveAuthed(cr.Id);
+        GMTrack(cr.Id, "TARGET logged out.");
+    }
+    if(toDelete && cr.Stat[ST_DEAD_BLOCKER_ID] != 0)
+    {
+        Item@ block = ::GetItem(cr.Stat[ST_DEAD_BLOCKER_ID]);
+        if(valid(block))
+            DeleteItem(block);
+        cr.StatBase[ST_DEAD_BLOCKER_ID] = 0;
+    }
+    if(toDelete)
+    {
+        //  DeleteVars(cr.Id);
+
+        GMTrack(cr.Id, "TARGET deleted.");
+
+        if (cr.IsPlayer())
+        {
+            for(uint f = 0, fc = GetFactionsCount(); f < fc; f++)
+            {
+                IFaction@ faction = GetFactionByIdx(f);
+                if(valid(faction) && faction.get_Id() > 199)
+                    RemovePlayer(faction.get_Id(), cr.Id);
+            }
+    		
+    		bool bookCreated = false;
+    		string delMap = " mapId: 0";
+    		string message = cr.Name + "(" + cr.Id + ") level: " + cr.Stat[ST_LEVEL];
+    		uint delCaps = _CritCountItem(cr, PID_BOTTLE_CAPS);
+
+    		Map@ map = cr.GetMap();
+
+    		if (valid(map))
+    		{
+    			delMap = " mapId: " + map.Id;
+
+    			if (IsBase(map) || IsTent(map))
+    			{
+    				delMap += (IsBase(map)) ? " (base)" : " (tent)";
+
+    				if (delCaps >= 10000 && cr.Stat[ST_LEVEL]>1)
+    				{
+    					Item@ hintbook = map.AddItem(cr.HexX, cr.HexY, PID_BOOK_OF_ACHIEVEMENT, 1);
+    					hintbook.Val0 = cr.Stat[ST_LEVEL] - 1;
+    					hintbook.Val2 = cr.Stat[ST_LEVEL];
+    					hintbook.Update();
+    					bookCreated = true;
+    				}
+    			}
+    		}
+
+    		message += delMap + " caps: " + delCaps + " book: " + (bookCreated == true ? "YES" : "NO");
+    		FLog(LOG_CHARS_DELETED, message);
+        }
+		
+		// Disabling VTDB for deleted character
+		GameVar@ var = GetLocalVar(LVAR_online_stats, cr.Id);
+		var=0;
+		OnlineStats_TrySave(cr);
+    }
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// Call every __CritterIdleTick time.
+#define REPUTATION_DECAY         (10.0f)        // 100 points per day
+#define REPUTATION_DECAY_TIME    (REAL_DAY(1) / REPUTATION_DECAY)
+void critter_idle(Critter& cr)
+{
+    // Healing
+    if(cr.Timeout[TO_HEALING] == 0)
+    {
+        if(!cr.IsDead() && cr.Mode[MODE_NO_HEAL] == 0 && cr.Timeout[TO_BATTLE] == 0 && cr.Stat[ST_CURRENT_HP] < cr.Stat[ST_MAX_LIFE] && cr.Stat[ST_POISONING_LEVEL] == 0)
+        {
+            if(cr.Stat[ST_HEALING_RATE] > 0)
+                cr.StatBase[ST_CURRENT_HP] += MAX(cr.Stat[ST_HEALING_RATE] * cr.Stat[ST_MAX_LIFE] / 100, 3);
+            else
+                cr.StatBase[ST_CURRENT_HP] += cr.Stat[ST_HEALING_RATE];
+            if(cr.StatBase[ST_CURRENT_HP] > cr.Stat[ST_MAX_LIFE])
+                cr.StatBase[ST_CURRENT_HP] = cr.Stat[ST_MAX_LIFE];
+        }
+
+        _SetTimeout(cr, TO_HEALING, HEALING_TIMEOUT(cr));
+    }
+
+    // try to heal injuries
+    if(cr.IsInjured() && cr.IsNpc() && IsHumanoid(cr) && cr.Timeout[TO_SK_DOCTOR] <= 0 && cr.Timeout[TO_BATTLE] == 0)
+    {
+        if(cr.Stat[ST_INTELLECT] >= Random(1, 10))
+        {
+            array<NpcPlane@> planes;
+            cr.GetPlanes(PLANE_DOCTOR_CRITTER, planes);
+            if(planes.length() > 0)
+                planes[0].IdentifierExt = cr.Id;
+            else
+                AddDoctorCritterPlane(cr, valid(cr.GetCurPlane()) ? cr.GetCurPlane().Priority + 5 : 0, cr, false);     // self
+        }
+    }
+
+    // cr.Say(SAY_NORM, ""+cr.Stat[ST_TEAM_ID]);
+    if(cr.IsPlayer())
+    {
+        Map@ map = cr.GetMap();
+        if(valid(map) && _IsOffline(cr) && !IsBase(map) && !IsTent(map))
+        {
+            array<Critter@> followers;
+            uint num = GetFollowers(cr, map, followers);
+            for(uint i = 0; i < num; i++)
+            {
+                Flee(followers[i]);
+            }
+
+        }
+
+        uint diff = ELAPSED_TIME > uint(cr.Stat[ST_REP_DECAY] + REPUTATION_DECAY_TIME) ? ELAPSED_TIME - uint(cr.Stat[ST_REP_DECAY]) : 0;
+        if(diff > 0)
+        {
+            // decay reputations
+            float decay = float(REPUTATION_DECAY) * float(diff) / float(REPUTATION_DECAY_TIME);             // int overflow warning
+            for(uint i = 0; i < REPUTATION_COUNT; i++)
+            {
+                int rep = cr.Reputation[i];
+                if(rep > 200)
+                    rep = MAX(200, int(rep - decay));
+                else if(rep < -200)
+                    rep = MIN(-200, int(rep + decay));
+                if(rep == 0)
+                    rep = int(0x80000000);                          // just hide it
+                cr.ReputationBase[i] = rep;
+            }
+        }
+        cr.StatBase[ST_REP_DECAY] = ELAPSED_TIME;
+    }
+
+    // replication
+    if(cr.IsDead() && cr.Timeout[TO_REPLICATION] == 0)
+        ReplicateCritter(cr);
+
+    if(cr.IsNotValid)     // might have been deleted during replication
+        return;
+
+    if(cr.IsPlayer())
+    {
+        // keeping track of worldmap zones
+        WorldmapUpdatePlayer(cr);
+
+        UpdateDrugs(cr);
+    }
+}
+
+void CritterTrophy(Critter& critter, Critter& looter)
+{
+    uint count = _CritCountItem(critter, PID_BRAHMIN_HIDE_TROPHY);
+    if(count > 0)
+    {
+        _CritDeleteItem(critter, PID_BRAHMIN_HIDE_TROPHY, count);
+        _CritAddItem(critter, PID_BRAHMIN_HIDE, count);
+        _CritAddItem(critter, PID_MEAT, 11);
+    }
+
+    if(looter.Perk[PE_GECKO_SKINNING] <= 0 &&
+       (critter.CrType == CRTYPE_GECKO ||
+        critter.CrType == CRTYPE_GECKO_SMALL ||
+		critter.CrType == CRTYPE_MOLERAT ||
+        critter.CrType == CRTYPE_GECKO_FIRE))
+        return;
+
+    bool geckoSkinning = false;
+    array<Item@> trophies;
+    count = critter.GetItems(SLOT_TROPHY, trophies);
+    for(uint t = 0; t < count; t++)
+    {
+        if(!geckoSkinning &&
+           (trophies[t].GetProtoId() == PID_GECKO_PELT ||
+            trophies[t].GetProtoId() == PID_GOLDEN_GECKO_PELT ||
+            trophies[t].GetProtoId() == PID_MEAT ||
+            trophies[t].GetProtoId() == PID_FIREGECKO_PELT))
+        {
+            geckoSkinning = true;
+            looter.Say(SAY_NETMSG, "You have skinned the gecko.");
+        }
+
+        critter.MoveItem(trophies[t].Id, trophies[t].GetCount(), SLOT_INV);
+		_CritAddItem(critter, PID_MEAT, 2);
+    }
+}
+
+void TownCitizenKilled(Critter& critter, Critter@ killer)
+{
+    if(!valid(killer))
+        return;
+    uint mapid = critter.GetMapId();
+
+    for(uint i = 1; i < GetTownCount() + 1; i++)
+    {
+        // DLog("mapid = " + mapid);
+        // DLog("town mapid = " + GetTown(i).GetMapID());
+
+        ITown@ town = GetTown(i);
+        if(mapid == town.GetMapID())
+        {
+            uint factionId = town.GetControllingFaction();
+            if(GetGroupIndex(killer) == factionId)
+                town.ModifyInfluence(factionId, -0.05);
+        }
+    }
+
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// Call on something critter dies.
+// Killer can be null.
+void death(Critter& cr, int p0, int p1, int p2)
+{
+    cr.ToDead(p0, null);
+}
+
+void critter_dead(Critter& cr, Critter@ killer)
+{
+    uint crGroup = _GroupIndex(cr);
+    Map@ map = cr.GetMap();
+    cr.ParamBase[TO_IMMUNITY_TIME] = MAX(uint(cr.Param[TO_IMMUNITY_TIME]), ELAPSED_TIME + SLEEPY_DEATH_IMMUNITY(cr));
+    if(valid(killer) && killer.IsPlayer() && !IsFlaggedAsIllegal(cr) && (killer.Id != cr.Id) && (crGroup > 1) && !IsDueling(killer))
+    {
+        FeedReputations(killer, crGroup, 0);
+        if(IsTown(map))
+            SubReputation(killer, crGroup, REP_KILL_PENALTY * MAX(1, _GroupRank(cr)));
+        else
+            TryReportOffense(cr, killer, REP_KILL_PENALTY * MAX(1, _GroupRank(cr)));
+    }
+
+    //death experience penalty for player NO DROP
+    if(cr.IsPlayer() && !_PlayerDropEnabled(cr, map) && cr.StatBase[ST_LEVEL] > 23)
+    {
+        if(valid(killer))
+        {
+            int exp = (cr.StatBase[ST_LEVEL] * 10 * (killer.IsPlayer()?2:5));
+            cr.StatBase[ST_EXPERIENCE] -= exp;
+
+            // player vs player
+            if(killer.IsPlayer() && cr.IsPlayer())
+            {
+                //faction vs faction
+                if(cr.Stat[ST_TEAM_ID] > 199 && killer.Stat[ST_TEAM_ID] > 199 && cr.Stat[ST_TEAM_ID] != killer.Stat[ST_TEAM_ID])
+                {
+                    //active TC, lvl 24+ characters PvP
+                    if(cr.StatBase[ST_LEVEL] > 23 && killer.StatBase[ST_LEVEL] > 23 && valid(map) && _MapHasMode(map, MAP_MODE_ACTIVE_TC))
+                    {
+                        array<Critter@> players;
+                        uint num = map.GetCritters(0, FIND_LIFE | FIND_ONLY_PLAYERS, players);
+
+                        array<Critter@> factionPlayers;
+                        for(uint i = 0; i < num; ++i)
+                        {
+                            if(players[i].Stat[ST_TEAM_ID] == killer.Stat[ST_TEAM_ID] && players[i].StatBase[ST_LEVEL] > 23 && _IsOnline(players[i]))
+                                factionPlayers.insertLast(players[i]);
+                        }
+                        uint factionExp = exp / (factionPlayers.length() * 2);
+
+                        for(uint i = 0, j = factionPlayers.length(); i < j; ++i)
+                        {
+                            if(factionPlayers[i].Id != killer.Id)
+                            {
+                                factionPlayers[i].StatBase[ST_EXPERIENCE] += factionExp;
+                                FLog(LOG_PVP_EXP, "TC: exp: " + factionExp + " mapID: " + map.Id + " dead: [id: " + cr.Id + " team_id: " + cr.Stat[ST_TEAM_ID] + " nick: " + cr.Name + "] killer: [id: " + killer.Id + " team_id: " + killer.Stat[ST_TEAM_ID] + " nick: " + killer.Name + "] rewarded: [id: " + factionPlayers[i].Id + " team_id: " + factionPlayers[i].Stat[ST_TEAM_ID] + " nick: " + factionPlayers[i].Name + "]");
+                            }
+                            else
+                            {
+                                uint killerExp = factionExp + (factionExp/10);
+                                factionPlayers[i].StatBase[ST_EXPERIENCE] += killerExp;
+                                FLog(LOG_PVP_EXP, "TC: exp: " + killerExp + " mapID: " + map.Id + " dead: [id: " + cr.Id + " team_id: " + cr.Stat[ST_TEAM_ID] + " nick: " + cr.Name + "] killer: [id: " + killer.Id + " team_id: " + killer.Stat[ST_TEAM_ID] + " nick: " + killer.Name + "] rewarded: [id: " + factionPlayers[i].Id + " team_id: " + factionPlayers[i].Stat[ST_TEAM_ID] + " nick: " + factionPlayers[i].Name + "]");
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        if(!valid(killer))
+        {
+            int exp = (cr.StatBase[ST_LEVEL] * 50);
+            cr.StatBase[ST_EXPERIENCE] -= exp;
+        }
+    }
+
+    // heal radiation
+    // HealRadiation(cr);
+
+    // items 'pre' filtering
+    RemoveWorkbenches(cr);     // better safe than sorry
+
+    // npc
+    if(cr.IsNpc())
+    {
+        // Clear NPC memory about enemies after it dies.
+        cr.ClearEnemyStack();
+    }
+    else     // players
+    {
+        // If critter is being tracked (by command, not tracking feature) and tracker is online
+        GMTrack(cr.Id, "TARGET has died on map" + cr.GetMapId());
+    }
+    // common item removal/damaging
+    // retrieve all critters' items (armor, hand1, hand2, inv...)
+    Item@ armor = cr.GetItem(0, SLOT_ARMOR);
+    Item@ helmet = cr.GetItem(0, SLOT_HEAD);
+    array<Item@> trophies;
+    array<Item@> items;
+    /*
+    if(valid(map) && (map.GetProtoId() == MAP_noob_camp_2 || map.GetProtoId() == MAP_noob_camp_3))
+    {
+        cr.GetItems(SLOT_TROPHY, trophies);     
+            
+        if (trophies.length()<=0)
+        {                   
+            switch(cr.Stat[ST_BASE_CRTYPE])
+            {
+                case CRTYPE_BRAHMIN:
+                {
+                    _AddTrophy(cr, PID_BRAHMIN_HIDE_TROPHY, 1, trophies);
+                    break;
+                }
+                case CRTYPE_SCORPION:
+                case CRTYPE_SCORPION_SMALL:
+                    _AddTrophy(cr, PID_SCORPION_TAIL, 1, trophies);                 
+                    break;
+                case CRTYPE_GECKO_SMALL:
+                    _AddTrophy(cr, PID_GECKO_PELT, 1, trophies);                    
+                    break;
+                case CRTYPE_GECKO:
+                    _AddTrophy(cr, PID_GOLDEN_GECKO_PELT, 1, trophies);                 
+                    break;
+                case CRTYPE_GECKO_FIRE:
+                    _AddTrophy(cr, PID_FIREGECKO_PELT, 1, trophies);
+                    break;
+            }
+        }
+        for(uint t = 0, tlen = trophies.length(); t < tlen; t++)
+        {
+            cr.MoveItem(trophies[t].Id, trophies[t].GetCount(), SLOT_TROPHY);
+        }
+    }
+    */
+    cr.GetItems(SLOT_TROPHY, trophies);
+    cr.GetItems(SLOT_HAND1, items);
+    cr.GetItems(SLOT_HAND2, items);
+    cr.GetItems(SLOT_INV, items);
+
+    bool isArmor = (valid(armor));
+    bool isHelmet = (valid(helmet));
+    bool isTrophy = (trophies.length() > 0);
+
+    // remove armor/helmet/trophies on following death types
+    if((isArmor || isHelmet || isTrophy) &&
+       (cr.Anim2Dead == ANIM2_DEAD_FUSED || cr.Anim2Dead == ANIM2_DEAD_PULSE_DUST || cr.Anim2Dead == ANIM2_DEAD_EXPLODE) &&
+       _CritCanDropItemsOnDead(cr))
+    {
+        if(!valid(map))
+        {
+            if(isArmor)
+            {
+                DeleteItem(armor);
+                isArmor = false;
+            }
+            if(isHelmet)
+            {
+                DeleteItem(helmet);
+                isHelmet = false;
+            }
+        }
+        if(isTrophy && cr.Anim2Dead == ANIM2_DEAD_EXPLODE)
+        {
+            DeleteItems(trophies);
+            isTrophy = false;
+        }
+    }
+
+    bool isCriticalDeath = (cr.Anim2Dead == ANIM2_DEAD_BURST ||  cr.Anim2Dead == ANIM2_DEAD_BLOODY_SINGLE || cr.Anim2Dead == ANIM2_DEAD_BLOODY_BURST ||
+                            cr.Anim2Dead == ANIM2_DEAD_PULSE || cr.Anim2Dead == ANIM2_DEAD_PULSE_DUST || cr.Anim2Dead == ANIM2_DEAD_LASER ||
+                            cr.Anim2Dead == ANIM2_DEAD_EXPLODE || cr.Anim2Dead == ANIM2_DEAD_FUSED || cr.Anim2Dead == ANIM2_DEAD_BURN || cr.Anim2Dead == ANIM2_DEAD_BURN_RUN);
+
+    bool isArmorDestroyedDeath = (cr.Anim2Dead == ANIM2_DEAD_FUSED || cr.Anim2Dead == ANIM2_DEAD_PULSE_DUST || cr.Anim2Dead == ANIM2_DEAD_EXPLODE);
+    //players' items deterioration for NO DROP
+    if(cr.IsPlayer() && !_PlayerDropEnabled(cr, map))
+    {
+        if(isArmor)
+            WearItem(cr, armor, ((Random(15, 20) + (isArmorDestroyedDeath?1:0))*MAX_DETERIORATION/100));
+        if(isHelmet)
+            WearItem(cr, helmet, ((Random(15, 20) + (isArmorDestroyedDeath?1:0))*MAX_DETERIORATION/100));
+    }
+
+
+    if(_IsTrueNpc(cr) && IsEncounterMap(map))
+    {
+        if(isArmor)// && !_CritHasExtMode(cr, MODE_EXT_NO_DETERIORATION))
+        {
+            if(armor.Val0 >= BONUS_ARMOR_CRIT_CHANCE && armor.Val0 <= BONUS_ARMOR_HEALING_RATE)
+            {
+                WearItem(cr, armor, ((Random(10, 15) + (isArmorDestroyedDeath?5:0))*MAX_DETERIORATION/100));
+            }
+            else if(Random(0, 100) > 25 || !armor.IsDeteriorable())
+            {
+                DeleteItem(armor);
+                isArmor = false;
+            }
+            else
+                SetMinWear(armor, 100);
+        }
+
+        if(isHelmet)// && !_CritHasExtMode(cr, MODE_EXT_NO_DETERIORATION))
+        {
+            if(helmet.Val0 >= BONUS_ARMOR_CRIT_CHANCE && helmet.Val0 <= BONUS_ARMOR_HEALING_RATE)
+            { 
+                WearItem(cr, helmet, ((Random(10, 15) + (isArmorDestroyedDeath?5:0))*MAX_DETERIORATION/100));
+            }
+            else if(Random(0, 100) > 25 || !helmet.IsDeteriorable())
+            {
+                DeleteItem(helmet);
+                isHelmet = false;
+            }
+            else
+                SetMinWear(helmet, 100);
+        }
+    }
+    else
+    {    
+        // damage armor on other critical death types
+        if((isArmor || isHelmet) && isCriticalDeath && !(cr.IsPlayer() && !_PlayerDropEnabled(cr, map)) && !_CritHasExtMode(cr, MODE_EXT_NO_DETERIORATION))
+        {
+            if(isArmor)
+                WearItem(cr, armor,  (MAX_DETERIORATION - armor.Deterioration) / 5); // 23-07-2013 Cubik: zЕ‚agodzone psucie sie pancerzy i helmow podczas smierci z 50% na 20% na kaЕјda smierc
+            if(isHelmet)
+                WearItem(cr, helmet, (MAX_DETERIORATION - helmet.Deterioration) / 5);
+        }
+    }
+
+    if(isArmor)
+        items.insertLast(armor);
+    if(isHelmet)
+        items.insertLast(helmet);
+
+    // move all armor items to inventory of npc. delete it if no drop.
+    if(cr.Stat[ST_REPLICATION_TIME] < 0 && cr.IsNpc())
+    {
+        for(uint i = 0, j = items.length(); i < j; i++)
+            if(items[i].GetType() == ITEM_TYPE_ARMOR && items[i].CritSlot != SLOT_INV)
+            {
+                if(FLAG(items[i].Flags, ITEM_FLAG_NO_STEAL) || FLAG(items[i].Flags, ITEM_FLAG_NO_LOOT))
+                    DeleteItem(items[i]);
+                else
+                    cr.MoveItem(items[i].Id, 1, SLOT_INV);
+            }
+    }
+
+    // drop items immediately if pulsed
+    if(valid(map) && (cr.Anim2Dead == ANIM2_DEAD_PULSE_DUST || cr.Anim2Dead == ANIM2_DEAD_EXPLODE) && _CritCanDropItemsOnDead(cr))
+    {
+        for(uint i = 0; i < items.length(); i++)
+        {
+            if(valid(items[i]) && items[i].GetType() == ITEM_TYPE_CONTAINER)
+            {
+                DeleteItem(items[i]);
+            }
+        }
+        // drop all (armor/helmet/trophies was removed earlier)
+        MoveItems(items, map, cr.HexX, cr.HexY);
+    }
+    // 'loot-me'
+    // NO DROP MODE FOR PLAYERS
+    if(!_CritHasMode(cr, MODE_NO_LOOT) && !(cr.IsPlayer() && !_PlayerDropEnabled(cr, map)))
+    {
+        uint mappid = 0;
+        if(valid(cr.GetMap()))
+            mappid = cr.GetMap().GetProtoId();
+
+        // encounters and certain towns
+        if(IsEncounterMap(cr.GetMap()))
+        {
+            DPlayerLog(cr, "Having loot here!");
+            array<Critter@> crits;
+            uint num = cr.GetCritters(true, FIND_LIFE | FIND_ONLY_NPC, crits);
+
+            for(uint i = 0; i < num; i++)
+            {
+                // loot only players and other humanoids, and only when you're humanoid and you don't have loot plane already
+                if((cr.IsPlayer() || IsHumanoid(cr)) && IsHumanoid(crits[i]) && crits[i].GetPlanes(PLANE_LOOT, null) == 0 && _IsTrueNpc(crits[i]))
+                {
+                    string scriptName = "";
+                    if(crits[i].GetScriptId() > 0)
+                        scriptName = GetScriptName(crits[i].GetScriptId());
+
+                    //caravan guards will not loot
+                    if(crits[i].GetScriptId() == 0)
+                    {
+                        DPlayerLog(cr, "Critter " + crits[i].Id + " will loot me.");
+                        AddWalkPlane(crits[i], 0, PLANE_LOOT, cr.Id, cr.HexX, cr.HexY, 6, true, 1);
+                        break;
+                    }
+                }
+            }
+        }
+    }
+
+    if(valid(killer) && killer.IsPlayer())
+    {
+        //CheckBountyHunters(cr, killer);
+
+        if(cr.Stat[ST_BODY_TYPE] == BT_CHILDREN)
+        {
+            uint8 current = killer.Karma[KARMA_CHILDKILLER];
+            if(current < 200)             // Check overflow
+            {
+                killer.KarmaBase[KARMA_CHILDKILLER] = current + 1;
+            }
+        }
+    }
+
+    SetReplicationTime(cr);
+    if(cr.IsNpc())
+        cr.DropPlanes();                // Delete all planes
+
+    // additional stuff
+    if(cr.IsNpc())
+    {
+        TownCitizenKilled(cr, killer);    // Check if its a town citizen, if so, add npc death penalty
+
+        if(valid(map) && (cr.CrType == CRTYPE_BRAHMIN) && IsBase(map))
+            cr.StatBase[ST_REPLICATION_TIME] = REPLICATION_DELETE;
+
+        if(valid(map) && IsCave(map))
+            AddCrittersKilled();
+
+        if(valid(map))
+            ProcessDeath(map, cr, killer);    // reinforcements
+    }
+    else                                      // IsPlayer
+    {
+        if(valid(map))
+        {
+            array<Critter@> followers;
+            uint num = GetFollowers(cr, map, followers);
+            for(uint i = 0; i < num; i++)
+            {
+                if(map.GetLocation().IsEncounter())
+                {
+                    if(!Flee(followers[i]))
+                    {
+                        followers[i].FollowerVarBase[FV_MODE] = FOLLOWMODE_GUARD;
+                        _CritUnsetMode(followers[i], MODE_GECK);
+                    }
+                }
+                else
+                {
+                    if(followers[i].GetMapId() != 0 && (IsTent(map) || IsBase(map) || !Flee(followers[i])))
+                        followers[i].FollowerVarBase[FV_MODE] = FOLLOWMODE_GUARD;
+                }
+            }
+
+            cr.SendMessage(MSG_PLAYER_KILLED, cr.Id, SENDMESSAGE_TO_ALL_ON_MAP);
+
+            if(IsCave(map))
+                AddPlayerDeaths();
+        }
+
+        #ifdef __DEBUG__
+        if(Random(0, 0) == 0)
+        #endif
+        #ifndef __DEBUG__
+        if(Random(0, 19) == 0)
+		#endif
+        {
+            CreateTimeEvent(AFTER(REAL_SECOND(Random(4, 6))), "e_DeathSpeech", cr.Id, false);
+        }
+    }
+
+    if(valid(map) && cr.Mode[MODE_NO_FLATTEN] != 0)
+    {
+        Item@ blocker = map.AddItem(cr.HexX, cr.HexY, PID_UNVISIBLE_BLOCK, 1);
+        if(valid(blocker))
+            cr.StatBase[ST_DEAD_BLOCKER_ID] = blocker.Id;
+    }
+	
+	
+	// Death from worldmap - from poison or other shit
+	if(!valid(map) && cr.IsPlayer())
+	{
+	Critter@[] group = { cr };
+
+    uint locId = CreateLocation(101, cr.WorldX, cr.WorldY, group);
+
+    Location@ loc = GetLocation(locId );
+    loc.Visible = false;
+    loc.GeckVisible = false;
+    loc.AutoGarbage = true;
+	
+	cr.TransitToMap(loc.GetMapByIndex(0).Id, 0);
+	}
+}
+
+uint e_DeathSpeech(array<uint>@ values)
+{
+    if(!valid(values) || values.length() < 1)
+        return(0);
+
+    Critter@ cr = GetCritter(values[0]);
+    if(!valid(cr))
+        return(0);
+
+    string[][] death =
+    {
+		{ "4",       "The darkness of the afterlife is all that awaits you now. May you find more peace in that world than you found in this one..." },
+		{ "5",       "Not even the carrion eaters are interested in your irradiated corpse." },
+		{ "6",       "Your life ends in the wasteland." },
+		{ "8",		 "You fought valiantly, but to no avail. Your twisted and ruined body goes down in a hail of bullets... and thus ends your life in the wasteland..." },
+		{ "dth2",    "You have perished." },
+		{ "jdd1",    "You're dead. Again." },
+		{ "jdd3",    "Time to reload." },
+		{ "jdd4",    "Hoped you saved your game, cause you're dead." },
+		{ "jdd6",    "Boy, are you stupid. And dead." },
+		{ "7",       "The radiation has taken its toll. Your death was lingering and extremely painful. Your adventure is done." },
+		{ "options", "War never changes." }
+    };
+
+	uint8 roll = Random( 0, death.length() - 1 );
+
+    PlaySound(cr, "nar_" + death[roll][0] + ".acm");
+	cr.Say( SAY_NETMSG, "|"+COLOR_WHITE+" "+death[roll][1] );
+
+    return(0);
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// Call on something critter reswapned.
+void critter_respawn(Critter& cr)
+{
+    if(cr.Stat[ST_DEAD_BLOCKER_ID] != 0)
+    {
+        Item@ block = ::GetItem(cr.Stat[ST_DEAD_BLOCKER_ID]);
+        if(valid(block))
+            DeleteItem(block);
+        cr.StatBase[ST_DEAD_BLOCKER_ID] = 0;
+    }
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// Called when a critter enters a map.
+void map_critter_in(Map& map, Critter& cr)
+{
+	SetWalkRunTimeForNpcs(map, 0);
+    RemoveWorkbenches(cr);   // there
+    Location@ loc = map.GetLocation();
+
+    if(cr.IsPlayer() || _IsFollower(cr))
+    {
+
+        if(loc.IsEncounter())
+        {
+            // Spawning predators in encounters disabled here
+            //if(_IsRealPlayer(cr))
+            //    TryStartEncounterMobWave(map);
+
+            if(map.IsTurnBasedAvailability() && map.IsTurnBased() && cr.IsPlayer())
+                cr.StatBase[ST_CURRENT_AP] = 0;
+        }
+        else if(IsTent(map) || IsBase(map))
+        {
+            cr.ParamBase[TO_IMMUNITY_TIME] = MAX(uint(cr.Param[TO_IMMUNITY_TIME]), ELAPSED_TIME + SLEEPY_BASE_IMMUNITY(cr));
+        }
+    }
+
+    if(cr.EventExtMapIn(map))
+        return;
+    if(cr.IsPlayer() && cr.GetAccess() < ACCESS_TESTER)
+        map.SetData(MAP_DATA_LAST_ENTERED, ELAPSED_TIME);
+
+    if(cr.IsPlayer() && IsFlaggedAsIllegal(cr))
+        cr.SayMsg(SAY_NETMSG, TEXTMSG_TEXT, STR_FLAGGED_ENTERING_MAP);
+
+    if(_IsFollower(cr))
+    {
+        if(IsTown(map))
+            PutAwayItems(cr);
+        cr.FollowerVarBase[FV_WM_IDLE] = 0;
+    }
+
+    if(GetLvar(cr, LVAR_authed_char) == 0)
+        SetSpectator(cr, false);
+
+    if(_MapHasMode(map, MAP_MODE_SPECTATE_ENTER) && (GetLvar(cr, LVAR_authed_char) == 0))
+        SetSpectator(cr, true);
+
+    if(_IsTrueNpc(cr) && (_CritHasExtMode(cr, MODE_EXT_GUARD)))
+    {
+        cr.SetBagRefreshTime(1);
+        int bagbug = cr.GetBagRefreshTime(); // this is need right now
+    }
+    else if(_IsTrueNpc(cr))
+    {
+        cr.SetBagRefreshTime(360);
+        int bagbug = cr.GetBagRefreshTime(); // this is need right now
+    }
+    if(_IsTrueNpc(cr) && IsTown(cr.GetMap()))
+
+    {
+        uint bt = cr.Stat[ST_BODY_TYPE];
+
+        if(bt == BT_MEN || bt == BT_WOMEN || bt == BT_CHILDREN || bt == BT_GHOUL || bt == BT_SUPER_MUTANT)
+        {
+            cr.StatBase[ST_REPLICATION_TIME] = REPLICATION_MINUTE(10);
+        }
+    }
+
+
+    // update zone players info
+    if(cr.IsPlayer())
+    {
+        WorldmapUpdatePlayer(cr);
+        // tracking stuff - it updates track coords, but it should also
+        // set location as known if tracked player still is idling in global
+        // at that location
+        // TrackLocation(cr);
+
+        // Info about not legit location when entering map by tester+
+        if(cr.GetAccess() > ACCESS_CLIENT && _IsNotLegit(map.GetData(MAP_DATA_SPAWNER)))
+        {
+            cr.Say(SAY_NETMSG, "Warning: This map is not legit (players can use not-legit items here).");
+        }
+    }
+
+    // If critter is being tracked (by command, not tracking feature) and tracker is online
+    GMTrack(cr.Id, "TARGET has entered map" + cr.GetMapId());
+
+    if(GetLvar(cr, LVAR_authed_char) == 1)
+        LogAction(cr, GetCritterInfo(cr) + " has entered map " + cr.GetMapId());
+
+    if(cr.IsPlayer())
+    {
+        uint16 locPid = loc.GetProtoId();
+
+        //	if(not LOCATION_IS_CITY(locPid)) return;
+        //	GameVar@ lastCityVar = GetLocalVar(LVAR_last_city, cr.Id);
+        //	if (lastCityVar is null) return;
+        //	lastCityVar = locPid;
+    }
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// Call on something critter out from map.
+void map_critter_out(Map& map, Critter& cr)
+{
+    RemoveWorkbenches(cr);   // there
+
+    if(_IsNotLegit(map.GetData(MAP_DATA_SPAWNER)) && (cr.IsNpc() || _IsRealPlayer(cr)))
+    {
+
+        Map@ newMap = cr.GetMap();
+        if(!valid(newMap) || _IsLegit(newMap.GetData(MAP_DATA_SPAWNER)))
+        {
+            RemoveNotLegit(cr);
+        }
+    }
+
+    if(cr.EventExtMapOut(map))
+        return;
+    if(GetLvar(cr, LVAR_authed_char) == 0)
+        SetSpectator(cr, false);
+
+    // If critter is being tracked (by command, not tracking feature) and tracker is online
+    GMTrack(cr.Id, "TARGET has entered the worldmap");
+
+    if(GetLvar(cr, LVAR_authed_char) == 1)
+        LogAction(cr, GetCritterInfo(cr) + " has entered worldmap");
+
+    // Move the followers
+    if(!cr.IsDead())
+    {
+        array<Critter@> crits;
+        int n = GetFollowers(cr, map, crits);
+        for(int i = 0; i < n; i++)
+        {
+            if(!crits[i].IsLife())
+            {
+                string cond = crits[i].Cond == CRITTER_CONDITION_KNOCKOUT ? "unconscious" : "dead";
+                cr.Say(SAY_NETMSG, "You've left your " + cond + " follower " + GetLexem(crits[i], "$name") + " behind.");
+                continue;
+            }
+
+            if(crits[i].Timeout[TO_BATTLE] > 0)
+            {
+                cr.Say(SAY_NETMSG, "You've left behind your follower " + GetLexem(crits[i], "$name") + ", who is still fighting.");
+                continue;
+            }
+
+            if(!(crits[i].FollowerVar[FV_MODE] == FOLLOWMODE_FOLLOW || crits[i].FollowerVar[FV_MODE] == FOLLOWMODE_FOLLOW_CONTROL))
+            {
+                cr.Say(SAY_NETMSG, "You've left your follower " + GetLexem(crits[i], "$name") + " behind.");
+                continue;
+            }
+
+            crits[i].ErasePlane(AI_PLANE_WALK, true);
+            crits[i].ErasePlane(AI_PLANE_ATTACK, true);
+            crits[i].ErasePlane(AI_PLANE_MISC, true);
+            if(cr.GetMapId() != 0)
+                crits[i].TransitToMap(cr.GetMapId(), cr.HexX, cr.HexY, crits[i].Dir);
+            else
+				{
+				array<Critter@> critsOnGlobal = cr.GetGlobalGroup();
+				if(critsOnGlobal.length<10) crits[i].TransitToGlobalGroup(cr.Id);
+				}
+        }
+    }
+
+    if(cr.IsPlayer())
+    {
+        if(cr.GetMapId() == 0)
+        {
+            ITown@ town = RetrieveTown(cr);
+            if(valid(town))
+                FlushInfluenceBuffer(cr, town);
+
+            // 33% chance for lost encounter to be recycled (100% in debug)
+            //
+            Location@ loc = map.GetLocation();
+            if(!loc.IsNotValid)
+            {
+                #ifdef __DEBUG__
+                if(IsDisposableEncounter(loc))
+                {
+                    RecycleEncounter(loc);
+                }
+                #endif
+                #ifndef __DEBUG__
+                if(IsDisposableEncounter(loc) && Random(0, 2) == 0)
+                {
+                    RecycleEncounter(loc);
+                }
+                #endif
+            }
+	
+		array<Critter@>@ players = WorldmapGetPlayers(ZONE_X(cr.WorldX), ZONE_Y(cr.WorldY));
+		string characters;
+		if(players.length()-1>0)
+		{
+		characters +="Other characters on worldmap in zone: ";
+        for(uint i = 0, j = players.length(); i < j; i++)  if(cr.Id!=players[i].Id) characters+=""+(IsLexem(players[i], "$@")?GetLexem(players[i], "$@"):players[i].Name)+",";
+		cr.Say(SAY_NETMSG, characters);
+		}
+
+        }
+    }
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// Call on something player votes for another.
+// Already checked valid positions and timeout.
+void karma_voting(Critter& crFrom, Critter& crTo, bool valUp)
+{
+    // Players karma system (not used)
+//	crTo.StatBase[ST_PLAYER_KARMA]+=(valUp?int(5):-10);
+//	crFrom.TimeoutBase[TO_KARMA_VOTING]=__FullMinute+__TimeMultiplier*4*60; // 4 hours
+
+    // Good / Evil system
+    _SetTimeout(crFrom, TO_KARMA_VOTING, REAL_SECOND(3));     // Some small time to prevent bruteforce
+    int crId = int(crTo.Id);
+    // Find alredy added
+    for(uint i = GOOD_EVIL_LIST_BEGIN; i <= GOOD_EVIL_LIST_END; i++)
+    {
+        int id = crFrom.GoodEvilList[i];
+        if(id != 0)
+        {
+            bool isEvil = FLAG(id, 0x80000000);
+            if(isEvil)
+                id ^= 0x80000000;
+
+            if(id == crId)
+            {
+                if((valUp && !isEvil) || (!valUp && isEvil))
+                    return;                                   // Already added
+                crFrom.GoodEvilListBase[i] = 0;               // Erase from list
+                return;
+            }
+        }
+    }
+    // Add new record
+    if(!valUp)
+        crId |= 0x80000000;
+    for(uint i = GOOD_EVIL_LIST_BEGIN; i <= GOOD_EVIL_LIST_END; i++)
+    {
+        int id = crFrom.GoodEvilList[i];
+        if(id == 0)
+        {
+            crFrom.GoodEvilListBase[i] = crId;
+            return;
+        }
+    }
+    // All places busy, erase first 10
+    for(uint i = GOOD_EVIL_LIST_BEGIN; i <= GOOD_EVIL_LIST_END - 10; i++)
+        crFrom.GoodEvilListBase[i] = crFrom.GoodEvilListBase[i + 10];
+    for(uint i = GOOD_EVIL_LIST_END - 9; i <= GOOD_EVIL_LIST_END; i++)
+        crFrom.GoodEvilListBase[i] = 0;
+    crFrom.GoodEvilListBase[GOOD_EVIL_LIST_END - 10] = crId;
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// Call to determine cost of single item.
+// To allow function set __CustomItemCost to true.
+// Don't forgot specify this function in client script.
+uint item_cost(Item& item, Critter& cr, Critter& npc, bool buy)
+{
+    return GetItemCost(item, cr, npc, buy);
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// Call on barter transaction.
+// Return false to cancel transaction.
+bool items_barter(array<Item@>& saleItems, array<uint>& saleItemsCount, array<Item@>& buyItems, array<uint>& buyItemsCount, Critter& player, Critter& npc)
+{
+
+    for(uint i = 0, j = saleItems.length(); i < j; i++)
+    {
+        switch(saleItems[i].GetProtoId())
+        {
+            case PID_WORKBENCH:
+            case PID_WORKBENCH_PRIMITIVE:
+            case PID_WORKBENCH_RAIDERS:
+            case PID_MFC_MACHINE:
+            case PID_MED_MACHINE:
+            case PID_AMMO_FACILITY:
+            case PID_CAMPFIRE:
+            case PID_ADVANCED_BENCH:
+            case PID_TOBACCO_BENCH:
+                DeleteItem(saleItems[i]);
+                return false;
+        }
+    }
+
+    if(_IsTrader(npc))
+    {
+        // reputations
+        int profit = 0;
+        int itemCost = 0;
+        for(uint i = 0, j = saleItems.length(); i < j; i++)
+        {
+            profit += GetItemCostPlain(saleItems[i], player, npc) * saleItemsCount[i];
+            int itemCostOne = GetItemCost(saleItems[i], player, npc, true);
+            if (itemCostOne > 1)
+                itemCost +=  itemCostOne * saleItemsCount[i];
+        }
+        TC_BarterReward(player, itemCost);
+        for(uint i = 0, j = buyItems.length(); i < j; i++)
+        {
+            profit -= GetItemCostPlain(buyItems[i], player, npc) * buyItemsCount[i];
+        }
+        ProcessProfitReputation(player, _GroupIndex(npc), profit);
+        DPlayerLog(player, "Increased reputation " + _GroupIndex(npc) + " from profit of " + profit);
+    }
+    return true;
+}
+
+// Call on something player craft some items.
+void items_crafted(array<Item@>& items, array<uint>& itemsCount, array<Item@>& resources, Critter& crafter)
+{
+    uint8 multiplier = CLAMP(crafter.ParamBase[ST_FIXBOY_COUNTER], 1, 99);
+    if(crafter.StatBase[ST_FIXBOY_FIXALL] > 0)
+        multiplier = CLAMP(crafter.StatBase[ST_FIXBOY_FIXALL], 1, 100);
+
+    array<uint16> recipePids;
+    array<uint> recipeCnt;
+
+    if(multiplier > 1)
+    {
+        GetItemRecipe(items[0].GetProtoId(), recipePids, recipeCnt);
+    }
+
+	TC_CraftCapsReward(crafter, (multiplier * items[0].Proto.Cost));
+
+    for(uint8 m = 0; m < multiplier; ++m)
+    {
+        if(m > 0)
+        {
+            for(uint i = 0, j = items.length(); i < j; i++)
+            {
+                @items[i] = crafter.AddItem(items[i].GetProtoId(), itemsCount[i]);
+            }
+            for(uint ri = 0, rj = resources.length(); ri < rj; ri++) 
+            {
+                if((resources[ri].GetType()==ITEM_TYPE_WEAPON && !resources[ri].IsStackable()) || resources[ri].GetType()==ITEM_TYPE_ARMOR)
+                {
+                    uint16 oldPid = resources[ri].GetProtoId();
+                    if(m > 1)
+                    {
+                        MoveItem(resources[ri], 1, crafter.GetMap(), 1, 1);
+                        DeleteItem(resources[ri]);
+                    }
+                    Item@ res = crafter.GetItem(oldPid, -1);
+                    if(valid(res))
+                    {
+                        @resources[ri] = res;
+                    }
+                }
+            }
+        }
+
+        for(uint ii = 0, jj = items.length(); ii < jj; ii++)
+        {
+            // Unload weapons
+            Item@ item = items[ii];
+            if(item.GetType() == ITEM_TYPE_WEAPON && item.Proto.Weapon_MaxAmmoCount > 0)
+            {
+                item.AmmoCount = 0;
+                item.Update();
+            }
+            
+            bool upgradedWeapon=false;
+            for(uint ri = 0, rj = resources.length(); ri < rj; ri++) 
+            {
+                if(resources[ri].GetType()==ITEM_TYPE_WEAPON && resources[ri].GetProtoId() != PID_SLEDGEHAMMER) 
+                {
+                    upgradedWeapon=true;
+                    for(uint i=0,j=items.length();i<j;i++)
+                    {
+                        items[i].Val0 = resources[i].Val0;
+                        items[i].Val1 = resources[i].Val1;              
+                        items[i].Val2 = resources[i].Val2;              
+                        items[i].Val3 = resources[i].Val3;              
+                        items[i].Val4 = resources[i].Val4;              
+                        items[i].Val5 = resources[i].Val5;
+                        items[i].Val6 = resources[i].Val6;
+                        items[i].Val7 = resources[i].Val7;
+                        items[i].Val8 = resources[i].Val8;
+                        items[i].Val9 = resources[i].Val9;                  
+                    }
+                }
+            }
+            string@ crafterName=""+crafter.Name;
+            if(!upgradedWeapon) 
+                AddBonuses(item, crafterName);
+            else 
+                if(!item.IsStackable()) 
+                    SetLexem(item, "$crafter", crafterName);
+            
+            uint score=BonusNumber(item);
+            if(item.GetType()==ITEM_TYPE_ARMOR) 
+                AddScore(crafter, SCORE_ARMORER, score);
+            else 
+                if(item.GetType()==ITEM_TYPE_WEAPON) 
+                    AddScore(crafter, SCORE_GUNSMITH, score);
+        }
+
+        for(uint i = 0, j = resources.length(); i < j; i++)
+        {
+            // Unload weapons
+            Item@ item = resources[i];
+            if(item.GetType() == ITEM_TYPE_WEAPON && item.Proto.Weapon_MaxAmmoCount > 0)
+            {
+                if(item.AmmoCount > 0)
+                {
+                    crafter.AddItem(item.AmmoPid, item.AmmoCount);
+                    item.AmmoCount = 0;
+                    item.Update();
+                }
+            }
+        }
+        ApplyTimeout(items, itemsCount, resources, crafter);
+
+        if(m > 0 && m == multiplier-1)
+        {
+            for(uint ri = 0, rj = resources.length(); ri < rj; ri++) 
+            {
+                if((resources[ri].GetType()==ITEM_TYPE_WEAPON && !resources[ri].IsStackable()) || resources[ri].GetType()==ITEM_TYPE_ARMOR)
+                {
+                    DeleteItem(resources[ri]);
+                }
+            }
+        }
+
+        if(m > 0)
+        {    
+            for(uint i = 0, j = recipePids.length(); i < j; i++)
+            {
+                Item@ res = crafter.GetItem(recipePids[i], -1);
+                if(valid(res))
+                {
+                    if( !( (res.GetType()==ITEM_TYPE_WEAPON && !res.IsStackable()) || res.GetType()==ITEM_TYPE_ARMOR ) )
+                    {
+                        if(res.IsStackable())
+                        {
+                            if(res.GetCount() > recipeCnt[i])
+                            {
+                                res.SetCount(res.GetCount() - recipeCnt[i]);
+                            }
+                            else
+                                DeleteItem(res);
+                        }
+                        else
+                            DeleteItem(res);
+                    }
+                }
+            }
+        }
+    }
+}
+
+/**
+ * Checks if critter B is out of fov. (used in 'entering sneak mode' check)
+ */
+bool FovCheck(Critter& cr, Critter& opponent)
+{
+    uint16 cx = cr.HexX;
+    uint16 cy = cr.HexY;
+    uint16 ox = opponent.HexX;
+    uint16 oy = opponent.HexY;
+
+    uint16 dist = GetDistantion(cx, cy, ox, oy);
+    uint16 range =  __LookNormal + cr.Stat[ST_PERCEPTION] * 3 + _CritGetPerk(cr, PE_SHARPSHOOTER) * 6;
+    if(dist > range)
+        return false;
+
+    // transform direction from critter A to critter B into "character coord-space"
+    uint8 dir = GetDirection(cx, cy, ox, oy);
+    dir = (dir > cr.Dir) ? dir - cr.Dir : cr.Dir - dir;
+
+    uint16 nrange = range;
+    // adjust distance based on fov
+    if(dir == 0)                    // front
+        nrange -= nrange * __LookDir0 / 100;
+    else if(dir == 5 || dir == 1)   // frontsides
+        nrange -= nrange * __LookDir1 / 100;
+    else if(dir == 4 || dir == 2)   // backsides
+        nrange -= nrange * __LookDir2 / 100;
+    else                            // back
+        nrange -= nrange * __LookDir3 / 100;
+
+    if(dist > nrange)
+        return false;
+    else
+        return true;
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// Levelup callback.
+void player_levelup(Critter& player, uint skillIndex, uint skillUp, uint perkIndex)
+{
+    if(skillIndex >= SKILL_BEGIN && skillIndex <= SKILL_END)
+    {
+        for( ; skillUp != 0; skillUp--)
+        {
+            int skillVal = player.SkillBase[skillIndex];
+            if(skillVal >= MAX_SKILL_VAL)
+                break;
+			
+			bool skillCap=((skillIndex==SK_FIRST_AID || skillIndex==SK_DOCTOR) && skillVal>=200) || (skillIndex==SK_OUTDOORSMAN && skillVal>=175) ||
+						  ((skillIndex==SK_LOCKPICK || skillIndex==SK_TRAPS || skillIndex==SK_STEAL || skillIndex==SK_BARTER || skillIndex==SK_GAMBLING)&& skillVal>=150) ||
+						  ((skillIndex==SK_SCIENCE || skillIndex==SK_REPAIR) && skillVal>=125) || (skillIndex==SK_SNEAK && skillVal >=270) || skillIndex==SK_SCAVENGING;
+						  
+			if(skillCap) break;
+
+            int needPoints = 1;
+            if(skillVal > __SkillModAdd6)
+                needPoints = 6;
+            else if(skillVal > __SkillModAdd5)
+                needPoints = 5;
+            else if(skillVal > __SkillModAdd4)
+                needPoints = 4;
+            else if(skillVal > __SkillModAdd3)
+                needPoints = 3;
+            else if(skillVal > __SkillModAdd2)
+                needPoints = 2;
+
+            if(player.StatBase[ST_UNSPENT_SKILL_POINTS] < needPoints)
+                break;
+
+            skillVal++;
+			
+			skillCap=((skillIndex==SK_FIRST_AID || skillIndex==SK_DOCTOR) && skillVal>=200) || (skillIndex==SK_OUTDOORSMAN && skillVal>=175) ||
+				     ((skillIndex==SK_LOCKPICK || skillIndex==SK_TRAPS || skillIndex==SK_STEAL || skillIndex==SK_BARTER || skillIndex==SK_GAMBLING)&& skillVal>=150) ||
+					 ((skillIndex==SK_SCIENCE || skillIndex==SK_REPAIR) && skillVal>=125) || (skillIndex==SK_SNEAK && skillVal >=270);
+						  
+            if(_CritIsTagSkill(player, skillIndex) && skillVal < MAX_SKILL_VAL && !skillCap)
+                skillVal++;
+            player.SkillBase[skillIndex] = skillVal;
+            player.StatBase[ST_UNSPENT_SKILL_POINTS] -= needPoints;
+        }
+    }
+    else if(perkIndex >= PERK_BEGIN && perkIndex <= PERK_END)
+    {
+        if(PerkCheck(player, perkIndex, false))
+        {
+            if(player.IsPlayer())
+                FLog(LOG_PERKS_PICKED, player.Name+"("+player.Id+") perk: "+perkIndex+" at level "+player.Stat[ST_LEVEL]);
+            player.PerkBase[perkIndex]++;
+            player.StatBase[ST_UNSPENT_PERKS]--;
+        }
+    }
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// Turn based callbacks.
+// Called on every round begin, return false to disable turn-based
+void turn_based_begin(Map& map)
+{
+	SetWalkRunTimeForNpcs(map, 100);
+    array<Critter@> critters;
+    uint count = map.GetCritters(0, FIND_LIFE_AND_KO, critters);
+
+    // Try end battle
+    if(map.TurnBasedRound > 0)
+    {
+        array<uint> crittersIds;
+        map.GetTurnBasedSequence(crittersIds);
+
+        bool continueBattle = false;
+        if(crittersIds.length() >= 2)
+        {
+            for(uint i = 0, j = crittersIds.length(); i < j; i++)
+            {
+                Critter@ cr = ::GetCritter(crittersIds[i]);
+                if(!(!valid(cr) || cr.IsDead() ||
+                     (cr.IsNpc() && cr.GetPlanes(AI_PLANE_ATTACK, null) == 0) ||
+                     (cr.IsPlayer() && (cr.Mode[MODE_END_COMBAT] != 0 || cr.Stat[ST_CURRENT_HP] < 1))))
+                {
+                    continueBattle = true;
+                    break;
+                }
+            }
+        }
+
+        if(!continueBattle)
+            map.EndTurnBased();
+    }
+}
+
+// Call on end turn-based battle
+void turn_based_end(Map& map)
+{
+	SetWalkRunTimeForNpcs(map, 0);
+    array<Critter@> critters;
+    uint count = map.GetCritters(0, FIND_LIFE_AND_KO, critters);
+}
+
+void SetWalkRunTimeForNpcs(Map& map, uint time)
+{
+	Critter@[] critters;
+	map.GetCritters(0, FIND_ONLY_NPC | FIND_LIFE_AND_KO, critters);
+
+
+	for (uint i = 0; i < critters.length(); i++)
+	{
+		if(valid(critters[i]))
+		{
+			critters[i].StatBase[ST_WALK_TIME] = time;
+			critters[i].StatBase[ST_RUN_TIME] = time;
+		}
+	}
+}
+
+
+// Call on every begin and end turn
+void turn_based_process(Map& map, Critter& cr, bool beginTurn)
+{
+    if(beginTurn)
+    {
+        if(cr.Timeout[TO_BATTLE] == 0)
+            cr.TimeoutBase[TO_BATTLE] = TB_BATTLE_TIMEOUT; // setting to initial value (TB_BATTLE_TIMEOUT in fonline.h)
+
+        if(!_IsTrueNpc(cr))
+            SetLvar(cr, LVAR_tb_turn_time, ELAPSED_TIME);
+
+
+        cr.StatBase[ST_MOVE_AP] = cr.Stat[ST_MAX_MOVE_AP];
+        //cr.StatBase[ST_TURN_BASED_AC] = 0;
+        //cr.StatBase[ST_TURN_BASED_HEX] = MAKELONG(cr.HexX, cr.HexY);
+        if(map.TurnBasedRound > 0)
+            PlaySound(cr, "icombat1.acm");
+
+        // Offline and non-real players (staff) skip turns in TB
+        if(cr.IsPlayer())
+        {
+            if(_IsOffline(cr))
+            {
+                _EndTurn(cr);
+            }
+        }
+    }
+    else
+    {
+        //always desneak at the end of turn
+        _Desneak(cr);
+
+        /*
+        uint dist = GetDistantion(cr.HexX, cr.HexY, LOWORD(cr.Stat[ST_TURN_BASED_HEX]), HIWORD(cr.Stat[ST_TURN_BASED_HEX]));
+        cr.StatBase[ST_TURN_BASED_AC] = 2 * (dist + cr.Stat[ST_CURRENT_AP]) >= cr.Stat[ST_ACTION_POINTS] ? 1 : 0;
+        if(cr.Stat[ST_TURN_BASED_AC] < 0)
+            cr.StatBase[ST_TURN_BASED_AC] = 0;
+        */
+        cr.StatBase[ST_MOVE_AP] = 0;
+        PlaySound(cr, "icombat2.acm");
+    }
+}
+
+// Call when need generate turns sequence
+void turn_based_sequence(Map& map, array<Critter@>& critters, Critter@ firstTurnCrit)
+{
+    // Check first turn critter
+    //if(valid(firstTurnCrit) && (firstTurnCrit.IsDead() || firstTurnCrit.Stat[ST_CURRENT_AP] <= 0))
+    //    @firstTurnCrit = null;
+
+    // Collect critters
+    array<SequenceCritter> sequenceCritters;
+    for(uint i = 0, j = critters.length(); i < j; i++)
+    {
+        Critter@ cr = critters[i];
+        //if(valid(firstTurnCrit) && firstTurnCrit.Id == cr.Id)
+        //    continue;
+        if(cr.IsDead())
+            continue;
+        sequenceCritters.resize(sequenceCritters.length() + 1);
+        @sequenceCritters.last().critter = cr;
+    }
+
+    // Sort sequence, see SequenceCritter::opCmp below
+    SequenceCritterRandom = Random(0, 1);
+    sequenceCritters.sortDesc();
+
+    // Fill result
+    critters.resize(0);
+    //if(valid(firstTurnCrit))
+    //    critters.insertLast(firstTurnCrit);
+    for(uint i = 0, j = sequenceCritters.length(); i < j; i++)
+        critters.insertLast(sequenceCritters[i].critter);
+}
+
+// Sequence sorter for turn_based_sequence
+int   SequenceCritterRandom = 0;
+class SequenceCritter
+{
+    Critter@ critter;
+    int opCmp(SequenceCritter& in other)
+    {
+        bool     result;
+        Critter@ cr1 = critter;
+        Critter@ cr2 = other.critter;
+        int      seq1 = cr1.Stat[ST_SEQUENCE];
+        int      seq2 = cr2.Stat[ST_SEQUENCE];
+        if(seq1 == seq2)
+        {
+            int ag1 = cr1.Stat[ST_AGILITY];
+            int ag2 = cr2.Stat[ST_AGILITY];
+            if(ag1 == ag2)
+            {
+                int lk1 = cr1.Stat[ST_LUCK];
+                int lk2 = cr2.Stat[ST_LUCK];
+                if(lk1 == lk2)
+                {
+                    if(SequenceCritterRandom == 0)
+                        result = cr1.Id > cr2.Id;
+                    else
+                        result = cr1.Id < cr2.Id;
+                }
+                else
+                    result = lk1 > lk2;
+            }
+            else
+                result = ag1 > ag2;
+        }
+        else
+            result = seq1 > seq2;
+        return result ? int(1) : int(-1);
+    }
+};
+
+// Call on world saving
+// Range of currentIndex: 1..9999
+void world_save(uint currentIndex, array<uint>& deleteIndexes)
+{
+    SaveAlertMaps();
+
+    Log("Saving faction data...");
+    for(uint i = 0; i < FACTION_COUNT; i++)
+    {
+        if(FactionExists(i))
+        {
+            /*Faction@ f = GetFaction(i);
+               if(!valid(f))
+               Log("ERROR: FactionType.dll failure, id: " + i);
+               else
+               f.Save(); // Save params*/
+            SaveFactionData(i);
+        }
+    }
+    Log("Faction data saved.");
+    Log("Saving TC data...");
+    for(uint i = 0; i < TOWN_COUNT; i++)
+    {
+        for(uint i = 1; i <= TOWN_COUNT; i++)
+        {
+            ITown@ town = GetTown(i);
+            town.SaveData();
+        }
+    }
+    Log("TC data saved.");
+    Log("Saving bank data...");
+    SaveBankData();
+    Log("Bank data saved.");
+    Log("Saving brahmin pen data...");
+    SaveBrahminPenData();
+    Log("Saved brahmin pen data.");
+    SaveEventSpawns();
+    Log("Saving car price data...");
+    SaveCarPriceData();
+    Log("Saved car price data.");
+
+    // Keep only current and four last saves
+    if(currentIndex == 1)
+    {
+        deleteIndexes.resize(5);
+        for(uint i = 0; i < 5; i++)
+            deleteIndexes[i] = 9999 - i;
+    }
+    else if(currentIndex > 4 && ((currentIndex % 24) != 0))
+    {
+        deleteIndexes.resize(1);
+        deleteIndexes[0] = currentIndex - 5;
+    }
+    //Log("Saving weather data...");
+    //SaveWeather();
+    //Log("Saved weather data.");
+
+    FLog(LOG_WMLOCATIONS, "SAVE");
+    // SaveCheats();
+}
+
+// Call on player try register
+// Return true to allow, false to disallow
+bool player_registration(uint ip, string& name, uint& textMsg, uint& strNum)
+{
+    uint nameError = CheckPlayerName( name );
+    if( nameError != 0 )
+    {
+        textMsg = TEXTMSG_GAME;
+        strNum = nameError;
+        return( false );
+    }
+
+	// check for staff members
+    LoadConfig("config/GetAccess.cfg");
+
+    string@ reserved = GetConfigValue("config/GetAccess.cfg", name, "Reserved", false);
+
+    if(!valid(reserved))         // dedicated to RJ
+    {
+        IConfigFile@ config = GetConfigFile("config/GetAccess.cfg");
+        if(valid(config))
+        {
+            array<string> sections;
+            config.GetSections(sections);
+            if(sections.length() > 0)
+            {
+                for(uint s = 0; s < sections.length(); s++)
+                {
+                    string@ alias = GetConfigValue("config/GetAccess.cfg", sections[s], "Nickname", false);
+                    if(valid(alias) && strlwr(name) == strlwr(alias))
+                    {
+                        @reserved = GetConfigValue("config/GetAccess.cfg", sections[s], "Reserved", false);
+                        break;
+                    }
+                }
+            }
+        }
+    }
+
+    if(valid(reserved))
+    {
+        if(reserved == "true")
+        {
+            // kick client
+            textMsg = TEXTMSG_GAME;
+            strNum  = 1049;
+            return(false);
+        }
+        else
+        {
+            // allow client, reserve again
+            IConfigSection@ section = GetConfigSection("config/GetAccess.cfg", name, false);
+            SetConfigValue("config/GetAccess.cfg", section.GetName(), "Reserved", "true");
+            SaveConfig("config/GetAccess.cfg");
+            return(true);
+        }
+    }
+    else
+    {
+        // check player-reserved names
+        LoadConfig("config/ReservedNicknames.cfg");
+
+        @reserved = GetConfigValue("config/ReservedNicknames.cfg", "Reserved", name, false);
+
+        if(valid(reserved) && reserved == "1")
+        {
+            // kick client
+            textMsg = TEXTMSG_GAME;
+            strNum  = 1050;
+            return(false);
+        }
+    }
+
+    return(true);
+}
+
+// Call on player try login
+// Return true to allow, false to disallow
+bool player_login(uint ip, string& name, uint id, uint& textMsg, uint& strNum)
+{
+    uint nameError = CheckPlayerName( name );
+    if( nameError != 0 )
+    {
+        textMsg = TEXTMSG_GAME;
+        strNum = nameError;
+        return( false );
+    }
+
+	Critter@ player = GetCritter(id);
+    if(valid(player))
+    {
+        // Player is online and the IP is the same, try disconnect the player to solve "character already in game"
+        if(_IsOnline(player) && player.GetIp() == ip)
+        {
+            player.Say(SAY_NETMSG, "Another connection from the same IP incoming, logging off.");
+            player.Disconnect();
+            textMsg = TEXTMSG_TEXT;
+            strNum = 400;
+            return false;
+        }
+        else
+        {
+            UpdateFactionsInfo(player);
+        }
+
+        if(_IsOffline(player))
+            CreateTimeEvent(AFTER(REAL_SECOND(5)), "e_CritterInit_Broadcast", player.Id, false);
+    }
+
+    uint16 year=0, month=0, day=0, dayofweek=0, hour=0, minute=0, second=0;
+    GetGameTime( __FullSecond, year, month, day, dayofweek, hour, minute, second );
+    FLog(LOG_LOGIN, GetTimeString(__FullSecond) + " " + name + " " +  IntToIp(ip));
+    return true;
+}
+
+uint8 access_level(string& access)
+{
+    if(strlwr(access) == "admin")
+        return(ACCESS_ADMIN);
+    else if(strlwr(access) == "moder")
+        return(ACCESS_MODER);
+    else if(strlwr(access) == "tester")
+        return(ACCESS_TESTER);
+    else
+        return(ACCESS_CLIENT);
+}
+
+string access_level(uint8& access)
+{
+    switch(access)
+    {
+    case ACCESS_ADMIN:
+        return("admin");
+    case ACCESS_MODER:
+        return("moder");
+    case ACCESS_TESTER:
+        return("tester");
+    default:
+        return("client");
+    }
+    return("client");
+}
+
+// Call on player try change access
+// Return true to allow, false to disallow
+bool player_getaccess(Critter& player, int access, string& password)
+{
+    FLog(LOG_GETACCESS, "Access changed for player " + GetCritterInfo(player) + ", from " + GetAuthString(player.GetAccess()) + " to " + GetAuthString(access) + ".");
+    SetLvar(player, LVAR_authed_char, 1);
+    player.RunClientScript("client_messages@_Listen", 0, 0, 0, null, null);
+    SetCritterEvents(player);
+    Broadcast_CheckRequestHelpBuffer(player);
+    return true;
+}
+
+// Call on player trying to use a command
+// Return true to allow, false to disallow
+bool player_allowcommand(Critter@ cr, string@ adminPanel, uint8 command)
+{
+    if(valid(adminPanel))
+        return true;
+
+    switch(command)
+    {
+    /* disabled commands
+            when adding another command, don't forget to
+            add it to client-side check (client_messages@out_message)
+     */
+    case COMMAND_ADDITEM:
+    case COMMAND_ADDITEM_SELF:
+    case COMMAND_ADDLOCATION:
+    case COMMAND_ADDNPC:
+    case COMMAND_PARAM:
+        Log("WARN: " + cr.Name + "(" + cr.Id + ") tried to use disabled command (" + command + ")");
+        break;
+
+    /* overwritten commands
+            hardcoded commands moved to scripts, client should never send them
+     */
+    case COMMAND_MYINFO:
+        Log("WARN: " + cr.Name + "(" + cr.Id + ") tried to use overwritten command (" + command + ")");
+        break;
+
+    // ACCESS_CLIENT
+    case COMMAND_CHANGE_PASSWORD:
+    case COMMAND_DELETE_ACCOUNT:
+        if(cr.GetAccess() == ACCESS_CLIENT && cr.Param[PE_MENTAL_BLOCK] == 1)
+        {
+            cr.Say(SAY_NETMSG, "You are not allowed to " + (command == COMMAND_CHANGE_PASSWORD ? "change password of" : "delete") + " this character.");
+            return(false);
+        }
+        if(command == COMMAND_DELETE_ACCOUNT && cr.Stat[ST_LEVEL] > 1)
+        {
+/* TODO:
+add: EXPORT bool PlayerToDelete( Critter* cr ) return( cr && cr->IsPlayer() && cr->ClientToDelete ); 
+*/
+            if(valid(cr.GetMap()) && (IsBase(cr.GetMap()) || IsTent(cr.GetMap())))
+            {
+                if(_CritCountItem(cr, PID_BOTTLE_CAPS)>=10000 && cr.Stat[ST_LEVEL]>1)
+                    cr.Say(SAY_NETMSG, "|0xBBBBBB INFO: You will receive Achievement Book after your character disappears from game.");
+                else
+                    cr.Say(SAY_NETMSG, "|0xCC0000 WARNING: You are removing a character without 10.000 caps in inventory. You will not get Achievement Book to perform reroll! You can use ~deleteself command again to cancel.");
+            }
+            else
+                cr.Say(SAY_NETMSG, "|0xCC0000 WARNING: You are removing a character outside of tent/base. You will not get Achievement Book to perform reroll! You can use ~deleteself command again to cancel.");
+        }
+		if(command == COMMAND_DELETE_ACCOUNT && cr.Stat[ST_FACTION_RANK]==5)
+		{
+			cr.Say(SAY_NETMSG, "|0xCC0000 WARNING: You are removing a character which is a leader of player faction. Faction's leadership will be lost. You can use ~deleteself command again to cancel.");
+		}
+		
+        return(true);
+
+    case COMMAND_EXIT:
+    case COMMAND_GETACCESS:
+        return(true);
+
+    // ACCESS_TESTER
+    case COMMAND_DROP_UID:
+    case COMMAND_GAMEINFO:
+    case COMMAND_TOGLOBAL:
+        if(cr.GetAccess() >= ACCESS_TESTER)
+            return(true);
+        break;
+
+    // ACCESS_MODER
+    case COMMAND_BAN:
+    case COMMAND_CHECKVAR:
+    case COMMAND_CRITID:
+    case COMMAND_DISCONCRIT:
+    case COMMAND_KILLCRIT:
+    case COMMAND_LOG:
+    case COMMAND_MOVECRIT:
+    case COMMAND_RESPAWN:
+    case COMMAND_SETVAR:
+        if(cr.GetAccess() >= ACCESS_MODER)
+            return(true);
+        break;
+
+    // ACCESS_ADMIN
+    case COMMAND_LOADDIALOG:
+    case COMMAND_LOADLOCATION:
+    case COMMAND_LOADMAP:
+    case COMMAND_LOADSCRIPT:
+    case COMMAND_RELOAD_CLIENT_SCRIPTS:
+    case COMMAND_RELOADAI:
+    case COMMAND_RELOADDIALOGS:
+    case COMMAND_RELOADLOCATIONS:
+    case COMMAND_RELOADMAPS:
+    case COMMAND_RELOADSCRIPTS:
+    case COMMAND_RELOADTEXTS:
+    case COMMAND_REGENMAP:
+    case COMMAND_RUNSCRIPT:
+    case COMMAND_SETTIME:
+        if(cr.GetAccess() >= ACCESS_ADMIN)
+		{
+			// uuuggghhh
+			if( command == COMMAND_REGENMAP )
+			{
+
+			}
+			return(true);
+		}
+        break;
+
+    default:
+        Log("WARN: " + cr.Name + "(" + cr.Id + ") tried to use unknown command (" + command + ")");
+        break;
+    }
+
+    cr.Say(SAY_NETMSG, "Unknown command.");
+    return(false);
+}
+
+void server_log(string& message)
+{
+    // placeholder
+};
+
+void CheckScripts(Critter& cr, int p0, int p1, int p2)
+{
+    array<Item@> items;
+    uint num = cr.GetMap().GetItems(0, items);
+    for(uint i = 0; i < num; i++)
+    {
+        uint16 hx, hy;
+        hx = hy = 0;
+        Map@ map = items[i].GetMapPosition(hx, hy);
+        uint id = items[i].GetScriptId();
+        map.SetText(hx, hy, 0, "" + id + " : " + GetScriptName(id));
+    }
+    array<Critter@> crs;
+    num = cr.GetMap().GetCritters(0, FIND_ALL | FIND_ONLY_NPC, crs);
+
+    for(uint i = 0; i < num; i++)
+    {
+        uint id = cr.GetScriptId();
+        crs[i].Say(SAY_NORM, "" + id + " : " + GetScriptName(id));
+    }
+}
+
+void CheckPids(Critter& cr, int p0, int p1, int p2)
+{
+    array<Critter@> critters;
+    uint num = cr.GetMap().GetCritters(0, FIND_ALL | FIND_ONLY_NPC, critters);
+    for(uint i = 0; i < num; i++)
+        critters[i].Say(SAY_NORM, "PID: " + critters[i].GetProtoId());
+}
+
+void CheckItems(Critter& cr, int p0, int p1, int p2)
+{
+    Item@ it = cr.AddItem(1, 1);
+    cr.Say(SAY_NETMSG, "" + it.Id);
+}
+
+void reprohang(Critter& cr, int p0, int p1, int p2)
+{
+    cr.ParamBase[305] = 1 << 32;
+    cr.Say(SAY_NETMSG, "Done");
+    cr.Say(SAY_NETMSG, "Param's value: " + cr.ParamBase[305]);
+}
+
+void spawnjunk(Critter& cr, int, int, int)
+{
+    Item@ junk = cr.GetMap().AddItem(cr.HexX, cr.HexY, PID_PUMP_PARTS, 1);
+    junk.SetScript("prod_barrel_junk@_Junk");
+}

@@ -1,0 +1,811 @@
+//
+// Wipe/Rotators
+//
+// critter_skin.fos
+//
+
+//
+// NOTE:
+// clothes are NOT and WON'T be supported by skin system
+// any bugs/inconsistency related to clothes will be ignored
+
+#ifndef __CRITTER_SKIN__
+#define __CRITTER_SKIN__
+
+#include "_defines.fos"
+#include "_macros.fos"
+#include "_basetypes.fos"
+#include "ITEMPID.H"
+
+#include "critter_skin_h.fos"
+
+import bool GetBaseType(const int& in id, string& out name) from "main";
+
+// i'm THAT lazy
+#define _SkinErr#(skin,text) { Log( "SKIN<"+skin.Name+":"+skin.Base+"> "+text ); error = true; }
+#define _SkinError#(text) { Log( "SKINS: "+text); return; }
+#define _SkinErrorR#(text,ret) { Log( "SKINS: "+text); return( ret ); }
+
+#define _GETTER#(type,from,to)	type get_ ## to ## () { return( this. ## from ); };
+#define _INFO#(from,to)			_GETTER( SkinInfo, from, to );
+
+// filled on init with data below
+uint16[] MaleSet, FemaleSet;
+
+const uint16[] FemaleLeatherSet = // blind use by LeatherJacket(), LeatherArmor()
+{
+	CRTYPE_FEMALE_LEATHER_JACKET,
+	CRTYPE_FEMALE_LEATHER_ARMOR
+};
+
+const uint16[] FemaleCombatSet = 
+{
+	CRTYPE_FEMALE_COMBAT_ARMOR,
+	CRTYPE_FEMALE_CABLACK,
+	CRTYPE_FEMALE_CARANGER,
+	CRTYPE_FEMALE_CADESERT
+};
+
+const uint16[] MaleLeatherSet = // blind use by LeatherJacket(), LeatherArmor()
+{
+	CRTYPE_MALE_LEATHER_JACKET,
+	CRTYPE_MALE_LEATHER_ARMOR
+};
+
+const uint16[] MaleCombatSet =
+{
+	CRTYPE_MALE_COMBAT_ARMOR,
+	CRTYPE_MALE_CABLACK,
+	CRTYPE_MALE_CARANGER,
+	CRTYPE_MALE_CADESERT
+};
+
+const uint16[] RobesSet =
+{
+	CRTYPE_ROBE_PURPLE,
+	CRTYPE_ROBE_SAND,
+	CRTYPE_ROBE_RED
+};
+
+const uint16[] PowerArmorsSet =
+{
+	CRTYPE_POWER_ARMOR,
+	CRTYPE_ENCLAVE
+};
+
+class SkinBase : Skin
+{
+	private string name;
+	private uint16 base;
+	private uint8 gender;
+	private bool lock = false;
+	private uint effects = 0;
+
+	private array<uint16> from;
+	private array<uint16> to;
+
+	SkinInfo pistol, smg, shotgun, rifle;
+	SkinInfo flamer, heavyBG, minigun, rocketLauncher;
+	SkinInfo heavyEW;
+	SkinInfo unarmed, knife, club, spear, hammer;
+	SkinInfo throwing;
+	SkinInfo running;
+
+	SkinBase( uint16 crType, uint8 gender )
+	{
+		this.base = crType;
+		this.gender = gender;
+		if( this.gender > GENDER_IT )
+			this.gender = GENDER_IT;
+
+		if( !GetBaseType( this.base, this.name ))
+			this.name = "CRTYPE<"+this.base+">";
+	}
+
+	_GETTER( string, name, Name );
+	_GETTER( uint16, base, Base );
+	_GETTER( uint8, gender, Gender );
+	_GETTER( bool, lock, Locked );
+	_GETTER( uint, effects, Effects );
+	_INFO( pistol, Pistol );
+	_INFO( smg, SMG );
+	_INFO( shotgun, Shotgun );
+	_INFO( rifle, Rifle );
+	_INFO( flamer, Flamer );
+	_INFO( minigun, Minigun );
+	_INFO( rocketLauncher, RocketLauncher );
+	_INFO( heavyBG, HeavyBG );
+	_INFO( heavyEW, HeavyEW );
+	_INFO( unarmed, Unarmed );
+	_INFO( knife, Knife );
+	_INFO( club, Club );
+	_INFO( spear, Spear );
+	_INFO( hammer, Hammer );
+	_INFO( throwing, Throwing );
+	_INFO( running, Running );
+
+	uint16 get_opIndex( uint16 crType )
+	{
+		// locked skins always return base crType
+		if( this.lock )
+			return( this.base );
+
+		int idx = this.from.find( crType );
+		if( idx >= 0 )
+			return( this.to[idx] );
+
+		// return provided crType if redirection isn't found
+		// shouldn't happen on Reloaded as skins must have all rediects filled for npc_barber
+		return( crType );
+	}
+
+	void set_opIndex( uint16 crType, uint16 value )
+	{
+		if( this.lock )
+		{
+			Log( "SKINS : Attemt to set redirect for locked skin" );
+			return;
+		}
+
+		if( crType == 0 || crType > 999 || value == 0 || value > 999 )
+		{
+			Log( "SKINS : Attemt to set invalid redirect from<"+crType+"> to<"+value+">" );
+			return;
+		}
+
+		//string sType = "["+crType+"]", sValue = "["+value+"]";
+		//GetBaseType( crType, sType );
+		//GetBaseType( value, sValue );
+
+		int idx = this.from.find( crType );
+		if( idx >= 0 )
+		{
+			//Log( "  "+sType+" => "+sValue );
+			this.to[idx] = value;
+		}
+		else
+		{
+			//Log( "  "+sType+" -> "+sValue );
+			this.from.insertLast( crType );
+			this.to.insertLast( value );
+		}
+	}
+
+	SkinBase@ Set( uint16 crType, uint16 value )
+	{
+		this[crType] = value;
+
+		return( this );
+	}
+
+	SkinBase@ Set( uint16 crType, uint16 female, uint16 male )
+	{
+		if( this.gender == GENDER_IT || this.gender == GENDER_FEMALE )
+			this[female] = crType;
+
+		if( this.gender == GENDER_IT || this.gender == GENDER_MALE )
+			this[male] = crType;
+
+		return( this );
+	}
+
+	SkinBase@ Set( array<uint16> list )
+	{
+		for( uint l=0, len=list.length(); l<len; l++ )
+		{
+			uint16 crType = list[l];
+			this[crType] = crType;
+		}
+
+		return( this );
+	}
+
+	SkinBase@ Set( uint16 crType, array<uint16> list )
+	{
+		for( uint l=0, len=list.length(); l<len; l++ )
+		{
+			uint16 from = list[l];
+			this[from] = crType;
+		}
+
+		return( this );
+	}
+
+	SkinBase@ Unset( uint16 crType )
+	{
+		int idx = this.from.find( crType );
+		if( idx >= 0 )
+		{
+			this.from.removeAt( idx );
+			this.to.removeAt( idx );
+		}
+
+		return( this );
+	}
+
+	// locked skins always return base crType
+	SkinBase@ Lock()
+	{
+		this.from.resize(0);
+		this.to.resize(0);
+		this.lock = true;
+
+		return( this );
+	}
+
+	// filling = setting redirects only if they haven't been set previously
+	SkinBase@ Fill()
+	{
+		return( this.Fill( this.base ));
+	}
+
+	SkinBase@ Fill( uint16 crType )
+	{
+		this.Fill( crType, FemaleSet );
+		this.Fill( crType, MaleSet );
+		this.Fill( crType, RobesSet );
+		this.Fill( crType, PowerArmorsSet );
+
+		return( this );
+	}
+
+	SkinBase@ Fill( array<uint16> list )
+	{
+		for( uint l=0, len=list.length(); l<len; l++ )
+		{
+			uint16 crType = list[l];
+			if( this.from.find( crType ) < 0 )
+				this[crType] = crType;
+		}
+
+		return( this );
+	}
+
+	SkinBase@ Fill( uint16 crType, array<uint16> tmpl )
+	{
+		for( uint t=0, tLen=tmpl.length(); t<tLen; t++ )
+		{
+			uint16 _from = tmpl[t];
+			if( this.from.find( _from ) < 0 )
+				this[_from] = crType;
+		}
+
+		return( this );
+	}
+
+	// fills missing redirects with defaults for npc_barber
+	// should be used for all non-locked human skins which have some animations missing
+	SkinBase@ Humanize()
+	{
+		if( this.gender == GENDER_IT || this.gender == GENDER_FEMALE )
+			this.Fill( FemaleSet );
+
+		if( this.gender == GENDER_IT || this.gender == GENDER_MALE )
+			this.Fill( MaleSet );
+
+		this.Fill( RobesSet );
+		this.Fill( PowerArmorsSet );
+
+		return( this );
+	}
+
+	SkinBase@ LongHair()
+	{
+		if( this.gender != GENDER_MALE )
+		{
+			Log( "SKINS: Attemt to set LONGHAIR redirects for non-male skin" );
+			return( this );
+		}
+
+		this.LeatherJacket( CRTYPE_LHD_LEATHER_JACKET );
+		this.LeatherArmor( CRTYPE_LHD_LEATHER_ARMOR );
+		this.MetalArmor( CRTYPE_LHD_METAL_ARMOR );
+
+		return( this );
+	}
+
+	SkinBase@ Bald()
+	{
+		if( this.gender != GENDER_MALE )
+		{
+			Log( "SKINS: Attemt to set BALD redirects for non-male skin" );
+			return( this );
+		}
+
+		this.LeatherJacket( CRTYPE_BHD_LEATHER_JACKET );
+		this.LeatherArmor( CRTYPE_BHD_LEATHER_ARMOR );
+		this.MetalArmor( CRTYPE_BHD_METAL_ARMOR );
+
+		return( this );
+	}
+
+	SkinBase@ LeatherJacket()
+	{
+		return( this.LeatherJacket( this.base ));
+	}
+
+	SkinBase@ LeatherJacket( uint16 crType )
+	{
+		return( this.Set( crType, FemaleLeatherSet[0], MaleLeatherSet[0] ));
+	}
+
+	SkinBase@ LeatherArmor()
+	{
+		return( this.LeatherArmor( this.base ));
+	}
+
+	SkinBase@ LeatherArmor( uint16 crType )
+	{
+		return( this.Set( crType, FemaleLeatherSet[1], MaleLeatherSet[1] ));
+	}
+
+	SkinBase@ Leather()
+	{
+		return( this.Leather( this.base ));
+	}
+
+	SkinBase@ Leather( uint16 crType )
+	{
+		this.LeatherJacket( crType );
+		this.LeatherArmor( crType );
+
+		return( this );
+	}
+
+	SkinBase@ Robes()
+	{
+		return( this.Robes( this.base ));
+	}
+
+	SkinBase@ Robes( uint16 crType )
+	{
+		this.Set( crType, RobesSet );
+
+		return( this );
+	}
+
+	SkinBase@ MetalArmor()
+	{
+		return( this.MetalArmor( this.base ));
+	}
+
+	SkinBase@ MetalArmor( uint16 crType )
+	{
+		return( this.Set( crType, CRTYPE_FEMALE_METAL_ARMOR, CRTYPE_MALE_METAL_ARMOR ));
+	}
+
+	SkinBase@ CombatArmor()
+	{
+		return( this.CombatArmor( this.base ));
+	}
+
+	SkinBase@ CombatArmor( uint16 crType )
+	{
+		if( this.gender == GENDER_IT || this.gender == GENDER_FEMALE )
+			this.Set( crType, FemaleCombatSet );
+		if( this.gender == GENDER_IT || this.gender == GENDER_MALE )
+			this.Set( crType, MaleCombatSet );
+
+		return( this );
+	}
+
+	SkinBase@ PowerArmor( uint16 crType )
+	{
+		return( this.Set( crType, CRTYPE_POWER_ARMOR, CRTYPE_POWER_ARMOR ));
+	}
+
+	// another npc_barber crap
+	void RefreshInfo()
+	{
+		array<uint16> crTypes = this.to;
+		crTypes.insertFirst( this.base );
+
+		this.pistol =
+		this.smg =
+		this.shotgun =
+		this.rifle =
+		this.flamer =
+		this.minigun =
+		this.rocketLauncher =
+		this.heavyBG =
+		this.heavyEW =
+		this.unarmed =
+		this.knife =
+		this.club =
+		this.spear =
+		this.hammer =
+		this.throwing =
+		this.running =
+		SKIN_INFO_UNKNOWN;
+
+		for( uint c=0, cLen=crTypes.length(); c<cLen; c++ )
+		{
+			uint16 crType = crTypes[c];
+			CheckWeapon( this.pistol, crType, PID_10MM_PISTOL );
+			CheckWeapon( this.smg, crType, PID_10MM_SMG );
+			CheckWeapon( this.shotgun, crType, PID_SHOTGUN );
+			CheckWeapon( this.rifle, crType, PID_ASSAULT_RIFLE );
+			CheckWeapon( this.flamer, crType, PID_FLAMER );
+			CheckWeapon( this.heavyBG, crType, PID_LIGHT_SUPPORT_WEAPON );
+			CheckWeapon( this.minigun, crType, PID_MINIGUN );
+			CheckWeapon( this.rocketLauncher, crType, PID_ROCKET_LAUNCHER );
+			CheckWeapon( this.heavyEW, crType, PID_PLASMA_RIFLE );
+			CheckWeapon( this.unarmed, crType, PID_SPIKED_KNUCKLES );
+			CheckWeapon( this.knife, crType, PID_KNIFE );
+			CheckWeapon( this.club, crType, PID_CLUB );
+			CheckWeapon( this.spear, crType, PID_SPEAR );
+			CheckWeapon( this.hammer, crType, PID_SLEDGEHAMMER );
+			CheckWeapon( this.throwing, crType, PID_FRAG_GRENADE );
+
+			if( this.running == SKIN_INFO_LIMITED )
+				continue;
+
+			SkinInfo run = IsCritterCanRun( crType ) ? SKIN_INFO_YES : SKIN_INFO_NO;
+			if( this.running == SKIN_INFO_UNKNOWN )
+				this.running = run;
+			else if( this.running != run )
+				this.running = SKIN_INFO_LIMITED;
+		}
+
+		if( FLAG( this.effects, SKIN_EFFECT_NORUN ))
+			this.running = SKIN_INFO_NO;
+	}
+
+	void Effect( SkinEffect eff )
+	{
+		SETFLAG( this.effects, eff );
+	}
+};
+
+array<SkinBase@> Skins;
+
+void InitSkins() // export
+{
+	append_array( FemaleSet, FemaleLeatherSet );
+	FemaleSet.insertLast( CRTYPE_FEMALE_METAL_ARMOR );
+	append_array( FemaleSet, FemaleCombatSet );
+
+	append_array( MaleSet, MaleLeatherSet );
+	MaleSet.insertLast( CRTYPE_MALE_METAL_ARMOR );
+	append_array( MaleSet, MaleCombatSet );
+
+	///
+	///
+	///
+
+	AddSkinFemale( CRTYPE_FEMALE_DEFAULT ).Humanize();
+	AddSkinMale( CRTYPE_MALE_DEFAULT ).Humanize();
+
+	// 1..9
+	AddSkinMale( CRTYPE_BLACKMALE_VAULT13SUIT ).Leather().MetalArmor( CRTYPE_BLACKMALE_METAL_ARMOR ).Humanize();
+	// 10..19
+	AddSkin( CRTYPE_BRAHMIN ).Lock();
+	AddSkin( CRTYPE_DOG ).LeatherJacket( CRTYPE_DOG ).LeatherArmor( CRTYPE_DOG_RED ).Robes( CRTYPE_DOG_RED ).Fill( CRTYPE_DOG_ROBOT );
+	AddSkin( CRTYPE_MRHANDY ).Lock();
+	AddSkin( CRTYPE_MOLERAT ).Lock();
+	// 20..29
+	AddSkin( CRTYPE_MUTANT ).Leather( CRTYPE_NIGHTKIN ).Robes( CRTYPE_NIGHTKIN ).Fill( CRTYPE_LIEUTANANT ).Set( PowerArmorsSet )
+		.Effect( SKIN_EFFECT_NORUN );
+	AddSkin( CRTYPE_SCORPION ).Lock();
+	AddSkin( CRTYPE_FLOATER ).Lock();
+	AddSkin( CRTYPE_RAT ).Lock();
+	AddSkin( CRTYPE_ROBE_BLUE ).Leather().MetalArmor().Humanize();
+	AddSkinMale( CRTYPE_MALE_KID ).Lock();
+	AddSkin( CRTYPE_GHOUL ).Leather().MetalArmor().Humanize()
+		.Effect( SKIN_EFFECT_NORUN );
+	AddSkin( CRTYPE_GLOWING_ONE ).Leather().MetalArmor().Humanize()
+		.Effect( SKIN_EFFECT_NORUN );
+	// 30..39
+	AddSkin( CRTYPE_PA_BOS ).Lock();
+	AddSkin( CRTYPE_MONK ).Leather().MetalArmor().Humanize();
+	AddSkinFemale( CRTYPE_WOMAN_1 ).Leather().MetalArmor();
+	AddSkinFemale( CRTYPE_WOMAN_2 );
+	AddSkinFemale( CRTYPE_KURWA );
+	AddSkinFemale( CRTYPE_REDHAIR_FEMALE ).Leather().MetalArmor().Humanize();
+	AddSkinMale( CRTYPE_POOR_BLACKMALE ).Leather().MetalArmor().Humanize();
+	// 40..49
+	AddSkinMale( CRTYPE_POOR_MAN );
+	AddSkinMale( CRTYPE_PROPER_MAN );
+	AddSkinMale( CRTYPE_DWARF ).Lock();
+	AddSkinMale( CRTYPE_BEGGAR ).Leather().MetalArmor().Humanize()
+		.Effect( SKIN_EFFECT_NORUN );
+	AddSkinMale( CRTYPE_RAIDER ).LongHair().Humanize();
+	AddSkinMale( CRTYPE_CLERK );
+	// 50..59
+	AddSkin( CRTYPE_DEATHCLAW ).Lock();
+	AddSkin( CRTYPE_MANTIS ).Lock();
+	AddSkin( CRTYPE_ROBOT ).Lock();
+	AddSkin( CRTYPE_ROBOT_2 ).Lock();
+	AddSkin( CRTYPE_PIGRAT ).Lock();
+	AddSkin( CRTYPE_ROBE_BROWN ).Leather().MetalArmor().Humanize();
+	AddSkinMale( CRTYPE_BUTCHER ).Bald().Leather().Humanize();
+	AddSkin( CRTYPE_SCORPION_SMALL ).Lock();
+	// 60..69
+	AddSkin( CRTYPE_DEATHCLAW_SMALL ).Lock();
+	AddSkinFemale( CRTYPE_FEMALE_TRIBAL ).Humanize();
+	AddSkinMale( CRTYPE_MALE_TRIBAL ).Humanize();
+	// TODO? 63
+	AddSkinMale( CRTYPE_MALE_SULIK ).LeatherJacket( CRTYPE_SULIK_LJ ).LeatherArmor( CRTYPE_SULIK_LA ).MetalArmor( CRTYPE_SULIK_MA ).CombatArmor( CRTYPE_SULIK_CA ).PowerArmor( CRTYPE_SULIK_PA );
+	AddSkin( CRTYPE_MECH ).Lock();
+	AddSkin( CRTYPE_GECKO_SMALL ).Lock();
+	AddSkin( CRTYPE_GECKO ).Lock();
+	// 70..79
+	AddSkinMale( CRTYPE_AHS ).Leather().MetalArmor().Humanize();
+	AddSkinFemale( CRTYPE_KITTY ).Leather().MetalArmor().Humanize();
+	AddSkin( CRTYPE_RAT_GOD ).Lock();
+	AddSkinMale( CRTYPE_MOBSTER_BLUE ).Leather().Robes().MetalArmor().CombatArmor().Humanize();
+	AddSkinMale( CRTYPE_MOBSTER_GRAY ).Leather().Robes().MetalArmor().CombatArmor().Humanize();
+	AddSkin( CRTYPE_GHOUL_GECKO ).Leather().MetalArmor().Humanize();
+	// 80..89
+	AddSkin( CRTYPE_ALIEN ).Leather().Robes().Fill( CRTYPE_ALIEN_SILVER );
+	AddSkin( CRTYPE_GECKO_FIRE ).Lock();
+	AddSkinMale( CRTYPE_MALE_CHINESE );
+	AddSkinFemale( CRTYPE_LYNETTE ).Leather().MetalArmor().Humanize();
+	AddSkin( CRTYPE_ROBE_GRAY ).Leather().Humanize();
+	AddSkinMale( CRTYPE_NCR_POLICE ).Leather().Humanize();
+	AddSkinMale( CRTYPE_MYRON ).Leather().MetalArmor().CombatArmor( CRTYPE_MYRON_CA ).Humanize();
+	AddSkinMale( CRTYPE_SCIENTIST ).Leather().MetalArmor().Humanize();
+	// 90..99
+	AddSkinMale( CRTYPE_VIC ).LeatherJacket( CRTYPE_VIC_LJ ).LeatherArmor( CRTYPE_VIC_LA ).MetalArmor( CRTYPE_VIC_MA ).CombatArmor( CRTYPE_VIC_CA ).Humanize();
+	AddSkinMale( CRTYPE_CHINESE_GUARD_RED ).Leather().MetalArmor().Humanize();
+	AddSkinMale( CRTYPE_CHINESE_GUARD_BLUE ).Leather().MetalArmor().Humanize();
+	AddSkinFemale( CRTYPE_FEMALE_CHINESE ).Leather().MetalArmor().Humanize();
+	AddSkinMale( CRTYPE_CYBORG ).Leather().MetalArmor().Humanize();
+	AddSkinMale( CRTYPE_BOXER ).Leather().MetalArmor().Humanize();
+	AddSkin( CRTYPE_ANT ).Lock();
+	AddSkinMale( CRTYPE_SALVADORE ).Leather().MetalArmor().Humanize();
+		//.Effect( SKIN_EFFECT_NORUN );
+	// 100..109
+	AddSkin( CRTYPE_DEATHCLAW_SPECIAL )
+		.Robes( CRTYPE_BEAR )
+		.Set( CRTYPE_ROBE_BLUE, CRTYPE_BEAR ).Set( CRTYPE_ROBE_BROWN, CRTYPE_BEAR ).Set( CRTYPE_ROBE_GRAY, CRTYPE_BEAR )
+		.Fill();
+	AddSkinFemale( CRTYPE_FEMALE_KID ).Lock();
+	AddSkinMale( CRTYPE_METZGER ).Bald().Humanize();
+	AddSkinMale( CRTYPE_LHD_JUMPSUIT ).LongHair().Humanize();
+	// 110..119
+	AddSkinMale( CRTYPE_LHD_TRIBAL ).LongHair().Humanize();
+	AddSkinMale( CRTYPE_KHAN_LONGHAIR ).LongHair().Humanize();
+	// 120..129
+	AddSkinMale( CRTYPE_BHD_JUMPSUIT ).Bald().Humanize();
+	AddSkinMale( CRTYPE_BHD_TRIBAL ).Bald().Humanize();
+	AddSkinMale( CRTYPE_OLD_IAN ).LongHair().Humanize();
+	// 130..139
+	AddSkinFemale( CRTYPE_PUNK_JUMPSUIT ).LeatherJacket( CRTYPE_PUNK ).LeatherArmor( CRTYPE_PUNK_LA ).MetalArmor( CRTYPE_PUNK_MA ).Humanize();
+	// 140..163
+	AddSkinMale( CRTYPE_CASSIDY ).LeatherJacket( CRTYPE_BHD_LEATHER_JACKET ).LeatherArmor( CRTYPE_BHD_LEATHER_ARMOR ).MetalArmor( CRTYPE_BHD_METAL_ARMOR ).CombatArmor( CRTYPE_MALE_COMBAT_ARMOR_BALD ).PowerArmor( CRTYPE_BALD_PA );
+	//
+	//
+	//
+
+	// must be last
+	for( uint s=0, sLen=Skins.length(); s<sLen; s++ )
+	{
+		Skins[s].RefreshInfo();
+	}
+}
+
+bool ValidateSkins() // export
+{
+	// shut. Down. **EVERYTHING!!!** if any of skins isn't fully usuable
+	// spams server log as a free bonus
+
+	if( Skins.isEmpty() )
+		_SkinErrorR( "nothing added", false )
+
+	else if( FemaleSet.isEmpty() )
+		_SkinErrorR( "FemaleSet : empty", false )
+	else if( MaleSet.isEmpty() )
+		_SkinErrorR( "MaleSet : empty", false )
+	else if( FemaleLeatherSet.isEmpty() )
+		_SkinErrorR( "FemaleLeatherSet : empty", false )
+	else if( MaleLeatherSet.isEmpty() )
+		_SkinErrorR( "MaleLeatherSet : empty", false )
+	else if( FemaleCombatSet.isEmpty() )
+		_SkinErrorR( "FemaleCombatSet : empty", false )
+	else if( MaleCombatSet.isEmpty() )
+		_SkinErrorR( "MaleCombatSet : empty", false )
+	else if( RobesSet.isEmpty() )
+		_SkinErrorR( "RobesSet : empty", false )
+	else if( PowerArmorsSet.isEmpty() )
+		_SkinErrorR( "PowerArmorsSet : empty", false )
+
+	else if( FemaleSet.find(0) >= 0 )
+		_SkinErrorR( "FemaleSet : zero", false )
+	else if( MaleSet.find(0) >= 0 )
+		_SkinErrorR( "MaleSet : zero", false )
+	else if( FemaleLeatherSet.find(0) >= 0 )
+		_SkinErrorR( "FemaleLeatherSet : zero", false )
+	else if( FemaleLeatherSet.find(0) >= 0 )
+		_SkinErrorR( "FemaleLeatherSet : zero", false )
+	else if( MaleLeatherSet.find(0) >= 0 )
+		_SkinErrorR( "MaleLeatherSet : zero", false )
+	else if( FemaleCombatSet.find(0) >= 0 )
+		_SkinErrorR( "FemaleCombatSet : zero", false )
+	else if( MaleCombatSet.find(0) >= 0 )
+		_SkinErrorR( "MaleCombatSet : zero", false )
+	else if( RobesSet.find(0) >= 0 )
+		_SkinErrorR( "RobesSet : zero", false )
+	else if( PowerArmorsSet.find(0) >= 0 )
+		_SkinErrorR( "PowerArmorsSet : zero", false )
+
+	else if( FemaleLeatherSet.length() != MaleLeatherSet.length() )
+		_SkinErrorR( "*LeatherSet : different length", false )
+	else if( FemaleCombatSet.length() != MaleCombatSet.length() )
+		_SkinErrorR( "*CombatSet : different length", false )
+	else if( FemaleSet.length() != MaleSet.length() )
+		_SkinErrorR( "*Set : different length", false )
+
+	bool error = false;
+
+	array<uint16> fullSet;
+	append_array( fullSet, FemaleSet );
+	append_array( fullSet, MaleSet );
+	append_array( fullSet, RobesSet );
+	append_array( fullSet, PowerArmorsSet );
+
+	for( uint s=0, sLen=Skins.length(); s<sLen; s++ )
+	{
+		Skin@ skin = Skins[s];
+
+		if( !valid(skin) )
+			_SkinErrorR( "invalid skin at idx<"+s+">", false );
+
+		if( !IsCritterCanWalk( skin.Base ))
+			_SkinErr( skin, "can't walk : base<"+skin.Name+">" );
+		if( !IsCritterCanRotate( skin.Base ))
+			_SkinErr( skin, "can't rotate (oh noes!) : base<"+skin.Name+">" );
+		if( !IsCritterCanArmor( skin.Base ))
+			_SkinErr( skin, "can't use armor : base<"+skin.Name+">" );
+		if( !IsCritterCanAim( skin.Base ))
+			_SkinErr( skin, "can't aim : base<"+skin.Name+">" );
+
+		for( uint f=0, fLen=fullSet.length(); f<fLen; f++ )
+		{
+			uint16 from = fullSet[f];
+			uint16 to = skin[from];
+			string fromName = "["+from+"]", toName = "["+to+"]";
+			GetBaseType( from, fromName );
+			GetBaseType( to, toName );
+
+			if( !IsCritterCanWalk( to ))
+				_SkinErr( skin, "can't walk : from<"+fromName+"> to<"+toName+">" );
+			if( !IsCritterCanRotate( to ))
+				_SkinErr( skin, "can't rotate (oh noes!) : from<"+fromName+"> to<"+toName+">" );
+			if( !IsCritterCanArmor( to ))
+				_SkinErr( skin, "can't use armor : from<"+fromName+"> to<"+toName+">" );
+			if( !IsCritterCanAim( to ))
+				_SkinErr( skin, "can't aim : from<"+fromName+"> to<"+toName+">" );
+		}
+	}
+
+	Log( "Skins validation complete" );
+	return( !error );
+}
+//
+// add
+//
+SkinBase@ AddSkin( uint16 crType )
+{
+	return( AddSkin( crType, GENDER_IT ));
+}
+
+SkinBase@ AddSkinFemale( uint16 crType )
+{
+	return( AddSkin( crType, GENDER_FEMALE ));
+}
+
+SkinBase@ AddSkinMale( uint16 crType )
+{
+	return( AddSkin( crType, GENDER_MALE ));
+}
+
+SkinBase@ AddSkin( uint16 crType, uint8 gender )
+{
+	if( crType == 0 )
+		_SkinErrorR("Attempt to add 0 as base crType", null );
+
+	if( gender > GENDER_IT )
+		gender = GENDER_IT;
+
+	for( uint s=0, sLen=Skins.length(); s<sLen; s++ )
+	{
+		if( Skins[s].Base == crType )
+		{
+			//Log( "SKIN OVERRIDE: "+Skins[s].Name );
+			Skins.removeAt( s );
+			break;
+		}
+	}
+
+	Skins.insertLast( @SkinBase( crType, gender ));
+	//Log( "SKIN: "+Skins.last().Name );
+	return( Skins.last() );
+}
+//
+// get
+//
+Skin@ GetSkin( Critter& cr ) // export
+{
+	return( GetSkin( cr.Stat[ST_BASE_CRTYPE] ));
+}
+
+Skin@ GetSkin( uint16 base ) // export
+{
+	if( base == 0 )
+		return( null );
+
+	for( uint s=0, sLen=Skins.length(); s<sLen; s++ )
+	{
+		if( Skins[s].Base == base )
+		{
+			return( Skins[s] );
+		}
+	}
+
+	return( null );
+}
+//
+// misc
+//
+void CheckWeapon( SkinInfo& result, uint crType, uint weaponPid )
+{
+	if( result == SKIN_INFO_LIMITED )
+		return;
+
+	ProtoItem@ proto = GetProtoItem( weaponPid );
+	if( !valid(proto) || proto.Type != ITEM_TYPE_WEAPON )	
+		return;
+
+	SkinInfo tmp = IsCritterAnim1( crType, proto.Weapon_Anim1 ) ? SKIN_INFO_YES : SKIN_INFO_NO;
+
+	if( result == SKIN_INFO_UNKNOWN )
+		result = tmp;
+	else if( result != tmp )
+		result = SKIN_INFO_LIMITED;
+}
+
+//
+// effects
+//
+void SetSkinEffects( Critter& cr, Skin& skin )
+{
+	if( cr.SkinEffects > 0 )
+		UnsetSkinEffects( cr );
+
+	if( FLAG( skin.Effects, SKIN_EFFECT_NORUN ))
+	{
+		cr.Say( SAY_NETMSG, "SkinEffect set: NORUN" );
+		cr.ParamBase[MODE_NO_RUN]++;
+	}
+
+	cr.SkinEffects = skin.Effects;
+}
+
+void UnsetSkinEffects( Critter& cr ) // export
+{
+	if( FLAG( cr.SkinEffects, SKIN_EFFECT_NORUN ))
+	{
+		cr.Say( SAY_NETMSG, "SkinEffect unset: NORUN" );
+		cr.ParamBase[MODE_NO_RUN]--;
+	}
+
+	cr.SkinEffects = 0;
+}
+
+void changedParam_SkinHooks( Critter& cr, uint param, int oldValue )
+{
+	if( param == ST_BASE_CRTYPE )
+	{
+		UnsetSkinEffects( cr );
+
+		Skin@ skin = GetSkin( cr );
+		if( valid(skin) )
+		{
+			//cr.Say( SAY_NETMSG, "SKIN = "+skin.Name+" ("+skin.Base+")" );
+			SetSkinEffects( cr, skin );
+		}
+	}
+}
+
+#endif // __CRITTER_SKIN__ //

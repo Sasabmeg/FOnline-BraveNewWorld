@@ -1,0 +1,504 @@
+#include "utils.fos"
+#include "_macros.fos"
+#include "_colors.fos"
+
+import bool LockerClose(Item& item) from "lockers";
+import void AddSpecialBonus(Item@ it) from "item_bonus";
+
+import void SetWear(Item& item, int wearProcent) from "repair";
+import void SetMinWear(Item& item, int wearProcent) from "repair";
+
+void locker_NewRenoArms(Item& item, bool firstTime)
+{
+	item.SetEvent(ITEM_EVENT_SKILL, "_UseRewardContainer");
+	CreateTimeEvent(AFTER(REAL_MINUTE(Random(10,30))), "e_Spawn", item.Id, false);
+}
+
+void locker_Warehouse(Item& item, bool firstTime)
+{
+	item.SetEvent(ITEM_EVENT_SKILL, "_UseRewardContainer");	
+	CreateTimeEvent(AFTER(REAL_MINUTE(Random(5,15))), "e_Spawn", item.Id, false);
+}
+
+void locker_NewRenoSewers(Item& item, bool firstTime)
+{
+	item.SetEvent(ITEM_EVENT_SKILL, "_UseRewardContainer");
+	CreateTimeEvent(AFTER(REAL_MINUTE(Random(10,30))), "e_SpawnLow", item.Id, false);
+}
+
+void locker_Verti(Item& item, bool firstTime)
+{
+	item.SetEvent(ITEM_EVENT_SKILL, "_UseRewardContainer");
+	CreateTimeEvent(AFTER(REAL_MINUTE(Random(5,15))), "e_SpawnV", item.Id, false);
+}
+
+void locker_DayglowDT(Item& item, bool firstTime)
+{
+	item.SetEvent(ITEM_EVENT_SKILL, "_UseRewardContainer");	
+	CreateTimeEvent(AFTER(REAL_MINUTE(Random(10,30))), "e_SpawnDayglow", item.Id, false);
+}
+
+
+// Executed when opening reward chest
+bool _UseRewardContainer(Item& item, Critter& crit, int skill)
+{
+	// Opening / Closing
+    if((skill == -1) || (skill == SK_STEAL))
+    {
+		if(!isSlagsKilled(crit))
+        {
+			uint16 hexX = 0;
+			uint16 hexY = 0;
+			Map@   map = item.GetMapPosition(hexX, hexY);
+			map.SetText(hexX, hexY, COLOR_WHITE,  "The locker looks guarded.");		
+            return true;
+        }
+		
+        // open it if closed
+        if(_LockerIsClose(item))
+        {
+			//item.LockerId = 0;
+			//item.LockerId = Random(98989, 989898);
+			//item.LockerComplexity = Random(50,50);			
+            return false;
+        }
+    }
+    return false;
+}
+
+
+
+bool isSlagsKilled(Critter& player)
+{     											//  ST_NPC_ROLE == 1 dla SLags w Warehouse; w skrypcie mob.fos ST_NPC_ROLE == 1 oznacza jako agro dla obliczania dystansu od gracza
+	uint numLifeSlags = player.GetMap().GetNpcCount(1, FIND_ONLY_NPC | FIND_LIFE); 			 // Critter_ParamIndex4  ST_NPC_ROLE
+																							 //	Critter_ParamValue4  1
+	if(numLifeSlags!=0)
+	{
+		for(uint i = 0; i < numLifeSlags; i++)
+		{
+			Critter@ mob = player.GetMap().GetNpc(1, FIND_ONLY_NPC | FIND_LIFE, i);
+			//mob.Say(SAY_SHOUT_ON_HEAD, "DON'T TOUCH IT!");
+			switch (Random(1,3))
+			{
+				case 1: {mob.Say(SAY_SHOUT_ON_HEAD, "DON'T TOUCH IT!"); break;}
+				case 2: {mob.Say(SAY_SHOUT_ON_HEAD, "PUT YOUR HANDS AWAY!"); break;}
+				case 3: {mob.Say(SAY_SHOUT_ON_HEAD, "GET AWAY FROM THE LOCKER!"); break;}				
+			}
+			
+		}	
+		return false;
+	}
+	else
+		return true;
+
+}
+
+uint e_Spawn(array<uint>@ values)
+{
+	Item@ item = GetItem(values[0]);
+    if(!valid(item))
+        return 0;
+	ClearContainer(item);
+
+	if(Random(0,99)<50)
+	{
+		switch (Random(1,8))
+		{
+			case 1: 	{SpawnBuffItem(item, PID_TESLA_ARMOR); break;}
+			case 2: 	{SpawnBuffItem(item, PID_COMBAT_ARMOR); break;}
+			case 3: 	{SpawnBuffItem(item, PID_COMBAT_HELMET); break;}			
+			case 4: 	{SpawnBuffItem(item, PID_METAL_HELMET_MK2); break;}
+			case 5: 	{SpawnBuffItem(item, PID_METAL_ARMOR_MK_II); break;}
+			case 6: 	{SpawnBuffItem(item, PID_TESLA_HELMET); break;}			
+			case 7: 	{item.AddItem(PID_DESERT_COMBAT_ARMOR, 1, 0); break;}
+			case 8: 	{item.AddItem(PID_DESERT_COMBAT_HELMET, 1, 0); break;}
+			//case 9: 	{SpawnBuffItem(item, PID_COMBAT_ARMOR_MK_II); break;}
+			//case 10: 	{SpawnBuffItem(item, PID_COMBAT_HELMET_MK_II); break;}
+			//case 11: 	{item.AddItem(PID_BROTHERHOOD_COMBAT_ARMOR, 1, 0); break;}	
+			//case 12: 	{item.AddItem(PID_BROTHERHOOD_HELMET, 1, 0); break;}
+			//case 13: 	{item.AddItem(PID_NCR_ARMOR, 1, 0); break;}			
+			//case 14: 	{item.AddItem(PID_NCR_HELMET, 1, 0); break;}				
+			//case 15: 	{item.AddItem(PID_ENCLAVE_COMBAT_ARMOR, 1, 0); break;}			
+			//case 16: 	{item.AddItem(PID_ENCLAVE_COMBAT_HELMET, 1, 0); break;}
+		}
+	}
+	else
+	{
+		switch (Random(1,12))
+		{
+			case 1: 	{SpawnBuffItem(item, PID_ROCKET_LAUNCHER); break;}
+			case 2: 	{SpawnBuffItem(item, PID_PLASMA_RIFLE); break;}
+			case 3: 	{SpawnBuffItem(item, PID_SUPER_SLEDGE); break;}
+			case 4: 	{SpawnBuffItem(item, PID_SNIPER_RIFLE); break;}
+			case 5: 	{SpawnBuffItem(item, PID_223_PISTOL); break;}
+			case 6: 	{SpawnBuffItem(item, PID_HK_P90C); break;}	
+			case 7: 	{SpawnBuffItem(item, PID_LIGHT_SUPPORT_WEAPON); break;}
+			case 8: 	{SpawnBuffItem(item, PID_M60); break;}		
+			case 9: 	{SpawnBuffItem(item, PID_IMPROVED_FLAMETHROWER); break;}
+			case 10: 	{SpawnBuffItem(item, PID_LASER_RIFLE_EXT_CAP); break;}
+			case 11: 	{SpawnBuffItem(item, PID_WAKIZASHI_BLADE); break;}
+			case 12: 	{SpawnBuffItem(item, PID_GRENADE_LAUNCHER); break;}
+			//case 13: 	{SpawnBuffItem(item, PID_GATLING_LASER); break;}
+			//case 14: 	{SpawnBuffItem(item, PID_PANCOR_JACKHAMMER); break;}
+			//case 15: 	{SpawnBuffItem(item, PID_AVENGER_MINIGUN); break;}
+		}
+	}
+		
+	if(Random(0,99)<10)
+	{
+		switch (Random(1,3))
+		{
+			case 1: 	{item.AddItem(PID_2MM_EC_AMMO, 10, 0); break;}
+			case 2: 	{item.AddItem(PID_4_7MM_CASELESS, 25, 0); break;}
+			case 3: 	{item.AddItem(PID_SHOTGUN_DRAGON_BREATH_SHELLS, 10, 0); break;}		
+		}
+	}
+		
+	if(Random(0,99)<2)
+	{
+		switch (Random(1,1))
+		{
+			case 1: 	{item.AddItem(PID_SOLAR_SCORCHER, 1, 0); break;}
+			//case 1: 	{item.AddItem(PID_ADVANCED_POWER_ARMOR, 1, 0); break;}
+			//case 2: 	{item.AddItem(PID_POWERED_ARMOR, 1, 0); break;}
+			//case 3: 	{item.AddItem(PID_POWER_HELMET, 1, 0); break;}	
+			//case 4: 	{item.AddItem(PID_APA_HELMET, 1, 0); break;}
+			//case 5: 	{item.AddItem(PID_BRIDGEKEEPER_ROBE, 1, 0); break;}			
+			//case 6: 	{item.AddItem(PID_TURBO_PLASMA_RIFLE, 1, 0); break;}				
+			//case 7: 	{item.AddItem(PID_ALIEN_LASER_PISTOL, 1, 0); break;}			
+			//case 8: 	{item.AddItem(PID_BOZAR, 1, 0); break;}		
+			//case 9: 	{item.AddItem(PID_SOLAR_SCORCHER, 1, 0); break;}
+			//case 10: 	{item.AddItem(PID_HK_G11E, 1, 0); break;}	
+			//case 11: 	{item.AddItem(PID_PK12_GAUSS_PISTOL, 1, 0); break;}
+			//case 12: 	{item.AddItem(PID_VINDICATOR_MINIGUN, 1, 0); break;}			
+			//case 13: 	{item.AddItem(PID_YK42B_PULSE_RIFLE, 1, 0); break;}
+			//case 14: 	{item.AddItem(PID_M72_GAUSS_RIFLE, 1, 0); break;}
+			//case 15: 	{item.AddItem(PID_INDEPENDENT, 1, 0); break;}
+			//case 16: 	{item.AddItem(PID_IMPLANT_DERMAL, 1, 0); break;}			
+			//case 17: 	{item.AddItem(PID_IMPLANT_PHOENIX, 1, 0); break;}
+			//case 18: 	{item.AddItem(PID_IMPLANT_NEMEAN, 1, 0); break;}
+			//case 19: 	{item.AddItem(PID_IMPLANT_STRENGTH, 1, 0); break;}
+			//case 20: 	{item.AddItem(PID_IMPLANT_PERCEPTION, 1, 0); break;}	
+			//case 21: 	{item.AddItem(PID_IMPLANT_ENDURANCE, 1, 0); break;}
+			//case 22: 	{item.AddItem(PID_IMPLANT_CHARISMA, 1, 0); break;}			
+			//case 23: 	{item.AddItem(PID_IMPLANT_INTELLIGENCE, 1, 0); break;}				
+			//case 24: 	{item.AddItem(PID_IMPLANT_AGILITY, 1, 0); break;}			
+			//case 25: 	{item.AddItem(PID_IMPLANT_LUCK, 1, 0); break;}
+		}
+	}
+
+	if(FLAG(item.LockerCondition, LOCKER_ISOPEN)) LockerClose(item);
+
+	array<Item@> items;
+    item.GetItems(0, items);
+    for(uint i = 0, j = items.length(); i < j; i++)
+    {
+        if(valid(items[i]) && items[i].IsDeteriorable() && !items[i].IsStackable())
+        {
+            uint wear = items[i].GetType() == ITEM_TYPE_ARMOR ? Random(5, 15) : Random(10, 30);
+            SetMinWear(items[i], wear);
+            SetWear(items[i], wear+Random(10, 20));
+        }
+    }
+
+    //item.LockerId = Random(98989, 989898);
+    //item.LockerComplexity = Random(50,50);
+    	
+    return REAL_MINUTE(Random(5,15));	
+}
+
+uint e_SpawnLow(array<uint>@ values)
+{
+	Item@ item = GetItem(values[0]);
+    if(!valid(item))
+        return 0;
+	ClearContainer(item);
+
+	if(Random(0,99)<50)
+	{
+		switch (Random(1,8))
+		{
+			case 1: 	{SpawnBuffItem(item, PID_TESLA_ARMOR); break;}
+			case 2: 	{SpawnBuffItem(item, PID_COMBAT_ARMOR); break;}
+			case 3: 	{SpawnBuffItem(item, PID_COMBAT_HELMET); break;}			
+			case 4: 	{SpawnBuffItem(item, PID_METAL_HELMET_MK2); break;}
+			case 5: 	{SpawnBuffItem(item, PID_METAL_ARMOR_MK_II); break;}
+			case 6: 	{SpawnBuffItem(item, PID_TESLA_HELMET); break;}			
+			case 7: 	{item.AddItem(PID_DESERT_COMBAT_ARMOR, 1, 0); break;}
+			case 8: 	{item.AddItem(PID_DESERT_COMBAT_HELMET, 1, 0); break;}
+			//case 9: 	{SpawnBuffItem(item, PID_COMBAT_ARMOR_MK_II); break;}
+			//case 10: 	{SpawnBuffItem(item, PID_COMBAT_HELMET_MK_II); break;}
+			//case 11: 	{item.AddItem(PID_BROTHERHOOD_COMBAT_ARMOR, 1, 0); break;}	
+			//case 12: 	{item.AddItem(PID_BROTHERHOOD_HELMET, 1, 0); break;}
+			//case 13: 	{item.AddItem(PID_NCR_ARMOR, 1, 0); break;}			
+			//case 14: 	{item.AddItem(PID_NCR_HELMET, 1, 0); break;}				
+			//case 15: 	{item.AddItem(PID_ENCLAVE_COMBAT_ARMOR, 1, 0); break;}			
+			//case 16: 	{item.AddItem(PID_ENCLAVE_COMBAT_HELMET, 1, 0); break;}
+		}
+	}
+	else
+	{
+		switch (Random(1,13))
+		{
+			case 1: 	{SpawnBuffItem(item, PID_ROCKET_LAUNCHER); break;}
+			case 2: 	{SpawnBuffItem(item, PID_PLASMA_RIFLE); break;}
+			case 3: 	{SpawnBuffItem(item, PID_SUPER_SLEDGE); break;}
+			case 4: 	{SpawnBuffItem(item, PID_SNIPER_RIFLE); break;}
+			case 5: 	{SpawnBuffItem(item, PID_223_PISTOL); break;}
+			case 6: 	{SpawnBuffItem(item, PID_HK_P90C); break;}	
+			case 7: 	{SpawnBuffItem(item, PID_LIGHT_SUPPORT_WEAPON); break;}
+			case 8: 	{SpawnBuffItem(item, PID_M60); break;}		
+			case 9: 	{SpawnBuffItem(item, PID_MINIGUN); break;}
+			case 10: 	{SpawnBuffItem(item, PID_IMPROVED_FLAMETHROWER); break;}
+			case 11: 	{SpawnBuffItem(item, PID_LASER_RIFLE_EXT_CAP); break;}
+			case 12: 	{SpawnBuffItem(item, PID_WAKIZASHI_BLADE); break;}
+			case 13: 	{SpawnBuffItem(item, PID_GRENADE_LAUNCHER); break;}
+			//case 14: 	{SpawnBuffItem(item, PID_GATLING_LASER); break;}
+			//case 15: 	{SpawnBuffItem(item, PID_PANCOR_JACKHAMMER); break;}
+		}
+	}
+		
+	if(Random(0,99)<10)
+	{
+		switch (Random(1,4))
+		{
+			case 1: 	{item.AddItem(PID_2MM_EC_AMMO, 10, 0); break;}
+			case 2: 	{item.AddItem(PID_4_7MM_CASELESS, 25, 0); break;}
+			case 3: 	{item.AddItem(PID_SHOTGUN_DRAGON_BREATH_SHELLS, 10, 0); break;}
+			case 4:		{item.AddItem(PID_HYPO, 1, 3); break;}
+		}
+	}	
+
+	if(FLAG(item.LockerCondition, LOCKER_ISOPEN)) LockerClose(item);
+
+	array<Item@> items;
+    item.GetItems(0, items);
+    for(uint i = 0, j = items.length(); i < j; i++)
+    {
+        if(valid(items[i]) && items[i].IsDeteriorable() && !items[i].IsStackable())
+        {
+            uint wear = items[i].GetType() == ITEM_TYPE_ARMOR ? Random(5, 15) : Random(10, 30);
+            SetMinWear(items[i], wear);
+            SetWear(items[i], wear+Random(10, 20));
+        }
+    }
+
+    //item.LockerId = Random(98989, 989898);
+    //item.LockerComplexity = Random(50,50);
+    	
+    return REAL_MINUTE(Random(10,60));	
+}
+
+uint e_SpawnV(array<uint>@ values)
+{
+	Item@ item = GetItem(values[0]);
+    if(!valid(item))
+        return 0;
+	ClearContainer(item);
+
+	if(Random(0,99)<50)
+	{
+		switch (Random(1,8))
+		{
+			case 1: 	{SpawnBuffItem(item, PID_TESLA_ARMOR); break;}
+			case 2: 	{SpawnBuffItem(item, PID_COMBAT_ARMOR); break;}
+			case 3: 	{SpawnBuffItem(item, PID_COMBAT_HELMET); break;}			
+			case 4: 	{SpawnBuffItem(item, PID_METAL_HELMET_MK2); break;}
+			case 5: 	{SpawnBuffItem(item, PID_METAL_ARMOR_MK_II); break;}
+			case 6: 	{SpawnBuffItem(item, PID_TESLA_HELMET); break;}			
+			case 7: 	{item.AddItem(PID_DESERT_COMBAT_ARMOR, 1, 0); break;}
+			case 8: 	{item.AddItem(PID_DESERT_COMBAT_HELMET, 1, 0); break;}
+			//case 9: 	{SpawnBuffItem(item, PID_COMBAT_ARMOR_MK_II); break;}
+			//case 10: 	{SpawnBuffItem(item, PID_COMBAT_HELMET_MK_II); break;}
+			//case 11: 	{item.AddItem(PID_BROTHERHOOD_COMBAT_ARMOR, 1, 0); break;}	
+			//case 12: 	{item.AddItem(PID_BROTHERHOOD_HELMET, 1, 0); break;}
+			//case 13: 	{item.AddItem(PID_NCR_ARMOR, 1, 0); break;}			
+			//case 14: 	{item.AddItem(PID_NCR_HELMET, 1, 0); break;}				
+			//case 15: 	{item.AddItem(PID_ENCLAVE_COMBAT_ARMOR, 1, 0); break;}			
+			//case 16: 	{item.AddItem(PID_ENCLAVE_COMBAT_HELMET, 1, 0); break;}
+		}
+	}
+	else
+	{
+		switch (Random(1,9))
+		{
+			case 1: 	{SpawnBuffItem(item, PID_BLUEPRINT_JET); break;}
+			case 2: 	{SpawnBuffItem(item, PID_PLASMA_RIFLE); break;}
+			case 3: 	{SpawnBuffItem(item, PID_SUPER_SLEDGE); break;}
+			case 4: 	{SpawnBuffItem(item, PID_SNIPER_RIFLE); break;}
+			case 5: 	{SpawnBuffItem(item, PID_223_PISTOL); break;}
+			case 6: 	{SpawnBuffItem(item, PID_HK_P90C); break;}	
+			case 7: 	{SpawnBuffItem(item, PID_LIGHT_SUPPORT_WEAPON); break;}
+			case 8: 	{SpawnBuffItem(item, PID_BLUEPRINT_MENTATS); break;}					
+			case 9: 	{SpawnBuffItem(item, PID_LASER_RIFLE_EXT_CAP); break;}
+			//case 10: 	{SpawnBuffItem(item, PID_BLUEPRINT_BUFFOUT); break;}
+			//case 11: 	{SpawnBuffItem(item, PID_BLUEPRINT_SUPER_STIMPAK); break;}
+			//case 12: 	{SpawnBuffItem(item, PID_GATLING_LASER); break;}
+			//case 13: 	{SpawnBuffItem(item, PID_BLUEPRINT_RADAWAY); break;}
+			//case 14: 	{SpawnBuffItem(item, PID_AVENGER_MINIGUN); break;}
+			//case 15: 	{SpawnBuffItem(item, PID_BLUEPRINT_PSYCHO); break;}
+		}
+	}
+		
+	if(Random(0,99)<10)
+	{
+		switch (Random(1,4))
+		{
+			case 1: 	{item.AddItem(PID_2MM_EC_AMMO, 10, 0); break;}
+			case 2: 	{item.AddItem(PID_4_7MM_CASELESS, 25, 0); break;}
+			case 3: 	{item.AddItem(PID_SHOTGUN_DRAGON_BREATH_SHELLS, 10, 0); break;}		
+			case 4: 	{item.AddItem(PID_FOOLS_GOLD, 8, 0); break;}
+			}
+	}
+		
+	if(Random(0,99)<2)
+	{
+		switch (Random(1,12))
+		{
+			case 1: 	{item.AddItem(PID_ALLOYS, 50, 0); break;}
+			case 2: 	{item.AddItem(PID_PUMP_PARTS, 50, 0); break;}
+			case 3: 	{item.AddItem(PID_METAL_PARTS, 50, 0); break;}	
+			case 4: 	{item.AddItem(PID_GUNPOWDER, 50, 0); break;}
+			case 5: 	{item.AddItem(PID_FIREWOOD, 50, 0); break;}			
+			case 6: 	{item.AddItem(PID_MEAT, 50, 0); break;}		
+			case 7: 	{item.AddItem(PID_WATERBAG, 50, 0); break;}
+			case 8: 	{item.AddItem(PID_BOTTLE_CAPS, 10000, 0); break;}
+			case 9: 	{item.AddItem(PID_METAL_PARTS2, 50, 0); break;}			
+			case 10: 	{item.AddItem(PID_ALLOYS2, 50, 0); break;}
+			case 11: 	{item.AddItem(PID_GUNPOWDER2, 50, 0); break;}
+			case 12: 	{item.AddItem(PID_MINERALS2, 50, 0); break;}
+			//case 13: 	{item.AddItem(PID_BRIDGEKEEPER_ROBE, 1, 0); break;}			
+			//case 14: 	{item.AddItem(PID_TURBO_PLASMA_RIFLE, 1, 0); break;}				
+			//case 15: 	{item.AddItem(PID_HK_G11E, 1, 0); break;}	
+			//case 16: 	{item.AddItem(PID_IMPLANT_DERMAL, 1, 0); break;}			
+			//case 17: 	{item.AddItem(PID_IMPLANT_PHOENIX, 1, 0); break;}
+			//case 18: 	{item.AddItem(PID_IMPLANT_NEMEAN, 1, 0); break;}
+			//case 19: 	{item.AddItem(PID_IMPLANT_STRENGTH, 1, 0); break;}
+			//case 20: 	{item.AddItem(PID_IMPLANT_PERCEPTION, 1, 0); break;}	
+			//case 21: 	{item.AddItem(PID_IMPLANT_ENDURANCE, 1, 0); break;}
+			//case 22: 	{item.AddItem(PID_IMPLANT_CHARISMA, 1, 0); break;}			
+			//case 23: 	{item.AddItem(PID_IMPLANT_INTELLIGENCE, 1, 0); break;}				
+			//case 24: 	{item.AddItem(PID_IMPLANT_AGILITY, 1, 0); break;}			
+			//case 25: 	{item.AddItem(PID_IMPLANT_LUCK, 1, 0); break;}
+		}
+	}
+
+	if(FLAG(item.LockerCondition, LOCKER_ISOPEN)) LockerClose(item);
+
+	array<Item@> items;
+    item.GetItems(0, items);
+    for(uint i = 0, j = items.length(); i < j; i++)
+    {
+        if(valid(items[i]) && items[i].IsDeteriorable() && !items[i].IsStackable())
+        {
+            uint wear = items[i].GetType() == ITEM_TYPE_ARMOR ? Random(5, 15) : Random(10, 30);
+            SetMinWear(items[i], wear);
+            SetWear(items[i], wear+Random(10, 20));
+        }
+    }
+
+    //item.LockerId = Random(98989, 989898);
+    //item.LockerComplexity = Random(50,50);
+    	
+    return REAL_MINUTE(Random(5,45));	
+}
+
+
+uint e_SpawnDayglow(array<uint>@ values)
+{
+	Item@ item = GetItem(values[0]);
+    if(!valid(item))
+        return 0;
+	ClearContainer(item);
+
+	uint roll=Random(0,71);
+	
+	if(roll<12)	// Hi-Tech
+	{
+		switch (Random(1,19))
+		{
+			case 1: 	{item.AddItem(PID_IMPLANT_DERMAL, 1, 0); break;}			
+			case 2: 	{item.AddItem(PID_IMPLANT_PHOENIX, 1, 0); break;}
+			case 3: 	{item.AddItem(PID_IMPLANT_NEMEAN, 1, 0); break;}
+			case 4: 	{item.AddItem(PID_IMPLANT_STRENGTH, 1, 0); break;}
+			case 5: 	{item.AddItem(PID_IMPLANT_PERCEPTION, 1, 0); break;}	
+			case 6: 	{item.AddItem(PID_IMPLANT_ENDURANCE, 1, 0); break;}
+			case 7: 	{item.AddItem(PID_IMPLANT_CHARISMA, 1, 0); break;}			
+			case 8: 	{item.AddItem(PID_IMPLANT_INTELLIGENCE, 1, 0); break;}				
+			case 9: 	{item.AddItem(PID_IMPLANT_AGILITY, 1, 0); break;}			
+			case 10: 	{item.AddItem(PID_IMPLANT_LUCK, 1, 0); break;}
+			case 11: 	{item.AddItem(PID_POWERED_ARMOR, 1, 0); break;}
+			case 12: 	{item.AddItem(PID_ADVANCED_POWER_ARMOR, 1, 0); break;}
+			case 13: 	{item.AddItem(PID_POWER_HELMET, 1, 0); break;}			
+			case 14: 	{item.AddItem(PID_APA_HELMET, 1, 0); break;}
+			case 15: 	{item.AddItem(PID_BOZAR, 1, 0); break;}
+			case 16: 	{item.AddItem(PID_VINDICATOR_MINIGUN, 1, 0); break;}			
+			case 17: 	{item.AddItem(PID_YK42B_PULSE_RIFLE, 1, 0); break;}
+			case 18: 	{item.AddItem(PID_M72_GAUSS_RIFLE, 1, 0); break;}			
+			case 19: 	{SpawnBuffItem(item, PID_BRIDGEKEEPER_ROBE); break;}					
+		}
+	}
+	else if(roll<66)	// medium tech
+	{
+		switch (Random(1,16))
+		{
+			case 1: 	{item.AddItem(PID_ENCLAVE_COMBAT_ARMOR, 1, 0); break;}
+			case 2: 	{item.AddItem(PID_ENCLAVE_COMBAT_HELMET, 1, 0); break;}
+			case 3: 	{item.AddItem(PID_NCR_ARMOR, 1, 0); break;}			
+			case 4: 	{item.AddItem(PID_NCR_HELMET, 1, 0); break;}				
+			case 5: 	{item.AddItem(PID_BROTHERHOOD_COMBAT_ARMOR, 1, 0); break;}	
+			case 6: 	{item.AddItem(PID_BROTHERHOOD_HELMET, 1, 0); break;}
+			case 7: 	{item.AddItem(PID_TURBO_PLASMA_RIFLE, 1, 0); break;}
+			case 8: 	{item.AddItem(PID_INDEPENDENT, 1, 0); break;}
+			case 9: 	{item.AddItem(PID_SOLAR_SCORCHER, 1, 0); break;}
+			case 10: 	{item.AddItem(PID_BRIDGEKEEPER_ROBE, 1, 0); break;}
+			case 11: 	{item.AddItem(PID_PK12_GAUSS_PISTOL, 1, 0); break;}
+			case 12: 	{SpawnBuffItem(item,PID_FN_FAL_HPFA); break;}	
+			case 13: 	{SpawnBuffItem(item, PID_HK_G11E); break;}
+			case 14: 	{SpawnBuffItem(item, PID_DESERT_COMBAT_ARMOR); break;}
+			case 15: 	{SpawnBuffItem(item, PID_DESERT_COMBAT_HELMET); break;}
+			case 16:    {item.AddItem(PID_ENCLAVE_COMBAT_HELMET_MK2, 1, 0); break;}
+		}
+	}
+	else	// consolation prize
+	{
+		switch (Random(1,4))
+		{
+			case 1: 	{SpawnBuffItem(item, PID_PANCOR_JACKHAMMER); break;}
+			case 2: 	{SpawnBuffItem(item, PID_COMBAT_HELMET_MK_II); break;}
+			case 3:		{SpawnBuffItem(item, PID_LASER_SUPPORT_WEAPON); break;}
+			case 4:		{SpawnBuffItem(item, PID_HK_G11); break;}	
+		}
+	}
+		
+	switch (Random(1,3))
+	{
+			case 1: 	{item.AddItem(PID_2MM_EC_AMMO, 25, 0); break;}
+			case 2: 	{item.AddItem(PID_4_7MM_CASELESS, 100, 0); break;}
+			case 3: 	{item.AddItem(PID_SHOTGUN_DRAGON_BREATH_SHELLS, 80, 0); break;}	
+	}
+	
+
+	if(FLAG(item.LockerCondition, LOCKER_ISOPEN)) LockerClose(item);
+
+	array<Item@> items;
+    item.GetItems(0, items);
+    for(uint i = 0, j = items.length(); i < j; i++)
+    {
+        if(valid(items[i]) && items[i].IsDeteriorable() && !items[i].IsStackable())
+        {
+            uint wear = items[i].GetType() == ITEM_TYPE_ARMOR ? Random(5, 15) : Random(10, 30);
+            SetMinWear(items[i], wear);
+            SetWear(items[i], wear+Random(10, 20));
+        }
+    }
+
+    return REAL_MINUTE(Random(10,30));	
+}
+
+
+void SpawnBuffItem(Item& container, uint16 pid)
+{
+	Item@ it = container.AddItem(pid, 1, 0);
+	AddSpecialBonus(it);
+}

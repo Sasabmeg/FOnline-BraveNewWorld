@@ -1,0 +1,20 @@
+;;
+;;Standard devmenu
+;;
+
+ONPLAYER,ONNPC;Possess;internal possess
+ONPLAYER,ONNPC;Trade;runscript_unsafe dev_menu@unsafe_Trade $[Critter.Id] 0 0
+ONITEM,ISCONTAINER;Browse items;runscript_unsafe dev_menu@unsafe_Trade 0 $[Item.Id] 0
+ONPLAYER,ONNPC,ISALIVE;Kill;runscript_unsafe dev_menu@unsafe_KillCritter $[Critter.Id] 0 0
+ONPLAYER,ONNPC,ISKNOCK;Kill;runscript_unsafe dev_menu@unsafe_KillCritter $[Critter.Id] 0 0
+ONCHOSEN,ONPLAYER,ONNPC,ISDEAD;Revive;runscript_unsafe dev_menu@unsafe_KillCritter $[Critter.Id] 0 0
+ONNPC;Remove critter;runscript_unsafe dev_menu@unsafe_RemoveCritter $[Critter.Id] 0 0
+ONITEM;Remove item;runscript_unsafe dev_menu@unsafe_RemoveItem $[Item.Id] 0 0
+ONITEM,ONGROUND;Teleport;runscript_unsafe dev_menu@unsafe_Teleport 0 $[HexX] $[HexY]
+ONGROUND,NOHIDE;Airstrike;runscript dev_menu@Airstrike 0 $[HexX] $[HexY]
+ONITEM,ISPOSSESS;Pick item;runscript_unsafe dev_menu@unsafe_PickItem $[Possessed.Id] $[Item.Id] 0
+ONPLAYER,ONNPC,ISPOSSESS;Attack;runscript_unsafe dev_menu@unsafe_Attack $[Possessed.Id] $[Critter.Id] 0
+ONGROUND,ISPOSSESS;Move to;runscript_unsafe dev_menu@unsafe_MoveTo $[Possessed.Id] $[HexX] $[HexY]
+ISPOSSESS;Stop;runscript_unsafe dev_menu@unsafe_Stop $[Possessed.Id] 0 0
+ONCHOSEN,ONPLAYER,ONNPC,ISKNOCK;Wake;runscript_unsafe dev_menu@unsafe_NeutralizeCritter $[Critter.Id] 0 0
+ONCHOSEN,ONPLAYER,ONNPC,ISNTKNOCK;Neutralize;runscript_unsafe dev_menu@unsafe_NeutralizeCritter $[Critter.Id] 0 0

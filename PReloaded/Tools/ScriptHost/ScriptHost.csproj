@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{C3A00B4A-96DC-436F-8F7B-C0D71D644545}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>ScriptHost</RootNamespace>
+    <AssemblyName>ScriptHost</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="CSScriptLibrary, Version=3.2.2.0, Culture=neutral, PublicKeyToken=70fcc3d18c749033, processorArchitecture=MSIL">
+      <HintPath>3rdParty\CSScriptLibrary\CSScriptLibrary.dll</HintPath>
+    </Reference>
+    <Reference Include="ObjectListView">
+      <HintPath>..\3rdParty\ObjectListView\ObjectListView.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="Microsoft.CSharp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="frmExtensionList.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmExtensionList.Designer.cs">
+      <DependentUpon>frmExtensionList.cs</DependentUpon>
+    </Compile>
+    <Compile Include="frmScriptLoad.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmScriptLoad.Designer.cs">
+      <DependentUpon>frmScriptLoad.cs</DependentUpon>
+    </Compile>
+    <Compile Include="frmScriptsLoaded.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmScriptsLoaded.Designer.cs">
+      <DependentUpon>frmScriptsLoaded.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ScriptHost.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="frmExtensionList.resx">
+      <DependentUpon>frmExtensionList.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmScriptLoad.resx">
+      <DependentUpon>frmScriptLoad.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmScriptsLoaded.resx">
+      <DependentUpon>frmScriptsLoaded.cs</DependentUpon>
+    </EmbeddedResource>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

@@ -1,0 +1,306 @@
+#ifndef __CLIENT_FIXBOY_ADDONS__
+#define __CLIENT_FIXBOY_ADDONS__
+
+#include "_colors.fos"
+#include "client_gui_h.fos"
+#include "client_gui_ex.fos"
+#include "client_utils_h.fos"
+#include "_client_defines.fos"
+#include "_macros.fos"
+
+/*
+#define FIX_FILTER_ALL         (0)
+#define FIX_FILTER_WEAPONS     (1)
+#define FIX_FILTER_ARMORS      (2)
+#define FIX_FILTER_AMMO        (3)
+#define FIX_FILTER_DRUGS       (4)
+#define FIX_FILTER_MISC        (5)
+*/
+
+InjectCounterLabel@  insectCntVal;
+InjectFixAllButton@  insectFixAll;
+
+void InitFixboyAddons()
+{
+    IGUIScreenOpt@ screen = GUI_GetScreen(CLIENT_SCREEN_FIXBOY);
+	Control@       control = @Control();
+    
+    @insectCntVal = InjectCounterLabel(screen);
+    insectCntVal.TextPosition("FixCntValue");
+    insectCntVal.SetFont(FONT_TYPE_BIG_NUM);
+    insectCntVal.SetFormat(FONT_FLAG_CENTERY | FONT_FLAG_CENTERX);
+    insectCntVal.SetColor(COLOR_IFACE);
+    insectCntVal.SetCaption(FormatXX(GetPlayerCounter()));
+    control.AddControl(@insectCntVal);
+
+    InjectCounterButton@  insectCntInc = InjectCounterButton(screen, "FixCntUpPicDn", "FixCntUp", 1);
+    control.AddControl(@insectCntInc);
+    
+    InjectCounterButton@  insectCntDev = InjectCounterButton(screen, "FixCntDnPicDn", "FixCntDn", -1);
+    control.AddControl(@insectCntDev);
+
+    @insectFixAll = InjectFixAllButton(screen, false);
+    control.AddControl(@insectFixAll);
+
+    InjectFilterButton@  insectAll = InjectFilterButton(screen, "FixFilterPicAllDn", "FixFilterAll", 0);
+    control.AddControl(@insectAll);
+
+    InjectFilterButton@  insectWeapons = InjectFilterButton(screen, "FixFilterPicWeaponsDn", "FixFilterWeapons", 1);
+    control.AddControl(@insectWeapons);
+    
+    InjectFilterButton@  insectArmors = InjectFilterButton(screen, "FixFilterPicArmorsDn", "FixFilterArmors", 2);
+    control.AddControl(@insectArmors);
+    
+    InjectFilterButton@  insectAmmo = InjectFilterButton(screen, "FixFilterPicAmmoDn", "FixFilterAmmo", 3);
+    control.AddControl(@insectAmmo);
+    
+    InjectFilterButton@  insectDrugs = InjectFilterButton(screen, "FixFilterPicDrugsDn", "FixFilterDrugs", 4);
+    control.AddControl(@insectDrugs);
+    
+    InjectFilterButton@  insectMisc = InjectFilterButton(screen, "FixFilterPicMiscDn", "FixFilterMisc", 5);
+    control.AddControl(@insectMisc);
+
+    screen.Control(control);
+    screen.Multiinstance(false);
+}
+
+uint8 GetPlayerCounter() 
+{
+	CritterCl@ cr = GetChosen();
+	if(valid(cr))
+	{
+		return CLAMP(cr.ParamBase[ST_FIXBOY_COUNTER], 1, 99);
+	}
+	return 1;
+}
+
+void SetupFixboyAddons()
+{
+	CritterCl@ cr = GetChosen();
+	if(!valid(cr))
+		return;
+
+	if(valid(insectCntVal))
+		insectCntVal.SetCaption(FormatXX((cr.ParamBase[ST_FIXBOY_FIXALL] > 0)?0:GetPlayerCounter()));
+	if(valid(insectFixAll))
+		insectFixAll.SetState((cr.ParamBase[ST_FIXBOY_FIXALL] > 0)?true:false);
+}
+
+void ExecuteSetFixCounter(uint8 cnt) 
+{
+	insectCntVal.SetCaption(FormatXX(cnt));
+	insectFixAll.SetState(false);
+	RunServerScriptUnsafe( "fix_boy@unsafe_counter", cnt, 0, 0, null, null );
+}
+
+void ExecuteSetFixAll(uint8 cnt) 
+{
+	if(cnt == 1)
+		insectCntVal.SetCaption(FormatXX(0));
+	else
+		insectCntVal.SetCaption(FormatXX(GetPlayerCounter()));
+	RunServerScriptUnsafe( "fix_boy@unsafe_fixall", cnt, 0, 0, null, null );
+}
+
+void ExecuteSetFixFilter(uint8 filter) 
+{
+	CritterCl@ cr = GetChosen();
+	if(valid(cr))
+	{
+		uint8 cFilter = cr.ParamBase[ST_FIXBOY_FILTER];
+		if(cFilter == filter)
+			return;
+	}
+	RunServerScriptUnsafe( "fix_boy@unsafe_filter", filter, 0, 0, null, null );
+}
+
+string@ FormatXX( int value )
+{
+    value = CLAMP( value, 0, 99 );
+    return value < 10 ? "0" + value : "" + value;
+}
+
+class InjectCounterLabel : CLabel
+{
+    IGUIScreenOpt@ window;
+    Control@       picControl;
+
+    InjectCounterLabel(IGUIScreenOpt@ window)
+    {
+        super(0, 0, 0, 0, "");
+        @picControl = Control();
+        @this.window = window;
+    }
+
+    void TextPosition(string& ini)
+    {
+        CLabel::Position(ini);
+    }
+
+    int Left()
+    {
+        if(valid(this.window))
+            return(this.window.GetPosX() + this.left);
+        return(0);
+    }
+
+    int Top()
+    {
+        if(valid(this.window))
+            return(this.window.GetPosY() + this.top);
+        return(0);
+    }
+
+    void Draw()
+    {
+        CLabel::Draw();
+    }
+};
+
+
+class InjectCounterButton : Control
+{
+    IGUIScreenOpt@ window;
+    Sprite         buttonDown;
+    string 		   iniCord;
+    int            change;
+
+    InjectCounterButton(IGUIScreenOpt@ window, string iniPic, string iniCords, int chng)
+    {
+        @this.window = window;
+        this.buttonDown.LoadByIni(iniPic, PATH_ART_INTRFACE);
+        this.iniCord = iniCords;
+        this.change = chng;
+    }
+
+    void Init()
+    {
+        this.Position(iniCord);
+    }
+
+    void Click()
+    {
+        if(GUI_IsKeyPressed(DIK_LSHIFT))
+            ExecuteSetFixCounter(CLAMP((GetPlayerCounter()+(this.change*10)), 1, 99));
+        else
+            ExecuteSetFixCounter(CLAMP((GetPlayerCounter()+this.change), 1, 99));
+    }
+
+    int Left()
+    {
+        if(valid(this.window))
+            return(this.window.GetPosX() + this.left);
+        return(0);
+    }
+
+    int Top()
+    {
+        if(valid(this.window))
+            return(this.window.GetPosY() + this.top);
+        return(0);
+    }
+
+    void Draw()
+    {
+        if(this.mousePressed)
+            DrawSprite(this.buttonDown.Id, 0, this.Left(), this.Top(), 0);
+    }
+};
+
+class InjectFixAllButton : Control
+{
+    IGUIScreenOpt@ window;
+    bool 		   isChecked;
+    Sprite         buttonDown;
+
+    InjectFixAllButton(IGUIScreenOpt@ window, bool check)
+    {
+        @this.window = window;
+        this.isChecked = check;
+        this.buttonDown.LoadByIni("FixFixAllPicDn", PATH_ART_INTRFACE);
+    }
+
+    void Init()
+    {
+        this.Position("FixFixAll");
+    }
+
+    void SetState(bool st)
+    {
+    	isChecked = st;
+    }
+
+    void Click()
+    {
+    	isChecked = !isChecked;
+    	ExecuteSetFixAll( isChecked ? 1: 0 );
+    }
+
+    int Left()
+    {
+        if(valid(this.window))
+            return(this.window.GetPosX() + this.left);
+        return(0);
+    }
+
+    int Top()
+    {
+        if(valid(this.window))
+            return(this.window.GetPosY() + this.top);
+        return(0);
+    }
+
+    void Draw()
+    {
+        if(this.isChecked)
+            DrawSprite(this.buttonDown.Id, 0, this.Left(), this.Top(), 0);
+    }
+};
+
+class InjectFilterButton : Control
+{
+    IGUIScreenOpt@ window;
+    Sprite         buttonDown;
+    string 		   iniCord;
+    uint8          filter;
+
+    InjectFilterButton(IGUIScreenOpt@ window, string iniPic, string iniCords, uint8 fltr)
+    {
+        @this.window = window;
+        this.buttonDown.LoadByIni(iniPic, PATH_ART_INTRFACE);
+        this.iniCord = iniCords;
+        this.filter = fltr;
+    }
+
+    void Init()
+    {
+        this.Position(iniCord);
+    }
+
+    void Click()
+    {
+        ExecuteSetFixFilter(filter);
+    }
+
+    int Left()
+    {
+        if(valid(this.window))
+            return(this.window.GetPosX() + this.left);
+        return(0);
+    }
+
+    int Top()
+    {
+        if(valid(this.window))
+            return(this.window.GetPosY() + this.top);
+        return(0);
+    }
+
+    void Draw()
+    {
+        if(this.mousePressed)
+            DrawSprite(this.buttonDown.Id, 0, this.Left(), this.Top(), 0);
+    }
+};
+
+#endif

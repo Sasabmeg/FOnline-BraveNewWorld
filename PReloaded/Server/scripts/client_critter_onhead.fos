@@ -1,0 +1,248 @@
+#include "_defines.fos"
+#include "_client_defines.fos"
+#include "_macros.fos"
+#include "_colors.fos"
+#include "lexems_h.fos"
+#include "MsgStr.h"
+#include "_basetypes.fos"
+#include "sprite.fos"
+
+import bool GMToolsAccess() from "client_gmtools";
+import bool IsGMTEnabled() from "client_main";
+#define IsGM    IsGMTEnabled() && GMToolsAccess
+
+import int stringReplaceText(string& s, string@ f, string@ t) from "config_file";
+import int GUI_GetActiveMainScreen() from "client_gui";
+import int GUI_GetActiveScreen() from "client_gui";
+
+array<CritterCl@> crs;
+array<uint> crits;
+array<Sprite> factionIcons;
+uint factionCount = 0;
+uint mapPid = 0;
+
+void InitCritterOnHead()	//export
+{
+	__ShowNpcNames = __ConfigShowNpcAwareness;
+	crs.resize(0);
+	crits.resize(0);
+
+	//factionIcons
+	if(__ConfigShowFactionEmblems)
+		factionIcons.resize(factionCount);
+}
+
+void InitFactionIcons()
+{
+	if(factionCount == 0)
+		RunServerScriptUnsafe("unsafe_client@unsafe_GetFactionCount", 0, 0, 0, "", null);
+}
+
+void _SetFactionCount(int fc, int, int, string@, array<int>@ list)
+{
+	factionIcons.resize(fc);
+
+	for (int i = 0; i < fc; ++i)
+		factionIcons[i].Load("factionIcons\\" + (i + 200) + ".png", PATH_ART_INTRFACE);
+	factionCount = fc;		
+}
+
+void AddCritter(uint id, uint pid)
+{
+	if(mapPid != pid)
+	{
+		mapPid = pid;
+		ClearCritter();
+	}
+    for(uint c = 0, cLen = crits.length(); c < cLen; ++c)
+    {
+        if(crits[c] == id)
+            return;
+    }
+    crits.insertLast(id);
+}
+
+void RemoveCritter(uint id)
+{
+    for(uint c = 0, cLen = crits.length(); c < cLen; ++c)
+    {
+        if(crits[c] == id)
+        {
+            crits.removeAt(c);
+            return;
+        }            
+    }
+}
+
+void ClearCritter()
+{
+	crits.resize(0);
+}
+
+array<CritterCl@> GetCrittersCache()
+{
+	return( crs );
+}
+
+void DrawCritterOnHead()	//export
+{
+	if(GUI_GetActiveMainScreen() != CLIENT_MAIN_SCREEN_GAME)
+		return;
+
+	int color_b = 0;
+	int color_g = 0;
+	int color_r = 0;
+	int hp_proc = 0;
+	string name;
+	string hp;
+	string inj;
+	string crInjures;
+
+	CritterCl@ chosen = GetChosen();
+
+	for(uint i = 0, iLen = crits.length(); i < iLen; ++i)
+	{
+		CritterCl@ cr = GetCritter(crits[i]);
+		if(!valid(cr))
+			continue;
+
+		//OnHeadAwareness
+		uint   dialog = cr.Stat[ST_DIALOG_ID];
+        uint16 pid = cr.Pid;
+        string head = (cr.IsPlayer() ? cr.Name : " ");
+
+        if(IsLexem(cr, "$@"))
+        {
+            head = GetLexem(cr, "$@");
+            if(head.length() == 0)
+                head = " ";
+			
+			stringReplaceText(head, "|", "");
+            head = FormatTags(head, "");
+        }
+
+        if(IsGM())
+        {
+            array<string> gm;
+
+            string        id = "<" + cr.Id + ">";
+
+            if((cr.IsPlayer() && head != cr.Name) || (cr.IsNpc() && IsLexem(cr, "$@")))
+            {
+                if(cr.IsPlayer())
+                    gm.insertLast("Player: " + cr.Name);
+                else if(cr.IsNpc())
+                    gm.insertLast("NPC: " + GetMsgStr(TEXTMSG_DLG, STR_NPC_NAME(dialog, pid)));
+            }
+
+            if(__ShowCritId)
+                gm.insertLast("ID: " + cr.Id);
+
+            if(cr.Param[MODE_HIDE] > 0)
+                gm.insertLast("sneaked");
+
+            if(gm.length() > 0)
+            {
+                head += "|" + COLOR_RGB(0xFF, 0xFF, 0xFF) + " ";
+                for(uint g = 0, gLen = gm.length(); g < gLen; g++)
+                {
+                    head += "\n(" + gm[g] + ")";
+                }
+            }
+        }
+
+		if(head != " ")
+		{
+			name = "|" + cr.NameColor + " " + head;
+			cr.ContourColor = cr.ContourColor;
+
+		}
+		else 
+			name = " ";
+
+		if(cr.IsPlayer())
+		{
+			cr.NameOnHead = name;
+
+			uint tId = cr.StatBase[ST_TEAM_ID];
+
+			if(__ConfigShowFactionEmblems && tId >= 200 && (tId-200) < factionCount && factionIcons[tId-200].Id > 0)
+			{
+				bool nameVisible = false;
+				int x = 0, y = 0, w = 0, h = 0, lines = 0;
+
+				cr.GetNameTextInfo(nameVisible, x, y, w, h, lines);
+				
+				if(nameVisible)
+					factionIcons[tId-200].Draw(x-25, y-5);
+			}
+
+			if(!__ConfigShowPlayerAwareness)
+				continue;	
+		}
+		if(cr.IsNpc() && !__ConfigShowNpcAwareness)
+		{
+			cr.NameOnHead = name;
+			continue;
+		}
+
+		if(cr.IsDead() == false)
+		{
+			if(valid(chosen) && __ConfigOnHeadAwareness == 1)
+			{
+				color_g = (255*cr.Param[ST_CURRENT_HP])/cr.Param[ST_MAX_LIFE];
+				hp_proc = cr.Param[ST_CURRENT_HP] * 100 / cr.Param[ST_MAX_LIFE];
+
+				if(color_g < 0)
+					color_g = 0;
+				color_r = 255 - color_g;
+				
+				hp = "|" + COLOR_RGB(color_r, color_g, color_b) + " " + cr.Param[ST_CURRENT_HP] + "/" + cr.Param[ST_MAX_LIFE];
+			}
+			else
+			{
+				string lifeRes = "";
+				switch(cr.Stat[ST_HEALTH_LEVEL])
+				{
+					case 4: lifeRes = "****"; break;
+					case 3: lifeRes = "***"; break;
+					case 2: lifeRes = "**"; break;
+					case 1: lifeRes = "*"; break;
+				}
+				
+				hp = "|" + (cr.Stat[ST_HEALTH_LEVEL] < 1 ? COLOR_LGRAY : COLOR_RGB(0xff - (0xff * cr.Stat[ST_HEALTH_LEVEL]) / 5, (0xff * cr.Stat[ST_HEALTH_LEVEL]) / 5, 0)) + " " + lifeRes;
+			}
+		
+			if(valid(chosen) && _CritIsInjured(cr))
+			{
+				crInjures = " ";
+				crInjures += _CritDamaged(cr, DAMAGE_EYE) ? "E " : "";
+                crInjures += _CritDamaged(cr, DAMAGE_RIGHT_ARM) ? "RA " : "";
+                crInjures += _CritDamaged(cr, DAMAGE_LEFT_ARM) ? "LA " : "";
+                crInjures += _CritDamaged(cr, DAMAGE_RIGHT_LEG) ? "RL " : "";
+                crInjures += _CritDamaged(cr, DAMAGE_LEFT_LEG) ? "LL " : "";
+				inj = "|" + COLOR_RGB(200, 0, 0) + crInjures + "\n"; 
+			}
+			else
+				inj = "";
+		}
+		else 
+		{
+			cr.NameOnHead = name;
+			continue;	
+		}
+
+		cr.NameOnHead = (name == " ") ? (inj + hp) : (inj + hp + "\n" + name);
+	}
+}
+
+void ChangeOnHeadAwarenessPlayer()	//export
+{
+	__ConfigShowPlayerAwareness = !__ConfigShowPlayerAwareness;
+}
+
+void ChangeOnHeadAwarenessNPC()	//export
+{
+	__ConfigShowNpcAwareness = !__ConfigShowNpcAwareness;
+	__ShowNpcNames =  __ConfigShowNpcAwareness;
+}

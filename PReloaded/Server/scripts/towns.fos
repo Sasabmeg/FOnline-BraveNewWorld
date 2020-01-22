@@ -1,0 +1,88 @@
+//
+// FOnline: 2238
+// Rotators
+//
+// towns.fos
+//
+
+#ifndef __TOWNS__
+#define __TOWNS__
+
+#define GET_CONT_POSITIONS    # (__map) { GetNearEntire(__map, ENTIRE_TC_CONT_REWARD, rx, ry); GetNearEntire(__map, ENTIRE_TC_CONT_LIMBO, lx, ly); }
+#define ADD_TOWN              # (__name, __db, __properties) ITown@ __name = CreateTown(__db); __name.__properties; AddTown(__name)
+
+#include "_entires.fos"
+#include "_macros.fos"
+#include "_maps.fos"
+#include "entire.fos"
+#include "town_h.fos"
+#include "polygon_towns.fos"
+
+array<ITown@> Towns;
+
+import ITown@ CreateTown(string Name) from "town";
+
+ITown@ GetTownByIndex(uint index)
+{
+    return Towns[index];
+}
+
+ITown@ GetTown(uint id)
+{
+    for(uint i = 0; i < Towns.length(); i++)
+    {
+        if(id == Towns[i].GetTownID())
+        {
+            return Towns[i];
+        }
+    }
+    return null;
+}
+
+uint GetTownCount()
+{
+    return Towns.length();
+}
+
+void AddTown(ITown& town)
+{
+    Towns.insertLast(town);
+}
+
+uint GetTowns(array<ITown@>@ towns)
+{
+    for(uint i = 0, j = Towns.length(); i < j; i++)
+    {
+        towns.insertLast(Towns[i]);
+    }
+    return Towns.length();
+}
+
+bool VerifyMaps(array<Map@>& maps)
+{
+    for(uint i = 0; i < maps.length(); i++)
+        if(!valid(maps[i]))
+            return false;
+    return true;
+}
+
+void InitTowns()
+{
+    Map@[] maps;
+
+    if(!VerifyMaps(maps))
+    {
+        Log("Error while finding TC maps, the TC system in some towns may fail to work properly");
+    }
+
+    uint16 rx, ry, lx, ly;
+    rx = ry = lx = ly = 0;
+
+    for(uint i = 0; i < Towns.length(); i++)
+    {
+        Towns[i].SetScore();
+    }
+
+    InitMilitia();
+}
+#endif

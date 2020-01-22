@@ -1,0 +1,64 @@
+##
+## AppVeyor
+## https://www.appveyor.com/
+##
+## https://ci.appveyor.com/project/rotators/foclassic/
+##
+
+version: "{build}"
+
+# VS 2013 image = VS 2010 build
+image:
+ - Ubuntu
+ - Visual Studio 2013
+ - Visual Studio 2017
+
+platform:
+ - x32
+
+matrix:
+ allow_failures:
+  - image: Visual Studio 2015
+  - image: Visual Studio 2017
+  - platform: x64
+
+skip_commits:
+ files:
+  - .travis.yml
+
+for:
+ - matrix:
+    only:
+     - image: Ubuntu
+     - image: Ubuntu1604
+     - image: Ubuntu1804
+   clone_folder: /FOClassic
+ - matrix:
+    only:
+     - image: Visual Studio 2013
+     - image: Visual Studio 2015
+     - image: Visual Studio 2017
+   clone_folder: C:\FOClassic
+
+cache:
+ - SDK.Cache -> CMakeLists.txt, Build.cmake
+
+init:
+ - sh: if [ "${PLATFORM}" == "x32" ]; then arch=i386; else arch=amd64; fi
+
+install:
+ - git submodule update --init --recursive
+ - sh: sudo add-apt-repository --yes ppa:ubuntu-toolchain-r/test
+ - sh: sudo apt-get update
+ - sh: sudo apt-get install -y gcc-multilib g++-multilib
+ - sh: sudo apt-get install -y libx11-dev:${arch} libxft-dev:${arch} libxi-dev:${arch} libxinerama-dev:${arch} libgl1-mesa-dev:${arch} libglu1-mesa-dev:${arch} freeglut3-dev:${arch} libfreetype6-dev:${arch} libfontconfig-dev:${arch} libpng-dev:${arch}
+ - sh: PATH=SDK.Cache/cmake/bin:$PATH
+ - cmd: set PATH=SDK.Cache\cmake\bin;%PATH%
+ - cmake -DO=Build.cmake -DOWNLOAD_DIR=SDK.Cache -P CMake/SelfUpdate/SelfUpdate.cmake
+ - sh: hash -r
+
+build_script:
+ - cmake -P Build.cmake
+
+artifacts:
+ - path: FOClassic-v*

@@ -1,0 +1,50 @@
+[comment]
+
+
+[data]
+lang=engl
+
+[dialog]
+&
+1 1000 None 0 #
+2 1010 @
+2 2000 None 0 #
+3 2010 D _item p PID_BOTTLE_CAPS > 199 R _item p PID_BOTTLE_CAPS - 200 R _param p ST_CURRENT_HP - 6 R _param p ST_RADIATION_LEVEL + 4 R _param p ST_POISONING_LEVEL + 2 #
+3 2020 D _item p PID_BOTTLE_CAPS > 199 R _item p PID_BOTTLE_CAPS - 200 R _param p ST_CURRENT_HP - 6 R _param p ST_RADIATION_LEVEL + 4 R _param p ST_POISONING_LEVEL + 2 #
+3 2030 D _item p PID_BOTTLE_CAPS > 199 R _item p PID_BOTTLE_CAPS - 200 R _param p ST_CURRENT_HP - 6 R _param p ST_RADIATION_LEVEL + 4 R _param p ST_POISONING_LEVEL + 2 #
+3 2040 D _item p PID_BOTTLE_CAPS > 199 R _item p PID_BOTTLE_CAPS - 200 R _param p ST_CURRENT_HP - 6 R _param p ST_RADIATION_LEVEL + 4 R _param p ST_POISONING_LEVEL + 2 #
+3 2050 D _item p PID_RED_CONDOM > 0 D _item p PID_BOTTLE_CAPS > 199 R _item p PID_RED_CONDOM - 1 R _item p PID_BOTTLE_CAPS - 200 R _param p ST_CURRENT_HP + 1 #
+3 2060 D _item p PID_GREEN_CONDOM > 0 D _item p PID_BOTTLE_CAPS > 199 R _item p PID_GREEN_CONDOM - 1 R _item p PID_BOTTLE_CAPS - 200 R _param p ST_CURRENT_HP + 1 #
+0 2070 #
+0 2080 @
+3 3000 None 0 #
+4 3010 @
+4 4000 None 0 #
+5 4010 @
+5 5000 None 0 #
+0 5010 R _script dialog@r_FlushScreen 0  &
+
+[engl]
+{100}{}{Prostitute}
+{200}{}{You see a prostitute.}
+{210}{}{You see a…lady of the evening. Her tattered clothes are draped seductively around her body.}
+{1000}{}{Predialogue installations}
+{1010}{}{Answer text}
+{2000}{}{My name's Easy. What's yours?@@Need a little company?@@Let me teach you some things only a woman can teach.@@Need someone to warm your tent?@@Need someone to share your bedroll?@@Got some hot-rocks there, pal.@@Lookin' for some action?@@Looking for a date?@@Looking for some company?@@Wanna dance?@@New stranger in town, looks like…@@Wanna fly?@@Let me cheer you up, sad clown.@@Too many streetwalkers in this town, not enough chips to go around.@@Been walking this street since last night...@@Need a friend for the evening? Or just ten minutes?@@Looking for a good time?@@Looking to go down-town@@Need a guide around town, sugah?
+}
+{2010}{}{Ay gurl, you want sum fuk?}
+{2020}{}{You lookin' for a date, sweet cheeks?}
+{2030}{}{Shh. No names. Come.}
+{2040}{}{You better not give me the clap! Now shut up and come with me!}
+{2050}{}{Safety first! Let me just double wrap it with this red thing... Does your vagina like cinnamon?}
+{2060}{}{Safety first! Let me just double wrap it with this green thing... But we gotta do it in the dark! I want to see it glow, baby!}
+{2070}{}{A hooker?! Oh God! I need to get some caps!}
+{2080}{}{Get lost, bimbo.}
+{3000}{}{[The screen fades to black]}
+{3010}{}{Hmm... Groovy.}
+{4000}{}{[After a few minutes you're finished, and walk away. Let your imagination fill in the rest]}
+{4010}{}{Hubba-Hubba.}
+{5000}{}{[Your genitals are itchy, but you don't know why. Maybe you shouldn't go sticking your private areas near strange, dirty bodies?]
+}
+{5010}{}{Damnit! Not again! I need a bath...}
+

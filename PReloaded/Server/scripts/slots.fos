@@ -1,0 +1,197 @@
+// Slots
+// by Kilgore
+
+#include "_macros.fos"
+#include "entire.fos"
+#include "_msgstr.fos"
+
+#define SLOTS_DIALOGUE   (10001)
+#define SLOTS_MSG        (13000)
+
+void item_init(Item& item, bool firstTime)
+{
+    item.SetEvent(ITEM_EVENT_SKILL, "_Play");
+	
+	if(firstTime)
+	{
+	array<uint> params = {item.Id};
+	CreateTimeEvent(AFTER(REAL_SECOND(Random(30,60))), "e_Ding", params, true);
+	}
+}
+
+uint e_Ding(array<uint>@ values)
+{
+    Item@ slots = GetItem(values[0]);
+    uint16 hexX = 0;
+    uint16 hexY = 0;
+	if(!valid(slots)) return 0;
+    Map@   map = slots.GetMapPosition(hexX, hexY);
+    map.SetTextMsg(hexX, hexY, 0, TEXTMSG_TEXT, SLOTS_MSG);
+    return REAL_SECOND(Random(30,60));
+}
+
+bool _Play(Item& item, Critter& cr, int skill)
+{
+	uint proto=item.GetProtoId();
+	uint16 hexX = 0;
+    uint16 hexY = 0;
+    Map@   map = item.GetMapPosition(hexX, hexY);
+	if(cr.IsPlayer() && ((proto==2465 && cr.HexX==hexX+1 && cr.HexY==hexY) || (proto==2466 && cr.HexY==hexY+1 && cr.HexX==hexX))) RunDialog(cr, SLOTS_DIALOGUE, 0, 0, true);
+	else cr.Say(SAY_NETMSG, "Wrong hex.");
+	return true;
+}
+
+void dlg_Score(Critter& player, Critter@ npc, string@ text)
+{
+if(!IS_DIALOG_GENERATED(text)) return;
+	
+uint roll=Random(1,10000);
+uint score=0;
+if(roll==10000) score=100000;
+else if(roll>=9900) score=1000;
+else if(roll>=9700) score=500;
+else if(roll>=8100) score=250;
+else if(roll>=6100) score=150;
+
+// EV calculation
+// 0,6099 = 0 	ev = 0
+// 0,16 = $250    ev = 40
+// 0,02 = $500    ev = 10
+// 0,20 = $150     ev = 30
+// 0,01 = $1000		ev = 10 
+// 0,0001  = $100.000 ev = 10
+// total ev = 100 (bet value)
+
+if (score==0)
+	{
+	text +="$score" + "The rolls spin on the machine...";
+	
+	uint first=Random(1,5);
+	uint second=Random(1,5);
+	uint third=Random(1,5);
+	if(first==second && second==third)
+	{
+	if(third==5) third--;
+	else if (third==1) third++;
+	else 
+		{
+		if(Random(1,2)==1) third++;
+		else third--;
+		}
+	}
+	
+			switch(first)
+            {
+                case 1:
+                {
+					text +=" bullet...";
+                    break;
+                }
+                case 2:
+				{
+					text +=" grenade...";
+                    break;
+                }
+                case 3:
+				{
+					text +=" rocket...";
+                    break;
+                }
+                case 4:
+				{
+					text +=" bomb...";
+                    break;
+                }
+                case 5:
+				{
+					text +=" nuke...";
+                    break;
+                }
+            }
+				
+			switch(second)
+            {
+                case 1:
+                {
+					text +=" bullet...";
+                    break;
+                }
+                case 2:
+				{
+					text +=" grenade...";
+                    break;
+                }
+                case 3:
+				{
+					text +=" rocket...";
+                    break;
+                }
+                case 4:
+				{
+					text +=" bomb...";
+                    break;
+                }
+                case 5:
+				{
+					text +=" nuke...";
+                    break;
+                }
+            }
+				
+			switch(third)
+            {
+                case 1:
+                {
+					text +=" bullet...";
+                    break;
+                }
+                case 2:
+				{
+					text +=" grenade...";
+                    break;
+                }
+                case 3:
+				{
+					text +=" rocket...";
+                    break;
+                }
+                case 4:
+				{
+					text +=" bomb...";
+                    break;
+                }
+                case 5:
+				{
+					text +=" nuke...";
+                    break;
+                }
+            }
+	text +=" Nothing.";
+
+	//player.PlaySound("LOOSER.ACM",true);
+	return;
+	}
+else 
+	{
+	if (score==150) text +="$score" + "You get three bullets. Winner! " + score + " bottle caps drop into the tray and you snatch it up.";
+	else if (score==250) text +="$score" + "You get three grenades. Excellent! " + score + " bottle caps drop into the tray and you snatch it up.";
+	else if (score==500) text +="$score" + "You get three rockets. Impressive! " + score + " bottle caps drop into the tray and you snatch it up.";
+	else if (score==1000) text +="$score" + "You get three bombs. Impressive! " + score + " bottle caps drop into the tray and you snatch it up.";
+	else if (score==100000) text +="$score" + "You get three NUKES! ***JACKPOT*** " + score + " bottle caps drop into the tray and you take them away.";
+	player.PlaySound("WINNER.ACM",true);
+	player.AddItem(PID_BOTTLE_CAPS,score);
+	}
+	
+}
+
+uint HitMachine(Critter& player, Critter@ cr)
+{
+	int roll=Random(0,2);
+	if(roll==0) return 27;
+	else if(roll==1) return 29;
+	else {
+			if(Random(0,1)==1) player.DamageBase[DAMAGE_RIGHT_ARM]=1;
+			else player.DamageBase[DAMAGE_LEFT_ARM]=1;
+			return 28;
+			}
+}

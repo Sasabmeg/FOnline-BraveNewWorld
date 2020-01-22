@@ -1,0 +1,317 @@
+[comment]
+
+
+[data]
+lang=engl
+
+[dialog]
+&
+1 1000 None 0 #
+7 1010 D _param p ST_BASE_CRTYPE = 21 D or D _param p ST_BASE_CRTYPE = 30 #
+2 1020 R _script npc_barber@r_SkinShowPrepare 1 -1 @
+2 2000 None 0 #
+3 2010 #
+6 2020 #
+0 2030 @
+3 3000 None 0 #
+4 3010 D _script npc_barber@d_SkinDemand 1 CRTYPE_DEFAULT R _script npc_barber@r_SkinChange 1 CRTYPE_DEFAULT #
+4 3020 D _script npc_barber@d_SkinDemand 1 CRTYPE_PUNK_JUMPSUIT R _script npc_barber@r_SkinChange 1 CRTYPE_PUNK_JUMPSUIT #
+4 3030 D _script npc_barber@d_SkinDemand 1 CRTYPE_BHD_JUMPSUIT R _script npc_barber@r_SkinChange 1 CRTYPE_BHD_JUMPSUIT #
+4 3040 D _script npc_barber@d_SkinDemand 1 CRTYPE_LHD_JUMPSUIT R _script npc_barber@r_SkinChange 1 CRTYPE_LHD_JUMPSUIT #
+10 3050 #
+3 3060 D _script dialog@d_IsTester 0  R _script npc_barber@r_ChangeGender 0  #
+3 3070 D _script dialog@d_IsTester 0  D _script npc_barber@d_NeedTestSet 1 0 R _script npc_barber@r_GiveTestSet 1 0 #
+3 3080 D _script dialog@d_IsTester 0  D _script npc_barber@d_NeedTestSet 1 1 R _script npc_barber@r_GiveTestSet 1 1 #
+0 3090 @
+4 4000 None 0 #
+0 4010 @
+5 5000 None 0 #
+0 5010 #
+0 5020 @
+6 6000 None 0 #
+3 6010 #
+0 6020 @
+7 7000 None 0 #
+0 7010 @
+10 8000 None 0 #
+11 8010 #
+12 8020 #
+13 8030 #
+0 8040 @
+11 9000 None 0 #
+22 9010 #
+20 9020 #
+23 9030 #
+21 9040 #
+24 9050 #
+100 9060 D _script npc_barber@d_SkinDemandNoCaps 1 CRTYPE_POOR_BLACKMALE R _script npc_barber@r_SkinShowPrepare 1 CRTYPE_POOR_BLACKMALE #
+100 9070 D _script npc_barber@d_SkinDemandNoCaps 1 CRTYPE_AHS R _script npc_barber@r_SkinShowPrepare 1 CRTYPE_AHS #
+100 9080 D _script npc_barber@d_SkinDemandNoCaps 1 CRTYPE_BEGGAR R _script npc_barber@r_SkinShowPrepare 1 CRTYPE_BEGGAR #
+100 9090 D _script npc_barber@d_SkinDemandNoCaps 1 CRTYPE_BOXER R _script npc_barber@r_SkinShowPrepare 1 CRTYPE_BOXER #
+100 9100 D _script npc_barber@d_SkinDemandNoCaps 1 CRTYPE_DWARF R _script npc_barber@r_SkinShowPrepare 1 CRTYPE_DWARF #
+100 9110 D _script npc_barber@d_SkinDemandNoCaps 1 CRTYPE_BUTCHER R _script npc_barber@r_SkinShowPrepare 1 CRTYPE_BUTCHER #
+100 9120 D _script npc_barber@d_SkinDemandNoCaps 1 CRTYPE_CASSIDY R _script npc_barber@r_SkinShowPrepare 1 CRTYPE_CASSIDY #
+100 9130 D _script npc_barber@d_SkinDemandNoCaps 1 CRTYPE_FEMALE_CHINESE R _script npc_barber@r_SkinShowPrepare 1 CRTYPE_FEMALE_CHINESE #
+100 9140 D _script npc_barber@d_SkinDemandNoCaps 1 CRTYPE_MALE_CHINESE R _script npc_barber@r_SkinShowPrepare 1 CRTYPE_MALE_CHINESE #
+100 9150 D _script npc_barber@d_SkinDemandNoCaps 1 CRTYPE_CHINESE_GUARD_BLUE R _script npc_barber@r_SkinShowPrepare 1 CRTYPE_CHINESE_GUARD_BLUE #
+100 9160 D _script npc_barber@d_SkinDemandNoCaps 1 CRTYPE_CHINESE_GUARD_RED R _script npc_barber@r_SkinShowPrepare 1 CRTYPE_CHINESE_GUARD_RED #
+100 9170 D _script npc_barber@d_SkinDemandNoCaps 1 CRTYPE_CLERK R _script npc_barber@r_SkinShowPrepare 1 CRTYPE_CLERK #
+100 9180 D _script npc_barber@d_SkinDemandNoCaps 1 CRTYPE_CYBORG R _script npc_barber@r_SkinShowPrepare 1 CRTYPE_CYBORG #
+100 9190 D _script npc_barber@d_SkinDemandNoCaps 1 CRTYPE_FEMALE_KID R _script npc_barber@r_SkinShowPrepare 1 CRTYPE_FEMALE_KID #
+100 9200 D _script npc_barber@d_SkinDemandNoCaps 1 CRTYPE_MALE_KID R _script npc_barber@r_SkinShowPrepare 1 CRTYPE_MALE_KID #
+100 9210 D _script npc_barber@d_SkinDemandNoCaps 1 CRTYPE_KITTY R _script npc_barber@r_SkinShowPrepare 1 CRTYPE_KITTY #
+100 9220 D _script npc_barber@d_SkinDemandNoCaps 1 CRTYPE_MOBSTER_BLUE R _script npc_barber@r_SkinShowPrepare 1 CRTYPE_MOBSTER_BLUE #
+100 9230 D _script npc_barber@d_SkinDemandNoCaps 1 CRTYPE_MOBSTER_GRAY R _script npc_barber@r_SkinShowPrepare 1 CRTYPE_MOBSTER_GRAY #
+100 9240 D _script npc_barber@d_SkinDemandNoCaps 1 CRTYPE_MYRON R _script npc_barber@r_SkinShowPrepare 1 CRTYPE_MYRON #
+100 9250 D _script npc_barber@d_SkinDemandNoCaps 1 CRTYPE_NCR_POLICE R _script npc_barber@r_SkinShowPrepare 1 CRTYPE_NCR_POLICE #
+100 9260 D _script npc_barber@d_SkinDemandNoCaps 1 CRTYPE_SALVADORE R _script npc_barber@r_SkinShowPrepare 1 CRTYPE_SALVADORE #
+100 9270 D _script npc_barber@d_SkinDemandNoCaps 1 CRTYPE_POOR_MAN R _script npc_barber@r_SkinShowPrepare 1 CRTYPE_POOR_MAN #
+100 9280 D _script npc_barber@d_SkinDemandNoCaps 1 CRTYPE_KURWA R _script npc_barber@r_SkinShowPrepare 1 CRTYPE_KURWA #
+100 9290 D _script npc_barber@d_SkinDemandNoCaps 1 CRTYPE_SCIENTIST R _script npc_barber@r_SkinShowPrepare 1 CRTYPE_SCIENTIST #
+100 9300 D _script npc_barber@d_SkinDemandNoCaps 1 CRTYPE_VIC R _script npc_barber@r_SkinShowPrepare 1 CRTYPE_VIC #
+100 9310 D _script npc_barber@d_SkinDemandNoCaps 1 CRTYPE_WOMAN_2 R _script npc_barber@r_SkinShowPrepare 1 CRTYPE_WOMAN_2 #
+100 9320 D _script npc_barber@d_SkinDemandNoCaps 1 CRTYPE_WOMAN_1 R _script npc_barber@r_SkinShowPrepare 1 CRTYPE_WOMAN_1 #
+10 9330 #
+0 9340 @
+12 10000 None 0 #
+100 10010 D _script npc_barber@d_SkinDemandNoCaps 1 CRTYPE_MRHANDY R _script npc_barber@r_SkinShowPrepare 1 CRTYPE_MRHANDY #
+100 10020 D _script npc_barber@d_SkinDemandNoCaps 1 CRTYPE_ROBOT R _script npc_barber@r_SkinShowPrepare 1 CRTYPE_ROBOT #
+100 10030 D _script npc_barber@d_SkinDemandNoCaps 1 CRTYPE_ROBOT_2 R _script npc_barber@r_SkinShowPrepare 1 CRTYPE_ROBOT_2 #
+100 10040 D _script npc_barber@d_SkinDemandNoCaps 1 CRTYPE_MECH R _script npc_barber@r_SkinShowPrepare 1 CRTYPE_MECH #
+10 10050 #
+0 10060 @
+13 11000 None 0 #
+31 11010 #
+32 11020 #
+30 11030 #
+100 11040 D _script npc_barber@d_SkinDemandNoCaps 1 CRTYPE_ALIEN R _script npc_barber@r_SkinShowPrepare 1 CRTYPE_ALIEN #
+100 11050 D _script npc_barber@d_SkinDemandNoCaps 1 CRTYPE_ANT R _script npc_barber@r_SkinShowPrepare 1 CRTYPE_ANT #
+100 11060 D _script npc_barber@d_SkinDemandNoCaps 1 CRTYPE_BRAHMIN R _script npc_barber@r_SkinShowPrepare 1 CRTYPE_BRAHMIN #
+100 11070 D _script npc_barber@d_SkinDemandNoCaps 1 CRTYPE_DOG R _script npc_barber@r_SkinShowPrepare 1 CRTYPE_DOG #
+100 11080 D _script npc_barber@d_SkinDemandNoCaps 1 CRTYPE_FLOATER R _script npc_barber@r_SkinShowPrepare 1 CRTYPE_FLOATER #
+100 11090 D _script npc_barber@d_SkinDemandNoCaps 1 CRTYPE_MANTIS R _script npc_barber@r_SkinShowPrepare 1 CRTYPE_MANTIS #
+100 11100 D _script npc_barber@d_SkinDemandNoCaps 1 CRTYPE_SCORPION_SMALL R _script npc_barber@r_SkinShowPrepare 1 CRTYPE_SCORPION_SMALL #
+100 11110 D _script npc_barber@d_SkinDemandNoCaps 1 CRTYPE_SCORPION R _script npc_barber@r_SkinShowPrepare 1 CRTYPE_SCORPION #
+10 11120 #
+0 11130 @
+20 12000 None 0 #
+100 12010 D _script npc_barber@d_SkinDemandNoCaps 1 CRTYPE_DEFAULT R _script npc_barber@r_SkinShowPrepare 1 CRTYPE_DEFAULT #
+100 12020 D _script npc_barber@d_SkinDemandNoCaps 1 CRTYPE_BLACKMALE_VAULT13SUIT R _script npc_barber@r_SkinShowPrepare 1 CRTYPE_BLACKMALE_VAULT13SUIT #
+100 12030 D _script npc_barber@d_SkinDemandNoCaps 1 CRTYPE_BHD_JUMPSUIT R _script npc_barber@r_SkinShowPrepare 1 CRTYPE_BHD_JUMPSUIT #
+100 12040 D _script npc_barber@d_SkinDemandNoCaps 1 CRTYPE_LHD_JUMPSUIT R _script npc_barber@r_SkinShowPrepare 1 CRTYPE_LHD_JUMPSUIT #
+100 12050 D _script npc_barber@d_SkinDemandNoCaps 1 CRTYPE_LYNETTE R _script npc_barber@r_SkinShowPrepare 1 CRTYPE_LYNETTE #
+100 12060 D _script npc_barber@d_SkinDemandNoCaps 1 CRTYPE_PUNK_JUMPSUIT R _script npc_barber@r_SkinShowPrepare 1 CRTYPE_PUNK_JUMPSUIT #
+100 12070 D _script npc_barber@d_SkinDemandNoCaps 1 CRTYPE_REDHAIR_FEMALE R _script npc_barber@r_SkinShowPrepare 1 CRTYPE_REDHAIR_FEMALE #
+11 12080 #
+0 12090 @
+21 13000 None 0 #
+100 13010 D _script npc_barber@d_SkinDemandNoCaps 1 CRTYPE_ROBE_BLUE R _script npc_barber@r_SkinShowPrepare 1 CRTYPE_ROBE_BLUE #
+100 13020 D _script npc_barber@d_SkinDemandNoCaps 1 CRTYPE_ROBE_BROWN R _script npc_barber@r_SkinShowPrepare 1 CRTYPE_ROBE_BROWN #
+100 13030 D _script npc_barber@d_SkinDemandNoCaps 1 CRTYPE_ROBE_GRAY R _script npc_barber@r_SkinShowPrepare 1 CRTYPE_ROBE_GRAY #
+100 13040 D _script npc_barber@d_SkinDemandNoCaps 1 CRTYPE_MONK R _script npc_barber@r_SkinShowPrepare 1 CRTYPE_MONK #
+11 13050 #
+0 13060 @
+22 14000 None 0 #
+100 14010 D _script npc_barber@d_SkinDemandNoCaps 1 CRTYPE_GHOUL R _script npc_barber@r_SkinShowPrepare 1 CRTYPE_GHOUL #
+100 14020 D _script npc_barber@d_SkinDemandNoCaps 1 CRTYPE_GHOUL_GECKO R _script npc_barber@r_SkinShowPrepare 1 CRTYPE_GHOUL_GECKO #
+100 14030 D _script npc_barber@d_SkinDemandNoCaps 1 CRTYPE_GLOWING_ONE R _script npc_barber@r_SkinShowPrepare 1 CRTYPE_GLOWING_ONE #
+11 14040 #
+0 14050 @
+23 15000 None 0 #
+100 15010 D _script npc_barber@d_SkinDemandNoCaps 1 CRTYPE_RAIDER R _script npc_barber@r_SkinShowPrepare 1 CRTYPE_RAIDER #
+100 15020 D _script npc_barber@d_SkinDemandNoCaps 1 CRTYPE_KHAN_LONGHAIR R _script npc_barber@r_SkinShowPrepare 1 CRTYPE_KHAN_LONGHAIR #
+100 15030 D _script npc_barber@d_SkinDemandNoCaps 1 CRTYPE_METZGER R _script npc_barber@r_SkinShowPrepare 1 CRTYPE_METZGER #
+100 15040 D _script npc_barber@d_SkinDemandNoCaps 1 CRTYPE_OLD_IAN R _script npc_barber@r_SkinShowPrepare 1 CRTYPE_OLD_IAN #
+100 15050 D _script npc_barber@d_SkinDemandNoCaps 1 CRTYPE_METALARMOR_FEMALE_YP R _script npc_barber@r_SkinShowPrepare 1 CRTYPE_METALARMOR_FEMALE_YP #
+11 15060 #
+0 15070 @
+24 16000 None 0 #
+100 16010 D _script npc_barber@d_SkinDemandNoCaps 1 CRTYPE_FEMALE_TRIBAL R _script npc_barber@r_SkinShowPrepare 1 CRTYPE_FEMALE_TRIBAL #
+100 16020 D _script npc_barber@d_SkinDemandNoCaps 1 CRTYPE_MALE_TRIBAL R _script npc_barber@r_SkinShowPrepare 1 CRTYPE_MALE_TRIBAL #
+100 16030 D _script npc_barber@d_SkinDemandNoCaps 1 CRTYPE_BHD_TRIBAL R _script npc_barber@r_SkinShowPrepare 1 CRTYPE_BHD_TRIBAL #
+100 16040 D _script npc_barber@d_SkinDemandNoCaps 1 CRTYPE_LHD_TRIBAL R _script npc_barber@r_SkinShowPrepare 1 CRTYPE_LHD_TRIBAL #
+100 16050 D _script npc_barber@d_SkinDemandNoCaps 1 CRTYPE_MALE_SULIK R _script npc_barber@r_SkinShowPrepare 1 CRTYPE_MALE_SULIK #
+11 16060 #
+0 16070 @
+30 17000 None 0 #
+100 17010 D _script npc_barber@d_SkinDemandNoCaps 1 CRTYPE_RAT R _script npc_barber@r_SkinShowPrepare 1 CRTYPE_RAT #
+100 17020 D _script npc_barber@d_SkinDemandNoCaps 1 CRTYPE_PIGRAT R _script npc_barber@r_SkinShowPrepare 1 CRTYPE_PIGRAT #
+100 17030 D _script npc_barber@d_SkinDemandNoCaps 1 CRTYPE_MOLERAT R _script npc_barber@r_SkinShowPrepare 1 CRTYPE_MOLERAT #
+100 17040 D _script npc_barber@d_SkinDemandNoCaps 1 CRTYPE_RAT_GOD R _script npc_barber@r_SkinShowPrepare 1 CRTYPE_RAT_GOD #
+13 17050 #
+0 17060 @
+31 18000 None 0 #
+100 18010 D _script npc_barber@d_SkinDemandNoCaps 1 CRTYPE_DEATHCLAW_SMALL R _script npc_barber@r_SkinShowPrepare 1 CRTYPE_DEATHCLAW_SMALL #
+100 18020 D _script npc_barber@d_SkinDemandNoCaps 1 CRTYPE_DEATHCLAW R _script npc_barber@r_SkinShowPrepare 1 CRTYPE_DEATHCLAW #
+100 18030 D _script npc_barber@d_SkinDemandNoCaps 1 CRTYPE_DEATHCLAW_SPECIAL R _script npc_barber@r_SkinShowPrepare 1 CRTYPE_DEATHCLAW_SPECIAL #
+13 18040 #
+0 18050 @
+32 19000 None 0 #
+100 19010 D _script npc_barber@d_SkinDemandNoCaps 1 CRTYPE_GECKO_SMALL R _script npc_barber@r_SkinShowPrepare 1 CRTYPE_GECKO_SMALL #
+100 19020 D _script npc_barber@d_SkinDemandNoCaps 1 CRTYPE_GECKO R _script npc_barber@r_SkinShowPrepare 1 CRTYPE_GECKO #
+100 19030 D _script npc_barber@d_SkinDemandNoCaps 1 CRTYPE_GECKO_FIRE R _script npc_barber@r_SkinShowPrepare 1 CRTYPE_GECKO_FIRE #
+13 19040 #
+0 19050 @
+100 20000 npc_barber@dlg_SkinShow 0 #
+4 20010 D _script npc_barber@d_SkinDemand 0  R _script npc_barber@r_SkinChange 0  #
+65505 20020 R _script npc_barber@r_SkinShowPrepare 1 -1 #
+0 20030 R _script npc_barber@r_SkinShowPrepare 1 -1 @
+1000 21000 None 0 #
+0 21010 &
+
+[engl]
+{100}{}{Barber}
+{200}{}{You see a barber.}
+{1000}{}{Predialogue installations}
+{1010}{}{Can't change}
+{1020}{}{dialog}
+{2000}{}{[The barber looks at you happy.] Good day. How can I help you?}
+{2010}{}{Can you use your fabulous magick on my hair?}
+{2020}{}{I would like to have a pink colored beard. Can you do this?}
+{2030}{}{In no kind of way. Bye.}
+{3000}{}{Of course.}
+{3010}{}{[Default] I want to look like an average wastelander.}
+{3020}{}{I want to have a green mohawk!@@Fine. I want to have a green mohawk!}
+{3030}{}{I want to have a bald head!@@Fine. I want to have a bald head!@@Cut them all, i want to be as bald a man can be!}
+{3040}{}{I want to have long hair!@@Fine. I want to have longer hair!}
+{3050}{}{I need something special, unique, and it doesn't need to be cheap. I have caps, I have style, show me all you got!}
+{3060}{}{|4291297280 [Tester] Change my gender.}
+{3070}{}{|4291297280 [Tester] Give me a testing set (armors)}
+{3080}{}{|4291297280 [Tester] Give me a testing set (weapons)}
+{3090}{}{I totally changed my mind. Your presence interrupts my aura. Bye.}
+{4000}{}{That's exactly what I like to do! [He is fiddleing around in your hair. You have absolutly no clue what happens right now. After a few minutes, he seems to be done.] }
+{4010}{}{Thanks! See you later again. Maybe.}
+{5000}{}{Then I can't use my fabulous magick on your hair. I am sorry.}
+{5010}{}{I bet you suck anyway. Bye.}
+{5020}{}{Okay, I might come back later. See you.}
+{6000}{}{Er... Uh... I am sorry, but I can't do this.}
+{6010}{}{Okay... Can you use your fabulous magick on my head hair then?}
+{6020}{}{This sucks! I am going!@@You sucks! I am going!}
+{7000}{}{Sorry, I can't help you.}
+{7010}{}{Ok...}
+{8000}{}{You what mate?}
+{8010}{}{[Humanoids]}
+{8020}{}{[Robots]}
+{8030}{}{[Animals]}
+{8040}{}{[Exit]}
+{9000}{}{[Humanoids]}
+{9010}{}{[Ghouls]}
+{9020}{}{[Jumpsuits]}
+{9030}{}{[Raiders]}
+{9040}{}{[Robes]}
+{9050}{}{[Tribals]}
+{9060}{}{Afroamerican (red shirt)}
+{9070}{}{AHS-9}
+{9080}{}{Beggar}
+{9090}{}{Boxer}
+{9100}{}{Buster}
+{9110}{}{Butcher}
+{9120}{}{Cassidy}
+{9130}{}{Chinesse}
+{9140}{}{Chinesse}
+{9150}{}{Chinesse guard (blue)}
+{9160}{}{Chinesse guard (red)}
+{9170}{}{Clerk}
+{9180}{}{Cyborg}
+{9190}{}{Kid}
+{9200}{}{Kid}
+{9210}{}{Miss Kitty}
+{9220}{}{Mobster (blue)}
+{9230}{}{Mobster (gray)}
+{9240}{}{Myron}
+{9250}{}{NCR Police}
+{9260}{}{Old man}
+{9270}{}{Poor man}
+{9280}{}{Prostitute}
+{9290}{}{Scientist}
+{9300}{}{Vic}
+{9310}{}{Woman (pants)}
+{9320}{}{Woman (skirt)}
+{9330}{}{[Back]}
+{9340}{}{[Exit]}
+{10000}{}{[Robots]}
+{10010}{}{Mr. Handy}
+{10020}{}{Robot}
+{10030}{}{Robot 2}
+{10040}{}{Mech}
+{10050}{}{[Back]}
+{10060}{}{[Exit]}
+{11000}{}{[Animals]}
+{11010}{}{[Deathclaws]}
+{11020}{}{[Geckos]}
+{11030}{}{[Rats]}
+{11040}{}{Alien}
+{11050}{}{Ant}
+{11060}{}{Brahmin}
+{11070}{}{Dog}
+{11080}{}{Floater}
+{11090}{}{Mantis}
+{11100}{}{Radscorpion (small)}
+{11110}{}{Radscorpion (big)}
+{11120}{}{[Back]}
+{11130}{}{[Exit]}
+{12000}{}{[Jumpsuits]}
+{12010}{}{Default}
+{12020}{}{Afroamerican}
+{12030}{}{Bald}
+{12040}{}{Long hair}
+{12050}{}{Lynette}
+{12060}{}{Mohawk}
+{12070}{}{Redhair}
+{12080}{}{[Back]}
+{12090}{}{[Exit]}
+{13000}{}{[Robes]}
+{13010}{}{Blue}
+{13020}{}{Brown}
+{13030}{}{Gray}
+{13040}{}{Monk}
+{13050}{}{[Back]}
+{13060}{}{[Exit]}
+{14000}{}{[Ghouls]}
+{14010}{}{Regular}
+{14020}{}{Gecko}
+{14030}{}{Glowing One}
+{14040}{}{[Back]}
+{14050}{}{[Exit]}
+{15000}{}{[Raiders]}
+{15010}{}{Ian}
+{15020}{}{Khan}
+{15030}{}{Metzger}
+{15040}{}{Old Ian}
+{15050}{}{Woman in Metal Armor}
+{15060}{}{[Back]}
+{15070}{}{[Exit]}
+{16000}{}{[Tribals]}
+{16010}{}{Regular}
+{16020}{}{Regular}
+{16030}{}{Bald}
+{16040}{}{Long hair}
+{16050}{}{Sulik}
+{16060}{}{[Back]}
+{16070}{}{[Exit]}
+{17000}{}{[Rats]}
+{17010}{}{Rat}
+{17020}{}{Pigrat}
+{17030}{}{Molerat}
+{17040}{}{Rat God}
+{17050}{}{[Back]}
+{17060}{}{[Exit]}
+{18000}{}{[Deathclaws]}
+{18010}{}{Small}
+{18020}{}{Big}
+{18030}{}{Goris}
+{18040}{}{[Back]}
+{18050}{}{[Exit]}
+{19000}{}{[Geckos]}
+{19010}{}{Silver}
+{19020}{}{Green}
+{19030}{}{Fire}
+{19040}{}{[Back]}
+{19050}{}{[Exit]}
+{20000}{}{@lex skin@}
+{20010}{}{BUY}
+{20020}{}{[Back]}
+{20030}{}{[Exit]}
+{21000}{}{NODE_NOCAPS}
+{21010}{}{[Exit]}
+

@@ -1,0 +1,28 @@
+//
+// FOnline: 2238
+// Rotators
+//
+// billboards.fos
+//
+
+#include "_macros.fos"
+#include "_maps.fos"
+#include "mapdata_h.fos"
+
+#define BILLBOARD_DIALOG_HUB       (10900)
+#define BILLBOARD_DIALOG_ADYTUM    (10901)
+#define BILLBOARD_DIALOG_NCR       (10902)
+#define SAN_FOREST                 (23130)
+#define QE_ADVENTURE2              (23187)
+#define QE_ADVENTURE3              (23188)
+#define QE_ADVENTURE4              (23189)
+#define QE_ADVENTURE9              (23194)
+#define QE_ADVENTURE11             (23196)
+
+bool s_Billboard(Critter& player, Scenery& terminal, int skill, Item@ item)
+{
+    if(!player.IsPlayer() || skill != -1 || valid(item))
+        return false;
+
+    return true;
+}

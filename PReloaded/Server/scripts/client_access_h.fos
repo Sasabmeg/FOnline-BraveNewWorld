@@ -1,0 +1,16 @@
+// Author: JohnPL
+// Client access control header
+
+#ifndef __CLIENT_ACCESS__
+#define __CLIENT_ACCESS__
+
+
+shared interface IClientAccessLevelOpt
+{
+	void setAccessLevel(int level);
+	void setPlayerGender(int g);
+	int getAccessLevel();
+	int getPlayerGender();
+}
+
+#endif //__CLIENT_ACCESS__

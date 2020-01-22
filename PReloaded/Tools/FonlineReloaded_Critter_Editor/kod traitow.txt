@@ -1,0 +1,146 @@
+TRAIT_FAST_METABOLISM:String;
+TRAIT_BRUISER:String;
+TRAIT_SMALL_FRAME:String;
+TRAIT_ONE_HANDER:String;
+TRAIT_FINESSE:String;
+TRAIT_KAMIKAZE:String;
+TRAIT_HEAVY_HANDED:String;
+TRAIT_FAST_SHOT:String;
+TRAIT_BLOODY_MESS:String;
+TRAIT_JINXED:String;
+TRAIT_GOOD_NATURED:String;
+TRAIT_CHEM_RELIANT:String;
+TRAIT_CHEM_RESISTANT:String;
+TRAIT_BONEHEAD:String;
+TRAIT_SKILLED:String;
+TRAIT_LONER:String;
+
+TRAIT_FAST_METABOLISM:=Selected_Item.SubItems.Strings[160];
+TRAIT_BRUISER:=Selected_Item.SubItems.Strings[161];
+TRAIT_SMALL_FRAME:=Selected_Item.SubItems.Strings[162];
+TRAIT_ONE_HANDER:=Selected_Item.SubItems.Strings[163];
+TRAIT_FINESSE:=Selected_Item.SubItems.Strings[164];
+TRAIT_KAMIKAZE:=Selected_Item.SubItems.Strings[165];
+TRAIT_HEAVY_HANDED:=Selected_Item.SubItems.Strings[166];
+TRAIT_FAST_SHOT:=Selected_Item.SubItems.Strings[167];
+TRAIT_BLOODY_MESS:=Selected_Item.SubItems.Strings[168];
+TRAIT_JINXED:=Selected_Item.SubItems.Strings[169];
+TRAIT_GOOD_NATURED:=Selected_Item.SubItems.Strings[170];
+TRAIT_CHEM_RELIANT:=Selected_Item.SubItems.Strings[171];
+TRAIT_CHEM_RESISTANT:=Selected_Item.SubItems.Strings[172];
+TRAIT_BONEHEAD:=Selected_Item.SubItems.Strings[173];
+TRAIT_SKILLED:=Selected_Item.SubItems.Strings[174];
+TRAIT_LONER:=Selected_Item.SubItems.Strings[175];
+
+
+
+TRAIT_FAST_METABOLISM:='0';
+TRAIT_BRUISER:='0';
+TRAIT_SMALL_FRAME:='0';
+TRAIT_ONE_HANDER:='0';
+TRAIT_FINESSE:='0';
+TRAIT_KAMIKAZE:='0';
+TRAIT_HEAVY_HANDED:='0';
+TRAIT_FAST_SHOT:='0';
+TRAIT_BLOODY_MESS:='0';
+TRAIT_JINXED:='0';
+TRAIT_GOOD_NATURED:='0';
+TRAIT_CHEM_RELIANT:='0';
+TRAIT_CHEM_RESISTANT:='0';
+TRAIT_BONEHEAD:='0';
+TRAIT_SKILLED:='0';
+TRAIT_LONER:='0';
+
+
+
+160:begin if (sText<>'') and (sText<>'0') then Writeln(plik,'TRAIT_FAST_METABOLISM='+sText); end;
+161:begin if (sText<>'') and (sText<>'0') then Writeln(plik,'TRAIT_BRUISER='+sText); end;
+162:begin if (sText<>'') and (sText<>'0') then Writeln(plik,'TRAIT_SMALL_FRAME='+sText); end;
+163:begin if (sText<>'') and (sText<>'0') then Writeln(plik,'TRAIT_ONE_HANDER='+sText); end;
+164:begin if (sText<>'') and (sText<>'0') then Writeln(plik,'TRAIT_FINESSE='+sText); end;
+165:begin if (sText<>'') and (sText<>'0') then Writeln(plik,'TRAIT_KAMIKAZE='+sText); end;
+166:begin if (sText<>'') and (sText<>'0') then Writeln(plik,'TRAIT_HEAVY_HANDED='+sText); end;
+167:begin if (sText<>'') and (sText<>'0') then Writeln(plik,'TRAIT_FAST_SHOT='+sText); end;
+168:begin if (sText<>'') and (sText<>'0') then Writeln(plik,'TRAIT_BLOODY_MESS='+sText); end;
+169:begin if (sText<>'') and (sText<>'0') then Writeln(plik,'TRAIT_JINXED='+sText); end;
+170:begin if (sText<>'') and (sText<>'0') then Writeln(plik,'TRAIT_GOOD_NATURED='+sText); end;
+171:begin if (sText<>'') and (sText<>'0') then Writeln(plik,'TRAIT_CHEM_RELIANT='+sText); end;
+172:begin if (sText<>'') and (sText<>'0') then Writeln(plik,'TRAIT_CHEM_RESISTANT='+sText); end;
+173:begin if (sText<>'') and (sText<>'0') then Writeln(plik,'TRAIT_BONEHEAD='+sText); end;
+174:begin if (sText<>'') and (sText<>'0') then Writeln(plik,'TRAIT_SKILLED='+sText); end;
+175:begin if (sText<>'') and (sText<>'0') then Writeln(plik,'TRAIT_LONER='+sText); end;
+
+
+
+ListItem.SubItems.Add(TRAIT_FAST_METABOLISM);
+ListItem.SubItems.Add(TRAIT_BRUISER);
+ListItem.SubItems.Add(TRAIT_SMALL_FRAME);
+ListItem.SubItems.Add(TRAIT_ONE_HANDER);
+ListItem.SubItems.Add(TRAIT_FINESSE);
+ListItem.SubItems.Add(TRAIT_KAMIKAZE);
+ListItem.SubItems.Add(TRAIT_HEAVY_HANDED);
+ListItem.SubItems.Add(TRAIT_FAST_SHOT);
+ListItem.SubItems.Add(TRAIT_BLOODY_MESS);
+ListItem.SubItems.Add(TRAIT_JINXED);
+ListItem.SubItems.Add(TRAIT_GOOD_NATURED);
+ListItem.SubItems.Add(TRAIT_CHEM_RELIANT);
+ListItem.SubItems.Add(TRAIT_CHEM_RESISTANT);
+ListItem.SubItems.Add(TRAIT_BONEHEAD);
+ListItem.SubItems.Add(TRAIT_SKILLED);
+ListItem.SubItems.Add(TRAIT_LONER);
+
+Selected_Item.SubItems.Strings[160]:=ValueListEditor2.Values['TRAIT_FAST_METABOLISM'];
+Selected_Item.SubItems.Strings[161]:=ValueListEditor2.Values['TRAIT_BRUISER'];
+Selected_Item.SubItems.Strings[162]:=ValueListEditor2.Values['TRAIT_SMALL_FRAME'];
+Selected_Item.SubItems.Strings[163]:=ValueListEditor2.Values['TRAIT_ONE_HANDER'];
+Selected_Item.SubItems.Strings[164]:=ValueListEditor2.Values['TRAIT_FINESSE'];
+Selected_Item.SubItems.Strings[165]:=ValueListEditor2.Values['TRAIT_KAMIKAZE'];
+Selected_Item.SubItems.Strings[166]:=ValueListEditor2.Values['TRAIT_HEAVY_HANDED'];
+Selected_Item.SubItems.Strings[167]:=ValueListEditor2.Values['TRAIT_FAST_SHOT'];
+Selected_Item.SubItems.Strings[168]:=ValueListEditor2.Values['TRAIT_BLOODY_MESS'];
+Selected_Item.SubItems.Strings[169]:=ValueListEditor2.Values['TRAIT_JINXED'];
+Selected_Item.SubItems.Strings[170]:=ValueListEditor2.Values['TRAIT_GOOD_NATURED'];
+Selected_Item.SubItems.Strings[171]:=ValueListEditor2.Values['TRAIT_CHEM_RELIANT'];
+Selected_Item.SubItems.Strings[172]:=ValueListEditor2.Values['TRAIT_CHEM_RESISTANT'];
+Selected_Item.SubItems.Strings[173]:=ValueListEditor2.Values['TRAIT_BONEHEAD'];
+Selected_Item.SubItems.Strings[174]:=ValueListEditor2.Values['TRAIT_SKILLED'];
+Selected_Item.SubItems.Strings[175]:=ValueListEditor2.Values['TRAIT_LONER'];
+
+ValueListEditor2.Values['TRAIT_FAST_METABOLISM']:=Trim(Item.SubItems.Strings[160]);
+ValueListEditor2.Values['TRAIT_BRUISER']:=Trim(Item.SubItems.Strings[161]);
+ValueListEditor2.Values['TRAIT_SMALL_FRAME']:=Trim(Item.SubItems.Strings[162]);
+ValueListEditor2.Values['TRAIT_ONE_HANDER']:=Trim(Item.SubItems.Strings[163]);
+ValueListEditor2.Values['TRAIT_FINESSE']:=Trim(Item.SubItems.Strings[164]);
+ValueListEditor2.Values['TRAIT_KAMIKAZE']:=Trim(Item.SubItems.Strings[165]);
+ValueListEditor2.Values['TRAIT_HEAVY_HANDED']:=Trim(Item.SubItems.Strings[166]);
+ValueListEditor2.Values['TRAIT_FAST_SHOT']:=Trim(Item.SubItems.Strings[167]);
+ValueListEditor2.Values['TRAIT_BLOODY_MESS']:=Trim(Item.SubItems.Strings[168]);
+ValueListEditor2.Values['TRAIT_JINXED']:=Trim(Item.SubItems.Strings[169]);
+ValueListEditor2.Values['TRAIT_GOOD_NATURED']:=Trim(Item.SubItems.Strings[170]);
+ValueListEditor2.Values['TRAIT_CHEM_RELIANT']:=Trim(Item.SubItems.Strings[171]);
+ValueListEditor2.Values['TRAIT_CHEM_RESISTANT']:=Trim(Item.SubItems.Strings[172]);
+ValueListEditor2.Values['TRAIT_BONEHEAD']:=Trim(Item.SubItems.Strings[173]);
+ValueListEditor2.Values['TRAIT_SKILLED']:=Trim(Item.SubItems.Strings[174]);
+ValueListEditor2.Values['TRAIT_LONER']:=Trim(Item.SubItems.Strings[175]);
+
+
+
+
+
+#define TRAIT_FAST_METABOLISM                    (550)
+#define TRAIT_BRUISER                            (551)
+#define TRAIT_SMALL_FRAME                        (552) // Used in engine
+#define TRAIT_ONE_HANDER                         (553)
+#define TRAIT_FINESSE                            (554)
+#define TRAIT_KAMIKAZE                           (555)
+
+#define TRAIT_HEAVY_HANDED                       (556)
+#define TRAIT_FAST_SHOT                          (557) // Used in engine
+#define TRAIT_BLOODY_MESS                        (558)
+#define TRAIT_JINXED                             (559)
+#define TRAIT_GOOD_NATURED                       (560)
+#define TRAIT_CHEM_RELIANT                       (561)
+#define TRAIT_CHEM_RESISTANT                     (562)
+#define TRAIT_BONEHEAD                           (563)
+#define TRAIT_SKILLED                            (564)
+#define TRAIT_LONER                              (565) // Used in engine

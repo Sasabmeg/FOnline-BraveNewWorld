@@ -1,0 +1,510 @@
+//
+// FOnline: 2238
+// Rotators
+//
+// npc_barber.fos
+//
+
+#include "_defines.fos"
+#include "_macros.fos"
+#include "_colors.fos"
+#include "_basetypes.fos"
+#include "_dialogs.fos"
+#include "ITEMPID.H"
+#include "critter_skin_h.fos"
+
+import void ChangeCrTypeSafe(Critter& cr, uint16 crType) from "utils";
+import void FlushScreen(Critter& cr, bool fadeOut, uint timeMs) from "effects";
+
+// dialog nodes redirections
+#define NODE_SKINSELECT	(10)
+#define NODE_NOCAPS		(1000)
+
+#define SKIN_CRTYPE	(0)
+#define SKIN_PRICE	(1)
+#define SKIN_END	(2)
+
+#define PRICE_DEFAULT	(50)	// skins which have [almost] full player set (includes twisted armor redirects)
+#define PRICE_HUMANOID	(1000)
+#define PRICE_ANIMAL	(500)
+#define PRICE_ROBOT		(5000)
+#define PRICE_VIP		(2500)
+// feel free to add different categories or change price inside a table
+
+const uint[][] SkinBarber =
+{
+	// ST_BASE_CRTYPE				PRICE
+
+	// defaults
+	{ CRTYPE_MALE_DEFAULT,			PRICE_DEFAULT },
+	{ CRTYPE_FEMALE_DEFAULT,		PRICE_DEFAULT },
+	// 1..9
+	{ CRTYPE_BLACKMALE_VAULT13SUIT,	PRICE_HUMANOID },
+	// 10..19
+	{ CRTYPE_BRAHMIN,				PRICE_ANIMAL },
+	{ CRTYPE_DOG,					PRICE_ANIMAL },
+	{ CRTYPE_MRHANDY,				PRICE_ROBOT },
+	{ CRTYPE_MOLERAT,				PRICE_ANIMAL },
+	// 20..29
+	{ CRTYPE_MUTANT,				PRICE_HUMANOID },
+	{ CRTYPE_SCORPION,				PRICE_ANIMAL },
+	{ CRTYPE_FLOATER,				PRICE_ANIMAL },
+	{ CRTYPE_RAT,					PRICE_ANIMAL },
+	{ CRTYPE_ROBE_BLUE,				PRICE_HUMANOID },
+	{ CRTYPE_MALE_KID,				PRICE_HUMANOID },
+	{ CRTYPE_GHOUL,					PRICE_HUMANOID },
+	{ CRTYPE_GLOWING_ONE,			PRICE_HUMANOID },
+	// 30..39
+	{ CRTYPE_MONK,					PRICE_HUMANOID },
+	{ CRTYPE_WOMAN_1,				PRICE_HUMANOID },
+//	{ CRTYPE_METALARMOR_FEMALE_YP,	PRICE_HUMANOID }, // should be part of multiskin?
+	{ CRTYPE_WOMAN_2,				PRICE_HUMANOID },
+	{ CRTYPE_KURWA,					PRICE_HUMANOID },
+	{ CRTYPE_REDHAIR_FEMALE,		PRICE_HUMANOID },
+	{ CRTYPE_POOR_BLACKMALE,		PRICE_HUMANOID },
+	// 40..49
+	{ CRTYPE_POOR_MAN,				PRICE_HUMANOID },
+	{ CRTYPE_PROPER_MAN,			PRICE_HUMANOID },
+	{ CRTYPE_DWARF,					PRICE_HUMANOID },
+	{ CRTYPE_BEGGAR,				PRICE_HUMANOID },
+	{ CRTYPE_RAIDER,				PRICE_HUMANOID },
+	{ CRTYPE_CLERK,					PRICE_HUMANOID },
+	// 50..59
+	{ CRTYPE_DEATHCLAW,				PRICE_ANIMAL },
+	{ CRTYPE_MANTIS,				PRICE_ANIMAL },
+	{ CRTYPE_ROBOT,					PRICE_ROBOT },
+	{ CRTYPE_ROBOT_2,				PRICE_ROBOT },
+	{ CRTYPE_PIGRAT,				PRICE_ANIMAL },
+	{ CRTYPE_ROBE_BROWN,			PRICE_HUMANOID },
+	{ CRTYPE_BUTCHER,				PRICE_HUMANOID },
+	{ CRTYPE_SCORPION_SMALL,		PRICE_ANIMAL },
+	// 60..69
+	{ CRTYPE_DEATHCLAW_SMALL,		PRICE_ANIMAL },
+	{ CRTYPE_FEMALE_TRIBAL,			PRICE_DEFAULT },
+	{ CRTYPE_MALE_TRIBAL,			PRICE_DEFAULT },
+	// TODO? 63
+	{ CRTYPE_MALE_SULIK,			PRICE_VIP },
+	{ CRTYPE_MECH,					PRICE_ROBOT },
+	{ CRTYPE_GECKO_SMALL,			PRICE_ROBOT },
+	{ CRTYPE_GECKO,					PRICE_ROBOT },
+	// 70..79
+	{ CRTYPE_AHS,					PRICE_HUMANOID },
+	{ CRTYPE_KITTY,					PRICE_HUMANOID },
+	{ CRTYPE_RAT_GOD,				PRICE_ANIMAL },
+	{ CRTYPE_MOBSTER_BLUE,			PRICE_HUMANOID },
+	{ CRTYPE_MOBSTER_GRAY,			PRICE_HUMANOID },
+	{ CRTYPE_GHOUL_GECKO,			PRICE_HUMANOID },
+	// 80..89
+	{ CRTYPE_ALIEN,					PRICE_ANIMAL },
+	{ CRTYPE_GECKO_FIRE,			PRICE_ANIMAL },
+	{ CRTYPE_MALE_CHINESE,			PRICE_HUMANOID },
+	{ CRTYPE_LYNETTE,				PRICE_HUMANOID },
+	{ CRTYPE_ROBE_GRAY,				PRICE_HUMANOID },
+	{ CRTYPE_NCR_POLICE,			PRICE_HUMANOID },
+	{ CRTYPE_MYRON,					PRICE_VIP },
+	{ CRTYPE_SCIENTIST,				PRICE_HUMANOID },
+	// 90..99
+	{ CRTYPE_VIC,					PRICE_HUMANOID },
+	{ CRTYPE_CHINESE_GUARD_RED,		PRICE_HUMANOID },
+	{ CRTYPE_CHINESE_GUARD_BLUE,	PRICE_HUMANOID },
+	{ CRTYPE_FEMALE_CHINESE,		PRICE_HUMANOID },
+	{ CRTYPE_CYBORG,				PRICE_HUMANOID },
+	{ CRTYPE_BOXER,					PRICE_HUMANOID },
+	{ CRTYPE_ANT,					PRICE_ANIMAL },
+	{ CRTYPE_SALVADORE,				PRICE_HUMANOID },
+	// 100..109
+	{ CRTYPE_DEATHCLAW_SPECIAL,		PRICE_ANIMAL },
+	{ CRTYPE_FEMALE_KID,			PRICE_HUMANOID },
+	{ CRTYPE_METZGER,				PRICE_DEFAULT },
+	{ CRTYPE_LHD_JUMPSUIT,			PRICE_DEFAULT },
+	// 110..119
+	{ CRTYPE_LHD_TRIBAL,			PRICE_DEFAULT },
+	{ CRTYPE_KHAN_LONGHAIR,			PRICE_DEFAULT },
+	// 120..129
+	{ CRTYPE_BHD_JUMPSUIT,			PRICE_DEFAULT },
+	{ CRTYPE_BHD_TRIBAL,			PRICE_DEFAULT },
+	{ CRTYPE_OLD_IAN,				PRICE_DEFAULT },
+	// 130..139
+	{ CRTYPE_PUNK_JUMPSUIT,			PRICE_DEFAULT },
+	// 140..163
+	{ CRTYPE_CASSIDY,               PRICE_VIP }
+};
+
+string[] SkinText;
+
+bool SkinDemand( Critter& cr, uint crType, bool dBase, bool dPrice )
+{
+	for( uint s=0, sLen=SkinBarber.length(); s<sLen; s++ )
+	{
+		if( SkinBarber[s][SKIN_CRTYPE] == crType && SkinBarber[s].length() == SKIN_END )
+		{
+			array<uint> barber = SkinBarber[s];
+			Skin@ skin = GetSkin( barber[SKIN_CRTYPE] );
+			if( !valid(skin) )
+				return( false );
+
+			if( dBase && cr.Stat[ST_BASE_CRTYPE] == int(barber[SKIN_CRTYPE]) )
+				return( false );
+
+			if( dPrice && cr.CountItem( PID_BOTTLE_CAPS ) < barber[SKIN_PRICE] )
+				return( false );
+
+			if( int(skin.Gender) < GENDER_IT && cr.Stat[ST_GENDER] != int(skin.Gender) )
+				return( false );
+
+			return( true );
+		}
+	}
+
+	return( false );
+}
+
+bool d_SkinDemand( Critter& player, Critter@ npc )
+{
+	array<uint> barber = SkinBarber[player.StatBase[ST_VAR9]];
+	uint crType = barber[SKIN_CRTYPE];
+
+	return( d_SkinDemand( player, npc, crType ));
+}
+
+bool d_SkinDemand( Critter& player, Critter@ npc, int crType )
+{
+	FixDefaultCrType( player, crType );
+
+	return( SkinDemand( player, crType, true, true ));
+}
+
+bool d_SkinDemandNoCaps( Critter& player, Critter@ kitty, int crType )
+{
+    FixDefaultCrType( player, crType );
+
+	return( SkinDemand( player, crType, true, false ));
+}
+
+bool d_SkinDemandEx( Critter& player, Critter@ kitty, int crType, int base, int price )
+{
+    FixDefaultCrType( player, crType );
+
+	return( SkinDemand( player, crType, base > 0, price > 0 ));
+}
+
+void FixDefaultCrType( Critter& cr, int& crType )   // for data/DefineNames.lst
+{
+	if( crType > 0 )
+		return;
+
+	if( cr.Stat[ST_GENDER] == GENDER_FEMALE )
+		crType = CRTYPE_FEMALE_DEFAULT;
+	else
+		crType = CRTYPE_MALE_DEFAULT;
+}
+
+void r_SkinShowPrepare(Critter& player, Critter@ npc, int crType)
+{
+	player.StatBase[ST_VAR9] = -1;
+
+	if( crType < 0 )
+	{
+		player.RunClientScript( "client_interface@_DialogImageUnset", 0, 0, 0, " ", null );
+	}
+
+	FixDefaultCrType( player, crType );
+
+	for( uint s=0, sLen=SkinBarber.length(); s<sLen; s++ )
+	{
+		if( SkinBarber[s].first() == uint(crType) && SkinBarber[s].length() == SKIN_END )
+		{
+			player.StatBase[ST_VAR9] = s;
+			break;
+		}
+	}
+}
+
+bool CanUseWeapon(uint crType, uint weaponPid )
+{
+    ProtoItem@ proto = GetProtoItem( weaponPid );
+    if( !valid(proto) || proto.Type != ITEM_TYPE_WEAPON )
+        return( false );
+
+    return( IsCritterAnim1( crType, proto.Weapon_Anim1 ));
+}
+
+#define FASTCOLOR#(color,text)	("|"+color+" "+text+"|"+COLOR_LGREEN+" ")
+#define SAND_TEXT#(text)		FASTCOLOR(COLOR_SAND,text)
+#define RED_TEXT#(text)			FASTCOLOR(COLOR_DRED,text)
+
+void SkinInfoText( array<string@>& list, SkinInfo info, string& text )
+{
+	if( info == SKIN_INFO_YES )
+		list.insertLast( text );
+	else if( info == SKIN_INFO_LIMITED )
+		list.insertLast( SAND_TEXT(text) );
+	else if( info == SKIN_INFO_UNKNOWN ) // let the bug reports hit the forums
+		list.insertLast( RED_TEXT( "UNKNOWN" ));
+}
+
+void dlg_SkinShow(Critter& player,Critter@ npc,string@ lexems)
+{
+    if(!IS_DIALOG_GENERATED(lexems))
+        return;
+
+	uint skinId = player.StatBase[ST_VAR9];
+	array<uint> barber = SkinBarber[skinId];
+	uint crType = barber[SKIN_CRTYPE];
+
+	// set DialogImage
+	string@ name = GetCritterTypeName(crType);
+	if( valid(name) )
+	{
+		uint hash = GetStrHash( "art/critters/"+strlwr(name)+"aa.frm" );
+		player.RunClientScript( "client_interface@_DialogImageSkin", hash, 3, 0, " ", null );
+	}
+
+	// cache skin info during first display
+	if( SkinText.length() != SkinBarber.length() )
+	{
+		SkinText.resize( 0 );
+		SkinText.resize( SkinBarber.length() );
+	}
+
+	Skin@ skin = GetSkin( crType );
+
+	// ...unless skin cannot be found, then panick
+	if( !valid(skin) )
+	{
+		SkinText[skinId]  = RED_TEXT( "Skin information not available, please report (include data below).\n" );
+		SkinText[skinId] += "skinId<"+skinId+"> crType<"+crType+"> name<"+name+">";
+	}
+	else if( valid(skin) && SkinText[skinId].length() == 0 )
+	{
+		string text;
+		array<string@> list;
+
+		// sg (dynamic)
+		SkinInfoText( list, skin.Pistol, "pistol" );
+		SkinInfoText( list, skin.SMG, "smg" );
+		SkinInfoText( list, skin.Shotgun, "shotgun" );
+		SkinInfoText( list, skin.Rifle, "rifle" );
+		if( list.length() > 0 )
+		{
+			text += "Small Guns: "+join( list, ", " )+"\n";
+			list.resize(0);
+		}
+
+		// bg (dynamic)
+		SkinInfoText( list, skin.Flamer, "flamer" );
+		SkinInfoText( list, skin.Minigun, "minigun" );
+		SkinInfoText( list, skin.RocketLauncher, "rocket launcher" );
+		SkinInfoText( list, skin.HeavyBG, "misc" );
+		if( list.length() > 0 )
+		{
+			text += "Big Guns: "+join( list, ", " )+"\n";
+			list.resize(0);
+		}
+
+		// ew (dynamic)
+		SkinInfoText( list, skin.Pistol, "pistol" ); // yeah
+		SkinInfoText( list, skin.HeavyEW, "heavy rifle" );
+		if( list.length() > 0 )
+		{
+			text += "Energy Weapons: "+join( list, ", " )+"\n";
+			list.resize(0);
+		}
+
+		// cc (dynamic)
+		SkinInfoText( list, skin.Unarmed, "unarmed" );
+		SkinInfoText( list, skin.Knife, "knife" );
+		SkinInfoText( list, skin.Club, "club" );
+		SkinInfoText( list, skin.Spear, "spear" );
+		SkinInfoText( list, skin.Hammer, "hammer" );
+		if( list.length() > 0 )
+		{
+			text += "Close Combat: "+join( list, ", " )+"\n";
+			list.resize(0);
+		}
+
+		// throwing (dynamic)
+		text += "Throwing: ";
+		switch( skin.Throwing )
+		{
+			case SKIN_INFO_YES:
+				text += "yes";
+				break;
+			case SKIN_INFO_LIMITED:
+				text += SAND_TEXT( "limited" );
+				break;
+			case SKIN_INFO_UNKNOWN:
+				text += RED_TEXT( "UNKNOWN" ); // let the bug reports hit the forums
+				break;
+		}
+		text += "\n";
+
+		// running (constant)
+		text += "Running: ";
+		switch( skin.Running )
+		{
+			case SKIN_INFO_YES:
+				text += "yes";
+				break;
+			case SKIN_INFO_NO:
+				if( FLAG( skin.Effects, SKIN_EFFECT_NORUN ))
+					text += RED_TEXT( "always disabled" );
+				else
+					text += RED_TEXT( "disabled" );
+				break;
+			case SKIN_INFO_LIMITED:
+				text += SAND_TEXT( "limited" );
+				break;
+			case SKIN_INFO_UNKNOWN:
+				text += RED_TEXT( "UNKNOWN" ); // let the bug reports hit the forums
+				break;
+		}
+		text += "\n";
+
+		// empty line
+		text += "\n";
+
+		// extras
+		//	gender (dynamic)
+		//	price (constant)
+		if( skin.Gender < GENDER_IT )
+			text += "Available for "+(skin.Gender == GENDER_FEMALE ? "female" : "male")+" characters only\n";
+
+		text += "Price: "+(barber[SKIN_PRICE]==0?"free":(barber[SKIN_PRICE]+" cap"+(barber[SKIN_PRICE]>1?"s":"")));
+
+		SkinText[skinId] = text;
+	}
+	
+	lexems += "$skin" + SkinText[skinId];
+}
+
+uint r_SkinChange( Critter& player, Critter@ npc )
+{
+	array<uint> barber = SkinBarber[player.StatBase[ST_VAR9]];
+	uint crType = barber[SKIN_CRTYPE];
+
+	return( r_SkinChange( player, npc, crType ));
+}
+
+uint r_SkinChange( Critter& player, Critter@ npc, int crType )
+{
+	FixDefaultCrType( player, crType );
+
+	if( !d_SkinDemand( player, npc, crType ))
+		return( NODE_NOCAPS );
+
+	for( uint s=0, sLen=SkinBarber.length(); s<sLen; s++ )
+	{
+		if( SkinBarber[s].first() == uint(crType) && SkinBarber[s].length() == SKIN_END )
+		{
+			uint caps = SkinBarber[s][SKIN_PRICE];
+			if( caps > 0 )
+				_CritDeleteItem( player, PID_BOTTLE_CAPS, caps );
+			break;
+		}
+	}
+
+	FlushScreen(player, false, 500);
+    FlushScreen(player, true, 2500);
+
+	ChangeCrTypeSafe(player, crType);
+
+	r_SkinShowPrepare( player, npc, -1 );
+
+	return( 0 );
+}
+
+// ingame testing, requires ACCESS_TESTER or higher
+
+const uint16[][] TestSet =
+{
+	{
+		PID_LEATHER_JACKET,
+		PID_CURED_LEATHER_ARMOR,
+		PID_LEATHER_ARMOR,
+		PID_LEATHER_ARMOR_MK_II,
+		PID_PURPLE_ROBE,
+		PID_SAND_ROBE,
+		PID_BRIDGEKEEPER_ROBE,
+		PID_METAL_ARMOR,
+		PID_COMBAT_ARMOR,
+		PID_COMBAT_ARMOR_MK_II,
+		PID_BROTHERHOOD_COMBAT_ARMOR,
+		PID_DESERT_COMBAT_ARMOR,
+		PID_ENCLAVE_COMBAT_ARMOR,
+		PID_NCR_ARMOR,
+		PID_POWERED_ARMOR,
+		PID_ADVANCED_POWER_ARMOR
+	},
+	{
+		PID_KNIFE,
+		PID_CLUB,
+		PID_SPEAR,
+		PID_SLEDGEHAMMER,
+		PID_10MM_PISTOL,
+		PID_10MM_SMG,
+		PID_SHOTGUN,
+		PID_HUNTING_RIFLE,
+		PID_FLAMER,
+		PID_MINIGUN,
+		PID_ROCKET_LAUNCHER,
+		PID_PLASMA_RIFLE
+	}
+};
+
+bool d_NeedTestSet( Critter& player, Critter@, int idx )
+{
+	if( idx < 0 || uint(idx) >= TestSet.length() )
+	{
+		player.Say( SAY_NETMSG, "Invalid argument" );
+		return( false );
+	}
+
+	for( uint a=0, aLen=TestSet[idx].length(); a<aLen; a++ )
+	{
+		if(	player.CountItem( TestSet[idx][a] ) == 0 )
+			return( true );
+	}
+
+	return( false );
+}
+
+void r_GiveTestSet( Critter& player, Critter@, int idx )
+{
+	if( idx < 0 || uint(idx) >= TestSet.length() )
+	{
+		player.Say( SAY_NETMSG, "Invalid argument" );
+		return;
+	}
+
+	for( uint a=0, aLen=TestSet[idx].length(); a<aLen; a++ )
+	{
+		if(	player.CountItem( TestSet[idx][a] ) == 0 )
+			player.AddItem( TestSet[idx][a], 1 );
+	}
+}
+
+void r_ChangeGender( Critter& player, Critter@ )
+{
+	if( player.Stat[ST_GENDER] == GENDER_FEMALE )
+		player.StatBase[ST_GENDER] = GENDER_MALE;
+	else
+		player.StatBase[ST_GENDER] = GENDER_FEMALE;
+}
+
+// TODO: DEPRECATE THIS SHIT (cath_barber.fodlg)
+void r_Haircut( Critter& player, Critter@ npc, int crType)
+{
+	r_SkinChange( player, npc, crType );
+}
+
+bool d_IsCrType(Critter& player, Critter@ kitty, int crType)
+{
+	FixDefaultCrType(player,crType);
+    return(player.Stat[ST_BASE_CRTYPE] == crType);
+}
+
+bool d_IsNotCrType(Critter& player, Critter@ kitty, int crType)
+{
+    return(!d_IsCrType(player, kitty, crType));
+}

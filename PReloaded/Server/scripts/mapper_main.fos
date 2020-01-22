@@ -1,0 +1,1489 @@
+//
+// FOnline: 2238
+// Rotators
+//
+// mapper_main.fos
+//
+
+// Mapper main script
+// Compile with -mapper switch
+
+//
+// API specification
+//
+// see solution/intellisense_mapper.h
+//
+/// Reserved functions
+// void start()
+// uint loop()
+// bool console_message(string& message)
+// void render_iface(uint layer)
+// void render_map()
+// bool mouse_down(int click)
+// bool mouse_up(int click)
+// void mouse_move(int x, int y)
+// bool key_down(uint8 key, string& keyText)
+// bool key_up(uint8 key, string& keyText)
+// void input_lost()
+
+/// User functions
+// string FuncName(string str)
+// Call in console using '#'
+
+//
+// Anything else - see intellisense_mapper.h
+//
+
+#include "_mapper_defines.fos"
+#include "config_h.fos"
+#include "_macros.fos"
+#include "ITEMPID.H"
+#include "strtoint_h.fos"
+#include "mapper_plugin_h.fos"
+#include "mapper_utils_h.fos"
+#include "_colors.fos"
+
+// plugins
+import void RegisterCrtypes() from "mapper_crtypes";
+import void RegisterAutowall() from "mapper_autowall";
+import void RegisterTilemap() from "mapper_tilemap";
+import void RegisterGrid() from "mapper_grid";
+
+bool ShowDoorScript = false, ShowContainerScript = false;
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// Call on new mapper instance creating.
+// Return true to handle event and close new instance or
+// return false to allow creating of new mapper instance.
+bool new_instance(string commandLine)
+{
+    return false;
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// Call on mapper loaded.
+void start()
+{
+    InitializeGame();
+
+    SetDefaultCritterParam(6, ST_FACTION_RANK);
+    SetDefaultCritterParam(7, ST_FACTION_MODE);
+    SetDefaultCritterParam(8, ST_OVERRIDE_CRTYPE);
+    SetDefaultCritterParam(9, ST_LEVEL);
+
+    AllowSlot(4, "Helmet");
+
+    Message("Welcome to FOClassic Mapper. Run #RLD command to get the newest commands!");
+    Message("Maps not created in this mapper must be converted with the #PortMap command.");
+    InitializeTabs();
+    InitializePlugins();
+}
+
+void finish()
+{
+}
+
+void InitializePlugins()
+{
+    RegisterAutowall();
+    RegisterCrtypes();
+    RegisterTilemap();
+    RegisterGrid();
+}
+
+// helper
+void _SetTab(int tab, string& name, array<uint16>@ pids)
+{
+    TabDelete(tab);
+    TabSetName(tab, name);
+    // if(valid(pids) && pids.length()>0) TabSetItemPids(tab,"(all)",pids);
+}
+
+void InitializeTabs()
+{
+    TabDelete(TAB_ITEMS);
+    TabDelete(TAB_CRITTERS);
+    TabDelete(TAB_TILES);
+
+    TabSetName(TAB_MESAGE_BOX,      "Info");
+    TabSetName(TAB_MAPS,            "Maps");
+    TabSetName(TAB_INVENTORY,       "Inve");
+    TabSetName(TAB_IGNORE_ITEMS,    "Ignr");
+    TabSetName(TAB_CUSTOM0,         "");
+
+    TabSetName(TAB_CUSTOM1,         "Norm");
+    TabSetName(TAB_CUSTOM2,         "Vehi");
+    TabSetName(TAB_CUSTOM3,         "Cont");
+    TabSetName(TAB_CUSTOM4,         "Door");
+    TabSetName(TAB_CUSTOM5,         "Spec");
+
+    TabSetName(TAB_CUSTOM6,         "Grid");
+    TabSetName(TAB_CUSTOM7,         "Scen");
+    TabSetName(TAB_ITEMS,           "Wall");
+    TabSetName(TAB_TILES,           "Flor");
+    TabSetName(TAB_CUSTOM8,         "Roof");
+    TabSetName(TAB_FAST_ITEMS,      "Tech");
+
+    TabSetName(TAB_CUSTOM9,         "Humn");
+    TabSetName(TAB_CRITTERS,        "Othr");
+
+    LoadTabsConfig();
+}
+
+
+
+void LoadTabsConfig()
+{
+    file f;
+    if(f.open("tabs.cfg", "r") < 0)
+    {
+        Message("Couldn't find tabs.cfg, ignored.");
+        return;
+    }
+    string        line;
+    int           tab = -1;
+    string        name = "";
+    array<uint16> pids;
+    while(!f.isEndOfFile())
+    {
+        f.readLine(line);
+        int len = line.rawLength();
+        while(len > 0 && (line.rawGet(len - 1) == 10 || line.rawGet(len - 1) == 13))
+            len--;
+        if(len == 0)
+            continue;
+        line.rawResize(len);
+        if(line == "[SubTab]")
+        {
+            // if(tab>=0) TabSetItemPids(tab,name,pids);
+            tab = -1;
+            name = "";
+            pids.resize(0);
+            continue;
+        }
+        array<string@>@ splitted = splitEx(line, "=");
+        if(splitted.length() < 2)
+            continue;
+        if(splitted[0] == "MainTab")
+        {
+            StrToInt(splitted[1], tab);
+            continue;
+        }
+        if(splitted[0] == "Name")
+        {
+            name = splitted[1];
+            continue;
+        }
+        if(splitted[0] == "Pids")
+        {
+            if(tab < 0)
+                continue;
+            array<string@>@ splitted2 = split(splitted[1], " ");
+            for(uint i = 0, j = splitted2.length(); i < j; i++)
+            {
+                uint16 pid = 0;
+                StrToInt(splitted2[i], pid);
+                if(pid != 0)
+                    pids.insertLast(pid);
+            }
+            TabSetItemPids(tab, name, pids);
+        }
+
+        if(splitted[0] == "Tiles")
+        {
+            string      tiles = splitted[1];
+            array<string@>@ dirNames = splitEx(tiles, " ");
+            array<bool> includeSubdirs;
+            for(uint i = 0, j = dirNames.length(); i < j; i++)
+            {
+                dirNames[i] = "art\\tiles\\" + dirNames[i];
+                includeSubdirs.insertLast(false);
+            }
+            TabSetTileDirs(tab, dirNames, includeSubdirs);
+            continue;
+        }
+
+        if(splitted[0] == "Crits")
+        {
+            array<string@> textPids = splitEx(splitted[1], " ");
+            array<uint16>  crPids;
+            for(uint i = 0, j = textPids.length(); i < j; i++)
+            {
+                uint16 crPid = 0;
+                StrToInt(textPids[i], crPid);
+                crPids.insertLast(crPid);
+            }
+            TabSetCritterPids(tab, name, crPids);
+        }
+
+    }
+    // if(tab>=0) TabSetItemPids(tab,name,pids);
+    f.close();
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// Main loop function. Returned time of next call in milliseconds.
+uint loop()
+{
+    Plugins_Loop();
+    return 250;
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// Call on console message. Return true to disable engine processing.
+bool console_message(string& message)
+{
+    // Plugins can't take over messages with following prefixes:
+    //
+    if(message[0] == "~" ||  // Load map
+       message[0] == "^" ||  // Save map
+       message[0] == "@" ||  // Critter animation
+       message[0] == "#" ||  // Run script
+       message[0] == "*")    // Other
+    {
+        return false;
+    }
+
+    if(Plugins_Message(message))
+    {
+        return true;
+    }
+
+    return false;
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// Render interface function. You can use Draw* functions only there.
+// Layer specification:
+//    0
+// Game map
+//    1
+// Mapper interface
+//    2
+// Console, Messbox
+//    3
+// Mapper object interface
+//    4
+// Cursor
+//    5
+void render_iface(uint layer)
+{
+    Plugins_Render(layer);
+	if(layer == 1)
+	{
+		// it doesn't work anyway
+		// DrawMenu();
+		DrawDescForItems();
+	}
+    if(layer == 5)
+    {
+        RenderTileName();
+        RenderZoom();
+    }
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// Render map function. You can use DrawMap* functions only there. This drawing before 1 iface layer.
+void render_map()
+{
+    Plugins_RenderMap();
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// Mouse behaviours. Click states look in _client_defines.fos, Mouse click states.
+// Return true to disable engine events.
+bool mouse_down(int click)
+{
+    if(Plugins_MouseDown(click))
+        return true;
+    return false;
+}
+
+bool mouse_up(int click)
+{
+    if(Plugins_MouseUp(click))
+        return true;
+    return false;
+}
+
+void mouse_move(int x, int y)
+{
+    Plugins_MouseMove(x, y);
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// Keyboard behaviours. Key codes look in _mapper_defines.fos DirectInput keyboard scan codes.
+// Return true to disable engine events.
+bool key_down(uint8 key,string& keyText)
+{
+    if(Plugins_KeyDown(key,keyText))
+        return true;
+	
+	if(key == DIK_D && ShowDoorScript) ShowDoorScript = false;
+	else if(key== DIK_D && !ShowDoorScript) ShowDoorScript = true;
+	
+	if(key == DIK_C && ShowContainerScript) ShowContainerScript = false;
+	else if(key == DIK_D && !ShowContainerScript) ShowContainerScript = true;
+	
+	return false;
+}
+
+bool key_up(uint8 key,string& keyText)
+{
+    if(Plugins_KeyUp(key,keyText))
+        return true;
+    return false;
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// Called on mouse/keyboard input lost (alt-tab, minimize, lost focus).
+void input_lost()
+{
+    Plugins_InputLost();
+}
+
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// Some useful functions.
+// #ConvertMaps
+// #ClearTiles
+// #MapTime         value
+// #MapNoLogOut     value
+// #MapScriptModule moduleName
+// #MapScriptFunc   funcName
+
+/*
+   // Maps convertation to text format
+   string ConvertMaps(string str)
+   {
+        array<string@> mapNames;
+        GetMapFileNames(null, mapNames);
+
+        uint success = 0;
+        uint fail = 0;
+        for(uint i = 0; i < mapNames.length(); i++)
+        {
+                MapperMap@ map = LoadMap(mapNames[i], PATH_SERVER_MAPS);
+                if(not (map is null))
+                {
+                        if(SaveMap(map, mapNames[i], PATH_SERVER_MAPS))
+                        {
+                                success++;
+                        }
+                        else
+                        {
+                                Message("Fail to save " + mapNames[i]);
+                                fail++;
+                        }
+
+                        UnloadMap(map);
+                }
+                else
+                {
+                        Message("Fail to load " + mapNames[i]);
+                        fail++;
+                }
+        }
+
+        return "Done, maps converted " + (success + fail) + ", success " + success + ", fail " + fail + ".";
+   }
+ */
+
+void DrawMenu()
+{
+	// contours for menu background
+	/* array<int> menubackground = {10, 10, int(COLOR_RED),
+								210, 10, int(COLOR_RED),
+								210, 50, int(COLOR_RED),
+								10, 50, int(COLOR_RED),
+								10, 10, int(COLOR_RED)};
+	DrawPrimitive(DRAW_PRIMITIVE_TRIANGLESTRIP, menubackground); */
+	DrawText("FOClassic Mapper", 15, 15, 195, 10, COLOR_LGREEN, FONT_TYPE_DEFAULT, 0);
+	MapperMap@ map = GetActiveMap();
+	
+	if(!valid(map))
+	{		
+		DrawSprite(LoadSprite("options_singleplayer.png", PATH_ART_INTRFACE),0,(__ScreenWidth / 2) - (164 / 2),100,0);
+		DrawText("NEW MAP", (__ScreenWidth / 2) - 164 / 2 + 18, 123, 130, 25, COLOR_LGREEN, FONT_TYPE_BIG, FONT_FLAG_CENTERX);
+		DrawText("LOAD MAP", (__ScreenWidth / 2) - 164 / 2 + 18, 159, 130, 25, COLOR_LGREEN, FONT_TYPE_BIG, FONT_FLAG_CENTERX);
+		DrawText("SETTINGS", (__ScreenWidth / 2) - 164 / 2 + 18, 195, 130, 25, COLOR_LGREEN, FONT_TYPE_BIG, FONT_FLAG_CENTERX);
+		DrawText("CONVERT", (__ScreenWidth / 2) - 164 / 2 + 18, 231, 130, 25, COLOR_LGREEN, FONT_TYPE_BIG, FONT_FLAG_CENTERX);
+		DrawText("EXIT", (__ScreenWidth / 2) - 164 / 2 + 18, 267, 130, 25, COLOR_LGREEN, FONT_TYPE_BIG, FONT_FLAG_CENTERX);
+		DrawText("This menu is not active yet.", (__ScreenWidth / 2) - 164 / 2 + 5 , 293, 160, 20, COLOR_LGREEN, FONT_TYPE_DEFAULT, FONT_FLAG_CENTERX);
+	}
+}
+
+void DrawDescForItems()
+{
+	MapperMap@ map = GetActiveMap();
+	if(!valid(map)) return;
+	
+	array<MapperObject@> items;
+	for(uint i = 0, n = map.GetObjects(1, 1, 10000, MAP_OBJECT_ITEM, 0, items); i < n; i++)
+	{
+		ProtoItem@ item = GetProtoItem(items[i].ProtoId);
+		int x = 0, y = 0;
+		int MoveX = 20, MoveY = 50;
+		uint16 WidthForFalloutFont = 300;
+		GetHexPos(items[i].MapX, items[i].MapY, x, y);
+		
+		if(item.Type == ITEM_TYPE_CONTAINER && ShowContainerScript)
+		{			
+			if(items[i].ScriptName == "item_spawner_container")
+			{
+				DrawText("Container script: " + items[i].ScriptName + "\nFunction: " + items[i].FuncName + "\nVal4: " + items[i].Item_Val4, x-MoveX, y-MoveY, WidthForFalloutFont, 30, COLOR_LGREEN, FONT_TYPE_DEFAULT, 0);
+			}
+			else if(items[i].ScriptName == "")
+			{
+				DrawText("Container script: NONE", x-MoveX, y-MoveY, WidthForFalloutFont, 10, COLOR_LGREEN, FONT_TYPE_DEFAULT, 0);
+				if(items[i].Item_LockerDoorId != 0 ||  items[i].Item_LockerComplexity != 0)
+				{
+					DrawText("Locker ID: " + items[i].Item_LockerDoorId + "\nComplexity: " + items[i].Item_LockerComplexity, x-MoveX, y-MoveY+10, WidthForFalloutFont, 20, COLOR_LGREEN, FONT_TYPE_DEFAULT, 0);
+				}
+			}
+			else
+			{
+				DrawText("Container script: " + items[i].ScriptName + "\nFunction: " + items[i].FuncName, x-MoveX, y-MoveY, WidthForFalloutFont, 20, COLOR_LGREEN, FONT_TYPE_DEFAULT, 0);
+			}
+		}
+		
+		if(item.Type == ITEM_TYPE_DOOR && ShowDoorScript)
+		{
+			
+			
+			if(items[i].ScriptName == "multihex")
+			{
+				DrawText("MULTIHEXED", x-MoveX, y-MoveY, WidthForFalloutFont, 30, COLOR_LGREEN, FONT_TYPE_DEFAULT, 0);
+			}
+			else if(items[i].ScriptName == "")
+			{
+				DrawText("Door script: NONE", x-MoveX, y-MoveY, WidthForFalloutFont, 10, COLOR_LGREEN, FONT_TYPE_DEFAULT, 0);
+				if(items[i].Item_LockerDoorId != 0 ||  items[i].Item_LockerComplexity != 0)
+				{
+					DrawText("Locker ID: " + items[i].Item_LockerDoorId + "\nComplexity: " + items[i].Item_LockerComplexity, x-MoveX, y-MoveY+10, WidthForFalloutFont, 20, COLOR_LGREEN, FONT_TYPE_DEFAULT, 0);
+				}
+			}
+			else
+			{
+				DrawText("Door script: " + items[i].ScriptName + "\nFunction: " + items[i].FuncName, x-MoveX, y-MoveY, WidthForFalloutFont, 20, COLOR_LGREEN, FONT_TYPE_DEFAULT, 0);
+			}
+		}
+		
+		if(item.ProtoId == 10004 || item.ProtoId == 10005 || item.ProtoId == 10006)
+		{
+			string state;
+			switch(items[i].Item_Val2 & 0x0000FFFF)
+			{
+				case 0x00 : state = "Full off"; break;
+				case 0x01 : state = "Full on"; break;
+				case 0x02 : state = "Half off"; break;
+				case 0x03 : state = "Half on"; break;
+				case 0x04 : state = "Destroyed"; break;
+				case 0x08 : state = "Disrupted"; break;
+				case 0x10 : state = "Flickered"; break;
+				case 0x20 : state = "Repairable when off"; break;
+				case 0x21 : state = "Repairable when on"; break;
+				default : state = "UNKNOWN"; break;
+			}
+			DrawText("Special object: Forcefield" + "\nComplexity: " + ((items[i].Item_Val1 > 0) ? items[i].Item_Val1 : 60) + "%\nState: " + state + "\nInterval: " + items[i].Item_Val3 + (items[i].Item_Val3 == 1 ? " second" : " seconds"), x-MoveX, y-MoveY, WidthForFalloutFont, 40, COLOR_LGREEN, FONT_TYPE_DEFAULT, 0);
+		}
+		if(item.ProtoId == 10007 || item.ProtoId == 10008 || item.ProtoId == 10009)
+		{
+			string state;
+			switch(items[i].Item_Val2 & 0x0000FFFF)
+			{
+				case 0x00 : state = "Full off"; break;
+				case 0x01 : state = "Full on"; break;
+				case 0x02 : state = "Half off"; break;
+				case 0x03 : state = "Half on"; break;
+				case 0x04 : state = "Destroyed"; break;
+				case 0x08 : state = "Disrupted"; break;
+				case 0x10 : state = "Flickered"; break;
+				case 0x20 : state = "Repairable when off"; break;
+				case 0x21 : state = "Repairable when on"; break;
+				default : state = "UNKNOWN"; break;
+			}
+			DrawText("Special object: Forcefield" + "\nComplexity: " + ((items[i].Item_Val1 > 0) ? items[i].Item_Val1 : 60) + "%\nState: " + state + "\nInterval: " + items[i].Item_Val3 + (items[i].Item_Val3 == 1 ? " second" : " seconds"), x-MoveX, y-MoveY, WidthForFalloutFont, 40, COLOR_LGREEN, FONT_TYPE_DEFAULT, 0);
+		}
+	}
+}
+
+string cmc(string str)
+{
+    array<string@> mapNames;
+    GetMapFileNames(null, mapNames);
+    for(uint i = 0; i < mapNames.length(); i++)
+        Message(mapNames[i]);
+    return "";
+}
+
+// Keep only one tile per hex
+string ClearTiles(string str)
+{
+    MapperMap@ map = GetActiveMap();
+    if(map is null)
+        return "Map not loaded.";
+
+    uint deleted = 0;
+    for(uint hx = 0; hx < map.Width; hx++)
+    {
+        for(uint hy = 0; hy < map.Height; hy++)
+        {
+            for( ; map.GetTilesCount(hx, hy, false) > 1; deleted++)
+                map.DeleteTile(hx, hy, false, 0);
+            for( ; map.GetTilesCount(hx, hy, true)  > 1; deleted++)
+                map.DeleteTile(hx, hy, true, 0);
+        }
+    }
+
+    return "Done. Deleted " + deleted + " tiles.";
+}
+
+// Map parameters
+string MapTime(string str)
+{
+    MapperMap@ map = GetActiveMap();
+    if(map is null)
+        return "Map not loaded.";
+    int value = 0;
+    if(!StrToInt(str, value))
+        return "Wrong value.";
+
+    map.Time = value;
+    return "Done. Time setted to " + map.Time + ".";
+}
+
+string MapNoLogOut(string str)
+{
+    MapperMap@ map = GetActiveMap();
+    if(map is null)
+        return "Map not loaded.";
+    int value = 0;
+    if(!StrToInt(str, value))
+        return "Wrong value.";
+
+    map.NoLogOut = value != 0 ? true : false;
+    return "Done. NoLogOut setted to " + map.NoLogOut + ".";
+}
+
+string MapScriptModule(string str)
+{
+    MapperMap@ map = GetActiveMap();
+    if(map is null)
+        return "Map not loaded.";
+
+    map.ScriptModule = str;
+    return "Done. ScriptModule setted to " + map.ScriptModule + ".";
+}
+
+string MapScriptFunc(string str)
+{
+    MapperMap@ map = GetActiveMap();
+    if(map is null)
+        return "Map not loaded.";
+
+    map.ScriptFunc = str;
+    return "Done. ScriptFunc setted to " + map.ScriptFunc + ".";
+}
+
+
+bool AssignParam(MapperObject& cr, int param)
+{
+// index operator, damnit
+    #define CHECK_PARAM             \
+        # (__s) if(cr.__s == param) \
+            return true;
+        #define TRY_ASSIGN_PARAM    # (__s) if(cr.__s == -1) { cr.__s = param; return true; }
+    CHECK_PARAM(Critter_ParamIndex0);
+    CHECK_PARAM(Critter_ParamIndex1);
+    CHECK_PARAM(Critter_ParamIndex2);
+    CHECK_PARAM(Critter_ParamIndex3);
+    CHECK_PARAM(Critter_ParamIndex4);
+    CHECK_PARAM(Critter_ParamIndex5);
+    CHECK_PARAM(Critter_ParamIndex6);
+    CHECK_PARAM(Critter_ParamIndex7);
+    CHECK_PARAM(Critter_ParamIndex8);
+    CHECK_PARAM(Critter_ParamIndex9);
+    CHECK_PARAM(Critter_ParamIndex10);
+    CHECK_PARAM(Critter_ParamIndex11);
+    CHECK_PARAM(Critter_ParamIndex12);
+    CHECK_PARAM(Critter_ParamIndex13);
+    CHECK_PARAM(Critter_ParamIndex14);
+    CHECK_PARAM(Critter_ParamIndex15);
+    CHECK_PARAM(Critter_ParamIndex16);
+    CHECK_PARAM(Critter_ParamIndex17);
+    CHECK_PARAM(Critter_ParamIndex18);
+    CHECK_PARAM(Critter_ParamIndex19);
+    CHECK_PARAM(Critter_ParamIndex20);
+    CHECK_PARAM(Critter_ParamIndex21);
+    CHECK_PARAM(Critter_ParamIndex22);
+    CHECK_PARAM(Critter_ParamIndex23);
+    CHECK_PARAM(Critter_ParamIndex24);
+    CHECK_PARAM(Critter_ParamIndex25);
+    CHECK_PARAM(Critter_ParamIndex26);
+    CHECK_PARAM(Critter_ParamIndex27);
+    CHECK_PARAM(Critter_ParamIndex28);
+    CHECK_PARAM(Critter_ParamIndex29);
+    CHECK_PARAM(Critter_ParamIndex30);
+    CHECK_PARAM(Critter_ParamIndex31);
+    CHECK_PARAM(Critter_ParamIndex32);
+    CHECK_PARAM(Critter_ParamIndex33);
+    CHECK_PARAM(Critter_ParamIndex34);
+    CHECK_PARAM(Critter_ParamIndex35);
+    CHECK_PARAM(Critter_ParamIndex36);
+    CHECK_PARAM(Critter_ParamIndex37);
+    CHECK_PARAM(Critter_ParamIndex38);
+    CHECK_PARAM(Critter_ParamIndex39);
+
+    TRY_ASSIGN_PARAM(Critter_ParamIndex0);
+    TRY_ASSIGN_PARAM(Critter_ParamIndex1);
+    TRY_ASSIGN_PARAM(Critter_ParamIndex2);
+    TRY_ASSIGN_PARAM(Critter_ParamIndex3);
+    TRY_ASSIGN_PARAM(Critter_ParamIndex4);
+    TRY_ASSIGN_PARAM(Critter_ParamIndex5);
+    TRY_ASSIGN_PARAM(Critter_ParamIndex6);
+    TRY_ASSIGN_PARAM(Critter_ParamIndex7);
+    TRY_ASSIGN_PARAM(Critter_ParamIndex8);
+    TRY_ASSIGN_PARAM(Critter_ParamIndex9);
+    TRY_ASSIGN_PARAM(Critter_ParamIndex10);
+    TRY_ASSIGN_PARAM(Critter_ParamIndex11);
+    TRY_ASSIGN_PARAM(Critter_ParamIndex12);
+    TRY_ASSIGN_PARAM(Critter_ParamIndex13);
+    TRY_ASSIGN_PARAM(Critter_ParamIndex14);
+    TRY_ASSIGN_PARAM(Critter_ParamIndex15);
+    TRY_ASSIGN_PARAM(Critter_ParamIndex16);
+    TRY_ASSIGN_PARAM(Critter_ParamIndex17);
+    TRY_ASSIGN_PARAM(Critter_ParamIndex18);
+    TRY_ASSIGN_PARAM(Critter_ParamIndex19);
+    TRY_ASSIGN_PARAM(Critter_ParamIndex20);
+    TRY_ASSIGN_PARAM(Critter_ParamIndex21);
+    TRY_ASSIGN_PARAM(Critter_ParamIndex22);
+    TRY_ASSIGN_PARAM(Critter_ParamIndex23);
+    TRY_ASSIGN_PARAM(Critter_ParamIndex24);
+    TRY_ASSIGN_PARAM(Critter_ParamIndex25);
+    TRY_ASSIGN_PARAM(Critter_ParamIndex26);
+    TRY_ASSIGN_PARAM(Critter_ParamIndex27);
+    TRY_ASSIGN_PARAM(Critter_ParamIndex28);
+    TRY_ASSIGN_PARAM(Critter_ParamIndex29);
+    TRY_ASSIGN_PARAM(Critter_ParamIndex30);
+    TRY_ASSIGN_PARAM(Critter_ParamIndex31);
+    TRY_ASSIGN_PARAM(Critter_ParamIndex32);
+    TRY_ASSIGN_PARAM(Critter_ParamIndex33);
+    TRY_ASSIGN_PARAM(Critter_ParamIndex34);
+    TRY_ASSIGN_PARAM(Critter_ParamIndex35);
+    TRY_ASSIGN_PARAM(Critter_ParamIndex36);
+    TRY_ASSIGN_PARAM(Critter_ParamIndex37);
+    TRY_ASSIGN_PARAM(Critter_ParamIndex38);
+    TRY_ASSIGN_PARAM(Critter_ParamIndex39);
+
+    return false;
+}
+
+string AddParam(string str)
+{
+    int param = -1;
+    if(!StrToInt(str, param))
+        return "could not parse the param number.";
+
+    array<MapperObject@> objs;
+    for(uint i = 0, n = GetSelectedObjects(objs); i < n; i++)
+    {
+        if(objs[i].MapObjType == MAP_OBJECT_CRITTER)
+        {
+            if(!AssignParam(objs[i], param))
+                Message("Could not assign the param to critter pid " + objs[i].ProtoId + ", coords " + objs[i].MapX + "," + objs[i].MapY);
+        }
+    }
+    return "success.";
+}
+
+string ChangeParams(string str)
+{
+    array<string@> splitted = splitEx(str, " ");
+    if(splitted.length() < 2)
+        return "not enough arguments.";
+    // for(uint i=0;i<splitted.length();i++) Message(splitted[i]);
+    int param = 0;
+    int value = 0;
+    if(!StrToInt(splitted[0], param))
+        return "could not parse param.";
+    if(param > 14 || param < 0)
+        return "wrong param number (>14 or <0).";
+    if(!StrToInt(splitted[1], value))
+        return "could not parse value.";
+    MapperMap@ map = GetActiveMap();
+    if(!valid(map))
+        return "map not loaded.";
+    array<MapperObject@> crits;
+    uint                 n = map.GetObjects(1, 1, 10000, MAP_OBJECT_CRITTER, 0, crits);
+    for(uint i = 0; i < n; i++)
+    {
+        MapperObject@ cr = crits[i];
+        switch(param)
+        {
+        case 0:
+            cr.Critter_ParamValue0 = value;
+            break;
+        case 1:
+            cr.Critter_ParamValue1 = value;
+            break;
+        case 2:
+            cr.Critter_ParamValue2 = value;
+            break;
+        case 3:
+            cr.Critter_ParamValue3 = value;
+            break;
+        case 4:
+            cr.Critter_ParamValue4 = value;
+            break;
+        case 5:
+            cr.Critter_ParamValue5 = value;
+            break;
+        case 6:
+            cr.Critter_ParamValue6 = value;
+            break;
+        case 7:
+            cr.Critter_ParamValue7 = value;
+            break;
+        case 8:
+            cr.Critter_ParamValue8 = value;
+            break;
+        case 9:
+            cr.Critter_ParamValue9 = value;
+            break;
+        case 10:
+            cr.Critter_ParamValue10 = value;
+            break;
+        case 11:
+            cr.Critter_ParamValue11 = value;
+            break;
+        case 12:
+            cr.Critter_ParamValue12 = value;
+            break;
+        case 13:
+            cr.Critter_ParamValue13 = value;
+            break;
+        case 14:
+            cr.Critter_ParamValue14 = value;
+            break;
+        default:
+            break;
+        }
+    }
+    return "set param " + param + " to " + value + " on " + n + " critters.";
+}
+
+string FixWorldEntires(string args)
+{
+    array<string@> maps;
+    uint           count = GetMapFileNames(null, maps);
+    Message("Found " + count + " maps");
+    for(uint m = 0; m < count; m++)
+    {
+        FixMapEntires(maps[m] + " " + args);
+    }
+    return("");
+}
+string FixMapEntires(string args)
+{
+    array<string@>@ cmd = splitEx(args, " ");
+    if(cmd.length < 2)
+    {
+        return("#FixMapEntires <mapName> <entire1> <entire2> ... <entireN>");
+    }
+
+    string mapName = cmd[0];
+    cmd.removeAt(0);
+
+    array<int> entires;
+    for(uint e = 0, eX = cmd.length(); e < eX; e++)
+    {
+        int tmp = 0;
+        if(!StrToInt(cmd[e], tmp))
+            return("Invalid entire number <" + cmd[e] + ">");
+        entires.insertLast(tmp);
+    }
+
+    Message("Loading: " + mapName);
+    MapperMap@ map = LoadMap(mapName, PATH_SERVER_MAPS);
+
+    if(!valid(map))
+        return("Error loading map");
+
+    ShowMap(map);
+    for(int e = 0, eX = entires.length(); e < eX; e++)
+    {
+        FixEntires(entires[e] + "");
+    }
+
+    SaveMap(map, mapName, PATH_SERVER_MAPS);
+    UnloadMap(map);
+
+    return("Done.");
+}
+
+string FixEntires(string num)
+{
+    int entire = 0;
+    if(!StrToInt(num, entire))
+        return("#FixEntires <number>");
+
+    MapperMap@ map = GetActiveMap();
+    if(!valid(map))
+        return "Map not loaded.";
+    array<MapperObject@> entires;
+
+    int                  count = 0;
+    for(uint e = 0, eX = map.GetObjects(1, 1, 10000, MAP_OBJECT_SCENERY, 3853, entires); e < eX; e++)
+    {
+        MapperObject@ obj = entires[e];
+        if(int(obj.Scenery_ToEntire) == entire && obj.MapX % 2 != 0)
+        {
+            Message("found " + entire + " at " + obj.MapX + "," + obj.MapY);
+            obj.MoveToHex(obj.MapX - 1, obj.MapY);
+            count++;
+        }
+    }
+    return("Changed " + count);
+}
+
+string PortMap(string)
+{
+    MapperMap@ map = GetActiveMap();
+    if(!valid(map))
+        return "Map not loaded.";
+    array<MapperObject@> crits;
+    for(uint i = 0, n = map.GetObjects(1, 1, 10000, MAP_OBJECT_CRITTER, 0, crits); i < n; i++)
+    {
+        MapperObject@ cr = crits[i];
+        if(cr.Critter_ParamIndex6 != ST_FACTION_RANK)
+        {
+            cr.Critter_ParamIndex39 = cr.Critter_ParamIndex6;
+            cr.Critter_ParamValue39 = cr.Critter_ParamValue6;
+            cr.Critter_ParamIndex6 = ST_FACTION_RANK;
+            cr.Critter_ParamValue6 = 1;
+        }
+        if(cr.Critter_ParamIndex7 != ST_FACTION_MODE)
+        {
+            cr.Critter_ParamIndex38 = cr.Critter_ParamIndex7;
+            cr.Critter_ParamValue38 = cr.Critter_ParamValue7;
+            cr.Critter_ParamIndex7 = ST_FACTION_MODE;
+            cr.Critter_ParamValue7 = 0;
+        }
+        if(cr.Critter_ParamIndex8 != ST_OVERRIDE_CRTYPE)
+        {
+            cr.Critter_ParamIndex37 = cr.Critter_ParamIndex8;
+            cr.Critter_ParamValue37 = cr.Critter_ParamValue8;
+            cr.Critter_ParamIndex8 = ST_OVERRIDE_CRTYPE;
+            cr.Critter_ParamValue8 = 0;
+        }
+        if(cr.Critter_ParamIndex9 != ST_LEVEL)
+        {
+            cr.Critter_ParamIndex36 = cr.Critter_ParamIndex9;
+            cr.Critter_ParamValue36 = cr.Critter_ParamValue9;
+            cr.Critter_ParamIndex9 = ST_LEVEL;
+            cr.Critter_ParamValue9 = 0;
+        }
+    }
+    return "Porting complete, resave the map.";
+}
+
+void TrimToFileName(string@ s)
+{
+    if(!valid(s))
+        return;
+    if(s.length() == 0)
+        return;
+    int last = s.length() - 1;
+    while(last >= 0 && s[last] != ".")
+        last--;
+    if(last == -1)
+        last = s.length();
+    int first = last - 1;
+    while(first >= 0 && s.rawGet(first) != 0x5c)
+        first--;                                   // '\\'!
+    if(first == -1)
+        first = 0;
+    else
+        first++;
+    s = substring(s, first, last - first);
+}
+
+
+void RenderTileName()
+{
+    MapperMap@ map = GetActiveMap();
+    if(!valid(map))
+        return;
+    uint16 hx = 0;
+    uint16 hy = 0;
+    if(!GetMonitorHex(__MouseX, __MouseY, hx, hy))
+        return;
+    uint    x = __ScreenWidth - 100;
+    uint    y = 60;
+    string@ s;
+    for(uint i = 0; i < 5; i++)
+    {
+        @s = map.GetTileName(hx, hy, false, i);
+        if(valid(s) && s != "")
+        {
+            TrimToFileName(s);
+            DrawText("Floor " + i + ": " + s, x, y, 100, 10, COLOR_LGREEN, FONT_TYPE_DEFAULT, 0);
+            y += 10;
+        }
+    }
+    for(uint i = 0; i < 5; i++)
+    {
+        @s = map.GetTileName(hx, hy, true, i);
+        if(valid(s) && s != "")
+        {
+            TrimToFileName(s);
+            DrawText("Roof " + i + ": " + s, x, y, 100, 10, COLOR_LGREEN, FONT_TYPE_DEFAULT, 0);
+            y += 10;
+        }
+    }
+}
+
+void RenderZoom()
+{
+    if(valid(GetActiveMap()))
+    {
+        uint x = __ScreenWidth - 100;
+        uint y = 50;
+        DrawText("Zoom: " + GetZoom() + "%", x, y, 100, 10, COLOR_LGREEN, FONT_TYPE_DEFAULT, 0);
+    }
+}
+
+
+string proc(string s)
+{
+    TrimToFileName(s);
+    return s;
+}
+
+string goto (string s)
+{
+    array<string@>@ args = splitEx(s, " ");
+    if(args.length() != 2)
+        return("Usage: goto [hx] [hy]");
+    uint16 hx = 0, hy = 0;
+    if(StrToInt(args[0], hx) && StrToInt(args[1], hy))
+    {
+        MoveScreen(hx, hy, 100);
+        MapMessage("<!!!>", hx, hy, 5000, 0, false, 0, 0);
+    }
+    return("OK");
+}
+
+string getsize(string)
+{
+    MapperMap@ map = GetActiveMap();
+    if(valid(map))
+        return("Width: " + map.Width + " Height: " + map.Height);
+    else
+        return("No idea");
+}
+
+string chopchopchop(string)
+{
+	MapperMap@ map = GetActiveMap();
+	if( !valid(map) )
+		return "Map not loaded.";
+
+	array<uint16> scen_tree = { 2945, 2946, 2947 };
+	array<uint16> item_tree = { PID_TREE1_FIREWOOD, PID_TREE2_FIREWOOD, PID_TREE3_FIREWOOD };
+
+	array<MapperObject@> sceneries;
+	for(uint s = 0, sLen = map.GetObjects(1, 1, 10000, MAP_OBJECT_SCENERY, 0, sceneries); s<sLen ; s++)
+	{
+		MapperObject@ scenery = sceneries[s];
+
+		if( scen_tree.find( scenery.ProtoId ) >= 0 )
+		{
+			MapperObject@ obj = map.AddObject( scenery.MapX, scenery.MapY, MAP_OBJECT_ITEM, item_tree[Random( 0, item_tree.length()-1 )] );
+			obj.ScriptName = "prod_tree_firewood";
+			obj.FuncName   = "item_init";
+
+			DeleteObject( scenery );
+		}
+	}
+
+	return "CHOP! CHOP! CHOP!";
+}
+
+string FixLockers(string)
+{
+    MapperMap@ map = GetActiveMap();
+    if(!valid(map))
+        return "Map not loaded.";
+    array<MapperObject@> items;
+    for(uint i = 0, n = map.GetObjects(1, 1, 10000, MAP_OBJECT_ITEM, 0, items); i < n; i++)
+    {
+        MapperObject@ it = items[i];
+		if(it.OffsetX != 0)
+			it.OffsetX = 0;
+		if(it.OffsetY != 0)
+			it.OffsetY = 0;
+		if(it.AnimStayBegin != 0)
+			it.AnimStayBegin = 0;
+		if(it.AnimStayEnd != 0)
+			it.AnimStayEnd = 0;
+    }
+    return "Lockers and doors fixed, save and reload the map.";
+}
+
+string CleanTech(string s)
+{
+	if(s == "")
+			return ("No argument. Usage: #CleanTech [argument] Arguments: afterconv, greengrids, browngrids, 3853, 4012, 2049.");
+    
+		MapperMap@ map = GetActiveMap();
+    if(!valid(map))
+        return "Map not loaded.";
+	
+	if(s == "afterconv" || s == "4012")
+	{
+		array<MapperObject@> blockers;
+		for(uint i = 0, n = map.GetObjects(1, 1, 10000, MAP_OBJECT_SCENERY, 4012, blockers); i < n; i++)
+		{
+			MapperObject@ obj = blockers[i];
+			DeleteObject(obj);
+		}
+	}
+	if(s == "afterconv" || s == "3853")
+	{
+		array<MapperObject@> blockers;
+		for(uint i = 0, n = map.GetObjects(1, 1, 10000, MAP_OBJECT_SCENERY, 3853, blockers); i < n; i++)
+		{
+        MapperObject@ obj = blockers[i];
+		DeleteObject(obj);
+		}
+	}
+	if(s == "afterconv" || s == "2049")
+	{
+		array<MapperObject@> blockers;
+		for(uint i = 0, n = map.GetObjects(1, 1, 10000, MAP_OBJECT_SCENERY, 2049, blockers); i < n; i++)
+		{
+        MapperObject@ obj = blockers[i];
+		DeleteObject(obj);
+		}
+	}
+	if(s == "afterconv" || s == "greengrids")
+	{
+		array<MapperObject@> blockers;
+		for(uint i = 0, n = map.GetObjects(1, 1, 10000, MAP_OBJECT_SCENERY, 4016, blockers); i < n; i++)
+		{
+        MapperObject@ obj = blockers[i];
+		DeleteObject(obj);
+		}
+	}
+	if(s == "afterconv" || s == "greengrids")
+	{
+		array<MapperObject@> blockers;
+		for(uint i = 0, n = map.GetObjects(1, 1, 10000, MAP_OBJECT_SCENERY, 4017, blockers); i < n; i++)
+		{
+        MapperObject@ obj = blockers[i];
+		DeleteObject(obj);
+		}
+	}
+	if(s == "afterconv" || s == "greengrids")
+	{
+		array<MapperObject@> blockers;
+		for(uint i = 0, n = map.GetObjects(1, 1, 10000, MAP_OBJECT_SCENERY, 4018, blockers); i < n; i++)
+		{
+        MapperObject@ obj = blockers[i];
+		DeleteObject(obj);
+		}
+	}
+	if(s == "afterconv" || s == "greengrids")
+	{
+		array<MapperObject@> blockers;
+		for(uint i = 0, n = map.GetObjects(1, 1, 10000, MAP_OBJECT_SCENERY, 4019, blockers); i < n; i++)
+		{
+        MapperObject@ obj = blockers[i];
+		DeleteObject(obj);
+		}
+	}
+	if(s == "afterconv" || s == "greengrids")
+	{
+		array<MapperObject@> blockers;
+		for(uint i = 0, n = map.GetObjects(1, 1, 10000, MAP_OBJECT_SCENERY, 4020, blockers); i < n; i++)
+		{
+        MapperObject@ obj = blockers[i];
+		DeleteObject(obj);
+		}
+	}
+	if(s == "afterconv" || s == "greengrids")
+	{
+		array<MapperObject@> blockers;
+		for(uint i = 0, n = map.GetObjects(1, 1, 10000, MAP_OBJECT_SCENERY, 4021, blockers); i < n; i++)
+		{
+        MapperObject@ obj = blockers[i];
+		DeleteObject(obj);
+		}
+	}
+	if(s == "afterconv" || s == "greengrids")
+	{
+		array<MapperObject@> blockers;
+		for(uint i = 0, n = map.GetObjects(1, 1, 10000, MAP_OBJECT_SCENERY, 4022, blockers); i < n; i++)
+		{
+        MapperObject@ obj = blockers[i];
+		DeleteObject(obj);
+		}
+	}
+	if(s == "afterconv" || s == "greengrids")
+	{
+		array<MapperObject@> blockers;
+		for(uint i = 0, n = map.GetObjects(1, 1, 10000, MAP_OBJECT_SCENERY, 4023, blockers); i < n; i++)
+		{
+        MapperObject@ obj = blockers[i];
+		DeleteObject(obj);
+		}
+	}
+	if(s == "afterconv" || s == "browngrids")
+	{
+		array<MapperObject@> blockers;
+		for(uint i = 0, n = map.GetObjects(1, 1, 10000, MAP_OBJECT_SCENERY, 4031, blockers); i < n; i++)
+		{
+        MapperObject@ obj = blockers[i];
+		DeleteObject(obj);
+		}
+	}
+	if(s == "afterconv" || s == "browngrids")
+	{
+		array<MapperObject@> blockers;
+		for(uint i = 0, n = map.GetObjects(1, 1, 10000, MAP_OBJECT_SCENERY, 4033, blockers); i < n; i++)
+		{
+        MapperObject@ obj = blockers[i];
+		DeleteObject(obj);
+		}
+	}
+	if(s == "afterconv" || s == "browngrids")
+	{
+		array<MapperObject@> blockers;
+		for(uint i = 0, n = map.GetObjects(1, 1, 10000, MAP_OBJECT_SCENERY, 4035, blockers); i < n; i++)
+		{
+        MapperObject@ obj = blockers[i];
+		DeleteObject(obj);
+		}
+	}
+	if(s == "afterconv" || s == "browngrids")
+	{
+		array<MapperObject@> blockers;
+		for(uint i = 0, n = map.GetObjects(1, 1, 10000, MAP_OBJECT_SCENERY, 4037, blockers); i < n; i++)
+		{
+        MapperObject@ obj = blockers[i];
+		DeleteObject(obj);
+		}
+	}
+    return "Map is clean. Resave the map.";
+}
+
+string RLD(string)
+{
+	//return "#MakeMobsDynamics #ClearTiles #FixLockers #CleanTech #ReplaceHex #SignSpawners #FixLockersOnAllMaps (NOT A TOY!)";
+	return "#MakeMobsDynamics #ClearTiles #FixLockers #CleanTech #ReplaceHex";
+}
+
+string ReplaceHex(string s)
+{
+	if(s == "")
+			return ("No argument. Usage: #ReplaceHex [replacebyTechPID]");
+		
+	int replacer = 0;
+	bool replaced = false;	
+
+	if(!StrToInt(s, replacer))
+	{
+		return (s + " is not a 16bit unsigned integer vaule. Usage: #ReplaceHex [replacebyTechPID]");
+	}
+	if(StrToInt(s, replacer))
+	{
+	if(replacer != 2067 && replacer != 2344 && replacer != 4012 &&
+			replacer != 5621 && replacer != 5621 && replacer != 5622)
+		{
+			return ("PID "+ replacer +" is not a Tech Hex's PID. Usage: #ReplaceHex [replacebyTechPID]");
+		}
+	
+	MapperMap@ map = GetActiveMap();
+	array<MapperObject@> objs;
+    for(uint i = 0, n = GetSelectedObjects(objs); i < n; i++)
+		{
+        if(objs[i].ProtoId == 2067 || objs[i].ProtoId == 2344 || objs[i].ProtoId == 4012 ||
+			objs[i].ProtoId == 5621 || objs[i].ProtoId == 5621 || objs[i].ProtoId == 5622)
+			{
+				MapperObject@ obj = objs[i];
+				//obj.ProtoId = replacer;
+				uint x = obj.MapX, y = obj.MapY;
+				DeleteObject(obj);
+				// GetHexPos(objs[i].MapX,objs[i].MapY,x,y);
+				map.AddObject( x, y, MAP_OBJECT_SCENERY, replacer);
+				replaced = true;
+			}
+		}
+		
+	}
+	if(replaced == false)
+		return "No hexes replaced.";
+	return("Hexes replaced by " + replacer +".");
+}
+
+/*string SignSpawners(string s)
+{
+    MapperMap@ map = GetActiveMap();
+	uint countsigned = 0;
+	
+    if(!valid(map))
+        return "Map not loaded.";
+	
+	if(s == "")
+		return ("No argument. Arguments: unguardedtown, guardedtown, privatedungeon, publicdungeon, encounter");
+		
+	if(s != "unguardedtown" && s != "guardedtown" && s != "privatedungeon" && s != "publicdungeon" && s != "encounter")
+		return ("Wrong argument. Arguments: unguardedtown, guardedtown, privatedungeon, publicdungeon, encounter");
+		
+    array<MapperObject@> spawners;
+    for(uint i = 0, n = map.GetObjects(1, 1, 10000, MAP_OBJECT_ITEM, 0, spawners); i < n; i++)
+    {
+		ProtoItem@ container = GetProtoItem(spawners[i].ProtoId);
+		
+		if(container.Type == ITEM_TYPE_CONTAINER)
+		{
+			MapperObject@ spawner = spawners[i];
+				if(spawner.ScriptName == "" || spawner.ScriptName == "item_spawner_container")
+					{
+						spawner.ScriptName = "item_spawner_container" ;
+						spawner.FuncName = "item_init" ;
+						
+						if(s == "unguardedtown")
+							{
+								spawner.Item_Val4 = 3;
+								countsigned++;
+							}
+							
+						if(s == "guardedtown")
+							{
+								spawner.Item_Val4 = 1;
+								countsigned++;
+							}
+					
+						if(s == "encounter")
+							{
+								spawner.Item_Val4 = 2;
+								countsigned++;
+							}
+							
+						if(s == "privatedungeon")
+							{
+								switch(Random(1, 25))
+								{
+									case 1: spawner.Item_Val4 = 31; break;
+									case 2: spawner.Item_Val4 = 32; break;
+									case 3: spawner.Item_Val4 = 33; break;
+									case 4: spawner.Item_Val4 = 34; break;
+									case 5: spawner.Item_Val4 = 36; break;
+									case 6: spawner.Item_Val4 = 37; break;
+									case 7: spawner.Item_Val4 = 38; break;
+									case 8: spawner.Item_Val4 = 39; break;
+									case 9: spawner.Item_Val4 = 40; break;
+									case 10: spawner.Item_Val4 = 41; break;
+									case 11: spawner.Item_Val4 = 42; break;
+									case 12: spawner.Item_Val4 = 43; break;
+									case 13: spawner.Item_Val4 = 44; break;
+									case 14: spawner.Item_Val4 = 45; break;
+									case 15: spawner.Item_Val4 = 46; break;
+									case 16: spawner.Item_Val4 = 47; break;
+									case 17: spawner.Item_Val4 = 48; break;
+									case 18: spawner.Item_Val4 = 49; break;
+									case 19: spawner.Item_Val4 = 50; break;
+									case 20: spawner.Item_Val4 = 51; break;
+									case 21: spawner.Item_Val4 = 52; break;
+									case 22: spawner.Item_Val4 = 53; break;
+									case 23: spawner.Item_Val4 = 54; break;
+									case 24: spawner.Item_Val4 = 55; break;
+									case 25: spawner.Item_Val4 = 56; break;
+								}
+							
+							countsigned++;
+							}
+						if(s == "publicdungeon")
+							{
+								switch(Random(1, 12))
+								{
+									case 1: spawner.Item_Val4 = 57; break;
+									case 2: spawner.Item_Val4 = 58; break;
+									case 3: spawner.Item_Val4 = 59; break;
+									case 4: spawner.Item_Val4 = 60; break;
+									case 5: spawner.Item_Val4 = 61; break;
+									case 6: spawner.Item_Val4 = 62; break;
+									case 7: spawner.Item_Val4 = 63; break;
+									case 8: spawner.Item_Val4 = 64; break;
+									case 9: spawner.Item_Val4 = 65; break;
+									case 10: spawner.Item_Val4 = 66; break;
+									case 11: spawner.Item_Val4 = 67; break;
+									case 12: spawner.Item_Val4 = 68; break;
+								}
+							
+							countsigned++;
+							}
+					}
+					
+		}
+	}
+    return "Script is signed to " + countsigned + " spawners, resave the map.";
+}
+
+string FixLockersOnAllMaps(string s)
+{
+    uint countsigned = 0, countall = 0, success = 0, failload = 0, failsave = 0;
+	
+	if(s == "")
+		return ("No argument. Arguments: unguardedtown, guardedtown, privatedungeon, publicdungeon, encounter");
+		
+	if(s != "unguardedtown" && s != "guardedtown" && s != "privatedungeon" && s != "publicdungeon" && s != "encounter")
+		return ("Wrong argument. Arguments: unguardedtown, guardedtown, privatedungeon, publicdungeon, encounter");
+	
+	array<string@> mapNames;
+    GetMapFileNames(null, mapNames);
+	
+    for(uint i = 0; i < mapNames.length(); i++)
+    {
+        MapperMap@ map = LoadMap(mapNames[i], PATH_SERVER_MAPS);
+		
+        if(not (map is null))
+        {
+            array<MapperObject@> spawners;
+			for(uint i = 0, n = map.GetObjects(1, 1, 10000, MAP_OBJECT_ITEM, 0, spawners); i < n; i++)
+			{
+				ProtoItem@ container = GetProtoItem(spawners[i].ProtoId);
+		
+				if(container.Type == ITEM_TYPE_CONTAINER)
+				{
+					MapperObject@ spawner = spawners[i];
+					if(spawner.ScriptName == "" || spawner.ScriptName == "item_spawner_container")
+					{
+						spawner.ScriptName = "item_spawner_container" ;
+						spawner.FuncName = "item_init" ;
+						
+						if(s == "unguardedtown")
+							{
+								spawner.Item_Val4 = 3;
+								countsigned++;
+							}
+							
+						if(s == "guardedtown")
+							{
+								spawner.Item_Val4 = 1;
+								countsigned++;
+							}
+					
+						if(s == "encounter")
+							{
+								spawner.Item_Val4 = 2;
+								countsigned++;
+							}
+							
+						if(s == "privatedungeon")
+							{
+								switch(Random(1, 25))
+								{
+									case 1: spawner.Item_Val4 = 31; break;
+									case 2: spawner.Item_Val4 = 32; break;
+									case 3: spawner.Item_Val4 = 33; break;
+									case 4: spawner.Item_Val4 = 34; break;
+									case 5: spawner.Item_Val4 = 36; break;
+									case 6: spawner.Item_Val4 = 37; break;
+									case 7: spawner.Item_Val4 = 38; break;
+									case 8: spawner.Item_Val4 = 39; break;
+									case 9: spawner.Item_Val4 = 40; break;
+									case 10: spawner.Item_Val4 = 41; break;
+									case 11: spawner.Item_Val4 = 42; break;
+									case 12: spawner.Item_Val4 = 43; break;
+									case 13: spawner.Item_Val4 = 44; break;
+									case 14: spawner.Item_Val4 = 45; break;
+									case 15: spawner.Item_Val4 = 46; break;
+									case 16: spawner.Item_Val4 = 47; break;
+									case 17: spawner.Item_Val4 = 48; break;
+									case 18: spawner.Item_Val4 = 49; break;
+									case 19: spawner.Item_Val4 = 50; break;
+									case 20: spawner.Item_Val4 = 51; break;
+									case 21: spawner.Item_Val4 = 52; break;
+									case 22: spawner.Item_Val4 = 53; break;
+									case 23: spawner.Item_Val4 = 54; break;
+									case 24: spawner.Item_Val4 = 55; break;
+									case 25: spawner.Item_Val4 = 56; break;
+								}
+							
+							countsigned++;
+							}
+						if(s == "publicdungeon")
+							{
+								switch(Random(1, 12))
+								{
+									case 1: spawner.Item_Val4 = 57; break;
+									case 2: spawner.Item_Val4 = 58; break;
+									case 3: spawner.Item_Val4 = 59; break;
+									case 4: spawner.Item_Val4 = 60; break;
+									case 5: spawner.Item_Val4 = 61; break;
+									case 6: spawner.Item_Val4 = 62; break;
+									case 7: spawner.Item_Val4 = 63; break;
+									case 8: spawner.Item_Val4 = 64; break;
+									case 9: spawner.Item_Val4 = 65; break;
+									case 10: spawner.Item_Val4 = 66; break;
+									case 11: spawner.Item_Val4 = 67; break;
+									case 12: spawner.Item_Val4 = 68; break;
+								}
+							
+							countsigned++;
+							}
+					}
+					
+				}
+			}
+			
+			if(SaveMap(map, mapNames[i], PATH_SERVER_MAPS))
+            {
+                Message("Saved " + mapNames[i] + " with " + countsigned + " reworked lockers.");
+				success++;
+            }
+            else
+            {
+                Message("Fail to save " + mapNames[i]);
+                failsave++;
+            }
+            UnloadMap(map);
+			countall = countall + countsigned;
+			countsigned = 0;
+        }
+        else
+        {
+            Message("Fail to load " + mapNames[i]);
+            failload++;
+        }
+    }
+    Message("Not loaded: " + failload + " Not saved: " + failsave);
+    return "Script is signed to " + countall + " spawners, in " + success + " maps.";
+}
+
+string MakeMobsDynamics(string)
+{
+	MapperMap@ map = GetActiveMap();
+	uint countsigned = 0;
+	
+    if(!valid(map))
+        return "Map not loaded.";
+		
+	array<MapperObject@> mobs;
+    for(uint i = 0, n = map.GetObjects(1, 1, 10000, MAP_OBJECT_CRITTER, 0, mobs); i < n; i++)
+    {
+		//MapperObject@ mob = mobs[i];
+		if(mobs[i].ScriptName == "mob" || mobs[i].ScriptName == "map_dungeon")
+		{
+			mobs[i].ScriptName = "mob_dynamic";
+			mobs[i].FuncName = "init_static_mob";
+			mobs[i].Critter_ParamValue4 = 203;
+		}
+	}
+	return "Script is signed to " + countsigned + " mobs on map. Resave the map";
+}*/

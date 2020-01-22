@@ -1,0 +1,539 @@
+//
+// FOnline: 2238, FOnline2, Reloaded
+// pdata.fos
+//
+#ifndef __PDATA__
+#define __PDATA__
+
+//
+// PData
+// Personal data attached to specific Location / Map / Critter / Item
+
+#include "_defines.fos" // for server identification only
+#include "_macros.fos"
+#include "_time.fos"
+
+#ifdef FONLINE2
+ #pragma bindfunc "void dummy_pdata() -> fonline_tla.dll SERVER"
+ #define WLog#(_type,_text,_level) Log(_text)
+ #define PrintCallstack NOP
+ void NOP() {}
+#endif
+#ifdef RELOADED
+ #include "debug_h.fos"
+ #include "utils_h.fos"
+#endif
+
+#include "buffer_h.fos"
+
+#ifndef NPC_BASE_ID
+ #define NPC_BASE_ID (5000000)
+#endif
+
+// how often personal data of removed objects will be cleaned
+#ifndef __DEBUG__
+ #define PDATA_CLEANUP_TIME	REAL_MINUTE(10)
+#endif
+#ifdef __DEBUG__
+ #define PDATA_CLEANUP_TIME	REAL_MINUTE(1)
+#endif
+
+// used internally, do NOT change enum name/values names without wiping server
+enum PDataType
+{
+    PDataLoc,
+    PDataMap,
+    PDataCr,
+    PDataIt
+};
+
+array<string@> PDataTypeString;
+string PDataString(PDataType type)
+{
+	if( PDataTypeString.isEmpty() )
+	{
+		array<int>     dummy;
+		GetEnum("PDataType", PDataTypeString, dummy);
+	}
+
+	return( PDataTypeString[type] );
+};
+
+#define CHECK_ID	if(id == 0) return(false);
+
+//
+// *PData() - *AnyData() wrappers
+// none of them should be exported, ever
+//
+bool IsPData(PDataType type, uint id)
+{
+	CHECK_ID;
+    string prefix = PDataString(type);
+
+    return(IsAnyData(prefix + ":" + id));
+}
+
+bool GetPData(PDataType type, uint id, array<uint8>& raw)
+{
+	CHECK_ID;
+    string prefix = PDataString(type);
+
+    return(GetAnyData(prefix + ":" + id, raw));
+}
+
+bool SetPData(PDataType type, uint id, array<uint8>& raw)
+{
+	CHECK_ID;
+    string prefix = PDataString(type);
+
+    if(SetAnyData(prefix + ":" + id, raw))
+    {
+        array<uint> list;
+        if(!GetAnyData(prefix, list) || list.find(id) < 0)
+        {
+            list.insertLast(id);
+            SetAnyData(prefix, list);
+		}
+
+        return(true);
+    }
+
+    return(false);
+}
+
+bool UnsetPData(PDataType type, uint id)
+{
+	CHECK_ID;
+    string prefix = PDataString(type);
+
+    EraseAnyData(prefix + ":" + id);
+
+    array<uint> list;
+    if(GetAnyData(prefix, list))
+    {
+        int idx = list.find(id);
+        if(idx >= 0)
+            list.removeAt(idx);
+    }
+
+    if(list.length() > 0)
+        SetAnyData(prefix, list);
+    else
+        EraseAnyData(prefix);
+
+    return(true);
+}
+
+//
+
+void StartPersonalDataCleanup()
+{
+    CreateTimeEvent(AFTER(REAL_SECOND(1)), "e_CleanupPData", false);
+}
+
+uint e_CleanupPData(array<uint>@)
+{
+    array<string>  pdataName;
+    array<int>     pdataType;
+
+    array<string@> names;
+    array<int>     values;
+    uint           count = GetEnum("PDataType", names, values);
+    for(uint e = 0; e < count; e++)
+    {
+        if(IsAnyData(names[e]))
+        {
+            pdataName.insertLast(names[e]);
+            pdataType.insertLast(values[e]);
+        }
+    }
+
+    for(uint d = 0, dLen = pdataName.length(); d < dLen; d++)
+    {
+        array<uint> list;
+        if(GetAnyData(pdataName[d], list))
+        {
+            for(uint l = 0, len = list.length(); l < len; l++)
+            {
+                bool   exists = true;
+                string what = "something";
+
+                switch(pdataType[d])
+                {
+					case PDataLoc:
+						exists = valid(GetLocation(list[l]));
+						what = "location";
+						break;
+					case PDataMap:
+						exists = valid(GetMap(list[l]));
+						what = "map";
+						break;
+					case PDataCr:
+						if(list[l] >= NPC_BASE_ID)
+						{
+							exists = valid(GetCritter(list[l]));
+							what = "npc";
+						}
+						else
+						{
+							exists = valid(GetPlayerName(list[l]));
+							what = "player";
+						}
+						break;
+					case PDataIt:
+						exists = valid(GetItem(list[l]));
+						what = "item";
+                }
+
+                if(!exists)
+                {
+                    Log("Removing personal data for " + what + "<" + list[l] + ">");
+                    UnsetPData(PDataType(pdataType[d]), list[l]);
+                }
+            }
+        }
+    }
+
+    return( PDATA_CLEANUP_TIME );
+}
+
+bool IsPersonalData(PDataType type, uint id, string& name)
+{
+    array<uint8> dataRaw;
+    if(GetPData(type, id, dataRaw))
+    {
+        array<string> dataNames;
+
+        Buffer@ buffer = NewBuffer(dataRaw);
+        buffer >> dataNames;
+
+		return( dataNames.find( name ) >= 0 );
+    }
+
+    return(false);
+}
+
+bool GetPersonalData(PDataType type, uint id, string& name, array<uint8>& data)
+{
+    array<uint8> dataRaw;
+    if(GetPData(type, id, dataRaw))
+    {
+        array<string> dataNames;
+
+        Buffer@ buffer = NewBuffer(dataRaw);
+        buffer >> dataNames;
+
+		int idx = dataNames.find( name );
+		if( idx >= 0 )
+		{
+			array<array<uint8>> dataValues;
+
+			buffer >> dataValues;
+			data = dataValues[idx];
+			return( true );
+		}
+    }
+
+    return(false);
+}
+
+uint GetPersonalData(PDataType type, uint id, array<string>& outNames, array<array<uint8>>& outValues)
+{
+    uint count = 0;
+
+	array<uint8> dataRaw;
+    if(GetPData(type, id, dataRaw))
+    {
+        array<string>       dataNames;
+        array<array<uint8>> dataValues;
+
+        Buffer@ buffer = NewBuffer(dataRaw);
+        buffer >> dataNames >> dataValues;
+
+        for(uint d = 0, dLen = dataNames.length(); d < dLen; d++)
+        {
+            outNames.insertLast(dataNames[d]);
+            outValues.insertLast(dataValues[d]);
+            count++;
+        }
+    }
+
+    return(count);
+}
+
+bool SetPersonalData(PDataType type, uint id, string& name, array<uint8>& value)
+{
+    array<uint8>        dataRaw;
+    array<string>       dataNames;
+    array<array<uint8>> dataValues;
+
+    Buffer@              buffer = null;
+
+    bool                 added = false;
+
+    if(GetPData(type, id, dataRaw))
+    {
+        @buffer = NewBuffer(dataRaw);
+        buffer >> dataNames >> dataValues;
+
+		int idx = dataNames.find( name );
+		if( idx >= 0 )
+		{
+			dataValues[idx] = value;
+			added = true;
+		}
+    }
+
+    if(!added)
+    {
+		dataNames.insertLast(name);
+        dataValues.insertLast(value);
+    }
+
+    @buffer = NewBuffer();
+    buffer << dataNames << dataValues;
+
+    return(SetPData(type, id, buffer.AsUint8()));
+}
+
+bool UnsetPersonalData(PDataType type, uint id, string& name)
+{
+    array<uint8> dataRaw;
+
+    if(GetPData(type, id, dataRaw))
+    {
+        array<string>       dataNames;
+        array<array<uint8>> dataValues;
+
+        Buffer@ buffer = NewBuffer(dataRaw);
+        buffer >> dataNames;
+
+		int idx = dataNames.find( name );
+		if( idx >= 0 )
+		{
+			buffer >> dataValues;
+
+			dataNames.removeAt( idx );
+			dataValues.removeAt( idx );
+
+			if(dataNames.length() == 0)
+			{
+				UnsetPData(type, id);
+
+				return(true);
+			}
+
+			@buffer = NewBuffer();
+			buffer << dataNames << dataValues;
+
+			return(SetPData(type, id, buffer.AsUint8()));
+		}
+
+		return( false );
+    }
+
+    return(false);
+}
+
+uint UnsetPersonalDataWithPrefix(PDataType type, uint id, string& prefix)
+{
+	uint pLen = prefix.length();
+	if( pLen == 0 )
+		return( 0 );
+
+	uint result = 0;
+	array<uint8> dataRaw;
+
+    if(GetPData(type, id, dataRaw))
+    {
+        array<string>       dataNames;
+
+		Buffer@ buffer = NewBuffer(dataRaw);
+        buffer >> dataNames;
+
+		for( uint d=0, dLen=dataNames.length(); d<dLen; d++ )
+		{
+			string name = dataNames[d];
+			if( substring( name, 0, pLen ) == prefix )
+			{
+				UnsetPersonalData( type, id, name );
+				result++;
+			}
+		}
+	}
+
+	return( result );
+}
+
+void AddToPersonalDataList( PDataType type, uint id, string& name, uint value )
+{
+	array<uint> list;
+	GetPersonalDataList( type, id, name, list );
+
+	if( list.find(value) >= 0 )
+		return;
+
+	list.insertLast(value);
+	Buffer@ buff = NewBuffer();
+	buff << list;
+
+	SetPersonalData( type, id, name, buff.AsUint8() );
+}
+
+void RemoveFromPersonalDataList( PDataType type, uint id, string& name, uint value )
+{
+	array<uint> list;
+	if( GetPersonalDataList( type, id, name, list ) == 0 )
+		return;
+
+	int idx = list.find(value);
+	if( idx < 0 )
+		return;
+
+	list.removeAt(idx);
+
+	if( list.length() > 0 )
+	{
+		Buffer@ buffer = NewBuffer();
+		buffer << list;
+
+		SetPersonalData( type, id, name, buffer.AsUint8() );
+	}
+	else
+		UnsetPersonalData( type, id, name );
+}
+
+uint GetPersonalDataList( PDataType type, uint id, string& name, array<uint>& list )
+{
+	array<uint8> raw;
+	if( GetPersonalData( type, id, name, raw ))
+	{
+		array<uint> _list;
+
+		Buffer@ buffer = NewBuffer(raw);
+		BUFFER_LENTYPE len = 0;
+		buffer >> len;
+
+		for( uint l=0; l<len; l++ )
+		{
+			uint tmp = 0;
+			buffer >> tmp;
+			list.insertLast( tmp );
+		}
+
+		return( len );
+	}
+
+	return( 0 );
+}
+
+uint GetPersonalDataListSize( PDataType type, uint id, string& name )
+{
+	array<uint8> raw;
+
+	if( GetPersonalData( type, id, name, raw ))
+	{
+		Buffer@ buffer = NewBuffer(raw);
+		BUFFER_LENTYPE len = 0;
+		buffer >> len;
+
+		return( len );
+	}
+
+	return( 0 );
+}
+
+bool IsInPersonalDataList( PDataType type, uint id, string& name, uint value )
+{
+	array<uint> list;
+	GetPersonalDataList( type, id, name, list );
+
+	return( list.find(value) >= 0 );
+}
+
+bool PersonalDataAllowed(Item& item)
+{
+    if(item.IsStackable())
+    {
+        WLog("utils", "[PersonalData] Stackable item<"+item.Id+"> not supported", DEBUG_WARNING);
+        PrintCallstack();
+        return(false);
+    }
+
+    return(true);
+}
+
+// macro abuse minefield
+
+#define PERSONAL_DATA_RAW#(_gameType,_pdataType,_objId,_extraVoid,_extraBool,_extraUint) \
+	bool GetPersonalData( _gameType obj, string& name, array<uint8>& value )		\
+	{																				\
+		_extraBool;																	\
+		return( GetPersonalData( _pdataType, _objId, name, value ));				\
+	}																				\
+	uint GetPersonalData( _gameType obj, array<string>& names, array<array<uint8>>& values )	\
+	{																				\
+		_extraUint;																	\
+		return( GetPersonalData( _pdataType, _objId, names, values ));				\
+	}																				\
+	bool IsPersonalData( _gameType obj, string& name )								\
+	{																				\
+		_extraBool;																	\
+		return( IsPersonalData( _pdataType, _objId, name ));						\
+	}																				\
+	bool SetPersonalData( _gameType obj, string& name, array<uint8>& value )		\
+	{																				\
+		_extraBool;																	\
+		return( SetPersonalData( _pdataType, _objId, name, value ));				\
+	}																				\
+	bool UnsetPersonalData( _gameType obj, string& name )							\
+	{																				\
+		_extraBool;																	\
+		return( UnsetPersonalData( _pdataType, _objId, name ));						\
+	}																				\
+	uint UnsetPersonalDataWithPrefix( _gameType obj, string& prefix )				\
+	{																				\
+		_extraUint;																	\
+		return( UnsetPersonalDataWithPrefix( _pdataType, _objId, prefix ));			\
+	}
+
+#define PERSONAL_DATA_LIST#(_gameType,_pdataType,_objId,_extraVoid,_extraBool,_extraUint) \
+	void AddToPersonalDataList( _gameType obj, string& name, uint value )			\
+	{																				\
+		_extraVoid;																	\
+		AddToPersonalDataList( _pdataType, _objId, name, value );					\
+	}																				\
+	uint GetPersonalDataList( _gameType obj, string& name, array<uint>& list )		\
+	{																				\
+		_extraUint;																	\
+		return( GetPersonalDataList( _pdataType, _objId, name, list ));				\
+	}																				\
+	uint GetPersonalDataListSize( _gameType obj, string& name )					\
+	{																				\
+		_extraUint;																	\
+		return( GetPersonalDataListSize( _pdataType, _objId, name ));				\
+	}																				\
+	bool IsInPersonalDataList( _gameType obj, string& name, uint value )			\
+	{																				\
+		_extraBool;																	\
+		return( IsInPersonalDataList( _pdataType, _objId, name, value ));			\
+	}																				\
+	void RemoveFromPersonalDataList( _gameType obj, string& name, uint value )		\
+	{																				\
+		_extraVoid;																	\
+		RemoveFromPersonalDataList( _pdataType, _objId, name, value );				\
+	}
+
+#define PERSONAL_DATA#(_gameType,_pdataType,_objId,_extraVoid,_extraBool,_extraUint) \
+	PERSONAL_DATA_RAW( _gameType,_pdataType,_objId,_extraVoid,_extraBool,_extraUint) \
+	PERSONAL_DATA_LIST(_gameType,_pdataType,_objId,_extraVoid,_extraBool,_extraUint)
+
+PERSONAL_DATA( Location&,	PDataLoc,	obj.Id,	0, 0, 0)
+PERSONAL_DATA( Map&,		PDataMap,	obj.Id,	0, 0, 0)
+PERSONAL_DATA( Critter&,	PDataCr,	obj.Id,	0, 0, 0)
+PERSONAL_DATA( Item&,		PDataIt,	obj.Id,	if(!PersonalDataAllowed(obj)) return, if(!PersonalDataAllowed(obj)) return(false), if(!PersonalDataAllowed(obj)) return(0) )
+
+// Critter need extra wrappers to work on lists attached to offline characters
+PERSONAL_DATA_LIST(uint,	PDataCr,	obj,	0, 0, 0)
+
+#endif // __PDATA__ //
