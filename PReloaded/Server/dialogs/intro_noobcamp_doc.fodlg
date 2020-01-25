@@ -1,0 +1,364 @@
+[comment]
+doc for plague quest
+
+she's a female, camp needs more strong women so we don't seem sexist lolz.
+
+give her female doc clothing plz, or a generic female san fran model. 
+
+[data]
+lang=engl russ
+
+[dialog]
+&
+1 1000 None 0 #
+4 1010 D _var p name_mem_npc_player = 0 D _var p noob_camp_plague = 0 #
+15 1020 D _var p noob_camp_plague = 1 #
+16 1030 D _var p noob_camp_plague = 0 D _var p name_mem_npc_player = 1 #
+28 1040 D _var p noob_camp_plague = 2 @
+4 2000 None 0 #
+6 2010 #
+6 2020 #
+2 2030 #
+0 2040 @
+2 3000 None 0 #
+3 3010 #
+3 3020 @
+3 4000 None 0 #
+7 4010 #
+7 4020 @
+5 5000 None 0 #
+11 5010 D _param p SK_DOCTOR > 49 #
+11 5020 @
+6 6000 None 0 #
+8 6010 #
+9 6020 #
+10 6030 @
+7 7000 None 0 #
+6 7010 #
+6 7020 @
+8 8000 None 0 #
+5 8010 @
+9 9000 None 0 #
+5 9010 @
+10 10000 None 0 #
+5 10010 @
+11 11000 None 0 #
+12 11010 #
+12 11020 #
+12 11030 #
+14 11040 D _param p SK_DOCTOR > 59 #
+14 11050 D _param p ST_INTELLECT > 7 #
+14 11060 D _param p SK_OUTDOORSMAN > 59 @
+12 12000 None 0 #
+13 12010 #
+0 12020 @
+13 13000 None 0 #
+0 13010 R _var p name_mem_npc_player = 1 @
+14 14000 None 0 #
+0 14010 R _var p noob_camp_plague = 1 @
+15 15000 None 0 @
+16 16000 None 0 #
+17 16010 D _item p PID_HEALING_POWDER > 4 #
+30 16020 #
+0 16030 @
+17 17000 None 0 #
+18 17010 @
+18 18000 None 0 #
+19 18010 @
+19 19000 None 0 #
+20 19010 @
+20 20000 None 0 #
+21 20010 #
+21 20020 #
+21 20030 @
+21 21000 None 0 #
+22 21010 #
+23 21020 #
+25 21030 #
+26 21040 #
+0 21050 @
+22 22000 None 0 #
+21 22010 #
+24 22020 #
+26 22030 #
+0 22040 @
+23 23000 None 0 #
+22 23010 #
+25 23020 #
+26 23030 #
+0 23040 @
+24 24000 None 0 #
+26 24010 #
+22 24020 @
+25 25000 None 0 #
+26 25010 #
+21 25020 @
+26 26000 None 0 #
+27 26010 @
+27 27000 None 0 #
+14 27010 R _item p PID_HEALING_POWDER - 5 @
+28 28000 None 0 #
+29 28010 D _item p PID_SCORPION_TAIL > 1 R _item p PID_SCORPION_TAIL - 2 R _item p PID_ANTIDOTE + 1 #
+30 28020 @
+29 29000 None 0 @
+30 30000 None 0 #
+0 30010 D _item p PID_HEALING_POWDER > 0 R _item p PID_HEALING_POWDER - 1 R _param p DAMAGE_EYE = 0 R _param p DAMAGE_RIGHT_ARM = 0 R _param p DAMAGE_LEFT_ARM = 0 R _param p DAMAGE_RIGHT_LEG = 0 R _param p DAMAGE_LEFT_LEG = 0 &
+
+[engl]
+{100}{}{Dr. Sun Yat-sen}
+{200}{}{You see Dr. Sun Yat-sen.}
+{210}{}{She's a nervous wreck, looks like she's the only qualified medical professional around here. }
+{1000}{}{Predialogue installations}
+{1010}{}{not known}
+{1020}{}{complete}
+{1030}{}{known}
+{1040}{}{final}
+{2000}{}{[This woman looks very sad, but she's hiding it well] Hi there! I'm Dr. Sun Yat-sen, what's your name? I'd love to get to know everybody that comes out of the vault. You're not sick are you? [She impatiently awaits an answer]}
+{2010}{}{No ma'am, my name is @pname@.}
+{2020}{}{My name is @pname@, and I'm not sick. I had a physical before leaving the vault. }
+{2030}{}{I just wanted to ask you a few...}
+{2040}{}{Yeah, this is definitely not the tent I'm looking for, goodbye.}
+{3000}{}{[She interrupts you] Answer the question. Are you sick? Yes or no.}
+{3010}{}{Yes ma'am, I mean, no ma'am.}
+{3020}{}{No ma'am, I'm not sick. }
+{4000}{}{[She definitely seems pleased now] Good! It pains me to say this, but this isn't the vault. We barely have any supplies left and I'm the only medical professional that wasn't too afraid to leave the vault. So if you get hurt, I'm sorry, but your best bet is to ask a fellow vault dweller if they know anything about medicine. Do you understand?}
+{4010}{}{Sure.}
+{4020}{}{Yes ma'am.}
+{5000}{}{[The good doctor suddenly gets an idea] Do you know anything about medicine? }
+{5010}{}{Of course.}
+{5020}{}{No, sorry.}
+{6000}{}{[She gently shakes your hand] It's nice to meet you @pname@, how are you finding things? Are you handling it well?}
+{6010}{}{Well, I haven't had much of a chance yet, but it's different. That's for sure.}
+{6020}{}{Oh golly, fuzzy duck! It sure is scary being outside of the vault}
+{6030}{}{I didn't get a brochure...}
+{7000}{}{[She smiles] Good! So tell me, what's your name?}
+{7010}{}{It's @pname@, ma'am.}
+{7020}{}{@pname@.}
+{8000}{}{[She laughs] Well hang in there, you'll be fine.
+}
+{8010}{}{I hope.}
+{9000}{}{[She scrowls] Ah! My hair isn't that short! Just hang in there, okay? You'll be fine, take it slow.
+}
+{9010}{}{I hope.}
+{10000}{}{[She laughs] The only brochures they had left were probably in Chinese. Hang in there, you'll be fine.
+}
+{10010}{}{I hope.}
+{11000}{}{[With worried eyes the doctor says] I ask because, there is a plague polluting this camp. Every day Captain Stone sends me another poor vault dweller, suffering from the same disease. Upset stomach, diarrhea, bloating, loss of appetite. These men are useless in this condition! What we're trying to accomplish here is utterly worthless if our people can't stay healthy. If you know anything about medicine, or outdoorsman feel free to provide your input.}
+{11010}{}{Gosh.}
+{11020}{}{Golly.}
+{11030}{}{So? What can I do about it?}
+{11040}{}{Sounds like giardiasis. It's a parasite that affects the intestines of humans and animals. You've probably been drinking from a water source that came in contact with animal feces, or haven't been properly boiling your water.}
+{11050}{}{Sounds like you haven't been boiling your water.}
+{11060}{}{Are you drinking boiled water? Or is it straight from the ground?}
+{12000}{}{[She bows her head] Could you help me figure this out, please? It's for the benefit of the camp, and we'd all be really grateful. I'm sure we'll even reward you with something nice. 
+}
+{12010}{}{Oh, sure. I'll do whatever I can.}
+{12020}{}{Hmm, no, not right now. See ya.}
+{13000}{}{[The good doctor pats you on the back and says] Thank you, I really appreciate whatever help you can give me. We'll have to stabilize one of the patients. Can you come back with five batches of healing powder? You just need some Xander root and Broc flower, just mix them together. But could you hurry? Please?
+}
+{13010}{}{Sure, I'll be back. }
+{14000}{}{[Her eyes light up] @pname@! You're a genius! I never even thought about it! We never had to boil the water in the past, but something must have contaminated the drinking supply! Or died in it. Thanks! Go tell the bartender to start boiling the water for now, until we've cleaned out the wells. 
+}
+{14010}{}{You're welcome. I'll go tell the bartender.}
+{15000}{}{Thanks again, @pname@! Don't forget to tell the bartender.
+}
+{16000}{}{[She wastes no time] Do you have the five batches of healing powder?
+}
+{16010}{}{Yeah, here you go.}
+{16020}{}{Can you fix any of my broken limbs, doc?}
+{16030}{}{Not yet, but I'll be back.}
+{17000}{}{[She smiles] Excellent! Give them to me. [She walks away and begins to administer the medicine to one of the patients] 
+}
+{17010}{}{[Wait]}
+{18000}{}{[A few moments later, the good doctor and the patient begin to have a conversation. You can't really hear what they're talking about, but it probably has something to do with the patient's last actions]
+}
+{18010}{}{[Wait some more]}
+{19000}{}{[Time passes, and the good doctor still seems stumped]
+}
+{19010}{}{Man, if she's not back soon, I'll have to wait some more.}
+{20000}{}{[More time passes, and the good doctor finally returns. But she isn't smiling] Oh, @pname@! It's hopeless, I can't figure it out. Jethro, the patient, says that the last thing he remembers before getting sick is eating the soup. But we all ate the soup, and we're fine. 
+}
+{20010}{}{I like soup.}
+{20020}{}{Couldn't have been the soup then, I ate it too.}
+{20030}{}{Thank God I didn't eat the soup.}
+{21000}{}{[She seems to have given up] Got any ideas? [She seems desperate] [You have one patient available]
+
+}
+{21010}{}{Let's try: Dissecting a patient.}
+{21020}{}{Let's try: Talking to a patient.}
+{21030}{}{Let's try: Examining the water.}
+{21040}{}{Let's try: Drinking the water.}
+{21050}{}{Let's try: Giving up.}
+{22000}{}{[Despite the good doctor's attempts to stop you, you take a scalpel and ram it into the forehead of the sickest patient, killing him. This has solved absolutely nothing. Looks like you'll need a new patient] [Your patient is dead! You killed him!]
+}
+{22010}{}{Let's try: Curing another patient.}
+{22020}{}{Let's try: Examining the water.}
+{22030}{}{Let's try: Drinking the water.}
+{22040}{}{Let's try: Giving up.}
+{23000}{}{[You attempt to talk to the patient but they refuse to speak with you. They're blaring on about you being just as bad as the water] [You have one patient available]
+}
+{23010}{}{Let's try: Dissecting a patient.}
+{23020}{}{Let's try: Examining the water.}
+{23030}{}{Let's try: Drinking the water.}
+{23040}{}{Let's try: Giving up.}
+{24000}{}{[You carefully examine the water, and find that it's just plain ordinary water] [Your patient is dead! You killed him!]
+}
+{24010}{}{Let's try: Drinking the water.}
+{24020}{}{Let's try: Not drinking the water.}
+{25000}{}{[You carefully examine the water, and find that it's just plain ordinary water] [You have one patient available]
+}
+{25010}{}{Let's try: Drinking the water.}
+{25020}{}{Let's try: Not drinking the water.}
+{26000}{}{[You drink the water and suddenly feel very sick! The room is spinning and your legs feel like jelly. You think that you're about to pass out!]
+}
+{26010}{}{Oh, hello floor.}
+{27000}{}{[You wake up a few hours later]
+}
+{27010}{}{Hrmf! You guys need to boil that water before drinking it. }
+{28000}{}{You're turning into quite the hero, aren't you? If you can bring me two radscorpion tails by the way, I can make a weak poison antidote for you. I almost forgot.}
+{28010}{}{Well howdy, good doctor! Can you squeeze out some of these scorpion tails and brew me up something to stop this horrible poison pain? Feels like my head's all spinney! }
+{28020}{}{Can you fix any of my broken limbs, doc?}
+{29000}{}{Sure, @pname@. It won't be very effective, but it might work as an antidote.}
+{30000}{}{Yes! But only in exchange for a bag of healing powder.}
+{30010}{}{Okay, fix me up.}
+{100000001}{}{Better wash the counter again...}
+{100000002}{}{That's 5 caps buddy. Hey did you hear me? Cough em' up.}
+{100000003}{}{Better change the keg...}
+{100000004}{}{RotGut? You drink that shit?}
+{100000005}{}{Domestic? I got B.E.E.R buddy, do you want one or not?}
+{100000006}{}{Fuckin' dust is getting everywhere. Hey close the fuckin' door!}
+{100000007}{}{I swear if the next asshole doesn't tip. Ima' shoot somebody!}
+{100000008}{}{I got bottles, I got shots, and I got a bat behind the counter for the retards. Your not a retard are you?}
+{100000009}{}{Uh-huh, yeah that's nice buddy. You don't say...What? Of course I'm listening...}
+{100000010}{}{That's 5 caps. FIVE CAPS Tribal! F.I.V.E! }
+{100000011}{}{Shut up and order a fuckin' beer already!}
+{100000012}{}{I swear if I have to serve another drunk, I'm getting the shotgun!}
+{100000013}{}{Look the keg went dry, and it's going to be another month until the caravan shows up again.}
+{100000014}{}{Really? You don't say, buy another drink or get out!}
+{100000015}{}{What? I'm on break.}
+{100000016}{}{Be right with ya'}
+{100000017}{}{Have a sit stranger. I'll be with you in a moment.}
+{100000018}{}{When do we close? Uh, when the place get's shot up, that's when!}
+{100000019}{}{We're fresh outta' cold beer, sorry. You'll just have to drink it warm.}
+{100000020}{}{RotGut? No man, go make that shit yourself! I wouldn't drink it!}
+
+[russ]
+{100}{}{Алкоголик}
+{200}{}{Вы видите пьяницу.}
+{210}{}{Вы видите шатающегося из стороны в сторону пьяного человека в лохмотьях. Лицо его распухло, нос синющий как слива. А аромат рядом с ним такой, что свалит брамина насмерть. Он что-то бормочет про себя и иногда громко поет песни.}
+{210}{}{Вы видите алкаша. Он весьма грязен - кажется, он повалялся в луже, но не особо этим расстроен.}
+{1000}{}{I?aaaeaeiaiaua onoaiiaee}
+{1010}{}{Answer text}
+{1020}{}{complete}
+{1030}{}{known}
+{1040}{}{final}
+{2000}{}{Thank you! Thank you! }
+{2010}{}{No ma'am, my name is @pname@.}
+{2020}{}{My name is @pname@, and I'm not sick. I had a physical before leaving the vault. }
+{2030}{}{I just wanted to ask you a few...}
+{2040}{}{Yeah, this is definitely not the tent I'm looking for, goodbye.}
+{3000}{}{[She interrupts you] Answer the question. Are you sick? Yes or no.}
+{3010}{}{Yes ma'am, I mean, no ma'am.}
+{3020}{}{No ma'am, I'm not sick. }
+{4000}{}{[She definitely seems pleased now] Good! It pains me to say this, but this isn't the vault, we barely have any supplies left and I'm the only medical professional that wasn't too afraid to leave the vault. So if you get hurt, I'm sorry, but your best bet is to ask a fellow vault dweller if they know anything about medicine. }
+{4010}{}{Sure, that's too bad though.}
+{4020}{}{Yes ma'am.}
+{5000}{}{[The good doctor suddenly gets an idea] Do you know anything about medicine? }
+{5010}{}{Of course.}
+{5020}{}{No, sorry.}
+{6000}{}{[She gently shakes your hand] It's nice to meet you @pname@, how are you finding things? Are you handling it well?}
+{6010}{}{Banana}
+{6020}{}{Oh golly fuzzy duck! It sure is scary being out of the vault}
+{6030}{}{I didn't get a brochure...}
+{7000}{}{[She smiles] Good! So tell me, what's your name?}
+{7010}{}{It's @pname@, ma'am.}
+{7020}{}{@pname@.}
+{8000}{}{[She laughs] Hang in there, you'll be fine.
+}
+{8010}{}{I hope.}
+{9000}{}{[She scrowls] Ah! My hair isn't that short! Just hang in there, okay? You'll be fine, take it slow.
+}
+{9010}{}{I hope.}
+{10000}{}{[She laughs] The only brochures they had left were probably in Chinese. Hang in there, you'll be fine.
+}
+{10010}{}{I hope.}
+{11000}{}{I ask because, there is a plague polluting this camp. Everyday Captain Stone sends me another poor vault dweller, suffering from the same disease. Upset stomach, diarrhea, bloating, loss of appetite. These men are useless in this condition! And the amount of cleaning that's required is out of this world. 
+}
+{11010}{}{Gosh.}
+{11020}{}{Golly.}
+{11030}{}{So? What can I do about it?}
+{11040}{}{Sounds like giardiasis. It's a parasite that affects the intestines of humans and animals. You've probably been drinking from a water source that came in contact with animal feces, or haven't been properly boiling your water.}
+{11050}{}{Sounds like you haven't been boiling your water.}
+{11060}{}{Are you drinking boiled water? Or is it straight from the ground?}
+{12000}{}{[She bows her head] Could you help me figure this out, please? It's for the benefit of the camp, and we'd all be really grateful. I'm sure we'll even reward you with something nice. 
+}
+{12010}{}{Oh, sure. I'll do whatever I can.}
+{12020}{}{Hmm, no, not right now. See ya.}
+{13000}{}{[The good doctor pats you on the back and says] Thank you, I really appreciate whatever help you can give. We'll have to stabilize one of the patients. Can you come back with five batches of healing powder? You just need some Xander root and Broc flower, just mix them together. But could you hurry? Please?
+}
+{13010}{}{Sure, I'll be back. }
+{14000}{}{[Her eyes light up] @pname@! You're a genius! I never even thought about it! We never had to boil the water in the past, but something must have contaminated the drinking supply! Or died in it. Thanks! Go tell the bartender to start boiling the water for now, until we've cleaned out the wells. 
+}
+{14010}{}{You're welcome.}
+{15000}{}{Thanks again @pname@, for all your hard work.
+}
+{16000}{}{[She wastes no time] Do you have the five batches of healing powder?
+}
+{16010}{}{Yeah, here you go.}
+{16020}{}{Can you fix any of my broken limbs, doc?}
+{16030}{}{Not yet, but I'll be back.}
+{17000}{}{[She smiles] Excellent! Give them to me. [She begins to administer the medicine to one of the patients] 
+}
+{17010}{}{[Wait]}
+{18000}{}{[A few moments later, the good doctor and the patient begin to have a conversation. You can't really hear what they're talking about, but it probably has something to do with the patients last actions]
+}
+{18010}{}{[Wait some more]}
+{19000}{}{[Time passes, and the good doctor still seems stumped]
+}
+{19010}{}{Man, if she's not back soon, I'll just have to wait some more.}
+{20000}{}{[More time passes, and the good doctor finally returns. But she isn't smiling] Oh, @pname@! It's hopeless, I can't figure it out. Jethro, the patient, says that the last thing he remembers before getting sick is eating the soup. But we all ate the soup, and we're fine. 
+}
+{20010}{}{I like soup.}
+{20020}{}{Couldn't have been the soup then, I ate it too.}
+{20030}{}{Thank God I didn't eat the soup.}
+{21000}{}{[She seems to have given up] Got any ideas? [She seems desperate]
+
+}
+{21010}{}{Let's try: Dissecting a patient.}
+{21020}{}{Let's try: Talking to a patient.}
+{21030}{}{Let's try: Examining the Water}
+{21040}{}{Let's try: Drinking the water.}
+{21050}{}{Let's try: Giving up.}
+{22000}{}{[Despite the good doctor's attempts to stop you, you take a scalpel and ram it into the forehead of the sickest patient, killing him. This has solved absolutely nothing. Looks like you'll need a new patient]
+}
+{22010}{}{Let's try: Curing another patient.}
+{22020}{}{Let's try: Examining the water.}
+{22030}{}{Let's try: Drinking the water.}
+{22040}{}{Let's try: Giving up.}
+{23000}{}{[You attempt to talk to the patient but they refuse to speak with you. They're blaring on about you being just as bad as the water]
+}
+{23010}{}{Let's try: Dissecting a patient.}
+{23020}{}{Let's try: Examining the water.}
+{23030}{}{Let's try: Drinking the water.}
+{23040}{}{Let's try: Giving up.}
+{24000}{}{[You carefully examine the water]
+}
+{24010}{}{Let's try: Drinking the water.}
+{24020}{}{Let's try: Not drinking the water.}
+{25000}{}{[You carefully examine the water, and find that it's just plain ordinary water]
+}
+{25010}{}{Let's try: Drinking the water.}
+{25020}{}{Let's try: Not drinking the water.}
+{26000}{}{[You drink the water and suddenly feel very sick! The room is spinning and your legs feel like jelly. You think that you're about to pass out!]
+}
+{26010}{}{Might as well take a nap!}
+{27000}{}{[You wake up a few hours later]
+}
+{27010}{}{Hrmf! You guys need to boil that water before drinking it. }
+{28000}{}{You're turning into quite the hero, aren't you?}
+{28010}{}{Well howdy, good doctor! Can you squeeze out some of these scorpion tails and brew me up something to stop this horrible poison pain? Feels like my head's all spinney! }
+{28020}{}{Can you fix any of my broken limbs, doc?}
+{29000}{}{Sure, @pname@. It won't be very effective, but it might work as an antidote. I guess I can make one for you every two scorpion tails you bring me.}
+{30000}{}{Yes! But only in exchange for a bag of healing powder.}
+{30010}{}{Okay, fix me up.}
+

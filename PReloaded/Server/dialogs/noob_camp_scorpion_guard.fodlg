@@ -1,0 +1,33 @@
+[comment]
+
+
+[data]
+lang=engl
+
+[dialog]
+&
+1 1000 None 1 #
+2 1010 D _var p nc_inlair = 0 #
+3 1020 D _var p nc_inlair = 1 @
+2 2000 None 0 #
+0 2010 R _var p nc_inlair = 1 R _script dialog@r_TeleportToMap 2 597 2 #
+0 2020 @
+3 3000 None 0 #
+0 3010 R _var p nc_inlair = 0 R _script dialog@r_TeleportToMap 2 597 1 #
+0 3020 &
+
+[engl]
+{100}{}{Lander's Point Guard}
+{200}{}{You see a bored man guarding a boring cave.}
+{210}{}{He sure looks bored, I tell ya.}
+{1000}{}{Predialogue installations}
+{1010}{}{trying to enter}
+{1020}{}{trying to exit}
+{2000}{}{[A man dressed in vault armor is standing in front of the barricade that blocks the path to the scorpion lair] 
+Hey! Be careful ! These fuckers killed a few of our guys last night. If you go in there we won't be able to help if you get sick. }
+{2010}{}{[Enter the Lair]}
+{2020}{}{[Leave]}
+{3000}{}{[Do you want to leave?]}
+{3010}{}{[Exit the Lair]}
+{3020}{}{[Stay here]}
+

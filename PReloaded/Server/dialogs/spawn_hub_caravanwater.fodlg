@@ -1,0 +1,124 @@
+[comment]
+
+
+[data]
+lang=engl
+
+[dialog]
+&
+1 1000 None 0 #
+2 1010 D _var p name_mem_npc_player = 0 R _var p name_mem_npc_player = 1 #
+20 1020 @
+20 2000 None 0 #
+11 2010 @
+2 3000 None 0 #
+5 3010 #
+3 3020 #
+0 3030 @
+3 4000 None 0 #
+4 4010 D _var p q_spawn_hub_water = 0 #
+16 4020 D _param p ST_KARMA { 0 #
+4 4030 D _var p q_spawn_hub_water = 0 D _param p ST_CHARISMA } 6 D or D _var p q_spawn_hub_water = 0 D _param p SK_SPEECH } 50 #
+0 4040 @
+4 5000 None 0 #
+7 5010 #
+0 5020 @
+5 6000 None 0 #
+6 6010 @
+6 7000 None 0 #
+11 7010 #
+0 7020 @
+7 8000 None 0 #
+8 8010 #
+0 8020 @
+8 9000 None 0 #
+9 9010 R _script dialog@r_AddExperience 1 50 R _var p q_spawn_hub_water = 1 #
+9 9020 R _script dialog@r_AddExperience 1 50 R _var p q_spawn_hub_water = 1 @
+9 10000 None 0 #
+10 10010 #
+0 10020 @
+10 11000 None 0 #
+11 11010 #
+0 11020 @
+11 12000 None 0 #
+4 12010 D _var p q_spawn_hub_water = 0 #
+3 12020 #
+12 12030 #
+0 12040 @
+12 13000 None 0 #
+13 13010 #
+11 13020 #
+14 13030 #
+0 13040 @
+13 14000 None 0 #
+0 14010 #
+11 14020 @
+14 15000 None 0 #
+15 15010 #
+11 15020 #
+0 15030 @
+15 16000 None 0 #
+11 16010 #
+0 16020 @
+16 17000 None 0 &
+
+[engl]
+{100}{}{Water Guard}
+{200}{}{You see a man guarding some water.}
+{210}{}{He's guarding what appears to be a small desert oasis. His hands are almost as big as your entire head! Bet he can drink his share of H2O.}
+{1000}{}{Predialogue installations}
+{1010}{}{Answer text}
+{1020}{}{bereits gesprochen}
+{2000}{}{[You see a burley man watching over what appears to be the caravan's water supply. He stops you as you approach] Hey, water's still off limits.}
+{2010}{}{Can I ask you something?}
+{3000}{}{[You see a burley man watching over what appears to be the caravan's water supply. He stops you as you approach] Whoa, there! Don't get too close to the water stream, please!}
+{3010}{}{Sorry, I'm just a bit thirsty that's all.}
+{3020}{}{People claiming water now?}
+{3030}{}{Okay.}
+{4000}{}{[He frowns] Now? Always have, stranger. We got here first. There's a lot more of us than you that could use a drink. You'll just have to find your own water, @sex@|sir.||ma'am.|}
+{4010}{}{I have no idea how to find water out there.}
+{4020}{}{What if I just killed you and took the water?}
+{4030}{}{Oh, the humanity! But without water I'll just die! You have to help me, I'm so helpless!}
+{4040}{}{Whatever, see ya.}
+{5000}{}{[He laughs] You aren't from around here, are ya? I can teach you a few things if you're interested.}
+{5010}{}{Please.}
+{5020}{}{No, I'll manage. See ya. }
+{6000}{}{[He is emotionless] With a heat like this, I'm not surprised. You shouldn't go wandering the desert without water.}
+{6010}{}{Mind if I take a drink?}
+{7000}{}{[He shakes his head] Yeah, I do. Sorry, we got here first, and there's a lot more of us that could use a drink instead of you. You'll just have to find your own water, stranger.}
+{7010}{}{Mind I ask you some questions?}
+{7020}{}{Whatever. Goodbye.}
+{8000}{}{[After a few moments of listening to the man talk about the basics of desert survival you realize just how useless your vault training was. It didn't mention anything about surviving in the desert] ...Water can be found in the ground if you dig deep enough. You'll have to boil it, but you can generally dig near any riverbed and find water. Don't go digging near any plants though, whatever nutrients or liquids in the area will be all used up by the plants. You can also just dig a hole, place a container deep inside of it. Fill the gaps with something wet, like plants or piss. Put a plastic sheet over the top of the hole, and anchor it down with rocks, one in the center above the container. The idea is to create condensation. It will drip into the container and fill it with distilled drinking water.}
+{8010}{}{[Listen]}
+{8020}{}{That's enough, I'll be fine. I gotta go.}
+{9000}{}{[After about an hour of listening to the man talk he realizes that he's taught you everything he knows] That's everything I know, @pname@! You sure are a good listener. You know what, feel free to have a drink from the spring. }
+{9010}{}{Thanks a lot, I sure am thirsty! [Drink from the fresh spring]}
+{9020}{}{Oh, boy! [Drink from the fresh spring]}
+{10000}{}{[He seems to have noticed something off about you] That there is a funny accent, @pname@. Where are you from? }
+{10010}{}{I'm uh... From a vault... }
+{10020}{}{Well, thanks for the help and all! But I've got to go.}
+{11000}{}{[His eyes light up in amazement] No way! You're kidding me? Is this your first time in the wasteland? Man, if you've got questions feel free to ask them!}
+{11010}{}{Well, gee golly, sure. Can I ask you about...}
+{11020}{}{Thanks, but I'll be fine. See you.}
+{12000}{}{[He smiles] What do you want to know?}
+{12010}{}{Can you teach me how to find water in the desert?}
+{12020}{}{People claiming water now?}
+{12030}{}{What's it like out there?}
+{12040}{}{That's all I wanted to know, thanks.}
+{13000}{}{[He bows his head in shame] Hell. Ain't much law and order around here outside of the south. Most of the towns here are protected, but the further you go up north the worse it gets. You'll find out for yourself eventually, there's nothing I can do to prepare you for it. }
+{13010}{}{Gosh mister, what do you mean?}
+{13020}{}{Mind if I ask you something else?}
+{13030}{}{Did I just see a... Dog? Or... was that a Man?}
+{13040}{}{Thats everything I wanted to know. Thanks.}
+{14000}{}{[He is emotionless, again] The wasteland is a fickle mistress, friend. You need to find a town and get your shit together before somebody takes advantage of you. }
+{14010}{}{That's all I wanted to know, thanks}
+{14020}{}{Mind I ask you something else?}
+{15000}{}{[The caravan reaches for their weapons. The man shouts out] Look alive! We might have company! It's never just a dog, kid.}
+{15010}{}{What else could it be?}
+{15020}{}{Another question, if you don't mind.}
+{15030}{}{Good to know. See you.}
+{16000}{}{[He looks very worried] Kid! Just... Keep shut, okay? This world ain't friendly.}
+{16010}{}{Alright I'll keep it down, but can I ask you another question?}
+{16020}{}{Oh, okay. Well... see ya!}
+{17000}{}{Don't even try. You'd lose. Play nice.}
+

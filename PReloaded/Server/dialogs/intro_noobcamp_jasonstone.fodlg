@@ -1,0 +1,294 @@
+[comment]
+Noob Camp Rule Guy
+
+[data]
+lang=engl russ
+
+[dialog]
+&
+1 1000 None 0 #
+2 1010 D _var p name_mem_npc_player = 0 #
+14 1020 D _var p name_mem_npc_player = 1 @
+2 2000 None 0 #
+3 2010 #
+3 2020 #
+3 2030 #
+3 2040 @
+3 3000 None 0 #
+5 3010 #
+11 3020 #
+12 3030 @
+5 4000 None 0 #
+8 4010 #
+6 4020 #
+7 4030 @
+11 5000 None 0 #
+6 5010 #
+7 5020 #
+8 5030 @
+12 6000 None 0 #
+6 6010 #
+7 6020 #
+8 6030 @
+6 7000 None 0 #
+7 7010 #
+13 7020 @
+7 8000 None 0 #
+6 8010 #
+13 8020 @
+8 9000 None 0 #
+9 9010 #
+12 9020 @
+9 10000 None 0 #
+10 10010 @
+10 11000 None 0 #
+0 11010 #
+12 11020 @
+13 12000 None 0 #
+0 12010 R _script dialog@r_AddExperience 1 50 R _var p name_mem_npc_player = 1 @
+14 13000 None 0 #
+15 13010 #
+32 13020 #
+16 13030 #
+17 13040 #
+29 13050 #
+33 13060 D _var p noob_camp_plague = 2 #
+0 13070 @
+15 14000 None 0 #
+14 14010 @
+16 15000 None 0 #
+14 15010 #
+0 15020 @
+17 16000 None 0 #
+26 16010 #
+27 16020 #
+25 16030 D _param p ST_STRENGTH > 7 D _param p ST_ENDURANCE > 7 #
+28 16040 @
+25 17000 None 0 @
+26 18000 None 0 #
+14 18010 @
+27 19000 None 0 #
+14 19010 @
+28 20000 None 0 #
+14 20010 @
+29 21000 None 0 #
+30 21010 #
+30 21020 #
+30 21030 @
+30 22000 None 0 #
+31 22010 #
+31 22020 #
+31 22030 #
+31 22040 #
+31 22050 #
+31 22060 @
+31 23000 None 0 #
+14 23010 @
+32 24000 None 0 #
+14 24010 @
+33 25000 None 0 #
+14 25010 &
+
+[engl]
+{100}{}{Cpt. Jason Stone}
+{200}{}{You see Cpt. Jason Stone.}
+{210}{}{You see a man radiating authority, he's also wearing a Vault-Tec style pip-boy on his wrist. He must be the one in charge.  }
+{1000}{}{Predialogue installations}
+{1010}{}{intro}
+{1020}{}{known}
+{2000}{}{About time you guys got here, was the sight of it all a bit too distracting for you? You're late. I was told to expect you almost an hour ago! }
+{2010}{}{Expect me for what? }
+{2020}{}{What're you talking about? }
+{2030}{}{Sorry my name's @pname@, I'm new here. }
+{2040}{}{I just came out of a big vault, I don't think you were expecting me.}
+{3000}{}{Oh, you're new here aren't you? That's my mistake, sorry. My name is Captain Jason Stone, I was sent here by the overseer of our vault. I was part of the first group of Vault Dwellers that left the vault to make sure it was clear for the rest of you guys. Been out here for months, it's pretty harsh out there if you don't know what you're doing, that's why we set up this here camp to help you newcomers out. But there's a few things you need to know...}
+{3010}{}{Go on.}
+{3020}{}{I thought this was a vacation...}
+{3030}{}{Even that damn Overseer thinks he can control us out here!}
+{4000}{}{Well first of all, you're here to learn and contribute to the camp. The Overseer says that it's your duty as a responsible vault citizen to help out where you can. I'm sure you all remember the brochure? I'm assuming that we had enough to distribute? Either way, everything you gather, build, or destroy falls on you. As we're all responsible for helping keep this camp alive. With that said all the work you do for the camp stays in the camp, but when you decide to leave we'll have a backpack ready for you equal to the amount of work you put in. Sound fair?}
+{4010}{}{I, uh... Didn't get a brochure.}
+{4020}{}{What kind of work do you need?}
+{4030}{}{Wait, so I'm not free to do as I please?}
+{5000}{}{No, it's a responsibility. You're here to learn and contribute to the camp. The Overseer says that it's your duty as a responsible vault citizen to help out where you can. I'm sure you all remember the brochure? I'm assuming that we had enough to distribute? Either way, everything you gather, build, or destroy falls on you. As we're all responsible for helping keep this camp alive. With that said all the work you do for the camp stays in the camp, but when you decide to leave we'll have a backpack ready for you equal to the amount of work you put in. Sound fair?
+}
+{5010}{}{What kind of work do you need?}
+{5020}{}{Wait, so I'm not free to do as I please?}
+{5030}{}{I, uh... Didn't get a brochure.}
+{6000}{}{Listen! You're here to learn and contribute to the camp. I think that it's your duty as a responsible vault citizen to help out where you can. I'm sure you all remember the brochure? I'm assuming that we had enough to distribute? Either way, everything you gather, build, or destroy falls on you. As we're all responsible for helping keep this camp alive. With that said all the work you do for the camp stays in the camp, but when you decide to leave we'll have a backpack ready for you equal to the amount of work you put in. Sound fair?
+}
+{6010}{}{What kind of work do you need?}
+{6020}{}{Wait, so I'm not free to do as I please?}
+{6030}{}{I, uh... Didn't get a brochure.}
+{7000}{}{Oh God, there's so much that needs to get done around here. I've got a couple dozen injured men, and a bad plague going around the camp. On top of that we're running low on firewood, tools, and supplies. What's worse is that the brahmin crap just keeps pilling up, and nobody's willing to get their hands dirty anymore. You'd be surprised how entitled you Vault Dwellers feel right after leaving the vault for the first time. Well I tell you, there's a lot of shit out there that I ain't cleaning up, so you'd best keep your nose clean. }
+{7010}{}{Am I free to do as I please?}
+{7020}{}{I think I'm ready to begin.}
+{8000}{}{Well yeah, I mean, I won't stop you if you want to leave and go do your own thing. You're finally free from the prison that is life in the vault! You're finally free from the clutches of that damn VO, I won't stop you from living the life you want to live. But I'll fucking shoot you if you try to hurt anybody around here, or try to take anything. As far as I can tell, you Vault Dwellers are still civilized, and I expect you to act that way around my camp. We do not tolerate any kind of violence, or injustice around here. This is not a place for Rogues, or thieves. If you want to indulge in your vices, head over to New Reno. }
+{8010}{}{What kind of work do you need?}
+{8020}{}{I think I'm ready to begin.}
+{9000}{}{You didn't get a pamplet? You're kidding me? Did you even read the damn Vault Dweller's guide?}
+{9010}{}{Uh...No...}
+{9020}{}{Oh, of course I did. Quite the lovely read, indeed. }
+{10000}{}{Oh man, why did you even leave the vault?}
+{10010}{}{I...Uh...}
+{11000}{}{Take those fucking goggles off, you look ridiculous. Just stay out of trouble okay? And go walk the around the tents. When you find something interesting go talk to the guy inside, and tell him that you're here to work. I can't believe you didn't even read the damn manual! Are you crazy? Do you even know what radiation is? Geez! Just...Just get out of my sight!}
+{11010}{}{[Walk away in shame]}
+{11020}{}{Wait, let's start over!}
+{12000}{}{That's good to hear, have a walk around the camp, and check out some of these tents. I've got men working on everything and anything, they can teach you a lot about the world. I hope you end up doing good out there, stranger. Don't dissapoint the vault. Why don't you try crafting something? Pick up some flint, hit "F" to open your FixBoy and craft a Primitive Tool. Open your inventory with the "I" button and equip the tool into an active slot. You can almost anything with one of those babies. Go have fun, kid. . Oh, almst forgot! If you want a shortcut just right click and hold. Use the hand icon to automatically use your equipped tool.
+}
+{12010}{}{Thanks for the help. }
+{13000}{}{Ah, you're still here? I hope you're finding the camp to be accommodating. Did you need a refresher on what we talked about? }
+{13010}{}{Actually could you tell me more about the camp?}
+{13020}{}{You mentioned something about a plague? What can you tell me about that?}
+{13030}{}{You mentioned something about a couple of injured men? What can you tell me about that?}
+{13040}{}{Anything to hunt around here?}
+{13050}{}{I think I'm ready to get going.}
+{13060}{}{I solved the plague issue!}
+{13070}{}{No, I'm fine. Just wanted to say hello. }
+{14000}{}{You're here to learn and contribute to the camp, everything you gather, build, or destroy falls on you. As we're all responsible for helping keep this place alive. With that said all the work you do for the camp stays in the camp, but when you decide to leave we'll have a backpack ready for you equal to the amount of work you put in. You can find work scattered across the tents inside the camp, and when you're ready to check out the rest of the wasteland you're allowed. But there's no shooting, stabbing, punching, yelling, raping, stealing, or killing allowed on base, copy? 
+}
+{14010}{}{Yup, thanks. }
+{15000}{}{Yeah well, we've got a scorpion problem. When we settled here we noticed a small cave with a couple of scorpion nests in it, so we burnt one of them and kept the other one around for food. Scorpion is full of protein and if you cook it long enough you burn away the radiation. Anyhow, we got careless and now the nest is kind of out of control. You should probably stay away from it, but if you think you can handle yourself I'd still recommend you stay the hell away from it. Anymore questions?}
+{15010}{}{Yeah actually...}
+{15020}{}{No, thanks a lot.}
+{16000}{}{You think you're ready to hunt? There's more than just rats and cockroaches out here, kid. You ever seen a gecko before? Or a giant scorpion?}
+{16010}{}{A giant scorpion?! Oh golly!}
+{16020}{}{What the hell is a gecko?! Sounds scary!}
+{16030}{}{The only thing you people should fear, is me.}
+{16040}{}{I ain't afraid of nothin'!}
+{17000}{}{*Gulp* God have mercy on us all!}
+{18000}{}{Yeah! Scorpions as big as a dog! If you think you're ready for that then there's a cave around here you can check out. But don't get hurt! Doc doesn't have the resources to help you.}
+{18010}{}{*Gulp* Gee willikers!}
+{19000}{}{Gecko's are big, mean, leathery beasts with teeth as big as my hand! Haha! I'm just teasing you! But they're these weird looking lizards that walk around on two feet. Sounds scary, but their hides are worth a fortune out here. Most of the armour you'll see around the wasteland was made with gecko skin. A lot of people make a living hunting them, just stay away from the one's that breath fire!}
+{19010}{}{Fire breathing lizards?! You mean dragons?! Oh my God! Why did I leave the vault?! This is a mad house, I tell you! A mad house!}
+{20000}{}{Oh you will be...You will be! You can't even begin to imagine what kind of horrific monsters spawned from the radioactive ashes of mankind! }
+{20010}{}{Hah! How bad can it be! }
+{21000}{}{Really? Okay man, brace yourself. Once you leave you can't come back. I mean, like... If we need you again we'll send you a PipBoy message. But really man, after this, you're on your own. }
+{21010}{}{What do you mean? }
+{21020}{}{That's fine, I'm done with this damn vault.}
+{21030}{}{*Gasp!*}
+{22000}{}{The vault opened up automatically, it's a Vault-Tek thing don't look at me. There's nothing to go back to. Overseer's just sending people out in droves, internal battery's dying so what can we do? The first group of us volunteered to help get you guys ready. Now that you're ready, well, I guess it's just time to go. Good luck out there, pat on the back and all that. Honestly man, I know it sucks, but the vault's dead, gotta move on. }
+{22010}{}{My home! Oh God! What am I going to do? I thought this was just a mandatory learning experience! I didn't know that I'd never come back!}
+{22020}{}{Where shall I go? What shall I do?}
+{22030}{}{Hah! Good riddance! I wasn't planning on going back anyways.}
+{22040}{}{Hmm, I thought they exiled me. Go figure.}
+{22050}{}{Guess that explains why they let everybody out.}
+{22060}{}{What? That's bullshit. You're a fucking liar! The vault's fine! I'm just on vacation!}
+{23000}{}{Things are tough all over, pal. I'm just sticking around until my wife and kids come out of the vault. Just do yourself a favor, and head over to the Hub after all this. I told all my men to recommend it, it's the only safe place in California. You can make a living, get laid, shit-faced, whatever man. If there's something to find, you'll find it there. }
+{23010}{}{Aw, shucks.}
+{24000}{}{Not much I'm afraid, the Doc can tell you more. All I know is that people are getting sick. I thought that it was just scorpion attacks but it's something else, I really have no idea. If you can figure it out I'll put something special in that backpack of yours. }
+{24010}{}{Interesting.}
+{25000}{}{[He smiles and shakes your hand] Damn fine job! You've really helped fixed this camp up! I'll make sure you get something nice in return.}
+{25010}{}{Thanks!}
+{100000001}{}{Welcome to the outside, officers.}
+{100000002}{}{Have your I.D tags ready...}
+{100000003}{}{That better be YOUR PipBoy!}
+{100000004}{}{Glad to see you're all wearing your goggles...}
+{100000005}{}{Chapter one of the brochure will explain the following steps...}
+{100000006}{}{This is NOT a vacation. I repeat! NOT a vacation.}
+{100000007}{}{Okay, okay! Calm down! There's no reason to turn to drugs and alcohol.}
+{100000008}{}{They let YOU out? Holy crap!}
+{100000009}{}{What the hell are you jackasses still doing here?! }
+{100000010}{}{You've got work to do! Get to it, officers!}
+{100000011}{}{When you're ready to leave the gate is right in front of me.}
+{100000012}{}{Make sure you get well acquainted with your new environment before continuing.}
+{100000013}{}{We've got over a dozen different tasks for you to complete before we loosen the leash.}
+{100000014}{}{Have you spoken to the good Doctor yet?}
+{100000015}{}{I think we've got contact with an outsider to the far West, over.}
+{100000016}{}{When you're ready to leave, go visit the Hub. It'll be like your new home.}
+{100000017}{}{So, you little shits finally seeing the light, eh? Good! Welcome to Earth.}
+{100000018}{}{My God! What is this?! This is the next wave?! Pathetic!}
+{100000019}{}{Uh... wow... we're doomed.}
+{100000020}{}{Ya'll better be earning your exit packages!}
+
+[russ]
+{100}{}{Алкоголик}
+{200}{}{Вы видите пьяницу.}
+{210}{}{Вы видите шатающегося из стороны в сторону пьяного человека в лохмотьях. Лицо его распухло, нос синющий как слива. А аромат рядом с ним такой, что свалит брамина насмерть. Он что-то бормочет про себя и иногда громко поет песни.}
+{210}{}{Вы видите алкаша. Он весьма грязен - кажется, он повалялся в луже, но не особо этим расстроен.}
+{1000}{}{I?aaaeaeiaiaua onoaiiaee}
+{1010}{}{intro}
+{1020}{}{known}
+{2000}{}{Thank you! Thank you! }
+{2010}{}{[Ponder about the strange aroma[}
+{2020}{}{[Listen in on a nearby conversation]}
+{2030}{}{[Are those Vault Dwellers?]}
+{2040}{}{[Take it all in]}
+{3000}{}{The smell of a strange new meat reaches your nostrils as your mouth begins to water. You wonder what strange creature was caught this morning? You ask to try the stew and are handed a wooden bowl with a small spoon. It's bland tasting, rough, but has a fairly unique flavor you can't seem to put your finger on. You ask the man doing the cooking what this meat is, "Molerat" he replies, "With some Xander root and Broc flower for seasoning.}
+{3010}{}{[Listen in on a nearby conversation]}
+{3020}{}{[Notice all the Vault Dwellers]}
+{3030}{}{[Take it all in]}
+{4000}{}{You over hear two men talking about a place, or thing named "L.A" infested by giant three headed abominations, and Roman Centurions. Either way, you aren't quite sure what a Centaur really is, or if your recollection of history is still right. The vault records were pretty old. }
+{4010}{}{[Take it all in]}
+{4020}{}{[Ponder about the strange aroma]}
+{4030}{}{[Notice all the Vault Dwellers]}
+{5000}{}{No, it's a responsibility. You're here to learn and contribute to the camp. The Overseer says that it's your duty as a responsible vault citizen to help out where you can. I'm sure you all remember the pamplet? I'm assuming that we had enough to distribute? Either way, everything you gather, build, or destroy falls on you. As we're all responsible for helping keep this camp alive. With that said all the work you do for the camp stay in the camp, but when you decide to leave we'll have a backpack ready for you equal to the amount of work you put in. Sounds fair?
+}
+{5010}{}{What kind of work do you need?}
+{5020}{}{Wait, so I'm not free to do as I please?}
+{5030}{}{I, uh... Didn't get a pamplet.}
+{6000}{}{Insubordination will not be tolerated. You're here to learn and contribute to the camp. The Overseer says that it's your duty as a responsible vault citizen to help out where you can. I'm sure you all remember the pamplet? I'm assuming that we had enough to distribute? Either way, everything you gather, build, or destroy falls on you. As we're all responsible for helping keep this camp alive. With that said all the work you do for the camp stay in the camp, but when you decide to leave we'll have a backpack ready for you equal to the amount of work you put in. Sounds fair?
+}
+{6010}{}{What kind of work do you need?}
+{6020}{}{Wait, so I'm not free to do as I please?}
+{6030}{}{I, uh... Didn't get a pamplet.}
+{7000}{}{The camp is full of Vault Dwellers with no numbers on their backs, just like you. This must be the outpost security talked about on your way out. You should be able to make some friends here; better be on your best behaviour. }
+{7010}{}{[Ponder about the strange aroma]}
+{7020}{}{I think I'm ready to begin.}
+{8000}{}{You take a deep breath and take it all in, it's a bit too much for you, and you're definitely feeling culture-shocked. The outside air alone is something that makes you cringe; you're not in Kansas anymore. This new world feels almost primitive to you, but there's no going back now. You think you're ready to go exploring, and take the biggest step of your life. }
+{8010}{}{[Continue]}
+{8020}{}{I think I'm ready to begin.}
+{9000}{}{As you walk around the camp you are overwhelmed with the amount of things to do and see. You simply never expected these outsiders of accomplishing so much, in such little time. It feels like there is a lot you should learn from this new world, and here would be the perfect place to start.}
+{9010}{}{[Begin]}
+{9020}{}{Oh, of course I did. Quite the lovely read, indeed. }
+{10000}{}{Oh man, why did you even leave the vault?}
+{10010}{}{I...Uh...}
+{11000}{}{Take those fucking goggles off, you look ridiculous. Now just stay out of trouble, and go walk the around the tents. When you find something interesting go talk to the guy inside, and tell him that you're here to work. I can't believe you didn't read the damn manual! Are you crazy? Do you even know what radiation is? Geez! Get out of my sight. }
+{11010}{}{[Walk away in shame]}
+{11020}{}{Wait, let's start over!}
+{12000}{}{That's good to hear, have a walk around the camp, and check out some of these tents. I've got men working on everything and anything, they can teach you a lot about the world. I hope you end up doing good out there, stranger, don't dissapoint the vault.  
+}
+{12010}{}{Thanks for the help. }
+{13000}{}{Ah, you're still here? I hope you're finding the camp to be accommodating. Did you need a refresher on what we talked about? }
+{13010}{}{Actually could you tell me more about the camp?}
+{13020}{}{You mentioned something about a plague? What can you tell me about that.}
+{13030}{}{You mentioned something about a couple of injured men? What can you tell me about that?}
+{13040}{}{Anything to hunt around here?}
+{13050}{}{I think I'm ready to get going.}
+{13060}{}{I solved the plague issue!}
+{13070}{}{No, I'm fine. Just wanted to say hello. }
+{14000}{}{You're here to learn and contribute to the camp, everything you gather, build, or destroy falls on you. As we're all responsible for helping keep this place alive. With that said all the work you do for the camp stays in the camp, but when you decide to leave we'll have a backpack ready for you equal to the amount of work you put in. You can find work scattered across the tents inside the camp, and when you're ready to check out the rest of the wasteland you're allowed. But there's no shooting, stabbing, punching, yelling, raping, stealing, or killing allowed on base, copy? 
+}
+{14010}{}{Yup, thanks. }
+{15000}{}{Yeah well, we've got a scorpion problem. When we settled here we noticed a small cave with a couple of scorpion nests in it, so we burnt one of them and kept the other one around for food. Scorpion is full of protein and if you cook it long enough you burn away the radiation. Anyhow, we got careless and now the nest is kind of out of control. You should probably stay away from it, but if you think you can handle yourself I'd still recommend you stay the hell away from it. Anymore questions?}
+{15010}{}{Yeah actually...}
+{15020}{}{No, thanks a lot.}
+{16000}{}{You think you're ready to hunt? There's more than just rats and cockroaches out here, kid. You ever seen a gecko before? Or a giant scorpion?}
+{16010}{}{A giant scorpion?! Oh golly!}
+{16020}{}{What the hell is a gecko?! Sounds scary!}
+{16030}{}{The only thing you people should fear, is me.}
+{16040}{}{I ain't afraid of nothin'!}
+{17000}{}{*Gulp* God have mercy on our souls!}
+{18000}{}{Yeah! Scorpions as big as a dog! If you think you're ready for that then there's a cave around here you can check out. But don't get hurt! Doc doesn't have the resources to help you.}
+{18010}{}{[Gulp] }
+{19000}{}{Gecko's are big, mean, leathery beasts with teeth as big as my hand! Haha! I'm just teasing you! But they're these weird looking lizards that walk around on two feet. Sounds scary, but their hides are worth a fortune out here. Most of the armour you'll see around the wasteland was made with gecko skin. A lot of people make a living hunting them, just stay away from the one's that breath fire!}
+{19010}{}{Fire breathing lizards?! You mean dragons?! Oh my God! Why did I leave the vault?! This is a mad house, I tell you! A mad house!}
+{20000}{}{Oh you will be...You will be! You can't even begin to imagine what kind of horrific monsters spawned from the radioactive ashes of mankind! }
+{20010}{}{Hah! How bad can it be! }
+{21000}{}{Really? Okay man, brace yourself. Once you leave you can't come back. I mean, like... If we need you again we'll send you a PipBoy message. But really man, after this, you're on your own. }
+{21010}{}{What do you mean? }
+{21020}{}{That's fine, I'm done with the damn vault.}
+{21030}{}{*Gasp!*}
+{22000}{}{The vault opened up automatically, it's a Vault-Tek thing don't look at me. There's nothing to go back to. Overseer's just sending people out in droves, internal battery's dying so what can we do? The first group of us volunteered to help get you guys ready. Now that you're ready, well, I guess it's just time to go. Good luck out there, pat on the back and all that. Honestly man, I know it sucks, but the vault's dead, gotta move on. }
+{22010}{}{My home! Oh God! What am I going to do? I thought this was just a mandatory learning experience! I didn't know that I'd never come back!}
+{22020}{}{Where shall I go? What shall I do?}
+{22030}{}{Hah! Good riddance! I wasn't planning on going back anyways.}
+{22040}{}{Hmm, I thought they exiled me. Go figure.}
+{22050}{}{Guess that explains why they let everybody out.}
+{22060}{}{What? That's bullshit. You're a fucking liar! The vault's fine! I'm just on vacation!}
+{23000}{}{Things are tough all over, pal. I'm just sticking around until my wife and kids come out. Just do yourself a favor, and head over to the Hub after all this. I told all my men to recommend it, it's the only safe place in California. You can make a living, get laid, shit-faced, whatever man. It's there's something to find, you'll find it there. }
+{23010}{}{Aw shucks.}
+{24000}{}{Not much I'm afraid, the Doc can tell you more. All I know is that people are getting sick. I thought that it was just scorpion attacks but it's something else, I really have no idea. If you can figure it out I'll put something special in that backpack of yours. }
+{24010}{}{Interesting.}
+{25000}{}{[He smiles and shakes your hand] Damn fine job! You've really helped fixed this camp up! I'll make sure you get something nice in return.}
+{25010}{}{Thanks!}
+

@@ -1,0 +1,134 @@
+[comment]
+jes needs help 
+
+noob_camp_jessica
+
+23007
+
+[data]
+lang=engl russ
+
+[dialog]
+&
+1 1000 None 0 #
+4 1010 D _var p name_mem_npc_player = 0 D _var p noob_camp_jessica = 0 #
+7 1020 D _var p name_mem_npc_player = 1 D _var p noob_camp_jessica = 0 #
+11 1030 D _var p noob_camp_jessica = 1 @
+4 2000 None 0 #
+3 2010 #
+5 2020 #
+5 2030 #
+2 2040 @
+2 3000 None 0 @
+3 4000 None 0 #
+5 4010 @
+5 5000 None 0 #
+6 5010 @
+6 6000 None 0 #
+0 6010 R _var p name_mem_npc_player = 1 @
+7 7000 None 0 #
+8 7010 #
+9 7020 D _item p PID_ANTIDOTE > 0 #
+0 7030 @
+8 8000 None 0 #
+9 8010 D _item p PID_ANTIDOTE > 0 #
+0 8020 @
+9 9000 None 0 #
+10 9010 @
+10 10000 None 0 #
+12 10010 @
+12 11000 None 0 #
+0 11010 R _param p ST_POISON_RESISTANCE + 5 R _script dialog@r_AddExperience 1 500 R _var p noob_camp_jessica = 1 @
+11 12000 None 0 &
+
+[engl]
+{100}{}{Jessica, the hopeless}
+{200}{}{You see Jessica, the hopeless.}
+{210}{}{You see a very sad sight, a young woman is lying half naked on a make-shift bed, covered in her own filth and sweat. You think she's dying. }
+{1000}{}{Predialogue installations}
+{1010}{}{not known}
+{1020}{}{known}
+{1030}{}{completed}
+{2000}{}{[This young woman can barely speak and appears to be moments away from death. She's as pale as a ghost, she stinks, and she needs the sweat wiped from her eyes] }
+{2010}{}{What's wrong? What happened?}
+{2020}{}{[Attempt to help the poor woman]}
+{2030}{}{[Wipe the sweat from her face]}
+{2040}{}{[Refuse to touch her, and walk away]}
+{3000}{}{Hnnngh!!}
+{4000}{}{[The young woman toses about and whimpers something you can barely here, but you think she says] Scorpions...}
+{4010}{}{[Attempt to help the poor woman]}
+{5000}{}{[You try to touch the woman gently but a guard comes in running and tells you not to touch her, or face getting shot] }
+{5010}{}{[Ask the guard what happened to her]}
+{6000}{}{[You and one of the guards have a brief conversation about the young woman. He tells you that she was attacked by a large group of radscorpions hiding about near the local Broc garden. He then explains how they do not have enough poision antidote to go around, and that this woman lost the lottery that dealt with handing out the vaccines. You feel terrible about her circumstances, but what can you do? There's just not enough resources to go around. Perhaps you could craft your own antidote? You wonder.]  }
+{6010}{}{[Ponder the fate of man, and walk away]}
+{7000}{}{[This young woman is about to die unless you can get her the treatment that she needs. But does she deserve it? You'll never know unless you try to help her] }
+{7010}{}{[Ask the guard what happened again]}
+{7020}{}{[Tell the guard that you have an antidote and to come with you immediately]}
+{7030}{}{[Stress over the loss of young life and walk away]}
+{8000}{}{[You and one of the guards have a brief conversation about the young woman. He tells you that she was attacked by a large group of radscorpions hiding about near the local Broc garden. He then explains how they do not have enough poision antidote to go around, and that this woman lost the lottery that dealt with handing out the vaccines. You feel terrible about her circumstances, but what can you do? There's just not enough resources to go around. Perhaps you could craft your own antidote? You wonder.]  }
+{8010}{}{[Tell the guard that you have an antidote and to come with you immediately]}
+{8020}{}{[Stress over the loss of young life and walk away]}
+{9000}{}{[You gently clean off the dried filth from the woman's body and change her blankets. You then help the young woman assume a sitting position and begin feeding her small sips of the antidote. You decide to stay here for some time and take care of the girl but the guards rush you out. After a few hours you notice her complexion begining to normalize and you feel confident about leaving]}
+{9010}{}{[Walk away]}
+{10000}{}{"Wait!" [You hear suddenly]}
+{10010}{}{[Stop and greet the woman]}
+{11000}{}{[A young, beautiful woman is standing before you. She has love in her eyes; if only for a moment you wonder, but this moment is yours] Stranger! I just wanted to say thank you! [She jumps towards you and gives you a big hug] You saved my life when nobody else would! It was so horrible lying there dying, I was so alone! [She cries] I knew nobody was coming but I prayed so hard for a hero! It's the only thing this world really needs! [She smiles at you at says] You can be that hero.  }
+{11010}{}{[Walk away speechless]}
+{12000}{}{My hero!@@Hi hero!@@Thanks again for saving me!}
+{100000001}{}{Better wash the counter again...}
+{100000002}{}{That's 5 caps buddy. Hey did you hear me? Cough em' up.}
+{100000003}{}{Better change the keg...}
+{100000004}{}{RotGut? You drink that shit?}
+{100000005}{}{Domestic? I got B.E.E.R buddy, do you want one or not?}
+{100000006}{}{Fuckin' dust is getting everywhere. Hey close the fuckin' door!}
+{100000007}{}{I swear if the next asshole doesn't tip. Ima' shoot somebody!}
+{100000008}{}{I got bottles, I got shots, and I got a bat behind the counter for the retards. Your not a retard are you?}
+{100000009}{}{Uh-huh, yeah that's nice buddy. You don't say...What? Of course I'm listening...}
+{100000010}{}{That's 5 caps. FIVE CAPS Tribal! F.I.V.E! }
+{100000011}{}{Shut up and order a fuckin' beer already!}
+{100000012}{}{I swear if I have to serve another drunk, I'm getting the shotgun!}
+{100000013}{}{Look the keg went dry, and it's going to be another month until the caravan shows up again.}
+{100000014}{}{Really? You don't say, buy another drink or get out!}
+{100000015}{}{What? I'm on break.}
+{100000016}{}{Be right with ya'}
+{100000017}{}{Have a sit stranger. I'll be with you in a moment.}
+{100000018}{}{When do we close? Uh, when the place get's shot up, that's when!}
+{100000019}{}{We're fresh outta' cold beer, sorry. You'll just have to drink it warm.}
+{100000020}{}{RotGut? No man, go make that shit yourself! I wouldn't drink it!}
+
+[russ]
+{100}{}{Алкоголик}
+{200}{}{Вы видите пьяницу.}
+{210}{}{Вы видите шатающегося из стороны в сторону пьяного человека в лохмотьях. Лицо его распухло, нос синющий как слива. А аромат рядом с ним такой, что свалит брамина насмерть. Он что-то бормочет про себя и иногда громко поет песни.}
+{210}{}{Вы видите алкаша. Он весьма грязен - кажется, он повалялся в луже, но не особо этим расстроен.}
+{1000}{}{I?aaaeaeiaiaua onoaiiaee}
+{1010}{}{Answer text}
+{1020}{}{known}
+{1030}{}{completed}
+{2000}{}{Thank you! Thank you! }
+{2010}{}{Exit into the wasteland}
+{2020}{}{Answer 3}
+{2030}{}{Answer 4}
+{2040}{}{Head to the camp}
+{3000}{}{Hnnngh!!}
+{4000}{}{[The young woman toses about and whimpers something you can barely here, but you think she says] Scorpions...}
+{4010}{}{[Attempt to help the poor woman]}
+{5000}{}{[You try to touch the woman gently, but a guard comes running in and tells you not to touch her, or face getting shot] }
+{5010}{}{[Ask the guard what happened to her]}
+{6000}{}{[You and one of the guards have a brief conversation about the young woman. He tells you that she was attacked by a large group of radscorpions hiding about near the local Broc garden. He then explains how they do not have enough poision antidote to go around, and that this woman lost the lottery that dealt with handing out the vaccines. You feel terrible about her circumstances, but what can you do? There's just not enough resources to go around. Perhaps you could craft your own antidote? You wonder.]  }
+{6010}{}{[Ponder the fate of man, and walk away]}
+{7000}{}{[This young woman is about to die unless you can get her the treatment that she needs. But does she deserve it? You'll never know unless you try to help her] }
+{7010}{}{[Ask the guard what happened again]}
+{7020}{}{[Tell the guard that you have an antidote and to come with you immediately]}
+{7030}{}{[Stress over the loss of young life and walk away]}
+{8000}{}{[You and one of the guards have a brief conversation about the young woman. He tells you that she was attacked by a large group of radscorpions hiding about near the local Broc garden. He then explains how they do not have enough poision antidote to go around, and that this woman lost the lottery that dealt with handing out the vaccines. You feel terrible about her circumstances, but what can you do? There's just not enough resources to go around. Perhaps you could craft your own antidote? You wonder.]  }
+{8010}{}{[Stress over the loss of young life and walk away]}
+{8020}{}{[Stress over the loss of young life and walk away]}
+{9000}{}{[You gently clean off the dried filth from the woman's body and change her blankets. You then help the young woman assume a sitting position and begin feeding her small sips of the antidote. You decide to stay here for some time and take care of the girl. After a few hours her complexion begins to normalize and you feel confident about leaving]}
+{9010}{}{[Walk away]}
+{10000}{}{"Wait!" [You hear suddenly]}
+{10010}{}{[Stop and greet the woman]}
+{11000}{}{[A young, beautiful woman is standing before you. She has love in her eyes; if only for a moment you wonder, but this moment is yours] Mister! I just wanted to say thank you! [She jumps towards you and gives you a big hug] You saved my life when nobody else would! It was so horrible lying there dying, I was so alone! [She cries] I knew nobody was coming but I prayed so hard for a hero! It's the only thing this world really needs! [She smiles at you at says] You can be this hero.  }
+{11010}{}{[Walk away speechless]}
+{12000}{}{Thank you! You saved my life! }
+

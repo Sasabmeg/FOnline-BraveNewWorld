@@ -1,0 +1,262 @@
+[comment]
+alec teaches you how to make a leather jacket, then wants a new one. 
+600 xp for 1 leather jacket
+
+you gain a LJ in your noob kit after completing the quest
+(Please add scripts)
+
+var required
+
+noob_camp_alecquest
+# 23003
+
+Local -> Quest
+0 min 2 max
+0 not completed
+1 completed
+2 is extra
+
+[data]
+lang=engl russ
+
+[dialog]
+&
+1 1000 None 0 #
+4 1010 D _var p name_mem_npc_player = 0 D _var p noob_camp_alecquest = 0 #
+18 1020 D _var p name_mem_npc_player = 1 D _var p noob_camp_alecquest = 0 #
+22 1030 D _var p noob_camp_alecquest = 1 @
+4 2000 None 0 #
+2 2010 #
+3 2020 #
+5 2030 #
+7 2040 #
+0 2050 @
+2 3000 None 0 #
+7 3010 @
+3 4000 None 0 #
+7 4010 @
+5 5000 None 0 #
+6 5010 @
+6 6000 None 0 #
+7 6010 @
+7 7000 None 0 #
+8 7010 #
+0 7020 @
+8 8000 None 0 #
+10 8010 #
+10 8020 #
+10 8030 @
+10 9000 None 0 #
+11 9010 @
+11 10000 None 0 #
+9 10010 #
+10 10020 #
+10 10030 #
+10 10040 #
+10 10050 @
+9 11000 None 0 #
+12 11010 @
+12 12000 None 0 #
+14 12010 #
+13 12020 @
+13 13000 None 0 #
+14 13010 #
+23 13020 @
+14 14000 None 0 #
+15 14010 #
+15 14020 @
+23 15000 None 0 #
+15 15010 #
+15 15020 #
+15 15030 #
+15 15040 @
+15 16000 None 0 #
+16 16010 @
+16 17000 None 0 #
+17 17010 #
+0 17020 @
+17 18000 None 0 #
+0 18010 R _var p name_mem_npc_player = 1 @
+18 19000 None 0 #
+19 19010 D _item p PID_LEATHER_JACKET > 0 #
+0 19020 @
+19 20000 None 0 #
+20 20010 @
+20 21000 None 0 #
+21 21010 #
+21 21020 #
+21 21030 #
+21 21040 @
+21 22000 None 0 #
+0 22010 R _script dialog@r_AddExperience 1 600 R _item p PID_LEATHER_JACKET - 1 R _var p noob_camp_alecquest = 1 @
+22 23000 None 0 &
+
+[engl]
+{100}{}{Alec, the vault rebel}
+{200}{}{You see Alec, the vault rebel.}
+{210}{}{What a punk! His hair is spiked, and dyed a God awful color, and his leather jacket is full of holes. He's just standing there fixing his hair. }
+{1000}{}{Predialogue installations}
+{1010}{}{not known}
+{1020}{}{known}
+{1030}{}{completed}
+{2000}{}{[The young man spits as you approach] What d'ya' want, goon? I'll get back to work once my hair is fixed, shove off!}
+{2010}{}{Captain Jason wanted me to ask everyone if they needed any help.}
+{2020}{}{[Scruff up the boy's hair]}
+{2030}{}{That jacket is full of holes, why don't you replace it?}
+{2040}{}{You sure do remind me of a younger me!}
+{2050}{}{[Walk away]}
+{3000}{}{[The young man scrowls] Yeah? Well, I could use a blowjob and a martini, now piss off!}
+{3010}{}{Listen punk! You'll show me some damn respect!}
+{4000}{}{[The young man becomes hysterical] Oh, you son'o'bitch! My goddamn hair! My goddamn hair! Wait until the boys get a word of this! We'll fuck you up good! Just where do you get off touching another man's hair? Hmm?! }
+{4010}{}{Listen punk! You'll show me some damn respect!}
+{5000}{}{[The young man gives you a funny, confused look] This isn't just any leather jacket! It's a uniform!  }
+{5010}{}{Like a costume?}
+{6000}{}{[You feel like you've heard this before] You think this is a fuckin' costume? This is a way of life!}
+{6010}{}{Yeah, well you still look like a clown to me.}
+{7000}{}{[The young man isn't moved at all by your story] Sure, grandpa, whatever you say.}
+{7010}{}{Man, that jacket looks really cool. Where did you get it? }
+{7020}{}{Kids today! [Walk away]}
+{8000}{}{[The young man throws you a confident smile and says] I *made* it. }
+{8010}{}{No way! How?}
+{8020}{}{Any asshole can make a Jacket, but not like this...}
+{8030}{}{Bullshit! Your momma probably made it for you!}
+{9000}{}{Just why the hell should I tell you anyways? Like I said, it's a uniform! You don't see just anybody wearing one of these, do you?! [His response makes you pause for a moment]}
+{9010}{}{Uhm...Well...}
+{10000}{}{[This young man isn't quite impressed by your swavy ways, you'll have to convince him to give up his secret] Uh-huh?}
+{10010}{}{I just want to look as badass as you.}
+{10020}{}{Just tell me you stupid punk! I'm in a hurry!}
+{10030}{}{I want to be cool, okay?!}
+{10040}{}{Can you please tell me how you did it?}
+{10050}{}{Don't make me tell the Captain you're being a jerk!}
+{11000}{}{Dude! It's so easy! All you gotta do is collect some fibers from one of those darker plants, kill yourself a couple of silver geckos and BAM! You've got yourself a leather jacket! Just uh, remember to clean out the guts first. Sew them together by the back, cut out a couple of arm holes, and you're good to go!}
+{11010}{}{Wow! Cool!}
+{12000}{}{Yeah! You want to join my gang?!}
+{12010}{}{Hell yeah!}
+{12020}{}{Hell no!}
+{13000}{}{What? Don't be such a pussy! You want to be cool, don't you?}
+{13010}{}{Sure! Why not! Count me in, little buddy!}
+{13020}{}{Well, gee wilikers that sure does sound swell!}
+{14000}{}{Hell yeah! Okay! But you gotta be initiated!}
+{14010}{}{Initiated?}
+{14020}{}{Uh...Okay...}
+{15000}{}{Uh, what? Okay! But you gotta be initiated!}
+{15010}{}{Initiated? Gosh.}
+{15020}{}{Do I have to roll for this?}
+{15030}{}{Oh! Golly!}
+{15040}{}{Uh... Okay...}
+{16000}{}{[He punches you in the gut!] Ha-hah! But seriously! You'll need to make your own uniform! There's a part of the camp full of silver geckos, go over there and get the stuff to make it. Don't come back until it's done, or you're not getting in! Hah! }
+{16010}{}{Alright...}
+{17000}{}{Good! You'll need a weapon or something, I don't know. Those geckos can get kind of tough, but I bet a tough guy like you can handle it, eh? Hah! Just go kill five of them, grab a fiber, sew it all together and come back here. Easy!}
+{17010}{}{No problem, I got this. }
+{17020}{}{Uh... yeah, no. Goodbye. }
+{18000}{}{[The young man is smiling like a jackal] You'll be an honourary Thrasher by no time!}
+{18010}{}{I'll be back.}
+{19000}{}{Shit, you're back already? You got that new leather jacket?}
+{19010}{}{Yeah! It's right here! Pretty snazzy eh?}
+{19020}{}{No not yet, but I'll be back.}
+{20000}{}{[The young man is smiling like a jackal] Hot damn! That's one fancy coat! Shit son! Why don't I just take it? [He snatches the leather jacket from you and puts it on] Oh, yeah! That's a perfect fit! Thanks! I needed a new coat! You go tell the Captain I'm mighty grateful! Hah!  }
+{20010}{}{Hey! What the hell?}
+{21000}{}{[The young man gives you a hefty push] Shove off! It's mine now, gramps!}
+{21010}{}{You stupid kid! If I ever see you again, I'll kill you!}
+{21020}{}{But you said I could be in the gang!}
+{21030}{}{Holy tennis racquets! You sure do know how to ruin a swell time! You're mean!}
+{21040}{}{[Say nothing and just stare at the boy as if you were tearing him limb from limb in your own mind]}
+{22000}{}{[The young man bows his head in shame and says] Look, I'm sorry, okay? You were tryin' to be nice to me, but I've got this image to keep up. If the lads saw me being kind I'd lose my reputation. I'll make sure you get my old jacket, alright? As a token of my appreciation and all. Hell! Consider yourself an honorary Thrasher! Thanks gramps! }
+{22010}{}{Uh...Thanks, I guess.}
+{23000}{}{Stay strong. Stay tough. That's the Thrasher way!}
+{100000001}{}{Better wash the counter again...}
+{100000002}{}{That's 5 caps buddy. Hey did you hear me? Cough em' up.}
+{100000003}{}{Better change the keg...}
+{100000004}{}{RotGut? You drink that shit?}
+{100000005}{}{Domestic? I got B.E.E.R buddy, do you want one or not?}
+{100000006}{}{Fuckin' dust is getting everywhere. Hey close the fuckin' door!}
+{100000007}{}{I swear if the next asshole doesn't tip. Ima' shoot somebody!}
+{100000008}{}{I got bottles, I got shots, and I got a bat behind the counter for the retards. Your not a retard are you?}
+{100000009}{}{Uh-huh, yeah that's nice buddy. You don't say...What? Of course I'm listening...}
+{100000010}{}{That's 5 caps. FIVE CAPS Tribal! F.I.V.E! }
+{100000011}{}{Shut up and order a fuckin' beer already!}
+{100000012}{}{I swear if I have to serve another drunk, I'm getting the shotgun!}
+{100000013}{}{Look the keg went dry, and it's going to be another month until the caravan shows up again.}
+{100000014}{}{Really? You don't say, buy another drink or get out!}
+{100000015}{}{What? I'm on break.}
+{100000016}{}{Be right with ya'}
+{100000017}{}{Have a sit stranger. I'll be with you in a moment.}
+{100000018}{}{When do we close? Uh, when the place get's shot up, that's when!}
+{100000019}{}{We're fresh outta' cold beer, sorry. You'll just have to drink it warm.}
+{100000020}{}{RotGut? No man, go make that shit yourself! I wouldn't drink it!}
+
+[russ]
+{100}{}{Алкоголик}
+{200}{}{Вы видите пьяницу.}
+{210}{}{Вы видите шатающегося из стороны в сторону пьяного человека в лохмотьях. Лицо его распухло, нос синющий как слива. А аромат рядом с ним такой, что свалит брамина насмерть. Он что-то бормочет про себя и иногда громко поет песни.}
+{210}{}{Вы видите алкаша. Он весьма грязен - кажется, он повалялся в луже, но не особо этим расстроен.}
+{1000}{}{I?aaaeaeiaiaua onoaiiaee}
+{1010}{}{Answer text}
+{1020}{}{known}
+{1030}{}{completed}
+{2000}{}{Thank you! Thank you! }
+{2010}{}{Head to the camp}
+{2020}{}{Exit into the wasteland}
+{2030}{}{Answer 3}
+{2040}{}{Answer 4}
+{2050}{}{[Walk away]}
+{3000}{}{[The man scrowls] Yeah? Well I could use a blowjob and a martini, piss off!}
+{3010}{}{Listen punk! You'll show me some damn respect!}
+{4000}{}{[The man becomes hysterical] Oh you son'o'bitch! My goddamn hair! My goddamn hair! Wait until the boys get a word of this! We'll fuck you up good! Just where do you get off touching another man's hair? Hmm?! }
+{4010}{}{Listen punk! You'll show me some damn respect!}
+{5000}{}{[The man gives you a funny, confused look] This isn't just any leather jacket! It's a uniform!  }
+{5010}{}{Like a costume?}
+{6000}{}{[You feel like you've heard this before] You think this is a fuckin' costume? This is a way of life!}
+{6010}{}{Yeah, well you still look like a clown to me.}
+{7000}{}{[The young man isn't moved at all by your story] Sure grandpa, whatever you say.}
+{7010}{}{Man, that jacket just looks really cool. Where did you get it? }
+{7020}{}{Kids today! [Walk away]}
+{8000}{}{[The young man throws you a confident smile and says] I made it. }
+{8010}{}{No way! How?}
+{8020}{}{Any asshole can make a Jacket, but not like this...}
+{8030}{}{Bullshit, your momma probably made it for you!}
+{9000}{}{[This young man isn't quite impressed by your swavy ways, you'll have to convince him to give up his secret] Just why the hell should I tell you anyways? Like I said, it's a uniform! You don't see just anybody wearing one of these, do you?! [His response makes you pause for a moment]}
+{9010}{}{Uhm...Well...}
+{10000}{}{[This young man isn't quite impressed by your swavy ways, you'll have to convince him to give up his secret] Uh-huh?}
+{10010}{}{I just want to look as badass as you.}
+{10020}{}{Just tell me you stupid punk! I'm in a hurry!}
+{10030}{}{Because I want to be cool!}
+{10040}{}{Can you please tell me how you did it?}
+{10050}{}{Don't make me tell the Captain you're being a jerk!}
+{11000}{}{Dude! It's so easy! All you gotta do is collect some fibers from one of those darker plants, kill yourself a couple of silver geckos and BAM! You've got yourself a leather jacket! Just uh, remember to clean out the guts first, sew them together by the back, cut out a couple of arm holes, and you're good to go!}
+{11010}{}{Wow! Cool!}
+{12000}{}{Yeah! You want to join my gang?!}
+{12010}{}{Hell yes!}
+{12020}{}{Hell no!}
+{13000}{}{What? Don't be such a pussy! You want to be cool, don't you?}
+{13010}{}{Sure! Why not! Count me in little buddy!}
+{13020}{}{Well gee wilikers that sure does sound swell!}
+{14000}{}{Hell yeah! Okay! But you gotta be initiated!}
+{14010}{}{Initiated?}
+{14020}{}{Uh...Okay...}
+{15000}{}{Uh, what? Okay! But you gotta be initiated!}
+{15010}{}{Initiated? Gosh.}
+{15020}{}{Do I have to roll for this?}
+{15030}{}{Oh! Golly!}
+{15040}{}{Uh... Okay...}
+{16000}{}{[He punches you in the gut!] Ha-hah! But seriously! You'll need to make your own uniform! There's a part of the camp full of silver geckos, go over there and get the stuff to make it. Don't come back until it's done, or you're not getting in! Hah! }
+{16010}{}{Alright...}
+{17000}{}{Good! You'll need a weapon or something, I don't know. Those geckos can get kind of tough, but I bet a tough guy like you can handle it, eh? Hah! Just go kill five of them, grab a fiber, sew it all together and come back here. Easy!}
+{17010}{}{No problem, I got this. }
+{17020}{}{Uh-yeah, no. Goodbye. }
+{18000}{}{[The young man is smiling like a jackal] You'll be an honorary Thrasher by no time!}
+{18010}{}{I'll be back.}
+{19000}{}{Shit, you're back? You got that jacket?}
+{19010}{}{Yeah! It's right here! Pretty snazzy,eh?}
+{19020}{}{No not yet, but I'll be back.}
+{20000}{}{[The young man is smiling like a jackal] Hot damn! That's one fancy coat! Shit son! Why don't I just take it? [He snatches the leather jacket from you, and puts it on] Oh yeah! That's a perfect fit! Thanks! I needed a new coat! You go tell the Captain I'll mighty grateful, hah!  }
+{20010}{}{Hey! What the hell?}
+{21000}{}{[The young man gives you a hefty push] Shove off! It's mine now gramps!}
+{21010}{}{You stupid kid! If I ever see you again, I'll kill you!}
+{21020}{}{But you said I could be in the gang!}
+{21030}{}{Holy tennis racquets! You sure do know how to ruin a swell time!}
+{21040}{}{[Say nothing and just stare at the boy as if you were tearing him limb from limb in your own mind]}
+{22000}{}{[The young man bows his head in shame and says] Look, I'm sorry, okay? You were tryin' to be nice to me, but I've got this image to keep up. If the lads saw me being kind i'd lose my reputation. I'll make sure you get my old jacket, alright? As a token of my appreciation and all. Hell! Consider yourself an honorary Thrasher! Thanks gramps! }
+{22010}{}{Uh...Thanks, I guess.}
+{23000}{}{Stay strong. Stay Tough. That's the Thrasher way!}
+
