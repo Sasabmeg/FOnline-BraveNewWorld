@@ -1,0 +1,219 @@
+[comment]
+needs 3 hatchets 300 xp
+german accent canadian culture
+
+noob_camp_simon
+
+23014
+
+[data]
+lang=engl russ
+
+[dialog]
+&
+1 1000 None 0 #
+4 1010 D _var p name_mem_npc_player = 0 D _var p noob_camp_simon = 0 #
+22 1020 D _var p name_mem_npc_player = 1 D _var p noob_camp_simon = 0 #
+20 1030 D _var p noob_camp_simon = 1 @
+4 2000 None 0 #
+2 2010 #
+3 2020 #
+5 2030 #
+6 2040 @
+2 3000 None 0 #
+7 3010 #
+8 3020 #
+5 3030 @
+3 4000 None 0 #
+6 4010 #
+8 4020 @
+5 5000 None 0 #
+21 5010 #
+11 5020 @
+6 6000 None 0 #
+7 6010 #
+5 6020 @
+7 7000 None 0 #
+5 7010 @
+8 8000 None 0 #
+9 8010 @
+9 9000 None 0 #
+10 9010 #
+10 9020 #
+5 9030 @
+10 10000 None 0 #
+5 10010 @
+11 11000 None 0 #
+12 11010 @
+12 12000 None 0 #
+13 12010 @
+13 13000 None 0 #
+14 13010 #
+14 13020 @
+14 14000 None 0 #
+15 14010 #
+16 14020 #
+17 14030 #
+0 14040 R _var p name_mem_npc_player = 1 @
+15 15000 None 0 #
+0 15010 R _var p name_mem_npc_player = 1 @
+16 16000 None 0 #
+0 16010 R _var p name_mem_npc_player = 1 @
+17 17000 None 0 #
+0 17010 R _var p name_mem_npc_player = 1 @
+21 18000 None 0 #
+11 18010 @
+20 19000 None 0 @
+22 20000 None 0 #
+23 20010 D _item p PID_AXE > 2 #
+0 20020 @
+23 21000 None 0 #
+0 21010 R _item p PID_AXE - 3 R _script dialog@r_AddExperience 1 300 R _var p noob_camp_simon = 1 &
+
+[engl]
+{100}{}{Simon, the Woodsman}
+{200}{}{You see Simon, the Woodsman.}
+{210}{}{This man is dressed in red and green flannel, similar to the average Canadian. However there is something off about his accent, you aren't quite sure what it is. }
+{1000}{}{Predialogue installations}
+{1010}{}{not known}
+{1020}{}{known}
+{1030}{}{completed}
+{2000}{}{[The man is talking to himself in a strange language, your PipBoy identifies it as Mongolian but that can't be right, can it?]  How ze goin' eh?}
+{2010}{}{Wait... You're not speaking Mongolian!?}
+{2020}{}{That accent... }
+{2030}{}{Captain Stone wanted me to ask everyone if they needed help with anything.}
+{2040}{}{Nice shirt Eh! Canada called they want it back.}
+{3000}{}{[With a flappy head he politely says] Nein! Iz German eh! Do you always go around questioning a stranger's accent? Ja?}
+{3010}{}{Sometimes ja!}
+{3020}{}{Sorry your accent is throwing off my PipBoy.}
+{3030}{}{Whatever, need any help with anything?}
+{4000}{}{[With a flappy head he politely says] Und vhat aboot it eh?}
+{4010}{}{Why do you talk so funny?}
+{4020}{}{Just curious that's all, where you from?}
+{5000}{}{[With a flappy head he politely says] Oh ja eh? Und do you know how to makes die hatchet?}
+{5010}{}{Uh, nope...}
+{5020}{}{Of course! Need any?}
+{6000}{}{[With a flappy head he politely says] Fuck off eh!}
+{6010}{}{Hey! I thought you people were supposed to be jolly! What gives?}
+{6020}{}{Whatever, need any help with anything?}
+{7000}{}{[He smiles and says] Stop it.}
+{7010}{}{Sorry, I promise I'll never make fun of someone's accent again.}
+{8000}{}{[He smiles and says] It must be the Canadian ja? Mein family iz German, but mein vater was born in Canada. Mein balls have never been happier to be in California.}
+{8010}{}{We're in California?! Where's the ocean?!}
+{9000}{}{[His smile fades] You fool, die ocean iz a radioactive cesspool of filth und dispair, didn't you read the brochure?}
+{9010}{}{No...[You take the goggles off your head]}
+{9020}{}{Man, so no movie stars or surfers? That sucks.}
+{9030}{}{Uh sure did! I was just teasing!}
+{10000}{}{[He's serious now] What culture you grew up with in the vault about the outside world was all wrong, just take a look around. It's up to us to rebuild, not clown around playing celebrity.}
+{10010}{}{Yes sir [Bow your head in shame]}
+{11000}{}{[He seems pleased] Das ist gut! Ich brauche drei! Ja?}
+{11010}{}{Uh... What?}
+{12000}{}{[His smile fades] I need three, eh!}
+{12010}{}{Oh no problem.}
+{13000}{}{[He smiles and says] Then it is settled! You bring me three hatchets and I'll tell herr Stone what a good boy you've been, ja?}
+{13010}{}{Sure, I'll get right on it.}
+{13020}{}{It's a deal! And who should I say I'm doing it for?}
+{14000}{}{[He shakes your hand and introduces himself] Mein name is Simon! [You dont think you heard that quite right]}
+{14010}{}{You mean like the sperm?}
+{14020}{}{[Your PipBoy reacts "Seamann; sailor"] Your name's Sailor?}
+{14030}{}{Sure whatever! Nice to meet you!}
+{14040}{}{[Your refuse to shake his hand and walk away]}
+{15000}{}{[His smile fades] Nein! Not like the hahn rotz! Mein name is Simon! Not semen! Get ze hell out of here!}
+{15010}{}{Damn Canadians...}
+{16000}{}{[His smile fades] Nein! Not like the tintenfisch! Mein name is Simon! Not seamann! Get ze hell out of here!}
+{16010}{}{Damn Canadians...}
+{17000}{}{[He politely says] Nice to meet you too! Bring me zem hatchets ja?}
+{17010}{}{Sure! See ya!}
+{18000}{}{[He doesn't look very impressed] All you need is ze wood and ze junk and you've got a hatchet ja! Go ask Albert if you need more help, eh.}
+{18010}{}{Oh, okay.}
+{19000}{}{Viel gluck out there ja? Hope you won't need a rettungswagen!}
+{20000}{}{[He greets you with a floppy head and a firm handshake] Grub! Did you make those three hatchets yet? }
+{20010}{}{Sure did! Here you go.}
+{20020}{}{Not yet, but I'll be back.}
+{21000}{}{[He smiles hard] Okie-dokey! Das ist gut! You've done well for a non-Canadian! Be proud, ja? I'll make sure herr Stone gives you your own hatchet before you leave. Thanks for ze help.}
+{21010}{}{No problem! See you around, you crazy Canadian!}
+{100000001}{}{Better wash the counter again...}
+{100000002}{}{That's 5 caps buddy. Hey did you hear me? Cough em' up.}
+{100000003}{}{Better change the keg...}
+{100000004}{}{RotGut? You drink that shit?}
+{100000005}{}{Domestic? I got B.E.E.R buddy, do you want one or not?}
+{100000006}{}{Fuckin' dust is getting everywhere. Hey close the fuckin' door!}
+{100000007}{}{I swear if the next asshole doesn't tip. Ima' shoot somebody!}
+{100000008}{}{I got bottles, I got shots, and I got a bat behind the counter for the retards. Your not a retard are you?}
+{100000009}{}{Uh-huh, yeah that's nice buddy. You don't say...What? Of course I'm listening...}
+{100000010}{}{That's 5 caps. FIVE CAPS Tribal! F.I.V.E! }
+{100000011}{}{Shut up and order a fuckin' beer already!}
+{100000012}{}{I swear if I have to serve another drunk, I'm getting the shotgun!}
+{100000013}{}{Look the keg went dry, and it's going to be another month until the caravan shows up again.}
+{100000014}{}{Really? You don't say, buy another drink or get out!}
+{100000015}{}{What? I'm on break.}
+{100000016}{}{Be right with ya'}
+{100000017}{}{Have a sit stranger. I'll be with you in a moment.}
+{100000018}{}{When do we close? Uh, when the place get's shot up, that's when!}
+{100000019}{}{We're fresh outta' cold beer, sorry. You'll just have to drink it warm.}
+{100000020}{}{RotGut? No man, go make that shit yourself! I wouldn't drink it!}
+
+[russ]
+{100}{}{Алкоголик}
+{200}{}{Вы видите пьяницу.}
+{210}{}{Вы видите шатающегося из стороны в сторону пьяного человека в лохмотьях. Лицо его распухло, нос синющий как слива. А аромат рядом с ним такой, что свалит брамина насмерть. Он что-то бормочет про себя и иногда громко поет песни.}
+{210}{}{Вы видите алкаша. Он весьма грязен - кажется, он повалялся в луже, но не особо этим расстроен.}
+{1000}{}{I?aaaeaeiaiaua onoaiiaee}
+{1010}{}{Answer text}
+{1020}{}{known}
+{1030}{}{completed}
+{2000}{}{Thank you! Thank you! }
+{2010}{}{Head to the camp}
+{2020}{}{Exit into the wasteland}
+{2030}{}{Answer 3}
+{2040}{}{Answer 4}
+{3000}{}{[With a flappy head he politely says] Nein! Iz German eh! Do you always go around questioning a stranger's accent? Ja?}
+{3010}{}{Sometimes ja!}
+{3020}{}{Sorry your accent is throwing off my PipBoy.}
+{3030}{}{Whatever, need any help with anything?}
+{4000}{}{[With a flappy head he politely says] Und vhat aboot it eh?}
+{4010}{}{Why do you talk so funny?}
+{4020}{}{Just curious that's all, where you from?}
+{5000}{}{[With a flappy head he politely says] Oh ja eh? Und do you know how to makes die hatchet?}
+{5010}{}{Uh, nope...}
+{5020}{}{Of course! Need any?}
+{6000}{}{[With a flappy head he politely says] Fuck off eh!}
+{6010}{}{Hey! I thought you people were supposed to be jolly! What gives?}
+{6020}{}{Whatever, need any help with anything?}
+{7000}{}{[He smiles and says] Stop it.}
+{7010}{}{Sorry, I promise I'll never make fun of someone's accent again.}
+{8000}{}{[He smiles and says] It must be the Canadian ja? Mein family was born in Germany, but I was born in Canada. Mein balls have never been happier to be in California.}
+{8010}{}{We're in California?! Where's the ocean?!}
+{9000}{}{[His smile fades] You fool, the ocean is a radioactive cesspool of filth and dispair, didn't you read the brochure?}
+{9010}{}{No...[You take the goggles off your head]}
+{9020}{}{Man, so no movie stars or surfers? That sucks.}
+{9030}{}{Uh sure did! I was just teasing!}
+{10000}{}{[He's serious now] What culture you grew up with in the vault about the outside world was all wrong, just take a look around. It's up to us to rebuild, not clown around playing celebrity.}
+{10010}{}{Yes sir [Bow your head in shame]}
+{11000}{}{[He seems pleased] Das ist gut! Ich brauche drei! Ja?}
+{11010}{}{Uh... What?}
+{12000}{}{[His smile fades] I need three, eh!}
+{12010}{}{Oh no problem.}
+{13000}{}{[He smiles and says] Then it is settled! You bring me three hatchets and I'll tell herr Stone what a good boy you've been, ja?}
+{13010}{}{Sure, I'll get right on it.}
+{13020}{}{It's a deal! And who should I say I'm doing for?}
+{14000}{}{[He shakes your hand and introduces himself] Mein name is Simon![You dont think you heard that quite right]}
+{14010}{}{You mean like the sailor?}
+{14020}{}{[Your PipBoy reacts "Seamann; sailor"] Your name's Sailor?}
+{14030}{}{Sure whatever! Nice to meet you!}
+{14040}{}{[Your refuse to shake his hand and walk away]}
+{15000}{}{[His smile fades] Nein! Not like the hahn rotz! Mein name is Simon! Not semen! Get ze hell out of here!}
+{15010}{}{Damn Canadians...}
+{16000}{}{[His smile fades] Nein! Not like the tintenfisch! Mein name is Simon! Not seamann! Get ze hell out of here!}
+{16010}{}{Damn Canadians...}
+{17000}{}{[He politely says] Nice to meet you too! Bring me zem hatchets ja?}
+{17010}{}{Sure! See ya!}
+{18000}{}{[He doesn't look very impressed] All you need is ze wood and ze junk and you've got a hatchet ja! Go ask Albert if you need more help, eh.}
+{18010}{}{Oh, okay.}
+{19000}{}{Viel glГјck out there ja? Hope you won't need a rettungswagen!}
+{20000}{}{[He greets you with a floppy head and a firm handshake] GruГџ! Did you make those hatchets yet? }
+{20010}{}{Sure did! Here you go.}
+{20020}{}{Not yet, but I'll be back.}
+{21000}{}{[He smiles hard] Okie-dokey! Das ist gut! You've done well for a non-Canadian! Be proud, ja? I'll make sure herr Stone gives you your own hatchet before you leave. Thanks for ze help.}
+{21010}{}{No problem! See ya! You crazy Canadian!}
+

@@ -1,0 +1,148 @@
+[comment]
+tom the breeder
+250 xp for 2 rope
+teaches how to make rope
+Rope to Noob Kit
+(Please script)
+
+noob_camp_breederquest 23004
+
+local quest
+0 min 2 min
+0 not com
+1 com
+2 extra
+
+[data]
+lang=engl russ
+
+[dialog]
+&
+1 1000 None 0 #
+4 1010 D _var p name_mem_npc_player = 0 D _var p noob_camp_breederquest = 0 #
+12 1020 D _var p name_mem_npc_player = 1 D _var p noob_camp_breederquest = 0 #
+10 1030 D _var p noob_camp_breederquest = 1 @
+4 2000 None 0 #
+2 2010 #
+3 2020 #
+5 2030 #
+6 2040 @
+2 3000 None 0 #
+3 3010 @
+3 4000 None 0 #
+7 4010 @
+5 5000 None 0 #
+6 5010 @
+6 6000 None 0 #
+3 6010 @
+7 7000 None 0 #
+8 7010 @
+8 8000 None 0 #
+11 8010 @
+10 9000 None 0 @
+11 10000 None 0 #
+0 10010 R _var p name_mem_npc_player = 1 @
+12 11000 None 0 #
+14 11010 D _item p PID_ROPE > 1 #
+13 11020 #
+0 11030 @
+13 12000 None 0 #
+12 12010 @
+14 13000 None 0 #
+0 13010 R _item p PID_ROPE - 2 R _script dialog@r_AddExperience 1 250 R _var p noob_camp_breederquest = 1 &
+
+[engl]
+{100}{}{Tom, the brahmin herder}
+{200}{}{You see Tom, the brahmin herder}
+{210}{}{He looks like he really cares about those cows, but he's having a hard time keeping them still. }
+{1000}{}{Predialogue installations}
+{1010}{}{not known}
+{1020}{}{known}
+{1030}{}{completed}
+{2000}{}{[You see a man struggling with his cows] Argh! Damnit Mitsy! Sit still! Why do you keep chewing at the rope? Just where do you think you'll go? The wasteland is too harsh for brahmin! }
+{2010}{}{Quite the animals aren't they?}
+{2020}{}{Need a hand?}
+{2030}{}{Maybe if you weren't such a pussy with them, they'd listen to you more?}
+{2040}{}{Captain Jason told me to ask everyone if they needed anything...}
+{3000}{}{[He smiles and waves his arms around] Oh yes! Quite the animals indeed! But they're so stubborn! It takes a truly strong rope to tame a brahmin, they're quite the freespirit! Always running away, running free from the crazyness of the wasteland. From man... From...}
+{3010}{}{Stop it, do you need any help?}
+{4000}{}{[He smiles and waves his arms around] A hand? Mmmhyes! That would be delightful! Could you hold this rope while I head over to my tent for a while? }
+{4010}{}{No, I mean't did you need any work done? Captain Jason asked me to ask everyone if they needed any help with their day to day tasks. }
+{5000}{}{[He smiles and waves his arms around] What was that? Cats? No, no pussy here, I haven't seen a cat in years! Say could you hold this rope for a while? I need to go to my tent for a bit.}
+{5010}{}{Of course not. Listen Captain Jason asked me to ask everyone if they needed any help with they day to day tasks.}
+{6000}{}{[He smiles and waves his arms around] Oh that's delightful! Yes, I could use some new shoes and a nicer hat, mine are quite worn from the day to day travels I make when...}
+{6010}{}{That's not what I mean't, I was asking if you needed a hand with anything?}
+{7000}{}{[He's still waving his arms around] Ah yes! I need new rope, as soon as possible! In fact the sooner the better! These little brahmin of mine keep poking their mouths at it, and I fear that they've grown a liking to the taste. Woe is me for my little fingers cannot keep up with the great demand of twisting those fibers into existence. Ah, but alas, you'll just have to do it for me, yes? I mean, it is your responsibility after all. }
+{7010}{}{Yeah, sure, I guess.}
+{8000}{}{Excellent! Your FixBoy has already been coded with the basic rope blueprint, just open it up by pushing "F" and see how to fold the ends and what not. If you need more help using your FixBoy ask Albert, he's pretty knowledgeable with them. All I know is that you need a few Fibers, you can find these on yellow looking plants out in the fields, and there's a couple of them around here somewhere. Take a knife to one and cut off a few pieces it's quite easy. I need you to bring me back two of them, one for each brahmin. That would be greatly appreciated, and I would tell Captain Jason what a wonderful help you've been. }
+{8010}{}{Bring back two pieces of rope? No problem. }
+{9000}{}{Ah mister vault man, how do you do?}
+{10000}{}{[He smiles heavily] Yes! Yes! Two rope! One for each brahmin indeed! Do be so ever quick about it, please!}
+{10010}{}{I'll be right back... Eventually.}
+{11000}{}{[He's quite the strange vault dweller] A cow! A cow! My kingdom for a cow! Oh it's you! [He leans closer] Do you have the one piece of rope?}
+{11010}{}{Yeah, but you're kind of creeping me out.}
+{11020}{}{Could you tell me how to make a rope again? Please?}
+{11030}{}{Not yet, but I'll be back.}
+{12000}{}{Excellent! Your PipBoy has already been coded with the basic rope blueprint, just open it up and see how to fold the ends and what not. If you need more help using your PipBoy ask Albert, he's pretty knowledgeable with them. All I know is that you need a few Fibers, you can find these on yellow looking plants out in the fields, and there's a couple of them around here somewhere. Take a knife to one and cut off a few pieces it's quite easy. I need you to bring me back two of them, one for each brahmin. That would be greatly appreciated, and I would tell Captain Jason what a wonderful help you've been. }
+{12010}{}{Thanks.}
+{13000}{}{[He shakes your hand and says] Delightful! Mister vault man, you've been quite the help! Thank you! I'll make you your very own piece of rope once you leave, I promise!}
+{13010}{}{Sure, thanks.}
+{100000001}{}{Better wash the counter again...}
+{100000002}{}{That's 5 caps buddy. Hey did you hear me? Cough em' up.}
+{100000003}{}{Better change the keg...}
+{100000004}{}{RotGut? You drink that shit?}
+{100000005}{}{Domestic? I got B.E.E.R buddy, do you want one or not?}
+{100000006}{}{Fuckin' dust is getting everywhere. Hey close the fuckin' door!}
+{100000007}{}{I swear if the next asshole doesn't tip. Ima' shoot somebody!}
+{100000008}{}{I got bottles, I got shots, and I got a bat behind the counter for the retards. Your not a retard are you?}
+{100000009}{}{Uh-huh, yeah that's nice buddy. You don't say...What? Of course I'm listening...}
+{100000010}{}{That's 5 caps. FIVE CAPS Tribal! F.I.V.E! }
+{100000011}{}{Shut up and order a fuckin' beer already!}
+{100000012}{}{I swear if I have to serve another drunk, I'm getting the shotgun!}
+{100000013}{}{Look the keg went dry, and it's going to be another month until the caravan shows up again.}
+{100000014}{}{Really? You don't say, buy another drink or get out!}
+{100000015}{}{What? I'm on break.}
+{100000016}{}{Be right with ya'}
+{100000017}{}{Have a sit stranger. I'll be with you in a moment.}
+{100000018}{}{When do we close? Uh, when the place get's shot up, that's when!}
+{100000019}{}{We're fresh outta' cold beer, sorry. You'll just have to drink it warm.}
+{100000020}{}{RotGut? No man, go make that shit yourself! I wouldn't drink it!}
+
+[russ]
+{100}{}{Алкоголик}
+{200}{}{Вы видите пьяницу.}
+{210}{}{Вы видите шатающегося из стороны в сторону пьяного человека в лохмотьях. Лицо его распухло, нос синющий как слива. А аромат рядом с ним такой, что свалит брамина насмерть. Он что-то бормочет про себя и иногда громко поет песни.}
+{210}{}{Вы видите алкаша. Он весьма грязен - кажется, он повалялся в луже, но не особо этим расстроен.}
+{1000}{}{I?aaaeaeiaiaua onoaiiaee}
+{1010}{}{Answer text}
+{1020}{}{known}
+{1030}{}{completed}
+{2000}{}{Thank you! Thank you! }
+{2010}{}{Head to the camp}
+{2020}{}{Exit into the wasteland}
+{2030}{}{Answer 3}
+{2040}{}{Answer 4}
+{3000}{}{Oh yes! Quite the animals indeed! But they're so stubborn! It takes a truly strong rope to tame a brahmin, they're quite the freespirit! Always running away, running free from the crazyness of the wasteland. From man... From...}
+{3010}{}{Stop it, do you need any help?}
+{4000}{}{A hand? Mmmhyes! That would be delightful! Could you hold this rope while I head over to my tent for a while? }
+{4010}{}{No, I mean't did you need any work done? Captain Jason asked me to ask everyone if they needed any help with their day to day tasks. }
+{5000}{}{What was that? Cats? No, no pussy here, I haven't seen a cat in years! }
+{5010}{}{Of course not. Listen Captain Jason asked me to ask everyone if they needed any help. }
+{6000}{}{Oh that's delightful! Yes, I could use some new shoes, mine are quite worn from the day to day travels I make when...}
+{6010}{}{That's not what I mean't, I was asking if you needed a hand with anything?}
+{7000}{}{Ah yes! I need new rope, as soon as possible! In fact the sooner the better! These little brahmin of mine keep poking their mouths at it, and I fear that they've grown a liking to the taste. Woe is me for my little fingers cannot keep up with the great demand of twisting those fibers into existence. Ah but alas you'll just have to do it for me, yes? I mean, it is your responsibility after all. }
+{7010}{}{Yeah, sure, I guess.}
+{8000}{}{Excellent! Your PipBoy has already been coded with the basic rope blueprint, just open it up and see how to fold the ends and what not. If you need more help using your PipBoy ask Albert, he's pretty knowledgeable with them. All I know is that you need a few Fibers, you can find these on yellow looking plants out in the fields, and there's a couple of them around here somewhere. Take a knife to one and cut off a few pieces it's quite easy. I need you to bring me back two of them, one for each brahmin. That would be greatly appreciated, and I would tell Captain Jason what a wonderful help you've been. }
+{8010}{}{Bring back two pieces of rope? No problem. }
+{9000}{}{Ah mister vault man, how do you do?}
+{10000}{}{[He smiles heavily] Yes! Yes! Two rope! One for each brahmin indeed! Do be so ever quick about it, please!}
+{10010}{}{I'll be right back... Eventually.}
+{11000}{}{[He's quite the strange vault dweller] A cow! A cow! My kingdom for a cow! Oh it's you! [He leans closer] Do you have the rope?}
+{11010}{}{Yeah, but you're kind of creeping me out.}
+{11020}{}{Could you tell me how to make a rope again? Please?}
+{11030}{}{Not yet, but I'll be back.}
+{12000}{}{Excellent! Your PipBoy has already been coded with the basic rope blueprint, just open it up and see how to fold the ends and what not. If you need more help using your PipBoy ask Albert, he's pretty knowledgeable with them. All I know is that you need a few Fibers, you can find these on yellow looking plants out in the fields, and there's a couple of them around here somewhere. Take a knife to one and cut off a few pieces it's quite easy. I need you to bring me back two of them, one for each brahmin. That would be greatly appreciated, and I would tell Captain Jason what a wonderful help you've been. }
+{12010}{}{Thanks.}
+{13000}{}{[He shakes your hand and says] Delightful! Mister vault man, you've been quite the help! Thank you! I'll make you your very own piece of rope once you leave, I promise!}
+{13010}{}{Sure, thanks.}
+

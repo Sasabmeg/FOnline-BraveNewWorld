@@ -1,0 +1,109 @@
+[comment]
+drunk stanley 
+noob_camp_stanley
+
+23015
+
+[data]
+lang=engl russ
+
+[dialog]
+&
+1 1000 None 0 #
+4 1010 D _var p name_mem_npc_player = 0 D _var p noob_camp_stanley = 0 #
+8 1020 D _var p name_mem_npc_player = 1 D _var p noob_camp_stanley = 0 #
+10 1030 D _var p noob_camp_stanley = 1 @
+4 2000 None 0 #
+2 2010 #
+3 2020 #
+5 2030 #
+6 2040 @
+2 3000 None 0 @
+3 4000 None 0 @
+5 5000 None 0 @
+6 6000 None 0 #
+7 6010 @
+7 7000 None 0 #
+0 7010 R _var p name_mem_npc_player = 1 @
+8 8000 None 0 #
+9 8010 D _item p PID_ROT_GUT > 0 #
+0 8020 @
+9 9000 None 0 #
+0 9010 R _script dialog@r_AddExperience 1 325 R _item p PID_ROT_GUT - 1 R _var p noob_camp_stanley = 1 @
+10 10000 None 0 &
+
+[engl]
+{100}{}{Stanley, the drunk}
+{200}{}{You see Stanley, the drunk.}
+{210}{}{Whoa! This man is so drunk you're seeing two of him! }
+{1000}{}{Predialogue installations}
+{1010}{}{not known}
+{1020}{}{known}
+{1030}{}{completed}
+{2000}{}{[The man grabs your shirt as you pass by and says] 'ssyou gotta 'selp me man! I'm all 'sout of booze! 'Sah got'sta 'selp, 'sah got'sta! I's can'stevens see!}
+{2010}{}{Get your filthy hands off me you drunk!}
+{2020}{}{They let you drink like this? How about I go tell the Captain how...}
+{2030}{}{Boy howdy! I sure could go for a drink myself!}
+{2040}{}{Well, what's in it for me?}
+{3000}{}{'Soh Gawd! I'ms soooooo 'sorray!}
+{4000}{}{Why? I'm as sober as a judge! *Hic* }
+{5000}{}{Oh 'Me'es too man! 'Me'es too!}
+{6000}{}{[Your question makes the drunkard pause for a while but in no time his eyes glimmer with an idea] I'ss be mighty crateful! S'all! You's don'ts wants to see's a blind man's smile? [He holds up three fingers, you don't know why]}
+{6010}{}{Alright whatever, I might come back with a bottle.}
+{7000}{}{[The man jumps out of his haze and shouts] Rotgut! I'z got'sta be Rotgut! Jus' won, I'ms gettin's kind of sleepy...}
+{7010}{}{Uh-huh, see ya'.}
+{8000}{}{[The eyes on this man are not awake, but his body is] Sou' got'sta' Rotgut? Or sou' got'sta' the clap, haha! Sers'rious'lee though's? Just one'zzz bottle! [He flashes you three fingers]}
+{8010}{}{Yup sure do buddy! Hope you enjoy it! }
+{8020}{}{Uh-huh? [Walk away]}
+{9000}{}{[The man takes the bottle from you and chugs it down in one foul swoop! After a long pause followed by a short burp he falls over and hits the ground dead! At least you think he's dead] }
+{9010}{}{Drink responsibly kids.}
+{10000}{}{@@*Hic!* Hope I don't get brain damage...@@I...I think I'm drunk...@@Oh god! I've got to pee!@@You're slurring your words!@@What?@@Hi yourself, I'm drunk!@@Yup! I'm drunk!@@Scotch, scotch, scotch! I love scotch!@@I sure am pretty when you're drunk!}
+{100000001}{}{Better wash the counter again...}
+{100000002}{}{That's 5 caps buddy. Hey did you hear me? Cough em' up.}
+{100000003}{}{Better change the keg...}
+{100000004}{}{RotGut? You drink that shit?}
+{100000005}{}{Domestic? I got B.E.E.R buddy, do you want one or not?}
+{100000006}{}{Fuckin' dust is getting everywhere. Hey close the fuckin' door!}
+{100000007}{}{I swear if the next asshole doesn't tip. Ima' shoot somebody!}
+{100000008}{}{I got bottles, I got shots, and I got a bat behind the counter for the retards. Your not a retard are you?}
+{100000009}{}{Uh-huh, yeah that's nice buddy. You don't say...What? Of course I'm listening...}
+{100000010}{}{That's 5 caps. FIVE CAPS Tribal! F.I.V.E! }
+{100000011}{}{Shut up and order a fuckin' beer already!}
+{100000012}{}{I swear if I have to serve another drunk, I'm getting the shotgun!}
+{100000013}{}{Look the keg went dry, and it's going to be another month until the caravan shows up again.}
+{100000014}{}{Really? You don't say, buy another drink or get out!}
+{100000015}{}{What? I'm on break.}
+{100000016}{}{Be right with ya'}
+{100000017}{}{Have a sit stranger. I'll be with you in a moment.}
+{100000018}{}{When do we close? Uh, when the place get's shot up, that's when!}
+{100000019}{}{We're fresh outta' cold beer, sorry. You'll just have to drink it warm.}
+{100000020}{}{RotGut? No man, go make that shit yourself! I wouldn't drink it!}
+
+[russ]
+{100}{}{Алкоголик}
+{200}{}{Вы видите пьяницу.}
+{210}{}{Вы видите шатающегося из стороны в сторону пьяного человека в лохмотьях. Лицо его распухло, нос синющий как слива. А аромат рядом с ним такой, что свалит брамина насмерть. Он что-то бормочет про себя и иногда громко поет песни.}
+{210}{}{Вы видите алкаша. Он весьма грязен - кажется, он повалялся в луже, но не особо этим расстроен.}
+{1000}{}{I?aaaeaeiaiaua onoaiiaee}
+{1010}{}{Answer text}
+{1020}{}{known}
+{1030}{}{completed}
+{2000}{}{Thank you! Thank you! }
+{2010}{}{Head to the camp}
+{2020}{}{Exit into the wasteland}
+{2030}{}{Answer 3}
+{2040}{}{Answer 4}
+{3000}{}{'Soh Gawd! I'ms soooooo 'sorray!}
+{4000}{}{Why? I'm as sober as a judge! *Hic* }
+{5000}{}{'Me'es too man! 'Me'es too!}
+{6000}{}{[Your question makes the drunkard pause for a while but in no time his eyes glimmer with an idea] I'ss be mighty crateful! S'all! You's don'ts wants to see's a blind man's smile?}
+{6010}{}{Alright whatever, I might come back with a bottle.}
+{7000}{}{[The man jumps out of his haze and shouts] Rotgut! I'z got'sta be Rotgut! Jus' won, I'ms gettin's kind of sleepy...}
+{7010}{}{Uh-huh, see ya'.}
+{8000}{}{[The eyes on this man are not awake, but his body is] Sou' got'sta' Rotgut? Or sou' got'sta' the clap, haha! Sers'rious'lee though's?}
+{8010}{}{Yup sure do buddy! Hope you enjoy it! }
+{8020}{}{Uh-huh? [Walk away]}
+{9000}{}{[The man takes the bottle from you and chugs it down in one foul swoop! After a long pause followed by a short burp he falls over and hits the ground dead] }
+{9010}{}{Drink responsibly kids.}
+{10000}{}{@@*Hic!* Hope I don't get brain damage...@@I...I think I'm drunk...@@Oh god! I've got to pee!@@You're slurring your words!@@What?@@Hi yourself, I'm drunk!@@Yup! I'm drunk!@@Scotch, scotch, scotch! I love scotch!@@I sure am pretty when you're drunk!}
+

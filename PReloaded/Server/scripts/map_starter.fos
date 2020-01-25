@@ -1,0 +1,99 @@
+//
+// FOnline: 2238
+// Rotators
+//
+// map_starter.fos
+//
+
+#include "_macros.fos"
+#include "logging_h.fos"
+
+import void SetQuestGarbager(uint time, uint playerid, uint locid, uint var, uint val) from "utils";
+
+// Map script for starter locations
+void map_init(Map& map, bool firstTime)
+{
+    map.SetEvent(MAP_EVENT_OUT_CRITTER, "_OnLeaveMap");
+    if(firstTime)
+        SetQuestGarbager(3 * 60, 0, map.GetLocation().Id, 0, 0);
+}
+
+void _OnLeaveMap(Map& map, Critter& cr)
+{
+    if(valid(cr.GetMap()))
+        return;
+    Location@ loc = map.GetLocation();
+    if(valid(loc))
+    {
+        DeleteLocation(loc.Id);
+        FLog(LOG_DYNAMIC_LOC, "map_starter@_OnLeaveMap: locId " + loc.Id);
+    }
+    else
+        Log("Invalid starter location.");
+}
+
+// Vault Door Console
+bool s_Console(Critter& player, Scenery& console, int skill, Item@ item)
+{
+    player.Say(SAY_NETMSG, "Access denied.");
+    return true;
+}
+
+// Trigger (Players chooses whether to play tutorial or not)
+void t_Tutorial( Critter& player, Scenery& trigger, bool entered, uint8 dir)
+{
+    Location@ loc = player.GetMap().GetLocation();
+    if (!valid(loc) || loc.GetProtoId() != LOCATION_StartVault24)
+    {
+        FLog(LOG_DYNAMIC_LOC, "ILLEGAL START LOCATION TRIGGER : map_starter@r_TutorialTeleport: locId " + (valid(loc) ? loc.Id : 0) + " player id: " + player.Id);
+        return;
+    }
+
+    if(entered && (dir==3 || dir==4))
+    {
+		player.Wait( 0 );
+		RunDialog(player, DIALOG_intro_vaultexit, player.HexX, player.HexY, true);
+    }
+}
+
+
+// Dialogue (on leaving Vault)
+void r_TutorialTeleport(Critter& player, Critter@ npc)
+{
+    Location@ loc = player.GetMap().GetLocation();
+    if (!valid(loc) || loc.GetProtoId() != LOCATION_StartVault24)
+    {
+        FLog(LOG_DYNAMIC_LOC, "ILLEGAL NOOB CAMP TP : map_starter@r_TutorialTeleport: locId " + (valid(loc) ? loc.Id : 0) + " player id: " + player.Id);
+        return;
+    }
+
+    // Teleport to Tutorial map
+    Map@ map = GetMapByPid(MAP_LandersPoint_Gate, 0);
+    if(!valid(map))
+    {
+        Log("Teleport failed, tutorial map not found.");
+        return;
+    }
+    player.TransitToMap(map.Id, 0);
+
+    // Removing start location
+    if(valid(loc) && loc.GetProtoId() == LOCATION_StartVault24)
+    {
+        DeleteLocation(loc.Id);
+        FLog(LOG_DYNAMIC_LOC, "map_starter@r_TutorialTeleport: locId " + loc.Id);
+    }
+    CreateTimeEvent(AFTER(REAL_SECOND(3)), "e_WelcomeMessage", player.Id, false);
+}
+
+// Welcome message upon entering Tutorial map
+uint e_WelcomeMessage(array<int>@ data)
+{
+    Critter@ cr = GetCritter(data[0]);
+    if(valid(cr) && cr.IsPlayer())
+        {
+        cr.Wait( 0 );
+        RunDialog(cr, 23007, cr.HexX, cr.HexY, true);
+        }
+
+    return(0);
+}

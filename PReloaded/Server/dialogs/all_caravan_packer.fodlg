@@ -1,0 +1,60 @@
+[comment]
+
+
+[data]
+lang=engl
+
+[dialog]
+&
+1 1000 None 0 #
+4 1010 D _script quest_caravan_box@d_IsOngoing 0  #
+2 1020 D _var n name_mem_npc_player = 0 R _var n name_mem_npc_player = 1 #
+20 1030 @
+20 2000 None 0 #
+3 2010 D _script quest_caravan_box@d_NotStarted 0  D _script dialog@d_QuestTimeoutReady 0  #
+7 2020 D _script dialog@d_QuestTimeoutNotReady 0  D _script quest_caravan_box@d_NotStarted 0  #
+0 2030 @
+2 3000 None 0 #
+3 3010 D _script quest_caravan_box@d_NotStarted 0  #
+0 3020 @
+3 4000 None 0 #
+0 4010 D _param p ST_KARMA } 0 R _script quest_caravan_box@r_StartQuest 0  R _param p ST_KARMA - 1 #
+0 4020 @
+4 5000 None 0 #
+5 5010 D _script quest_caravan_box@d_IsDone 0  R _script quest_caravan_box@r_CompleteQuest 0  R _script dialog@r_QuestTimeout 1 15 R _param p ST_KARMA + 1 #
+6 5020 @
+5 6000 None 0 #
+0 6010 @
+6 7000 None 0 #
+0 7010 @
+7 8000 None 0 #
+0 8010 &
+
+[engl]
+{100}{}{Caravan Packer}
+{200}{}{You see a Caravan packer.}
+{210}{}{He looks pretty busy with the caravans.}
+{1000}{}{Predialogue installations}
+{1010}{}{Got the unloading job.}
+{1020}{}{We are talking the first time.}
+{1030}{}{We talked already.}
+{2000}{}{I'm a busy man, what do you want this time?}
+{2010}{}{Need a hand?}
+{2020}{}{Need a hand?}
+{2030}{}{I'm just looking around, see you.}
+{3000}{}{Can't you see I'm busy? What do you want? You want to unload some Water Crates, or what?}
+{3010}{}{Sure. Does it pay?}
+{3020}{}{No, no, just looking around. Thanks.}
+{4000}{}{Grab some crates from the caravan cart, and unload them over there. Think you could take 10 boxes and drop them where the others are? I'll pay you 250 caps.}
+{4010}{}{Sure, I'll do it.}
+{4020}{}{No way. Do it yourself.}
+{5000}{}{You're all sweaty! Sheesh, do you stink! Did you finish carrying those boxes over, or what?}
+{5010}{}{Yeah, finished the last box just now.}
+{5020}{}{Not quite yet.}
+{6000}{}{Good, here's your reward, 250 caps. Don't you go spend it all on Iguana. I'll have more work for you later if you're still in need of some cash.}
+{6010}{}{Cool, thanks. I'll think about it.}
+{7000}{}{Then hurry up. I don't have the whole day.}
+{7010}{}{Yeah, yeah...}
+{8000}{}{Not now, come back later.}
+{8010}{}{Okay.}
+

@@ -1,0 +1,162 @@
+[comment]
+hungry kid
+
+easter egg -> wargames quotes
+
+noob_camp_kid
+23009
+
+[data]
+lang=engl russ
+
+[dialog]
+&
+1 1000 None 0 #
+4 1010 D _var p name_mem_npc_player = 0 D _var p noob_camp_kid = 0 #
+11 1020 D _var p name_mem_npc_player = 1 D _var p noob_camp_kid = 0 #
+18 1030 D _var p noob_camp_kid = 1 @
+4 2000 None 0 #
+2 2010 #
+3 2020 #
+5 2030 #
+6 2040 @
+2 3000 None 0 #
+14 3010 #
+4 3020 #
+4 3030 @
+3 4000 None 0 #
+4 4010 @
+5 5000 None 0 #
+4 5010 @
+6 6000 None 0 #
+7 6010 @
+7 7000 None 0 #
+8 7010 @
+8 8000 None 0 #
+9 8010 @
+9 9000 None 0 #
+10 9010 R _var p name_mem_npc_player = 1 #
+10 9020 R _var p name_mem_npc_player = 1 @
+10 10000 None 0 @
+11 11000 None 0 #
+13 11010 D _item p PID_MUTATED_FRUIT > 4 R _item p PID_MUTATED_FRUIT - 5 R _script dialog@r_AddExperience 1 200 R _var p noob_camp_kid = 1 #
+12 11020 @
+14 12000 None 0 #
+15 12010 @
+15 13000 None 0 #
+16 13010 @
+16 14000 None 0 #
+4 14010 @
+13 15000 None 0 @
+12 16000 None 0 @
+18 17000 None 0 &
+
+[engl]
+{100}{}{Rooster, the young}
+{200}{}{You see a small child named Rooster.}
+{210}{}{You see a small, snot nosed brat. He's probably too young to tie his own boots.}
+{1000}{}{Predialogue installations}
+{1010}{}{not known}
+{1020}{}{known}
+{1030}{}{completed}
+{2000}{}{[The small child is digging in the dirt and making weird structures out of mud. It almost appears to be a battlefield, with one side slaughtering the other, strange] Vroom! Ra-ta-ta-ta-ta! Boom! Bang! SMASH! Oh hey mister! }
+{2010}{}{What are you doing kid?}
+{2020}{}{Aren't you a little young for playing war?}
+{2030}{}{Oh boy! Are those castles?!}
+{2040}{}{You from the vault? Where's your jumpsuit?}
+{3000}{}{[The boy cleans his hands on his pants and says] I'm playing glo-mo-tur-mal-nu-clear-er-war! It's fun!}
+{3010}{}{A strange game. The only winning move is not to play.}
+{3020}{}{Oh that's cool.}
+{3030}{}{Yeah whatever.}
+{4000}{}{[The boy cleans his hands on his pants and says] No! I'm eight years old! }
+{4010}{}{Uh-huh?}
+{5000}{}{[The boy cleans his hands on his pants and says] No! They're houses! This one is the Pent-O-Gone! This one is It's Real, and this is Can-of-Duh! It's fun!}
+{5010}{}{Uh-huh?}
+{6000}{}{[The boy cleans his hands on his pants and says] A wault? No! I'm a boy! I live in that tent over there [He points to one of the smaller tents] }
+{6010}{}{You mean to say that you left the vault and now live here?}
+{7000}{}{[The boy gives you a puzzled look] No, I was born here! In that tent over there silly! A big bird dropped me off at my mamma's!}
+{7010}{}{You mean you weren't born in a vault?!}
+{8000}{}{[The boy gives you an even more puzzled look] No! Got any food? I'm hungry! Oh! You got any Apples?! I smeckin' love Apples!}
+{8010}{}{Yeah sure, how many do you want?}
+{9000}{}{[The boy's eyes light up] I have a choice?! I want five! Five big, green tasty Apples! Will you do it?! Please?!}
+{9010}{}{Sure kid, I'll be back.}
+{9020}{}{Ugh, maybe. See ya'.}
+{10000}{}{Oh boy! }
+{11000}{}{[The boy's eyes light up when he sees you] It's you! Did you bring me my Apples?! I can't wait! Please, please, please!}
+{11010}{}{Here you go!}
+{11020}{}{No Apples for you! }
+{12000}{}{What? Why?}
+{12010}{}{Because the whole point is to find a way to win a nuclear war without destroying yourself. To learn from mistakes we can't afford to make. But I never could get to learn the most important lesson.}
+{13000}{}{What's that?}
+{13010}{}{Futility. that there's a time when you should just give up. There's no way to win. The game itself is pointless! But in the back of one's mind you always believe that you can succeed.}
+{14000}{}{[The light in the boy's eye fades] I think I'd rather just play chess...}
+{14010}{}{Fine.}
+{15000}{}{Apples!!! Yay!!! They look so good!!!}
+{16000}{}{Wah!!! Apples!!! Gimme!!!}
+{17000}{}{@@Vroom!@@Bang! Bang!@@Smash!}
+{100000001}{}{Better wash the counter again...}
+{100000002}{}{That's 5 caps buddy. Hey did you hear me? Cough em' up.}
+{100000003}{}{Better change the keg...}
+{100000004}{}{RotGut? You drink that shit?}
+{100000005}{}{Domestic? I got B.E.E.R buddy, do you want one or not?}
+{100000006}{}{Fuckin' dust is getting everywhere. Hey close the fuckin' door!}
+{100000007}{}{I swear if the next asshole doesn't tip. Ima' shoot somebody!}
+{100000008}{}{I got bottles, I got shots, and I got a bat behind the counter for the retards. Your not a retard are you?}
+{100000009}{}{Uh-huh, yeah that's nice buddy. You don't say...What? Of course I'm listening...}
+{100000010}{}{That's 5 caps. FIVE CAPS Tribal! F.I.V.E! }
+{100000011}{}{Shut up and order a fuckin' beer already!}
+{100000012}{}{I swear if I have to serve another drunk, I'm getting the shotgun!}
+{100000013}{}{Look the keg went dry, and it's going to be another month until the caravan shows up again.}
+{100000014}{}{Really? You don't say, buy another drink or get out!}
+{100000015}{}{What? I'm on break.}
+{100000016}{}{Be right with ya'}
+{100000017}{}{Have a sit stranger. I'll be with you in a moment.}
+{100000018}{}{When do we close? Uh, when the place get's shot up, that's when!}
+{100000019}{}{We're fresh outta' cold beer, sorry. You'll just have to drink it warm.}
+{100000020}{}{RotGut? No man, go make that shit yourself! I wouldn't drink it!}
+
+[russ]
+{100}{}{Алкоголик}
+{200}{}{Вы видите пьяницу.}
+{210}{}{Вы видите шатающегося из стороны в сторону пьяного человека в лохмотьях. Лицо его распухло, нос синющий как слива. А аромат рядом с ним такой, что свалит брамина насмерть. Он что-то бормочет про себя и иногда громко поет песни.}
+{210}{}{Вы видите алкаша. Он весьма грязен - кажется, он повалялся в луже, но не особо этим расстроен.}
+{1000}{}{I?aaaeaeiaiaua onoaiiaee}
+{1010}{}{Answer text}
+{1020}{}{known}
+{1030}{}{completed}
+{2000}{}{Thank you! Thank you! }
+{2010}{}{Head to the camp}
+{2020}{}{Exit into the wasteland}
+{2030}{}{Answer 3}
+{2040}{}{Answer 4}
+{3000}{}{[The boy cleans his hands on his pants and says] I'm playing glo-mo-tur-mal-nu-clear-er-war! It's fun!}
+{3010}{}{A strange game. The only winning move is not to play. How about a game of chess?}
+{3020}{}{Oh that's cool}
+{3030}{}{Yeah whatever.}
+{4000}{}{[The boy cleans his hands on his pants and says] No! I'm eight years old! }
+{4010}{}{Uh-huh?}
+{5000}{}{[The boy cleans his hands on his pants and says] No! They're houses! This one is the Pent-O-Gone! This one is It's Real, and this is Can-of-Duh! It's fun! You want to play? }
+{5010}{}{Uh-huh?}
+{6000}{}{[The boy cleans his hands on his pants and says] A wault? No! I'm a boy! I live in that tent over there [He points to one of the smaller tents] }
+{6010}{}{You mean to say that you left the vault and now live here?}
+{7000}{}{[The boy gives you a puzzled look[ No, I was born here! In that tent over there silly! A big bird dropped me off at my mama's!}
+{7010}{}{You mean you weren't born in a vault?!}
+{8000}{}{[The boy gives you an even more puzzled look] No! Got any food? I'm hungry! Oh! You got any Apples?! I smeckin' love Apples!}
+{8010}{}{Yeah sure, how many do you want?}
+{9000}{}{[The boy's eyes light up] I have a choice?! I want five! Five big, green tasty Apples! Will you do it?! Please?!}
+{9010}{}{Sure kid, I'll be back.}
+{9020}{}{Ugh, maybe. See ya'.}
+{10000}{}{Oh boy! }
+{11000}{}{[The boy's eyes light up when he sees you] It's you! Did you bring me my Apples?! I can't wait! Please, please, please!}
+{11010}{}{Here you go!}
+{11020}{}{No Apples for you! }
+{12000}{}{The whole point was to find a way to practice nuclear war without destroying ourselves. To get the computers to learn from mistakes we couldn't afford to make. Except, I never could get Joshua to learn the most important lesson.}
+{12010}{}{What's that?}
+{13000}{}{What's that?}
+{13010}{}{Futility. that there's a time when you should give up. There's no way to win. The game itself is pointless! But in the back of one's mind you always believe that you can. }
+{14000}{}{[The light in the boy's eye fades] I think I'd rather play chess...}
+{14010}{}{Fine.}
+{15000}{}{Apples!!! Yay!!! They look so good!!!}
+{16000}{}{Wah!!! Apples!!! Gimme!!!}
+{17000}{}{@@Vroom!@@Bang!@@Smash!}
+
