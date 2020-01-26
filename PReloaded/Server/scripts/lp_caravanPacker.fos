@@ -1,0 +1,167 @@
+/**
+*   FO version:     FOClassic: Brave New World
+*   Contributor:    Sasabazmeg
+*   File:           lp_caravanPacker.fos
+*   Description:    Scripts used by Landers Point (tutorial zone) caravan packer.
+*                   Aim is to get this quest as a repeatable job into the Pip-boy and the (wip) Quest Tracker.
+*/
+
+#include "_macros.fos"
+#include "utils_h.fos"
+#include "_entires.fos"
+#include "npc_roles_h.fos"
+
+#include "entire.fos"
+#include "reputations_h.fos"
+
+#define BOX_STATUS_NONE       (0)   //  Quest not in progress.
+#define BOX_STATUS_STARTED    (1)   //  Quest started, but no boxes unpacked yet.
+#define BOX_STATUS_MAX        (3)   //  Number of boxes needed to unpack to complete quest
+
+bool d_IsOngoing(Critter& player, Critter@ npc)
+{
+    player.Say(SAY_NETMSG, "d_IsOngoing - LVAR_job_lp_caravan_box = " + GetLvar(player, LVAR_job_lp_caravan_box));
+    return(GetLvar(player, LVAR_job_lp_caravan_box) >= BOX_STATUS_STARTED);
+}
+
+bool d_NotStarted(Critter& player, Critter@ npc)
+{
+    player.Say(SAY_NETMSG, "d_NotStarted - LVAR_job_lp_caravan_box = " + GetLvar(player, LVAR_job_lp_caravan_box));
+    return(GetLvar(player, LVAR_job_lp_caravan_box) == BOX_STATUS_NONE);
+}
+
+bool d_IsDone(Critter& player, Critter@ npc)
+{
+    player.Say(SAY_NETMSG, "d_IsDone - LVAR_job_lp_caravan_box = " + GetLvar(player, LVAR_job_lp_caravan_box));
+    return GetLvar(player, LVAR_job_lp_caravan_box) > BOX_STATUS_MAX;
+}
+
+void r_StartQuest(Critter& player, Critter@ npc)
+{
+    SetLvar(player, LVAR_job_lp_caravan_box, BOX_STATUS_STARTED);
+    player.Say(SAY_NETMSG, "r_StartQuest - LVAR_job_lp_caravan_box = " + GetLvar(player, LVAR_job_lp_caravan_box));
+}
+
+void r_CompleteQuest(Critter& player, Critter@ npc)
+{
+    player.Say(SAY_NETMSG, "r_CompleteQuest - LVAR_job_lp_caravan_box = " + GetLvar(player, LVAR_job_lp_caravan_box));
+    player.AddItem(PID_BOTTLE_CAPS, 250);
+    player.StatBase[ST_EXPERIENCE] += 300;
+    //AddReputation(player, ReputationIndex( player.GetMap().GetLocation().GetProtoId() ), Random(5, 10), REP_CARAVAN_BOX_CAP);
+    SetLvar(player, LVAR_job_lp_caravan_box, BOX_STATUS_NONE);
+}
+
+/**
+*   Used to get the Caravan officer responsible for the job.
+*   (In case you are unloading at the wrong area, he should yell.)
+*/
+Critter@ GetCaravanOfficer(Map@ map)
+{
+    Critter@ npc = map.GetNpc(ROLE_CARAVAN_BOX, FIND_ALL | FIND_ONLY_NPC, 0);
+    if(!valid(npc))
+    {
+        DLog("Can't find quest npc.");
+        return null;
+    }
+    return npc;
+}
+
+/**
+*   Called when box is dropped by player.
+*   Checks if box has been dropped outside the designated area.
+*   - If box was unpacked wrong area, the caravan officer will shout at player, and the box will be deleted, to not
+*   trash the area with boxes.
+*/
+void _OnDropBox(Item& item, Critter& player)
+{
+    Map@     map = player.GetMap();
+
+    Critter@ caravanOfficer = GetCaravanOfficer(map);
+    if(!valid(caravanOfficer))
+    {
+        DeleteItem(item);
+        return;
+    }
+
+    array<Entire> entires;
+    ParseEntires(map, entires, ENTIRE_CARAVAN_DROP_ZONE);
+    for(uint i = 0; i < entires.length(); i++)
+    {
+        if((entires[i].HexX == item.HexX) && (entires[i].HexY == item.HexY))
+        {
+            GameVar@ var = GetLocalVar(LVAR_job_lp_caravan_box, player.Id);
+            if (valid(var)) {
+                var += 1;
+            }
+            if (var > BOX_STATUS_MAX) {
+                player.Say(SAY_NETMSG, "You've unloaded all the caravan boxes, speak to the caravan packer.");
+                player.Say(SAY_EMOTE_ON_HEAD, "*stretches back*");
+            } else {
+                int boxesLeft = BOX_STATUS_MAX + 1 - var.GetValue();
+                player.Say(SAY_NETMSG, "You've unloaded a caravan box. There is only " + boxesLeft + " more to go.");
+                player.Say(SAY_EMOTE_ON_HEAD, "*phew*");
+            }
+            DLog("Box collected!");
+            DeleteItem(item);
+            return;
+        }
+    }
+    if(player.GetMapId() == caravanOfficer.GetMapId())
+    {
+        caravanOfficer.Say(SAY_SHOUT_ON_HEAD, "You idiot, you can't drop it there!");
+    }
+    DeleteItem(item);
+}
+
+/**
+*   Sets the drop event for the box.
+*/
+void _BoxInit(Item& box, bool firstTime)
+{
+    box.SetEvent(ITEM_EVENT_DROP, "lp_caravanPacker@_OnDropBox");
+}
+
+/**
+*   Sets the use event for the caravan cart to unload boxes from.
+*/
+bool _OnUseCaravan(Critter& player, Scenery& scen, int skill, Item@ item)
+{
+    //  if it's not use, exit -> need macro constant for this..
+    if(skill != -1)
+        return false;
+
+    if(valid(player))
+    {
+        //Critter@ caravanOfficcer = player.GetMap().GetNpc(ROLE_CARAVAN_BOX, FIND_ALL | FIND_ONLY_NPC, 0);
+        Critter@ caravanOfficer = GetCaravanOfficer(player.GetMap());
+
+        if( valid(caravanOfficer) && (GetLvar(player, LVAR_job_lp_caravan_box) >= BOX_STATUS_STARTED) )
+        {
+            if(GetLvar(player, LVAR_job_lp_caravan_box) > BOX_STATUS_MAX)
+            {
+                player.Say(SAY_NETMSG, "You've completed the task assigned, speak to the caravan packer.");
+                return false;
+            }
+
+            if(player.CountItem(PID_CARAVAN_BOX) > 0)
+            {
+                player.Say(SAY_NETMSG, "You've already picked up a box, you can't carry two.");
+                return false;
+            }
+
+            player.Say(SAY_NETMSG, "You've picked up a box from the caravan cart");
+            Item@ item = player.AddItem(PID_CARAVAN_BOX, 1);
+            if(valid(item))
+                item.SetEvent(ITEM_EVENT_DROP, "lp_caravanPacker@_OnDropBox");
+        }
+        else
+        {
+            if(valid(caravanOfficer))
+                caravanOfficer.Say(SAY_SHOUT_ON_HEAD, "Don't touch that!");
+            else
+                player.Say(SAY_NETMSG, "Don't touch that!");
+            return false;
+        }
+    }
+    return true;
+}
