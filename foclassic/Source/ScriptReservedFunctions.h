@@ -49,8 +49,9 @@ struct ClientScriptFunctions
     int ItemMapChanged;
     int ItemMapOut;
     int ItemInvIn;
-    int ItemInvOut;
-    int MapMessage;
+	int ItemInvOut;
+	int QuestChange;
+	int MapMessage;
     int InMessage;
     int OutMessage;
     int ToHit;

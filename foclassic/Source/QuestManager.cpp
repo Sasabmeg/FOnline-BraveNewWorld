@@ -6,7 +6,10 @@
 #include "QuestManager.h"
 #include "Text.h"
 
+#include "Script.h"
+
 using namespace std;
+using namespace Script;
 
 /// QuestTab
 void QuestTab::ReparseText()
@@ -118,6 +121,22 @@ void QuestManager::OnQuest( uint num )
 
     // Get name of quest
     tab->RefreshQuest( q_num, string( msg->GetStr( num ) ) );
+
+	if (Script::PrepareContext(ClientFunctions.QuestChange, _FUNC_, "Game"))
+	{
+		string name = string(msg->GetStr(num));
+		ScriptString* event_name_script = new ScriptString(name);
+		Script::SetArgObject(event_name_script);
+
+		string text = string(msg->GetStr(STR_QUEST_INFO_(q_num)));
+		ScriptString* event_text_script = new ScriptString(text);
+		Script::SetArgObject(event_text_script);
+
+		Script::RunPrepared();
+		event_name_script->Release();
+		event_text_script->Release();
+	}
+
 }
 
 QuestTabMap* QuestManager::GetTabs()

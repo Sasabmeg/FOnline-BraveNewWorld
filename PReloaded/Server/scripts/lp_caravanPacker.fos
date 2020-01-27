@@ -20,31 +20,26 @@
 
 bool d_IsOngoing(Critter& player, Critter@ npc)
 {
-    player.Say(SAY_NETMSG, "d_IsOngoing - LVAR_job_lp_caravan_box = " + GetLvar(player, LVAR_job_lp_caravan_box));
     return(GetLvar(player, LVAR_job_lp_caravan_box) >= BOX_STATUS_STARTED);
 }
 
 bool d_NotStarted(Critter& player, Critter@ npc)
 {
-    player.Say(SAY_NETMSG, "d_NotStarted - LVAR_job_lp_caravan_box = " + GetLvar(player, LVAR_job_lp_caravan_box));
     return(GetLvar(player, LVAR_job_lp_caravan_box) == BOX_STATUS_NONE);
 }
 
 bool d_IsDone(Critter& player, Critter@ npc)
 {
-    player.Say(SAY_NETMSG, "d_IsDone - LVAR_job_lp_caravan_box = " + GetLvar(player, LVAR_job_lp_caravan_box));
     return GetLvar(player, LVAR_job_lp_caravan_box) > BOX_STATUS_MAX;
 }
 
 void r_StartQuest(Critter& player, Critter@ npc)
 {
     SetLvar(player, LVAR_job_lp_caravan_box, BOX_STATUS_STARTED);
-    player.Say(SAY_NETMSG, "r_StartQuest - LVAR_job_lp_caravan_box = " + GetLvar(player, LVAR_job_lp_caravan_box));
 }
 
 void r_CompleteQuest(Critter& player, Critter@ npc)
 {
-    player.Say(SAY_NETMSG, "r_CompleteQuest - LVAR_job_lp_caravan_box = " + GetLvar(player, LVAR_job_lp_caravan_box));
     player.AddItem(PID_BOTTLE_CAPS, 250);
     player.StatBase[ST_EXPERIENCE] += 300;
     //AddReputation(player, ReputationIndex( player.GetMap().GetLocation().GetProtoId() ), Random(5, 10), REP_CARAVAN_BOX_CAP);
