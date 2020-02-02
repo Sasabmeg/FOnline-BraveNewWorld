@@ -68,17 +68,11 @@ const char* QuestTab::GetText()   { return text.c_str(); }
 
 void QuestManager::Init( FOMsg* quest_msg )
 {
+	//	at this point whole FOTEXT.MSG files is loaded, as a multi map
     msg = quest_msg;
-
+	/*
 	WriteLog("QuestManager::Init()\n");
 	WriteLog("FOMsg size = %d\n", msg->GetSize());
-
-	/*
-	@Wipe - If I do this, the client will freeze at specific parts of logging the FOMsg:
-	i.e.: 7011102
-	Can you look into this code?
-		*/
-
 	for (auto ptr = msg->GetData().begin(); ptr != msg->GetData().end(); ptr++)
 	{
 		WriteLog("First: %d\t", ptr->first);
@@ -87,9 +81,6 @@ void QuestManager::Init( FOMsg* quest_msg )
 		}
 		WriteLog("\n");
 	}
-	/*
-	WriteLog("%d -> %s\n", 7011101, msg->GetData().find(7011101)->second.c_str());
-	WriteLog("%d -> %s\n", 7011102, msg->GetData().find(7011102)->second.c_str());
 	*/
 }
 
