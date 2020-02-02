@@ -89,19 +89,14 @@
 
 #=======================================
 # 6502
-# General: Caravan Packer
+# Landers Point: Caravan Packer
 #=======================================
 
 {6502001}{}{The caravan foreman at Landers Point asked me to unload some boxes from the cart to the north-west storage area. After unloading 3 boxes, my pay would be 250 caps.}
-{6502002}{}{I've unloaded one box already! Pheew, this was heavy.}
-{6502003}{}{This second box was twice as heavy. One last box to unload, then I can buy a drink.}
-{6502004}{}{That's it, I'm done. I should talk to the caravan foreman about my reward.}
-
-:: Quest Completed ::}
-{6502100}{}{I don't think I can lift boxes anymore, I'll just give up!
-
-:: Quest Failed ::}
-{6502101}{}{Job: Caravan packer at Landers Point}
+{6502004}{}{DONE:That's all. I should talk to the caravan foreman about my reward!}
+{6502097}{}{SOFT_FAILED:I tried to help the caravan packer but I dropped one of the boxes on the wrong location. Maybe I should work out a bit before trying again.}
+{6502099}{}{SOFT_COMPLETED:I finished the task and got my reward. I could return for more work a bit later.}
+{6502101}{}{JOB:Landers Point Caravan packer}
 {6502102}{}{Unload boxes from the caravan cart.}
 
 #=======================================
@@ -174,7 +169,7 @@
 
 :: Quest Completed ::}
 {7011101}{}{NCR: The Message}
-{7011102}{}{The Message}
+{7011102}{}{Assemble the Band}
 
 #=======================================
 # 7013
@@ -232,7 +227,6 @@
 {7019004}{}{The man in the leather armor with the black bull on it is dead. My job here is done. Guess I should report back to Hammilton for my reward.}
 {7019007}{}{I decided not to kill Greg. I doubt Hammilton will be very happy about it... Maybe I should try to lie about this.}
 {7019009}{}{I've killed Gregs daughter. I am a goddamn motherfucker.}
-
 {7019010}{}{Frisco done}
 {7019011}{}{LA done}
 {7019012}{}{NCR done}

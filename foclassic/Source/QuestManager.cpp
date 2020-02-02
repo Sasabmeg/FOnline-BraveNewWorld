@@ -7,6 +7,7 @@
 #include "Text.h"
 
 #include "Script.h"
+#include "Log.h"
 
 using namespace std;
 using namespace Script;
@@ -68,6 +69,28 @@ const char* QuestTab::GetText()   { return text.c_str(); }
 void QuestManager::Init( FOMsg* quest_msg )
 {
     msg = quest_msg;
+
+	WriteLog("QuestManager::Init()\n");
+	WriteLog("FOMsg size = %d\n", msg->GetSize());
+
+	/*
+	@Wipe - If I do this, the client will freeze at specific parts of logging the FOMsg:
+	i.e.: 7011102
+	Can you look into this code?
+		*/
+
+	for (auto ptr = msg->GetData().begin(); ptr != msg->GetData().end(); ptr++)
+	{
+		WriteLog("First: %d\t", ptr->first);
+		if (!ptr->second.empty() && ptr->first > 1000) {
+			WriteLog("Second: %s", ptr->second.c_str());
+		}
+		WriteLog("\n");
+	}
+	/*
+	WriteLog("%d -> %s\n", 7011101, msg->GetData().find(7011101)->second.c_str());
+	WriteLog("%d -> %s\n", 7011102, msg->GetData().find(7011102)->second.c_str());
+	*/
 }
 
 void QuestManager::Finish()
@@ -124,11 +147,13 @@ void QuestManager::OnQuest( uint num )
 
 	if (Script::PrepareContext(ClientFunctions.QuestChange, _FUNC_, "Game"))
 	{
-		string name = string(msg->GetStr(num));
+		//string name = string(msg->GetStr(STR_QUEST_INFO_(q_num)));
+		string name = tab_name;
+
 		ScriptString* event_name_script = new ScriptString(name);
 		Script::SetArgObject(event_name_script);
 
-		string text = string(msg->GetStr(STR_QUEST_INFO_(q_num)));
+		string text = string(msg->GetStr(num));
 		ScriptString* event_text_script = new ScriptString(text);
 		Script::SetArgObject(event_text_script);
 
@@ -136,7 +161,6 @@ void QuestManager::OnQuest( uint num )
 		event_name_script->Release();
 		event_text_script->Release();
 	}
-
 }
 
 QuestTabMap* QuestManager::GetTabs()

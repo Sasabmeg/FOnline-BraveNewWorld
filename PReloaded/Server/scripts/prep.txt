@@ -1,58 +1,4 @@
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       
-
-uint __GetColor(int r,int g,int b,int a=0xFF)
-{
-	r=(((r)>(255))?(255):(((r)<(0))?(0):(r)));
-	g=(((g)>(255))?(255):(((g)<(0))?(0):(g)));
-	b=(((b)>(255))?(255):(((b)<(0))?(0):(b)));
-	a=(((a)>(255))?(255):(((a)<(0))?(0):(a)));
-	return(uint((((a)&0xFF)<<24)|(((r)&0xFF)<<16)|(((g)&0xFF)<<8)|((b)&0xFF)));
-}                                                                                                                                                                                                                                                                                                                                                                                                                      
-
-shared interface Buffer
-{
-	Buffer@opCom();
-	
-	Buffer@opNeg();                 
-	
-	 Buffer@opShr(int8&value); Buffer@opShl(int8 value); Buffer@Get(int8&value); Buffer@Set(int8&value);
-	 Buffer@opShr(int16&value); Buffer@opShl(int16 value); Buffer@Get(int16&value); Buffer@Set(int16&value);
-	 Buffer@opShr(int32&value); Buffer@opShl(int32 value); Buffer@Get(int32&value); Buffer@Set(int32&value);
-	 Buffer@opShr(int64&value); Buffer@opShl(int64 value); Buffer@Get(int64&value); Buffer@Set(int64&value);
-	 Buffer@opShr(uint8&value); Buffer@opShl(uint8 value); Buffer@Get(uint8&value); Buffer@Set(uint8&value);
-	 Buffer@opShr(uint16&value); Buffer@opShl(uint16 value); Buffer@Get(uint16&value); Buffer@Set(uint16&value);
-	 Buffer@opShr(uint32&value); Buffer@opShl(uint32 value); Buffer@Get(uint32&value); Buffer@Set(uint32&value);
-	 Buffer@opShr(uint64&value); Buffer@opShl(uint64 value); Buffer@Get(uint64&value); Buffer@Set(uint64&value);
-	 Buffer@opShr(bool&value); Buffer@opShl(bool value); Buffer@Get(bool&value); Buffer@Set(bool&value);
-	 Buffer@opShr(string&value); Buffer@opShl(string value); Buffer@Get(string&value); Buffer@Set(string&value);
-	 Buffer@opShr(float&value); Buffer@opShl(float value); Buffer@Get(float&value); Buffer@Set(float&value);    
-	
-	 Buffer@opShr(array<uint8>&value); Buffer@opShl(array<uint8>&value); Buffer@Get(array<uint8>&value); Buffer@Set(array<uint8>&value);
-	 Buffer@opShr(array<uint16>&value); Buffer@opShl(array<uint16>&value); Buffer@Get(array<uint16>&value); Buffer@Set(array<uint16>&value);
-	 Buffer@opShr(array<uint32>&value); Buffer@opShl(array<uint32>&value); Buffer@Get(array<uint32>&value); Buffer@Set(array<uint32>&value); 
-	
-	 Buffer@opShr(array<string>&value); Buffer@opShl(array<string>&value); Buffer@Get(array<string>&value); Buffer@Set(array<string>&value);     
-	
-	 Buffer@opShr(array<array<uint8>>&value); Buffer@opShl(array<array<uint8>>&value); Buffer@Get(array<array<uint8>>&value); Buffer@Set(array<array<uint8>>&value);
-	 Buffer@opShr(array<array<uint16>>&value); Buffer@opShl(array<array<uint16>>&value); Buffer@Get(array<array<uint16>>&value); Buffer@Set(array<array<uint16>>&value);
-	 Buffer@opShr(array<array<uint32>>&value); Buffer@opShl(array<array<uint32>>&value); Buffer@Get(array<array<uint32>>&value); Buffer@Set(array<array<uint32>>&value);                  
-	
-	 Buffer@opUShr(array<int32>&arr); Buffer@opUShrAssign(array<int32>&arr); array<int32>AsInt32();
-	
-	 Buffer@opUShr(array<uint8>&arr); Buffer@opUShrAssign(array<uint8>&arr); array<uint8>AsUint8();  
-	
-};  
-
-import Buffer@NewBuffer()from"buffer";   
-
- import Buffer@NewBuffer(array<int8>@data)from"buffer";
- import Buffer@NewBuffer(array<int16>@data)from"buffer";
- import Buffer@NewBuffer(array<int32>@data)from"buffer";
- import Buffer@NewBuffer(array<int64>@data)from"buffer";
- import Buffer@NewBuffer(array<uint8>@data)from"buffer";
- import Buffer@NewBuffer(array<uint16>@data)from"buffer";
- import Buffer@NewBuffer(array<uint32>@data)from"buffer";
- import Buffer@NewBuffer(array<uint64>@data)from"buffer";                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  
+                                          
 
 shared class Sprite
 {
@@ -121,7 +67,16 @@ shared class Sprite
 	int Height;
 	uint FrmCount;
 	string Filename;
-};     
+};                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+
+uint __GetColor(int r,int g,int b,int a=0xFF)
+{
+	r=(((r)>(255))?(255):(((r)<(0))?(0):(r)));
+	g=(((g)>(255))?(255):(((g)<(0))?(0):(g)));
+	b=(((b)>(255))?(255):(((b)<(0))?(0):(b)));
+	a=(((a)>(255))?(255):(((a)<(0))?(0):(a)));
+	return(uint((((a)&0xFF)<<24)|(((r)&0xFF)<<16)|(((g)&0xFF)<<8)|((b)&0xFF)));
+}                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 
 
 shared interface IControl
 {
@@ -1341,2513 +1296,286 @@ shared interface IGUIElementButtonOpt
 	void SetFocused(bool state); 
 	
 	bool IsVisible();
-}                                                                                                                                                                                                                                                             
+}       
 
-import string GetCritterLexems(CritterCl&critter)from"lexems";
-import string GetItemLexems(ItemCl&item)from"lexems";
+CQuestTracker questTracker=CQuestTracker();    
 
-import bool IsLexem(CritterCl&critter,string&lex)from"lexems";
-import bool IsLexem(ItemCl&it,string&lex)from"lexems";
-import bool IsLexem(string&lexems,string&lex)from"lexems";
-
-import string GetLexem(CritterCl&critter,string&lex)from"lexems";
-import string GetLexem(ItemCl&item,string&lex)from"lexems";
-import string GetLexem(string&lexems,string&lex)from"lexems"; 
-
-import void SetLexem(CritterCl&critter,string&lex,string&value)from"lexems";
-import void SetLexem(ItemCl&item,string&lex,string&value)from"lexems";
-import string SetLexem(string&lexems,string&lex,string&value)from"lexems";
-
-import void UnsetLexem(CritterCl&critter,string&lex)from"lexems";
-import void UnsetLexem(ItemCl&item,string&lex)from"lexems";
-import string UnsetLexem(string&lexems,string&lex)from"lexems";                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    
-
-shared interface IPolygon
-{
-	IPolygon@AddVertex(uint16 x,uint16 y);
-	IPolygon@AddVertices(array<uint16>&hexes);   
+void InitQuestTracker(){
+	questTracker=CQuestTracker(); 
 	
-	bool IsWithin(Critter&cr);
-	bool IsWithin(Item&item);
+	questTracker.questHeader="Fallout 3: Radio New Vegas";
+	questTracker.questBody="A package courier found shot in the head near Good-Springs has reportedly regained consciousness,"
+	+" and has made a full recovery. Now that's a delivery service you can count on.";
 	
-	bool IsWithin(uint16 x,uint16 y);
-};  
-
-import IPolygon@NewPolygon()from"polygon"; 
-
-import IPolygon@LoadShapeFromEntires(Map&map,uint first,uint last)from"polygon";  
-
-import void GetDrawHexAreaData(array<uint16>&area,bool triangles,int color,array<int>&data)from"polygon";
-import void DrawHexArea(array<uint16>&area,bool triangles,int color)from"polygon";             
-
-uint16[]modoc_area_v=
-{
-	214,217,
-	107,217,
-	107,126,
-	70,126,
-	70,90,
-	93,90,
-	93,71,
-	145,71,
-	214,174
-};
-
-uint16[]redding_area_v=
-{
-	130,140,
-	130,155,
-	172,155,
-	172,183,
-	170,183,
-	170,197,
-	172,197,
-	172,217,
-	148,217,
-	148,230,
-	106,230,
-	106,147,
-	64,147,
-	64,60,
-	135,60,
-	135,97,
-	155,97,
-	155,140
-};
-
-uint16[]klamath_area_v=
-{
-	290,207,
-	318,207,
-	393,321,
-	293,321,
-	293,308,
-	265,308,
-	265,283,
-	245,283,
-	245,272,
-	127,272,
-	127,213,
-	190,213,
-	190,237,
-	240,237,
-	240,195,
-	248,195,
-	248,209,
-	260,209,
-	260,203,
-	272,203,
-	272,219,
-	282,219,
-	282,215,
-	290,215
-};
-
-uint16[]den_area_v=
-{
-	40,100,
-	125,100,
-	125,70,
-	210,70,
-	210,130,
-	195,130,
-	195,210,
-	125,210,
-	125,188,
-	40,188
-}; 
-
-uint16[]bh_area_v=
-{
-	292,179,
-	287,179,
-	287,193,
-	274,193,
-	274,202,
-	238,202,
-	238,182,
-	222,182,
-	222,174,
-	77,174,
-	77,155,
-	210,155,
-	210,117,
-	240,117,
-	240,149,
-	292,149
-}; 
-
-uint16[]gecko_area_v=
-{
-	148,45,
-	148,65,
-	194,65,
-	194,113,
-	194,223,
-	135,223,
-	135,188,
-	138,188,
-	138,165,
-	154,165,
-	154,133,
-	148,133,
-	147,113,
-	132,113,
-	132,111,
-	128,111,
-	128,107,
-	119,107,
-	120,99,
-	116,99,
-	116,45
-};            
-
-enum Ingredients
-{ 
+	questTracker.posX=10;
+	questTracker.posY=150;
+	questTracker.width=400;
+	questTracker.height=450;  
 	
-	INGREDIENT_NONE=0,
+	questTracker.colorStory=((uint((0xFF<<24)|(((0xff)&0xFF)<<16)|(((0xa5)&0xFF)<<8)|((0)&0xFF))));
+	questTracker.colorJob=((uint((0xFF<<24)|(((0xdd)&0xFF)<<16)|(((0x99)&0xFF)<<8)|((0)&0xFF))));
+	questTracker.colorQuest=(uint((((0xff)&0xff)<<24)|(((0x8F)&0xff)<<16)|(((0x6F)&0xff)<<8)|((0)&0xff)));
 	
-	INGREDIENT_WATER,
-	INGREDIENT_WOOD,
-	INGREDIENT_RADIATED_FOOD,
-	INGREDIENT_BARLEY,
-	INGREDIENT_TOBACCO,
-	INGREDIENT_FIBRE
-};      
-
-import bool HaveAnyIngredient(ItemCl&item)from"prod_ingredients";
-import bool HaveIngredient(ItemCl&item,uint8 ingredient)from"prod_ingredients";
-import uint16 GetIngredientReturnItem(ItemCl&item,uint8 ingredient)from"prod_ingredients";
-import string IngredientName(uint8 ingredient)from"prod_ingredients";
-import uint IngredientsNames(ItemCl&item,array<string>&names)from"prod_ingredients";                                                                                                                       
-
-import ItemCl@DogTag(Critter@cr)from"item_dogtags"; 
-
-import ItemCl@DogTag(Critter@holder,Critter@target)from"item_dogtags";
-
-import ItemCl@DogTagBlank(Critter@holder)from"item_dogtags";           
-
-import void BroadcastDraw()from"client_broadcast";
-
-import void changedParam_Hide(CritterCl&cr,uint,int oldValue)from"parameters";
-
-import void DrawChosenTabs()from"chosen_tabs";
-
-import bool IsPossessMode()from"client_dev_menu";
-import bool IsAuthorized()from"client_dev_menu"; 
-
-import bool GMToolsAccess()from"client_gmtools";
-import void GMToolsDraw(uint layer,int mouseX,int mouseY)from"client_gmtools";
-import bool IsGMTEnabled()from"client_main"; 
-
-import uint8 GetCurrentAim()from"client_keybinds";
-
-import void TimeoutsDraw()from"client_timeouts";
-
-import void ColorizeCritter(CritterCl&cr)from"name_colorizing";
-import void ColorizeCritterPreview(CritterCl&cr)from"name_colorizing";
-
-import void SetRepairPid(uint16 pid)from"client_main";
-import void SetRepairItem(uint id)from"client_main";
-
-import string@CritterDescription_Get(uint description1,uint description2)from"critter_description";
-
-import int stringReplaceText(string&s,string@f,string@t)from"config_file";
-
-import void RenderThrowing()from"throwing";
-import void RenderHexShoting()from"hexShot";
-import void RenderHexThrowing()from"hexThrow";
-
-import void DrawCritterOnHead()from"client_critter_onhead";
-import void AddCritter(uint id,uint pid)from"client_critter_onhead";
-import void RemoveCritter(uint id)from"client_critter_onhead";
-import void ClearCritter()from"client_critter_onhead";
-import void InitFactionIcons()from"client_critter_onhead";
-
-import void EncountersDraw()from"client_fef";
-
-import uint GetContainerId()from"client_container_addons";
-import uint GetBodyId()from"client_container_addons";
-
-import void SmartCursorDraw(uint layer)from"client/smart_cursor";                
-
-import void DrawFog()from"client_fov";
-import void DrawMsFov()from"client_fov";
-import void DrawCustomBorder()from"client_fov";
-
-import string DateTimeToString(uint gameTime)from"time";
-
-array<uint>crFade;    
-
-class CDialogImage
-{
-	int x;
-	int y;
-	int sprite;
+	questTracker.colorDone=((uint((0xFF<<24)|(((0)&0xFF)<<16)|(((0xFF)&0xFF)<<8)|((0)&0xFF))));
+	questTracker.colorSoftFailed=((uint((0xFF<<24)|(((0x99)&0xFF)<<16)|(((0x66)&0xFF)<<8)|((0)&0xFF))));
+	questTracker.colorHardFailed=((uint((0xFF<<24)|(((0xC8)&0xFF)<<16)|(((0)&0xFF)<<8)|((0)&0xFF))));
+	questTracker.colorSoftCompleted=((uint((0xFF<<24)|(((0)&0xFF)<<16)|(((0)&0xFF)<<8)|((0xFF)&0xFF))));
+	questTracker.colorHardCompleted=((uint((0xFF<<24)|(((0)&0xFF)<<16)|(((0xAA)&0xFF)<<8)|((0)&0xFF))));
 	
-	CDialogImage()
-	{
-		DMessage("DialogImage::Constructor");
-		this.Unset();
-	}
+	questTracker.colorProgress=((uint((0xFF<<24)|(((0xFF)&0xFF)<<16)|(((0xFF)&0xFF)<<8)|((0xFF)&0xFF))));
+	questTracker.colorBackground=(((((uint((0xFF<<24)|(((0)&0xFF)<<16)|(((0)&0xFF)<<8)|((0)&0xFF))))|0xFF000000)^0xFF000000)|(uint(150)&0xFF)<<24);
 	
-	void Set(int x,int y,string&image)
-	{
-		this.x=x;
-		this.y=y;
-		this.sprite=LoadSprite(image,int((2)));
-		DMessage("DialogImage::Set: "+x+","+y+","+image+" = "+this.sprite);
-	}
-	
-	void Unset()
-	{
-		this.x=-1;
-		this.y=-1;
-		this.sprite=-1;
-		DMessage("DialogImage::Unset");
-	}
-	
-	bool Exists()
-	{
-		if(this.x<0)
-		return(false);
-		if(this.y<0)
-		return(false);
-		if(this.sprite<=0)
-		return(false);
-		
-		return(true);
-	}
-	
-	void Draw()
-	{
-		int screen=GUI_GetActiveScreen();
-		if(screen!=(14))
-		return;
-		
-		int dX=0,dY=0;
-		GetHardcodedScreenPos(screen,dX,dY);       
-		
-		DrawSprite(this.sprite,0,dX+this.x,dY+this.y,0);
-	}
-};
-CDialogImage DialogImage;
-
-class CWorldmapElement
-{
-	int id;
-	uint layer;
-	uint x;
-	uint y;
-	uint width;
-	uint height;
-	uint color;
-	
-	Sprite sprite;
-	bool scratch;
-	bool center;
-	bool applyOffset;
-	
-	string text;
-	int font;
-	int flags;
-	
-	CWorldmapElement(int id,uint layer)
-	{
-		this.id=id;
-		this.layer=layer;
-		this.x=0;
-		this.y=0;
-		this.width=0;
-		this.height=0;
-		this.color=0;
-	}
-	
-	void SetSprite(Sprite&sprite,bool scratch,bool center,bool applyOffset)
-	{
-		this.text="";
-		
-		this.sprite=sprite;
-		this.scratch=scratch;
-		this.center=center;
-		this.applyOffset=applyOffset;
-	}
-	
-	void SetText(string&text,int font,int flags)
-	{
-		Sprite nul;
-		this.sprite=nul;
-		
-		this.text=text;
-		this.font=font;
-		this.flags=flags;
-	}
-	
-	void Draw(uint layer)
-	{
-		if(this.layer==layer)
-		{
-			if(this.sprite.Id>0)
-			DrawSprite(this.sprite.Id,-1,int(this.x/__WorldmapZoom+__WorldmapOffsetX),int(this.y/__WorldmapZoom+__WorldmapOffsetY),int((this.width==0?this.sprite.Width:this.width)/__WorldmapZoom),int((this.height==0?this.sprite.Height:this.height)/__WorldmapZoom),this.scratch,this.center,this.color,this.applyOffset);
-			if(this.text.length()>0)
-			DrawText(this.text,int(this.x/__WorldmapZoom+__WorldmapOffsetX),int(this.y/__WorldmapZoom+__WorldmapOffsetY),this.width,this.height,this.color,this.font,this.flags);
-		}
-	}
-};
-array<CWorldmapElement@>WorldmapElements;
-
-class CTempWorldmapElement:CWorldmapElement
-{
-	uint expirationTime;
-	CTempWorldmapElement(int id,uint layer,uint expirationTime)
-	{
-		super(id,layer);
-		this.expirationTime=expirationTime;
-	}
-	
-	bool IsExpired()
-	{
-		return(__FullSecond)>=expirationTime;
-	}
-};
-array<CTempWorldmapElement@>TempWorldmapElements;
-
-uint pickupScreenScrollCritter=0;
-uint pickupScreenScrollFrom=0;
-bool disableItemMove=false; 
-
-void unsetall_location_combatzone(int,int,int,string@,array<int>@)
-{
-	TempWorldmapElements.resize(0);
-}
-
-void location_combatzone(int id,int layer,int expiration,string@,array<int>@coords)
-{
-	CTempWorldmapElement@element;
-	
-	bool found=false;
-	for(uint e=0,elen=TempWorldmapElements.length();e<elen;e++)
-	{
-		if(TempWorldmapElements[e].id==id)
-		{
-			if(layer<0)
-			{
-				TempWorldmapElements.removeAt(e);
-				return;
-			}
-			@element=TempWorldmapElements[e];
-			found=true;
-			break;
-		}
-	}
-	
-	if(layer<0)
-	return;
-	if(!found)
-	{
-		@element=CTempWorldmapElement(id,layer,uint(expiration));
-		Sprite sprite;
-		sprite.Load("combat_zone.png",int((4)));
-		element.SetSprite(sprite,true,true,true);
-	}
-	
-	if(!(@coords!=null)||coords.length()<3)
-	return;
-	
-	element.x=coords[0]-coords[2];
-	element.y=coords[1]-coords[2];
-	element.width=coords[2]*2;
-	element.height=coords[2]*2; 
-	
-	if(!found)
-	TempWorldmapElements.insertLast(element);
-}
-
-void worldmap_element(int id,int layer,int type,string@,array<int>@data)
-{
-	CWorldmapElement@element;
-	
-	bool found=false;
-	for(uint e=0,elen=WorldmapElements.length();e<elen;e++)
-	{
-		if(WorldmapElements[e].id==id)
-		{
-			if(layer<0)
-			{
-				WorldmapElements.removeAt(e);
-				return;
-			}
-			@element=WorldmapElements[e];
-			found=true;
-			break;
-		}
-	}
-	if(layer<0)
-	return;
-	if(!found)
-	{
-		@element=CWorldmapElement(id,layer);
-	}
-	
-	if(!(@data!=null)||data.length()==0)
-	return;
-	
-	Buffer@buff=NewBuffer(data);
-	buff>>element.x>>element.y>>element.width>>element.height>>element.color;
-	
-	if(type==1)
-	{
-		Sprite sprite;
-		
-		string spriteName="";
-		int spritePath=0;
-		bool scratch=false;
-		bool center=false;
-		bool applyOffset=false;
-		
-		buff>>spriteName>>spritePath>>scratch>>center>>applyOffset;
-		
-		if(spriteName.length()>0&&sprite.Load(spriteName,spritePath))
-		{
-			element.SetSprite(sprite,scratch,center,applyOffset);
-		}
-		else
-		return;
-	}
-	else if(type==2)
-	{
-		string text="";
-		int font=0;
-		int flags=0;
-		
-		buff>>text>>font>>flags;
-		
-		if(text.length()>0)
-		{
-			element.SetText(text,font,flags);
-		}
-		else
-		return;
-	}
-	else
-	return;
-	
-	if(!found)
-	WorldmapElements.insertLast(element);
-}  
-
-void get_active_screens(array<int>&result)
-{
-	GUI_GetActiveScreens(result);
-}
-
-bool recheckDialogImage=false;  
-
-void screen_change(bool show,int screen,int p0,int p1,int p2)
-{
-	if(DialogImage.Exists()&&recheckDialogImage&&
-	show&&screen!=(14)&&
-	!(screen==(15)||screen==(24)))
-	{
-		DialogImage.Unset();
-		recheckDialogImage=false;
-	}
-	
-	if(!show&&DialogImage.Exists()&&screen==(14))
-	{
-		recheckDialogImage=true;
-	}
-	
-	if(show)
-	GUI_ShowScreen(screen,p0,p1,p2);
-	else
-	GUI_HideScreen(screen,p0,p1,p2);
-}               
-
-void render_iface(uint layer)
-{
-	uint sc=GUI_GetActiveScreen();
-	uint mainsc=GUI_GetActiveMainScreen();
-	
-	if(mainsc==(5))
-	{
-		if(layer==1)
-		{
-			if(__ForceHelpInfo)
-			__HelpInfo=false;
-			else if(!__HelpInfo)
-			__HelpInfo=true;
-			
-			CritterCl@chosen=GetChosen();
-			
-			bool chosenProcessed=false;
-			
-			for(int f=0,fLen=crFade.length();f<fLen;f++)
-			{
-				CritterCl@cr=GetCritter(crFade[f]);
-				if(!(@cr!=null)||((@cr!=null)&&!cr.FadingEnable))
-				{
-					if((@cr!=null))
-					cr.Alpha=cr.Stat[(184)];
-					crFade.removeAt(f--);
-					if(crFade.length()==0)
-					break;
-					fLen--;
-					
-					continue;
-				}
-				else if((@cr!=null))
-				{
-					if(int(cr.Alpha)>cr.Stat[(184)])
-					cr.Alpha=cr.Stat[(184)];
-					
-					if((@chosen!=null)&&chosen.Id==cr.Id)
-					chosenProcessed=true;
-				}
-			}
-			
-			if(!chosenProcessed&&(@chosen!=null))
-			chosen.Alpha=chosen.Stat[(184)];
-			
-			if((@chosen!=null))
-			MapZoom=__SpritesZoom;
-		}
-		
-		if(layer==4&&__ForceHelpInfo)
-		{
-			__HelpInfo=true;
-		}
-	}
-	else if(__HelpInfo&&__ForceHelpInfo)
-	__HelpInfo=false; 
-	
-	if(layer==2)
-	{
-		if(__ConfigDisplayTCZones>0)
-		DrawArea(GetCurrentMapPid(),__ConfigDisplayTCZones);
-		DrawFog();
-		DrawMsFov();
-		DrawCustomBorder();
-		RenderHexThrowing();
-		RenderHexShoting();
-		
-		if(__ConfigOnHeadAwareness>0)
-		DrawCritterOnHead();
-		
-		GUI_Render(true);
-		
-		if(!__WorldmapActive)
-		{
-			if(InterfaceShown)
-			DrawIndicators();
-			RenderThrowing();
-			
-			SmartCursorDraw(layer);
-		}
-	}
-	
-	if(layer==3)
-	{
-		
-		if(mainsc==(5))
-		{
-			
-			int yy=15;
-			DrawText("FOClassic",0,5,__ScreenWidth-5,10,0,(5),(0x0010));
-			string date=DateTimeToString(__FullSecond);
-			DrawText(date,0,yy,__ScreenWidth-5,10,0,(5),(0x0010));
-			
-			if(__ConfigGameInfo==1||__ConfigGameInfo==3)
-			{
-				yy+=10;
-				DrawText("Ping: "+__Ping,0,yy,__ScreenWidth-5,10,0,(5),(0x0010));
-			}
-			if(__ConfigGameInfo==2||__ConfigGameInfo==3)
-			{
-				yy+=10;
-				DrawText("Fps: "+__FPS,0,yy,__ScreenWidth-5,10,0,(5),(0x0010));
-			}
-		} 
-		
-		if(IsPossessMode())
-		DrawText("Possess mode on",0,0,__ScreenWidth,20,0,(5),(0x0004)|(0x0008)|(0x0200));
-		
-		TimeoutsDraw(); 
-		
-		if(IsGMTEnabled()&&GMToolsAccess())
-		GMToolsDraw(layer,__MouseX,__MouseY);
-		
-		if(sc==(5)&&GetCurrentAim()!=(9))
-		DrawText("Aimed: "+GetMsgStr((5),1109+GetCurrentAim()),10,40,__ScreenWidth,20,((uint((0xFF<<24)|(((0)&0xFF)<<16)|(((0xC8)&0xFF)<<8)|((0)&0xFF)))),(5),(0x0008)|(0x0200));    
-		
-		if((sc==(5)||sc==(6)||((sc>9)&&(sc<46))))
-		{
-			BroadcastDraw();
-		}
-		
-		if(sc==(5)&&IsAuthorized())
-		{
-			uint16 hx=0;
-			uint16 hy=0;
-			if(GetMonitorHex(__MouseX,__MouseY,hx,hy))
-			DrawText(""+hx+", "+hy,0,0,__ScreenWidth,20,(uint((((0xff)&0xff)<<24)|(((60)&0xff)<<16)|(((248)&0xff)<<8)|((0)&0xff))),(5),(0x0010));
-			CritterCl@cr=GetMonitorCritter(__MouseX,__MouseY);
-			if((@cr!=null))
-			DrawText("Critter> id: "+cr.Id+", pid: "+cr.Pid,0,10,__ScreenWidth,20,(uint((((0xff)&0xff)<<24)|(((60)&0xff)<<16)|(((248)&0xff)<<8)|((0)&0xff))),(5),(0x0010));
-			ItemCl@item=GetMonitorItem(__MouseX,__MouseY);
-			if((@item!=null))
-			DrawText("Item> pid: "+item.GetProtoId()+"x,y: "+item.HexX+", "+item.HexY,0,20,__ScreenWidth,20,(uint((((0xff)&0xff)<<24)|(((60)&0xff)<<16)|(((248)&0xff)<<8)|((0)&0xff))),(5),(0x0010));
-		}
-		
-		if(__ConfigAwareness)
-		{
-			CritterCl@chosen=GetChosen();
-			if((@chosen!=null))
-			{
-				CritterCl@cr=GetMonitorCritter(__MouseX,__MouseY);
-				if((@cr!=null))
-				{
-					int dy=-10;
-					
-					if(chosen.Perk[(320)]!=0&&cr.IsPlayer())
-					{
-						uint faTimeout=0;
-						uint docTimeout=0;
-						if(cr.Timeout[(230)]>0)
-						faTimeout=(cr.Timeout[(230)]/__TimeMultiplier)+1;
-						if(cr.Timeout[(231)]>0)
-						docTimeout=(cr.Timeout[(231)]/__TimeMultiplier)+1;
-						
-						string skillTimeout="";
-						if(faTimeout>0)
-						skillTimeout+="FA: "+faTimeout+" ";
-						if(docTimeout>0)
-						skillTimeout+="DOC: "+docTimeout;
-						
-						if(skillTimeout!="")
-						{
-							DrawText(skillTimeout,__MouseX+15,__MouseY+dy,__ScreenWidth,20,((uint((0xFF<<24)|(((0xAB)&0xFF)<<16)|(((0xAB)&0xFF)<<8)|((0xAB)&0xFF)))),(5),(0x0100)|(0x0200));
-							dy-=10;
-						}
-					}
-					
-					if(IsLexem(cr,("$"+"F"))&&cr.IsPlayer())
-					{
-						if(cr.Stat[(121)]==1)
-						DrawText("Recruit",__MouseX+15,__MouseY+dy,__ScreenWidth,20,((uint((0xFF<<24)|(((0xAB)&0xFF)<<16)|(((0xAB)&0xFF)<<8)|((0xAB)&0xFF)))),(5),(0x0100)|(0x0200));
-						else if(cr.Stat[(121)]==2)
-						DrawText("Member",__MouseX+15,__MouseY+dy,__ScreenWidth,20,((uint((0xFF<<24)|(((0xAB)&0xFF)<<16)|(((0xAB)&0xFF)<<8)|((0xAB)&0xFF)))),(5),(0x0100)|(0x0200));
-						else if(cr.Stat[(121)]==3)
-						DrawText("Trusted",__MouseX+15,__MouseY+dy,__ScreenWidth,20,((uint((0xFF<<24)|(((0xAB)&0xFF)<<16)|(((0xAB)&0xFF)<<8)|((0xAB)&0xFF)))),(5),(0x0100)|(0x0200));
-						else if(cr.Stat[(121)]==4)
-						DrawText("Officer",__MouseX+15,__MouseY+dy,__ScreenWidth,20,((uint((0xFF<<24)|(((0xAB)&0xFF)<<16)|(((0xAB)&0xFF)<<8)|((0xAB)&0xFF)))),(5),(0x0100)|(0x0200));
-						else if(cr.Stat[(121)]==5)
-						DrawText("Leader",__MouseX+15,__MouseY+dy,__ScreenWidth,20,((uint((0xFF<<24)|(((0xAB)&0xFF)<<16)|(((0xAB)&0xFF)<<8)|((0xAB)&0xFF)))),(5),(0x0100)|(0x0200));
-						dy-=10;
-					}
-					
-					string factionname;
-					if(IsLexem(cr,("$"+"F")))
-					{
-						factionname=GetLexem(cr,("$"+"F"));
-						DrawText(factionname,__MouseX+15,__MouseY+dy,__ScreenWidth,20,((uint((0xFF<<24)|(((0)&0xFF)<<16)|(((0xAA)&0xFF)<<8)|((0)&0xFF)))),(5),(0x0100)|(0x0200));
-						dy-=10;
-					}
-					
-					if(cr.IsDead())
-					{
-						DrawText("Dead",__MouseX+15,__MouseY+dy,__ScreenWidth,20,((uint((0xFF<<24)|(((0x30)&0xFF)<<16)|(((0x30)&0xFF)<<8)|((0x30)&0xFF)))),(5),(0x0100)|(0x0200));
-					}
-					else
-					{
-						ItemCl@item=cr.GetItem(0,(1));
-						string _item="Unarmed";
-						if((@item!=null))
-						{
-							if(IsLexem(item,"$-"))
-							_item=GetLexem(item,"$-");
-							else
-							_item=GetMsgStr((2),(item.GetProtoId()*100+item.Info)); 
-							
-							if(cr.IsPlayer()&&item.GetType()==(3))
-							{
-								if(((((item.Mode)&0xF))==0?item.Proto.Weapon_Skill_0:((((item.Mode)&0xF))==1?item.Proto.Weapon_Skill_1:((((item.Mode)&0xF))==2?item.Proto.Weapon_Skill_2:0)))==(205))
-								_item+=" ["+item.GetCount()+"]";
-								else if(item.Proto.Weapon_MaxAmmoCount>0)
-								_item+=" ["+item.AmmoCount+"/"+item.Proto.Weapon_MaxAmmoCount+"]";
-							}
-						}
-						DrawText(_item,__MouseX+15,__MouseY+dy,__ScreenWidth,20,((@item!=null)&&item.GetType()==(3))?((uint((0xFF<<24)|(((0)&0xFF)<<16)|(((0xFF)&0xFF)<<8)|((0)&0xFF)))):((uint((0xFF<<24)|(((0x7F)&0xFF)<<16)|(((0x7F)&0xFF)<<8)|((0x7F)&0xFF)))),(5),(0x0100)|(0x0200));
-						dy-=10;
-						
-						ItemCl@armor=cr.GetItem(0,(3));
-						ItemCl@helmet=cr.GetItem(0,(((3))+1));
-						if(cr.IsPlayer()||cr.Stat[(67)]==(0)||cr.Stat[(67)]==(1)||cr.Stat[(67)]==(2)||
-						cr.Stat[(67)]==(4)||cr.Stat[(67)]==(3)||
-						(@armor!=null)||(@helmet!=null))
-						{
-							
-							if((@armor!=null))
-							{
-								string _armor="No armor";
-								if(IsLexem(armor,"$-"))
-								_armor=GetLexem(armor,"$-");
-								else
-								_armor=GetMsgStr((2),(armor.GetProtoId()*100+armor.Info));
-								
-								DrawText(_armor,__MouseX+15,__MouseY+dy,__ScreenWidth,20,(@armor!=null)&&armor.GetType()==(1)?((uint((0xFF<<24)|(((0)&0xFF)<<16)|(((0xAA)&0xFF)<<8)|((0)&0xFF)))):((uint((0xFF<<24)|(((0x7F)&0xFF)<<16)|(((0x7F)&0xFF)<<8)|((0x7F)&0xFF)))),(5),(0x0100)|(0x0200));
-								dy-=10;
-							}
-							
-							if((@helmet!=null))
-							{
-								string _helmet="No helmet";
-								if(IsLexem(helmet,"$-"))
-								_helmet=GetLexem(helmet,"$-");
-								else
-								_helmet=GetMsgStr((2),(helmet.GetProtoId()*100+helmet.Info));
-								DrawText(_helmet,__MouseX+15,__MouseY+dy,__ScreenWidth,20,(@helmet!=null)&&helmet.GetType()==(1)?((uint((0xFF<<24)|(((0)&0xFF)<<16)|(((0xAA)&0xFF)<<8)|((0)&0xFF)))):((uint((0xFF<<24)|(((0x7F)&0xFF)<<16)|(((0x7F)&0xFF)<<8)|((0x7F)&0xFF)))),(5),(0x0100)|(0x0200));
-								dy-=10;
-							}
-						}
-						
-						if((!__ConfigShowNpcAwareness&&cr.IsNpc())||!__ConfigShowPlayerAwareness&&cr.IsPlayer())
-						{
-							int curHp=cr.Stat[(72)];
-							int maxHp=cr.Stat[(7)];
-							DrawText(curHp+"/"+maxHp,__MouseX+15,__MouseY+dy,__ScreenWidth,20,cr.IsDead()?((uint((0xFF<<24)|(((0)&0xFF)<<16)|(((0)&0xFF)<<8)|((0)&0xFF)))):(curHp<1?((uint((0xFF<<24)|(((0x7F)&0xFF)<<16)|(((0x7F)&0xFF)<<8)|((0x7F)&0xFF)))):(uint((0xFF<<24)|(((0xff-(0xff*curHp)/maxHp)&0xFF)<<16)|((((0xff*curHp)/maxHp)&0xFF)<<8)|((0)&0xFF)))),(5),(0x0100)|(0x0200));
-							
-							dy-=10;
-						}
-						
-						if((cr.Damage[(502)]>0||cr.Damage[(503)]>0||cr.Damage[(504)]>0||cr.Damage[(505)]>0||cr.Damage[(506)]>0))
-						{
-							if((!__ConfigShowNpcAwareness&&cr.IsNpc())||!__ConfigShowPlayerAwareness&&cr.IsPlayer())
-							{
-								string crInjures="";
-								crInjures+=(cr.Damage[(502)]>0)?"E ":"";
-								crInjures+=(cr.Damage[(503)]>0)?"RA ":"";
-								crInjures+=(cr.Damage[(504)]>0)?"LA ":"";
-								crInjures+=(cr.Damage[(505)]>0)?"RL ":"";
-								crInjures+=(cr.Damage[(506)]>0)?"LL ":"";
-								
-								DrawText(crInjures,__MouseX+15,__MouseY+dy,__ScreenWidth,20,((uint((0xFF<<24)|(((0xAA)&0xFF)<<16)|(((0)&0xFF)<<8)|((0)&0xFF)))),(5),(0x0100)|(0x0200));
-								dy-=10;
-							}
-						}
-						
-						if(cr.IsNpc())
-						{
-							uint dialog=cr.Stat[(104)];
-							uint16 pid=cr.Pid;
-							string result=GetMsgStr((1),((dialog)!=0?100000+(dialog)*1000+100:((pid)*10)));
-							DrawText(result,__MouseX+15,__MouseY+dy,__ScreenWidth,20,((uint((0xFF<<24)|(((0)&0xFF)<<16)|(((0x66)&0xFF)<<8)|((0)&0xFF)))),(5),(0x0100)|(0x0200));
-						}
-					}
-				}
-			}
-			
-		}
-		
-		GUI_Render(false);    
-		
-		if(sc==(14)&&DialogImage.Exists())
-		DialogImage.Draw();
-		
-		DrawChosenTabs();
-		
-	}
-	
-	if((layer==100||layer==101)&&__WorldmapActive)
-	{             
-		
-		for(uint e=0,elen=WorldmapElements.length();e<elen;e++)
-		{
-			WorldmapElements[e].Draw(layer);
-		}
-		
-		EncountersDraw();
-	}
-}  
-
-bool render_iface_screen(uint screen)
-{
-	
-	return(true);
-}   
-
-string generic_description(int descType,int&offsX,int&offsY)
-{
-	CritterCl@chosen=GetChosen();
-	if(!(@chosen!=null))
-	return"";
-	string result;
-	
-	if(descType==(0))
-	{
-		result+=chosen.Name+"\n";
-		result+="---------------------\n";
-		result+=GetMsgStr((3),(400+((0))))+"\n";
-		result+=GetMsgStr((3),(400+((1))))+"\n";
-		result+=GetMsgStr((3),(400+((2))))+"\n";
-		result+=GetMsgStr((3),(400+((3))))+"\n";
-		result+=GetMsgStr((3),(400+((4))))+"\n";
-		result+=GetMsgStr((3),(400+((5))))+"\n";
-		result+=GetMsgStr((3),(400+((6))))+"\n";
-		result+="\n\n---------------------\n";
-		
-		ItemCl@weaponMain=chosen.GetItem(0,(1));
-		if((@weaponMain!=null))
-		{
-			int use=((weaponMain.Mode)&0xF);
-			if(use>2)
-			use=0;
-			
-			string _name=GetMsgStr((2),(weaponMain.GetProtoId()*100+weaponMain.Info));
-			if(IsLexem(weaponMain,"$-"))
-			_name=GetLexem(weaponMain,"$-");
-			result+=showPrefix(weaponMain)+_name+"\n";
-			
-			if(weaponMain.GetType()==(3))
-			{
-				int nfix=2;
-				result+=GetMsgStr((3),(415))+" ";
-				int wpnMinDmg=((use)==0?weaponMain.Proto.Weapon_DmgMin_0:((use)==1?weaponMain.Proto.Weapon_DmgMin_1:((use)==2?weaponMain.Proto.Weapon_DmgMin_2:0)));
-				if((((use)==0?weaponMain.Proto.Weapon_Skill_0:((use)==1?weaponMain.Proto.Weapon_Skill_1:((use)==2?weaponMain.Proto.Weapon_Skill_2:0)))==(203)))
-				{   
-					
-					wpnMinDmg+=chosen.Stat[(10)];
-				}
-				wpnMinDmg+=wpnMinDmg*SelectWeaponBonus(weaponMain,(102))/100;
-				result+=wpnMinDmg+"-";
-				
-				int wpnMaxDmg=((use)==0?weaponMain.Proto.Weapon_DmgMax_0:((use)==1?weaponMain.Proto.Weapon_DmgMax_1:((use)==2?weaponMain.Proto.Weapon_DmgMax_2:0)));
-				if((((use)==0?weaponMain.Proto.Weapon_Skill_0:((use)==1?weaponMain.Proto.Weapon_Skill_1:((use)==2?weaponMain.Proto.Weapon_Skill_2:0)))==(203)))
-				{
-					wpnMaxDmg+=chosen.Stat[(10)];
-				}
-				wpnMaxDmg+=wpnMaxDmg*SelectWeaponBonus(weaponMain,(103))/100;
-				result+=wpnMaxDmg;
-				
-				if(((use)==0?weaponMain.Proto.Weapon_MaxDist_0:((use)==1?weaponMain.Proto.Weapon_MaxDist_1:((use)==2?weaponMain.Proto.Weapon_MaxDist_2:0)))>1)
-				{
-					result+=" "+GetMsgStr((3),(416))+" ";
-					int wpnMaxDist=((use)==0?weaponMain.Proto.Weapon_MaxDist_0:((use)==1?weaponMain.Proto.Weapon_MaxDist_1:((use)==2?weaponMain.Proto.Weapon_MaxDist_2:0)));
-					if(((use)==0?weaponMain.Proto.Weapon_Skill_0:((use)==1?weaponMain.Proto.Weapon_Skill_1:((use)==2?weaponMain.Proto.Weapon_Skill_2:0)))==(205))
-					{
-						wpnMaxDist=(((wpnMaxDist)<(3*(((int(10))<(chosen.Stat[(0)]))?(int(10)):(chosen.Stat[(0)]))))?(wpnMaxDist):(3*(((int(10))<(chosen.Stat[(0)]))?(int(10)):(chosen.Stat[(0)]))));
-						wpnMaxDist+=6*chosen.Perk[(336)];
-					}
-					wpnMaxDist+=SelectWeaponBonus(weaponMain,(106));
-					result+=wpnMaxDist+"\n";
-					nfix--;
-				}
-				
-				if(weaponMain.Proto.Weapon_MaxAmmoCount>0)
-				{
-					result+=GetMsgStr((3),(417))+" ";
-					result+=weaponMain.AmmoCount+"/";
-					result+=weaponMain.Proto.Weapon_MaxAmmoCount+" ";
-					result+=GetMsgStr((3),(10900+(weaponMain.Proto.Weapon_Caliber)));
-					result+="\n";
-					nfix--;
-				}
-				else if(weaponMain.IsStackable()&&weaponMain.GetCount()>1&&nfix>=1)
-				{
-					if(((use)==0?weaponMain.Proto.Weapon_MaxDist_0:((use)==1?weaponMain.Proto.Weapon_MaxDist_1:((use)==2?weaponMain.Proto.Weapon_MaxDist_2:0)))<2)
-					{
-						result+="\n";
-						nfix--;
-					}
-					result+="Amount: "+weaponMain.GetCount()+"\n";
-					nfix--;
-				}
-				for(int n=0;n<nfix;n++)
-				result+="\n";
-			}
-			else
-			{
-				if(weaponMain.IsStackable()&&weaponMain.GetCount()>1)
-				result+="Amount: "+weaponMain.GetCount()+"\n";
-				else if(weaponMain.Proto.Misc_ChargeMax>0)
-				result+="Charges: "+weaponMain.Charge+"/"+weaponMain.Proto.Misc_ChargeMax+"\n";
-				else
-				result+="\n";
-				
-				result+="\n";
-			}
-		}
-		else
-		{
-			
-			uint8 mode=0;
-			ProtoItem@unarmed=chosen.GetSlotProto((1),mode);
-			result+=GetMsgStr((3),(414))+"\n";
-			result+=GetMsgStr((3),(424))+" ";     
-			
-			result+=((((mode)&0xF))==0?unarmed.Weapon_DmgMin_0:((((mode)&0xF))==1?unarmed.Weapon_DmgMin_1:((((mode)&0xF))==2?unarmed.Weapon_DmgMin_2:0)))+chosen.Stat[(10)]+"-";
-			result+=((((mode)&0xF))==0?unarmed.Weapon_DmgMax_0:((((mode)&0xF))==1?unarmed.Weapon_DmgMax_1:((((mode)&0xF))==2?unarmed.Weapon_DmgMax_2:0)))+chosen.Stat[(10)];
-			result+="\n\n";
-		}
-		result+="---------------------\n";
-		
-		ItemCl@weaponExt=chosen.GetItem(0,(2));
-		if((@weaponExt!=null))
-		{
-			int use=((weaponExt.Mode)&0xF);
-			if(use>2)
-			use=0;
-			
-			string _name=showPrefix(weaponExt)+GetMsgStr((2),(weaponExt.GetProtoId()*100+weaponExt.Info));
-			if(IsLexem(weaponExt,"$-"))
-			_name=GetLexem(weaponExt,"$-");
-			result+=_name+"\n";
-			
-			if(weaponExt.GetType()==(3))
-			{
-				int nfix=2;
-				result+=GetMsgStr((3),(415))+" ";
-				
-				int wpnMinDmg=((use)==0?weaponExt.Proto.Weapon_DmgMin_0:((use)==1?weaponExt.Proto.Weapon_DmgMin_1:((use)==2?weaponExt.Proto.Weapon_DmgMin_2:0)));
-				if((((use)==0?weaponExt.Proto.Weapon_Skill_0:((use)==1?weaponExt.Proto.Weapon_Skill_1:((use)==2?weaponExt.Proto.Weapon_Skill_2:0)))==(203)))
-				{   
-					
-					wpnMinDmg+=chosen.Stat[(10)];
-				}
-				wpnMinDmg+=wpnMinDmg*SelectWeaponBonus(weaponExt,(102))/100;
-				result+=wpnMinDmg+"-";
-				
-				int wpnMaxDmg=((use)==0?weaponExt.Proto.Weapon_DmgMax_0:((use)==1?weaponExt.Proto.Weapon_DmgMax_1:((use)==2?weaponExt.Proto.Weapon_DmgMax_2:0)));
-				if((((use)==0?weaponExt.Proto.Weapon_Skill_0:((use)==1?weaponExt.Proto.Weapon_Skill_1:((use)==2?weaponExt.Proto.Weapon_Skill_2:0)))==(203)))
-				wpnMaxDmg+=chosen.Stat[(10)];
-				wpnMaxDmg+=wpnMaxDmg*SelectWeaponBonus(weaponExt,(103))/100;
-				result+=wpnMaxDmg;
-				if(((use)==0?weaponExt.Proto.Weapon_MaxDist_0:((use)==1?weaponExt.Proto.Weapon_MaxDist_1:((use)==2?weaponExt.Proto.Weapon_MaxDist_2:0)))>1)
-				{
-					result+=" "+GetMsgStr((3),(416))+" ";
-					int wpnMaxDist=((use)==0?weaponExt.Proto.Weapon_MaxDist_0:((use)==1?weaponExt.Proto.Weapon_MaxDist_1:((use)==2?weaponExt.Proto.Weapon_MaxDist_2:0)));
-					if(((use)==0?weaponExt.Proto.Weapon_Skill_0:((use)==1?weaponExt.Proto.Weapon_Skill_1:((use)==2?weaponExt.Proto.Weapon_Skill_2:0)))==(205))
-					{
-						wpnMaxDist=(((wpnMaxDist)<(3*(((int(10))<(chosen.Stat[(0)]))?(int(10)):(chosen.Stat[(0)]))))?(wpnMaxDist):(3*(((int(10))<(chosen.Stat[(0)]))?(int(10)):(chosen.Stat[(0)]))));
-						wpnMaxDist+=6*chosen.Perk[(336)];
-					}
-					wpnMaxDist+=SelectWeaponBonus(weaponExt,(106));
-					result+=wpnMaxDist+"\n";
-					nfix--;
-				}
-				
-				if(weaponExt.Proto.Weapon_MaxAmmoCount>0)
-				{
-					result+=GetMsgStr((3),(417))+" ";
-					result+=weaponExt.AmmoCount+"/";
-					result+=weaponExt.Proto.Weapon_MaxAmmoCount+" ";
-					result+=GetMsgStr((3),(10900+(weaponExt.Proto.Weapon_Caliber)));
-					result+="\n";
-					nfix--;
-				}
-				else if(weaponExt.IsStackable()&&weaponExt.GetCount()>1&&nfix>=1)
-				{
-					if(((use)==0?weaponExt.Proto.Weapon_MaxDist_0:((use)==1?weaponExt.Proto.Weapon_MaxDist_1:((use)==2?weaponExt.Proto.Weapon_MaxDist_2:0)))<2)
-					{
-						result+="\n";
-						nfix--;
-					}
-					result+="Amount: "+weaponExt.GetCount()+"\n";
-					nfix--;
-				}
-				for(int n=0;n<nfix;n++)
-				result+="\n";
-			}
-			else
-			{
-				if(weaponExt.IsStackable()&&weaponExt.GetCount()>1)
-				result+="Amount: "+weaponExt.GetCount()+"\n";
-				else if(weaponExt.Proto.Misc_ChargeMax>0)
-				result+="Charges: "+weaponExt.Charge+"/"+weaponExt.Proto.Misc_ChargeMax+"\n";
-				else
-				result+="\n";
-				
-				result+="\n";
-			}
-		}
-		else
-		{
-			
-			uint8 mode=0;
-			ProtoItem@unarmed=chosen.GetSlotProto((2),mode);
-			result+=GetMsgStr((3),(414))+"\n";
-			result+=GetMsgStr((3),(424))+" ";     
-			
-			result+=((((mode)&0xF))==0?unarmed.Weapon_DmgMin_0:((((mode)&0xF))==1?unarmed.Weapon_DmgMin_1:((((mode)&0xF))==2?unarmed.Weapon_DmgMin_2:0)))+chosen.Stat[(10)]+"-";
-			
-			result+=(((((mode)&0xF))==0?unarmed.Weapon_DmgMax_0:((((mode)&0xF))==1?unarmed.Weapon_DmgMax_1:((((mode)&0xF))==2?unarmed.Weapon_DmgMax_2:0)))+chosen.Stat[(10)]);
-			result+="\n\n";
-		}
-		
-		result+="\n";
-		result+=GetMsgStr((3),(420))+" ";
-		result+=chosen.ItemsWeight()/1000+"/";
-		result+=chosen.Stat[(11)]/1000+".";
-	}
-	else if(descType==(1))
-	{
-		offsX=23;
-		result+="\n\n";
-		result+=chosen.Stat[(0)]+"\n";
-		result+=chosen.Stat[(1)]+"\n";
-		result+=chosen.Stat[(2)]+"\n";
-		result+=chosen.Stat[(3)]+"\n";
-		result+=chosen.Stat[(4)]+"\n";
-		result+=chosen.Stat[(5)]+"\n";
-		result+=chosen.Stat[(6)];
-	}
-	else if(descType==(2))
-	{
-		offsX=39;
-		result+="\n\n";
-		result+=GetMsgStr((3),(407))+" ";
-		result+=chosen.Stat[(72)]+"/"+chosen.Stat[(7)]+"\n";
-		if((((__FullSecond)/((3)*__TimeMultiplier))%2==1))
-		result+="Headgear:\n";
-		else
-		result+="Body Armor:\n";
-		result+=GetMsgStr((3),(408))+" ";
-		result+=chosen.GetAC((((__FullSecond)/((3)*__TimeMultiplier))%2==1))+"\n";
-		result+=GetMsgStr((3),(409))+"\n";
-		result+=GetMsgStr((3),(410))+"\n";
-		result+=GetMsgStr((3),(411))+"\n";
-		result+=GetMsgStr((3),(412))+"\n";
-		result+="  Electro\n";
-		result+=GetMsgStr((3),(413));
-	}
-	else if(descType==(3))
-	{
-		offsX=103;
-		result+="\n\n\n\n\n";
-		result+=chosen.GetDT((1),(((__FullSecond)/((3)*__TimeMultiplier))%2==1))+"/"+chosen.GetDR((1),(((__FullSecond)/((3)*__TimeMultiplier))%2==1))+"%\n";
-		result+=chosen.GetDT((2),(((__FullSecond)/((3)*__TimeMultiplier))%2==1))+"/"+chosen.GetDR((2),(((__FullSecond)/((3)*__TimeMultiplier))%2==1))+"%\n";
-		result+=chosen.GetDT((3),(((__FullSecond)/((3)*__TimeMultiplier))%2==1))+"/"+chosen.GetDR((3),(((__FullSecond)/((3)*__TimeMultiplier))%2==1))+"%\n";
-		result+=chosen.GetDT((4),(((__FullSecond)/((3)*__TimeMultiplier))%2==1))+"/"+chosen.GetDR((4),(((__FullSecond)/((3)*__TimeMultiplier))%2==1))+"%\n";
-		result+=chosen.GetDT((5),(((__FullSecond)/((3)*__TimeMultiplier))%2==1))+"/"+chosen.GetDR((5),(((__FullSecond)/((3)*__TimeMultiplier))%2==1))+"%\n";
-		result+=chosen.GetDT((7),(((__FullSecond)/((3)*__TimeMultiplier))%2==1))+"/"+chosen.GetDR((7),(((__FullSecond)/((3)*__TimeMultiplier))%2==1))+"%";
-	}
-	
-	return result;
-}  
-
-string item_description(ItemCl&item,int lookType)
-{
-	CritterCl@chosen=GetChosen(); 
-	
-	if(!IsMsgStr((2),(item.GetProtoId()*100+item.Info)+(lookType!=(1)?1:0)))
-	{
-		if(!IsLexem(item,"$-"))
-		return(GetMsgStr((3),(10010)));
-	}
-	
-	string result; 
-	
-	if(lookType==(5))
-	{
-		string fuel=GetMsgStr((3),(561));
-		fuel=ReplaceText(fuel,"VALUE",item.Charge/100);
-		fuel=ReplaceText(fuel,"MAX_VALUE",(item.Proto.Car_TankVolume)/100);
-		string wear=GetMsgStr((3),(562));
-		wear=ReplaceText(wear,"VALUE",item.Deterioration*100/(item.Proto.Car_MaxDeterioration));
-		result=fuel+"\n"+wear;
-	}
-	
-	else if(lookType==(1))
-	{
-		string _name=showPrefix(item)+GetMsgStr((2),(item.GetProtoId()*100+item.Info));
-		if(IsLexem(item,"$-"))
-		_name=GetLexem(item,"$-");
-		if(item.GetProtoId()==(623)&&item.Val1!=0)
-		_name+=" |"+((uint((0xFF<<24)|(((0xC8)&0xFF)<<16)|(((0)&0xFF)<<8)|((0)&0xFF))))+" (USED)|"+(uint((((0xff)&0xff)<<24)|(((60)&0xff)<<16)|(((248)&0xff)<<8)|((0)&0xff)))+" ";
-		result+=ReplaceText(GetMsgStr((3),(10000)),"NAME",_name);
-		
-		if(GUI_GetActiveScreen()==(31))
-		{
-			uint8 brokenCount=item.BrokenCount;
-			uint16 wearCount=item.Deterioration;
-			result+=" ";
-			result+=ReplaceText(ReplaceText(GetMsgStr((3),(500)),"VALUE",100-wearCount*100/(10000)),"MAXVALUE",100-brokenCount);
-		}
-	}
-	
-	else
-	{
-		if(lookType==(4)&&GUI_IsKeyPressed(0x2A))
-		{
-			if(item.GetProtoId()==(9914)||item.GetProtoId()==(1864)||item.GetProtoId()==(1865)||item.GetProtoId()==(157)
-			||item.GetProtoId()==(4608)||item.GetProtoId()==(571)||item.GetProtoId()==(9626)||item.GetProtoId()==(206)
-			||item.GetProtoId()==(209)||item.GetProtoId()==(545)||item.GetProtoId()==(9853)||item.GetType()==(8))
-			return"";
-			
-			if(item.CritSlot==(3))
-			return"";
-			
-			if(disableItemMove)
-			return"";
-			disableItemMove=true;
-			
-			RunServerScriptUnsafe("unsafe_client@unsafe_DropOne",item.Id,0,0,"",null);
-			if(!chosen.IsKnockout()&&!chosen.IsDead()&&!chosen.IsAnimPlaying())
-			{
-				chosen.Animate(0,(27));
-			}
-			return"";
-		}
-		
-		if(GUI_GetActiveScreen()==(11)&&GUI_IsKeyPressed(0x2A))
-		{
-			if(item.GetProtoId()==(9914)||item.GetProtoId()==(1864)||item.GetProtoId()==(1865)||item.GetProtoId()==(157)
-			||item.GetProtoId()==(4608)||item.GetProtoId()==(571)||item.GetProtoId()==(9626)||item.GetProtoId()==(206)
-			||item.GetProtoId()==(209)||item.GetProtoId()==(545)||item.GetProtoId()==(9853)||item.GetType()==(8))
-			return"";
-			
-			if(item.CritId>0)
-			{
-				
-				if(disableItemMove)
-				return"";
-				disableItemMove=true;
-				
-				RunServerScriptUnsafe("unsafe_client@unsafe_DropOne",item.Id,0,0,"",null);
-				if(!chosen.IsKnockout()&&!chosen.IsDead()&&!chosen.IsAnimPlaying())
-				{
-					chosen.Animate(0,(27));
-				}
-				return"";
-			}
-		} 
-		
-		if(GUI_GetActiveScreen()==(11)&&GUI_IsKeyPressed(0x1D))
-		{
-			
-			if(item.GetProtoId()==(9914)||item.GetProtoId()==(1864)||item.GetProtoId()==(1865)||item.GetProtoId()==(157)||item.GetProtoId()==(4608)||item.GetProtoId()==(571)||item.GetType()==(8))
-			return"";
-			
-			if(disableItemMove)
-			return"";
-			disableItemMove=true;
-			
-			uint contId=GetContainerId();
-			
-			if(contId>0)
-			{
-				if(!chosen.IsKnockout()&&!chosen.IsDead())
-				{
-					pickupScreenScrollCritter=GetScroll((3));
-					pickupScreenScrollFrom=GetScroll((4));
-					if(item.CritId>0)
-					RunServerScriptUnsafe("unsafe_client@unsafe_MoveItemCrit2Cont",item.Id,contId,0,"",null);
-					else
-					RunServerScriptUnsafe("unsafe_client@unsafe_MoveItemCont2Crit",item.Id,contId,0,"",null);
-					if(!chosen.IsAnimPlaying())
-					chosen.Animate(0,(27));
-					return"";
-				}
-			}
-			
-			uint bodyId=GetBodyId();
-			
-			if(bodyId>0)
-			{
-				CritterCl@body=GetCritter(bodyId);
-				if((@body!=null))
-				{
-					if(!chosen.IsKnockout()&&!chosen.IsDead()&&body.IsDead())
-					{
-						pickupScreenScrollCritter=GetScroll((3));
-						pickupScreenScrollFrom=GetScroll((4));
-						if(item.CritId>0)
-						RunServerScriptUnsafe("unsafe_client@unsafe_MoveItemCrit2Body",item.Id,bodyId,0,"",null);
-						else
-						RunServerScriptUnsafe("unsafe_client@unsafe_MoveItemBody2Crit",item.Id,bodyId,0,"",null);
-						if(!chosen.IsAnimPlaying())
-						chosen.Animate(0,(27));
-						return"";
-					}
-				}
-			}
-			
-			disableItemMove=false;
-		} 
-		
-		if(lookType==(4)||lookType==(3)||GUI_GetActiveScreen()==(15))
-		{
-			string _name=showPrefix(item)+GetMsgStr((2),(item.GetProtoId()*100+item.Info));
-			if(IsLexem(item,"$-"))
-			_name=GetLexem(item,"$-");
-			
-			if(item.GetProtoId()==(623)&&item.Val1!=0)
-			_name+=" |"+((uint((0xFF<<24)|(((0xC8)&0xFF)<<16)|(((0)&0xFF)<<8)|((0)&0xFF))))+" (USED) |"+(uint((((0xff)&0xff)<<24)|(((60)&0xff)<<16)|(((248)&0xff)<<8)|((0)&0xff)))+" ";
-			
-			result+=(lookType==(0))?("\n"+_name+"\n"):(_name+"\n");
-		}
-		
-		if(item.GetProtoId()==(58)&&item.HolodiskNumber!=0)
-		result+=GetMsgStr((7),((item.HolodiskNumber)*10));
-		else if(item.GetProtoId()==(9601))
-		{
-			bool full=false;
-			if(lookType==(4)&&
-			(item.Val6)!=(0)&&
-			IsLexem(item,"$owner")&&
-			IsLexem(item,"$info"))
-			full=true;
-			if(full)
-			result+=GetMsgStr((2),(item.GetProtoId()*100+item.Info)+1);
-			else
-			result+=GetMsgStr((2),(item.GetProtoId()*100+item.Info)+2);
-			
-			stringReplaceText(result,"\\n","\n");
-			string type="blank";
-			switch((item.Val6))
-			{
-				case(1):
-				type="military";
-				break;
-				case(2):
-				type="custom-made";
-				break;
-			}
-			stringReplaceText(result,"TYPE",type);
-		}
-		else
-		{
-			string _description=GetMsgStr((2),(item.GetProtoId()*100+item.Info)+1);
-			if(IsLexem(item,"$~"))
-			_description=GetLexem(item,"$~");
-			
-			result+=_description;
-			
-			if(IsLexem(item,"$+"))
-			result+="\n"+GetLexem(item,"$+");
-		}
-		
-		if(lookType!=(2))
-		{
-			if(item.GetType()==(3))
-			{
-				
-				if(item.Proto.Weapon_MaxAmmoCount>0)
-				{
-					result+="\n";
-					string str=GetMsgStr((3),(434));
-					str=ReplaceText(str,"VALUE",item.AmmoCount);
-					str=ReplaceText(str,"MAX_VALUE",item.Proto.Weapon_MaxAmmoCount);
-					str=ReplaceText(str,"AMMO",GetMsgStr((3),(10900+(item.Proto.Weapon_Caliber))));
-					result+=str;
-				}
-				
-				if(item.Proto.Weapon_Perk!=0)
-				{
-					string str=GetMsgStr((3),(10850+(item.Proto.Weapon_Perk)));
-					result+="\nPerk: "+str+".";
-				}
-				
-				if(item.Proto.Weapon_MinStrength>1)
-				{
-					result+="\nMinimum Strength: "+item.Proto.Weapon_MinStrength;
-				}
-			}
-			
-			else if(item.GetType()==(1))
-			{
-				result+="\nCrit chance mod: "+(item.Proto.Armor_CMCritChance);
-				result+="\nCrit power mod: "+(item.Proto.Armor_CMCritPower);
-				if(item.GetProtoId()==(240))
-				result+="\nCharges: "+item.Charge+"/"+item.Proto.Misc_ChargeMax;
-			} 
-			
-			else if(item.GetType()==(4))
-			{
-				result+="\nDM mod: "+(item.Proto.Ammo_DmgMult)+"/"+(item.Proto.Ammo_DmgDiv);
-				result+="\nDR mod: "+(item.Proto.Ammo_DrMod)+"%";
-				result+="\nAC mod: "+(item.Proto.Ammo_AcMod);
-				if(((@item.Proto!=null)?(item.Proto.Ammo_DTDiv>0):false))
-				result+="\nArmor Piercing";
-			}
-			
-			else if(item.GetType()==(5))
-			{
-				if(item.Proto.Misc_ToolSkillNum!=0)
-				{
-					string str=GetMsgStr((3),(100001+(item.Proto.Misc_ToolSkillNum)*10));
-					result+="\n"+str+" bonus: "+item.Proto.Misc_ToolSkillBonus+".";
-				}
-				if(item.Proto.Misc_ChargeMax>0)
-				{
-					result+="\nCharges: "+item.Charge+"/"+item.Proto.Misc_ChargeMax;
-				}
-			} 
-			
-			else if(item.GetType()==(7))
-			result+="\n"+ReplaceText(GetMsgStr((3),(550)),"KEY_ID",item.LockerId); 
-			
-			if(item.IsDeteriorable())
-			{
-				uint8 flags=item.BrokenFlags;
-				uint8 brokenCount=item.BrokenCount;
-				uint16 wearCount=item.Deterioration; 
-				
-				result+="\n";
-				if((((flags)&((0x08)))!=0))
-				result+=GetMsgStr((3),(506));
-				else if((((flags)&((0x01)))!=0))
-				result+=GetMsgStr((3),(503));
-				else if((((flags)&((0x02)))!=0))
-				result+=GetMsgStr((3),(504));
-				else if((((flags)&((0x04)))!=0))
-				result+=GetMsgStr((3),(505));
-				else
-				result+=ReplaceText(ReplaceText(GetMsgStr((3),(500)),"VALUE",100-wearCount*100/(10000)),"MAXVALUE",100-brokenCount); 
-				
-				if((((flags)&((0x10)))!=0))
-				result+="\n"+GetMsgStr((3),(501)); 
-				
-				if((((flags)&((0x20)))!=0))
-				result+="\n"+GetMsgStr((3),(502));  
-				
-			} 
-			
-			if(HaveAnyIngredient(item))
-			{
-				array<string>ingredients;
-				uint count=IngredientsNames(item,ingredients);
-				for(uint i=0;i<count;i++)
-				{
-					if(ingredients[i].length()>0)
-					result+="\nIngredient: "+ingredients[i];
-				}
-			} 
-			
-			string weightString=GetMsgStr((3),(435));
-			if(item.Proto.Weight*item.GetCount()==1)
-			weightString=ReplaceText(weightString,"grams.","gram.");
-			
-			result+="\n"+ReplaceText(weightString,"VALUE",item.Proto.Weight*item.GetCount());
-			if(IsLexem(item,"$crafter"))result+="\nCrafter: "+GetLexem(item,"$crafter");
-			
-			result+=showItemBonus(item,item.Val0,item.Val5);
-			result+=showItemBonus(item,item.Val1,item.Val6);
-			result+=showItemBonus(item,item.Val2,item.Val7);
-			result+=showItemBonus(item,item.Val3,item.Val8);
-			result+=showItemBonus(item,item.Val4,item.Val9); 
-			
-			if(item.GetProtoId()==(623))
-			result+="\nLevels: "+item.Val0;
-		}
-	} 
-	
-	return(FormatTags(result,item.Lexems));
-}
-
-int SelectWeaponBonus(ItemCl&it,int Int_Val_WeaponBonus)
-{
-	if((@it!=null))
-	{
-		if(it.Val0==Int_Val_WeaponBonus)return it.Val5;
-		if(it.Val1==Int_Val_WeaponBonus)return it.Val6;
-		if(it.Val2==Int_Val_WeaponBonus)return it.Val7;
-		if(it.Val3==Int_Val_WeaponBonus)return it.Val8;
-		if(it.Val4==Int_Val_WeaponBonus)return it.Val9;
-		return 0;
-	}
-	else return 0;
-}
-
-string showItemBonus(ItemCl&it,int type,int value)
-{
-	string result="";
-	if(type==0)return result;
-	if(it.GetType()==(1))
-	{
-		switch(type)
-		{
-			case 100:{result="\nCrit Chance -"+value+"";break;}
-			case 101:{result="\nCrit Power -"+value+"";break;}
-			case 102:{result="\nNormal DT +"+value+"";break;}
-			case 103:{result="\nLaser DT +"+value+"";break;}
-			case 104:{result="\nFire DT +"+value+"";break;}
-			case 105:{result="\nPlasma DT +"+value+"";break;}
-			case 106:{result="\nNormal DR +"+value+"%";break;}
-			case 107:{result="\nLaser DR +"+value+"%";break;}
-			case 108:{result="\nFire DR +"+value+"%";break;}
-			case 109:{result="\nPlasma DR +"+value+"%";break;}
-			case 110:{result="\nExplode DT +"+value+"";break;}
-			case 111:{result="\nExplode DR +"+value+"%";break;}
-			case 112:{result="\nAction Points +"+value+"";break;}
-			case 113:{result="\nRad Resist +"+value+"";break;}
-			case 114:{result="\nPoison Resist +"+value+"";break;}
-			case 115:{result="\nStrength +"+value+"";break;}
-			case 116:{result="\nPerception +"+value+"";break;}
-			case 117:{result="\nEndurance +"+value+"";break;}
-			case 118:{result="\nCharisma +"+value+"";break;}
-			case 119:{result="\nIntelligence +"+value+"";break;}
-			case 120:{result="\nAgility +"+value+"";break;}
-			case 121:{result="\nLuck +"+value+"";break;}
-			case 122:{result="\nCarry Weight +"+value+"";break;}
-			case 123:{result="\nHealing Rate +"+value+"";break;}
-			default:break;
-		}
-	}
-	else if(it.GetType()==(3))
-	{
-		switch(type)
-		{
-			case 100:{result="\nCrit Power +"+value+"";break;}
-			case 101:{result="\nCrit Chance +"+value+"";break;}
-			case 102:{result="\nMin dmg +"+value+"%";break;}
-			case 103:{result="\nMax dmg +"+value+"%";break;}
-			case 104:{result="\nAccuracy +"+value+"%";break;}
-			case 105:{result="\nAction points +"+value+"";break;}
-			case 106:{result="\nRange +"+value+"";break;}
-			default:break;
-		}
-	}
-	return result;
-}
-
-string showPrefix(ItemCl@it)
-{
-	string result="";
-	if(it.GetType()==(1)||it.GetType()==(3))
-	{
-		if(it.Val4!=0)result+="|"+((uint((0xFF<<24)|(((0x8F)&0xFF)<<16)|(((0x6F)&0xFF)<<8)|((0)&0xFF))))+" Unique "+"|"+((uint((0xFF<<24)|(((0)&0xFF)<<16)|(((0xFF)&0xFF)<<8)|((0)&0xFF))))+" ";
-		else if(it.Val3!=0)result+="|"+((uint((0xFF<<24)|(((0)&0xFF)<<16)|(((0xC8)&0xFF)<<8)|((0xC8)&0xFF))))+" Advanced "+"|"+((uint((0xFF<<24)|(((0)&0xFF)<<16)|(((0xFF)&0xFF)<<8)|((0)&0xFF))))+" ";
-		else if(it.Val2!=0)result+="|"+((uint((0xFF<<24)|(((0xFF)&0xFF)<<16)|(((0xFF)&0xFF)<<8)|((0xFF)&0xFF))))+" Superior "+"|"+((uint((0xFF<<24)|(((0)&0xFF)<<16)|(((0xFF)&0xFF)<<8)|((0)&0xFF))))+" ";
-		else if(it.Val1!=0)result+="|"+((uint((0xFF<<24)|(((0xAB)&0xFF)<<16)|(((0xAB)&0xFF)<<8)|((0xAB)&0xFF))))+" Improved "+"|"+((uint((0xFF<<24)|(((0)&0xFF)<<16)|(((0xFF)&0xFF)<<8)|((0)&0xFF))))+" ";
-		else if(it.Val0!=0)result+="|"+((uint((0xFF<<24)|(((0x7F)&0xFF)<<16)|(((0x7F)&0xFF)<<8)|((0x7F)&0xFF))))+" Quality "+"|"+((uint((0xFF<<24)|(((0)&0xFF)<<16)|(((0xFF)&0xFF)<<8)|((0)&0xFF))))+" ";
-	}
-	return result;
-}
-
-uint8[]Abbr={'F','H','L','M','N','R','S'};
-uint8[]AnStart={'A','a','E','e','I','i','O','o'};   
-
-string critter_description(CritterCl&cr,int lookType)
-{
-	string result;
-	int gender=cr.Stat[(71)]; 
-	
-	if(lookType==(0))
-	{
-		uint dialog=cr.Stat[(104)];
-		uint16 pid=cr.Pid;  
-		
-		{
-			string head=(cr.IsPlayer()?cr.Name:" ");
-			
-			if(IsLexem(cr,"$@"))
-			{
-				head=GetLexem(cr,"$@");
-				if(head.length()==0)
-				head=" ";
-				
-				if(cr.IsPlayer()&&head==" ")
-				cr.ContourColor=0xFF960000;
-				else if(cr.IsNpc()&&head!=" ")
-				cr.ContourColor=0xFF969600;
-				
-				stringReplaceText(head,"|","");
-				head=FormatTags(head,"");
-			}
-			
-			if(IsGMTEnabled()&&GMToolsAccess())
-			{
-				array<string>gm;
-				
-				string id="<"+cr.Id+">";
-				
-				if((cr.IsPlayer()&&head!=cr.Name)||(cr.IsNpc()&&IsLexem(cr,"$@")))
-				{
-					if(cr.IsPlayer())
-					gm.insertLast("Player: "+cr.Name);
-					else if(cr.IsNpc())
-					gm.insertLast("NPC: "+GetMsgStr((1),((dialog)!=0?100000+(dialog)*1000+100:((pid)*10))));
-				}
-				
-				if(__ShowCritId)
-				gm.insertLast("ID: "+cr.Id);
-				
-				if(cr.Param[(510)]>0)
-				gm.insertLast("sneaked");
-				
-				if(gm.length()>0)
-				{
-					head+="|"+(uint((0xFF<<24)|(((0xFF)&0xFF)<<16)|(((0xFF)&0xFF)<<8)|((0xFF)&0xFF)))+" ";
-					for(uint g=0,gLen=gm.length();g<gLen;g++)
-					{
-						head+="\n("+gm[g]+")";
-					}
-				}
-			}
-			
-			cr.NameOnHead=head;
-			
-			if(cr.IsPlayer())
-			{
-				if(GUI_GetActiveMainScreen()==(6))
-				result=(IsLexem(cr,"$name")?GetLexem(cr,"$name"):cr.Name);
-				else
-				result=cr.Name;
-			}
-			else
-			result=cr.Name;
-		}
-		
-		return(result);
-	}
-	
-	if(cr.IsPlayer())
-	{
-		if(lookType==(0))
-		{} 
-		
-		if(lookType==(1))
-		{
-			result+=GetMsgStr((3),(11000+(gender)*1000));
-			result+=(IsLexem(cr,"$name")?GetLexem(cr,"$name"):cr.Name);
-			result+=".";
-		}
-		
-		else
-		{
-			result+=GetMsgStr((3),(11000+(gender)*1000)); 
-			
-			uint ageStr=GetMsgStrNumUpper((3),(11100+((cr.Stat[(70)])>99?99:(cr.Stat[(70)]))+((gender>1)?1:(gender))*1000));
-			if(ageStr!=0)
-			result+=GetMsgStr((3),ageStr);
-			else
-			result+=(IsLexem(cr,"$name")?GetLexem(cr,"$name"):cr.Name);
-			
-			result+=". Level "+cr.Stat[(77)]+".";                        
-			
-		}
-	}
-	else
-	{
-		uint dlgId=cr.Stat[(104)];
-		uint16 npcPid=cr.Pid;
-		bool defaultText=false;
-		
-		if(lookType==(0))
-		{
-			
-		}
-		
-		if(lookType==(1))
-		{
-			if(cr.IsLife()&&IsMsgStr((1),((dlgId)!=0?100000+(dlgId)*1000+200:((npcPid)*10+1))))
-			result+=GetMsgStr((1),((dlgId)!=0?100000+(dlgId)*1000+200:((npcPid)*10+1)));
-			else if(cr.IsKnockout()&&IsMsgStr((1),((dlgId)!=0?100000+(dlgId)*1000+220:((npcPid)*10+1))))
-			result+=GetMsgStr((1),((dlgId)!=0?100000+(dlgId)*1000+220:((npcPid)*10+1)));
-			else if(cr.IsDead()&&IsMsgStr((1),((dlgId)!=0?100000+(dlgId)*1000+240:((npcPid)*10+1))))
-			result+=GetMsgStr((1),((dlgId)!=0?100000+(dlgId)*1000+240:((npcPid)*10+1)));
-			else
-			defaultText=true;
-		}
-		
-		else
-		{
-			string rslt="You see ";
-			if(IsLexem(cr,"$name"))
-			rslt+=GetLexem(cr,"$name");
-			
-			if(cr.IsLife()&&IsMsgStr((1),((dlgId)!=0?100000+(dlgId)*1000+210:((npcPid)*10+1))))
-			{
-				if(rslt.length()>8)
-				result+=rslt;
-				else
-				result+=GetMsgStr((1),((dlgId)!=0?100000+(dlgId)*1000+210:((npcPid)*10+1)));
-			}
-			else if(cr.IsKnockout()&&IsMsgStr((1),((dlgId)!=0?100000+(dlgId)*1000+230:((npcPid)*10+1))))
-			{
-				if(rslt.length()>8)
-				result+=ReplaceText(rslt,"see","see an unconscious");
-				else
-				result+=GetMsgStr((1),((dlgId)!=0?100000+(dlgId)*1000+230:((npcPid)*10+1)));
-			}
-			else if(cr.IsDead()&&IsMsgStr((1),((dlgId)!=0?100000+(dlgId)*1000+250:((npcPid)*10+1))))
-			{
-				if(rslt.length()>8)
-				result+=ReplaceText(rslt,"see","see a dead");
-				else
-				result+=GetMsgStr((1),((dlgId)!=0?100000+(dlgId)*1000+250:((npcPid)*10+1)));
-			}
-			else
-			defaultText=true;
-		}
-		
-		if(defaultText)
-		{
-			
-			if(IsMsgStr((1),((dlgId)!=0?100000+(dlgId)*1000+100:((npcPid)*10))))
-			{
-				if(cr.IsLife())
-				result+=ReplaceText(GetMsgStr((3),(11010)),"NAME",GetMsgStr((1),((dlgId)!=0?100000+(dlgId)*1000+100:((npcPid)*10))));
-				else if(cr.IsKnockout())
-				result+=ReplaceText(GetMsgStr((3),(11011)),"NAME",GetMsgStr((1),((dlgId)!=0?100000+(dlgId)*1000+100:((npcPid)*10))));
-				else if(cr.IsDead())
-				result+=ReplaceText(GetMsgStr((3),(11012)),"NAME",GetMsgStr((1),((dlgId)!=0?100000+(dlgId)*1000+100:((npcPid)*10))));
-			}
-			
-			else
-			{
-				result+=GetMsgStr((3),(11014));
-			}
-		}
-	}
-	
-	CritterCl@chosen=GetChosen();
-	string extraSpecial="";
-	string extraDamage=""; 
-	
-	if((@chosen!=null)&&cr.IsPlayer())
-	{
-		string@special=CritterDescription_Get(cr.Param[(138)],
-		cr.Param[(139)]);
-		if((@special!=null))
-		extraSpecial=special;
-	} 
-	
-	{
-		array<uint>damage;
-		for(uint i=0;i<7;i++)
-		{
-			if(cr.Damage[(500)+i]!=0&&IsMsgStr((3),(11400+(i)+(gender)*1000)))
-			{
-				uint len=damage.length();
-				damage.insertLast(i);
-			}
-		}
-		
-		if(damage.length()>0)
-		{
-			extraDamage+=GetMsgStr((3),(11003+(gender)*1000));
-			
-			for(uint i=0;i<damage.length();i++)
-			{
-				uint dmg=damage[i];
-				extraDamage+=GetMsgStr((3),(11400+(dmg)+(gender)*1000));
-				
-				if(i==damage.length()-1)
-				break;
-				else if(i==damage.length()-2)
-				extraDamage+=GetMsgStr((3),(54));
-				else
-				extraDamage+=", ";
-			}
-			extraDamage+=".";
-		}
-	} 
-	
-	if(lookType==(2))
-	{
-		if(result.length()>0&&result[result.length()-1]!=".")
-		result+=".";
-		
-		if((@chosen!=null))
-		{
-			if(extraSpecial.length()>0)
-			result+=" It looks "+(gender==(0)?"h":"sh")+"e's "+extraSpecial+".";
-		}
-		
-		if(extraDamage.length()>0)
-		result+=" "+extraDamage;
-		
-		if((@chosen!=null))
-		{
-			result+=" ";
-			result+=GetMsgStr((3),(12530+(gender)));
-			result=ReplaceText(result,"CUR",cr.Stat[(72)]);
-			result=ReplaceText(result,"MAX",cr.Stat[(7)]);
-			
-			ItemCl@item=cr.GetItem(0,(1));        
-			
-			if((@item!=null))
-			{
-				string iName=GetMsgStr((2),(item.GetProtoId()*100+item.Info));
-				if(IsLexem(item,"$-"))
-				iName=GetLexem(item,"$-");
-				
-				bool isAn=((iName.length()>1&&('A'<=iName.rawGet(1)&&iName.rawGet(1)<='Z'||'0'<=iName.rawGet(1)&&iName.rawGet(1)<='9'||iName.rawGet(1)=='&')&&Abbr.find(iName.rawGet(0))>=0)||
-				AnStart.find(iName.rawGet(0))>=0);
-				
-				if(item.GetType()==(3))
-				{
-					
-					{
-						string pWeap=GetMsgStr((3),(12540));
-						if(isAn)
-						pWeap=ReplaceText(pWeap,"a WEAPON","an WEAPON");
-						result+=pWeap;
-						result=ReplaceText(result,"WEAPON",iName);
-					}         
-					
-				}
-				else
-				{
-					string pMisc=GetMsgStr((3),(12542));
-					if(isAn)
-					pMisc=ReplaceText(pMisc,"a MISC","an MISC");
-					result+=pMisc;
-					result=ReplaceText(result,"MISC",iName);
-				}
-			}
-		}
-		else
-		{
-			result+=" ";
-			result+=GetMsgStr((3),(12500+(gender)));
-			
-			int hp_proc=cr.Stat[(72)]*100/cr.Stat[(7)];
-			if(cr.IsDead())
-			result+=GetMsgStr((3),(12510+(0)));
-			else
-			result+=GetMsgStr((3),(12510+(cr.Stat[(136)]>1?cr.Stat[(136)]:1)));
-			
-			if((cr.Damage[(502)]>0||cr.Damage[(503)]>0||cr.Damage[(504)]>0||cr.Damage[(505)]>0||cr.Damage[(506)]>0))
-			{
-				if(cr.Stat[(136)]<4)
-				result+=GetMsgStr((3),(54));
-				result+=GetMsgStr((3),(12520+(gender)*2+(cr.Stat[(136)]==4?1:0)));
-			}
-		}
-		result+=".";
-	}  
-	
-	bool armVisible=false;
-	if(lookType==(2)&&IsLexem(cr,("$"+"T")))
-	{                                                                 
-		
-		armVisible=true;   
-		
-		string tatoo=GetLexem(cr,("$"+"T"));
-		if(armVisible&&tatoo.length()>0)
-		{
-			array<string@>@s=split(tatoo," ");
-			result+=" You can see a tattoo with the word"+(s.length()>1?"s":"")+" '"+tatoo+"' on h"+(gender==(0)?"is":"er")+" arm";
-		}
-		else
-		armVisible=false;
-	}
-	
-	bool headVisible=true;
-	ItemCl@helmet=cr.GetItem(0,(((3))+1));
-	if((@helmet!=null))
-	{
-		array<uint16>headVisibleHelmets=
-		{
-			(570),
-			(470),
-			(433),
-			(415),
-			(309),
-			(123),
-			(279),
-			(516),
-			(499)
-		};
-		headVisible=headVisibleHelmets.find(helmet.GetProtoId())>=0;
-	}
-	
-	if(lookType==(2)&&cr.Param[(489)]>0)
-	{
-		if(armVisible)
-		{
-			if(headVisible)
-			result+=", and another one on forehead. "+(gender==(0)?"H":"Sh")+"e's a slaver.";
-			else
-			result+=".";
-		}
-		else
-		{
-			if(headVisible)
-			{
-				array<string>rnd=
-				{
-					(gender==(0)?"H":"Sh")+"e has",
-					"You can see"
-				}; 
-				
-				result+=" "+rnd[Random(0,rnd.length()-1)]+" a slaver tattoo on h"+(gender==(0)?"is":"er")+" forehead.";
-			}
-		}
-	}
-	else if(lookType==(2)&&armVisible&&cr.Param[(489)]<=0)
-	result+=".";
-	
-	if(cr.IsPlayer()&&lookType==(2)&&IsLexem(cr,("$"+"~")))
-	{
-		result=GetMsgStr((3),(11000+(gender)*1000))+(IsLexem(cr,("$"+"N"))?GetLexem(cr,("$"+"N")):cr.Name)+".";
-		string descr=GetLexem(cr,("$"+"~"));
-		if(descr.length()>0)
-		result=descr;
-	}
-	else if(cr.IsNpc()&&IsLexem(cr,("$"+"~")))
-	{
-		if(lookType==(0))
-		{
-			result=(IsLexem(cr,("$"+"N"))?GetLexem(cr,("$"+"N")):cr.Name);
-		}
-		else if(lookType==(1))
-		{
-			result="You see "+(IsLexem(cr,("$"+"N"))?GetLexem(cr,("$"+"N")):cr.Name)+".";
-		}
-		else if(lookType==(2))
-		{
-			result="You see "+(IsLexem(cr,("$"+"N"))?GetLexem(cr,("$"+"N")):cr.Name)+". "+GetLexem(cr,("$"+"~"));
-		}
-	}
-	
-	return(FormatTags(result,cr.Lexems));
-}
-
-float MapZoom=1;  
-
-void critter_in(CritterCl&cr)
-{
-	CritterCl@chosen=GetChosen();
-	
-	critter_description(cr,(0));
-	if((@chosen!=null))
-	{
-		ColorizeCritter(cr);
-		if(__ConfigShowFactionEmblems&&cr.Id==chosen.Id)
-		InitFactionIcons();
-	}
-	else
-	ColorizeCritterPreview(cr);
-	
-	if(GetCurrentMapPid()!=0)
-	AddCritter(cr.Id,GetCurrentMapPid());
-	else if((@chosen!=null)&&chosen.Id==cr.Id)
-	ClearCritter();
-	
-	if(GetCurrentMapPid()!=0&&cr.Stat[(184)]<255)
-	{
-		cr.Alpha=cr.Stat[(184)];
-		crFade.insertLast(cr.Id);
-	}
-	
-	if((@chosen!=null)&&chosen.Id==cr.Id)
-	{
-		if(GetCurrentMapPid()!=0)
-		{
-			
-			RestoreWallRoofTransparency();
-			
-			MoveScreen(GetMapWidth()/2,GetMapHeight()/2,0);
-			SetZoom(MapZoom);
-			MoveScreen(cr.HexX,cr.HexY,0);
-		}
-		else
-		{
-			
-		}
-	}
-}
-
-void critter_out(CritterCl&cr)
-{
-	if((@cr!=null))
-	RemoveCritter(cr.Id);
-	
-	if((@cr!=null)
-	&&cr.Stat[(184)]<255)
-	{
-		cr.Alpha=cr.Stat[(184)];
-		crFade.insertLast(cr.Id);
-	}
-}   
-
-void _SetColor(int crId,int status,int reputation,string@param3,array<int>@param4)
-{
-	CritterCl@cr=GetCritter(crId);
-	if(!(@cr!=null))
-	return; 
-	
-	if(status==(2))
-	cr.ContourColor=((uint((0xFF<<24)|(((150)&0xFF)<<16)|(((0)&0xFF)<<8)|((0)&0xFF))));
-	else if(status==(1))
-	cr.ContourColor=((uint((0xFF<<24)|(((0)&0xFF)<<16)|(((150)&0xFF)<<8)|((0)&0xFF))));
-	else
-	cr.ContourColor=((uint((0xFF<<24)|(((150)&0xFF)<<16)|(((150)&0xFF)<<8)|((0)&0xFF)))); 
-	
-	if(reputation>=__ReputationLoved)
-	cr.NameColor=((uint((0xFF<<24)|(((0)&0xFF)<<16)|(((0)&0xFF)<<8)|((0xFF)&0xFF))));
-	else if(reputation>=__ReputationLiked)
-	cr.NameColor=((uint((0xFF<<24)|(((0)&0xFF)<<16)|(((0)&0xFF)<<8)|((0xC8)&0xFF))));
-	else if(reputation>=__ReputationAccepted)
-	cr.NameColor=((uint((0xFF<<24)|(((0)&0xFF)<<16)|(((0xC8)&0xFF)<<8)|((0)&0xFF))));
-	else if(reputation>=__ReputationNeutral)
-	cr.NameColor=(uint((((0xff)&0xff)<<24)|(((0xAD)&0xff)<<16)|(((0xAD)&0xff)<<8)|((0xB9)&0xff)));
-	else if(reputation>=__ReputationAntipathy)
-	cr.NameColor=((uint((0xFF<<24)|(((0x8F)&0xFF)<<16)|(((0x6F)&0xFF)<<8)|((0)&0xFF))));
-	else if(reputation>=__ReputationHated)
-	cr.NameColor=((uint((0xFF<<24)|(((0xC8)&0xFF)<<16)|(((0)&0xFF)<<8)|((0)&0xFF))));
-	else
-	cr.NameColor=((uint((0xFF<<24)|(((0xAA)&0xFF)<<16)|(((0)&0xFF)<<8)|((0)&0xFF))));
-}
-
-void _EnableItemsMove(int param1,int param2,int param3,string@param4,array<int>@param5)
-{
-	disableItemMove=false;
-}
-
-void _SetScrolls(int scrollCrit,int scrollCont,int param3,string@param4,array<int>@param5)
-{
-	SetScroll((3),pickupScreenScrollCritter);
-	SetScroll((4),pickupScreenScrollFrom);
-}
-
-void _RepairSession(int param1,int param2,int param3,string@param4,array<int>@param5)
-{
-	SetRepairPid(param1);
-	SetRepairItem(param2);
-	RefreshItemsCollection((1));
-}
-
-void _RechargeSession(int param1,int param2,int param3,string@param4,array<int>@param5)
-{
-	SetRepairPid(param1);
-	SetRepairItem(param2);
-	RefreshItemsCollection((1));
+	questTracker.active=false;
+	questTracker.firstActivationDelay=3000;
+	questTracker.activeDuration=10000;
+	questTracker.extraActiveDuration=5000;
+	questTracker.lettersReadPerSecond=12;
+	questTracker.fadeInDuration=1500;
+	questTracker.fadeOutDuration=3500;
 } 
 
-void _DialogImage(int x,int y,int imageId,string@,array<int>@)
-{
-	string image="";
-	switch(imageId)
-	{
-		case 1:
-		image="items/car_police01.png";
-		break;
-	}
-	if(image!=""&&image.length()>0)
-	DialogImage.Set(x,y,image);
-}
-
-void _DialogImageSkin(int hash,int dir,int,string@,array<int>@)
-{
-	DialogImage.Unset();
-	DialogImage.sprite=LoadSprite(hash,dir);
-	
-	int unused;
-	GUI_GetIniCoords("DlgText",unused,unused,DialogImage.x,DialogImage.y);
-	
-	DialogImage.x-=GetSpriteWidth(DialogImage.sprite,0);
-	DialogImage.y-=GetSpriteHeight(DialogImage.sprite,0);
-}
-
-void _DialogImageUnset(int,int,int,string@,array<int>@)
-{
-	DialogImage.Unset();
-}                            
-
-class BagCallbackHide:IGUIScreenCallbackHide
-{
-	void OnHide(int p0,int p1,int p2)
-	{
-		SetRepairPid(0);
-		RefreshItemsCollection((1));
-	}
-};
-
-BagCallbackHide BagHide;
-
-void InitBagCallbacks()
-{
-	IGUIScreenOpt@sc=GUI_GetScreen((31));
-	sc.SetCallbackHide(BagHide);
-}
-
-void IndicatorMouse(bool down,int click)
-{
-	if(!down)
-	{
-		InvItemClicked=false;
-		return;
-	}
-	if(down&&click==(0)&&GUI_GetActiveScreen()==(5))
-	{
-		if(ItemBar.IsInside(__MouseX,__MouseY))
-		InvItemClicked=true;
-	}
-	else
-	InvItemClicked=false;
-}
-
-bool ReadIniInt(string&key,int&ret)
-{
-	string@s=GetIfaceIniStr(key);
-	return(@s!=null)&&StrToInt(s,ret);
-}
-
-void InitIndicators()
-{
-	IndicatorDraw=__IndicatorType!=1;
-	CounterDraw=__IndicatorType!=0;
-	__IndicatorType=3;
-	
-	Rect IntWMain("IntMain");
-	int IntX=-1;
-	ReadIniInt("IntX",IntX);
-	if(IntX==-1)
-	IntX=(__ScreenWidth-IntWMain.W())/2;
-	else if(IntX==-2)
-	IntX=__ScreenWidth-IntWMain.W();
-	else if(IntX==-3)
-	IntX=0;
-	else
-	{
-		if(IntX<0)
-		IntX=0;
-		if(IntX+IntWMain.W()>__ScreenWidth)
-		IntX=0;
-	}
-	int IntY=__ScreenHeight-IntWMain.Y2;
-	@ItemBar=@Rect("IntItem",IntX,IntY);
-	@AmmoIndicator=@Rect("IntAmmoCount",IntX,IntY);
-	@WearIndicator=@Rect("IntWearProcent",IntX,IntY);
-	
-	string@s=GetIfaceIniStr("IntAmmoCountText");
-	if(!(@s!=null)||s.length()<4)
-	@AmmoCounter=@Rect(ItemBar,7,8);
-	else
-	@AmmoCounter=@Rect("IntAmmoCountText",IntX,IntY);
-	
-	@s=GetIfaceIniStr("IntWearProcentText");
-	if(!(@s!=null)||s.length()<4)
-	@WearCounter=@Rect(ItemBar,7,19);
-	else
-	@WearCounter=@Rect("IntWearProcentText",IntX,IntY);
-	
-	int IntItemOffsX=0;
-	int IntItemOffsY=-2;
-	ReadIniInt("IntItemOffsX",IntItemOffsX);
-	ReadIniInt("IntItemOffsY",IntItemOffsY);
-	@AmmoCounterClicked=@Rect(AmmoCounter,IntItemOffsX,IntItemOffsY);
-	@WearCounterClicked=@Rect(WearCounter,IntItemOffsX,IntItemOffsY);
-}
-
-void DrawIndicators()
-{
-	if(!InterfaceShown)
-	return;     
-	
-	CritterCl@chosen=GetChosen();
-	if(!(@chosen!=null))
-	return;
-	ItemCl@item=chosen.GetItem(0,(1));
-	
-	int wear_proc=((@item!=null)&&item.IsDeteriorable())?100-(item.Deterioration*100)/(10000):0;
-	int max_ammo=((@item!=null)&&item.GetType()==(3))?item.Proto.Weapon_MaxAmmoCount:0;
-	int cur_ammo=((@item!=null)&&item.GetType()==(3))?(((((item.Mode)&0xF))==0?item.Proto.Weapon_Skill_0:((((item.Mode)&0xF))==1?item.Proto.Weapon_Skill_1:((((item.Mode)&0xF))==2?item.Proto.Weapon_Skill_2:0)))==(205)?item.GetCount():item.AmmoCount):0;
-	
-	if((@item!=null)&&max_ammo==0&&cur_ammo==0&&item.Proto.Misc_ChargeMax>0)
-	{
-		max_ammo=item.Proto.Misc_ChargeMax;
-		cur_ammo=item.Charge;
-	}
-	
-	if((@item!=null)&&wear_proc==0&&item.Proto.IndicatorMax>0)
-	{
-		wear_proc=item.Indicator;
-	}
-	
-	if((@item!=null)&&cur_ammo==0&&item.IsStackable()&&item.GetCount()>1)
-	{
-		cur_ammo=item.GetCount();
-		if(cur_ammo>max_ammo)
-		cur_ammo=max_ammo;
-	}
-	int ammo_proc=max_ammo==0?0:100*cur_ammo/max_ammo;
-	if(IndicatorDraw)
-	{
-		DrawIndicator(AmmoIndicator,AmmoIndicatorPoints,((uint((0xFF<<24)|(((0)&0xFF)<<16)|(((0xC8)&0xFF)<<8)|((0)&0xFF)))),ammo_proc,AmmoIndicatorTick,true,false);
-		DrawIndicator(WearIndicator,WearIndicatorPoints,((uint((0xFF<<24)|(((0)&0xFF)<<16)|(((0xFF)&0xFF)<<8)|((0)&0xFF)))),wear_proc,WearIndicatorTick,true,false);
-	}
-	if(CounterDraw)
-	{
-		if(max_ammo>0||cur_ammo>0)
-		{
-			if(cur_ammo!=LastAmmoCount||AmmoString=="")
-			{
-				LastAmmoCount=cur_ammo;
-				if(cur_ammo>99)
-				AmmoString=cur_ammo+"";
-				else if(cur_ammo>9)
-				AmmoString="0"+cur_ammo;
-				else
-				AmmoString="00"+cur_ammo;
-			}
-			DrawCounter(InvItemClicked?AmmoCounterClicked:AmmoCounter,AmmoString,InvItemClicked?((uint((0xFF<<24)|(((0)&0xFF)<<16)|(((0xAA)&0xFF)<<8)|((0)&0xFF)))):((uint((0xFF<<24)|(((0)&0xFF)<<16)|(((0xC8)&0xFF)<<8)|((0)&0xFF)))),(4));
-		}
-		if((@item!=null)&&item.IsDeteriorable())
-		DrawCounter(InvItemClicked?WearCounterClicked:WearCounter,wear_proc+"%",InvItemClicked?((uint((0xFF<<24)|(((0)&0xFF)<<16)|(((0xC8)&0xFF)<<8)|((0)&0xFF)))):((uint((0xFF<<24)|(((0)&0xFF)<<16)|(((0xFF)&0xFF)<<8)|((0)&0xFF)))),(4));
-	}
-}
-
-class Rect
-{
-	int X1;
-	int Y1;
-	int X2;
-	int Y2;
-	Rect(string&ini_str)
-	{
-		GUI_GetIniCoords(ini_str,X1,Y1,X2,Y2);
-	}
-	Rect(string&ini_str,int x_off,int y_off)
-	{
-		GUI_GetIniCoords(ini_str,X1,Y1,X2,Y2);
-		X1+=x_off;
-		Y1+=y_off;
-		X2+=x_off;
-		Y2+=y_off;
-	}
-	Rect(Rect@rect,int x_off,int y_off)
-	{
-		this.X1=rect.X1+x_off;
-		this.Y1=rect.Y1+y_off;
-		this.X2=rect.X2+x_off;
-		this.Y2=rect.Y2+y_off;
-	}
-	
-	Rect(int x1,int y1,int x2,int y2)
-	{
-		X1=x1;
-		Y1=y1;
-		X2=x2;
-		Y2=y2;
-	}       
-	
-	bool IsInside(int x,int y)
-	{
-		return(X1<=x&&x<=X2&&Y1<=y&&y<=Y2);
-	}
-	
-	int H(){return Y2-Y1+1;}
-	int W(){return X2-X1+1;}
-};                         
-
-Rect@ItemBar;
-
-string AmmoString;
-int LastAmmoCount=0;
-bool IndicatorDraw=false;
-bool CounterDraw=false;
-bool InvItemClicked=false;
-array<int>AmmoIndicatorPoints;
-uint AmmoIndicatorTick=0;
-Rect@AmmoIndicator;
-Rect@AmmoCounter;
-Rect@AmmoCounterClicked;
-
-array<int>WearIndicatorPoints;
-uint WearIndicatorTick=0;
-Rect@WearIndicator;
-Rect@WearCounter;
-Rect@WearCounterClicked;
-
-bool InterfaceShown=true; 
-
-bool IsInterfaceShown()
-{
-	return(InterfaceShown);
-}
-
-void ToggleInterfaceShown()
-{
-	InterfaceShown=!InterfaceShown;
-}
-
-void SetInterfaceShown(bool setting)
-{
-	InterfaceShown=setting;
-}
-
-bool WallRoofTransparency=false;
-
-bool IsWallRoofTransparency()
-{
-	return(WallRoofTransparency);
-}
-
-bool ToggleWallRoofTransparency()
-{
-	WallRoofTransparency=!WallRoofTransparency;
-	RestoreWallRoofTransparency(true);
-	
-	return(WallRoofTransparency);
-}
-
-void RestoreWallRoofTransparency(bool force=false)
-{
-	uint8 alpha=(WallRoofTransparency?__ConfigWallRoofAlpha:uint8(-1));
-	
-	if(force||alpha<uint8(-1))
-	{  
-		
-		__RoofAlpha=__WallAlpha=alpha;
-	}
+void DrawQuestTracker(){
+	questTracker.Draw();
 } 
 
-void DrawIndicator(Rect@rect,array<int>&points,uint color,int procent,uint&tick,bool is_vertical,bool from_top_or_left,uint changeTick=35)
-{
+void SetQuestTrackerText(string&header,string&progress){
+	questTracker.SetQuestData(header,progress);
+} 
+
+void ActivateQuestTracker(){
 	
-	if(GetTick()>=tick)
-	{
-		int points_count=(is_vertical?rect.H():rect.W())/2*procent/100;
-		if(points_count==0&&procent>0)
-		points_count=1;
-		int points_length=points.length()/3;
-		if(points_length!=points_count)
-		{
-			if(points_count>points_length)
-			{
-				points_count=points_length+1;
-				points.resize(points_count*3);
-				points_length*=3;
-				if(is_vertical)
-				{
-					if(from_top_or_left)
-					{
-						points[points_length]=rect.X1;
-						points[points_length+1]=rect.Y1+points_count*2-2;
-					}
-					else
-					{
-						points[points_length]=rect.X1;
-						points[points_length+1]=rect.Y2-points_count*2+2;
-					}
-				}
-				else
-				{
-					if(from_top_or_left)
-					{
-						points[points_length]=rect.X1+points_count*2-2;
-						points[points_length+1]=rect.Y1;
-					}
-					else
-					{
-						points[points_length]=rect.X2-points_count*2+2;
-						points[points_length+1]=rect.Y1;
-					}
-				}
-				
-				points[points_length+2]=color;
-			}
-			else
-			{
-				points.resize((points_length-1)*3);
-			}
+	if(questTracker.creationTime+questTracker.firstActivationDelay<GetTick()){
+		questTracker.Activate();
+	}
+}    
+
+void RefreshQuestTracker(){
+	questTracker.active=false;
+	questTracker.creationTime=GetTick();
+	
+	questTracker.questHeader="Fallout 3: Radio New Vegas";
+	questTracker.questBody="A package courier found shot in the head near Good-Springs has reportedly regained consciousness,"
+	+" and has made a full recovery. Now that's a delivery service you can count on.";
+}
+
+enum QuestType{
+	QUEST=0,
+	STORY,
+	JOB
+};
+
+enum QuestProgress{
+	ONGOING=0
+	DONE,
+	SOFT_FAILED,
+	HARD_FAILED,
+	SOFT_COMPLETED,
+	HARD_COMPLETED
+};
+
+class CQuestTracker{
+	bool active;
+	uint creationTime;
+	uint firstActivationDelay;
+	uint activationTime;
+	uint activeDuration;
+	float lettersReadPerSecond;
+	uint extraActiveDuration;
+	uint fadeInDuration,fadeOutDuration;
+	int posX,posY,width,height;
+	uint colorStory,colorJob,colorQuest,colorDone,colorSoftFailed,colorHardFailed,colorSoftCompleted,colorHardCompleted;
+	uint colorBackground,colorProgress;
+	uint backgroundColor,headerColor,bodyColor;
+	string questHeader;
+	string questBody;  
+	
+	QuestType qType;
+	QuestProgress qProgress;
+	
+	CQuestTracker(){
+		active=false;
+		creationTime=GetTick();
+	}
+	
+	void SetQuestData(string&header,string&progress){
+		
+		if(findFirst(header,"JOB:")==0){
+			qType=JOB;
+			questHeader=substring(header,4,header.length()-4);
+		}else if(findFirst(header,"QUEST:")==0){
+			qType=QUEST;
+			questHeader=substring(header,6,header.length()-6);
+		}else if(findFirst(header,"STORY:")==0){
+			qType=STORY;
+			questHeader=substring(header,6,header.length()-6);
+		}else{
+			qType=QUEST;
+			questHeader=header;
 		}
-		tick=GetTick()+changeTick;
+		
+		if(findFirst(progress,"DONE:")==0){
+			qProgress=DONE;
+			questBody=substring(progress,5,progress.length()-5);
+		}else if(findFirst(progress,"SOFT_FAILED:")==0){
+			qProgress=SOFT_FAILED;
+			questBody=substring(progress,12,progress.length()-12);
+		}else if(findFirst(progress,"HARD_FAILED:")==0){
+			qProgress=HARD_FAILED;
+			questBody=substring(progress,12,progress.length()-12);
+		}else if(findFirst(progress,"SOFT_COMPLETED:")==0){
+			qProgress=SOFT_COMPLETED;
+			questBody=substring(progress,15,progress.length()-15);
+		}else if(findFirst(progress,"HARD_COMPLETED:")==0){
+			qProgress=HARD_COMPLETED;
+			headerColor=colorHardCompleted;
+			questBody=substring(progress,15,progress.length()-15);
+		}else{
+			qProgress=ONGOING;
+			questBody=progress;
+		}
+		
+		bodyColor=colorProgress;
+		backgroundColor=colorBackground;
+		
+		activeDuration=questBody.length()*1000/lettersReadPerSecond+extraActiveDuration;
 	}
-	if(points.length()>0)
-	DrawPrimitive((1),points);
-}
-
-void DrawCounter(Rect@rect,string&text,uint color,int font)
-{
-	DrawText(text,rect.X1,rect.Y1,rect.X2,rect.Y2,color,font,0);
-}   
-
-array<uint>timers;
-array<string>factions;
-array<string>townnames;
-
-uint lastsecond;
-uint lasthour;
-
-array<uint16>modoc_area_t;
-array<uint16>bh_area_t;
-array<uint16>klamath_area_t;
-array<uint16>den_area_t;
-array<uint16>redding_area_t;
-array<uint16>gecko_area_t;
-
-IPolygon@modoc_area;
-IPolygon@bh_area;
-IPolygon@klamath_area;
-IPolygon@den_area;
-IPolygon@redding_area;
-IPolygon@gecko_area;
-
-bool Initialized=false;
-
-void DrawArea(uint mappid,uint8 mode)
-{
-	if(mode==0)
-	return;
 	
-	CritterCl@chosen=GetChosen();
-	if(!(@chosen!=null))
-	return;
-	switch(mappid)
-	{
-		case(18):
-		DrawHexArea(modoc_area_v,false,(0x770000FF));
-		DrawInsideStatus(modoc_area.IsWithin(chosen.HexX,chosen.HexY));
-		break;
-		case(115):
-		DrawHexArea(bh_area_v,false,(0x770000FF));
-		DrawInsideStatus(bh_area.IsWithin(chosen.HexX,chosen.HexY));
-		break;
-		case(9):
-		DrawHexArea(klamath_area_v,false,(0x770000FF));
-		DrawInsideStatus(klamath_area.IsWithin(chosen.HexX,chosen.HexY));
-		break;
-		case(6):
-		DrawHexArea(den_area_v,false,(0x770000FF));
-		DrawInsideStatus(den_area.IsWithin(chosen.HexX,chosen.HexY));
-		break;
-		case(62):
-		DrawHexArea(redding_area_v,false,(0x770000FF));
-		DrawInsideStatus(redding_area.IsWithin(chosen.HexX,chosen.HexY));
-		break;
-		case(31):
-		DrawHexArea(gecko_area_v,false,(0x770000FF));
-		DrawInsideStatus(gecko_area.IsWithin(chosen.HexX,chosen.HexY));
-		break;
-		default:
+	void Draw(){
+		if(!active)
 		return;
+		
+		if(GUI_GetActiveMainScreen()!=(5))
+		return;
+		
+		CritterCl@chosen=GetChosen();
+		if(!(@chosen!=null))
+		return;
+		
+		SetColors();
+		DrawQuest();
+		SelfDisableAfterDurationExpired();
 	}
 	
-	if(mode==1)
-	return; 
-	
-	switch(mappid)
-	{
-		case(18):
-		DrawHexArea(modoc_area_t,true,(0x20000080));
-		break;
-		case(115):
-		DrawHexArea(bh_area_t,true,(0x20000080));
-		break;
-		case(9):
-		DrawHexArea(klamath_area_t,true,(0x20000080));
-		break;
-		case(6):
-		DrawHexArea(den_area_t,true,(0x20000080));
-		break;
-		case(62):
-		DrawHexArea(redding_area_t,true,(0x20000080));
-		break;
-		case(31):
-		DrawHexArea(gecko_area_t,true,(0x20000080));
-		break;
+	void SetColors(){
+		switch(qType){
+			case JOB:
+			headerColor=colorJob;
+			break;
+			case STORY:
+			headerColor=colorStory;
+			break;
+			case QUEST:
+			default:
+			headerColor=colorQuest;
+			break;
+		}
+		
+		switch(qProgress){
+			case DONE:
+			headerColor=colorDone;
+			break;
+			case SOFT_FAILED:
+			headerColor=colorSoftFailed;
+			break;
+			case HARD_FAILED:
+			headerColor=colorHardFailed;
+			break;
+			case SOFT_COMPLETED:
+			headerColor=colorSoftCompleted;
+			break;
+			case HARD_COMPLETED:
+			headerColor=colorHardCompleted;
+			break;
+			case ONGOING:
+			default:
+			break;
+		}
+		
+		backgroundColor=colorBackground;
 	}
-}
-
-void DrawInsideStatus(bool inside)
-{
-	DrawText(inside?"Inside the capture zone":"Outside the capture zone",10,30,__ScreenWidth,20,inside?((uint((0xFF<<24)|(((0)&0xFF)<<16)|(((0xC8)&0xFF)<<8)|((0)&0xFF)))):((uint((0xFF<<24)|(((0xC8)&0xFF)<<16)|(((0)&0xFF)<<8)|((0)&0xFF)))),(5),(0x0008)|(0x0200));
-}
-
-void InitTownDisplay()
-{
-	if(Initialized)
-	return;
-	timers.resize((6));
-	factions.resize((6));
-	townnames.resize((6));
-	InitAreas();
 	
-	townnames[0]="Modoc";
-	townnames[1]="Klamath";
-	townnames[2]="Gecko";
-	townnames[3]="Broken Hills";
-	townnames[4]="Den";
-	townnames[5]="Redding";
+	void SetAlphaOfColors(float ratio){
+		uint8 headerAlpha=headerColor>>24;
+		headerColor=((((colorQuest)|0xFF000000)^0xFF000000)|(uint(headerAlpha*ratio)&0xFF)<<24);
+		
+		uint8 bodyAlpha=bodyColor>>24;
+		bodyColor=((((colorProgress)|0xFF000000)^0xFF000000)|(uint(bodyAlpha*ratio)&0xFF)<<24);
+		
+		uint8 backgroundAlpha=backgroundColor>>24;
+		backgroundColor=((((colorBackground)|0xFF000000)^0xFF000000)|(uint(backgroundAlpha*ratio)&0xFF)<<24);
+	}
 	
-	for(uint i=0;i<(6);i++)
-	timers[i]=0;
-	Initialized=true;
-}
-
-void InitAreas()
-{
-	@modoc_area=NewPolygon();
-	modoc_area.AddVertices(modoc_area_v).GetTriangulation(modoc_area_t);
-	@bh_area=NewPolygon();
-	bh_area.AddVertices(bh_area_v).GetTriangulation(bh_area_t);
-	@klamath_area=NewPolygon();
-	klamath_area.AddVertices(klamath_area_v).GetTriangulation(klamath_area_t);
-	@den_area=NewPolygon();
-	den_area.AddVertices(den_area_v).GetTriangulation(den_area_t);
-	@redding_area=NewPolygon();
-	redding_area.AddVertices(redding_area_v).GetTriangulation(redding_area_t);
-	@gecko_area=NewPolygon();
-	gecko_area.AddVertices(gecko_area_v).GetTriangulation(gecko_area_t);
-}
-
-void CountDownStop(int town)
-{
-	timers[town]=0;
-}
-
-void CountDownStart(int town,uint time,string@faction)
-{
-	timers[town]=time;
-	factions[town]=faction;
-}
-
-bool IsCounting(uint townid)
-{
-	return timers[townid]>(__FullSecond);
-}
-
-string GetTownName(uint townid)
-{
-	return townnames[townid];
-}
-
-string GetFaction(uint townid)
-{
-	return factions[townid];
-}
-
-int GetSeconds(uint townid)
-{
-	if((__FullSecond)>timers[townid])
-	return 0;
-	uint ret=timers[townid];
-	ret-=(__FullSecond);
-	ret/=__TimeMultiplier;
-	return int(ret);
-}           
-
-void render_map()
-{}  
-
-void item_map_in(ItemCl&item)
-{}
-
-void item_map_changed(ItemCl&itemNow,ItemCl&itemBefore)
-{}
-
-void item_map_out(ItemCl&item)
-{}  
-
-void item_inv_in(ItemCl&item)
-{
+	void DrawQuest(){
+		int border=15;
+		int spacing=25;
+		uint currentTime=GetTick();
+		
+		if(currentTime<activationTime+fadeInDuration){
+			FadeIn(currentTime);
+		}else{
+			
+		}
+		if(currentTime>activationTime+activeDuration-fadeOutDuration){
+			FadeOut(currentTime);
+		} 
+		
+		int headerWidth=0,headerHeight=0,headerLines=0;
+		GetTextInfo(questHeader,width-2*border,height/2-2*border,(8),(0x0040),headerWidth,headerHeight,headerLines);
+		
+		int progressWidth=0,progressHeight=0,progressLines=0;
+		GetTextInfo(questBody,width-2*border,height-(2*border+headerHeight+spacing),(7),(0x0040),progressWidth,progressHeight,progressLines); 
+		
+		DrawRectangle(posX,posY,(((headerWidth)>(progressWidth))?(headerWidth):(progressWidth))+2*border,border+headerHeight+spacing+progressHeight+border,backgroundColor); 
+		
+		DrawText(questHeader,posX+border,posY+border,width-2*border,height/2-2*border,headerColor,(8),0); 
+		
+		DrawText(questBody,posX+border,posY+border+headerHeight+spacing,width-2*border,height-(2*border+headerHeight+spacing),bodyColor,(7),0);
+	}
 	
-}
-
-void item_inv_out(ItemCl&item)
-{
+	void FadeIn(uint time){
+		uint relativeTime=time-activationTime;
+		float percentage=(0.0f+relativeTime)/(0.0f+fadeInDuration);
+		SetAlphaOfColors(percentage);
+	}
 	
-}  
-
-void item_drop(ItemCl&item)
-{
+	void FadeOut(uint time){
+		uint relativeTime=activationTime+activeDuration-time;
+		float percentage=(0.0f+relativeTime)/fadeOutDuration;
+		SetAlphaOfColors(percentage);
+	}
 	
-}
+	void DrawRectangle(int left,int top,int width,int height,int color){
+		array<int>background;
+		
+		background.insertLast(left);
+		background.insertLast(top);
+		background.insertLast(color);
+		
+		background.insertLast(left);
+		background.insertLast(top+height);
+		background.insertLast(color);
+		
+		background.insertLast(left+width);
+		background.insertLast(top+height);
+		background.insertLast(color);
+		
+		background.insertLast(left+width);
+		background.insertLast(top);
+		background.insertLast(color);
+		
+		DrawPrimitive((6),background);
+	}
+	
+	void SelfDisableAfterDurationExpired(){
+		if(activationTime+activeDuration<GetTick()){
+			active=false;
+		}
+	}
+	
+	void Activate(){
+		activationTime=GetTick();
+		active=true;
+	}
+	
+}; 
 

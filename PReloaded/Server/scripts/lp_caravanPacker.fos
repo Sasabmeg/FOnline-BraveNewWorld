@@ -2,6 +2,7 @@
 *   FO version:     FOClassic: Brave New World
 *   Contributor:    Sasabazmeg
 *   File:           lp_caravanPacker.fos
+*
 *   Description:    Scripts used by Landers Point (tutorial zone) caravan packer.
 *                   Aim is to get this quest as a repeatable job into the Pip-boy and the (wip) Quest Tracker.
 */
@@ -14,28 +15,55 @@
 #include "entire.fos"
 #include "reputations_h.fos"
 
-#define BOX_STATUS_NONE       (0)   //  Quest not in progress.
-#define BOX_STATUS_STARTED    (1)   //  Quest started, but no boxes unpacked yet.
-#define BOX_STATUS_MAX        (3)   //  Number of boxes needed to unpack to complete quest
+#define BOX_STATUS_NONE         (0)     //  Quest not in progress.
+#define BOX_STATUS_STARTED      (1)     //  Quest started, but no boxes unpacked yet.
+#define BOX_STATUS_MAX          (3)     //  Number of boxes needed to unpack to complete quest
+#define BOX_STATUS_FAILED       (97)    //  Quest is completed and can be retaken after some time
+#define BOX_STATUS_COMPLETED    (99)    //  Quest is completed and can be retaken after some time
+
+import void r_QuestTimeout(Critter& player, Critter@ npc, int timeout) from "dialog";
 
 bool d_IsOngoing(Critter& player, Critter@ npc)
 {
-    return(GetLvar(player, LVAR_job_lp_caravan_box) >= BOX_STATUS_STARTED);
+    /*  Debug
+    string debugMessage = "d_IsOngoing - LVAR_job_lp_caravan_box = " + GetLvar(player, LVAR_job_lp_caravan_box);
+    //player.Say(SAY_NETMSG, debugMessage);
+    DLog(debugMessage);*/
+
+    return ( GetLvar(player, LVAR_job_lp_caravan_box) >= BOX_STATUS_STARTED
+           && GetLvar(player, LVAR_job_lp_caravan_box) < BOX_STATUS_COMPLETED );
 }
 
 bool d_NotStarted(Critter& player, Critter@ npc)
 {
-    return(GetLvar(player, LVAR_job_lp_caravan_box) == BOX_STATUS_NONE);
+    /*  Debug
+    string debugMessage = "d_NotStarted - LVAR_job_lp_caravan_box = " + GetLvar(player, LVAR_job_lp_caravan_box);
+    //player.Say(SAY_NETMSG, debugMessage);
+    DLog(debugMessage);*/
+
+    return ( GetLvar(player, LVAR_job_lp_caravan_box) == BOX_STATUS_NONE
+           || GetLvar(player, LVAR_job_lp_caravan_box) == BOX_STATUS_COMPLETED );
 }
 
 bool d_IsDone(Critter& player, Critter@ npc)
 {
-    return GetLvar(player, LVAR_job_lp_caravan_box) > BOX_STATUS_MAX;
+    /*  Debug
+    string debugMessage = "d_IsDone - LVAR_job_lp_caravan_box = " + GetLvar(player, LVAR_job_lp_caravan_box);
+    //player.Say(SAY_NETMSG, debugMessage);
+    DLog(debugMessage);*/
+
+    return ( GetLvar(player, LVAR_job_lp_caravan_box) > BOX_STATUS_MAX
+            && GetLvar(player, LVAR_job_lp_caravan_box) < BOX_STATUS_COMPLETED );
 }
 
 void r_StartQuest(Critter& player, Critter@ npc)
 {
     SetLvar(player, LVAR_job_lp_caravan_box, BOX_STATUS_STARTED);
+
+    /*  Debug
+    string debugMessage = "r_StartQuest - LVAR_job_lp_caravan_box = " + GetLvar(player, LVAR_job_lp_caravan_box);
+    //player.Say(SAY_NETMSG, debugMessage);
+    DLog(debugMessage);*/
 }
 
 void r_CompleteQuest(Critter& player, Critter@ npc)
@@ -43,11 +71,16 @@ void r_CompleteQuest(Critter& player, Critter@ npc)
     player.AddItem(PID_BOTTLE_CAPS, 250);
     player.StatBase[ST_EXPERIENCE] += 300;
     //AddReputation(player, ReputationIndex( player.GetMap().GetLocation().GetProtoId() ), Random(5, 10), REP_CARAVAN_BOX_CAP);
-    SetLvar(player, LVAR_job_lp_caravan_box, BOX_STATUS_NONE);
+    SetLvar(player, LVAR_job_lp_caravan_box, BOX_STATUS_COMPLETED);
+
+    /*  Debug
+    string debugMessage = "r_CompleteQuest - LVAR_job_lp_caravan_box = " + GetLvar(player, LVAR_job_lp_caravan_box);
+    //player.Say(SAY_NETMSG, debugMessage);
+    DLog(debugMessage);*/
 }
 
 /**
-*   Used to get the Caravan officer responsible for the job.
+*   Used to get the Caravan foreman responsible for the job.
 *   (In case you are unloading at the wrong area, he should yell.)
 */
 Critter@ GetCaravanOfficer(Map@ map)
@@ -104,6 +137,9 @@ void _OnDropBox(Item& item, Critter& player)
     if(player.GetMapId() == caravanOfficer.GetMapId())
     {
         caravanOfficer.Say(SAY_SHOUT_ON_HEAD, "You idiot, you can't drop it there!");
+        SetLvar(player, LVAR_job_lp_caravan_box, BOX_STATUS_FAILED);
+        r_QuestTimeout(player, caravanOfficer, 5);
+
     }
     DeleteItem(item);
 }
@@ -127,7 +163,6 @@ bool _OnUseCaravan(Critter& player, Scenery& scen, int skill, Item@ item)
 
     if(valid(player))
     {
-        //Critter@ caravanOfficcer = player.GetMap().GetNpc(ROLE_CARAVAN_BOX, FIND_ALL | FIND_ONLY_NPC, 0);
         Critter@ caravanOfficer = GetCaravanOfficer(player.GetMap());
 
         if( valid(caravanOfficer) && (GetLvar(player, LVAR_job_lp_caravan_box) >= BOX_STATUS_STARTED) )
