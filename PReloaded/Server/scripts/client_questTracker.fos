@@ -1,0 +1,362 @@
+/**
+*   FO version:     FOClassic: Brave New World
+*   Contributor:    Sasabazmeg
+*   File:           client_QuestTracker.fos
+*
+*   Description:    While not a true quest tracker (QT) in the common sense, this feature will highlight when changes
+*                   to quests/jobs/tasks occur. On the left side of the screen a notification should appear briefly,
+*                   notifying the player of the current progress of a quest.
+*                   Aim is to improve the look and feel of questing, doing tasks and jobs for NPC's. We had this
+*                   in the status box before, but that no longer cuts it.
+*                   The Pip-boy messages will be used, as defined in the /Server/text/engl/FOQUEST.MSG file, lines
+*                   starting with the following will be processed as:
+*                   Quest header:
+*                   - STORY:            Main quest line. (Orange)
+*                   - JOB:              This is a repeatable task. (Yellow)
+*                   - QUEST:            This is a quest, a non-repeatable endeavor. (Sand)
+*                   - [no prefix]       Defaulted to QUEST, for backward compatibility.
+*                   Quest message:
+*                   - [no prefix]:      Default color, depending on header type.
+*                   - DONE:             When the quest is done and player can return to receive the reward. (Light green)
+*                   - SOFT_FAILED:      Job failed but player may retry at a later time. (Dark Orange)
+*                   - HARD_FAILED:      Quest failed and player may not attempt again. (Red)
+*                   - SOFT_COMPLETED:   Job finished and the player may return later to do the same task. (Blue)
+*                   - HARD_COMPLETED:   Quest is finished. It was a one time quest. (Dark green)
+*                   Color of header will change accordingly, progress message will remain white for readability.
+*
+*   Inspiration:    Fallout 3 New Vegas, FOnline 2.
+*/
+
+#ifndef __QUEST_TRACKER__
+#define __QUEST_TRACKER__
+
+#include "sprite.fos"
+#include "_defines.fos"
+#include "_client_defines.fos"
+#include "_macros.fos"
+#include "_colors.fos"
+#include "client_gui_h.fos"
+#include "client_questTracker_h.fos"
+
+//  Exported
+void InitQuestTracker() {
+    questTracker = CQuestTracker();
+
+    //  Debug init texts - player should never see these, consider it an bug-easter egg
+    questTracker.questHeader = "Fallout 3: Radio New Vegas";
+    questTracker.questBody = "A package courier found shot in the head near Good-Springs has reportedly regained consciousness,"
+                + " and has made a full recovery. Now that's a delivery service you can count on.";
+    //  Init positions
+    questTracker.posX = 10;
+    questTracker.posY = 150;
+    questTracker.width = 400;
+    questTracker.height = 450;
+
+    //  Init colors -  possible colors of the header text, depending on quest type and current progress
+    //  based on header type
+    questTracker.colorStory = COLOR_ORANGE;
+    questTracker.colorJob = COLOR_DORANGE;
+    questTracker.colorQuest = COLOR_TEXT_SAND;
+    //  based on current progress
+    questTracker.colorDone = COLOR_LGREEN;
+    questTracker.colorSoftFailed = COLOR_DDORANGE;
+    questTracker.colorHardFailed = COLOR_RED;
+    questTracker.colorSoftCompleted = COLOR_DTEAL;
+    questTracker.colorHardCompleted = COLOR_DGREEN;
+
+    questTracker.colorProgress = COLOR_WHITE;           //  possible?! color of the progress texts, always white for visibility
+    questTracker.colorBackground = COLOR_CHANGE_ALPHA(COLOR_RGB(0, 0, 0), 150);
+
+    questTracker.active = false;
+    questTracker.firstActivationDelay = 3000;   //  wait for a few seconds before first activation
+    questTracker.activeDuration = 10000;        //  let's start at 10 seconds
+    questTracker.extraActiveDuration = 5000;    //  make sure short description quests are still readable
+    questTracker.lettersReadPerSecond = 20;
+    questTracker.fadeInDuration = 1500;
+    questTracker.fadeOutDuration = 3500;
+}
+
+//  Exported
+void DrawQuestTracker() {
+    questTracker.Draw();
+}
+
+//  Exported
+void SetQuestTrackerText(string& header, string& progress) {
+    questTracker.SetQuestData(header, progress);
+}
+
+//  Exported
+void ActivateQuestTracker() {
+    //  only accept if a few seconds already passed since player logged in
+    if (questTracker.creationTime + questTracker.firstActivationDelay < GetTick()) {
+        //  do not activate on buggy or half finished quests in FOMsg.msg
+        if (findFirst(questTracker.questBody, "error") != 0) {
+            questTracker.Activate();
+        }
+    }
+}
+
+//  Exported - Need to export so it activates between two logins
+/**
+*   Need to refresh the creation time, else quests will trigger after fast relogs.
+*/
+void RefreshQuestTracker() {
+    questTracker.active = false;
+    questTracker.creationTime = GetTick();
+    //  Debug init texts - player should never see these, consider it an bug-easter egg
+    questTracker.questHeader = "Fallout 3: Radio New Vegas";
+    questTracker.questBody = "A package courier found shot in the head near Good-Springs has reportedly regained consciousness,"
+                + " and has made a full recovery. Now that's a delivery service you can count on.";
+}
+
+enum QuestType {
+    QUEST,
+    STORY,
+    JOB
+};
+
+enum QuestProgress {
+    ONGOING,
+    DONE,
+    SOFT_FAILED,
+    HARD_FAILED,
+    SOFT_COMPLETED,
+    HARD_COMPLETED
+};
+
+class CQuestTracker {
+    bool active;
+    uint creationTime;                      //  time stamp to check against before activating
+    uint firstActivationDelay;              //  time to wait before activating, so it does not trigger on log-in
+    uint activationTime;                    //  last activation time stamp
+    uint activeDuration;                    //  time in milis to remain visible after quest update shown
+    float lettersReadPerSecond;             //  used to calculate the time player needs to read the quest description
+    uint extraActiveDuration;               //  Used to increase the duration, for short description quests
+    uint fadeInDuration, fadeOutDuration;   //  fade durations
+    int posX, posY, width, height;
+    uint colorStory, colorJob, colorQuest, colorDone, colorSoftFailed, colorHardFailed, colorSoftCompleted, colorHardCompleted;
+    uint colorBackground, colorProgress;
+    uint backgroundColor, headerColor, bodyColor;
+    string questHeader;
+    string questBody;
+
+
+
+    QuestType qType;
+    QuestProgress qProgress;
+
+    CQuestTracker() {
+        active = false;
+        creationTime = GetTick();
+    }
+
+    void SetQuestData(string& header, string& progress) {
+        //  Set the color and header data accordingly to quest type
+        if (findFirst(header, "JOB:") == 0) {
+            qType = JOB;
+            questHeader = substring(header, 4, header.length() - 4);
+        } else if (findFirst(header, "QUEST:") == 0) {
+            qType = QUEST;
+            questHeader = substring(header, 6, header.length() - 6);
+        } else if (findFirst(header, "STORY:") == 0) {
+            qType = STORY;
+            questHeader = substring(header, 6, header.length() - 6);
+        } else {
+            qType = QUEST;
+            questHeader = header;
+        }
+
+        if (findFirst(progress, "DONE:") == 0) {
+            qProgress = DONE;
+            questBody = substring(progress, 5, progress.length() - 5);
+        } else if (findFirst(progress, "SOFT_FAILED:") == 0) {
+            qProgress = SOFT_FAILED;
+            questBody = substring(progress, 12, progress.length() - 12);
+        } else if (findFirst(progress, "HARD_FAILED:") == 0) {
+            qProgress = HARD_FAILED;
+            questBody = substring(progress, 12, progress.length() - 12);
+        } else if (findFirst(progress, "SOFT_COMPLETED:") == 0) {
+            qProgress = SOFT_COMPLETED;
+            questBody = substring(progress, 15, progress.length() - 15);
+        } else if (findFirst(progress, "HARD_COMPLETED:") == 0) {
+            qProgress = HARD_COMPLETED;
+            headerColor = colorHardCompleted;
+            questBody = substring(progress, 15, progress.length() - 15);
+        } else {
+            qProgress = ONGOING;
+            questBody = progress;
+        }
+
+        bodyColor = colorProgress;
+        backgroundColor = colorBackground;
+
+        activeDuration = questBody.length() * 1000 / lettersReadPerSecond + extraActiveDuration;
+    }
+
+    void Draw() {
+        if (!active)
+            return;
+
+        if (GUI_GetActiveMainScreen() != CLIENT_MAIN_SCREEN_GAME)
+            return;
+
+        CritterCl@ chosen = GetChosen();
+        if(!valid(chosen))
+            return;
+
+        SelfDisableAfterDurationExpired();
+        DrawQuest();
+    }
+
+    void SetColors() {
+        switch (qType) {
+            case JOB:
+                headerColor = colorJob;
+                break;
+            case STORY:
+                headerColor = colorStory;
+                break;
+            case QUEST:
+            default:
+                headerColor = colorQuest;
+                break;
+        }
+
+        switch (qProgress) {
+            case DONE:
+                headerColor = colorDone;
+                break;
+            case SOFT_FAILED:
+                headerColor = colorSoftFailed;
+                break;
+            case HARD_FAILED:
+                headerColor = colorHardFailed;
+                break;
+            case SOFT_COMPLETED:
+                headerColor = colorSoftCompleted;
+                break;
+            case HARD_COMPLETED:
+                headerColor = colorHardCompleted;
+                break;
+            case ONGOING:
+            default:
+                break;
+        }
+
+        bodyColor = colorProgress;
+        backgroundColor = colorBackground;
+    }
+
+    void SetAlphaOfColors(float ratio) {
+        uint8 headerAlpha = headerColor >> 24;
+        headerColor = COLOR_CHANGE_ALPHA(headerColor, headerAlpha * ratio);
+
+        uint8 bodyAlpha = bodyColor >> 24;
+        bodyColor = COLOR_CHANGE_ALPHA(bodyColor, bodyAlpha * ratio);
+
+        uint8 backgroundAlpha = backgroundColor >> 24;
+        backgroundColor = COLOR_CHANGE_ALPHA(colorBackground, backgroundAlpha * ratio);
+    }
+
+    void DrawQuest() {
+        if (!active)
+            return;
+        int border = 15;
+        int spacing = 25;
+        uint currentTime = GetTick();
+
+        SetColors();
+        if (currentTime < activationTime + fadeInDuration) {
+            FadeIn(currentTime);
+        }
+        if (currentTime > activationTime + activeDuration - fadeOutDuration) {
+            FadeOut(currentTime);
+        }
+
+        //  Gather necessary data to be able to draw background and progress text
+        int headerWidth = 0, headerHeight = 0, headerLines = 0;
+        GetTextInfo(questHeader, width - 2 * border, height / 2 - 2 * border, FONT_TYPE_BIG, FONT_FLAG_UPPER, headerWidth, headerHeight, headerLines);
+
+        int progressWidth = 0, progressHeight = 0, progressLines = 0;
+        GetTextInfo(questBody, width - 2 * border, height - (2 * border + headerHeight + spacing), FONT_TYPE_FAT, FONT_FLAG_UPPER, progressWidth, progressHeight, progressLines);
+
+        //  Draw background
+        DrawRectangle(posX, posY, MAX(headerWidth, progressWidth) + 2 * border, border + headerHeight + spacing + progressHeight + border, backgroundColor);
+
+        //Draw header text: Maximum height allowed to draw is half of total available height.
+        DrawText(questHeader, posX + border, posY + border, width - 2 * border, height / 2 - 2 * border, headerColor, FONT_TYPE_BIG, 0);
+
+        //  Draw progress text
+        DrawText(questBody, posX + border, posY + border + headerHeight + spacing, width - 2 * border, height - (2 * border + headerHeight + spacing), bodyColor, FONT_TYPE_FAT, 0);
+    }
+
+    void FadeIn(uint time) {
+        uint relativeTime = time - activationTime;
+        float percentage = (0.0f + relativeTime) / (0.0f + fadeInDuration) ;
+        SetAlphaOfColors(percentage);
+    }
+
+    void FadeOut(uint time) {
+        uint relativeTime = activationTime + activeDuration - time;
+        float percentage = (0.0f + relativeTime) / fadeOutDuration;
+        SetAlphaOfColors(percentage);
+    }
+
+    void DrawRectangle(int left, int top, int width, int height, int color) {
+        array<int> background;
+        // left-top
+        background.insertLast(left);
+        background.insertLast(top);
+        background.insertLast(color);
+        // left-bottom
+        background.insertLast(left);
+        background.insertLast(top + height);
+        background.insertLast(color);
+        // right-bottom
+        background.insertLast(left + width);
+        background.insertLast(top + height);
+        background.insertLast(color);
+        // right-top
+        background.insertLast(left + width);
+        background.insertLast(top);
+        background.insertLast(color);
+        //  draw the rectangle
+        DrawPrimitive(DRAW_PRIMITIVE_TRIANGLEFAN, background);
+    }
+
+    void SelfDisableAfterDurationExpired() {
+        if (active && (GetTick() + 100 > activationTime + activeDuration)) {
+            active = false;
+        }
+    }
+
+    void Activate() {
+        activationTime = GetTick();
+        active = true;
+        switch (qProgress) {
+            case DONE:
+                PlaySound("LEVELUP.ACM");
+                headerColor = colorDone;
+                break;
+            case SOFT_FAILED:
+                PlaySound("quest_fail.ogg");
+                break;
+            case HARD_FAILED:
+                PlaySound("quest_fail.ogg");
+                break;
+            case SOFT_COMPLETED:
+                PlaySound("LEVELUP.ACM");
+                break;
+            case HARD_COMPLETED:
+                PlaySound("LEVELUP.ACM");
+                break;
+            case ONGOING:
+            default:
+                PlaySound("encoalert.ogg");
+                break;
+        }
+    }
+};
+
+#endif 	//	__QUEST_TRACKER__
