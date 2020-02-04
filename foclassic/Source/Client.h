@@ -202,6 +202,10 @@ public:
     void Net_OnCheckUID4();
     void Net_OnViewMap();
 
+	void addItemASCallback(Item* item, float netGain, std::string debugMessage);
+	void removeItemASCallback(Item* item, float netGain, std::string debugMessage);
+
+
     void OnText( const char* str, uint crid, int how_say, uint16 intellect );
     void OnMapText( const char* str, uint16 hx, uint16 hy, uint color, uint16 intellect );
 

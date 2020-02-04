@@ -175,6 +175,9 @@ void CritterCl::AddItem( Item* item )
     }
 
     InvItems.push_back( item );
+
+	//	SASA
+
     if( anim_stay && !IsAnim() )
         AnimateStay();
 }
@@ -210,8 +213,9 @@ void CritterCl::EraseItem( Item* item, bool animate )
 void CritterCl::EraseAllItems()
 {
     ItemPtrVec items = InvItems;
-    for( auto it = items.begin(), end = items.end(); it != end; ++it )
-        EraseItem( *it, false );
+	for (auto it = items.begin(), end = items.end(); it != end; ++it) {
+		EraseItem(*it, false);
+	}
     InvItems.clear();
 }
 

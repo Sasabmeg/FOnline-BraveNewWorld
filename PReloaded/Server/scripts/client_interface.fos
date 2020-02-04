@@ -2680,26 +2680,26 @@ void item_map_changed(ItemCl& itemNow, ItemCl& itemBefore)
 void item_map_out(ItemCl& item)
 {}
 
-////////////////////////////////////////////////////////////////////////////////////////////////////
-// Called on something critter in/out chosen inventory.
-void item_inv_in(ItemCl& item)
+/**
+*   Item in and out of inventory callbacks.
+*   To check the current amount of the item in case of stackables, use item.GetCount(), otherwise
+*   use the netGain variable.
+*   Note: There is a bug, when split dropping items, netGain will be always zero.
+*/
+void item_inv_in(ItemCl& item, float netGain, string& debugMessage)
 {
-    Message("Item received: " + item.Proto.ProtoId + " x " + item.GetCount());
+    Message(debugMessage + " - Item received: (" + netGain + " x " + item.Proto.ProtoId + ")");
 }
 
-void item_inv_out(ItemCl& item)
+void item_inv_out(ItemCl& item, float netGain, string& debugMessage)
 {
-    Message("Item lost: " + item.Proto.ProtoId + " x " + item.GetCount());
+    Message(debugMessage + " - Item lost: (" + netGain + " x " + item.Proto.ProtoId + ")");
 }
 
-////////////////////////////////////////////////////////////////////////////////////////////////////
-// Called on player drag&drop some item.
-void item_drop(ItemCl& item)
-{
-    Message("Item dropped: " + item.Proto.ProtoId + " x " + item.GetCount());
-}
-
-
+/**
+*   Quest changes callbacks.
+*   Used by Quest Tracker.
+*/
 void quest_change(string& header, string& progress)
 {
     //Message("QUEST CHANGED! \nHEADER:    " + header + "\nPROGRESS:    " + progress + "\n\n");

@@ -3049,6 +3049,7 @@ void FOClient::NetProcess()
         {
             case NETMSG_LOGIN_SUCCESS:
                 Net_OnLoginSuccess();
+					//	SASA: TODO - put script callback here for event then client logs in
                 break;
             case NETMSG_REGISTER_SUCCESS:
                 if( !Singleplayer )
@@ -5142,6 +5143,11 @@ void FOClient::Net_OnChosenClearItems()
     CollectContItems();
 }
 
+/**
+*	AS item add/remove callbacks:
+*	Here we have an issue when splitting items, AS will show same amount removed as added, it is bugged somehow.
+*	This does not happen when buying with barter for example. 
+*/
 void FOClient::Net_OnChosenAddItem()
 {
     uint   item_id;
@@ -5150,6 +5156,9 @@ void FOClient::Net_OnChosenAddItem()
     Bin >> item_id;
     Bin >> pid;
     Bin >> slot;
+
+	int itemsRemoved = 0;
+	int itemsAdded = 0;
 
     Item* item = NULL;
     uint8 prev_slot = SLOT_INV;
@@ -5161,7 +5170,12 @@ void FOClient::Net_OnChosenAddItem()
         {
             prev_slot = item->AccCritter.Slot;
             prev_light_hash = item->LightGetHash();
-            Chosen->EraseItem( item, false );
+
+			WriteLog("Net_OnChosenAddItem() - REMOVE - (%d x %d)\n", item->GetCount(), item->GetProtoId());
+
+			itemsRemoved = item->GetCount();
+			removeItemASCallback(item, (float)(item->GetCount()), "Net_OnChosenAddItem()");
+			Chosen->EraseItem( item, false );
             item = NULL;
         }
 
@@ -5187,21 +5201,57 @@ void FOClient::Net_OnChosenAddItem()
     item->AccCritter.Slot = slot;
     if( item != Chosen->ItemSlotMain || !item->IsWeapon() )
         item->SetMode( item->Data.Mode );
-    Chosen->AddItem( item );
 
-    if( Script::PrepareContext( ClientFunctions.ItemInvIn, _FUNC_, "Game" ) )
-    {
-        Script::SetArgObject( item );
-        Script::RunPrepared();
-    }
+	WriteLog("Net_OnChosenAddItem() - ADD - (%d x %d)\n", item->GetCount(), item->GetProtoId());
+	itemsAdded = item->GetCount();
+	addItemASCallback(item, (float)(item->GetCount()), "Net_OnChosenAddItem()");
+
+	//	Need to do this shit in case of stackables
+	float netGain = itemsAdded - itemsRemoved;
+	if (itemsAdded > itemsRemoved) {
+		//	Player received an item
+		WriteLog("Net_OnChosenAddItem() - NET GAIN: ADD - (%d x %d)\n", netGain, item->GetProtoId());
+		addItemASCallback(item, netGain, "Net_OnChosenAddItem() :: NET GAIN");
+	}
+	else {
+		//	Player lost items, return their currnet item amount in case of stackables
+		WriteLog("Net_OnChosenAddItem() - NET LOSS: REMOVE - (%d x %d)\n", itemsAdded, item->GetProtoId());
+		addItemASCallback(item, netGain, "Net_OnChosenAddItem() :: NET LOSS");
+	}
+
+    Chosen->AddItem( item );
 
     if( slot == SLOT_HAND1 || prev_slot == SLOT_HAND1 )
         RebuildLookBorders = true;
     if( item->LightGetHash() != prev_light_hash && (slot != SLOT_INV || prev_slot != SLOT_INV) )
         HexMngr.RebuildLight();
-    if( item->IsHidden() )
-        Chosen->EraseItem( item, true );
+	if (item->IsHidden()) {
+		WriteLog("Net_OnChosenAddItem() - REMOVE HIDDEN - (%d x %d)\n", item->GetCount(), item->GetProtoId());
+		removeItemASCallback(item, (float)(item->GetCount()), "Net_OnChosenAddItem() ITEM HIDDEN");
+		Chosen->EraseItem(item, true);
+	}
+
     CollectContItems();
+}
+
+void FOClient::addItemASCallback(Item* item, float netGain, string debugMessage) {
+	if (Script::PrepareContext(ClientFunctions.ItemInvIn, _FUNC_, "Game"))
+	{
+		Script::SetArgObject(item);
+		Script::SetArgFloat(netGain);
+		Script::SetArgObject(new ScriptString(debugMessage));
+		Script::RunPrepared();
+	}
+}
+
+void FOClient::removeItemASCallback(Item* item, float netGain, string debugMessage) {
+	if (Script::PrepareContext(ClientFunctions.ItemInvOut, _FUNC_, "Game"))
+	{
+		Script::SetArgObject(item);
+		Script::SetArgFloat(netGain);
+		Script::SetArgObject(new ScriptString(debugMessage));
+		Script::RunPrepared();
+	}
 }
 
 void FOClient::Net_OnChosenEraseItem()
@@ -5222,11 +5272,7 @@ void FOClient::Net_OnChosenEraseItem()
         return;
     }
 
-    if( Script::PrepareContext( ClientFunctions.ItemInvOut, _FUNC_, "Game" ) )
-    {
-        Script::SetArgObject( item );
-        Script::RunPrepared();
-    }
+	removeItemASCallback(item, (float)(item->GetCount()), "Net_OnChosenEraseItem()");
 
     if( item->IsLight() && item->AccCritter.Slot != SLOT_INV )
         HexMngr.RebuildLight();
@@ -8096,8 +8142,10 @@ label_EndMove:
                 Chosen->Action( CRITTER_ACTION_DROP_ITEM, from_slot, item );
                 if( item_count < item->GetCount() )
                     item->Count_Sub( item_count );
-                else
-                    Chosen->EraseItem( item, true );
+				else {
+					removeItemASCallback(item, (float)(item->GetCount()), "CrittersProcess()");
+					Chosen->EraseItem(item, true);
+				}
             }
             else
             {

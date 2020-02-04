@@ -26,8 +26,8 @@ ReservedFunctionsMap GetClientFunctionsMap()
     client["item_map_in"] = ReservedFunction( &ClientFunctions.ItemMapIn, "void %s( ItemCl& item )" );
     client["item_map_changed"] = ReservedFunction( &ClientFunctions.ItemMapChanged, "void %s( ItemCl& itemNew, ItemCl& itemOld )" );
     client["item_map_out"] = ReservedFunction( &ClientFunctions.ItemMapOut, "void %s( ItemCl& item )" );
-    client["item_inv_in"] = ReservedFunction( &ClientFunctions.ItemInvIn, "void %s( ItemCl& item )" );
-    client["item_inv_out"] = ReservedFunction( &ClientFunctions.ItemInvOut, "void %s( ItemCl& item )" );
+    client["item_inv_in"] = ReservedFunction( &ClientFunctions.ItemInvIn, "void %s( ItemCl& item, float netGain, string& debugMessage )" );
+    client["item_inv_out"] = ReservedFunction( &ClientFunctions.ItemInvOut, "void %s( ItemCl& item, float netGain, string& debugMessage )" );
 	client["quest_change"] = ReservedFunction(&ClientFunctions.QuestChange, "void %s( string& header, string& progress )" );
     client["map_message"] = ReservedFunction( &ClientFunctions.MapMessage, "bool %s( string& message, uint16& hexX, uint16& hexY, uint& color, uint& delay )" );
     client["in_message"] = ReservedFunction( &ClientFunctions.InMessage, "bool %s( string& message, int& sayType, uint& critterId, uint& delay )" );

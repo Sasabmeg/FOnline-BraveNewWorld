@@ -4105,7 +4105,7 @@ void Client::Send_AddItem( Item* item )
     if( item->IsHidden() )
         return;
 
-    BOUT_BEGIN( this );
+	BOUT_BEGIN( this );
     Bout << NETMSG_ADD_ITEM;
     Bout << item->GetId();
     Bout << item->GetProtoId();
@@ -4122,7 +4122,7 @@ void Client::Send_EraseItem( Item* item )
     if( IsSendDisabled() || IsOffline() )
         return;
 
-    BOUT_BEGIN( this );
+	BOUT_BEGIN( this );
     Bout << NETMSG_REMOVE_ITEM;
     Bout << item->GetId();
     BOUT_END( this );
