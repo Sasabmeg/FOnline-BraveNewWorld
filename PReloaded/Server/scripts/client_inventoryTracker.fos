@@ -1,0 +1,216 @@
+/**
+*   FO version:     FOClassic: Brave New World
+*   Contributor:    Sasabazmeg
+*   File:           client_inventoryTracker.fos
+*
+*   Description:    It's just a pop-up when player acquires or looses items.
+*                   Aim is to provide 21st century look and feel and QoL modules for FOClassic.
+*/
+
+#ifndef __INVENTORY_TRACKER__
+#define __INVENTORY_TRACKER__
+
+#include "sprite.fos"
+#include "_defines.fos"
+#include "_client_defines.fos"
+#include "_macros.fos"
+#include "_colors.fos"
+#include "client_gui_h.fos"
+
+
+CInventoryTracker inventoryTracker;// = CInventoryTracker();
+
+//  Exported
+void InitInventoryTracker() {
+    inventoryTracker = CInventoryTracker();
+    inventoryTracker.width = 100;
+    inventoryTracker.height = 30;
+    inventoryTracker.posX = __ScreenWidth - inventoryTracker.width - 5;
+    inventoryTracker.posY = __ScreenHeight / 2;
+    inventoryTracker.colorCounterGained = COLOR_GREEN;           //  possible?! color of the progress texts, always white for visibility
+    inventoryTracker.colorCounterLost = COLOR_RED;           //  possible?! color of the progress texts, always white for visibility
+    inventoryTracker.colorItem = COLOR_RGB(0x88, 0x88, 0x88);
+    inventoryTracker.colorBackground = COLOR_CHANGE_ALPHA(COLOR_RGB(0, 0, 0), 150);
+    inventoryTracker.firstActivationDelay = 3000;   //  wait for a few seconds before first activation
+    inventoryTracker.activeDuration = 7000;        //  let's start at 10 seconds
+    inventoryTracker.fadeInDuration = 500;
+    inventoryTracker.fadeOutDuration = 1500;
+}
+
+//  Exported
+void DrawInventoryTracker() {
+    inventoryTracker.Draw();
+}
+
+//  Exported
+void ActivateInventoryTracker() {
+    if (inventoryTracker.creationTime + inventoryTracker.firstActivationDelay < GetTick()) {
+        Message("InventoryTracker - activated");
+        inventoryTracker.Activate();
+    } else {
+        Message("InventoryTracker - not activated");
+    }
+}
+
+//  Exported
+void AddItemToInventoryTracker(ItemCl& item, int netGain) {
+    Message("InventoryTracker - item added: " + item.GetProtoId());
+
+    CInventoryTrackerItem invItem = CInventoryTrackerItem();
+    invItem.creationTime = GetTick();
+    invItem.itemPic = item.Proto.PicInv;
+    invItem.count = netGain;
+    inventoryTracker.items.insertLast(invItem);
+}
+
+//  Exported - Need to export so it activates between two logins
+/**
+*   Need to refresh the creation time, else quests will trigger after fast relogs.
+*/
+void RefreshQuestTracker() {
+    inventoryTracker.active = false;
+    inventoryTracker.creationTime = GetTick();
+}
+
+class CInventoryTrackerItem {
+    int posX, posY;
+    int count;
+    uint itemPic;
+    uint creationTime;
+};
+
+class CInventoryTracker {
+    bool active;
+    uint creationTime;                      //  time stamp to check against before activating
+    uint firstActivationDelay;              //  time to wait before activating, so it does not trigger on log-in
+    uint activationTime;                    //  last activation time stamp
+    uint activeDuration;                    //  time in milis to remain visible after quest update shown
+    uint fadeInDuration, fadeOutDuration;   //  fade durations
+    uint colorBackground, colorItem, colorCounterGained, colorCounterLost;     //  colors
+    uint backgroundColor, itemColor, counterColor;
+    int posX, posY, width, height;
+    array<CInventoryTrackerItem> items;
+
+    CInventoryTracker() {
+        active = false;
+        creationTime = GetTick();
+    }
+
+    void Draw() {
+        if (!active)
+            return;
+
+        if (GUI_GetActiveMainScreen() != CLIENT_MAIN_SCREEN_GAME)
+            return;
+
+        CritterCl@ chosen = GetChosen();
+        if (!valid(chosen))
+            return;
+
+        SelfDisableAfterDurationExpired();
+        DrawPickedItem();
+    }
+
+    void SetColors() {
+        itemColor = colorItem;
+        counterColor = items.last().count > 0 ? colorCounterGained : colorCounterLost;
+        backgroundColor = colorBackground;
+    }
+
+    void SetAlphaOfColors(float ratio) {
+        uint8 itemAlpha = itemColor >> 24;
+        itemColor = COLOR_CHANGE_ALPHA(itemColor, itemAlpha * ratio);
+
+        uint8 counterAlpha = counterColor >> 24;
+        counterColor = COLOR_CHANGE_ALPHA(counterColor, counterAlpha * ratio);
+
+        uint8 backgroundAlpha = backgroundColor >> 24;
+        backgroundColor = COLOR_CHANGE_ALPHA(backgroundColor, backgroundAlpha * ratio);
+    }
+
+    void DrawPickedItem() {
+        if (!active)
+            return;
+        int border = 3;
+        int spacing = 5;
+        uint currentTime = GetTick();
+
+        SetColors();
+
+        if (currentTime < activationTime + fadeInDuration) {
+            FadeIn(currentTime);
+        }
+        if (currentTime > activationTime + activeDuration - fadeOutDuration) {
+            FadeOut(currentTime);
+        }
+
+        /*
+        //  Gather necessary data to be able to draw background and progress text
+        int counterWidth = 0, counterHeight = 0, counterLines = 0;
+        string text = "" + item.GetCount();
+        GetTextInfo(text, width - 2 * border, height / 2 - 2 * border, FONT_TYPE_FAT, FONT_FLAG_UPPER, counterWidth, counterHeight, counterLines);
+        */
+
+        //  Draw background
+        DrawRectangle(posX, posY, width, height, backgroundColor);
+        //  Draw item
+        int sprite = LoadSprite(items.last().itemPic, 0);
+        DrawSprite(sprite, -1, posX + border, posY + border, 30, 30, false, false, itemColor);
+        //  Draw item count
+        int countAbs = items.last().count > 0 ? items.last().count : -items.last().count;
+        //  We got a bug here from client, that on split drop, negative would not be reported at all, place ? until fixed.
+        if (countAbs != 0) {
+            DrawText(" x " + countAbs, posX + border + 30, posY + border, width - 2 * border - 30, 27, counterColor, FONT_TYPE_DIALOG, FONT_FLAG_CENTERY);
+        } else {
+            DrawText(" x ?", posX + border + 30, posY + border, width - 2 * border - 30, 27, counterColor, FONT_TYPE_DIALOG, FONT_FLAG_CENTERY);
+        }
+    }
+
+
+    void FadeIn(uint time) {
+        uint relativeTime = time - activationTime;
+        float percentage = (0.0f + relativeTime) / (0.0f + fadeInDuration) ;
+        SetAlphaOfColors(percentage);
+    }
+
+    void FadeOut(uint time) {
+        uint relativeTime = activationTime + activeDuration - time;
+        float percentage = (0.0f + relativeTime) / fadeOutDuration;
+        SetAlphaOfColors(percentage);
+    }
+
+    void DrawRectangle(int left, int top, int width, int height, int color) {
+        array<int> background;
+        // left-top
+        background.insertLast(left);
+        background.insertLast(top);
+        background.insertLast(color);
+        // left-bottom
+        background.insertLast(left);
+        background.insertLast(top + height);
+        background.insertLast(color);
+        // right-bottom
+        background.insertLast(left + width);
+        background.insertLast(top + height);
+        background.insertLast(color);
+        // right-top
+        background.insertLast(left + width);
+        background.insertLast(top);
+        background.insertLast(color);
+        //  draw the rectangle
+        DrawPrimitive(DRAW_PRIMITIVE_TRIANGLEFAN, background);
+    }
+
+    void SelfDisableAfterDurationExpired() {
+        if (active && (GetTick() + 100 > activationTime + activeDuration)) {
+            active = false;
+        }
+    }
+
+    void Activate() {
+        activationTime = GetTick();
+        active = true;
+    }
+};
+
+#endif 	//	__QUEST_TRACKER__

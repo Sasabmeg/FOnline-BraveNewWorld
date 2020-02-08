@@ -5174,7 +5174,7 @@ void FOClient::Net_OnChosenAddItem()
 			WriteLog("Net_OnChosenAddItem() - REMOVE - (%d x %d)\n", item->GetCount(), item->GetProtoId());
 
 			itemsRemoved = item->GetCount();
-			removeItemASCallback(item, (float)(item->GetCount()), "Net_OnChosenAddItem()");
+			removeItemASCallback(item, -(float)(item->GetCount()), "Net_OnChosenAddItem()");
 			Chosen->EraseItem( item, false );
             item = NULL;
         }
@@ -5227,7 +5227,7 @@ void FOClient::Net_OnChosenAddItem()
         HexMngr.RebuildLight();
 	if (item->IsHidden()) {
 		WriteLog("Net_OnChosenAddItem() - REMOVE HIDDEN - (%d x %d)\n", item->GetCount(), item->GetProtoId());
-		removeItemASCallback(item, (float)(item->GetCount()), "Net_OnChosenAddItem() ITEM HIDDEN");
+		removeItemASCallback(item, -(float)(item->GetCount()), "Net_OnChosenAddItem() ITEM HIDDEN");
 		Chosen->EraseItem(item, true);
 	}
 
@@ -5272,7 +5272,7 @@ void FOClient::Net_OnChosenEraseItem()
         return;
     }
 
-	removeItemASCallback(item, (float)(item->GetCount()), "Net_OnChosenEraseItem()");
+	removeItemASCallback(item, -(float)(item->GetCount()), "Net_OnChosenEraseItem()");
 
     if( item->IsLight() && item->AccCritter.Slot != SLOT_INV )
         HexMngr.RebuildLight();
@@ -8143,7 +8143,7 @@ label_EndMove:
                 if( item_count < item->GetCount() )
                     item->Count_Sub( item_count );
 				else {
-					removeItemASCallback(item, (float)(item->GetCount()), "CrittersProcess()");
+					removeItemASCallback(item, -(float)(item->GetCount()), "CrittersProcess()");
 					Chosen->EraseItem(item, true);
 				}
             }

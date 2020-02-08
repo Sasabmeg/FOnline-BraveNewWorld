@@ -1,4 +1,4 @@
-                                          
+                      
 
 shared class Sprite
 {
@@ -76,7 +76,7 @@ uint __GetColor(int r,int g,int b,int a=0xFF)
 	b=(((b)>(255))?(255):(((b)<(0))?(0):(b)));
 	a=(((a)>(255))?(255):(((a)<(0))?(0):(a)));
 	return(uint((((a)&0xFF)<<24)|(((r)&0xFF)<<16)|(((g)&0xFF)<<8)|((b)&0xFF)));
-}                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 
+}                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    
 
 shared interface IControl
 {
@@ -1296,148 +1296,56 @@ shared interface IGUIElementButtonOpt
 	void SetFocused(bool state); 
 	
 	bool IsVisible();
-}       
+}    
 
-CQuestTracker questTracker=CQuestTracker();    
+CInventoryTracker inventoryTracker; 
 
-void InitQuestTracker(){
-	questTracker=CQuestTracker(); 
+void InitInventoryTracker(){
+	inventoryTracker=CInventoryTracker();
+	inventoryTracker.posX=510;
+	inventoryTracker.posY=50;
+	inventoryTracker.width=400;
+	inventoryTracker.height=450;
+	inventoryTracker.colorCounter=((uint((0xFF<<24)|(((0xFF)&0xFF)<<16)|(((0xFF)&0xFF)<<8)|((0xFF)&0xFF))));
+	inventoryTracker.colorBackground=(((((uint((0xFF<<24)|(((0)&0xFF)<<16)|(((0)&0xFF)<<8)|((0)&0xFF))))|0xFF000000)^0xFF000000)|(uint(150)&0xFF)<<24);
 	
-	questTracker.questHeader="Fallout 3: Radio New Vegas";
-	questTracker.questBody="A package courier found shot in the head near Good-Springs has reportedly regained consciousness,"
-	+" and has made a full recovery. Now that's a delivery service you can count on.";
-	
-	questTracker.posX=10;
-	questTracker.posY=150;
-	questTracker.width=400;
-	questTracker.height=450;  
-	
-	questTracker.colorStory=((uint((0xFF<<24)|(((0xff)&0xFF)<<16)|(((0xa5)&0xFF)<<8)|((0)&0xFF))));
-	questTracker.colorJob=((uint((0xFF<<24)|(((0xdd)&0xFF)<<16)|(((0x99)&0xFF)<<8)|((0)&0xFF))));
-	questTracker.colorQuest=(uint((((0xff)&0xff)<<24)|(((0x8F)&0xff)<<16)|(((0x6F)&0xff)<<8)|((0)&0xff)));
-	
-	questTracker.colorDone=((uint((0xFF<<24)|(((0)&0xFF)<<16)|(((0xFF)&0xFF)<<8)|((0)&0xFF))));
-	questTracker.colorSoftFailed=((uint((0xFF<<24)|(((0x99)&0xFF)<<16)|(((0x66)&0xFF)<<8)|((0)&0xFF))));
-	questTracker.colorHardFailed=((uint((0xFF<<24)|(((0xC8)&0xFF)<<16)|(((0)&0xFF)<<8)|((0)&0xFF))));
-	questTracker.colorSoftCompleted=((uint((0xFF<<24)|(((0)&0xFF)<<16)|(((0)&0xFF)<<8)|((0xFF)&0xFF))));
-	questTracker.colorHardCompleted=((uint((0xFF<<24)|(((0)&0xFF)<<16)|(((0xAA)&0xFF)<<8)|((0)&0xFF))));
-	
-	questTracker.colorProgress=((uint((0xFF<<24)|(((0xFF)&0xFF)<<16)|(((0xFF)&0xFF)<<8)|((0xFF)&0xFF))));
-	questTracker.colorBackground=(((((uint((0xFF<<24)|(((0)&0xFF)<<16)|(((0)&0xFF)<<8)|((0)&0xFF))))|0xFF000000)^0xFF000000)|(uint(150)&0xFF)<<24);
-	
-	questTracker.active=false;
-	questTracker.firstActivationDelay=3000;
-	questTracker.activeDuration=10000;
-	questTracker.extraActiveDuration=5000;
-	questTracker.lettersReadPerSecond=12;
-	questTracker.fadeInDuration=1500;
-	questTracker.fadeOutDuration=3500;
 } 
 
-void DrawQuestTracker(){
-	questTracker.Draw();
+void DrawInventoryTracker(){
+	inventoryTracker.Draw();
 } 
 
-void SetQuestTrackerText(string&header,string&progress){
-	questTracker.SetQuestData(header,progress);
-} 
-
-void ActivateQuestTracker(){
-	
-	if(questTracker.creationTime+questTracker.firstActivationDelay<GetTick()){
-		questTracker.Activate();
+void ActivateInventoryTracker(){
+	if(inventoryTracker.creationTime+inventoryTracker.firstActivationDelay<GetTick()){
+		inventoryTracker.Activate();
 	}
+} 
+
+void AddItemToInventoryTracker(ItemCl&it){
+	inventoryTracker.itemId=it.Id;
 }    
 
 void RefreshQuestTracker(){
-	questTracker.active=false;
-	questTracker.creationTime=GetTick();
-	
-	questTracker.questHeader="Fallout 3: Radio New Vegas";
-	questTracker.questBody="A package courier found shot in the head near Good-Springs has reportedly regained consciousness,"
-	+" and has made a full recovery. Now that's a delivery service you can count on.";
+	inventoryTracker.active=false;
+	inventoryTracker.creationTime=GetTick();
 }
 
-enum QuestType{
-	QUEST=0,
-	STORY,
-	JOB
-};
-
-enum QuestProgress{
-	ONGOING=0
-	DONE,
-	SOFT_FAILED,
-	HARD_FAILED,
-	SOFT_COMPLETED,
-	HARD_COMPLETED
-};
-
-class CQuestTracker{
+class CInventoryTracker{
 	bool active;
 	uint creationTime;
 	uint firstActivationDelay;
 	uint activationTime;
 	uint activeDuration;
-	float lettersReadPerSecond;
-	uint extraActiveDuration;
 	uint fadeInDuration,fadeOutDuration;
+	uint colorBackground,colorCounter;
+	uint backgroundColor,counterColor;
 	int posX,posY,width,height;
-	uint colorStory,colorJob,colorQuest,colorDone,colorSoftFailed,colorHardFailed,colorSoftCompleted,colorHardCompleted;
-	uint colorBackground,colorProgress;
-	uint backgroundColor,headerColor,bodyColor;
-	string questHeader;
-	string questBody;  
+	ItemCl@item;
+	uint itemId;
 	
-	QuestType qType;
-	QuestProgress qProgress;
-	
-	CQuestTracker(){
+	CInventoryTracker(){
 		active=false;
 		creationTime=GetTick();
-	}
-	
-	void SetQuestData(string&header,string&progress){
-		
-		if(findFirst(header,"JOB:")==0){
-			qType=JOB;
-			questHeader=substring(header,4,header.length()-4);
-		}else if(findFirst(header,"QUEST:")==0){
-			qType=QUEST;
-			questHeader=substring(header,6,header.length()-6);
-		}else if(findFirst(header,"STORY:")==0){
-			qType=STORY;
-			questHeader=substring(header,6,header.length()-6);
-		}else{
-			qType=QUEST;
-			questHeader=header;
-		}
-		
-		if(findFirst(progress,"DONE:")==0){
-			qProgress=DONE;
-			questBody=substring(progress,5,progress.length()-5);
-		}else if(findFirst(progress,"SOFT_FAILED:")==0){
-			qProgress=SOFT_FAILED;
-			questBody=substring(progress,12,progress.length()-12);
-		}else if(findFirst(progress,"HARD_FAILED:")==0){
-			qProgress=HARD_FAILED;
-			questBody=substring(progress,12,progress.length()-12);
-		}else if(findFirst(progress,"SOFT_COMPLETED:")==0){
-			qProgress=SOFT_COMPLETED;
-			questBody=substring(progress,15,progress.length()-15);
-		}else if(findFirst(progress,"HARD_COMPLETED:")==0){
-			qProgress=HARD_COMPLETED;
-			headerColor=colorHardCompleted;
-			questBody=substring(progress,15,progress.length()-15);
-		}else{
-			qProgress=ONGOING;
-			questBody=progress;
-		}
-		
-		bodyColor=colorProgress;
-		backgroundColor=colorBackground;
-		
-		activeDuration=questBody.length()*1000/lettersReadPerSecond+extraActiveDuration;
 	}
 	
 	void Draw(){
@@ -1451,86 +1359,51 @@ class CQuestTracker{
 		if(!(@chosen!=null))
 		return;
 		
-		SetColors();
-		DrawQuest();
+		if(!(@item!=null))
+		return;
+		
 		SelfDisableAfterDurationExpired();
+		DrawPickedItem();
 	}
 	
 	void SetColors(){
-		switch(qType){
-			case JOB:
-			headerColor=colorJob;
-			break;
-			case STORY:
-			headerColor=colorStory;
-			break;
-			case QUEST:
-			default:
-			headerColor=colorQuest;
-			break;
-		}
-		
-		switch(qProgress){
-			case DONE:
-			headerColor=colorDone;
-			break;
-			case SOFT_FAILED:
-			headerColor=colorSoftFailed;
-			break;
-			case HARD_FAILED:
-			headerColor=colorHardFailed;
-			break;
-			case SOFT_COMPLETED:
-			headerColor=colorSoftCompleted;
-			break;
-			case HARD_COMPLETED:
-			headerColor=colorHardCompleted;
-			break;
-			case ONGOING:
-			default:
-			break;
-		}
-		
+		counterColor=colorCounter;
 		backgroundColor=colorBackground;
 	}
 	
 	void SetAlphaOfColors(float ratio){
-		uint8 headerAlpha=headerColor>>24;
-		headerColor=((((colorQuest)|0xFF000000)^0xFF000000)|(uint(headerAlpha*ratio)&0xFF)<<24);
-		
-		uint8 bodyAlpha=bodyColor>>24;
-		bodyColor=((((colorProgress)|0xFF000000)^0xFF000000)|(uint(bodyAlpha*ratio)&0xFF)<<24);
+		uint8 headerAlpha=counterColor>>24;
+		counterColor=((((counterColor)|0xFF000000)^0xFF000000)|(uint(headerAlpha*ratio)&0xFF)<<24);
 		
 		uint8 backgroundAlpha=backgroundColor>>24;
 		backgroundColor=((((colorBackground)|0xFF000000)^0xFF000000)|(uint(backgroundAlpha*ratio)&0xFF)<<24);
 	}
 	
-	void DrawQuest(){
+	void DrawPickedItem(){
+		if(!active)
+		return;
 		int border=15;
 		int spacing=25;
 		uint currentTime=GetTick();
 		
+		SetColors();
 		if(currentTime<activationTime+fadeInDuration){
 			FadeIn(currentTime);
-		}else{
-			
 		}
 		if(currentTime>activationTime+activeDuration-fadeOutDuration){
 			FadeOut(currentTime);
 		} 
 		
-		int headerWidth=0,headerHeight=0,headerLines=0;
-		GetTextInfo(questHeader,width-2*border,height/2-2*border,(8),(0x0040),headerWidth,headerHeight,headerLines);
+		int counterWidth=0,counterHeight=0,counterLines=0;
+		string text=""+item.GetCount();
+		GetTextInfo(text,width-2*border,height/2-2*border,(7),(0x0040),counterWidth,counterHeight,counterLines); 
 		
-		int progressWidth=0,progressHeight=0,progressLines=0;
-		GetTextInfo(questBody,width-2*border,height-(2*border+headerHeight+spacing),(7),(0x0040),progressWidth,progressHeight,progressLines); 
+		DrawRectangle(posX,posY,width+2*border,border+height+border,backgroundColor);
 		
-		DrawRectangle(posX,posY,(((headerWidth)>(progressWidth))?(headerWidth):(progressWidth))+2*border,border+headerHeight+spacing+progressHeight+border,backgroundColor); 
+		int sprite=LoadSprite(GetItem(itemId).Proto.PicInv,0);
+		DrawSprite(sprite,-1,posX,posY,30,30,false,false,((uint((0xFF<<24)|(((0xFF)&0xFF)<<16)|(((0xFF)&0xFF)<<8)|((0xFF)&0xFF))))); 
 		
-		DrawText(questHeader,posX+border,posY+border,width-2*border,height/2-2*border,headerColor,(8),0); 
-		
-		DrawText(questBody,posX+border,posY+border+headerHeight+spacing,width-2*border,height-(2*border+headerHeight+spacing),bodyColor,(7),0);
-	}
+	} 
 	
 	void FadeIn(uint time){
 		uint relativeTime=time-activationTime;
@@ -1567,7 +1440,7 @@ class CQuestTracker{
 	}
 	
 	void SelfDisableAfterDurationExpired(){
-		if(activationTime+activeDuration<GetTick()){
+		if(active&&(GetTick()+100>activationTime+activeDuration)){
 			active=false;
 		}
 	}
@@ -1576,6 +1449,5 @@ class CQuestTracker{
 		activationTime=GetTick();
 		active=true;
 	}
-	
 }; 
 

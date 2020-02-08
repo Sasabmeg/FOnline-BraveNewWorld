@@ -41,6 +41,7 @@ import void changedParam_Hide(CritterCl& cr, uint, int oldValue) from "parameter
 
 import void DrawChosenTabs() from "chosen_tabs";
 import void DrawQuestTracker() from "client_QuestTracker";
+import void DrawInventoryTracker() from "client_InventoryTracker";
 
 import bool IsPossessMode() from "client_dev_menu";
 import bool IsAuthorized() from "client_dev_menu";
@@ -102,7 +103,9 @@ import void DrawFog() from "client_fov";
 import void DrawMsFov() from "client_fov";
 import void DrawCustomBorder() from "client_fov";
 import void ActivateQuestTracker() from "client_QuestTracker";
+import void ActivateInventoryTracker() from "client_InventoryTracker";
 import void SetQuestTrackerText(string& header, string& progress) from "client_QuestTracker";
+import void AddItemToInventoryTracker(Item& item, int netGain) from "client_InventoryTracker";
 
 
 import string DateTimeToString(uint gameTime) from "time";
@@ -730,6 +733,7 @@ void render_iface(uint layer)
 
         DrawChosenTabs();
         DrawQuestTracker();
+        DrawInventoryTracker();
 
     }
 
@@ -2689,11 +2693,15 @@ void item_map_out(ItemCl& item)
 void item_inv_in(ItemCl& item, float netGain, string& debugMessage)
 {
     Message(debugMessage + " - Item received: (" + netGain + " x " + item.Proto.ProtoId + ")");
+    AddItemToInventoryTracker(item, netGain);
+    ActivateInventoryTracker();
 }
 
 void item_inv_out(ItemCl& item, float netGain, string& debugMessage)
 {
     Message(debugMessage + " - Item lost: (" + netGain + " x " + item.Proto.ProtoId + ")");
+    AddItemToInventoryTracker(item, netGain);
+    ActivateInventoryTracker();
 }
 
 /**
