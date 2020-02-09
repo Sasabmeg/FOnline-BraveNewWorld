@@ -112,9 +112,11 @@ class CInventoryTracker {
     }
 
     void SetColors() {
-        itemColor = colorItem;
-        counterColor = items.last().count > 0 ? colorCounterGained : colorCounterLost;
-        backgroundColor = colorBackground;
+        if (!items.isEmpty()) {
+            itemColor = colorItem;
+            counterColor = items.last().count > 0 ? colorCounterGained : colorCounterLost;
+            backgroundColor = colorBackground;
+        }
     }
 
     void SetAlphaOfColors(float ratio) {
@@ -151,18 +153,20 @@ class CInventoryTracker {
         GetTextInfo(text, width - 2 * border, height / 2 - 2 * border, FONT_TYPE_FAT, FONT_FLAG_UPPER, counterWidth, counterHeight, counterLines);
         */
 
-        //  Draw background
-        DrawRectangle(posX, posY, width, height, backgroundColor);
-        //  Draw item
-        int sprite = LoadSprite(items.last().itemPic, 0);
-        DrawSprite(sprite, -1, posX + border, posY + border, 30, 30, false, false, itemColor);
-        //  Draw item count
-        int countAbs = items.last().count > 0 ? items.last().count : -items.last().count;
-        //  We got a bug here from client, that on split drop, negative would not be reported at all, place ? until fixed.
-        if (countAbs != 0) {
-            DrawText(" x " + countAbs, posX + border + 30, posY + border, width - 2 * border - 30, 27, counterColor, FONT_TYPE_DIALOG, FONT_FLAG_CENTERY);
-        } else {
-            DrawText(" x ?", posX + border + 30, posY + border, width - 2 * border - 30, 27, counterColor, FONT_TYPE_DIALOG, FONT_FLAG_CENTERY);
+        if (!items.isEmpty()) {
+            //  Draw background
+            DrawRectangle(posX, posY, width, height, backgroundColor);
+            //  Draw item
+            int sprite = LoadSprite(items.last().itemPic, 0);
+            DrawSprite(sprite, -1, posX + border, posY + border, 30, 30, false, false, itemColor);
+            //  Draw item count
+            int countAbs = items.last().count > 0 ? items.last().count : -items.last().count;
+            //  We got a bug here from client, that on split drop, negative would not be reported at all, place ? until fixed.
+            if (countAbs != 0) {
+                DrawText(" x " + countAbs, posX + border + 30, posY + border, width - 2 * border - 30, 27, counterColor, FONT_TYPE_DIALOG, FONT_FLAG_CENTERY);
+            } else {
+                DrawText(" x ?", posX + border + 30, posY + border, width - 2 * border - 30, 27, counterColor, FONT_TYPE_DIALOG, FONT_FLAG_CENTERY);
+            }
         }
     }
 
@@ -204,6 +208,7 @@ class CInventoryTracker {
     void SelfDisableAfterDurationExpired() {
         if (active && (GetTick() + 100 > activationTime + activeDuration)) {
             active = false;
+            items.removeFirst();
         }
     }
 
