@@ -5170,11 +5170,7 @@ void FOClient::Net_OnChosenAddItem()
         {
             prev_slot = item->AccCritter.Slot;
             prev_light_hash = item->LightGetHash();
-
-			WriteLog("Net_OnChosenAddItem() - REMOVE - (%d x %d)\n", item->GetCount(), item->GetProtoId());
-
 			itemsRemoved = item->GetCount();
-			removeItemASCallback(item, -(float)(item->GetCount()), "Net_OnChosenAddItem()");
 			Chosen->EraseItem( item, false );
             item = NULL;
         }
@@ -5202,23 +5198,7 @@ void FOClient::Net_OnChosenAddItem()
     if( item != Chosen->ItemSlotMain || !item->IsWeapon() )
         item->SetMode( item->Data.Mode );
 
-	WriteLog("Net_OnChosenAddItem() - ADD - (%d x %d)\n", item->GetCount(), item->GetProtoId());
 	itemsAdded = item->GetCount();
-	addItemASCallback(item, (float)(item->GetCount()), "Net_OnChosenAddItem()");
-
-	//	Need to do this shit in case of stackables
-	float netGain = itemsAdded - itemsRemoved;
-	if (itemsAdded > itemsRemoved) {
-		//	Player received an item
-		WriteLog("Net_OnChosenAddItem() - NET GAIN: ADD - (%d x %d)\n", netGain, item->GetProtoId());
-		addItemASCallback(item, netGain, "Net_OnChosenAddItem() :: NET GAIN");
-	}
-	else {
-		//	Player lost items, return their currnet item amount in case of stackables
-		WriteLog("Net_OnChosenAddItem() - NET LOSS: REMOVE - (%d x %d)\n", itemsAdded, item->GetProtoId());
-		addItemASCallback(item, netGain, "Net_OnChosenAddItem() :: NET LOSS");
-	}
-
     Chosen->AddItem( item );
 
     if( slot == SLOT_HAND1 || prev_slot == SLOT_HAND1 )
@@ -5226,9 +5206,21 @@ void FOClient::Net_OnChosenAddItem()
     if( item->LightGetHash() != prev_light_hash && (slot != SLOT_INV || prev_slot != SLOT_INV) )
         HexMngr.RebuildLight();
 	if (item->IsHidden()) {
-		WriteLog("Net_OnChosenAddItem() - REMOVE HIDDEN - (%d x %d)\n", item->GetCount(), item->GetProtoId());
-		removeItemASCallback(item, -(float)(item->GetCount()), "Net_OnChosenAddItem() ITEM HIDDEN");
 		Chosen->EraseItem(item, true);
+	}
+	else {
+		//	Need to do this shit in case of stackables
+		float netGain = itemsAdded - itemsRemoved;
+		if (itemsAdded > itemsRemoved) {
+			//	Player received an item
+			WriteLog("Net_OnChosenAddItem() - NET GAIN: ADD - (%d x %d)\n", netGain, item->GetProtoId());
+			addItemASCallback(item, netGain, "Net_OnChosenAddItem() :: NET GAIN");
+		}
+		else {
+			//	Player lost items, return their currnet item amount in case of stackables
+			WriteLog("Net_OnChosenAddItem() - NET LOSS: REMOVE - (%d x %d)\n", itemsAdded, item->GetProtoId());
+			addItemASCallback(item, netGain, "Net_OnChosenAddItem() :: NET LOSS");
+		}
 	}
 
     CollectContItems();

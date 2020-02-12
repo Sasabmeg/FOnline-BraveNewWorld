@@ -55,9 +55,8 @@ void ActivateInventoryTracker() {
 //  Exported
 void AddItemToInventoryTracker(ItemCl& item, int netGain) {
     Message("InventoryTracker - item added: " + item.GetProtoId());
-
     CInventoryTrackerItem invItem = CInventoryTrackerItem();
-    invItem.creationTime = GetTick();
+    invItem.activationTime = GetTick();
     invItem.itemPic = item.Proto.PicInv;
     invItem.count = netGain;
     inventoryTracker.items.insertLast(invItem);
@@ -76,7 +75,8 @@ class CInventoryTrackerItem {
     int posX, posY;
     int count;
     uint itemPic;
-    uint creationTime;
+    uint activationTime;
+    uint backgroundColor, itemColor, counterColor;
 };
 
 class CInventoryTracker {
@@ -86,10 +86,14 @@ class CInventoryTracker {
     uint activationTime;                    //  last activation time stamp
     uint activeDuration;                    //  time in milis to remain visible after quest update shown
     uint fadeInDuration, fadeOutDuration;   //  fade durations
+    int maxInventorySize = 5;
     uint colorBackground, colorItem, colorCounterGained, colorCounterLost;     //  colors
     uint backgroundColor, itemColor, counterColor;
     int posX, posY, width, height;
+    int border = 3, spacing = 5;
+
     array<CInventoryTrackerItem> items;
+    array<CInventoryTrackerItem> itemsInProcess;
 
     CInventoryTracker() {
         active = false;
@@ -107,80 +111,105 @@ class CInventoryTracker {
         if (!valid(chosen))
             return;
 
+        ProcessItems();
         SelfDisableAfterDurationExpired();
-        DrawPickedItem();
+        DrawPickedItems();
     }
 
-    void SetColors() {
+    void ProcessItems() {
         if (!items.isEmpty()) {
-            itemColor = colorItem;
-            counterColor = items.last().count > 0 ? colorCounterGained : colorCounterLost;
-            backgroundColor = colorBackground;
+            CInventoryTrackerItem@ first = items.first();
+            first.activationTime = GetTick();
+            itemsInProcess.insertFirst(first);
+            items.removeFirst();
+            if (itemsInProcess.length() > maxInventorySize) {
+                itemsInProcess.removeLast();
+            }
+        }
+        if (itemsInProcess.isEmpty()) {
+            active = false;
         }
     }
 
-    void SetAlphaOfColors(float ratio) {
-        uint8 itemAlpha = itemColor >> 24;
-        itemColor = COLOR_CHANGE_ALPHA(itemColor, itemAlpha * ratio);
-
-        uint8 counterAlpha = counterColor >> 24;
-        counterColor = COLOR_CHANGE_ALPHA(counterColor, counterAlpha * ratio);
-
-        uint8 backgroundAlpha = backgroundColor >> 24;
-        backgroundColor = COLOR_CHANGE_ALPHA(backgroundColor, backgroundAlpha * ratio);
-    }
-
-    void DrawPickedItem() {
-        if (!active)
-            return;
-        int border = 3;
-        int spacing = 5;
-        uint currentTime = GetTick();
-
-        SetColors();
-
-        if (currentTime < activationTime + fadeInDuration) {
-            FadeIn(currentTime);
-        }
-        if (currentTime > activationTime + activeDuration - fadeOutDuration) {
-            FadeOut(currentTime);
-        }
-
-        /*
-        //  Gather necessary data to be able to draw background and progress text
-        int counterWidth = 0, counterHeight = 0, counterLines = 0;
-        string text = "" + item.GetCount();
-        GetTextInfo(text, width - 2 * border, height / 2 - 2 * border, FONT_TYPE_FAT, FONT_FLAG_UPPER, counterWidth, counterHeight, counterLines);
-        */
-
-        if (!items.isEmpty()) {
-            //  Draw background
-            DrawRectangle(posX, posY, width, height, backgroundColor);
-            //  Draw item
-            int sprite = LoadSprite(items.last().itemPic, 0);
-            DrawSprite(sprite, -1, posX + border, posY + border, 30, 30, false, false, itemColor);
-            //  Draw item count
-            int countAbs = items.last().count > 0 ? items.last().count : -items.last().count;
-            //  We got a bug here from client, that on split drop, negative would not be reported at all, place ? until fixed.
-            if (countAbs != 0) {
-                DrawText(" x " + countAbs, posX + border + 30, posY + border, width - 2 * border - 30, 27, counterColor, FONT_TYPE_DIALOG, FONT_FLAG_CENTERY);
-            } else {
-                DrawText(" x ?", posX + border + 30, posY + border, width - 2 * border - 30, 27, counterColor, FONT_TYPE_DIALOG, FONT_FLAG_CENTERY);
+    void SelfDisableAfterDurationExpired() {
+        for (int i = 0; i < itemsInProcess.length(); i++) {
+            if (active && (GetTick() + 100 > itemsInProcess[i].activationTime + activeDuration)) {
+                //active = false;
+                itemsInProcess.removeAt(i);
             }
         }
     }
 
-
-    void FadeIn(uint time) {
-        uint relativeTime = time - activationTime;
-        float percentage = (0.0f + relativeTime) / (0.0f + fadeInDuration) ;
-        SetAlphaOfColors(percentage);
+    void SetColors() {
+        for (int i = 0; i < itemsInProcess.length(); i++) {
+            itemsInProcess[i].itemColor = colorItem;
+            itemsInProcess[i].counterColor = itemsInProcess[i].count > 0 ? colorCounterGained : colorCounterLost;
+            itemsInProcess[i].backgroundColor = colorBackground;
+        }
     }
 
-    void FadeOut(uint time) {
-        uint relativeTime = activationTime + activeDuration - time;
+    void SetAlphaOfColors(CInventoryTrackerItem& item, float ratio) {
+        uint8 itemAlpha = item.itemColor >> 24;
+        item.itemColor = COLOR_CHANGE_ALPHA(item.itemColor, itemAlpha * ratio);
+
+        uint8 counterAlpha = item.counterColor >> 24;
+        item.counterColor = COLOR_CHANGE_ALPHA(item.counterColor, counterAlpha * ratio);
+        item.counterColor = COLOR_CHANGE_ALPHA(item.counterColor, counterAlpha * ratio);
+
+        uint8 backgroundAlpha = item.backgroundColor >> 24;
+        item.backgroundColor = COLOR_CHANGE_ALPHA(item.backgroundColor, backgroundAlpha * ratio);
+    }
+
+    void DrawPickedItems() {
+        if (!active)
+            return;
+        uint currentTime = GetTick();
+
+        SetColors();
+
+        for (int i = 0; i < itemsInProcess.length(); i++) {
+            if (currentTime < itemsInProcess[i].activationTime + fadeInDuration) {
+                FadeIn(itemsInProcess[i], currentTime);
+            }
+            if (currentTime > itemsInProcess[i].activationTime + activeDuration - fadeOutDuration) {
+                FadeOut(itemsInProcess[i], currentTime);
+            }
+        }
+
+        for (int i = 0; i < maxInventorySize; i++) {
+            if (i < itemsInProcess.length()) {
+                DrawItem(itemsInProcess[i], i * (spacing + 30));
+            }
+        }
+    }
+
+    void DrawItem(CInventoryTrackerItem& item, int positionShift) {
+        //  Draw background
+        DrawRectangle(posX, posY + positionShift, width, height, item.backgroundColor);
+        //  Draw item
+        int sprite = LoadSprite(item.itemPic, 0);
+        DrawSprite(sprite, -1, posX + border, posY + border + positionShift, 30, 30, false, false, item.itemColor);
+        //  Draw item count
+        int countAbs = item.count > 0 ? item.count : -item.count;
+        //  We got a bug here from client, that on split drop, negative would not be reported at all, place ? until fixed.
+        if (countAbs != 0) {
+            DrawText(" x " + countAbs, posX + border + 30, posY + border + positionShift, width - 2 * border - 30, 27, item.counterColor, FONT_TYPE_DIALOG, FONT_FLAG_CENTERY);
+        } else {
+            DrawText(" x ?", posX + border + 30, posY + border + positionShift, width - 2 * border - 30, 27, item.counterColor, FONT_TYPE_DIALOG, FONT_FLAG_CENTERY);
+        }
+    }
+
+
+    void FadeIn(CInventoryTrackerItem& item, uint time) {
+        uint relativeTime = time - item.activationTime;
+        float percentage = (0.0f + relativeTime) / (0.0f + fadeInDuration) ;
+        SetAlphaOfColors(item, percentage);
+    }
+
+    void FadeOut(CInventoryTrackerItem& item, uint time) {
+        uint relativeTime = item.activationTime + activeDuration - time;
         float percentage = (0.0f + relativeTime) / fadeOutDuration;
-        SetAlphaOfColors(percentage);
+        SetAlphaOfColors(item, percentage);
     }
 
     void DrawRectangle(int left, int top, int width, int height, int color) {
@@ -203,13 +232,6 @@ class CInventoryTracker {
         background.insertLast(color);
         //  draw the rectangle
         DrawPrimitive(DRAW_PRIMITIVE_TRIANGLEFAN, background);
-    }
-
-    void SelfDisableAfterDurationExpired() {
-        if (active && (GetTick() + 100 > activationTime + activeDuration)) {
-            active = false;
-            items.removeFirst();
-        }
     }
 
     void Activate() {
