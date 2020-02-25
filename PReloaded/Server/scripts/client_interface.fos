@@ -2692,14 +2692,14 @@ void item_map_out(ItemCl& item)
 */
 void item_inv_in(ItemCl& item, float netGain, string& debugMessage)
 {
-    Message(debugMessage + " - Item received: (" + netGain + " x " + item.Proto.ProtoId + ")");
+    //Message(debugMessage + " - Item received: (" + netGain + " x " + item.Proto.ProtoId + ")");
     AddItemToInventoryTracker(item, netGain);
     ActivateInventoryTracker();
 }
 
 void item_inv_out(ItemCl& item, float netGain, string& debugMessage)
 {
-    Message(debugMessage + " - Item lost: (" + netGain + " x " + item.Proto.ProtoId + ")");
+    //Message(debugMessage + " - Item lost: (" + netGain + " x " + item.Proto.ProtoId + ")");
     AddItemToInventoryTracker(item, netGain);
     ActivateInventoryTracker();
 }

@@ -45,16 +45,16 @@ void DrawInventoryTracker() {
 //  Exported
 void ActivateInventoryTracker() {
     if (inventoryTracker.creationTime + inventoryTracker.firstActivationDelay < GetTick()) {
-        Message("InventoryTracker - activated");
+        //Message("InventoryTracker - activated");
         inventoryTracker.Activate();
     } else {
-        Message("InventoryTracker - not activated");
+        //Message("InventoryTracker - not activated");
     }
 }
 
 //  Exported
 void AddItemToInventoryTracker(ItemCl& item, int netGain) {
-    Message("InventoryTracker - item added: " + item.GetProtoId());
+    //Message("InventoryTracker - item added: " + item.GetProtoId());
     CInventoryTrackerItem invItem = CInventoryTrackerItem();
     invItem.activationTime = GetTick();
     invItem.itemPic = item.Proto.PicInv;
