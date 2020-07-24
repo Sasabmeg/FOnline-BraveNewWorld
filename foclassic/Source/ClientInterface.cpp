@@ -188,7 +188,8 @@ int FOClient::InitIface()
 /************************************************************************/
     WriteLog( "Load data.\n" );
     // Other
-    IfaceHold = IFACE_NONE;
+	SmartMouseLastClick = false;
+	IfaceHold = IFACE_NONE;
     TargetSmth.Clear();
 
     // Inventory
@@ -2264,7 +2265,20 @@ void FOClient::GameDraw()
         }
     }
 
-    // Map
+	//    Make sure smart cursor go to location stays at last click position
+	if ((IsCurMode(CURSOR_DEFAULT) || IsCurMode(CURSOR_USE_WEAPON)) && (SmartMouseLastClick))
+	{
+		if (HexMngr.ChosenDistanceHex(GameOpt.MouseXLastHexMoveClick, GameOpt.MouseYLastHexMoveClick) < 1)
+		{
+			HideSmartCursorLastPosition();
+		}
+		else {
+			HexMngr.SetCursorVisible(true);
+			HexMngr.SetCursorPos_Hex(GameOpt.MouseXLastHexMoveClick, GameOpt.MouseYLastHexMoveClick, true, true);
+		}
+	}
+
+	// Map
     HexMngr.DrawMap();
 
     // Look borders
@@ -2510,7 +2524,7 @@ void FOClient::GameKeyDown( uint8 dik, const char* dik_text )
             case DIK_P:
                 ShowScreen( CLIENT_SCREEN_PIPBOY );
                 break;
-            case DIK_F:
+            case DIK_U:
                 ShowScreen( CLIENT_SCREEN_FIXBOY );
                 break;
             // case DIK_Z: PipBoy clock
@@ -2520,15 +2534,20 @@ void FOClient::GameKeyDown( uint8 dik, const char* dik_text )
             case DIK_B:
                 ChosenChangeSlot();
                 break;
-            case DIK_M:
-                IfaceHold = IFACE_GAME_MNEXT;
-                GameRMouseUp();
-                break;
+			case DIK_Q:
+				GameMouseCrosshairToLook();
+				break;
+			case DIK_W:
+				//GameOpt.ItemHighlightActive = !GameOpt.ItemHighlightActive;
+				break;
+			case DIK_M:
+				GameMouseCrosshairToMove();
+				break;
             case DIK_N:
                 if( Chosen->NextRateItem( false ) )
                     Net_SendRateItem();
                 break;
-            case DIK_S:
+            case DIK_Y:
                 SboxUseOn.Clear();
                 ShowScreen( CLIENT_SCREEN_SKILLBOX );
                 break;
@@ -2603,7 +2622,10 @@ void FOClient::GameLMouseDown()
     }
     else if( IsCurMode( CURSOR_MOVE ) )
     {
-        ActionEvent* act = (IsAction( CHOSEN_MOVE ) ? &ChosenAction[0] : NULL);
+		//    set last move hex location
+		HexMngr.GetHexPixel(GameOpt.MouseX, GameOpt.MouseY, GameOpt.MouseXLastHexMoveClick, GameOpt.MouseYLastHexMoveClick);
+
+		ActionEvent* act = (IsAction( CHOSEN_MOVE ) ? &ChosenAction[0] : NULL);
         uint16 hx, hy;
         if( act && Timer::FastTick() - act->Param[5] < (GameOpt.DoubleClickTime ? GameOpt.DoubleClickTime : GetDoubleClickTicks() ) )
         {
@@ -2641,42 +2663,60 @@ void FOClient::GameLMouseDown()
             // Aim shoot
             if( Chosen->ItemSlotMain->IsWeapon() && Chosen->GetUse() < USE_MAX && cr != Chosen && Chosen->IsAim() )
             {
-                if( !CritType::IsCanAim( Chosen->GetCrType() ) )
-                    AddMess( MSGBOX_GAME, "Aim attack is not aviable for this critter type." );
-                else if( !Chosen->IsRawParam( MODE_NO_AIM ) )
-                    ShowScreen( CLIENT_SCREEN_AIM );
-                return;
+				if (!CritType::IsCanAim(Chosen->GetCrType()))
+				{
+					AddMess(MSGBOX_GAME, "Aim attack is not aviable for this critter type.");
+					HideSmartCursorLastPosition();
+				}
+				else if (!Chosen->IsRawParam(MODE_NO_AIM))
+				{
+					ShowScreen(CLIENT_SCREEN_AIM);
+				}
+				return;
             }
 
             // Use item
             SetAction( CHOSEN_USE_ITEM, Chosen->ItemSlotMain->GetId(), Chosen->ItemSlotMain->GetProtoId(), TARGET_CRITTER, cr->GetId(), Chosen->GetFullRate() );
+			HideSmartCursorLastPosition();
         }
         else if( item )
         {
             TargetSmth.SetItem( item->GetId() );
             SetAction( CHOSEN_USE_ITEM, Chosen->ItemSlotMain->GetId(), Chosen->ItemSlotMain->GetProtoId(), item->IsItem() ? TARGET_ITEM : TARGET_SCENERY, item->GetId(), USE_USE );
-        }
+			HideSmartCursorLastPosition();
+		}
     }
-    else if( IsCurMode( CURSOR_USE_SKILL ) )
-    {
-        CritterCl* cr;
-        ItemHex* item;
-        HexMngr.GetSmthPixel( GameOpt.MouseX, GameOpt.MouseY, item, cr );
+	else if (IsCurMode(CURSOR_USE_SKILL))
+	{
+		CritterCl* cr;
+		ItemHex* item;
+		HexMngr.GetSmthPixel(GameOpt.MouseX, GameOpt.MouseY, item, cr);
 
-        // Use skill
-        if( cr )
-        {
-            SetAction( CHOSEN_USE_SKILL_ON_CRITTER, CurSkill, cr->GetId(), Chosen->GetFullRate() );
-        }
-        else if( item && item->IsCanUseSkill() )
-        {
-            if( item->IsScenOrGrid() )
-                SetAction( CHOSEN_USE_SKILL_ON_SCENERY, CurSkill, item->GetProtoId(), item->GetHexX(), item->GetHexY() );
-            else
-                SetAction( CHOSEN_USE_SKILL_ON_ITEM, false, CurSkill, item->GetId() );
-        }
-
-        SetCurMode( CURSOR_DEFAULT );
+		// Use skill
+		if (cr)
+		{
+			SetAction(CHOSEN_USE_SKILL_ON_CRITTER, CurSkill, cr->GetId(), Chosen->GetFullRate());
+			SetCurMode(CURSOR_DEFAULT);
+			HideSmartCursorLastPosition();
+		}
+		else
+			if (item && item->IsCanUseSkill())
+			{
+				if (item->IsScenOrGrid()) {
+					SetAction(CHOSEN_USE_SKILL_ON_SCENERY, CurSkill, item->GetProtoId(), item->GetHexX(), item->GetHexY());
+					SetCurMode(CURSOR_DEFAULT);
+					HideSmartCursorLastPosition();
+				}
+				else {
+					SetAction(CHOSEN_USE_SKILL_ON_ITEM, false, CurSkill, item->GetId());
+					SetCurMode(CURSOR_DEFAULT);
+					HideSmartCursorLastPosition();
+				}
+			}
+			else {
+				//    Do nothing, but also do not change cursor, to help if misclick! If other behaviour req uncomment.
+				//SetCurMode(CURSOR_DEFAULT);
+			}
     }
 }
 
@@ -2687,43 +2727,55 @@ void FOClient::GameLMouseUp()
 
 void FOClient::GameRMouseDown()
 {
-    IfaceHold = IFACE_NONE;
+	//    copied from Left Mouse Down when about to move
+	ActionEvent* act = (IsAction(CHOSEN_MOVE) ? &ChosenAction[0] : NULL);
+	uint16 hx, hy;
+	if (act && Timer::FastTick() - act->Param[5] < (GameOpt.DoubleClickTime ? GameOpt.DoubleClickTime : GetDoubleClickTicks()))
+	{
+		act->Param[2] = (GameOpt.AlwaysRun ? 0 : 1);
+		act->Param[4] = 0;
+	}
+	else if (GetCurHex(hx, hy, false) && Chosen)
+	{
+		uint dist = DistGame(Chosen->GetHexX(), Chosen->GetHexY(), hx, hy);
+		bool is_run = (Keyb::ShiftDwn ? (!GameOpt.AlwaysRun) : (GameOpt.AlwaysRun && dist >= GameOpt.AlwaysRunMoveDist));
+
+		//    Show where we clicked, until click is released
+		SmartMouseLastClick = true;
+		HexMngr.SetCursorVisible(true);
+		HexMngr.SetCursorPos(GameOpt.MouseX, GameOpt.MouseY, true, false);
+		HexMngr.GetHexPixel(GameOpt.MouseX, GameOpt.MouseY, GameOpt.MouseXLastHexMoveClick, GameOpt.MouseYLastHexMoveClick);
+
+		SetAction(CHOSEN_MOVE, hx, hy, is_run, 0, act ? 0 : 1, Timer::FastTick());
+	}
+	/*
+	IfaceHold = IFACE_NONE;
 
     if( !(IntVisible && ( (IsCurInRect( IntWMain ) && SprMngr.IsPixNoTransp( IntMainPic->GetCurSprId(), GameOpt.MouseX - IntWMain[0], GameOpt.MouseY - IntWMain[1], false ) ) ||
                           (IntAddMess && IsCurInRect( IntWAddMess ) && SprMngr.IsPixNoTransp( IntPWAddMess->GetCurSprId(), GameOpt.MouseX - IntWAddMess[0], GameOpt.MouseY - IntWAddMess[1], false ) ) ) ) )
         IfaceHold = IFACE_GAME_MNEXT;
+	*/
 }
 
 void FOClient::GameRMouseUp()
 {
-    if( IfaceHold == IFACE_GAME_MNEXT && Chosen )
-    {
-        switch( GetCurMode() )
-        {
-            case CURSOR_DEFAULT:
-                SetCurMode( CURSOR_MOVE );
-                break;
-            case CURSOR_MOVE:
-                if( Chosen->GetParam( TO_BATTLE ) && Chosen->ItemSlotMain->IsWeapon() )
-                    SetCurMode( CURSOR_USE_WEAPON );
-                else
-                    SetCurMode( CURSOR_DEFAULT );
-                break;
-            case CURSOR_USE_ITEM:
-                SetCurMode( CURSOR_DEFAULT );
-                break;
-            case CURSOR_USE_WEAPON:
-                SetCurMode( CURSOR_DEFAULT );
-                break;
-            case CURSOR_USE_SKILL:
-                SetCurMode( CURSOR_MOVE );
-                break;
-            default:
-                SetCurMode( CURSOR_DEFAULT );
-                break;
-        }
-    }
-    IfaceHold = IFACE_NONE;
+	//	with smart cursor enable, nothing to do, can be used later for visual effects
+}
+
+void FOClient::HideSmartCursorLastPosition()
+{
+	HexMngr.SetCursorVisible(false);
+	SmartMouseLastClick = false;
+}
+
+void FOClient::GameMouseCrosshairToMove()
+{
+	SetCurMode(CURSOR_MOVE);
+}
+
+void FOClient::GameMouseCrosshairToLook()
+{
+	SetCurMode(CURSOR_DEFAULT);
 }
 
 // ==============================================================================================================================
@@ -5021,16 +5073,19 @@ void FOClient::LMenuMouseUp()
                     break;
                 case LMENU_NODE_USE:
                     SetAction( CHOSEN_PICK_CRITTER, cr->GetId(), 0 );
+					HideSmartCursorLastPosition();
                     break;
                 case LMENU_NODE_ROTATE:
                     SetAction( CHOSEN_DIR, 0 );
                     break;
                 case LMENU_NODE_PICK_ITEM:
                     TryPickItemOnGround();
-                    break;
+					HideSmartCursorLastPosition();
+					break;
                 case LMENU_NODE_PUSH:
                     SetAction( CHOSEN_PICK_CRITTER, cr->GetId(), 1 );
-                    break;
+					HideSmartCursorLastPosition();
+					break;
                 case LMENU_NODE_BAG:
                     UseSelect = TargetSmth;
                     ShowScreen( CLIENT_SCREEN_USE );
@@ -5073,16 +5128,20 @@ void FOClient::LMenuMouseUp()
                     break;
                 case LMENU_NODE_TALK:
                     SetAction( CHOSEN_TALK_NPC, cr->GetId() );
+					HideSmartCursorLastPosition();
                     break;
                 case LMENU_NODE_GMFOLLOW:
                     Net_SendRuleGlobal( GM_CMD_FOLLOW_CRIT, cr->GetId() );
-                    break;
+					HideSmartCursorLastPosition();
+					break;
                 case LMENU_NODE_USE:
                     SetAction( CHOSEN_PICK_CRITTER, cr->GetId(), 0 );
-                    break;
+					HideSmartCursorLastPosition();
+					break;
                 case LMENU_NODE_PUSH:
                     SetAction( CHOSEN_PICK_CRITTER, cr->GetId(), 1 );
-                    break;
+					HideSmartCursorLastPosition();
+					break;
                 case LMENU_NODE_BAG:
                     UseSelect = TargetSmth;
                     ShowScreen( CLIENT_SCREEN_USE );
@@ -5113,6 +5172,7 @@ void FOClient::LMenuMouseUp()
                     break;
                 case LMENU_NODE_PICK:
                     SetAction( CHOSEN_PICK_ITEM, item->GetProtoId(), item->HexX, item->HexY );
+					HideSmartCursorLastPosition();
                     break;
                 case LMENU_NODE_BAG:
                     UseSelect = TargetSmth;
@@ -5431,6 +5491,9 @@ void FOClient::ShowScreen( int screen, int p0, int p1, int p2 )
         return;
     }
 
+	//    Needed to fix smart cursor (using tool to scavenge/harvest) hiding mouse pointer while iface screens (Character, Inventory, etc) are activated.
+	GameOpt.HideCursor = false;
+
     switch( screen )
     {
         case CLIENT_SCREEN_INVENTORY:
@@ -5682,7 +5745,7 @@ void FOClient::SetCurMode( int new_cur )
 
     if( CurMode == CURSOR_MOVE )
         HexMngr.SetCursorVisible( true );
-    else if( CurModeLast == CURSOR_MOVE )
+	else if (CurModeLast == CURSOR_MOVE)
         HexMngr.SetCursorVisible( false );
 }
 

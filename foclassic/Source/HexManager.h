@@ -359,8 +359,10 @@ public:
 
     // Cursor
 public:
-    void SetCursorPos( int x, int y, bool show_steps, bool refresh );
-    void SetCursorVisible( bool visible ) { isShowCursor = visible; }
+	int ChosenDistanceHex(uint16 x, uint16 y);        //    Checks in game distance from player, needed for smart combat cursor
+	void SetCursorPos_Hex(uint16 x, uint16 y, bool show_steps, bool refresh);
+	void SetCursorPos(int x, int y, bool show_steps, bool refresh);
+	void SetCursorVisible(bool visible) { isShowCursor = visible; }
     void DrawCursor( uint spr_id );
     void DrawCursor( const char* text );
 

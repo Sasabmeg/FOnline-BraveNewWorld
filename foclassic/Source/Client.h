@@ -647,8 +647,8 @@ public:
 /************************************************************************/
 /* Interface                                                            */
 /************************************************************************/
-    int       IfaceHold;
-    StrVec    IfaceIniNames;
+	bool      SmartMouseLastClick;
+	int       IfaceHold;    StrVec    IfaceIniNames;
     IniParser IfaceIni;
 
     bool AppendIfaceIni( const char* ini_name );
@@ -781,6 +781,9 @@ public:
     void GameLMouseUp();
     void GameRMouseDown();
     void GameRMouseUp();
+	void GameMouseCrosshairToLook();
+	void GameMouseCrosshairToMove();
+	void HideSmartCursorLastPosition();
 
 /************************************************************************/
 /* Main iface                                                           */
@@ -1820,6 +1823,7 @@ public:
 #define IFACE_USE_CANCEL               (43)
 #define IFACE_USE_MAIN                 (44)
 #define IFACE_GAME_MNEXT               (60)
+#define IFACE_GAME_SMART               (61)
 #define IFACE_LOG_NAME                 (80)
 #define IFACE_LOG_PASS                 (81)
 #define IFACE_LOG_PLAY__NEWGAME        (82)

@@ -273,7 +273,7 @@ void ItemHex::RefreshAlpha()
     maxAlpha = (IsColorize() ? GetAlpha() : 0xFF);
 }
 
-void ItemHex::SetSprite( Sprite* spr )
+void ItemHex::SetSprite(Sprite* spr, bool forceContourColoring)
 {
     if( spr )
         SprDraw = spr;
@@ -281,9 +281,12 @@ void ItemHex::SetSprite( Sprite* spr )
     {
         SprDraw->SetColor( IsColorize() ? GetColor() : 0 );
         SprDraw->SetEgg( GetEggType() );
-        if( IsBadItem() )
-            SprDraw->SetContour( CONTOUR_RED );
-    }
+		if (IsBadItem())
+			SprDraw->SetContour(CONTOUR_RED);
+		else
+			if (forceContourColoring)
+				SprDraw->SetContour(CONTOUR_YELLOW);
+	}
 }
 
 int ItemHex::GetEggType()

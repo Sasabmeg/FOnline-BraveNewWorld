@@ -1349,7 +1349,7 @@ void FOClient::ParseKeyboard()
                                 TryExit();
                             continue;
                         }
-                    case DIK_O:
+                    case DIK_U:
                         if( GetActiveScreen() == CLIENT_SCREEN_FIXBOY )
                         {
                             TryExit();
@@ -1363,14 +1363,20 @@ void FOClient::ParseKeyboard()
                             continue;
                         }
                         break;
-                    case DIK_Q:
+					case DIK_W:
+						//GameOpt.ItemHighlightActive = true;
+						GameOpt.ItemHighlightActive = !GameOpt.ItemHighlightActive;
+						HexMngr.RefreshMap();
+
+						break;
+                    case DIK_LBRACKET:
                         if( IsMainScreen( CLIENT_MAIN_SCREEN_GAME ) && GetActiveScreen() == CLIENT_SCREEN_NONE )
                         {
                             DrawLookBorders = !DrawLookBorders;
                             RebuildLookBorders = true;
                         }
                         break;
-                    case DIK_W:
+                    case DIK_RBRACKET:
                         if( IsMainScreen( CLIENT_MAIN_SCREEN_GAME ) && GetActiveScreen() == CLIENT_SCREEN_NONE )
                         {
                             DrawShootBorders = !DrawShootBorders;
@@ -1445,7 +1451,9 @@ void FOClient::ParseKeyboard()
 
         // Cursor steps
         if( HexMngr.IsMapLoaded() && (dikdw == DIK_RCONTROL || dikdw == DIK_LCONTROL || dikup == DIK_RCONTROL || dikup == DIK_LCONTROL) )
-            HexMngr.SetCursorPos( GameOpt.MouseX, GameOpt.MouseY, Keyb::CtrlDwn, true );
+			//    To check if smart cursor is activated, if so, may not redraw to keep move-hex outline on clicked position.
+			if (!SmartMouseLastClick)
+				HexMngr.SetCursorPos( GameOpt.MouseX, GameOpt.MouseY, Keyb::CtrlDwn, true );
 
         // Other by screens
         // Key down
@@ -7389,6 +7397,18 @@ void FOClient::AddAction( bool to_front, ActionEvent act )
 
 void FOClient::SetAction( uint type_action, uint param0, uint param1, uint param2, uint param3, uint param4, uint param5 )
 {
+	//	temp fix, so if right click move is used, the last - not up to date pos - would not show.
+	//	TODO: complete code so even on these actions, the position is updated
+	if (type_action == CHOSEN_MOVE_TO_CRITTER ||
+		type_action == CHOSEN_USE_SKILL_ON_CRITTER ||
+		type_action == CHOSEN_USE_SKILL_ON_ITEM ||
+		type_action == CHOSEN_USE_SKILL_ON_SCENERY ||
+		type_action == CHOSEN_TALK_NPC ||
+		type_action == CHOSEN_PICK_ITEM ||
+		type_action == CHOSEN_PICK_CRITTER)
+	{
+		HideSmartCursorLastPosition();
+	}
     SetAction( ActionEvent( type_action, param0, param1, param2, param3, param4, param5 ) );
 }
 
@@ -7751,7 +7771,9 @@ label_EndMove:
                     Chosen->Params[ST_CURRENT_AP] -= ap_cost_real;
                 }
                 Chosen->ApRegenerationTick = 0;
-                HexMngr.SetCursorPos( GameOpt.MouseX, GameOpt.MouseY, Keyb::CtrlDwn, true );
+				//    To check if smart cursor is activated, if so, may not redraw to keep move-hex outline on clicked position.
+				if (!SmartMouseLastClick)
+					HexMngr.SetCursorPos(GameOpt.MouseX, GameOpt.MouseY, Keyb::CtrlDwn, true);
                 RebuildLookBorders = true;
             }
 

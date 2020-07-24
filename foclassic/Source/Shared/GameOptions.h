@@ -156,7 +156,10 @@ struct GameOptions
     bool         AssimpLogging;
     int          MouseX;
     int          MouseY;
-    int          ScrOx;
+	uint16       MouseXLastHexMoveClick;
+	uint16       MouseYLastHexMoveClick;
+	bool		 ItemHighlightActive;
+	int          ScrOx;
     int          ScrOy;
     bool         ShowTile;
     bool         ShowRoof;

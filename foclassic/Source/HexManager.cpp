@@ -362,7 +362,7 @@ bool HexManager::AddItem( uint id, uint16 pid, uint16 hx, uint16 hy, bool is_add
                                                  &item->DrawEffect, &item->SprDrawValid );
             if( !item->IsNoLightInfluence() && !(item->IsFlat() && item->IsScenOrGrid() ) )
                 spr.SetLight( hexLight, maxHexX, maxHexY );
-            item->SetSprite( &spr );
+            item->SetSprite( &spr, GameOpt.ItemHighlightActive);
         }
 
         if( item->IsLight() || !item->IsLightThru() )
@@ -729,6 +729,80 @@ void HexManager::SetRainAnimation( const char* fall_anim_name, const char* drop_
     picRainDrop = SprMngr.LoadAnimation( picRainDropName.c_str(), PATH_DATA, ANIM_USE_DUMMY );
 }
 
+int HexManager::ChosenDistanceHex(uint16 hexX, uint16 hexY)
+{
+	CritterCl* chosen = GetChosen();
+	if (!chosen)
+		return -1;
+	int chosenHexX = chosen->GetHexX();
+	int chosenHexY = chosen->GetHexY();
+	if (chosenHexX == hexX && chosenHexY == hexY) {
+		return 0;
+	}
+	else {
+		return DistGame(chosenHexX, chosenHexY, hexX, hexY);
+	}
+}
+
+void HexManager::SetCursorPos_Hex(uint16 hx, uint16 hy, bool show_steps, bool refresh)
+{
+	Field& f = GetField(hx, hy);
+	cursorX = f.ScrX + 1 - 1;
+	cursorY = f.ScrY - 1 - 1;
+
+	CritterCl* chosen = GetChosen();
+	if (!chosen)
+	{
+		drawCursorX = -1;
+		return;
+	}
+
+	int  cx = chosen->GetHexX();
+	int  cy = chosen->GetHexY();
+	uint mh = chosen->GetMultihex();
+
+	if ((cx == hx && cy == hy) || (f.IsNotPassed && (!mh || !CheckDist(cx, cy, hx, hy, mh))))
+	{
+		drawCursorX = -1;
+	}
+	else
+	{
+		static int    last_cur_x = 0;
+		static uint16 last_hx = 0, last_hy = 0;
+		if (refresh || hx != last_hx || hy != last_hy)
+		{
+			bool is_tb = chosen->IsTurnBased();
+			if (chosen->IsLife() && (!is_tb || chosen->GetAllAp() > 0))
+			{
+				UInt8Vec steps;
+				if (!FindPath(chosen, cx, cy, hx, hy, steps, -1))
+					drawCursorX = -1;
+				else if (!is_tb)
+					drawCursorX = (int)(show_steps ? steps.size() : 0);
+				else
+				{
+					drawCursorX = (int)steps.size();
+					if (!show_steps && drawCursorX > chosen->GetAllAp())
+						drawCursorX = -1;
+				}
+			}
+			else
+			{
+				drawCursorX = -1;
+			}
+
+			last_hx = hx;
+			last_hy = hy;
+			last_cur_x = drawCursorX;
+		}
+		else
+		{
+			drawCursorX = last_cur_x;
+		}
+	}
+
+}
+
 void HexManager::SetCursorPos( int x, int y, bool show_steps, bool refresh )
 {
     uint16 hx, hy;
@@ -1003,7 +1077,13 @@ void HexManager::RebuildMap( int rx, int ry )
                                                       &item->DrawEffect, &item->SprDrawValid );
                     if( !item->IsNoLightInfluence() && !(item->IsFlat() && item->IsScenOrGrid() ) )
                         spr.SetLight( hexLight, maxHexX, maxHexY );
-                    item->SetSprite( &spr );
+					//    Set contour color to show visible items on map (Item detection feature)
+					if (item->IsItem()) {
+						item->SetSprite(&spr, GameOpt.ItemHighlightActive);
+					}
+					else {
+						item->SetSprite(&spr);
+					}
                 }
             }
 
