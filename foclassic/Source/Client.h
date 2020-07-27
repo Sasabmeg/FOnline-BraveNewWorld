@@ -648,6 +648,7 @@ public:
 /* Interface                                                            */
 /************************************************************************/
 	bool      SmartMouseLastClick;
+	bool      LegacyMouseCursor;
 	int       IfaceHold;    StrVec    IfaceIniNames;
     IniParser IfaceIni;
 
