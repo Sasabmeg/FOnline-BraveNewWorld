@@ -5224,12 +5224,12 @@ void FOClient::Net_OnChosenAddItem()
 		float netGain = itemsAdded - itemsRemoved;
 		if (itemsAdded > itemsRemoved) {
 			//	Player received an item
-			WriteLog("Net_OnChosenAddItem() - NET GAIN: ADD - (%d x %d)\n", netGain, item->GetProtoId());
+			//WriteLog("Net_OnChosenAddItem() - NET GAIN: ADD - (%d x %d)\n", netGain, item->GetProtoId());
 			addItemASCallback(item, netGain, "Net_OnChosenAddItem() :: NET GAIN");
 		}
 		else {
 			//	Player lost items, return their currnet item amount in case of stackables
-			WriteLog("Net_OnChosenAddItem() - NET LOSS: REMOVE - (%d x %d)\n", itemsAdded, item->GetProtoId());
+			//WriteLog("Net_OnChosenAddItem() - NET LOSS: REMOVE - (%d x %d)\n", itemsAdded, item->GetProtoId());
 			addItemASCallback(item, netGain, "Net_OnChosenAddItem() :: NET LOSS");
 		}
 	}
