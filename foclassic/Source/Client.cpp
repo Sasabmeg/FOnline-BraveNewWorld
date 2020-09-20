@@ -1233,7 +1233,7 @@ void FOClient::ParseKeyboard()
             switch( dikdw )
             {
                 case DIK_F1:
-                    GameOpt.HelpInfo = !GameOpt.HelpInfo;
+					GameOpt.HelpInfo = !GameOpt.HelpInfo;
                     break;
                 case DIK_F2:
                     if( SaveLogFile() )
@@ -1395,8 +1395,6 @@ void FOClient::ParseKeyboard()
             switch( dikdw )
             {
 				case DIK_F1:
-					//	We have a bug here, for some reason this gets double triggered without the Ctrl in effect,
-					//	so it will also toggle normal F1 behaviour. TODO: ROTATORS PLS FIX
 					if (Keyb::CtrlDwn)
 						LegacyMouseCursor = !LegacyMouseCursor;
 					break;
@@ -3061,6 +3059,7 @@ void FOClient::NetProcess()
         {
             case NETMSG_LOGIN_SUCCESS:
                 Net_OnLoginSuccess();
+				GameOpt.ItemHighlightActive = false;
 					//	SASA: TODO - put script callback here for event then client logs in
                 break;
             case NETMSG_REGISTER_SUCCESS:

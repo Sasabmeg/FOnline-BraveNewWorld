@@ -1731,10 +1731,20 @@ public:
     };
     typedef std::vector<MessBoxMessage> MessBoxMessageVec;
 
-    MessBoxMessageVec MessBox;
+	//	0 - default, 1 - radio
+	int				  MessBoxActiveTab;
+
+	MessBoxMessageVec MessBox;
     std::string       MessBoxCurText;
     int               MessBoxScroll, MessBoxMaxScroll, MessBoxScrollLines;
     IntVec            MessBoxFilters;
+
+	//	adding a separate chat tab for radio
+	MessBoxMessageVec MessBoxRadio;
+	std::string       MessBoxCurTextRadio;
+	int               MessBoxScrollRadio, MessBoxMaxScrollRadio, MessBoxScrollLinesRadio;
+	IntVec            MessBoxFiltersRadio;
+
 
     void MessBoxGenerate();
     void AddMess( int mess_type, const char* msg );

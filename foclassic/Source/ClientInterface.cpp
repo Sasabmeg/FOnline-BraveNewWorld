@@ -3244,8 +3244,24 @@ void FOClient::AddMess( int mess_type, const char* msg )
     char mess_time[64];
     Str::Format( mess_time, "%02d:%02d:%02d ", dt.Hour, dt.Minute, dt.Second );
 
-    // Add
-    MessBox.push_back( MessBoxMessage( mess_type, str, mess_time ) );
+
+	//	check if the message we received is a radio message
+	/*
+	if (strlen(msg) > 5 && strncmp(msg, "Radio", 5) == 0) {
+		static char str2[MAX_FOTEXT];
+		strncpy(str2, mess_time, 9);
+		strncpy(str2 + 9, str, sizeof(str));
+		WriteLog("### SASA ### FOClient::AddMess(<%d>, <%s>)\n", mess_type, str2);
+		MessBox.push_back( MessBoxMessage(mess_type, str2, mess_time));
+	}
+	else {
+		WriteLog("### SASA ### FOClient::AddMess(<%d>, <%s>)\n", mess_type, str);
+		MessBox.push_back(MessBoxMessage(mess_type, str, mess_time));
+	}
+	*/
+
+	// Add
+	MessBox.push_back(MessBoxMessage(mess_type, str, mess_time));
 
     // Generate mess box
     if( std::find( MessBoxFilters.begin(), MessBoxFilters.end(), mess_type ) == MessBoxFilters.end() )
@@ -8632,7 +8648,6 @@ void FOClient::PipDraw()
         case PIP__STATUS:
         {
             // Status
-			/*
             PIP_DRAW_TEXT( FmtGameText( STR_PIP_STATUS ), FONT_FLAG_CENTERX, COLOR_TEXT_DGREEN );
             scr++;
             PIP_DRAW_TEXT( FmtGameText( STR_PIP_REPLICATION_MONEY ), 0, COLOR_TEXT );
@@ -8644,9 +8659,7 @@ void FOClient::PipDraw()
             PIP_DRAW_TEXT( FmtGameText( STR_PIP_REPLICATION_COUNT ), 0, COLOR_TEXT );
             PIP_DRAW_TEXTR( FmtGameText( STR_PIP_REPLICATION_COUNT_VAL, Chosen->GetParam( ST_REPLICATION_COUNT ) ), 0, COLOR_TEXT );
             scr++;
-			*/
             // Timeouts
-			/*
             scr++;
             PIP_DRAW_TEXT( FmtGameText( STR_PIP_TIMEOUTS ), FONT_FLAG_CENTERX, COLOR_TEXT_DGREEN );
             scr++;
@@ -8682,7 +8695,6 @@ void FOClient::PipDraw()
                     PIP_DRAW_TEXTR( FmtGameText( str_num, Str::FormatBuf( "%u", val ) ), 0, COLOR_TEXT );
                 scr++;
             }
-			*/
             // Quests
             scr++;
             if( scr >= 0 && scr < ml )
