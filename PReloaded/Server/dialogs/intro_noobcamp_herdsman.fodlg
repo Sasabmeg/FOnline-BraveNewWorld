@@ -1,0 +1,50 @@
+[comment]
+shit shovel man for noob camp
+
+[data]
+lang=engl
+
+[dialog]
+&
+1 1000 None 0 #
+2 1010 @
+2 2000 None 0 #
+3 2010 #
+6 2020 D _script brahmin_trader@d_CleanedSomeDung 0  #
+0 2030 @
+3 3000 None 0 #
+4 3010 #
+0 3020 @
+4 4000 None 0 #
+7 4010 #
+5 4020 D _item p PID_OLD_SHOVEL = 0 D _item p PID_SHOVEL = 0 D _script dialog@d_QuestTimeoutReady 0  #
+0 4030 @
+5 5000 None 0 #
+7 5010 R _item p PID_OLD_SHOVEL + 1 R _script dialog@r_QuestTimeout 1 24 @
+6 6000 None 0 #
+0 6010 R _script brahmin_trader@r_CleaningPayment 1 5 @
+7 7000 None 0 &
+
+[engl]
+{100}{}{Dirty Herdsman}
+{200}{}{You see a man covered in brahmin shit.}
+{210}{}{Looks like he's had more experience with brahmin than women. You can smell him from here.}
+{1000}{}{Predialogue installations}
+{1010}{}{Answer text}
+{2000}{}{[Ths stench of sweat and manure fills your nostrils with a tangy, pungent odor as you feel sick] Boy git' down ere' an' grab a shovel. This ere' is real work, you want'sta' earn yer' exit package?}
+{2010}{}{Exit package?}
+{2020}{}{I've shovelled some of your shit, I'm done. }
+{2030}{}{Not by doing this.}
+{3000}{}{[He spits out some disgusting brown phlem] Yer' exit package dumbass! You ain't stayin' ere' forever are ya? I didn't think so. You do some work roun' ere', ya' get a little good luck bonus. Now shuddup! I'm shovelling shit ere'!}
+{3010}{}{I'd like to uh...Shovel some shit for a while...}
+{3020}{}{Good luck with that. }
+{4000}{}{Good, get to work.}
+{4010}{}{Sure thing pal, let's get started.}
+{4020}{}{If you think I'm going into that field and grabbing fistfuls of brahmin shit, you have another thing coming.}
+{4030}{}{I think I'll pass...}
+{5000}{}{Yeah, okay, here you go. Come back to me when you're done.}
+{5010}{}{Ugh...This wasn't in the brochure.}
+{6000}{}{They'll keep shittin' but okay, thanks. I'll let Captain Stone know you've helped out over here. You can come back anytime if you want, do some more real work, I won't mind. }
+{6010}{}{I need a bath...}
+{7000}{}{Remember! It's all in the hips, all in the hips!}
+

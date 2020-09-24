@@ -31,9 +31,6 @@ import void CapRadiation(Critter& cr) from "radiation";
 // const uint16 HellMapPid=MAP_replication_hell;
 const uint16[] Hospitals = { LOCATION_StartLocation };
 
-// starting towns
-const uint16[] Towns = { LOCATION_StartLocation };
-
 //
 // Gets nearest replication map
 //
@@ -71,37 +68,21 @@ Map@ GetNearestReplicatorMap(Critter& player)
     // get first map
     return nearest.GetMapByIndex(0);
 }
+
 Map@ GetRandomReplicatorMap(Critter& player)
 {
     return GetLocationByPid(random_from_array(Hospitals), 0).GetMapByIndex(0);
 }
 
-//
-// Chose one of the towns to start
-//
-Map@ GetStartingMap(Critter& player)
-{
-    uint      idx = Random(0, Towns.length() - 1);
-    Location@ loc = GetLocation(Towns[idx]);
-
-    return loc.GetMapByIndex(0);
-}
-
 void SetStartLocation(Critter& cr)   // Export
 {
-    /*Map@ map=GetStartingMap(cr);
-       if(not valid(map))
-            return;*/
-
-    // Spawn player in instanced starter location
-    //uint x = 0, y = 0;
-   // uint startloc = Random(LOCATION_Spawnpoint1, LOCATION_Spawnpoint3);
-    //uint startloc = 0;
-
-    //uint      locId = CreateLocation(startloc, x, y, null);
-    //Location@ loc = GetLocation(locId);
-    //Map@      map = loc.GetMapByIndex(0);
-    Map@ map = GetStartingMap(cr);
+    uint x, y = 0;
+    uint startloc = LOCATION_StartVault24;
+    x = 1522;
+    y = 2028;
+    uint      locId = CreateLocation(startloc, x, y, null);
+    Location@ loc = GetLocation(locId);
+    Map@      map = loc.GetMapByIndex(0);
     if(!valid(map))
         return;
 

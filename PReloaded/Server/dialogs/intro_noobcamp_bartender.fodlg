@@ -1,0 +1,67 @@
+[comment]
+Intro bartender
+
+[data]
+lang=engl russ
+
+[dialog]
+&
+1 1000 None 0 #
+4 1010 D _var p noob_camp_plague = 0 #
+2 1020 D _var p noob_camp_plague = 1 #
+4 1030 D _var p noob_camp_plague = 2 @
+4 2000 None 0 @
+2 3000 None 0 #
+3 3010 @
+3 4000 None 0 #
+0 4010 R _var p noob_camp_plague = 2 R _script dialog@r_AddExperience 1 800 R _item p PID_BEER + 1 &
+
+[engl]
+{100}{}{Lander's Point Bartender}
+{200}{}{You see the Lander's Point friendly bartender.}
+{210}{}{They sure don't look friendly. I don't think I should be drinking anyways.}
+{1000}{}{Predialogue installations}
+{1010}{}{not known}
+{1020}{}{plague quest}
+{1030}{}{compl}
+{2000}{}{@@Better wash the counter again.@@That's five caps, buddy. Hey! Did you hear me? Cough em' up.@@Better change the keg.@@Rotgut? You drink that shit?@@Domestic? I got B.E.E.R, buddy. Do you want one or not?@@Fuckin' dust is getting everywhere. Hey! Close the fuckin' door!@@I swear if the next asshole doesn't tip, I'm going to shoot somebody!@@I got bottles. I got shots. And I got a bat behind the counter for retards. You're not a retard, are you?@@Uh-huh? Yeah that's nice buddy. You don't say? What? Of course I'm listening!@@Shut up and order a fuckin' beer already!@@I swear, if I have to serve another drunk, I'm getting the shotgun!@@Look, the key went dry, and it's going to be another month until the caravan shows up.@@Really? You don't say? Buy another drink or get out!@@Be right with ya.@@Have a seat, stranger @@When do we close? When the place gets shot up, that's when!@@We're fresh out of cold beer, sorry. You'll just have to drink it warm.@@Rotgut? No, go make that shit yourself!}
+{3000}{}{Yeah? [He looks at you impatiently]}
+{3010}{}{I solved the plague problem! You need to start boiling the water until they clear out the wells. }
+{4000}{}{[The bartender hands you a drink] It's on the house, good job! I'll tell the Captain you saved our asses big time.}
+{4010}{}{Thanks. See ya.}
+{100000001}{}{Better wash the counter again...}
+{100000002}{}{That's 5 caps buddy. Hey did you hear me? Cough em' up.}
+{100000003}{}{Better change the keg...}
+{100000004}{}{RotGut? You drink that shit?}
+{100000005}{}{Domestic? I got B.E.E.R buddy, do you want one or not?}
+{100000006}{}{Fuckin' dust is getting everywhere. Hey close the fuckin' door!}
+{100000007}{}{I swear if the next asshole doesn't tip. Ima' shoot somebody!}
+{100000008}{}{I got bottles, I got shots, and I got a bat behind the counter for the retards. Your not a retard are you?}
+{100000009}{}{Uh-huh, yeah that's nice buddy. You don't say...What? Of course I'm listening...}
+{100000010}{}{That's 5 caps. FIVE CAPS Tribal! F.I.V.E! }
+{100000011}{}{Shut up and order a fuckin' beer already!}
+{100000012}{}{I swear if I have to serve another drunk, I'm getting the shotgun!}
+{100000013}{}{Look the keg went dry, and it's going to be another month until the caravan shows up again.}
+{100000014}{}{Really? You don't say, buy another drink or get out!}
+{100000015}{}{What? I'm on break.}
+{100000016}{}{Be right with ya'}
+{100000017}{}{Have a sit stranger. I'll be with you in a moment.}
+{100000018}{}{When do we close? Uh, when the place get's shot up, that's when!}
+{100000019}{}{We're fresh outta' cold beer, sorry. You'll just have to drink it warm.}
+{100000020}{}{RotGut? No man, go make that shit yourself! I wouldn't drink it!}
+
+[russ]
+{100}{}{Алкоголик}
+{200}{}{Вы видите пьяницу.}
+{210}{}{Вы видите шатающегося из стороны в сторону пьяного человека в лохмотьях. Лицо его распухло, нос синющий как слива. А аромат рядом с ним такой, что свалит брамина насмерть. Он что-то бормочет про себя и иногда громко поет песни.}
+{210}{}{Вы видите алкаша. Он весьма грязен - кажется, он повалялся в луже, но не особо этим расстроен.}
+{1000}{}{I?aaaeaeiaiaua onoaiiaee}
+{1010}{}{Answer text}
+{1020}{}{plague quest}
+{1030}{}{compl}
+{2000}{}{Thank you! Thank you! }
+{3000}{}{Yeah? [He looks at you impatiently]}
+{3010}{}{I solved the plague problem! You need to start boiling the water until they clear out the wells. }
+{4000}{}{[The bartender hands you a free drink] It's on the house, good job! I'll tell the Captain you saved our asses big time. }
+{4010}{}{Thanks. See ya.}
+

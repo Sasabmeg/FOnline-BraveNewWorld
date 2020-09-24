@@ -1,0 +1,67 @@
+﻿#ifndef __NOOB_CAMP_DIALOG__
+#define __NOOB_CAMP_DIALOG__
+
+#include "_macros.fos"
+
+
+// questVars = { var, value, item, count, item, count... }
+array<array<uint>> questVars = { 
+	{ LVAR_noob_camp_alecquest, 1, PID_LEATHER_JACKET, 1, PID_LEATHER_JACKET_HELMET, 1 },
+	{ LVAR_noob_camp_breederquest, 1, PID_ROPE, 1 },
+	{ LVAR_noob_camp_robodog, 1, PID_RADIO, 1, },
+	{ LVAR_noob_camp_edquest, 1, PID_SLEDGEHAMMER, 1 },
+	{ LVAR_noob_camp_jessica, 1, PID_ANTIDOTE, 2 },
+	{ LVAR_noob_camp_jimmy, 1, PID_FIRST_AID_KIT, 1 },
+	{ LVAR_noob_camp_kid, 1, PID_MUTATED_FRUIT, Random(2, 6) },
+	{ LVAR_noob_camp_knife, 1, PID_KNIFE, 1 },
+	{ LVAR_noob_camp_lawrence, 2, PID_GREEN_CONDOM, 1 },
+	{ LVAR_noob_camp_trapper, 2, PID_HEALING_POWDER, 3 },
+	{ LVAR_noob_camp_rebec, 1, PID_WATERBAG, 1 },
+	{ LVAR_noob_camp_simon, 1, PID_AXE, 1 },
+	{ LVAR_noob_camp_stanley, 1, PID_BEER, Random(1, 3) },
+	{ LVAR_noob_camp_thunderjo, 1, PID_10MM_PISTOL, 1, PID_10MM_JHP, Random(20, 30) },
+	{ LVAR_noob_camp_hunter, 3, PID_TENT, 1 },
+	{ LVAR_noob_camp_plague, 2, PID_STIMPAK, 3 },
+	{ LVAR_noob_camp_armorer, 1, PID_MULTI_TOOL, 1 }
+};
+
+void r_LeaveNoobCamp(Critter& player, Critter@ npc)
+{
+	uint      locId = CreateLocation(LOCATION_StartCaravan, 1522, 2028, null);
+    Location@ loc = GetLocation(locId);
+    Map@      map = loc.GetMapByIndex(0);
+    if(!valid(map))
+        return;
+
+    if(player.Timeout[TO_BATTLE] > 0)
+    {
+    	npc.Say(SAY_NORM_ON_HEAD, "You shall not pass!");
+    	return;
+    }
+
+    array<Item@> items;
+    player.GetItems(-1, items);
+    DeleteItems(items);
+
+    for(uint i=0, j=questVars.length(); i < j; ++i)
+    {
+    	int m = questVars[i].length();
+    	if(m > 3 && m%2 == 0)
+    	{
+    		GameVar@ var = GetLocalVar(questVars[i][0], player.Id);
+    		uint varVal = var.GetValue();
+    		if(varVal == questVars[i][1])
+    		{
+    			for(int k=2; k < m; k+=2)
+    			{
+    				player.AddItem(questVars[i][k], questVars[i][k+1]);
+    			}
+    		}
+    	}
+    }
+
+    player.TransitToMap(map.Id, 0);
+}
+
+#endif // __NOOB_CAMP_DIALOG__ //
+

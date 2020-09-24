@@ -1,0 +1,104 @@
+[comment]
+
+
+[data]
+lang=engl
+
+[dialog]
+&
+1 1000 None 0 #
+14 1010 D _var p q_spawn_hub > 0 #
+2 1020 D _var p name_mem_npc_player = 0 R _var p name_mem_npc_player = 1 #
+20 1030 @
+20 2000 None 0 #
+5 2010 @
+2 3000 None 0 #
+3 3010 @
+3 4000 None 0 #
+4 4010 #
+5 4020 #
+0 4030 @
+4 5000 None 0 #
+5 5010 #
+0 5020 @
+5 6000 None 0 #
+6 6010 D _var p q_tourist = 0 R _var p q_tourist = 1 #
+7 6020 D _var p q_spawn_hub = 0 #
+8 6030 #
+0 6040 @
+6 7000 None 0 #
+9 7010 #
+5 7020 @
+7 8000 None 0 #
+5 8010 #
+6 8020 D _var p q_tourist = 0 R _var p q_tourist = 1 @
+8 9000 None 0 #
+5 9010 @
+9 10000 None 0 #
+10 10010 #
+0 10020 @
+10 11000 None 0 #
+11 11010 #
+0 11020 @
+11 12000 None 0 #
+13 12010 #
+12 12020 @
+12 13000 None 0 #
+5 13010 #
+0 13020 @
+13 14000 None 0 #
+0 14010 R _var p q_spawn_hub = 1 @
+14 15000 None 0 #
+5 15010 #
+0 15020 &
+
+[engl]
+{100}{}{Startled Caravan Driver}
+{200}{}{You see a startled caravan driver.}
+{210}{}{He looks like a well-travelled merchant, very well organized. You've never seen anything like this before. }
+{1000}{}{Predialogue installations}
+{1010}{}{Got the quest}
+{1020}{}{Answer text}
+{1030}{}{bereits gesprochen}
+{2000}{}{[He looks more worried than last time] Back? Careful now, you're in a desert. It's important to stay hydrated, have you found any water yet?}
+{2010}{}{Can I ask you something?}
+{3000}{}{[Your sudden arrival startles the caravan] What the?! Where the hell did you crawl from? Were you living in that cave over there? }
+{3010}{}{It's really none of your damn business.}
+{4000}{}{[The man seems uneasy] Alright, alright! I didn't mean nothing, stranger. You don't look like you're from around here, that's all.}
+{4010}{}{What are you guys doing out here? Where am I?}
+{4020}{}{Don't worry about that. Mind if I ask you a couple of questions?}
+{4030}{}{Sorry, I've got to get out of here.}
+{5000}{}{[The man looks at you as if you just walked out of a time capsule] We're in California... Right outside of the Hub actually. Say pal, you feeling all right? What's with the jumpsuit anyway?}
+{5010}{}{Don't worry about that. Mind if I ask you a couple of questions?}
+{5020}{}{No, now that you mention it. I should be going. }
+{6000}{}{[He smiles] Sure, what do you want to know?}
+{6010}{}{What's this Hub you're talking about?}
+{6020}{}{Where are you heading?}
+{6030}{}{What's it like out there? I've never been to California...}
+{6040}{}{Nevermind, I need to go.}
+{7000}{}{[The man discards his anxiety and starts to ramble on] The Hub? Hell, it's the central nervous system of the New California! Biggest city around, got it's own government, law, and caravan companies. You see, we may be livin' on top of the bones of an old civilization, but we kick-started back its heart. I've been living there for years, working the caravan trade. This here is my caravan don't'cha know? Any man, or woman can find a decent living waiting for them in the Hub. Go see Joe Kelly, tell him I sent ya. He'll love to see a fresh face.}
+{7010}{}{Strange, I thought this whole country was burnt to the ground years ago... What else can you tell me about the Hub?}
+{7020}{}{Can I ask you something else? }
+{8000}{}{[He laughs] Back home, chum! We're dropping off a shipment of knicknacks at Stockmen's Association. You'd be surprised what people will buy in bulk, and what someone else is seilling in bulk as well. [He realizes that you probably have no idea what he's talking about] We're heading to the Hub, it's just a couple hours travel east of here. Stockmen' is one of the organized traders in the Hub, they mostly deal with the suits though. But overall it's a good city to settle down, if you ask me. }
+{8010}{}{Mind if I ask you something else?}
+{8020}{}{Tell me about the Hub.}
+{9000}{}{[The man begins to look troubled] ... I don't know what to tell you, stranger. It's like anywhere I guess, ain't much civility. Some folks look around and see a world we never meant to leave behind. While others see it as an excuse to abuse the locals. Which are you? }
+{9010}{}{I really don't know anymore. Mind if I ask you another question?}
+{10000}{}{[He thinks for moment] Well, there's a Sheriff. A bar with a beautiful lounge singer. Several caravan companies, traders, and... Gangs. The Hub police have things pretty much under control, but it used to be a lot worse. Careful you don't go poking your nose where it don't belong. Still, you can make a decent living over there. Always plenty of work for a fellow who don't mind getting their hands dirty. }
+{10010}{}{Since you're heading that way do you mind if I tag along?}
+{10020}{}{That's all I wanted to know. See you.}
+{11000}{}{[He shakes his head and frowns] Nah, we're full here. Gotta stay here for a while longer and rest up. Won't be another day, I reckon, until we leave. Sandstorm from yesterday sure did slow us down. I even lost my scout to the dust, have no idea where he went. Say pal, you want to deliver a letter for me? You look like you'll probably make it the Hub before we do. }
+{11010}{}{Yeah, okay. }
+{11020}{}{Sorry, I can't promise anything. You're better off delivering it yourself. I'd better run.}
+{12000}{}{[He smiles and hands you the letter] Swell, pal. I'm running behind on the shipment. Promised it be there by monday but it doesn't look like that'll be happening any time soon. Stockmen's Association doesn't have regular customer service so you'll have to drop it off with the Far Go Traders. They've got an office right in front of it, you can't miss the signs. Just walk in, and hand them the letter. }
+{12010}{}{Sure. Sounds simple.}
+{12020}{}{You're probably better off just delivering it yourself. }
+{13000}{}{[He frowns] Yeah, you're probably right. Let me know if you change your mind, I really need to get a message out or else they'll buy someone elses product. }
+{13010}{}{Let me ask you a question.}
+{13020}{}{I will. See you.}
+{14000}{}{[He smiles heavily and shakes your hand] Great, pal! I owe you, really do. Just hand them the letter and say we'll be back in town in a day or two. }
+{14010}{}{Sure, no problem. I'll get to it. Thanks for your help.}
+{15000}{}{[He smiles and shakes your hand] Hey again, you loving this Californian heat? What's on your mind?}
+{15010}{}{Mind if I ask you of couple of questions?}
+{15020}{}{Not much, I'll be seeing ya.}
+

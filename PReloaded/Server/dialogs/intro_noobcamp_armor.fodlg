@@ -1,0 +1,190 @@
+[comment]
+tanner noob camp wants some golden geck pelts (4) to upgrade her armor
+
+[data]
+lang=engl russ
+
+[dialog]
+&
+1 1000 None 0 #
+4 1010 D _var p name_mem_npc_player = 0 D _var p noob_camp_armorer = 0 #
+14 1020 D _var p name_mem_npc_player = 1 D _var p noob_camp_armorer = 0 #
+16 1030 D _var p noob_camp_armorer = 1 @
+4 2000 None 0 #
+2 2010 #
+3 2020 #
+5 2030 #
+6 2040 @
+2 3000 None 0 #
+3 3010 #
+5 3020 #
+6 3030 @
+3 4000 None 0 #
+5 4010 #
+6 4020 #
+0 4030 @
+5 5000 None 0 #
+8 5010 #
+7 5020 #
+0 5030 @
+6 6000 None 0 #
+8 6010 #
+7 6020 #
+0 6030 @
+7 7000 None 0 @
+8 8000 None 0 #
+9 8010 #
+9 8020 #
+9 8030 #
+10 8040 @
+9 9000 None 0 #
+11 9010 #
+0 9020 @
+10 10000 None 0 #
+11 10010 #
+0 10020 @
+11 11000 None 0 #
+12 11010 D _param p PE_GECKO_SKINNING > 0 #
+13 11020 @
+12 12000 None 0 #
+0 12010 R _var p name_mem_npc_player = 1 @
+13 13000 None 0 #
+0 13010 @
+14 14000 None 0 #
+15 14010 D _item p PID_GOLDEN_GECKO_PELT > 4 R _item p PID_GOLDEN_GECKO_PELT - 5 R _script dialog@r_AddExperience 1 600 R _var p noob_camp_armorer = 1 #
+0 14020 @
+15 15000 None 0 #
+0 15010 @
+16 16000 None 0 &
+
+[engl]
+{100}{}{Samantha, the tanner}
+{200}{}{You see Samantha, the tanner.}
+{210}{}{She's wearing a very well made leather jacket. Maybe one day you'll be able to make something similar. }
+{1000}{}{Predialogue installations}
+{1010}{}{not known}
+{1020}{}{known}
+{1030}{}{complete}
+{2000}{}{[You see a woman sewing together some pieces of dried brahmin hide. She stops working as you approach] Hi there! You must be one of the new guys. Welcome to the *real* world, sorry it isn't much to look at. *Sigh* I sure do miss the vault. }
+{2010}{}{Why don't you just go back?}
+{2020}{}{Me too, I don't know why I'm out here.}
+{2030}{}{Have you left the camp yet?}
+{2040}{}{I don't. It felt like we were just human experiments. Rats in a cage, too stupid to realize that their master died years ago.}
+{3000}{}{[She smiles] Ask the Captain about that, or the Overseer. This is my new home, might as well get used to it. [She goes back to sewing]}
+{3010}{}{Just what the hell do they expect from us anyways?}
+{3020}{}{Have you left the camp yet?}
+{3030}{}{Well, anything is better than the vault. It felt like we were just human experiments. Rats in a cage, too stupid to realize that their master died years ago.}
+{4000}{}{[She smiles] We've all got our purpose in life, the only question is, what is it? *Sigh* No use in really thinking about it too much, though. Look at where it got us. [She points to the ruined buildings of L.A] }
+{4010}{}{Have you left the camp yet?}
+{4020}{}{Well, anything is better than the vault. It felt like we were just human experiments. Rats in a cage, too stupid to realize that their master died years ago.}
+{4030}{}{You sure are depressing. I'm out of here.}
+{5000}{}{[She bows her head] No, I haven't quite found the courage yet. I'm still feeling pretty nostalgic about it all. It just seems like yesterday, I was this little girl, running around the vault. Just waiting for the world to get better, I really thought that the outside was just "sick", and that in a few more years everything would get better. [She cries] I didn't know that I'd be walking out to this! [She points to the ruins of L.A]}
+{5010}{}{Hey, that sure is a nice looking jacket. Did you make it?}
+{5020}{}{Fuck, grow up. }
+{5030}{}{I think I'll just leave you alone for a while.}
+{6000}{}{[Her smile fades] If I could go back to being just another rat in a cage, I would. [She points to the ruined buildings of L.A] It just seems like yesterday, I was this little girl, running around the vault. Just waiting for the world to get better, I really thought that the outside was just "sick", and that in a few more years everything would get better. [She cries] I didn't know that I'd be walking out to this!  }
+{6010}{}{Hey, that sure is a nice looking jacket. Did you make it?}
+{6020}{}{You're still that little girl, you need to grow up.}
+{6030}{}{I think I'll just leave you alone for a while.}
+{7000}{}{How dare you! Get out!}
+{8000}{}{[The young woman cheers herself up] Oh, this thing? Yeah, I made it myself. Do you like it? I took an old leather jacket, some fiber, brahmin hides, golden and silver gecko pelts, and made this. It's even got two sleeves! [She dries her eyes with one of them]}
+{8010}{}{It's beautiful.}
+{8020}{}{It's very nice.}
+{8030}{}{It's okay.}
+{8040}{}{You could have done a better job actually. What is this thing? A tacky clip?}
+{9000}{}{[She smiles again] Thanks! Hey, can you do me a favor please? I need to make a new set of armor for the security guys, but I'm all out of golden gecko pelts. Can you run over to the trapping grounds, and bring me back five? }
+{9010}{}{Sure!}
+{9020}{}{No, fuck that. See ya.}
+{10000}{}{[She bows her head] No! It's a clip for your rifle strap! Listen, I need to make a new set of armor for the security guys, but I'm all out of golden gecko pelts. Can you run over to the trapping grounds, and bring me back five, please? }
+{10010}{}{Sure!}
+{10020}{}{No, fuck that. See ya.}
+{11000}{}{[She seems pleased] Great! You know how to skin geckos, right?}
+{11010}{}{Of course! That old trapper taught me.}
+{11020}{}{Uh, no actually, I don't.}
+{12000}{}{[She seems relieved] Thank God! I was worried that I was asking the wrong person. I completely forgot that most people don't know how to skin a gecko. Go figure! Alright then, you know what to do. I'll be wating for those five golden gecko pelts. Thanks again!}
+{12010}{}{Hah! Yeah! Some people. See ya!}
+{13000}{}{[Her smile fades] Oh, that's right. Most people don't know how to skin geckos. Well, there's an old trapper around here somewhere. If he's still around camp I'm sure he'll teach you something about gecko skinning. Go see him, then come back.}
+{13010}{}{Alright, thanks.}
+{14000}{}{[The young woman is casually just sewing away] Hey, you! Did you manage to get those five golden gecko pelts?}
+{14010}{}{Yup, got them right here!}
+{14020}{}{Not yet, those bastards are tough!}
+{15000}{}{[She smiles] Oh, wow, these are awesome! Thanks! You know, if people out there are as nice as you, I might just leave this camp one day!}
+{15010}{}{Me too! See you around.}
+{16000}{}{Hey again! Like my new jacket?}
+{100000001}{}{Better wash the counter again...}
+{100000002}{}{That's 5 caps buddy. Hey did you hear me? Cough em' up.}
+{100000003}{}{Better change the keg...}
+{100000004}{}{RotGut? You drink that shit?}
+{100000005}{}{Domestic? I got B.E.E.R buddy, do you want one or not?}
+{100000006}{}{Fuckin' dust is getting everywhere. Hey close the fuckin' door!}
+{100000007}{}{I swear if the next asshole doesn't tip. Ima' shoot somebody!}
+{100000008}{}{I got bottles, I got shots, and I got a bat behind the counter for the retards. Your not a retard are you?}
+{100000009}{}{Uh-huh, yeah that's nice buddy. You don't say...What? Of course I'm listening...}
+{100000010}{}{That's 5 caps. FIVE CAPS Tribal! F.I.V.E! }
+{100000011}{}{Shut up and order a fuckin' beer already!}
+{100000012}{}{I swear if I have to serve another drunk, I'm getting the shotgun!}
+{100000013}{}{Look the keg went dry, and it's going to be another month until the caravan shows up again.}
+{100000014}{}{Really? You don't say, buy another drink or get out!}
+{100000015}{}{What? I'm on break.}
+{100000016}{}{Be right with ya'}
+{100000017}{}{Have a sit stranger. I'll be with you in a moment.}
+{100000018}{}{When do we close? Uh, when the place get's shot up, that's when!}
+{100000019}{}{We're fresh outta' cold beer, sorry. You'll just have to drink it warm.}
+{100000020}{}{RotGut? No man, go make that shit yourself! I wouldn't drink it!}
+
+[russ]
+{100}{}{Алкоголик}
+{200}{}{Вы видите пьяницу.}
+{210}{}{Вы видите шатающегося из стороны в сторону пьяного человека в лохмотьях. Лицо его распухло, нос синющий как слива. А аромат рядом с ним такой, что свалит брамина насмерть. Он что-то бормочет про себя и иногда громко поет песни.}
+{210}{}{Вы видите алкаша. Он весьма грязен - кажется, он повалялся в луже, но не особо этим расстроен.}
+{1000}{}{I?aaaeaeiaiaua onoaiiaee}
+{1010}{}{Answer text}
+{1020}{}{known}
+{1030}{}{complete}
+{2000}{}{Thank you! Thank you! }
+{2010}{}{1}
+{2020}{}{2}
+{2030}{}{3}
+{2040}{}{4}
+{3000}{}{[Smiles] Yup!}
+{3010}{}{1}
+{3020}{}{2}
+{3030}{}{3}
+{4000}{}{[Smiles] Yup!}
+{4010}{}{1}
+{4020}{}{2}
+{4030}{}{3}
+{5000}{}{[Smiles] Yup!}
+{5010}{}{1}
+{5020}{}{2}
+{5030}{}{3}
+{6000}{}{[Smiles] Yup!}
+{6010}{}{1}
+{6020}{}{2}
+{6030}{}{3}
+{7000}{}{[Smiles] Yup! Yup! Yup!}
+{8000}{}{[Smiles] Answer 2a}
+{8010}{}{It's beautiful.}
+{8020}{}{It's very nice.}
+{8030}{}{It's okay.}
+{8040}{}{You could have done a better job actually. What is this thing? A tacky clip?}
+{9000}{}{[Smiles] Answer 3a}
+{9010}{}{Sure!}
+{9020}{}{No, fuck that. See ya.}
+{10000}{}{[Smiles] Answer 4a}
+{10010}{}{Sure!}
+{10020}{}{No, fuck that. See ya.}
+{11000}{}{[Smiles] Universal Quest Dialog}
+{11010}{}{Of course! That old trapper taught me.}
+{11020}{}{Uh, no actually, I don't.}
+{12000}{}{[Smiles] Universal Return Dialog}
+{12010}{}{Hah! Yeah! Some people.}
+{13000}{}{[Smiles] Universal Complete Dialog}
+{13010}{}{Alright, thanks.}
+{14000}{}{[The young woman is casually just sewing away] Hey you! Did you manage to get those five golden gecko pelts?}
+{14010}{}{Yup, got them right here!}
+{14020}{}{Not yet, those bastards are tough!}
+{15000}{}{[She smiles] Oh wow, these are awesome! Thanks! You know, if people out there are as nice as you, I might just leave this camp one day!}
+{15010}{}{Me too! See you around.}
+{16000}{}{Hey again! Like my new jacket?}
+
