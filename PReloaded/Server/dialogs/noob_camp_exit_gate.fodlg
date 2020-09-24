@@ -1,0 +1,36 @@
+[comment]
+custos is latin for keeper, noob camp exit guy replacement. Give him leather armor and a spear or keep him as a hermit, but give him a spear lol.
+
+[data]
+lang=engl
+
+[dialog]
+&
+1 1000 None 0 #
+2 1010 @
+2 2000 None 0 #
+0 2010 R _script noob_camp_dialog@r_LeaveNoobCamp 0  #
+3 2020 D _var p q_tourist = 0 #
+0 2030 @
+3 3000 None 0 #
+4 3010 @
+4 4000 None 0 #
+5 4010 R _var p q_tourist = 1 @
+5 5000 None 0 &
+
+[engl]
+{100}{}{Custos, the scout}
+{200}{}{You see Custos, the scout.}
+{210}{}{Looks like this guy is your ticket out of here. He's screening over the vault dwellers and getting them ready for departure. }
+{1000}{}{Predialogue installations}
+{1010}{}{Answer text}
+{2000}{}{Well howdy there! You just about ready to get on out of here? It's a big world, and it's been calling for ya. Whenever you're ready I can let ya out of here. Just remember that there's no turning back! No one's been able to find this place again. }
+{2010}{}{I'm ready to leave, open up the gates!}
+{2020}{}{What should I do with myself after I leave? Where will I go? }
+{2030}{}{On second thought I'm not quite ready to leave just yet.}
+{3000}{}{Beats me stranger, but I reckon you should head over to the Hub. It's just east of here, it's the trading capital of California! I'm sure you'll be able to figure it out over there. Plenty of work, and the people are pretty friendly when they're sober. }
+{3010}{}{What can you tell me about the Hub?}
+{4000}{}{Not much, I'm not a historian, but it's mostly a trading town and the main base for all the local caravan companies. They're always running shipments across the wasteland, God only knows where they go. It's a nice place really, you should check it out. Hell you're straight out of the vault! It's going to be quite the sight! You should go over there actually, and introduce yourself to an old friend of mine, Joe Kelly! He'll have a blast meeting you vault hicks.}
+{4010}{}{I'll have to think about it some more, see ya. But what did you mean by "Vault Hick"?}
+{5000}{}{Oh, gee willikers, I didn't mean nothin'! Move along now.}
+

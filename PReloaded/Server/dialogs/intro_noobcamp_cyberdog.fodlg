@@ -1,0 +1,157 @@
+[comment]
+cyberdog needs repairs
+
+noob_camp_robodog
+
+23005
+
+0-2
+0 not com
+1 com
+2 extra
+
+[data]
+lang=engl russ
+
+[dialog]
+&
+1 1000 None 0 #
+4 1010 D _var p name_mem_npc_player = 0 D _var p noob_camp_robodog = 0 #
+15 1020 D _var p noob_camp_robodog = 1 @
+4 2000 None 0 #
+10 2010 #
+11 2020 #
+12 2030 #
+3 2040 D _param p SK_SCIENCE > 29 #
+0 2050 @
+10 3000 None 0 #
+4 3010 #
+0 3020 @
+11 4000 None 0 #
+4 4010 #
+0 4020 @
+12 5000 None 0 #
+4 5010 #
+0 5020 @
+3 6000 None 0 #
+2 6010 D _item p PID_ELECTRONIC_PARTS > 0 #
+4 6020 #
+0 6030 @
+2 7000 None 0 #
+5 7010 @
+5 8000 None 0 #
+6 8010 #
+4 8020 @
+6 9000 None 0 #
+7 9010 @
+7 10000 None 0 #
+8 10010 @
+8 11000 None 0 #
+9 11010 @
+9 12000 None 0 #
+0 12010 R _param p SK_SCIENCE + 6 R _script dialog@r_AddExperience 1 300 R _item p PID_ELECTRONIC_PARTS - 1 R _var p noob_camp_robodog = 1 @
+15 13000 None 0 &
+
+[engl]
+{100}{}{Outdated Cyberdog}
+{200}{}{You see an old Vault-Tek Cyberhound.}
+{210}{}{Doesn't look like it's working at all, might need some repairs.}
+{1000}{}{Predialogue installations}
+{1010}{}{not known}
+{1020}{}{completed}
+{2000}{}{[You find what appears to be a barely functional Vault-Tek Cyberhound, and although it's an older model you remember reading much about them in a comic book growing up in the vault]}
+{2010}{}{[Fiddle with the processor]}
+{2020}{}{[Attempt to play fetch with the dog]}
+{2030}{}{[Give it a good kick]}
+{2040}{}{[Plug its brain into your PipBoy and run the diagnostics]}
+{2050}{}{Ah screw it! I'm done! Stupid dogs. I need to learn more about science before attempting this again.}
+{3000}{}{[You fiddle with the processor but find that it does absolutely nothing. Should have bought American] [Reqs 30x Science]}
+{3010}{}{What if I...}
+{3020}{}{Ah screw it! I'm done! Stupid dogs.}
+{4000}{}{[You throw a stick at the dog but it just feels cruel. Maybe you should stop?] [Reqs 30x Science]}
+{4010}{}{What if I...}
+{4020}{}{Ah screw it! I'm done! Stupid dogs.}
+{5000}{}{[You give the robotic pooch quite a good thrashing, but you only manage to hurt your foot... And your pride] [Reqs 30x Science]}
+{5010}{}{What if I...}
+{5020}{}{Ah screw it! I'm done! Stupid dogs.}
+{6000}{}{[You plug the Cyberhound TM' s brain into your PipBoy and start up the diagnostics program. A few moments later a piece of garbled code appears] ERROR ELECTRONIC HARDWARE FAILED! REPLACE INTERNAL HARD DRIVE! PLEASE CONTACT YOUR SYSTEM ADMINISTRATOR FOR MORE INFORMATION! [Looks like you'll need a new part to get this beast working]}
+{6010}{}{[Replace and reformat the internal hard drive]}
+{6020}{}{What if I...}
+{6030}{}{Ah screw it! I'm done! Stupid dogs.}
+{7000}{}{[After installing the new part you attempt to quickly wipe the data from the dog's brain and give it a reset. But a strange menu pops-up and says] GЗЋixiД› yГ¬ngjiГ n shГ№jГ№ bГ¬ng jГ¬xГ№ ma? (еђѕи‰ѕ) (и‰ѕеЁњ)}
+{7010}{}{What the hell? Where's the hologram interface?}
+{8000}{}{[This primitive computer language is puzzling to you, do you push the GHWYS or SJAKHE button?]}
+{8010}{}{GHWYS}
+{8020}{}{SJAKHE}
+{9000}{}{[You quickly push the "Y" key and patiently wait as the new data is overriden into the machine's brain. After a short pause the light inside the dog's cranium begins to light up and glow a menacing red]}
+{9010}{}{Uh...Okay...}
+{10000}{}{[A sequence of numbers is seen inside the robot's eyes but quickly disapears. Your PipBoy vibrates and sends you a pop-up it reads] Push any key to continue. [Well where's the "any key" you wonder?]}
+{10010}{}{[Close your eyes and push a random key]}
+{11000}{}{[You cleverly push the closest button to your right hand and hope for the best. Looks like it worked! The Vault-Tek Cyberhound flickers back to life and begins it's patrol. Great success!]}
+{11010}{}{Boy! I sure am smart! Time to rip out these cables!}
+{12000}{}{[You improve your Science skill by 6%!]}
+{12010}{}{Ugh..I should have done that more gently...}
+{13000}{}{@@Does not compute.@@*Beep!* *Beep!*@@ERROR.@@Arf! Arf!@@Brought to you by Vault-Tek!@@*Growls*@@*Pants*@@*Barks!*@@Patrolling!@@Greetings, citizen!}
+{100000001}{}{Better wash the counter again...}
+{100000002}{}{That's 5 caps buddy. Hey did you hear me? Cough em' up.}
+{100000003}{}{Better change the keg...}
+{100000004}{}{RotGut? You drink that shit?}
+{100000005}{}{Domestic? I got B.E.E.R buddy, do you want one or not?}
+{100000006}{}{Fuckin' dust is getting everywhere. Hey close the fuckin' door!}
+{100000007}{}{I swear if the next asshole doesn't tip. Ima' shoot somebody!}
+{100000008}{}{I got bottles, I got shots, and I got a bat behind the counter for the retards. Your not a retard are you?}
+{100000009}{}{Uh-huh, yeah that's nice buddy. You don't say...What? Of course I'm listening...}
+{100000010}{}{That's 5 caps. FIVE CAPS Tribal! F.I.V.E! }
+{100000011}{}{Shut up and order a fuckin' beer already!}
+{100000012}{}{I swear if I have to serve another drunk, I'm getting the shotgun!}
+{100000013}{}{Look the keg went dry, and it's going to be another month until the caravan shows up again.}
+{100000014}{}{Really? You don't say, buy another drink or get out!}
+{100000015}{}{What? I'm on break.}
+{100000016}{}{Be right with ya'}
+{100000017}{}{Have a sit stranger. I'll be with you in a moment.}
+{100000018}{}{When do we close? Uh, when the place get's shot up, that's when!}
+{100000019}{}{We're fresh outta' cold beer, sorry. You'll just have to drink it warm.}
+{100000020}{}{RotGut? No man, go make that shit yourself! I wouldn't drink it!}
+
+[russ]
+{100}{}{Алкоголик}
+{200}{}{Вы видите пьяницу.}
+{210}{}{Вы видите шатающегося из стороны в сторону пьяного человека в лохмотьях. Лицо его распухло, нос синющий как слива. А аромат рядом с ним такой, что свалит брамина насмерть. Он что-то бормочет про себя и иногда громко поет песни.}
+{210}{}{Вы видите алкаша. Он весьма грязен - кажется, он повалялся в луже, но не особо этим расстроен.}
+{1000}{}{I?aaaeaeiaiaua onoaiiaee}
+{1010}{}{Answer text}
+{1020}{}{completed}
+{2000}{}{Thank you! Thank you! }
+{2010}{}{Head to the camp}
+{2020}{}{Exit into the wasteland}
+{2030}{}{Answer 3}
+{2040}{}{Answer 4}
+{2050}{}{Ah screw it! I'm done! Stupid dogs.}
+{3000}{}{[You fiddle with the processor but find that it does absolutely nothing. Should have bought American]}
+{3010}{}{What if I...}
+{3020}{}{Ah screw it! I'm done! Stupid dogs.}
+{4000}{}{[You throw a stick at the dog but it just feels cruel. Maybe you should stop?]}
+{4010}{}{What if I...}
+{4020}{}{Ah screw it! I'm done! Stupid dogs.}
+{5000}{}{[You give the robotic pooch a good thrashing, but you only manage to hurt your foot... And your pride] }
+{5010}{}{What if I...}
+{5020}{}{Ah screw it! I'm done! Stupid dogs.}
+{6000}{}{Fixed2}
+{6010}{}{[Reformat the harddrive]}
+{6020}{}{What if I...}
+{6030}{}{Ah screw it! I'm done! Stupid dogs.}
+{7000}{}{Fixed}
+{7010}{}{What the hell? Where's the hologram interface?}
+{8000}{}{[This primitive computer language is puzzling to you, do you push the yes or no button?]}
+{8010}{}{еђѕи‰ѕ}
+{8020}{}{и‰ѕеЁњ}
+{9000}{}{[You quickly push the "Y" key and patiently wait as the new data is overriden into the machine's brain. After a short pause the light inside the dog's cranium begins to light up]}
+{9010}{}{Uh...Okay...}
+{10000}{}{[A sequence of numbers is seem inside the robot's eyes but quickly disapears. Your PipBoy vibrates and sends you a pop-up it reads] Push any key to continue. [Where's the "any key" you wonder?]}
+{10010}{}{[Close your eyes and push a random key]}
+{11000}{}{[You cleverly push the closest button to your right hand and hope for the best. Looks like it worked, the Vault-Tek Cyberhound flickers back to life and begins it's patrol. Great success!]}
+{11010}{}{Boy! I sure am smart!}
+{12000}{}{[You improve your Science skill by 6%!]}
+{12010}{}{Maybe now we can play fetch!}
+{13000}{}{Arf! Arf! I say!}
+

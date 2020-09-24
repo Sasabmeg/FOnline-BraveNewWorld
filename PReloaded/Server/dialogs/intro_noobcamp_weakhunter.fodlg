@@ -1,0 +1,179 @@
+[comment]
+weak hunter
+noob_camp_hunter
+23017
+
+needs 3 max vars
+
+[data]
+lang=engl russ
+
+[dialog]
+&
+1 1000 None 0 #
+4 1010 D _var p name_mem_npc_player = 0 D _var p noob_camp_hunter = 0 #
+4 1020 D _var p name_mem_npc_player = 1 D _var p noob_camp_hunter = 0 #
+13 1030 D _var p noob_camp_hunter = 2 #
+8 1040 D _var p noob_camp_hunter = 1 #
+20 1050 D _var p noob_camp_hunter = 3 @
+4 2000 None 0 #
+7 2010 D _var p name_mem_npc_player = 1 #
+3 2020 #
+3 2030 D _param p SK_DOCTOR > 40 #
+2 2040 #
+0 2050 @
+2 3000 None 0 #
+5 3010 @
+5 4000 None 0 @
+3 5000 None 0 #
+0 5010 R _var p name_mem_npc_player = 1 #
+6 5020 @
+6 6000 None 0 #
+0 6010 R _var p name_mem_npc_player = 1 @
+7 7000 None 0 #
+8 7010 D _item p PID_HEALING_POWDER > 2 R _script dialog@r_AddExperience 1 350 R _item p PID_HEALING_POWDER - 3 R _var p noob_camp_hunter = 1 #
+0 7020 @
+8 8000 None 0 #
+10 8010 D _item p PID_SHARPENED_POLE > 9 #
+9 8020 #
+0 8030 @
+9 9000 None 0 #
+0 9010 #
+0 9020 @
+10 10000 None 0 #
+11 10010 @
+11 11000 None 0 #
+12 11010 #
+0 11020 @
+12 12000 None 0 #
+0 12010 R _item p PID_SHARPENED_POLE - 10 R _var p noob_camp_hunter = 2 @
+13 13000 None 0 #
+14 13010 D _item p PID_TENT > 0 #
+0 13020 @
+14 14000 None 0 #
+15 14010 @
+15 15000 None 0 #
+0 15010 R _param p SK_OUTDOORSMAN + 6 R _script dialog@r_AddExperience 1 500 R _item p PID_TENT - 1 R _var p noob_camp_hunter = 3 @
+20 16000 None 0 &
+
+[engl]
+{100}{}{Weak Hunter}
+{200}{}{You see a Hunter.}
+{210}{}{He doesn't look like he's from a vault, you wonder why he's here?}
+{1000}{}{Predialogue installations}
+{1010}{}{not known}
+{1020}{}{known}
+{1030}{}{almost almost}
+{1040}{}{almost done}
+{1050}{}{done}
+{2000}{}{[This man appears to be in great pain, his leg is bleeding from a recent wound and he's groaning in agony] Ugh! Me hurt leg bad while hunting. Can you help? }
+{2010}{}{I've got the herbs you wanted.}
+{2020}{}{Sorry I'm not a doctor.}
+{2030}{}{Sure I know a thing or two about medicine.}
+{2040}{}{Pfft! Why should I help you?}
+{2050}{}{Oh! Wow! Uh blood! I'll, I'll just leave now! [You run away]}
+{3000}{}{Ugh! You people!}
+{3010}{}{What do you mean "You people"?!}
+{4000}{}{Ignorant vault man.}
+{5000}{}{[He grabs you by the wrist and says] No! Me no need doctor! Me need Xander root and Broc flower! Please! You help me! We will make healing powder together. I will show you the ways of my people. Go now. }
+{5010}{}{Oh, uh okay! I'll be right back!}
+{5020}{}{How much of it should I bring back?}
+{6000}{}{[He thinks for a moment and says] Need only one hand of Broc flower, one hand of Xander root. Very simple, but please hurry leg hurting bad. }
+{6010}{}{I'll do my best. }
+{7000}{}{[He smiles] Me glad me could trust you. Quickly take one hand Xander root, one hand Broc flower, break into dust and remove wood. Do this three time, and come back.}
+{7010}{}{No need I've already done it. Here you go}
+{7020}{}{Alright, give me a second.}
+{8000}{}{[He seems pleased] The Earth favors you be glad. Me leg will soon heal but me think you can help me still.}
+{8010}{}{I have the sticks you needed.}
+{8020}{}{Sure, what else did you need?}
+{8030}{}{Oh no sorry I'm done, see you. }
+{9000}{}{[His smile fades] Me do not believe in the gun, only the sword. Me think that if me must kill me must do it with only strength. Me hands must guide me way. If you can bring to me ten sharpened poles me will give you me old hand devil when you leave camp. Me will consider you good friend, to release me from this demon.}
+{9010}{}{Deal, I'll go cut some trees.}
+{9020}{}{I'll think about it, goodbye.}
+{10000}{}{[His eyes light up with joy] You are good friend to me, you have brought me happiness. Me will wait for you to leave before me continue to my people. I will give you my old demons.  But me think that me can help you now. }
+{10010}{}{Oh?}
+{11000}{}{[He pats you on the shoulder and says] Me will teach you how to make house in wasteland. Me know how to make tents very well, but me also good hunter. Me will show you the last ways of my people; the hunt, if you show to me you can make a tent with our ways.}
+{11010}{}{Sure!}
+{11020}{}{Nope, no more help from me. See you.}
+{12000}{}{[He smiles] It easy, you take four sharpen stick which you make from tree using hatchet. You take one rope which you make from fiber plant using knife. You take eight skin from the brahmin which you hunt like man. You then place the four sticks into the Earth with much strength. You stitch skin of animal into wall around stick and use fiber rope to bind. In time sun will harden tent and will stay for several weeks without visit. Go now, make me one. Show me that you have learnt your lesson well.}
+{12010}{}{Well gee wilikers! I sure do feel like I've learnt something! I'll be right back!}
+{13000}{}{[He shakes your hand upon meeting you] You have made tent? Show to me.}
+{13010}{}{Here have a look.}
+{13020}{}{Not yet, but I'll be back.}
+{14000}{}{[He examines the stitching on the brahmin hide and seems content with it] You have much to learn but you do still well. Me will teach you final trick for when you leave camp. It is wise to stay off roads, travel with tall grass, high mountains. Walk but do not step on the small trees under your feet. Smell the air before you cross into the unseen. [You and the hunter talk about the outdoors and how to better handle yourself out there] }
+{14010}{}{[Continue]}
+{15000}{}{[After about an hour you and the hunter part ways. You're much more confident about leaving camp now. You've gained +6% to your Outdoorsman Skill!]}
+{15010}{}{Awesome!}
+{16000}{}{You are no longer an ignorant vault man! You have made my people very proud!}
+{100000001}{}{Better wash the counter again...}
+{100000002}{}{That's 5 caps buddy. Hey did you hear me? Cough em' up.}
+{100000003}{}{Better change the keg...}
+{100000004}{}{RotGut? You drink that shit?}
+{100000005}{}{Domestic? I got B.E.E.R buddy, do you want one or not?}
+{100000006}{}{Fuckin' dust is getting everywhere. Hey close the fuckin' door!}
+{100000007}{}{I swear if the next asshole doesn't tip. Ima' shoot somebody!}
+{100000008}{}{I got bottles, I got shots, and I got a bat behind the counter for the retards. Your not a retard are you?}
+{100000009}{}{Uh-huh, yeah that's nice buddy. You don't say...What? Of course I'm listening...}
+{100000010}{}{That's 5 caps. FIVE CAPS Tribal! F.I.V.E! }
+{100000011}{}{Shut up and order a fuckin' beer already!}
+{100000012}{}{I swear if I have to serve another drunk, I'm getting the shotgun!}
+{100000013}{}{Look the keg went dry, and it's going to be another month until the caravan shows up again.}
+{100000014}{}{Really? You don't say, buy another drink or get out!}
+{100000015}{}{What? I'm on break.}
+{100000016}{}{Be right with ya'}
+{100000017}{}{Have a sit stranger. I'll be with you in a moment.}
+{100000018}{}{When do we close? Uh, when the place get's shot up, that's when!}
+{100000019}{}{We're fresh outta' cold beer, sorry. You'll just have to drink it warm.}
+{100000020}{}{RotGut? No man, go make that shit yourself! I wouldn't drink it!}
+
+[russ]
+{100}{}{Алкоголик}
+{200}{}{Вы видите пьяницу.}
+{210}{}{Вы видите шатающегося из стороны в сторону пьяного человека в лохмотьях. Лицо его распухло, нос синющий как слива. А аромат рядом с ним такой, что свалит брамина насмерть. Он что-то бормочет про себя и иногда громко поет песни.}
+{210}{}{Вы видите алкаша. Он весьма грязен - кажется, он повалялся в луже, но не особо этим расстроен.}
+{1000}{}{I?aaaeaeiaiaua onoaiiaee}
+{1010}{}{Answer text}
+{1020}{}{known}
+{1030}{}{completed}
+{1040}{}{almost done}
+{1050}{}{done}
+{2000}{}{Thank you! Thank you! }
+{2010}{}{I've got the herbs you wanted.}
+{2020}{}{Head to the camp}
+{2030}{}{Exit into the wasteland}
+{2040}{}{Answer 3}
+{2050}{}{Answer 4}
+{3000}{}{Ugh! You people!}
+{3010}{}{What do you mean "You people"?!}
+{4000}{}{Ignorant vault man.}
+{5000}{}{[He grabs you by the wrist and says] No! Me no need doctor! Me need Xander root and Broc flower! Please! You help me! We will make healing powder together. I will show you the ways of my people. Go now. }
+{5010}{}{Oh, uh okay! I'll be right back!}
+{5020}{}{How much of it should I bring back?}
+{6000}{}{[He thinks for a moment and says] Need only one hand of Broc flower, one hand of Xander root. Very simple, but please hurry my leg hurt bad. }
+{6010}{}{I'll do my best. }
+{7000}{}{[He smiles] Me glad me could trust you. Quickly take one hand Xander root, one hand Broc flower, break into dust and remove wood. Do this three time, and come back.}
+{7010}{}{No need I've already done it. Here you go}
+{7020}{}{Alright, give me a second.}
+{8000}{}{[He seems pleased] The Earth favors you be glad. Me leg will soon heal but me think you can help me still.}
+{8010}{}{I have the sticks you needed.}
+{8020}{}{Sure, what else did you need?}
+{8030}{}{Oh no sorry I'm done, see you. }
+{9000}{}{[His smile fades] Me do not believe in the gun, only the sword. Me think that if me must kill me must do it with only strength. Me hands must guide me way. If you can bring to me ten sharpened poles me will give you me old hand devil when you leave camp. Me will consider you good friend, to release me from this demon.}
+{9010}{}{Deal, I'll go cut some trees.}
+{9020}{}{I'll think about it, goodbye.}
+{10000}{}{[His eyes light up with joy] You are good friend to me, you have brought me happiness. Me will wait for you to leave before me continue to my people. I will give you my old demons.  But me think that me can help you now. }
+{10010}{}{Oh?}
+{11000}{}{[He pats you on the shoulder and says] Me will teach you how to make house in wasteland. Me know how to make tents very well, but me also good hunter. Me will show you the last ways of my people; the hunt, if you show to me you can make a tent with our ways.}
+{11010}{}{Sure!}
+{11020}{}{Nope, no more help from me. See you.}
+{12000}{}{[He smiles] It easy, you take four sharpen stick which you make from tree using hatchet. You take one rope which you make from fiber plant using knife. You take eight skin from the brahmin which you hunt like man. You then place the four sticks into the Earth with much strength. You stitch skin of animal into wall around stick and use fiber rope to bind. In time sun will harden tent and will stay for several weeks without visit. Go now, make me one. Show me that you have learnt your lesson well.}
+{12010}{}{Well gee wilikers! I sure do feel like I've learnt something! I'll be right back!}
+{13000}{}{[He shakes your hand upon meeting you] You have made tent? Show to me.}
+{13010}{}{Here have a look.}
+{13020}{}{Not yet, but I'll be back.}
+{14000}{}{[He examines the stitching on the brahmin hide and seems content with it] You have much to learn but you do still well. Me will teach you final trick for when you leave camp. It is wise to stay off roads, travel with tall grass, high mountains. Walk but do not step on the small trees under your feet. Smell the air before you cross into the unseen. [You and the hunter talk about the outdoors and how to better handle yourself out there] }
+{14010}{}{[Continue]}
+{15000}{}{[After about an hour you and the hunter part ways. You're much more confident about leaving camp now. You've gained +6% to your Outdoorsman Skill!]}
+{15010}{}{Awesome!}
+{16000}{}{You are no longer an ignorant vault man! You have made my people very proud!}
+

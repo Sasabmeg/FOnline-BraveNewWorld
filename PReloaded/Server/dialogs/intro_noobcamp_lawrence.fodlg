@@ -1,0 +1,128 @@
+[comment]
+Lawrence
+
+
+noob_camp_lawrence
+23011
+
+0 not com
+
+1 accepted
+
+2 com
+
+[data]
+lang=engl russ
+
+[dialog]
+&
+1 1000 None 0 #
+4 1010 D _var p name_mem_npc_player = 0 D _var p noob_camp_lawrence = 0 #
+12 1020 D _var p name_mem_npc_player = 1 D _var p noob_camp_lawrence = 1 #
+11 1030 D _var p noob_camp_lawrence = 2 @
+4 2000 None 0 #
+3 2010 #
+8 2020 #
+8 2030 #
+2 2040 #
+9 2050 @
+2 3000 None 0 @
+3 4000 None 0 #
+5 4010 @
+5 5000 None 0 #
+6 5010 @
+6 6000 None 0 #
+0 6010 R _var p name_mem_npc_player = 1 R _var p noob_camp_lawrence = 1 @
+7 7000 None 0 #
+0 7010 R _script dialog@r_AddExperience 1 250 R _item p PID_DECK_OF_CARDS - 1 R _var p noob_camp_lawrence = 2 @
+8 8000 None 0 #
+3 8010 @
+9 9000 None 0 @
+11 10000 None 0 @
+12 11000 None 0 #
+7 11010 D _item p PID_DECK_OF_CARDS > 0 #
+9 11020 &
+
+[engl]
+{100}{}{Lawrence, the average}
+{200}{}{You see a wastelander.}
+{210}{}{Another wastelander, just minding his own business.}
+{1000}{}{Predialogue installations}
+{1010}{}{not known}
+{1020}{}{known}
+{1030}{}{completed}
+{2000}{}{[This man is surprised to see that you just walked into his house!] Holy crap! }
+{2010}{}{Need any help?}
+{2020}{}{Well howdy! }
+{2030}{}{Oh sorry, didn't mean to scare.}
+{2040}{}{[You say nothing and just stare at the man]}
+{2050}{}{[Walk away]}
+{3000}{}{I've never been so scared in my entire life!}
+{4000}{}{[He's still petrified] No, no, I'm, I'm good.}
+{4010}{}{Oh come on! Nothing at all?}
+{5000}{}{[He's still petrified] Well, well, you, you could, could bring back my, my deck of cards...From Tina...}
+{5010}{}{Sure! I'll find her!}
+{6000}{}{[He's still petrified] Uh...Yeah, yeah sure... Goodbye!}
+{6010}{}{Back in a jiffy!}
+{7000}{}{[He's still petrified] Oh okay, uh, uh, bye...}
+{7010}{}{You're welcome!}
+{8000}{}{[He's still petrified] What do you want?}
+{8010}{}{Need any help? }
+{9000}{}{What the hell was that?!}
+{10000}{}{Will you stop scaring the crap out of me and get the hell out of here?!}
+{11000}{}{[This man is still surprised to see that you just walked right into his house!] Holy crap! You?! Again?!}
+{11010}{}{I've got that deck of cards you wanted!}
+{11020}{}{[Say nothing and walk away]}
+{100000001}{}{Better wash the counter again...}
+{100000002}{}{That's 5 caps buddy. Hey did you hear me? Cough em' up.}
+{100000003}{}{Better change the keg...}
+{100000004}{}{RotGut? You drink that shit?}
+{100000005}{}{Domestic? I got B.E.E.R buddy, do you want one or not?}
+{100000006}{}{Fuckin' dust is getting everywhere. Hey close the fuckin' door!}
+{100000007}{}{I swear if the next asshole doesn't tip. Ima' shoot somebody!}
+{100000008}{}{I got bottles, I got shots, and I got a bat behind the counter for the retards. Your not a retard are you?}
+{100000009}{}{Uh-huh, yeah that's nice buddy. You don't say...What? Of course I'm listening...}
+{100000010}{}{That's 5 caps. FIVE CAPS Tribal! F.I.V.E! }
+{100000011}{}{Shut up and order a fuckin' beer already!}
+{100000012}{}{I swear if I have to serve another drunk, I'm getting the shotgun!}
+{100000013}{}{Look the keg went dry, and it's going to be another month until the caravan shows up again.}
+{100000014}{}{Really? You don't say, buy another drink or get out!}
+{100000015}{}{What? I'm on break.}
+{100000016}{}{Be right with ya'}
+{100000017}{}{Have a sit stranger. I'll be with you in a moment.}
+{100000018}{}{When do we close? Uh, when the place get's shot up, that's when!}
+{100000019}{}{We're fresh outta' cold beer, sorry. You'll just have to drink it warm.}
+{100000020}{}{RotGut? No man, go make that shit yourself! I wouldn't drink it!}
+
+[russ]
+{100}{}{Алкоголик}
+{200}{}{Вы видите пьяницу.}
+{210}{}{Вы видите шатающегося из стороны в сторону пьяного человека в лохмотьях. Лицо его распухло, нос синющий как слива. А аромат рядом с ним такой, что свалит брамина насмерть. Он что-то бормочет про себя и иногда громко поет песни.}
+{210}{}{Вы видите алкаша. Он весьма грязен - кажется, он повалялся в луже, но не особо этим расстроен.}
+{1000}{}{I?aaaeaeiaiaua onoaiiaee}
+{1010}{}{Answer text}
+{1020}{}{known}
+{1030}{}{completed}
+{2000}{}{Thank you! Thank you! }
+{2010}{}{Head to the camp}
+{2020}{}{Exit into the wasteland}
+{2030}{}{Answer 3}
+{2040}{}{Answer 4}
+{2050}{}{[Walk away]}
+{3000}{}{I've never been so scared in my entire life!}
+{4000}{}{[He's still petrified] No, no, I'm, I'm good.}
+{4010}{}{Oh come on! Nothing at all?}
+{5000}{}{[He's still petrified] Well, well, you, you could, could bring back my, my deck of cards...From Tina...}
+{5010}{}{Sure! I'll find her!}
+{6000}{}{[He's still petrified] Uh...Yeah, yeah sure... Goodbye!}
+{6010}{}{Back in a jiffy!}
+{7000}{}{[He's still petrified] Oh okay, uh, uh, bye...}
+{7010}{}{You're welcome!}
+{8000}{}{[He's still petrified] What do you want?}
+{8010}{}{Need any help? }
+{9000}{}{What the hell was that?!}
+{10000}{}{Will you stop scaring the crap out of me and get the hell out of here?!}
+{11000}{}{[This man is still surprised to see that you just walked right into his house!] Holy crap! You?! Again?!}
+{11010}{}{I've got that deck of cards you wanted!}
+{11020}{}{[Say nothing and walk away]}
+

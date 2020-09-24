@@ -21,6 +21,15 @@
 {25}{}{}
 {26}{}{gntlwin1:25, gntlwind:25, gustwind:10, rattle:15, rattle1:15, vulture:10}
 
+# Map 2, base 30
+{30}{}{Start Vault}
+{36}{}{}
+
+# Map 6, base 70
+{70}{}{Start Caravan}
+{75}{}{01hub}
+{76}{}{}
+
 # Map 7, base 80
 {80}{}{Desert Encounter Khans 1}
 {85}{}{07desert}
@@ -480,6 +489,41 @@
 {2205}{}{07desert}
 {2206}{}{gntlwin1:25, gntlwind:25, gustwind:10, rattle:15, rattle1:15, vulture:10}
 
+# Map 221, base 2220
+{2220}{}{Hub: Downtown}
+{2225}{}{01hub}
+{2226}{}{gntlwin1:25, gntlwind:25, brdchir1:10, brdchirp:10, blank:30}
+
+# Map 222, base 2230
+{2230}{}{Hub: Oldtown}
+{2235}{}{01hub}
+{2236}{}{gntlwin1:25, gntlwind:25, brdchir1:10, brdchirp:10, blank:30}
+
+# Map 223, base 2240
+{2240}{}{Hub: Heights}
+{2245}{}{01hub}
+{2246}{}{gntlwin1:25, gntlwind:25, brdchir1:10, brdchirp:10, blank:30}
+
+# Map 224, base 2250
+{2250}{}{Hub: Watermerchants}
+{2255}{}{01hub}
+{2256}{}{gntlwin1:25, gntlwind:25, brdchir1:10, brdchirp:10, blank:30}
+
+# Map 225, base 2260
+{2260}{}{Hub: Underground}
+{2265}{}{01hub}
+{2266}{}{gntlwin1:25, gntlwind:25, brdchir1:10, brdchirp:10, blank:30}
+
+# Map 226, base 2270
+{2270}{}{Hub: Underground thief}
+{2275}{}{01hub}
+{2276}{}{gntlwin1:25, gntlwind:25, brdchir1:10, brdchirp:10, blank:30}
+
+# Map 227, base 2280
+{2280}{}{Hub: Arena}
+{2285}{}{01hub}
+{2286}{}{gntlwin1:25, gntlwind:25, brdchir1:10, brdchirp:10, blank:30}
+
 # Map 228, base 2290
 {2290}{}{Buffer Map}
 {2296}{}{}
@@ -647,6 +691,21 @@
 {5155}{}{07desert}
 {5156}{}{gustwind:30, gustwin1:30, rattle:10, rattle1:20, vulture:10, vulture1:10}
 
+# Map 595, base 5960
+{5960}{}{Landers Point: Gate}
+{5965}{}{01hub}
+{5966}{}{}
+
+# Map 596, base 5970
+{5970}{}{Landers Point: Gecko fields}
+{5975}{}{07desert}
+{5976}{}{}
+
+# Map 597, base 5980
+{5980}{}{Landers Point: Scorpion cave}
+{5985}{}{18modoc}
+{5986}{}{}
+
 #
 # Global map
 #
@@ -661,10 +720,32 @@
 # Entire X pic x, (pid + 100) * 1000 + 100 + X*10 + 2
 # Entire X pic y, (pid + 100) * 1000 + 100 + X*10 + 3
 
-# Safe Place, pid 1, base 101000
-{101000}{}{Safe Place}
+# A Safe Place, pid 1, base 101000
+{101000}{}{A Safe Place}
 {101005}{}{...}
-{101010}{}{24}
+{101010}{}{8}
+
+# Start Vault24, pid 2, base 102000
+{102000}{}{Start Vault24}
+{102005}{}{}
+{102010}{}{24}
+
+# Landers Point, pid 3, base 103000
+{103000}{}{Landers Point}
+{103005}{}{A camp set up to prepare the Vault 24 dwellers for the wastes.}
+{103010}{}{16}
+
+# Start Caravan, pid 4, base 104000
+{104000}{}{Start Caravan}
+{104005}{}{}
+{104010}{}{8}
+
+# Hub, pid 25, base 125000
+{125000}{}{Hub}
+{125005}{}{A major trading city with a large community of traders, gamblers and various other types of scum.}
+{125010}{}{24}
+{125020}{}{art\intrface\Twnmap06.frm}
+{125030}{}{art\intrface\Wm_06.frm}
 
 # Khan Mountains, pid 57, base 157000
 {157000}{}{Khan Mountains}
