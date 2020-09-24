@@ -14,32 +14,55 @@
 #include "entire.fos"
 #include "reputations_h.fos"
 
-#define BOX_STATUS_NONE       (0)   //  Quest not in progress.
-#define BOX_STATUS_STARTED    (1)   //  Quest started, but no boxes unpacked yet.
-#define BOX_STATUS_MAX        (3)   //  Number of boxes needed to unpack to complete quest
+#define BOX_STATUS_NONE         (0)     //  Quest not in progress.
+#define BOX_STATUS_STARTED      (1)     //  Quest started, but no boxes unpacked yet.
+#define BOX_STATUS_MAX          (3)     //  Number of boxes needed to unpack to complete quest
+#define BOX_STATUS_FAILED       (97)    //  Quest is completed and can be retaken after some time
+#define BOX_STATUS_COMPLETED    (99)    //  Quest is completed and can be retaken after some time
+
+import void r_QuestTimeout(Critter& player, Critter@ npc, int timeout) from "dialog";
 
 bool d_IsOngoing(Critter& player, Critter@ npc)
 {
-    player.Say(SAY_NETMSG, "d_IsOngoing - LVAR_job_lp_caravan_box = " + GetLvar(player, LVAR_job_lp_caravan_box));
-    return(GetLvar(player, LVAR_job_lp_caravan_box) >= BOX_STATUS_STARTED);
+    /*  Debug
+    string debugMessage = "d_IsOngoing - LVAR_job_lp_caravan_box = " + GetLvar(player, LVAR_job_lp_caravan_box);
+    //player.Say(SAY_NETMSG, debugMessage);
+    DLog(debugMessage);*/
+
+    return ( GetLvar(player, LVAR_job_lp_caravan_box) >= BOX_STATUS_STARTED
+           && GetLvar(player, LVAR_job_lp_caravan_box) < BOX_STATUS_COMPLETED );
 }
 
 bool d_NotStarted(Critter& player, Critter@ npc)
 {
-    player.Say(SAY_NETMSG, "d_NotStarted - LVAR_job_lp_caravan_box = " + GetLvar(player, LVAR_job_lp_caravan_box));
-    return(GetLvar(player, LVAR_job_lp_caravan_box) == BOX_STATUS_NONE);
+    /*  Debug
+    string debugMessage = "d_NotStarted - LVAR_job_lp_caravan_box = " + GetLvar(player, LVAR_job_lp_caravan_box);
+    //player.Say(SAY_NETMSG, debugMessage);
+    DLog(debugMessage);*/
+
+    return ( GetLvar(player, LVAR_job_lp_caravan_box) == BOX_STATUS_NONE
+           || GetLvar(player, LVAR_job_lp_caravan_box) == BOX_STATUS_COMPLETED );
 }
 
 bool d_IsDone(Critter& player, Critter@ npc)
 {
-    player.Say(SAY_NETMSG, "d_IsDone - LVAR_job_lp_caravan_box = " + GetLvar(player, LVAR_job_lp_caravan_box));
-    return GetLvar(player, LVAR_job_lp_caravan_box) > BOX_STATUS_MAX;
+    /*  Debug
+    string debugMessage = "d_IsDone - LVAR_job_lp_caravan_box = " + GetLvar(player, LVAR_job_lp_caravan_box);
+    //player.Say(SAY_NETMSG, debugMessage);
+    DLog(debugMessage);*/
+
+    return ( GetLvar(player, LVAR_job_lp_caravan_box) > BOX_STATUS_MAX
+            && GetLvar(player, LVAR_job_lp_caravan_box) < BOX_STATUS_COMPLETED );
 }
 
 void r_StartQuest(Critter& player, Critter@ npc)
 {
     SetLvar(player, LVAR_job_lp_caravan_box, BOX_STATUS_STARTED);
-    player.Say(SAY_NETMSG, "r_StartQuest - LVAR_job_lp_caravan_box = " + GetLvar(player, LVAR_job_lp_caravan_box));
+
+    /*  Debug
+    string debugMessage = "r_StartQuest - LVAR_job_lp_caravan_box = " + GetLvar(player, LVAR_job_lp_caravan_box);
+    //player.Say(SAY_NETMSG, debugMessage);
+    DLog(debugMessage);*/
 }
 
 void r_CompleteQuest(Critter& player, Critter@ npc)
@@ -48,11 +71,15 @@ void r_CompleteQuest(Critter& player, Critter@ npc)
     player.AddItem(PID_BOTTLE_CAPS, 250);
     player.StatBase[ST_EXPERIENCE] += 300;
     //AddReputation(player, ReputationIndex( player.GetMap().GetLocation().GetProtoId() ), Random(5, 10), REP_CARAVAN_BOX_CAP);
-    SetLvar(player, LVAR_job_lp_caravan_box, BOX_STATUS_NONE);
-}
+    SetLvar(player, LVAR_job_lp_caravan_box, BOX_STATUS_COMPLETED);
+
+    /*  Debug
+    string debugMessage = "r_CompleteQuest - LVAR_job_lp_caravan_box = " + GetLvar(player, LVAR_job_lp_caravan_box);
+    //player.Say(SAY_NETMSG, debugMessage);
+    DLog(debugMessage);*/}
 
 /**
-*   Used to get the Caravan officer responsible for the job.
+*   Used to get the Caravan foreman responsible for the job.
 *   (In case you are unloading at the wrong area, he should yell.)
 */
 Critter@ GetCaravanOfficer(Map@ map)
@@ -109,6 +136,8 @@ void _OnDropBox(Item& item, Critter& player)
     if(player.GetMapId() == caravanOfficer.GetMapId())
     {
         caravanOfficer.Say(SAY_SHOUT_ON_HEAD, "You idiot, you can't drop it there!");
+        SetLvar(player, LVAR_job_lp_caravan_box, BOX_STATUS_FAILED);
+        r_QuestTimeout(player, caravanOfficer, 5);
     }
     DeleteItem(item);
 }
@@ -127,23 +156,22 @@ void _BoxInit(Item& box, bool firstTime)
 bool _OnUseCaravan(Critter& player, Scenery& scen, int skill, Item@ item)
 {
     //  if it's not use, exit -> need macro constant for this..
-    if(skill != -1)
+    if (skill != -1)
         return false;
 
-    if(valid(player))
+    if (valid(player))
     {
-        //Critter@ caravanOfficcer = player.GetMap().GetNpc(ROLE_CARAVAN_BOX, FIND_ALL | FIND_ONLY_NPC, 0);
         Critter@ caravanOfficer = GetCaravanOfficer(player.GetMap());
 
-        if( valid(caravanOfficer) && (GetLvar(player, LVAR_job_lp_caravan_box) >= BOX_STATUS_STARTED) )
+        if ( valid(caravanOfficer) && (GetLvar(player, LVAR_job_lp_caravan_box) >= BOX_STATUS_STARTED) )
         {
-            if(GetLvar(player, LVAR_job_lp_caravan_box) > BOX_STATUS_MAX)
+            if (GetLvar(player, LVAR_job_lp_caravan_box) > BOX_STATUS_MAX)
             {
                 player.Say(SAY_NETMSG, "You've completed the task assigned, speak to the caravan packer.");
                 return false;
             }
 
-            if(player.CountItem(PID_CARAVAN_BOX) > 0)
+            if (player.CountItem(PID_CARAVAN_BOX) > 0)
             {
                 player.Say(SAY_NETMSG, "You've already picked up a box, you can't carry two.");
                 return false;
@@ -151,12 +179,12 @@ bool _OnUseCaravan(Critter& player, Scenery& scen, int skill, Item@ item)
 
             player.Say(SAY_NETMSG, "You've picked up a box from the caravan cart");
             Item@ item = player.AddItem(PID_CARAVAN_BOX, 1);
-            if(valid(item))
+            if (valid(item))
                 item.SetEvent(ITEM_EVENT_DROP, "lp_caravanPacker@_OnDropBox");
         }
         else
         {
-            if(valid(caravanOfficer))
+            if (valid(caravanOfficer))
                 caravanOfficer.Say(SAY_SHOUT_ON_HEAD, "Don't touch that!");
             else
                 player.Say(SAY_NETMSG, "Don't touch that!");

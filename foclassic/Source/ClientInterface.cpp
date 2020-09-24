@@ -8500,7 +8500,6 @@ void FOClient::PipDraw()
         case PIP__STATUS:
         {
             // Status
-			/*
             PIP_DRAW_TEXT( FmtGameText( STR_PIP_STATUS ), FONT_FLAG_CENTERX, COLOR_TEXT_DGREEN );
             scr++;
             PIP_DRAW_TEXT( FmtGameText( STR_PIP_REPLICATION_MONEY ), 0, COLOR_TEXT );
@@ -8512,9 +8511,7 @@ void FOClient::PipDraw()
             PIP_DRAW_TEXT( FmtGameText( STR_PIP_REPLICATION_COUNT ), 0, COLOR_TEXT );
             PIP_DRAW_TEXTR( FmtGameText( STR_PIP_REPLICATION_COUNT_VAL, Chosen->GetParam( ST_REPLICATION_COUNT ) ), 0, COLOR_TEXT );
             scr++;
-			*/
             // Timeouts
-			/*
             scr++;
             PIP_DRAW_TEXT( FmtGameText( STR_PIP_TIMEOUTS ), FONT_FLAG_CENTERX, COLOR_TEXT_DGREEN );
             scr++;
@@ -8550,7 +8547,6 @@ void FOClient::PipDraw()
                     PIP_DRAW_TEXTR( FmtGameText( str_num, Str::FormatBuf( "%u", val ) ), 0, COLOR_TEXT );
                 scr++;
             }
-			*/
             // Quests
             scr++;
             if( scr >= 0 && scr < ml )

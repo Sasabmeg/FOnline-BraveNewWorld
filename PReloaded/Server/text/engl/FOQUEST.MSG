@@ -89,21 +89,19 @@
 
 #=======================================
 # 6502
-# General: Caravan Packer
+# Landers Point: Caravan Packer
 #=======================================
 
-{6502001}{}{The caravan foreman at Landers Point asked me to unload some boxes from the cart to the north-west storage area. After unloading 10 boxes, my pay would be 250 caps.}
-{6502002}{}{I've unloaded one box already! Pheew, this was heavy.}
-{6502006}{}{Five more boxes to to, I feel like dying.}
-{6502010}{}{One last box to unload.}
-{6502011}{}{That's it, I'm done. I should talk to the caravan foreman about my reward.}
-
-:: Quest Completed ::}
-{6502100}{}{I don't think I can lift boxes anymore, I'll just give up!
+{6502001}{}{The caravan foreman at Landers Point asked me to unload some boxes from the cart to the north-west storage area. After unloading 3 boxes, my pay would be 250 caps.}
+{6502004}{}{DONE:That's all. I should talk to the caravan foreman about my reward!}
+{6502097}{}{SOFT_FAILED:I tried to help the caravan packer but I dropped one of the boxes on the wrong location. Maybe I should work out a bit before trying again.
 
 :: Quest Failed ::}
-{6502101}{}{Job: Caravan packer at Landers Point}
-{6502102}{}{Unload boxes from the caravan cart.}
+{6502099}{}{SOFT_COMPLETED:I finished the task and got my reward. I could return for more work a bit later.
+
+:: Quest Completed ::}
+{6502101}{}{Landers Point Caravan packer}
+{6502102}{}{JOB:Unload boxes from the caravan cart.}
 
 #=======================================
 # 7004
