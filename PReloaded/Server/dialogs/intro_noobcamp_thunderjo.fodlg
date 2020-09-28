@@ -10,28 +10,28 @@ lang=engl russ
 [dialog]
 &
 1 1000 None 0 #
-4 1010 D _var p name_mem_npc_player = 0 D _var p noob_camp_thunderjo = 0 #
-7 1020 D _var p name_mem_npc_player = 1 D _var p noob_camp_thunderjo = 0 #
-12 1030 D _var p noob_camp_thunderjo = 1 @
+4 1010 D _var p name_mem_npc_player = 0 D _var p noob_camp_thunderjo { 1 #
+7 1020 D _var p name_mem_npc_player = 1 D _var p noob_camp_thunderjo { 1 #
+12 1030 D _var p noob_camp_thunderjo = 99 @
 4 2000 None 0 #
 2 2010 #
 3 2020 #
 5 2030 #
 6 2040 @
 2 3000 None 0 #
-0 3010 R _var p name_mem_npc_player = 1 @
+0 3010 R _var p name_mem_npc_player = 1 R _var p noob_camp_thunderjo = 2 @
 3 4000 None 0 #
-0 4010 R _var p name_mem_npc_player = 1 @
+0 4010 R _var p name_mem_npc_player = 1 R _var p noob_camp_thunderjo = 2 @
 5 5000 None 0 #
-0 5010 R _var p name_mem_npc_player = 1 @
+0 5010 R _var p name_mem_npc_player = 1 R _var p noob_camp_thunderjo = 2 @
 6 6000 None 0 #
-0 6010 R _var p name_mem_npc_player = 1 @
+0 6010 R _var p name_mem_npc_player = 1 R _var p noob_camp_thunderjo = 2 @
 7 7000 None 0 #
-9 7010 D _item p PID_10MM_JHP > 49 D _item p PID_SHOTGUN_SHELLS > 199 D _item p PID_44_MAGNUM_JHP > 199 #
+9 7010 D _item p PID_10MM_JHP > 49 D _item p PID_44_MAGNUM_JHP > 49 D _item p PID_SHOTGUN_SHELLS > 49 #
 8 7020 @
 8 8000 None 0 @
 9 9000 None 0 #
-0 9010 R _script dialog@r_AddExperience 1 550 R _item p PID_10MM_JHP - 50 R _item p PID_SHOTGUN_SHELLS - 200 R _var p noob_camp_thunderjo = 1 R _item p PID_44_MAGNUM_JHP - 200 @
+0 9010 R _script dialog@r_AddExperience 1 550 R _item p PID_10MM_JHP - 50 R _item p PID_SHOTGUN_SHELLS - 50 R _item p PID_44_MAGNUM_JHP - 50 R _var p noob_camp_thunderjo = 99 @
 12 10000 None 0 &
 
 [engl]
@@ -47,13 +47,13 @@ lang=engl russ
 {2020}{}{Sorry, I'm new here.}
 {2030}{}{Got some ammo right here for ya', sir! [You grab your crotch and salute]}
 {2040}{}{No, but I could get some. Captain Stone told me to...}
-{3000}{}{All recruits are to provide the armory with two hundred rounds of forty four magnum jagged hollow points, two hundred rounds of twelve gauge shotgun shells, and fifty rounds of ten millimeter jagged hollow point. Any questions you can get back in line and ask somebody else. Next!}
+{3000}{}{All recruits are to provide the armory with 50 rounds of 44. magnum JHP, 50 rounds of 12 gauge shotgun shells, and 50 rounds of 10mm JHP. Any questions you can get back in line and ask somebody else. Next!}
 {3010}{}{Uh...Okay...Sir. I'll come back.}
-{4000}{}{I didn't ask for your life story. All I care is that new recruits are to provide the armory with two hundred rounds of forty four magnum jagged hollow point, two hundred rounds of twelve gauge shotgun shells, and fifty rounds of ten millimeter jagged hollow point. Any questions you can get back in line and ask somebody else. Next!}
+{4000}{}{I didn't ask for your life story. All I care is that new recruits are to provide the armory with 50 rounds of 44. magnum JHP, 50 rounds of 12 gauge shotgun shells, and 50 rounds of 10mm JHP. Any questions you can get back in line and ask somebody else. Next!}
 {4010}{}{Uh...Okay...Sir. I'll come back.}
-{5000}{}{Do you want to get shot smart-ass?!  Now shut it and listen! All recruits are to provide the armory with two hundred rounds of forty four magnum jagged hollow poin, two hundred rounds of twelve gauge shotgun shells, and fifty rounds of ten millimeter jagged hollow point. Any questions you can get back in line and ask somebody else. Next!}
+{5000}{}{Do you want to get shot smart-ass?!  Now shut it and listen! All recruits are to provide the armory with  50 rounds of 44. magnum JHP, 50 rounds of 12 gauge shotgun shells, and 50 rounds of 10mm JHP. Any questions you can get back in line and ask somebody else. Next!}
 {5010}{}{Uh...Okay...Sir. I'll come back.}
-{6000}{}{Captain Stone told you to assist where you can. I need you to provide the armory with two hundred rounds of forty four magnum jagged hollow point, two hundred rounds of twelve gauge shotgun shells, and fifty rounds of ten millimeter jagged hollow point. Any questions you can get back in line and ask somebody else. Next!}
+{6000}{}{Captain Stone told you to assist where you can. I need you to provide the armory with 50 rounds of 44. magnum JHP, 50 rounds of 12 gauge shotgun shells, and 50 rounds of 10mm JHP. Any questions you can get back in line and ask somebody else. Next!}
 {6010}{}{Uh...Okay...Sir. I'll come back.}
 {7000}{}{Back again? You better not be here to pull my goddamn chain again! Do you have two hundred rounds of forty four magnum jagged hollow point, two hundred rounds of twelve gauge shotgun shells, and fifty rounds of ten millimeter jagged hollow point?}
 {7010}{}{Yessir, got them right here.}

@@ -11,10 +11,10 @@ lang=engl russ
 [dialog]
 &
 1 1000 None 0 #
-4 1010 D _var p name_mem_npc_player = 0 D _var p noob_camp_plague = 0 #
-15 1020 D _var p noob_camp_plague = 1 #
-16 1030 D _var p noob_camp_plague = 0 D _var p name_mem_npc_player = 1 #
-28 1040 D _var p noob_camp_plague = 2 @
+4 1010 D _var p name_mem_npc_player = 0 D _var p noob_camp_plague { 1 #
+15 1020 D _var p noob_camp_plague = 3 #
+16 1030 D _var p name_mem_npc_player = 1 D _var p noob_camp_plague { 2 #
+28 1040 D _var p noob_camp_plague = 99 @
 4 2000 None 0 #
 6 2010 #
 6 2020 #
@@ -53,12 +53,12 @@ lang=engl russ
 13 12010 #
 0 12020 @
 13 13000 None 0 #
-0 13010 R _var p name_mem_npc_player = 1 @
+0 13010 R _var p name_mem_npc_player = 1 R _var p noob_camp_plague = 2 @
 14 14000 None 0 #
-0 14010 R _var p noob_camp_plague = 1 @
+0 14010 R _var p noob_camp_plague = 3 @
 15 15000 None 0 @
 16 16000 None 0 #
-17 16010 D _item p PID_HEALING_POWDER > 4 #
+17 16010 D _item p PID_HEALING_POWDER > 2 #
 30 16020 #
 0 16030 @
 17 17000 None 0 #
@@ -96,7 +96,7 @@ lang=engl russ
 26 26000 None 0 #
 27 26010 @
 27 27000 None 0 #
-14 27010 R _item p PID_HEALING_POWDER - 5 @
+14 27010 R _item p PID_HEALING_POWDER - 3 @
 28 28000 None 0 #
 29 28010 D _item p PID_SCORPION_TAIL > 1 R _item p PID_SCORPION_TAIL - 2 R _item p PID_ANTIDOTE + 1 #
 30 28020 @
@@ -154,7 +154,7 @@ lang=engl russ
 }
 {12010}{}{Oh, sure. I'll do whatever I can.}
 {12020}{}{Hmm, no, not right now. See ya.}
-{13000}{}{[The good doctor pats you on the back and says] Thank you, I really appreciate whatever help you can give me. We'll have to stabilize one of the patients. Can you come back with five batches of healing powder? You just need some Xander root and Broc flower, just mix them together. But could you hurry? Please?
+{13000}{}{[The good doctor pats you on the back and says] Thank you, I really appreciate whatever help you can give me. We'll have to stabilize one of the patients. Can you come back with 3 batches of healing powder? You just need some Xander root and Broc flower, just mix them together. But could you hurry? Please?
 }
 {13010}{}{Sure, I'll be back. }
 {14000}{}{[Her eyes light up] @pname@! You're a genius! I never even thought about it! We never had to boil the water in the past, but something must have contaminated the drinking supply! Or died in it. Thanks! Go tell the bartender to start boiling the water for now, until we've cleaned out the wells. 
@@ -162,7 +162,7 @@ lang=engl russ
 {14010}{}{You're welcome. I'll go tell the bartender.}
 {15000}{}{Thanks again, @pname@! Don't forget to tell the bartender.
 }
-{16000}{}{[She wastes no time] Do you have the five batches of healing powder?
+{16000}{}{[She wastes no time] Do you have the 3 batches of healing powder?
 }
 {16010}{}{Yeah, here you go.}
 {16020}{}{Can you fix any of my broken limbs, doc?}

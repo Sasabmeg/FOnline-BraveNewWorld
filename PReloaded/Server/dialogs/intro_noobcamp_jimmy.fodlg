@@ -11,31 +11,36 @@ lang=engl russ
 [dialog]
 &
 1 1000 None 0 #
-4 1010 D _var p name_mem_npc_player = 0 D _var p noob_camp_jimmy = 0 #
-10 1020 D _var p noob_camp_jimmy = 1 @
+4 1010 D _var p noob_camp_jimmy < 98 #
+7 1020 D _var p noob_camp_jimmy = 98 #
+10 1030 D _var p noob_camp_jimmy = 99 @
 4 2000 None 0 #
 2 2010 #
 3 2020 #
 2 2030 #
 2 2040 @
 2 3000 None 0 #
-5 3010 D _param p SK_DOCTOR > 35 #
+5 3010 D _param p SK_DOCTOR } 35 #
 0 3020 @
 3 4000 None 0 #
-5 4010 D _param p SK_DOCTOR > 34 #
+11 4010 D _param p SK_DOCTOR } 25 #
 0 4020 @
 5 5000 None 0 #
 6 5010 @
 6 6000 None 0 #
-8 6010 D _param p SK_DOCTOR > 49 #
-7 6020 #
-7 6030 @
-7 7000 None 0 @
-8 8000 None 0 #
-9 8010 @
-9 9000 None 0 #
-10 9010 R _script dialog@r_AddExperience 1 250 R _param p SK_DOCTOR + 3 R _var p noob_camp_jimmy = 1 @
-10 10000 None 0 &
+8 6010 D _param p SK_DOCTOR } 45 #
+7 6020 R _param p SK_DOCTOR + 3 R _var p noob_camp_jimmy = 98 #
+7 6030 R _param p SK_DOCTOR + 3 R _var p noob_camp_jimmy = 98 @
+11 7000 None 0 #
+8 7010 D _param p SK_DOCTOR } 35 #
+7 7020 R _param p SK_DOCTOR + 3 R _var p noob_camp_jimmy = 98 #
+7 7030 R _param p SK_DOCTOR + 3 R _var p noob_camp_jimmy = 98 @
+7 8000 None 0 @
+8 9000 None 0 #
+9 9010 @
+9 10000 None 0 #
+10 10010 R _script dialog@r_AddExperience 1 250 R _var p noob_camp_jimmy = 99 R _param p SK_DOCTOR + 6 @
+10 11000 None 0 &
 
 [engl]
 {100}{}{Jimmy, the cripple}
@@ -43,7 +48,8 @@ lang=engl russ
 {210}{}{He's a sad little man, who's legs haven't properly healed. If the camp had a better doctor you bet they could help him. }
 {1000}{}{Predialogue installations}
 {1010}{}{not known}
-{1020}{}{completed}
+{1020}{}{failed}
+{1030}{}{completed}
 {2000}{}{[You see a man with barely working legs, limping around trying to earn his way. He appears to be singing] Doo-wop-A-doo-wop-A-doo-wop-A-doo-hoo-hoo! A doo-wop-A-doo-wop-A...}
 {2010}{}{You're pretty cheery for a man with broken legs, what gives?}
 {2020}{}{Hey! I know that song! You must be from the vault too!}
@@ -61,12 +67,16 @@ lang=engl russ
 {6010}{}{Of course! I didn't go to Vault-Tec university for ten years just to be called sir. Now sit down and bite your thumb, this is going to hurt... A lot! }
 {6020}{}{Uhm... I've got a white coat...}
 {6030}{}{No, but I've got this here PipBoy...}
-{7000}{}{Get the hell out of here, you quack! You sound just like the last doctor I saw!}
-{8000}{}{[The man calms himself and lies down] Uh... Okay... Do your worse, doc! [After a loud pop the man screams in agony] Oh Jesus! Christ! Ow! Oh God! Have mercy! Have mercy!}
-{8010}{}{Don't be such a baby! There's just one more leg left!}
-{9000}{}{[The man is shivering with fear] I've... I've seen the devil! Oh God! And it's you! [Another loud pop later and the man passes out, several minutes pass and you begin to worry. A swift slap to the face and the man jumps to his feet] Ugh! You monster! My legs! My legs? Oh! My legs! You've fixed my legs! Thank you! Thank you! I can finally run away from this damn slave camp! Thank you, sir! Thank you! [You've improved your Doctor skill by 3%!]}
-{9010}{}{No problem, just stay off your feet for a few days. Once the adrenaline wears off you'll be in excruciating pain, and most likely bedridden. Remember to eat plenty of vegetables, and drink your brahmin milk to prevent these things from happening in the future. }
-{10000}{}{Now I've really got a reason to sing! Doo-wop! A-doo-wop! A-doo-wop! Thanks again, friend!}
+{7000}{}{[His eyes widen in terror] Well... I suppose so, if that's what it takes. But you are a doctor, aren't you?}
+{7010}{}{Of course! I didn't go to Vault-Tec university for ten years just to be called sir. Now sit down and bite your thumb, this is going to hurt... A lot! }
+{7020}{}{Uhm... I've got a white coat...}
+{7030}{}{No, but I've got this here PipBoy...}
+{8000}{}{Get the hell out of here, you quack! You sound just like the last doctor I saw!}
+{9000}{}{[The man calms himself and lies down] Uh... Okay... Do your worse, doc! [After a loud pop the man screams in agony] Oh Jesus! Christ! Ow! Oh God! Have mercy! Have mercy!}
+{9010}{}{Don't be such a baby! There's just one more leg left!}
+{10000}{}{[The man is shivering with fear] I've... I've seen the devil! Oh God! And it's you! [Another loud pop later and the man passes out, several minutes pass and you begin to worry. A swift slap to the face and the man jumps to his feet] Ugh! You monster! My legs! My legs? Oh! My legs! You've fixed my legs! Thank you! Thank you! I can finally run away from this damn slave camp! Thank you, sir! Thank you! [You've improved your Doctor skill by 3%!]}
+{10010}{}{No problem, just stay off your feet for a few days. Once the adrenaline wears off you'll be in excruciating pain, and most likely bedridden. Remember to eat plenty of vegetables, and drink your brahmin milk to prevent these things from happening in the future. }
+{11000}{}{Now I've really got a reason to sing! Doo-wop! A-doo-wop! A-doo-wop! Thanks again, friend!}
 {100000001}{}{Better wash the counter again...}
 {100000002}{}{That's 5 caps buddy. Hey did you hear me? Cough em' up.}
 {100000003}{}{Better change the keg...}
@@ -95,7 +105,8 @@ lang=engl russ
 {210}{}{¬ы видите алкаша. ќн весьма гр€зен - кажетс€, он повал€лс€ в луже, но не особо этим расстроен.}
 {1000}{}{I?aaaeaeiaiaua onoaiiaee}
 {1010}{}{Answer text}
-{1020}{}{completed}
+{1020}{}{failed}
+{1030}{}{completed}
 {2000}{}{Thank you! Thank you! }
 {2010}{}{Head to the camp}
 {2020}{}{Exit into the wasteland}
@@ -113,10 +124,14 @@ lang=engl russ
 {6010}{}{Of course! I didn't go to Vault-Tec university for ten years just to be called sir. Now sit down and bite down your thumb, this is going to hurt... A lot! }
 {6020}{}{Uhm... I've got a white coat...}
 {6030}{}{No, but I've got this here PipBoy...}
-{7000}{}{Get the hell out of here, you quack! You sound just like the last doctor I saw!}
-{8000}{}{[The man calms himself and lies down] Uh... Okay... Do your worse, doc! [After a loud pop the man screams in agony] Oh Jesus! Christ! Ow! Oh God! Have mercy! Have mercy!}
-{8010}{}{Don't be such a baby! There's just one more leg left!}
-{9000}{}{[The man is shivering with fear] I've... I've seen the devil! Oh God! And it's you! [Another loud pop later and the man passes out, several minutes pass and you begin to worry. A swift slap to the face and the man jumps to his feet] Ugh! You monster! My legs! My legs? Oh! My legs! You've fixed my legs! Thank you! Thank you! I can finally run away from slave camp! Thank you, sir! Thank you! }
-{9010}{}{No problem, just stay off your feet for a few days. Once the adrenaline wears off you'll be in excruciating pain, and most likely bedridden. Remember to eat plenty of vegetables, and drink your brahmin milk to prevent these things from happening the future. }
-{10000}{}{Now I've really got a reason to sing! Doo-wop! A-doo-wop! A-doo-wop!...}
+{7000}{}{Dialog text}
+{7010}{}{failed}
+{7020}{}{failed}
+{7030}{}{failed}
+{8000}{}{Get the hell out of here, you quack! You sound just like the last doctor I saw!}
+{9000}{}{[The man calms himself and lies down] Uh... Okay... Do your worse, doc! [After a loud pop the man screams in agony] Oh Jesus! Christ! Ow! Oh God! Have mercy! Have mercy!}
+{9010}{}{Don't be such a baby! There's just one more leg left!}
+{10000}{}{[The man is shivering with fear] I've... I've seen the devil! Oh God! And it's you! [Another loud pop later and the man passes out, several minutes pass and you begin to worry. A swift slap to the face and the man jumps to his feet] Ugh! You monster! My legs! My legs? Oh! My legs! You've fixed my legs! Thank you! Thank you! I can finally run away from slave camp! Thank you, sir! Thank you! }
+{10010}{}{No problem, just stay off your feet for a few days. Once the adrenaline wears off you'll be in excruciating pain, and most likely bedridden. Remember to eat plenty of vegetables, and drink your brahmin milk to prevent these things from happening the future. }
+{11000}{}{Now I've really got a reason to sing! Doo-wop! A-doo-wop! A-doo-wop!...}
 

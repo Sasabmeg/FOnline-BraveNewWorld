@@ -1,0 +1,196 @@
+[comment]
+shed
+
+[data]
+lang=engl russ
+
+[dialog]
+&
+1 1000 None 0 #
+2 1010 D _var p name_mem_npc_player = 0 #
+4 1020 D _var p name_mem_npc_player = 1 @
+2 2000 None 0 #
+3 2010 #
+3 2020 #
+3 2030 #
+3 2040 #
+3 2050 @
+3 3000 None 0 #
+4 3010 R _var p name_mem_npc_player = 1 @
+4 4000 None 0 #
+5 4010 #
+7 4020 #
+9 4030 D _param p SK_BARTER } 25 D _var p noob_camp_resource_trader { 1 #
+8 4040 D _var p noob_camp_resource_trader } 2 D _var p noob_camp_resource_trader { 4 D _item p PID_GECKO_PELT } 12 R _item p PID_BOTTLE_CAPS + 1300 R _var p noob_camp_resource_trader = 98 R _param p SK_BARTER + 6 #
+6 4050 D _var p noob_camp_resource_trader } 2 D _var p noob_camp_resource_trader { 4 D _item p PID_BOTTLE_CAPS } 1100 R _item p PID_PUMP_PARTS + 25 R _var p noob_camp_resource_trader = 99 R _param p SK_BARTER + 6 #
+0 4060 @
+5 5000 None 0 #
+6 5010 D _item p PID_BOTTLE_CAPS } 50 R _item p PID_PUMP_PARTS + 1 R _item p PID_BOTTLE_CAPS - 50 #
+6 5020 D _item p PID_BOTTLE_CAPS } 50 R _item p PID_FLINT + 1 R _item p PID_BOTTLE_CAPS - 50 #
+6 5030 D _item p PID_BOTTLE_CAPS } 150 R _item p PID_METAL_PARTS + 1 R _item p PID_BOTTLE_CAPS - 150 #
+6 5040 D _item p PID_BOTTLE_CAPS } 25 R _item p PID_FIBER + 1 R _item p PID_BOTTLE_CAPS - 25 #
+6 5050 D _item p PID_BOTTLE_CAPS } 50 R _item p PID_GECKO_PELT + 1 R _item p PID_BOTTLE_CAPS - 50 #
+6 5060 D _item p PID_BOTTLE_CAPS } 250 R _item p PID_BRAHMIN_HIDE + 1 R _item p PID_BOTTLE_CAPS - 250 #
+0 5070 @
+6 6000 None 0 #
+5 6010 #
+7 6020 #
+0 6030 @
+7 7000 None 0 #
+8 7010 D _item p PID_PUMP_PARTS } 1 R _item p PID_BOTTLE_CAPS + 20 R _item p PID_PUMP_PARTS - 1 #
+8 7020 D _item p PID_FLINT } 1 R _item p PID_BOTTLE_CAPS + 20 R _item p PID_FLINT - 1 #
+8 7030 D _item p PID_METAL_PARTS } 1 R _item p PID_BOTTLE_CAPS + 60 R _item p PID_METAL_PARTS - 1 #
+8 7040 D _item p PID_FIBER } 1 R _item p PID_BOTTLE_CAPS + 10 R _item p PID_FIBER - 1 #
+8 7050 D _item p PID_GECKO_PELT } 1 R _item p PID_BOTTLE_CAPS + 20 R _item p PID_GECKO_PELT - 1 #
+8 7060 D _item p PID_BRAHMIN_HIDE } 1 R _item p PID_BOTTLE_CAPS + 100 R _item p PID_BRAHMIN_HIDE - 1 #
+8 7070 D _item p PID_GOLDEN_GECKO_PELT } 1 R _item p PID_BOTTLE_CAPS + 100 R _item p PID_GOLDEN_GECKO_PELT - 1 #
+0 7080 @
+8 8000 None 0 #
+7 8010 #
+5 8020 #
+0 8030 @
+9 9000 None 0 #
+10 9010 #
+11 9020 D _param p SK_REPAIR } 35 #
+11 9030 D _param p SK_BARTER } 35 @
+10 10000 None 0 #
+0 10010 @
+11 11000 None 0 #
+0 11010 R _var p noob_camp_resource_trader = 2 #
+4 11020 &
+
+[engl]
+{100}{}{Henry, the trader}
+{200}{}{You see Henry the camp trader.}
+{210}{}{He is in a room filled with raw materials, gecko pelts and a lot of junk.}
+{1000}{}{Predialogue installations}
+{1010}{}{first time}
+{1020}{}{known}
+{2000}{}{Howdy. Are you here to buy or sell?}
+{2010}{}{Buy what?}
+{2020}{}{Sell what?}
+{2030}{}{Uhm, buy!?}
+{2040}{}{Sell!?}
+{2050}{}{What do you trade here?}
+{3000}{}{Oh, you are new here. I am the camp's resource manager. I buy and sell various crafting materials for Caps, short for Bottle Caps. I can sell you Junk, Metal Parts, Flint, Fiber and Gecko or Brahmin Hides. I don't have any Golden Gecko Hides, but I would buy them. If you need minerals or raw iron just go to the mine, there's plenty. }
+{3010}{}{Okay.}
+{4000}{}{Do you want to buy or sell? Hurry up, I'm a busy man.}
+{4010}{}{I would like to buy something.}
+{4020}{}{I would like to sell something.}
+{4030}{}{Can you give me any discount?}
+{4040}{}{I got the pelts for our deal.}
+{4050}{}{I got the caps for industrial amount of Junk!}
+{4060}{}{Sorry to bother you, I'll be back later.}
+{5000}{}{I can sell you Junk and Flint for 50 caps each, Metal Parts for 150 caps each, Fiber for 25 caps each, Gecko Hides for 50 caps each and Brahmin Hides for 250 caps each.}
+{5010}{}{Give me some Junk.}
+{5020}{}{Give me a Flint.}
+{5030}{}{Give me a Metal Part.}
+{5040}{}{Give me a Fiber.}
+{5050}{}{Give me a Gecko Hide.}
+{5060}{}{Give me a Brahmin Hide.}
+{5070}{}{Never mind.}
+{6000}{}{There you go. Wanna buy anything else?}
+{6010}{}{Yes.}
+{6020}{}{I would like to sell some stuff.}
+{6030}{}{Thanks, that's all. Bye.}
+{7000}{}{I can buy Junk and Flint for 20 caps each, Metal Parts for 60 caps each, Fiber for 10 caps each, Gecko Hides for 20 caps each. Brahmin or Golden Gecko Hides for 100 caps each if you got any.}
+{7010}{}{I got some Junk to sell.}
+{7020}{}{I got a Flint to sell.}
+{7030}{}{I got a Metal Part to sell.}
+{7040}{}{I got a Fiber to sell.}
+{7050}{}{I got a Gecko Hide to sell.}
+{7060}{}{I got a Brahmin Hide to sell.}
+{7070}{}{I got a Golden Gecko Hide to sell.}
+{7080}{}{Never mind.}
+{8000}{}{Thanks. Wanna sell anything else?}
+{8010}{}{Yes.}
+{8020}{}{I would like to buy some stuff instead.}
+{8030}{}{Thanks, that's all. Bye.}
+{9000}{}{Now, why would I do that?}
+{9010}{}{I thought I just ask.}
+{9020}{}{I see you have a lot of Junk lying around, you barely have enough space for the important stuff. I take most of it at a lower price, just to free you up some space. What do you say?}
+{9030}{}{How about I get you a lot of Golden Gecko Pelts, but you pay me one extra? That would open up some business opportunities for you and gain even more out of it.}
+{10000}{}{Everyone gets the same deal.}
+{10010}{}{Fair enough.}
+{11000}{}{Hah! A fellow trader! I do need a lot of Golden Gecko Pelts actually. If you bring me a batch of twelve, I would pay you one extra. I also got too much junk, it barely fits the room. I could sell you bulk for lower price, let's say 25 pile of Junk for 1100 caps?}
+{11010}{}{You got a deal!}
+{11020}{}{Nah, that's just too much trouble. I want to finish here as quickly as possible.}
+{100000001}{}{Better wash the counter again...}
+{100000002}{}{That's 5 caps buddy. Hey did you hear me? Cough em' up.}
+{100000003}{}{Better change the keg...}
+{100000004}{}{RotGut? You drink that shit?}
+{100000005}{}{Domestic? I got B.E.E.R buddy, do you want one or not?}
+{100000006}{}{Fuckin' dust is getting everywhere. Hey close the fuckin' door!}
+{100000007}{}{I swear if the next asshole doesn't tip. Ima' shoot somebody!}
+{100000008}{}{I got bottles, I got shots, and I got a bat behind the counter for the retards. Your not a retard are you?}
+{100000009}{}{Uh-huh, yeah that's nice buddy. You don't say...What? Of course I'm listening...}
+{100000010}{}{That's 5 caps. FIVE CAPS Tribal! F.I.V.E! }
+{100000011}{}{Shut up and order a fuckin' beer already!}
+{100000012}{}{I swear if I have to serve another drunk, I'm getting the shotgun!}
+{100000013}{}{Look the keg went dry, and it's going to be another month until the caravan shows up again.}
+{100000014}{}{Really? You don't say, buy another drink or get out!}
+{100000015}{}{What? I'm on break.}
+{100000016}{}{Be right with ya'}
+{100000017}{}{Have a sit stranger. I'll be with you in a moment.}
+{100000018}{}{When do we close? Uh, when the place get's shot up, that's when!}
+{100000019}{}{We're fresh outta' cold beer, sorry. You'll just have to drink it warm.}
+{100000020}{}{RotGut? No man, go make that shit yourself! I wouldn't drink it!}
+
+[russ]
+{100}{}{Ŕëęîăîëčę}
+{200}{}{Âű âčäčňĺ ďü˙íčöó.}
+{210}{}{Âű âčäčňĺ řŕňŕţůĺăîń˙ čç ńňîđîíű â ńňîđîíó ďü˙íîăî ÷ĺëîâĺęŕ â ëîőěîňü˙ő. Ëčöî ĺăî đŕńďóőëî, íîń ńčíţůčé ęŕę ńëčâŕ. Ŕ ŕđîěŕň đ˙äîě ń íčě ňŕęîé, ÷ňî ńâŕëčň áđŕěčíŕ íŕńěĺđňü. Îí ÷ňî-ňî áîđěî÷ĺň ďđî ńĺá˙ č číîăäŕ ăđîěęî ďîĺň ďĺńíč.}
+{210}{}{Âű âčäčňĺ ŕëęŕřŕ. Îí âĺńüěŕ ăđ˙çĺí - ęŕćĺňń˙, îí ďîâŕë˙ëń˙ â ëóćĺ, íî íĺ îńîáî ýňčě đŕńńňđîĺí.}
+{1000}{}{I?aaaeaeiaiaua onoaiiaee}
+{1010}{}{first time}
+{1020}{}{known}
+{2000}{}{Hi}
+{2010}{}{Buy what?}
+{2020}{}{Sell what?}
+{2030}{}{Uhm, buy!?}
+{2040}{}{Sell!?}
+{2050}{}{What do you trade here?}
+{3000}{}{Oh, you are new here. I am the camp's resource manager. I buy and sell various crafting materials for Caps, short for Bottle Caps. I can sell you Junk, Metal Parts, Flint, Fiber and Gecko or Brahmin Hides. I don't have any Golden Gecko Hides, but I would buy them. If you need minerals or raw iron just go to the mine, there's plenty. }
+{3010}{}{Okay}
+{4000}{}{Do you want to buy or sell?}
+{4010}{}{I would like to buy something.}
+{4020}{}{I would like to sell something.}
+{4030}{}{Can you give me any discount?}
+{4040}{}{I got the pelts for our deal.}
+{4050}{}{I got the caps for industrial amount of Junk!}
+{4060}{}{Sorry to bother you, I'll be back later.}
+{5000}{}{Junk, Metal Parts, Flint, Fiber and Gecko or Brahmin Hides? Hurry up I'm a busy man.}
+{5010}{}{Give me 1 Junk.}
+{5020}{}{Give me a Flint.}
+{5030}{}{Give me 1 Metal Part.}
+{5040}{}{Give me 1 Fiber.}
+{5050}{}{Give me 1 Gecko Hides.}
+{5060}{}{Give me a Brahmin Hide.}
+{5070}{}{Never mind.}
+{6000}{}{There you go. Wanna buy anything else?}
+{6010}{}{Yes.}
+{6020}{}{I would like to sell some stuff.}
+{6030}{}{Thanks, that's all.}
+{7000}{}{Junk, Metal Parts, Flint, Fiber and Gecko or Brahmin Hides? I also buy Golden Gecko Hides if you got any.}
+{7010}{}{I got a Junk to sell.}
+{7020}{}{I got a Flint to sell.}
+{7030}{}{I got a Metal Part to sell.}
+{7040}{}{I got a Fiber to sell.}
+{7050}{}{I got a Gecko Hide to sell.}
+{7060}{}{I got a Brahmin Hide to sell.}
+{7070}{}{I got a Golden Gecko Hide to sell.}
+{7080}{}{Never mind.}
+{8000}{}{Thanks. Wanna sell anything else?}
+{8010}{}{Yes.}
+{8020}{}{I would like to buy some stuff instead.}
+{8030}{}{Thanks, that's all. Bye.}
+{9000}{}{Now, why would I do that?}
+{9010}{}{I thought I just ask.}
+{9020}{}{I see you have a lot of Junk lying around. I take most of it at a lower price, just to free you up some space. What do you say?}
+{9030}{}{How about I get you a lot of Golden Gecko Pelts, but you pay me extra? That would open up some business opportunities for you and gain even more out of it.}
+{10000}{}{Sorry, but business is business. Everyone gets the same deal.}
+{10010}{}{Fair enough.}
+{11000}{}{Hah! A fellow trader! I do need a lot of Golden Gecko Pelts actualy. If you bring me a batch of twelve, I would pay you extra. I also got too much junk, it barely fits the room. I could sell you bulk for lower price, let's say 50 Junks for  for 2.250 caps?}
+{11010}{}{You got a deal!}
+{11020}{}{Nah, that's just too much trouble. I want to finish here as quickly as possible.}
+

@@ -2,28 +2,62 @@
 #define __NOOB_CAMP_DIALOG__
 
 #include "_macros.fos"
+#include "utils_h.fos"
 
 
 // questVars = { var, value, item, count, item, count... }
-array<array<uint>> questVars = { 
-	{ LVAR_noob_camp_alecquest, 1, PID_LEATHER_JACKET, 1, PID_LEATHER_JACKET_HELMET, 1 },
-	{ LVAR_noob_camp_breederquest, 1, PID_ROPE, 1 },
-	{ LVAR_noob_camp_robodog, 1, PID_RADIO, 1, },
-	{ LVAR_noob_camp_edquest, 1, PID_SLEDGEHAMMER, 1 },
-	{ LVAR_noob_camp_jessica, 1, PID_ANTIDOTE, 2 },
-	{ LVAR_noob_camp_jimmy, 1, PID_FIRST_AID_KIT, 1 },
-	{ LVAR_noob_camp_kid, 1, PID_MUTATED_FRUIT, Random(2, 6) },
-	{ LVAR_noob_camp_knife, 1, PID_KNIFE, 1 },
-	{ LVAR_noob_camp_lawrence, 2, PID_GREEN_CONDOM, 1 },
-	{ LVAR_noob_camp_trapper, 2, PID_HEALING_POWDER, 3 },
-	{ LVAR_noob_camp_rebec, 1, PID_WATERBAG, 1 },
-	{ LVAR_noob_camp_simon, 1, PID_AXE, 1 },
-	{ LVAR_noob_camp_stanley, 1, PID_BEER, Random(1, 3) },
-	{ LVAR_noob_camp_thunderjo, 1, PID_10MM_PISTOL, 1, PID_10MM_JHP, Random(20, 30) },
-	{ LVAR_noob_camp_hunter, 3, PID_TENT, 1 },
-	{ LVAR_noob_camp_plague, 2, PID_STIMPAK, 3 },
-	{ LVAR_noob_camp_armorer, 1, PID_MULTI_TOOL, 1 }
+array<array<uint>> questVars = {
+	{ LVAR_noob_camp_alecquest, 99, PID_LEATHER_JACKET, 1, PID_LEATHER_JACKET_HELMET, 1 },
+	{ LVAR_noob_camp_breederquest, 99, PID_ROPE, 1 },
+	{ LVAR_noob_camp_robodog, 99, PID_RADIO, 1, },
+	{ LVAR_noob_camp_edquest, 99, PID_SLEDGEHAMMER, 1 },
+	{ LVAR_noob_camp_jessica, 99, PID_ANTIDOTE, 2 },
+	{ LVAR_noob_camp_jimmy, 99, PID_FIRST_AID_KIT, 1 },
+	{ LVAR_noob_camp_kid, 99, PID_MUTATED_FRUIT, Random(2, 6) },
+	{ LVAR_noob_camp_knife, 99, PID_KNIFE, 1 },
+	{ LVAR_noob_camp_lawrence, 99, PID_GREEN_CONDOM, 1 },
+	{ LVAR_noob_camp_trapper, 99, PID_HEALING_POWDER, 3 },
+	{ LVAR_noob_camp_rebec, 99, PID_WATERBAG, 1 },
+	{ LVAR_noob_camp_simon, 99, PID_AXE, 1 },
+	{ LVAR_noob_camp_stanley, 99, PID_BEER, Random(1, 3) },
+	{ LVAR_noob_camp_thunderjo, 99, PID_10MM_PISTOL, 1, PID_10MM_JHP, Random(20, 30) },
+	{ LVAR_noob_camp_hunter, 99, PID_TENT, 1 },
+	{ LVAR_noob_camp_plague, 99, PID_STIMPAK, 3 },
+	{ LVAR_noob_camp_armorer, 99, PID_MULTI_TOOL, 1 }
 };
+
+void r_JasonNotifiesQuestsFirstWave(Critter& player, Critter@ npc) {
+    if (GetLvar(player, LVAR_job_lp_caravan_box) == 0)
+        SetLvar(player, LVAR_job_lp_caravan_box, 1);
+    if (GetLvar(player, LVAR_noob_camp_knife) == 0)
+        SetLvar(player, LVAR_noob_camp_knife, 1);
+    if (GetLvar(player, LVAR_noob_camp_armorer) == 0)
+        SetLvar(player, LVAR_noob_camp_armorer, 1);
+    if (GetLvar(player, LVAR_noob_camp_thunderjo) == 0)
+        SetLvar(player, LVAR_noob_camp_thunderjo, 1);
+    if (GetLvar(player, LVAR_noob_camp_alecquest) == 0)
+        SetLvar(player, LVAR_noob_camp_alecquest, 1);
+}
+
+void r_JasonNotifiesQuestsSecondWave(Critter& player, Critter@ npc) {
+    if (GetLvar(player, LVAR_noob_camp_trapper) == 0)
+        SetLvar(player, LVAR_noob_camp_trapper, 1);
+    if (GetLvar(player, LVAR_noob_camp_simon) == 0)
+        SetLvar(player, LVAR_noob_camp_simon, 1);
+    if (GetLvar(player, LVAR_noob_camp_edquest) == 0)
+        SetLvar(player, LVAR_noob_camp_edquest, 1);
+}
+
+void r_JasonNotifiesQuestsThirdWave(Critter& player, Critter@ npc) {
+    if (GetLvar(player, LVAR_noob_camp_breederquest) == 0)
+        SetLvar(player, LVAR_noob_camp_breederquest, 1);
+    if (GetLvar(player, LVAR_noob_camp_rebec) == 0)
+        SetLvar(player, LVAR_noob_camp_rebec, 1);
+    if (GetLvar(player, LVAR_noob_camp_stanley) == 0)
+        SetLvar(player, LVAR_noob_camp_stanley, 1);
+    if (GetLvar(player, LVAR_noob_camp_jimmy) == 0)
+        SetLvar(player, LVAR_noob_camp_jimmy, 1);
+}
 
 void r_LeaveNoobCamp(Critter& player, Critter@ npc)
 {

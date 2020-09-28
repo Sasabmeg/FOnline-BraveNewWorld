@@ -5,7 +5,10 @@
 #
 
 {4}{}{%d. }
-{5}{}{Current progress: }
+{5}{}{
+
+Current progress: 
+}
 
 #
 # Number
@@ -89,19 +92,21 @@
 
 #=======================================
 # 6502
-# Landers Point: Caravan Packer
+# Landers Point: Caravan Packing Job (repeatable)
 #=======================================
+{6502001}{}{I got word of job that requires heavy lifting and pays well for the invested time. I should check the Caravan Foreman at north-west part of Landers Point if I am interested. 
 
-{6502001}{}{The caravan foreman at Landers Point asked me to unload some boxes from the cart to the north-west storage area. After unloading 3 boxes, my pay would be 250 caps.}
-{6502004}{}{DONE:That's all. I should talk to the caravan foreman about my reward!}
+:: New Job Avaialble ::}
+{6502011}{}{The caravan foreman at Landers Point asked me to unload some boxes from the cart to the north-west storage area. After unloading a few boxes, my pay would be 250 caps.}
+{6502014}{}{DONE:That's all. I should talk to the caravan foreman about my reward!}
 {6502097}{}{SOFT_FAILED:I tried to help the caravan packer but I dropped one of the boxes on the wrong location. Maybe I should work out a bit before trying again.
 
-:: Quest Failed ::}
+:: Job Failed ::}
 {6502099}{}{SOFT_COMPLETED:I finished the task and got my reward. I could return for more work a bit later.
 
-:: Quest Completed ::}
-{6502101}{}{Landers Point Caravan packer}
-{6502102}{}{JOB:Unload boxes from the caravan cart.}
+:: Job Completed ::}
+{6502101}{}{Landers Point: Caravan Packing Job (repeatable)}
+{6502102}{}{JOB:Landers Point: Unload boxes from the caravan cart for caps.}
 
 #=======================================
 # 7004
@@ -720,7 +725,7 @@ In order to do this, I have to find new electronic parts with that I can repair 
 # 7301
 # New Reno, Corsican Brothers, Tattoo
 #=======================================
-{7301001}{}{Marty thinks I could lend a hand to them Corsican Brothers and invites me to join the bunch. I should immidiately visit a tattoo shop and ask for the official Corsican Brothers tattoo there.}
+{7301001}{}{Marti thinks I could lend a hand to them Corsican Brothers and invites me to join the bunch. I should immidiately visit a tattoo shop and ask for the official Corsican Brothers tattoo there.}
 {7301002}{}{The Corsican Brothers tattoo looks rather fancy. I should show it to Marty as soon as possible.}
 {7301003}{}{You have joined the Corsican Brothers
 
@@ -760,7 +765,9 @@ In order to do this, I have to find new electronic parts with that I can repair 
 # 7322
 # First Tent quest
 #=======================================
-{7322001}{}{During my journeys through the wasteland I noticed a small tent in this area. Maybe I should check it out.}
+{7322001}{}{During my journeys through the wasteland I noticed a small tent in this area. Maybe I should check it out.
+
+:: New Quest Avaialble ::}
 {7322002}{}{I met a family of farmers living in the tent. They escaped from a farmhouse infested with giant mutated rats. I promised to help them out.}
 {7322003}{}{I killed all the mutated rats in the farm. I should return to the family and tell them that they can come back home safely.}
 {7322004}{}{The family living in the tent was very happy to hear that they can finally come back home. Before leaving they gave me their tent.
@@ -771,3 +778,326 @@ In order to do this, I have to find new electronic parts with that I can repair 
 :: Quest Failed ::}
 {7322101}{}{A Tent in the Wasteland}
 {7322102}{}{Investigate a certain tent in the wasteland.}
+
+#=======================================
+# 11801
+# Landers Point: Alec quest
+#=======================================
+{11801001}{}{I got word that a young man named Alec formed a gang. Cpt. Stone specifically told me to stay away from that kid and his gang, but can I resist? Maybe I should get some new friends, if only I knew where to look for him.
+
+:: New Quest Avaialble ::}
+{11801002}{}{As part of my initiation, I have to make a brand new Leather Jacket from Gecko Pelts. It should be pretty straightforward assuming I can get some weapons to kill Geckos with. The fiber can be harvested with a Knife off fiber plants in the gecko fields nearby.}
+{11801003}{}{DONE:I managed to make a brand new Leather Jacket for Alec. New gang member incoming!}
+{11801099}{}{HARD_COMPLETED:Alec took my brand new Leather Jacket, but didn't let me in his gang for some bullshit reason. Can't believe that kid scammed me out of my jacket!
+
+:: Quest Completed ::}
+{11801101}{}{Landers Point: To join a gang}
+{11801102}{}{QUEST:Landers Point: Join Alec's gang The Trashers.}
+
+#=======================================
+# 11802
+# Landers Point: Brahmin breeder quest
+#=======================================
+{11802001}{}{I got word that the local herdsman needs some help. Sounds like a good opportunity to familiarize with docile animals first.
+
+:: New Quest Avaialble ::}
+{11802002}{}{I was asked to craft 2 Ropes for the Brahmin. All I need to do is gather some fiber and check my fix-boy for instructions at a workbench.}
+{11802003}{}{DONE:I managed to get 2 Ropes for the local Brahmin breeder. I should go back to him.}
+{11802099}{}{HARD_COMPLETED:I completed the task and learned many useful things.
+
+:: Quest Completed ::}
+{11802101}{}{Landers Point: To tame a beast}
+{11802102}{}{QUEST:Landers Point: One rope, two heads.}
+
+#=======================================
+# 11803
+# Landers Point: Man's best friend
+#=======================================
+{11803001}{}{I got word that there is a non functional cyber-dog in the camp. Sounds interesting...
+
+:: New Quest Avaialble ::}
+{11803002}{}{I could try to fix this cyber-dog if I had some spare electronic parts. }
+{11803003}{}{DONE:I managed to get some electronic parts to fix the cyber-dog, I should be heading that way.}
+{11803099}{}{HARD_COMPLETED:I did my best to fix the cyber-dog, but my success only lasted a few seconds. Never mind, it was a good science practice.
+
+:: Quest Completed ::
+:: Bonus reward +6% science}
+{11803101}{}{Landers Point: Man's best friend}
+{11803102}{}{QUEST:Landers Point: Man's best friend.}
+
+#=======================================
+# 11804
+# Landers Point: Sledgehammer for Ed
+#=======================================
+{11804001}{}{I got word that Ed the miner is looking for a new Sledgehammer. Maybe I should talk to him. He usually is in the west wing of the mining cave to the north.
+
+:: New Quest Avaialble ::}
+{11804002}{}{Ed the miner at Landers Point asked me to get him a brand new Sledgehammer. If I do this, maybe he will put in a good word with Cpt. Stone for me. I could either buy a new Sledgehammer for him from Felix or craft one.
+
+Here are some instructions to craft a new Sledgehammer: 
+
+1. To craft Sledgehammers, open your fix-boy by pressing F.
+2. Use the filter to show only weapons.
+3. Select Sledgehammer to show what materials are needed to craft it.
+4. Gather the required materials and click on the Workbench near Albert.
+5. Select the quantity and craft the Sledgehammers.}
+{11804003}{}{DONE:I managed to get a brand new Sledgehammer for Ed. I should go back to Ed the miner before I loose it.}
+{11804099}{}{HARD_COMPLETED:I finished the task and Ed will talk to Cpt. Stone about me helping him out. He also gave me some electronic parts, I wonder if I can make any use of those.
+
+:: Quest Completed ::}
+{11804101}{}{Landers Point: Sledgehammer for Ed}
+{11804102}{}{QUEST:Landers Point: Sledgehammer for Ed}
+
+#=======================================
+# 11805
+# Landers Point: Jessica, poisoned by Radscorpions
+#=======================================
+{11805002}{}{The guard told you that Jessica was attacked by a giant Radscorpion. Without some kind of antidote, you will not be able to help her. Maybe I should check in with the local doctor about this.}
+{11805003}{}{DONE:I got some antidote from Dr. Sun Yat-sen, I should hurry back to Jessica to cure her.}
+{11805099}{}{HARD_COMPLETED:I cured Jessica with the anti venom extract made by Dr. Sun Yat-sen. She should be back on her feet in a few days.
+
+:: Quest Completed ::
+:: Bonus reward +6% First Aid ::
+:: Bonus reward +5% Poision Resistance ::}
+{11805101}{}{Landers Point: Sledgehammer for Ed}
+{11805102}{}{QUEST:Landers Point: Sledgehammer for Ed}
+
+#=======================================
+# 11806
+# Landers Point: Jimmy, the cripple (Looney Tunes)
+#=======================================
+{11806001}{}{Investigate the lonely crippled young man singing at the edge of the camp.}
+{11806098}{}{HARD_FAILED:I tried to cure Jimmy's legs and I was that close for him to let me, but my expertise in medicinal procedures wasn't convincing enough. Maybe I should raise my doctor skill a bit more before attempting complex procedures on others. There is no way he will let me take a look at his legs again now.
+
+:: Quest Failed ::
+:: Bonus reward +3% Doctor ::}
+{11806099}{}{HARD_COMPLETED:I placed Jimmy's leg bones to the correct spot. It must have hurt a lot, but now he has a chance for a normal life.
+
+:: Quest Completed ::
+:: Bonus reward +6% Doctor ::}
+{11806101}{}{Landers Point: Looney Tunes}
+{11806102}{}{QUEST:Landers Point: Looney Tunes}
+
+#=======================================
+# 11807
+# Landers Point: The kid / One apple a day
+#=======================================
+{11807002}{}{I found a kid playing some kind of nuclear war game. Is this what the next generation will grow up on? I must do something about it, he wanted some apples. Maybe that will take his mind off from that stupid game. Five apples should do, now, where do I find an apple tree?}
+{11807099}{}{HARD_COMPLETED:I got some apples for the kid. His sate for nuclear destruction games has been neutralized. Well done!
+
+:: Quest Completed ::}
+{11807101}{}{Landers Point: One apple a day...}
+{11807102}{}{QUEST:Landers Point: One apple a day, keeps the nuclear war games away.}
+
+#=======================================
+# 11808
+# Landers Point: Knife for Albert
+#=======================================
+{11808001}{}{I got word that Albert the tool maker could need some help. He is in the building behind Cpt. Stone near the workbench.
+
+:: New Quest Avaialble ::}
+{11808002}{}{Albert the tool maker at Landers Point asked me to craft him some knives. If I do this, he will put in a good word with Cpt. Stone for me. 
+
+He gave me some crafting materials and some instructions he gave me to follow:
+
+1. To craft knives, open your fix-boy by pressing F.
+2. Use the filter to show only weapons.
+3. Select Knife to show what materials are needed to craft it.
+4. Gather the required materials and click on the Workbench near Albert.
+5. Select the quantity and craft the knives.}
+{11808003}{}{DONE:I managed to get a knife for Albert. I should should give it to Albert before I loose it.}
+{11808099}{}{HARD_COMPLETED:I finished the task and learned how to craft from Albert. This might be useful later.
+
+:: Quest Completed ::}
+{11808101}{}{Landers Point: Knife for Albert}
+{11808102}{}{QUEST:Landers Point: Craft a knife for Albert the tool maker.}
+
+#=======================================
+# 11809
+# Landers Point: Lawrence cards
+#=======================================
+{11809002}{}{I bumped into Lawrence in his tent. He seemed to be in shock and upset about his relationship. I promised to get his cards back from her ex.}
+{11809011}{}{DONE:I sweet talked the cards out of Tina, I can get back to Lawrence now.
+
+:: Bonus reward +6 speech ::}
+{11809012}{}{DONE:I stole the cards from Tina. I feel a bit bad about it, but it was the only way! I can get back to Lawrence now.
+
+:: Bonus reward +6 steal ::}
+{11809013}{}{DONE:I simply asked Tina for the cards and she throw them at me. I can get back to Lawrence now.
+{11809091}{}{SOFT_FAILED:I tried to steal the cards from Tina but I failed. I think it's because of the plague, people are too scared to help each other. Maybe I could try again later when it passes.}
+{11809092}{}{HARD_FAILED:I tried to charm Tina but I failed. Guess Lawrence has to deal with it on his own, I better not disturb him again.}
+{11809099}{}{HARD_COMPLETED: I recovered the cards for Lawrence. He looked like he was stoned when talking to him. I should keep my love happy if I ever get lucky, or I end up like him. Hope they used protection, but that child outside suggests otherwise.. poor kid.
+
+:: Quest Completed ::}
+{11809101}{}{Landers Point: Love... or something like it}
+{11809102}{}{QUEST:Landers Point: Recover Lawrence's cards from Tina.}
+
+
+#=======================================
+# 11810
+# Landers Point: Gecko Skinning
+#=======================================
+{11810001}{}{I got word that the Old Trapper at the west gate would teach newcomers how to skin a gecko. Maybe I should check it out.
+
+:: New Quest Avaialble ::}
+{11810002}{}{The Old Trapper at the west gate of Landers Point asked me to kill 5 geckos for him and after that we can go through them and he will show me how to skin geckos.}
+{11810003}{}{DONE:I managed to down 5 geckos, time to go back to the Old Trapper and learn to skin geckos.}
+{11810099}{}{HARD_COMPLETED:I finished the task and the Old Trapper taught me how to skin geckos.
+
+:: Quest Completed ::
+:: New Perk acquired - Gecko Skinning ::}
+{11810101}{}{Landers Point: Gecko Skinning}
+{11810102}{}{QUEST:Landers Point: Learn how to skin geckos from the Old Trapper.}
+
+#=======================================
+# 11811
+# Landers Point: Spiritual aggriculture
+#=======================================
+{11811002}{}{Rebecca the gardener asked me to get her 2 filled water bags to water her plants. All I need to do is find or craft some empty water bags and fill them up at the nearest waterpipe. I should check my fix-boy on crafting empty water bags.}
+{11811003}{}{DONE:I managed get 2 filled waterbags for Rebecca. I should go there and water her plant.}
+{11811099}{}{HARD_COMPLETED:I finished Rebecca's task and I learned something about aggriculture as well. Maybe some day I shall retire and run a farm.
+
+:: Quest Completed ::}
+{11811101}{}{Landers Point: Spiritual aggriculture}
+{11811102}{}{QUEST:Landers Point: Spiritual aggriculture}
+
+#=======================================
+# 11812
+# Landers Point: Craft Hatchet for Simon
+#=======================================
+{11812001}{}{I got word that Simon the Woodsman needs to restock his hatchet supply. Maybe I should check it out, he resides near the west gate of the encampment.
+
+:: New Quest Avaialble ::}
+{11812002}{}{Simon the Woodsman asked me to bring him 3 Hatchets. He will make sure I get one before leaving this camp for good.}
+{11812003}{}{DONE:I got 3 hatchet on me, I should get back to Simon.}
+{11812099}{}{HARD_COMPLETED:I helped Simon restock his Hatchet supply.
+
+:: Quest Completed ::}
+{11812101}{}{Landers Point: Craft Hatchet for Simon}
+{11812102}{}{QUEST:Landers Point: Crafting a few Hatchets for Simon.}
+
+#=======================================
+# 11813
+# Landers Point: Responsible drinking
+#=======================================
+{11813002}{}{I tried to talk to Stanley the local drunk but he wasn't focused enough to make sense. Maybe if I show him a bottle of Rot Gut, I'll be able to talk to him.}
+{11813003}{}{DONE:I got the spirits for Stanley, I should go back to him and flash this full bottle in front of him.}
+{11813099}{}{HARD_COMPLETED:Ugh. I think I helped the local drunk to overdose. Wait, no, he is just sleeping, I can hear him snorr.
+
+:: Quest Completed ::}
+{11813101}{}{Landers Point: Responsible drinking}
+{11813102}{}{QUEST:Landers Point: Responsible drinking.}
+
+#=======================================
+# 11814
+# Landers Point: Ammo for Thunder Jo
+#=======================================
+{11814001}{}{I got word that Thunder Jo is looking for recruits to craft some ammo for the armory. He resides in the north-east building, maybe I should go and talk to him.
+
+:: New Quest Avaialble ::}
+{11814002}{}{Thunder Jo the head of security at Landers Point asked me to craft more ammo. I need to craft 50 rounds of 44. Magnum JHP, 12. Shotgun Shells and 10mm JHP each. If I do this, he might put in a good word with Cpt. Stone for me and I hope they give me a proper gun before I leave this safe place. 
+
+Here are some instructions he gave me to follow:
+
+1. To craft ammo, open your fix-boy by pressing F.
+2. Use the filter to show only ammo.
+3. Select the ammo type you want to craft to show what materials are needed.
+4. Gather the required materials and click on the Workbench near Albert.
+5. Select the quantity and craft the ammo. Ammo can only be bulk crafted so don't worry if you get more, you can use or sell the rest.}
+{11814003}{}{DONE:I managed to get the ammo for Thunder Jo. I should should give it to him before I leave camp.}
+{11814099}{}{HARD_COMPLETED:I finished the task and I hope that Thunder Jo will talk to Cpt. Stone about me helping him out. Maybe they give me a gun before I leave this safe place.
+
+:: Quest Completed ::}
+{11814101}{}{Landers Point: Ammo for Thunder Jo}
+{11814102}{}{QUEST:Landers Point: Resupply the armory with ammo for Thunder Jo.}
+
+#=======================================
+# 11815
+# Landers Point: Tribal Hunter quest / Ancestral knowledge
+#=======================================
+{11815001}{}{I got word that there is a friendly Tribal Hunter across the Gecko Fields. To learn more about the natives tribes after the fallout, I feel like I should investigate.
+
+:: New Quest Avaialble ::}
+{11815002}{}{The hunter was weakened while hunting and asked to bring him a few batch of Xander Root and Broc Flower. If I help him, he will show me how to mix them into medicine.}
+{11815003}{}{Now I have to mix the Broc Flower with the Xander Root, keep the powder and remove the fiber parts. I should do this 3 times, that should be enough. [Open fix-boy to craft Healing Powder.]}
+{11815004}{}{I healed the hunter with the strange powder. Now he asked me to get some sharpened poles for him so he can fight if needed.}
+{11815005}{}{The hunter taught me how to make a tent, I should get sticks, ropes and brahmin hides use my fix-boy to craft it. Once I managed to make a tent, I should return with it to him.}
+{11815098}{}{HARD_COMPLETED:After healing the hunter, he asked me for more help. I refused to help, his tribal knowledge of the world does not interest me.
+
+:: Quest Completed ::}
+{11815099}{}{HARD_COMPLETED:I finished the task and I hope that Thunder Jo will talk to Cpt. Stone about me helping him out. Maybe they give me a gun before I leave this safe place.
+
+:: Quest Completed ::
+:: Bonus reward +6% Outdoorsman ::}
+{11815101}{}{Landers Point: Ancestral knowledge}
+{11815102}{}{QUEST:Landers Point: Help the weakened Tribal Hunter.}
+
+#=======================================
+# 11816
+# Landers Point: Encampment plague 
+#=======================================
+{11816001}{}{I got word that there is a sickness in the encampment. Maybe I should seek out the local medic, she is said to reside in the building behind Cpt. Jason Stone.
+
+:: New Quest Avaialble ::}
+{11816002}{}{I talked to Dr. Sun Yat-sen about the plague at the encampment and promised to bring her 5 healing powder. I could mix Xander Root with Broc Flower to make this medicine, assuming I find any.}
+{11816003}{}{DONE:We managed to identify the source of the plague. I should talk to the bartender about boiling the water.}
+{11816099}{}{HARD_COMPLETED:I have taken care of the plague situation. It's good to know the encampment is a safer place for new bluesuits.
+
+:: Quest Completed ::}
+{11816101}{}{Landers Point: Encampment plague}
+{11816102}{}{QUEST:Landers Point: Find the cause of the plague in the encampment.}
+
+
+#=======================================
+# 11818
+# Landers Point: Golden Gecko Pelts for Samantha 
+#=======================================
+{11818001}{}{I got word that Samantha at the tannery is looking for help. She resides in the north-east building, maybe I should go and talk to her.
+
+:: New Quest Avaialble ::}
+{11818002}{}{Samantha the tanner at Landers Point asked me to get 5 Golden Gecko Pelts for her. If I do this, not only will she teach me to saw but she might put in a good word with Cpt. Stone for me and I hope they give me a proper armor before I leave this safe place. 
+
+She also mentioned that if I need help skinning Geckos, I should talk to an old trapper near the west gate.}
+{11818003}{}{DONE:I managed to get the ammo for Thunder Jo. I should should give it to him before I leave camp.}
+{11818099}{}{HARD_COMPLETED:I finished the task and I hope that Thunder Jo will talk to Cpt. Stone about me helping him out. Maybe they give me a gun before I leave this safe place.
+
+:: Quest Completed ::}
+{11818101}{}{Landers Point: Golden Gecko Pelts for Samantha}
+{11818102}{}{QUEST:Landers Point: Resupply the tannery with Golden Gecko Pelts for Samantha}
+
+#=======================================
+# 11819
+# Landers Point: Camp resource trader bonus reward quest
+#=======================================
+{11819001}{}{There is a resource trader named Henry somewhere in the camp. I could do some trading with him if I have or need anything.}
+{11819002}{}{I made a deal with the camp resource trader, Henry. If I bring him 12 Golden Gecko Pelts he would pay me one extra or I could buy 25 piles of Junk from him at a discounted price of 1100 caps!}
+{11819003}{}{DONE:I got the 12 Golden Gecko Pelts for Henry's batch order.}
+{11819004}{}{DONE:I got enough caps to fulfill my deal with Henry, the camp resource trader.}
+{11819098}{}{HARD_COMPLETED:I fulfilled my deal with Henry by selling him 12 Golden Gecko Pelts. It was a great idea for me to ask for a discounted deal, I should do this more offten.
+
+:: Quest Completed ::
+:: Bonus reward +6% Barter ::}
+{11819099}{}{HARD_COMPLETED:I fulfilled my deal with Henry by buying 25 piles of Junk. It was a great idea for me to ask for a discounted deal, I should do this more offten.
+
+:: Quest Completed ::
+:: Bonus reward +6% Barter ::}
+{11819101}{}{Landers Point: A bottle cap saved...}
+{11819102}{}{QUEST:Landers Point: Landers Point: A bottle cap saved is a bottle cap earned.}
+
+#=======================================
+# 11820
+# Landers Point: Tutorial robot / Mr. Handy / Rage against the Machine
+#=======================================
+{11820001}{}{There is a tutorial in the camp. If I ever get stuck with my tasks I should look for it.}
+{11820002}{}{HIDDEN:When I tried to rip some parts off the robot, it started to give me useful advices. These machines aren't that different from humans after all...}
+{11820099}{}{HARD_COMPLETED:I ripped the tutorial robot for parts, which made it unoperable, but it still mutters random phrases. I will not be able to get any helpful hints from it, but who cares, most of his guides were outdated and would have done more harm than good. Good luck fellow new bluesuits, I did you a service!
+
+:: Quest Completed ::
+:: Bonus reward +6% Scavanging ::}
+{11820101}{}{Landers Point: Rage against the Machine}
+{11820102}{}{QUEST:Landers Point: Rage against the Machine.}
+
+
+
+
+#################################################################################

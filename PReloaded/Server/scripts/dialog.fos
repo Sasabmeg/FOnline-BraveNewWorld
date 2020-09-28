@@ -841,12 +841,12 @@ void r_PlaySoundDice(Critter& player, Critter@ npc, int val)
         PlaySound(player, "DICE.ACM");
     else if(val == 2)
         PlaySound(player, "DICE1.ACM");
-		
+
 }
 
 void r_PlaySoundGun(Critter& player, Critter@ npc, int val)
 {
-    // blackjack and russian roulette 
+    // blackjack and russian roulette
     if(val == 1)
         PlaySound(player, "SHUFFLE.ACM");
     else if(val == 2)
@@ -857,10 +857,10 @@ void r_PlaySoundGun(Critter& player, Critter@ npc, int val)
     PlaySound(player, "RLAUNCH.ACM");
     else if(val == 5)
     PlaySound(player, "HOWITZER.ACM");
-		
+
 }
 
-		
+
 /////////////////
 //    MISC     //
 /////////////////
@@ -980,7 +980,7 @@ void test_SpawnInRandomContainer(Critter& cr, int p0, int p1, int p2)
 
 /**
  * Checks timeout for given npc, in order to check if some repeatable quest can be given again.
- * It works per npc-player, so you can't make it for each quest. But it's simplier that way.
+ * It works per npc-player, so you can't make it for each quest. But it's simpler that way.
  * @return true - quest can be given, false - need to wait
  */
 bool d_QuestTimeoutReady(Critter& player, Critter@ npc)
@@ -1501,7 +1501,7 @@ uint dlg_SayBuyNuka(Critter& player, Critter@ npc, string@ text)
     uint cnt = 0;
     if(!StrToInt(text, cnt))
         return DIALOG_END;
-        
+
     if(cnt > 0)
     {
         if(_CritCountItem(player, PID_BOTTLE_CAPS) >= price*cnt)
@@ -1528,7 +1528,7 @@ uint dlg_SayBuyBeer(Critter& player, Critter@ npc, string@ text)
     uint cnt = 0;
     if(!StrToInt(text, cnt))
         return DIALOG_END;
-        
+
     if(cnt > 0)
     {
         if(_CritCountItem(player, PID_BOTTLE_CAPS) >= price*cnt)
@@ -1555,7 +1555,7 @@ uint dlg_SayBuyBooze(Critter& player, Critter@ npc, string@ text)
     uint cnt = 0;
     if(!StrToInt(text, cnt))
         return DIALOG_END;
-        
+
     if(cnt > 0)
     {
         if(_CritCountItem(player, PID_BOTTLE_CAPS) >= price*cnt)
@@ -1582,7 +1582,7 @@ uint dlg_SayBuyCigarettes(Critter& player, Critter@ npc, string@ text)
     uint cnt = 0;
     if(!StrToInt(text, cnt))
         return DIALOG_END;
-        
+
     if(cnt > 0)
     {
         if(_CritCountItem(player, PID_BOTTLE_CAPS) >= price*cnt)
@@ -1609,7 +1609,7 @@ uint dlg_SayBuyLighter(Critter& player, Critter@ npc, string@ text)
     uint cnt = 0;
     if(!StrToInt(text, cnt))
         return DIALOG_END;
-        
+
     if(cnt > 0)
     {
         if(_CritCountItem(player, PID_BOTTLE_CAPS) >= price*cnt)
@@ -1636,7 +1636,7 @@ uint dlg_SayBuyMedGel(Critter& player, Critter@ npc, string@ text)
     uint cnt = 0;
     if(!StrToInt(text, cnt))
         return DIALOG_END;
-        
+
     if(cnt > 0)
     {
         if(_CritCountItem(player, PID_BOTTLE_CAPS) >= price*cnt)
@@ -1663,7 +1663,7 @@ uint dlg_SayBuyNeedles(Critter& player, Critter@ npc, string@ text)
     uint cnt = 0;
     if(!StrToInt(text, cnt))
         return DIALOG_END;
-        
+
     if(cnt > 0)
     {
         if(_CritCountItem(player, PID_BOTTLE_CAPS) >= price*cnt)
