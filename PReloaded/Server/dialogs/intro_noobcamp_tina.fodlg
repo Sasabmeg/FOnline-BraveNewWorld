@@ -8,15 +8,25 @@ lang=engl russ
 &
 1 1000 None 0 #
 2 1010 D _var p name_mem_npc_player = 0 #
-5 1020 D _var p name_mem_npc_player = 1 @
+5 1020 D _var p name_mem_npc_player = 1 D _var p noob_camp_lawrence ! 91 #
+2 1030 D _var p noob_camp_lawrence = 91 @
 2 2000 None 0 #
 3 2010 #
-3 2020 #
-4 2030 D _var p noob_camp_lawrence = 1 D _item p PID_DECK_OF_CARDS = 0 @
+3 2020 D _var p noob_camp_lawrence = 2 R _var p name_mem_npc_player = 1 R _var p noob_camp_lawrence = 92 #
+6 2030 D _param p SK_SPEECH } 25 D _var p noob_camp_lawrence = 2 #
+7 2040 D _param p SK_STEAL } 25 D _var p noob_camp_plague < 99 D _var p noob_camp_lawrence = 2 R _var p name_mem_npc_player = 1 R _var p noob_camp_lawrence = 91 #
+8 2050 D _param p SK_STEAL } 25 D _var p noob_camp_plague } 99 D _var p noob_camp_lawrence = 2 R _var p noob_camp_lawrence = 12 R _item p PID_DECK_OF_CARDS + 1 R _var p name_mem_npc_player = 1 R _param p SK_STEAL + 6 #
+4 2060 D _item p PID_DECK_OF_CARDS = 0 D _var p noob_camp_lawrence = 2 @
 3 3000 None 0 @
 4 4000 None 0 #
-0 4010 R _var p name_mem_npc_player = 1 R _item p PID_DECK_OF_CARDS + 1 @
-5 5000 None 0 &
+0 4010 R _var p name_mem_npc_player = 1 R _item p PID_DECK_OF_CARDS + 1 R _var p noob_camp_lawrence = 13 @
+5 5000 None 0 @
+6 6000 None 0 #
+0 6010 R _var p name_mem_npc_player = 1 R _var p noob_camp_lawrence = 11 R _param p SK_SPEECH + 6 R _item p PID_DECK_OF_CARDS + 1 @
+7 7000 None 0 #
+0 7010 @
+8 8000 None 0 #
+0 8010 &
 
 [engl]
 {100}{}{Tina, the local}
@@ -25,14 +35,24 @@ lang=engl russ
 {1000}{}{Predialogue installations}
 {1010}{}{not known}
 {1020}{}{known}
+{1030}{}{known, but plague solved, can retry}
 {2000}{}{[This woman is surprised to see that you just walked into her house!] Holy shit! What the hell do you want?!}
 {2010}{}{Oh sorry! Wrong house!}
-{2020}{}{[Stare at her for a bit, wink then walk away]}
-{2030}{}{Are you Tina? I've come for the cards.}
+{2020}{}{[Stare at her for a bit, then wink with your best smile.]}
+{2030}{}{I just walked by and saw this clean and tidy tent. I was wondering how can you keep it so clean in this messy place?}
+{2040}{}{[Try to lift a deck of cards off the top shelf while keeping Tina busy] Can I get some water?}
+{2050}{}{[Try to lift a deck of cards off the top shelf while keeping Tina busy] Can I get some water?}
+{2060}{}{Are you Tina? I've come for the cards.}
 {3000}{}{Get the hell out of here you creep!}
 {4000}{}{[She takes out a deck of cards and throws them at you] Here! Now get the hell out of my house!}
 {4010}{}{Thanks!}
 {5000}{}{Leave me alone already! Shoo! Shoo!}
+{6000}{}{Oh.. thanks, I guess. It's not that hard anymore since I left Lawrence. That man was a pig! [She takes a deck of cards and throws them out of her tent, just like that.]}
+{6010}{}{See ya around. [Pick up the cards outside]}
+{7000}{}{[Tina turns halfway away to grab a bottle but then hesitates and snaps back to you.] You know what? There's a water pipe outside,  get your own water bag and fill it. Now get out!}
+{7010}{}{Leave.}
+{8000}{}{[Tina turns halfway away to grab a bottle and and start filling up a mug, giving you enough time to steal the cards.] Ah, you're the one solving the plague issue. Don't worry, I boiled the water before. There's a still nearby, you can distile water or brew even alcohol there! There you go.}
+{8010}{}{Thank you. See ya.}
 {100000001}{}{Better wash the counter again...}
 {100000002}{}{That's 5 caps buddy. Hey did you hear me? Cough em' up.}
 {100000003}{}{Better change the keg...}
@@ -62,12 +82,22 @@ lang=engl russ
 {1000}{}{I?aaaeaeiaiaua onoaiiaee}
 {1010}{}{Answer text}
 {1020}{}{known}
+{1030}{}{known, plague solved}
 {2000}{}{Thank you! Thank you! }
 {2010}{}{Oh sorry! Wrong house!}
 {2020}{}{[Walk away]}
-{2030}{}{Are you Tina? I've come for the cards.}
+{2030}{}{I just walked by and saw this clean and tidy tent. I was wondering how can you keep it so clean in this messy place?}
+{2040}{}{[Try to lift the cards while keeping Tina busy] Can I get some water?}
+{2050}{}{[Try to lift the cards while keeping Tina busy] Can I get some water?}
+{2060}{}{Are you Tina? I've come for the cards.}
 {3000}{}{Get the hell out of here you creep!}
 {4000}{}{[She takes out a deck of cards and throws them at you] Here! Now get the hell out of my house!}
 {4010}{}{Thanks!}
 {5000}{}{Leave me alone already! Shoo! Shoo!}
+{6000}{}{Oh.. thanks, I guess. It's not that hard anymore since I left Lawrence. That man was a pig! [She takes a deck of cards and throws them out of her tent, just like that.]}
+{6010}{}{See ya around. [Pick up the cards outside]}
+{7000}{}{[Tina turns halfway away to grab a bottle but then hesitates and snaps back to you.] You know what? There's a water pipe outside,  get your own water bag and fill it. Now get out!}
+{7010}{}{Leave.}
+{8000}{}{[Tina turns halfway away to grab a bottle and takes some time to fill up a clean mug.] Ah, you're the one solving the plague issue. Don't worry, I boiled the water before. There's a still nearby, you can distile water or brew even alcohol there! There you go.}
+{8010}{}{Thank you. See ya.}
 

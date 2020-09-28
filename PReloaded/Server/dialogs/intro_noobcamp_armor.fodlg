@@ -7,9 +7,9 @@ lang=engl russ
 [dialog]
 &
 1 1000 None 0 #
-4 1010 D _var p name_mem_npc_player = 0 D _var p noob_camp_armorer = 0 #
-14 1020 D _var p name_mem_npc_player = 1 D _var p noob_camp_armorer = 0 #
-16 1030 D _var p noob_camp_armorer = 1 @
+4 1010 D _var p name_mem_npc_player = 0 D _var p noob_camp_armorer < 99 #
+14 1020 D _var p name_mem_npc_player = 1 D _var p noob_camp_armorer < 99 #
+16 1030 D _var p noob_camp_armorer = 99 @
 4 2000 None 0 #
 2 2010 #
 3 2020 #
@@ -38,20 +38,21 @@ lang=engl russ
 9 8030 #
 10 8040 @
 9 9000 None 0 #
-11 9010 #
+11 9010 R _var p noob_camp_armorer = 2 #
 0 9020 @
 10 10000 None 0 #
-11 10010 #
+11 10010 R _var p noob_camp_armorer = 2 #
 0 10020 @
 11 11000 None 0 #
 12 11010 D _param p PE_GECKO_SKINNING > 0 #
-13 11020 @
+13 11020 D _var p noob_camp_trapper { 1 R _var p noob_camp_trapper = 1 #
+12 11030 D _var p noob_camp_trapper } 2 @
 12 12000 None 0 #
 0 12010 R _var p name_mem_npc_player = 1 @
 13 13000 None 0 #
 0 13010 @
 14 14000 None 0 #
-15 14010 D _item p PID_GOLDEN_GECKO_PELT > 4 R _item p PID_GOLDEN_GECKO_PELT - 5 R _script dialog@r_AddExperience 1 600 R _var p noob_camp_armorer = 1 #
+15 14010 D _item p PID_GOLDEN_GECKO_PELT > 4 R _item p PID_GOLDEN_GECKO_PELT - 5 R _script dialog@r_AddExperience 1 600 R _var p noob_camp_armorer = 99 #
 0 14020 @
 15 15000 None 0 #
 0 15010 @
@@ -101,6 +102,7 @@ lang=engl russ
 {11000}{}{[She seems pleased] Great! You know how to skin geckos, right?}
 {11010}{}{Of course! That old trapper taught me.}
 {11020}{}{Uh, no actually, I don't.}
+{11030}{}{Uh, not yet... but already in the training. That old trapper promised to teach me.}
 {12000}{}{[She seems relieved] Thank God! I was worried that I was asking the wrong person. I completely forgot that most people don't know how to skin a gecko. Go figure! Alright then, you know what to do. I'll be wating for those five golden gecko pelts. Thanks again!}
 {12010}{}{Hah! Yeah! Some people. See ya!}
 {13000}{}{[Her smile fades] Oh, that's right. Most people don't know how to skin geckos. Well, there's an old trapper around here somewhere. If he's still around camp I'm sure he'll teach you something about gecko skinning. Go see him, then come back.}
@@ -177,6 +179,7 @@ lang=engl russ
 {11000}{}{[Smiles] Universal Quest Dialog}
 {11010}{}{Of course! That old trapper taught me.}
 {11020}{}{Uh, no actually, I don't.}
+{11030}{}{Uh, not yet... but already in the training.}
 {12000}{}{[Smiles] Universal Return Dialog}
 {12010}{}{Hah! Yeah! Some people.}
 {13000}{}{[Smiles] Universal Complete Dialog}
