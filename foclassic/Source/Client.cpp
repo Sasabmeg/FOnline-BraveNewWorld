@@ -1349,7 +1349,7 @@ void FOClient::ParseKeyboard()
                                 TryExit();
                             continue;
                         }
-                    case DIK_O:
+                    case DIK_F:
                         if( GetActiveScreen() == CLIENT_SCREEN_FIXBOY )
                         {
                             TryExit();
@@ -5188,12 +5188,7 @@ void FOClient::Net_OnChosenAddItem()
     if( item != Chosen->ItemSlotMain || !item->IsWeapon() )
         item->SetMode( item->Data.Mode );
     Chosen->AddItem( item );
-
-    if( Script::PrepareContext( ClientFunctions.ItemInvIn, _FUNC_, "Game" ) )
-    {
-        Script::SetArgObject( item );
-        Script::RunPrepared();
-    }
+	addItemASCallback(item, 0, "Net_OnChosenAddItem() :: NET GAIN");
 
     if( slot == SLOT_HAND1 || prev_slot == SLOT_HAND1 )
         RebuildLookBorders = true;
@@ -5203,6 +5198,27 @@ void FOClient::Net_OnChosenAddItem()
         Chosen->EraseItem( item, true );
     CollectContItems();
 }
+
+void FOClient::addItemASCallback(Item* item, float netGain, string debugMessage) {
+	if (Script::PrepareContext(ClientFunctions.ItemInvIn, _FUNC_, "Game"))
+	{
+		Script::SetArgObject(item);
+		Script::SetArgFloat(netGain);
+		Script::SetArgObject(new ScriptString(debugMessage));
+		Script::RunPrepared();
+	}
+}
+
+void FOClient::removeItemASCallback(Item* item, float netGain, string debugMessage) {
+	if (Script::PrepareContext(ClientFunctions.ItemInvOut, _FUNC_, "Game"))
+	{
+		Script::SetArgObject(item);
+		Script::SetArgFloat(netGain);
+		Script::SetArgObject(new ScriptString(debugMessage));
+		Script::RunPrepared();
+	}
+}
+
 
 void FOClient::Net_OnChosenEraseItem()
 {
@@ -5222,13 +5238,9 @@ void FOClient::Net_OnChosenEraseItem()
         return;
     }
 
-    if( Script::PrepareContext( ClientFunctions.ItemInvOut, _FUNC_, "Game" ) )
-    {
-        Script::SetArgObject( item );
-        Script::RunPrepared();
-    }
+	removeItemASCallback(item, 0, "Net_OnChosenEraseItem()");
 
-    if( item->IsLight() && item->AccCritter.Slot != SLOT_INV )
+	if( item->IsLight() && item->AccCritter.Slot != SLOT_INV )
         HexMngr.RebuildLight();
     Chosen->EraseItem( item, true );
     CollectContItems();
@@ -6966,8 +6978,12 @@ void FOClient::Net_OnQuest( bool many )
 
         // Inform player
         Quest* quest = QuestMngr.GetQuest( q_num );
-        if( quest )
-            AddMess( MSGBOX_GAME, quest->str.c_str() );
+		if (quest) {
+			if (quest->progress != HIDDEN && quest->progress != NO_POPUP) {
+				AddMess(MSGBOX_GAME, (QuestMngr.removeFormat(quest->str)).c_str());
+				QuestMngr.updateQuestASCallback(quest->info, quest->str.c_str());
+			}
+		}
     }
 
     WriteLogX( "complete\n" );

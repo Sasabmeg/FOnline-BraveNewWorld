@@ -8511,6 +8511,7 @@ void FOClient::PipDraw()
             PIP_DRAW_TEXT( FmtGameText( STR_PIP_REPLICATION_COUNT ), 0, COLOR_TEXT );
             PIP_DRAW_TEXTR( FmtGameText( STR_PIP_REPLICATION_COUNT_VAL, Chosen->GetParam( ST_REPLICATION_COUNT ) ), 0, COLOR_TEXT );
             scr++;
+
             // Timeouts
             scr++;
             PIP_DRAW_TEXT( FmtGameText( STR_PIP_TIMEOUTS ), FONT_FLAG_CENTERX, COLOR_TEXT_DGREEN );
@@ -8547,6 +8548,7 @@ void FOClient::PipDraw()
                     PIP_DRAW_TEXTR( FmtGameText( str_num, Str::FormatBuf( "%u", val ) ), 0, COLOR_TEXT );
                 scr++;
             }
+
             // Quests
             scr++;
             if( scr >= 0 && scr < ml )
@@ -8555,7 +8557,16 @@ void FOClient::PipDraw()
             QuestTabMap* tabs = QuestMngr.GetTabs();
             for( auto it = tabs->begin(), end = tabs->end(); it != end; ++it )
             {
-                PIP_DRAW_TEXT( (*it).first.c_str(), FONT_FLAG_NOBREAK, COLOR_TEXT );
+				uint color = COLOR_TEXT;
+				QuestTab* tab = &((*it).second);
+				Quest* quest = &((tab->GetQuests())->front());
+				if (quest != NULL) {
+					color = quest->getQuestColor();
+				}
+				else {
+					WriteLogF(_FUNC_, " PIP__STATUS_QUESTS: '&((tab->GetQuests())->front());' == NULL\n");
+				}
+                PIP_DRAW_TEXT(QuestManager::removeFormat((*it).first).c_str(), FONT_FLAG_NOBREAK, color);
                 scr++;
             }
 
@@ -8569,7 +8580,17 @@ void FOClient::PipDraw()
             QuestTab* tab = QuestMngr.GetTab( QuestNumTab );
             if( !tab )
                 break;
-            SprMngr.DrawStr( Rect( PipWMonitor, PipX, PipY ), tab->GetText(), FONT_FLAG_SKIPLINES( PipScroll[PipMode] ) );
+			const char* tabText = QuestManager::removeFormat(std::string(tab->GetText())).c_str();
+			//WriteLogF(_FUNC_, " PIP__STATUS_QUESTS: %s\n", tabText);
+			uint color = 0U;
+			Quest* quest = &((tab->GetQuests())->front());
+			if (quest != NULL) {
+				color = quest->getQuestColor();
+			}
+			else {
+				WriteLogF(_FUNC_, " PIP__STATUS_QUESTS: '&((tab->GetQuests())->front());' == NULL\n");
+			}
+            SprMngr.DrawStr( Rect( PipWMonitor, PipX, PipY ), tabText, FONT_FLAG_SKIPLINES( PipScroll[PipMode] ), color );
             break;
         }
         case PIP__STATUS_SCORES:

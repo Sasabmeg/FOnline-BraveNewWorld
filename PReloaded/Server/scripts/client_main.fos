@@ -26,6 +26,7 @@ import void InitCritterOnHead() from "client_critter_onhead";
 // import void ActionUpdate(CritterCl& cr) from "client_anti_cheat";
 
 import void InitChosenTabs() from "chosen_tabs";
+import void InitQuestTracker() from "client_QuestTracker";
 
 import void BroadcastProcess() from "client_broadcast";
 
@@ -142,6 +143,7 @@ bool start()
     if(!InitBinds())
         Message("There were errors when initializing keybinds.");
     InitChosenTabs();
+    InitQuestTracker();
     InitBarterFilters();
     InitFixboyAddons();
     InitOnlineStats();

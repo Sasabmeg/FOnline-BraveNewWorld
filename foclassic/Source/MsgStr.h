@@ -538,8 +538,8 @@
 
 #define STR_QUEST_NUMBER                           (4)
 #define STR_QUEST_PROCESS                          (5)
-#define STR_QUEST_MAP_( num )                      ( (num) * 1000 + 101 )
-#define STR_QUEST_INFO_( num )                     ( (num) * 1000 + 102 )
+#define GET_QUEST_NAME_VAR( num )                  ( (num) * 1000 + 101 )
+#define GET_QUEST_INFO_VAR( num )                  ( (num) * 1000 + 102 )
 
 // ***************************************************************************************
 // ***  FOHOLO.MSG, FOUSERHOLO.MSG  ******************************************************
