@@ -125,7 +125,6 @@
 #define LVAR_redding_morton_brothers            (5386)
 #define UVAR_q_box_unload_status                (6500)
 #define UVAR_q_box_unload_count                 (6501)
-#define LVAR_job_lp_caravan_box                 (6502)
 #define LVAR_q_spawn_hub                        (7032)
 #define LVAR_q_spawn_hub_water                  (7034)
 #define LVAR_free_slave                         (7053)
@@ -172,6 +171,7 @@
 #define	LVAR_noob_camp_armorer					(11818)
 #define	LVAR_noob_camp_resource_trader  		(11819)
 #define	LVAR_noob_camp_mrhandy            		(11820)
+#define LVAR_job_lp_caravan_box                 (11821)
 #define GVAR_merc_prices_init                   (12000)
 #define GVAR_merc_prices_event                  (12002)
 #define LVAR_influence_buffer                   (12003)
@@ -836,11 +836,6 @@ $ 1800 1 q_jt_talked 0 0 3 1
 
 **********
 
-   $	6502	1	job_lp_caravan_box	0	0	0	5
-**********
-    Landers Point caravan packer quest variable.
-**********
-
    $	7032	1	q_spawn_hub	0	0	5	1
 **********
    Quest variable for spawn quest.
@@ -1063,6 +1058,11 @@ $ 11819 1 noob_camp_resource_trader 0 0 99 1
 $ 11820 1 noob_camp_mrhandy 0 0 99 1
 *****************
 *****************
+
+$	11821	1	job_lp_caravan_box	0	0	99	1
+**********
+Landers Point caravan packer quest variable.
+**********
 
 
 $	12000	0	merc_prices_init	0	0	0	4

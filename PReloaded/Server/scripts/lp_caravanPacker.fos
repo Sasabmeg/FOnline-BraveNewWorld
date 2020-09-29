@@ -14,11 +14,11 @@
 #include "entire.fos"
 #include "reputations_h.fos"
 
-#define BOX_STATUS_NONE         (0)     //  Quest not in progress.
+#define BOX_STATUS_NONE         (0)     //  Quest not known, not in pip-boy, set to this value when leaving camp to remove from pip-boy.
 #define BOX_STATUS_STARTED      (11)    //  Quest started, but no boxes unpacked yet.
 #define BOX_STATUS_MAX          (14)    //  Number of boxes needed to unpack: (BOX_STATUS_MAX - BOX_STATUS_STARTED)
-#define BOX_STATUS_FAILED       (97)    //  Quest is completed and can be retaken after some time
-#define BOX_STATUS_COMPLETED    (99)    //  Quest is completed and can be retaken after some time
+#define BOX_STATUS_FAILED       (97)    //  Quest failed but can be retaken after some time
+#define BOX_STATUS_COMPLETED    (99)    //  Quest completed and can be retaken after some time
 
 import void r_QuestTimeout(Critter& player, Critter@ npc, int timeout) from "dialog";
 

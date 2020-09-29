@@ -1,8 +1,13 @@
-# Created on 17.10.2007 Cvet  
+##################################
+##	Created on 17.10.2007 Cvet	##
+##################################
 
+
+# 	{4} is a header type, pip-boy will use this before every entry, if %d then a nr will be added. 
+# 	It was used by old behaviour, where previous quest steps were saved.
+#	Now it wcan be used to add some text before the quest header.
 #
-#
-#
+#	{5} is used to add text before the quest body. Used to format spacing between header and body.
 
 {4}{}{%d. }
 {5}{}{
@@ -17,9 +22,43 @@ Current progress:
 
 #
 # Number formula:
-#	VariableId * 1000 + Value (1-100) - The text that appears at a given value of the variable (current objective).
-#	VariableId * 1000 + 101 - Name of quest tab.
-#	VariableId * 1000 + 102 - Permanent quest description.
+#	Quest Progress:	VariableId * 1000 + Value (1-100) - The text that appears at a given value of the variable (current objective / body).
+#	Quest Tab:		VariableId * 1000 + 101 - Name of quest tab. 
+#	Quest Info:		VariableId * 1000 + 102 - Permanent quest description. (info/header, right after {4})
+#
+#	Notes:
+#		Setting a variable to VariableID * 1000 + 000 will remove the entry from Pip-boy. This can be used to remove tutorial quests for example, when leaving tutorial zone (Landers Point phase 1)
+
+
+##############################################
+##	Brave New World (BNW) update by Sasa	##
+##############################################
+#
+#	FOClassic tutorials and Brave New World update can be found at:
+#		https://fodev.net/forum/index.php/topic,30344.msg263172.html#msg263172
+#
+#	Quest Tabs (101):
+#		- Should containt location if that is known before every quest. Pip-boy will sort alphabetically, thus quest group will form naturally.
+#
+#	Quest Info (102):
+#		- Following keywords can be added to be processed by Quest Tracker (note that ':' is part of the keyword)
+#			- 'JOB:' denotes a repeatable task. If the task is completed or failed, it can be attempted at a later time.
+#			- 'STORY:' denotes important or main story lines, for example Vault 24 quest.
+#			- 'QUEST:' denotes everything else, it can be ommited and Quest Tracker will default to this, but I have added it for clarity.
+#
+#	Quest Progress (1-100):
+#		- Following keywords can be added to be processed by Quest Tracker (note that ':' is part of the keyword)
+#			- 'HIDDEN:' progress will not appear in Pip-boy or Quest Tracker. (used if code cycles through values that do not have entry, otherwise Pip-boy would show 'error' as description)
+#			- 'NO_POPUP:' progress will not appear in Pip-boy or Quest Tracker. (to suppress some quest changes, if they would pop up too offten, ex: while in dialog mode fast progressing quests)
+#			- 'DONE:' quest is ready, player can go back to quest giver to get rewards. (ex: kill dogs quest, show player all dogs are dead and they can leave are)
+#			- 'SOFT_FAILED:' quest failed but can be attempted again at a later time. 
+#			- 'HARD_FAILED:' quest failed for good and cannot be attempted later.
+#			- 'SOFT_COMPLETED:' quest completed and can be re-taken at a later time. (ex: JOB: type of tasks/quests)
+#			- 'HARD_COMPLETED:' quest completed for good.
+#			- 'ONGOING:' default behaviour, no extra coloring in Quest Tracker.
+#
+##############################################
+
 
 #=======================================
 # 6001
@@ -89,24 +128,6 @@ Current progress:
 :: Quest Completed ::}
 {6200101}{}{Den: Repair one of Becky's gaming tables}
 {6200102}{}{Repair one of Becky's gaming tables}
-
-#=======================================
-# 6502
-# Landers Point: Caravan Packing Job (repeatable)
-#=======================================
-{6502001}{}{I got word of job that requires heavy lifting and pays well for the invested time. I should check the Caravan Foreman at north-west part of Landers Point if I am interested. 
-
-:: New Job Avaialble ::}
-{6502011}{}{The caravan foreman at Landers Point asked me to unload some boxes from the cart to the north-west storage area. After unloading a few boxes, my pay would be 250 caps.}
-{6502014}{}{DONE:That's all. I should talk to the caravan foreman about my reward!}
-{6502097}{}{SOFT_FAILED:I tried to help the caravan packer but I dropped one of the boxes on the wrong location. Maybe I should work out a bit before trying again.
-
-:: Job Failed ::}
-{6502099}{}{SOFT_COMPLETED:I finished the task and got my reward. I could return for more work a bit later.
-
-:: Job Completed ::}
-{6502101}{}{Landers Point: Caravan Packing Job (repeatable)}
-{6502102}{}{JOB:Landers Point: Unload boxes from the caravan cart for caps.}
 
 #=======================================
 # 7004
@@ -1089,13 +1110,32 @@ She also mentioned that if I need help skinning Geckos, I should talk to an old 
 # Landers Point: Tutorial robot / Mr. Handy / Rage against the Machine
 #=======================================
 {11820001}{}{There is a tutorial in the camp. If I ever get stuck with my tasks I should look for it.}
-{11820002}{}{HIDDEN:When I tried to rip some parts off the robot, it started to give me useful advices. These machines aren't that different from humans after all...}
+{11820002}{}{NO_POPUP:When I tried to rip some parts off the robot, it started to give me useful advices. These machines aren't that different from humans after all...}
 {11820099}{}{HARD_COMPLETED:I ripped the tutorial robot for parts, which made it unoperable, but it still mutters random phrases. I will not be able to get any helpful hints from it, but who cares, most of his guides were outdated and would have done more harm than good. Good luck fellow new bluesuits, I did you a service!
 
-:: Quest Completed ::
-:: Bonus reward +6% Scavanging ::}
-{11820101}{}{Landers Point: Rage against the Machine}
-{11820102}{}{QUEST:Landers Point: Rage against the Machine.}
+:: Quest Completed ::}
+{11820101}{}{Landers Point: Man against Machine}
+{11820102}{}{QUEST:Landers Point: Man against Machine.}
+
+#=======================================
+# 11821
+# Landers Point: Caravan Packing Job (repeatable)
+#=======================================
+{11821001}{}{I got word of job that requires heavy lifting and pays well for the invested time. I should check the Caravan Foreman at north-west part of Landers Point if I am interested. 
+
+:: New Job Avaialble ::}
+{11821011}{}{The caravan foreman at Landers Point asked me to unload some boxes from the cart to the north-west storage area. After unloading a few boxes, my pay would be 250 caps.}
+{11821012}{}{HIDDEN: First box unloaded.}
+{11821013}{}{HIDDEN: Second box unloaded.}
+{11821014}{}{DONE:That's all. I should talk to the caravan foreman about my reward!}
+{11821097}{}{SOFT_FAILED:I tried to help the caravan packer but I dropped one of the boxes on the wrong location. Maybe I should work out a bit before trying again.
+
+:: Job Failed ::}
+{11821099}{}{SOFT_COMPLETED:I finished the task and got my reward. I could return for more work a bit later.
+
+:: Job Completed ::}
+{11821101}{}{Landers Point: Caravan Packing Job (repeatable)}
+{11821102}{}{JOB:Landers Point: Unload boxes from the caravan cart for caps.}
 
 
 
