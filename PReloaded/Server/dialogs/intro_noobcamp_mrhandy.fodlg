@@ -74,11 +74,14 @@ lang=engl russ
 9 22030 #
 0 22040 @
 30 23000 None 0 #
-31 23010 #
-32 23020 #
-33 23030 #
-0 23040 R _var p noob_camp_mrhandy = 99 R _item p PID_ELECTRONIC_PARTS + 5 #
-0 23050 @
+31 23010 D _var p noob_camp_mrhandy < 2 R _var p noob_camp_mrhandy = 2 #
+32 23020 D _var p noob_camp_mrhandy < 2 R _var p noob_camp_mrhandy = 2 #
+33 23030 D _var p noob_camp_mrhandy < 2 R _var p noob_camp_mrhandy = 2 #
+31 23040 D _var p noob_camp_mrhandy } 2 #
+32 23050 D _var p noob_camp_mrhandy } 2 #
+33 23060 D _var p noob_camp_mrhandy } 2 #
+0 23070 R _var p noob_camp_mrhandy = 99 R _item p PID_ELECTRONIC_PARTS + 5 #
+0 23080 @
 31 24000 None 0 #
 0 24010 @
 32 25000 None 0 #
@@ -1167,8 +1170,11 @@ within only a few minutes of starting!}
 {23010}{}{Huh, I needed some Electornic Parts.}
 {23020}{}{Huh, I needed some Metal Parts.}
 {23030}{}{Huh, I needed some Junk.}
-{23040}{}{[Rip some parts off the robot] FOR SCIENCE!}
-{23050}{}{Stare dazzled at the robot a bit then leave.}
+{23040}{}{Tell me again, where can I get some Electronic Parts?}
+{23050}{}{Tell me again, where can I get some Metal Parts?}
+{23060}{}{Tell me again, where can I get some Junk?}
+{23070}{}{[Rip some parts off the robot] FOR SCIENCE!}
+{23080}{}{Stare dazzled at the robot a bit then leave.}
 {24000}{}{The most efficient way to get Electronic Parts is from broken terminals. You can find one outside the fence near the west gate, just a bit north of the Old Trappers tent. [Use your Science Skill on Broken Computers to get Electronic Parts] }
 {24010}{}{Thanks. I'll try that.}
 {25000}{}{The most efficient way to get Metal Parts is to gather raw iron in a mine and refine it at a Workbench. Check with Ed the miner in the caves up north. The second most efficient way is scavenging.[Have a Primitive Tool or a Sledge Hammer in your inventory, then click on Iron Ore nodes to harvest.] }
@@ -2221,8 +2227,11 @@ within only a few minutes of starting!}
 {23010}{}{Huh, I needed some Electornic Parts.}
 {23020}{}{Huh, I need some metal parts.}
 {23030}{}{Huh, I need some Junk.}
-{23040}{}{It was for.. science!?}
-{23050}{}{Stare dazzled at the robot a bit then leave.}
+{23040}{}{Tell me again, where can I get some Electronic Parts?}
+{23050}{}{Tell me again, where can I get some Metal Parts?}
+{23060}{}{Tell me again, where can I get some Junk?}
+{23070}{}{It was for.. science!?}
+{23080}{}{Stare dazzled at the robot a bit then leave.}
 {24000}{}{The most efficient way to get Electronic Parts is from broken terminals. You can find one outside the fence near the west gate, just a bit north of the Old Trappers tent. [Use your Science Skill on Broken Computers to get Electronic Parts] }
 {24010}{}{Thanks. I'll try that.}
 {25000}{}{The most efficient way to get Metal Parts is to gather raw iron in a mine and refine it at a Workbench. Check with Ed the miner in the caves up north. The second most efficient way is scavenging.[Have a Primitive Tool or a Sledge Hammer in your inventory, then click on Iron Ore nodes to harvest.] }
