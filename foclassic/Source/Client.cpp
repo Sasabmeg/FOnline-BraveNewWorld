@@ -5198,10 +5198,7 @@ void FOClient::Net_OnChosenAddItem()
         item->SetMode( item->Data.Mode );
 
 	itemsAdded = item->GetCount();
-	//	Need to do this shit in case of stackables
-
     Chosen->AddItem( item );
-																 
 
     if( slot == SLOT_HAND1 || prev_slot == SLOT_HAND1 )
         RebuildLookBorders = true;
