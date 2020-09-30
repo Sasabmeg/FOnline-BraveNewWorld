@@ -103,6 +103,7 @@ bool InitBinds() // export
     ret = ret && InitFASelfBind();
     ret = ret && InitDocSelfBind();
     ret = ret && InitSSOtherBind();
+    ret = ret && InitInventoryTrackerBind();
     ret = ret && InitMsFovBind();
     ret = ret && InitRoofBind();
     ret = ret && InitWallBind();
@@ -275,6 +276,13 @@ bool InitSSOtherBind()
 {
     string@    s = GetConfigValue(CONFIG_FILE, CONFIG_BINDINGS, "SSOther");
     SSOtherBind bnd;
+    return TryAddBind(s, bnd);
+}
+
+bool InitInventoryTrackerBind()
+{
+    string@    s = GetConfigValue(CONFIG_FILE, CONFIG_BINDINGS, "ToggleInventoryTracker");
+    InventoryTrackerBind bnd;
     return TryAddBind(s, bnd);
 }
 
