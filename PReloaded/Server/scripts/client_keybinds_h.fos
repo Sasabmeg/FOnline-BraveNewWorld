@@ -8,6 +8,8 @@
 import bool GUI_IsKeyPressed(uint8 key) from "client_gui";
 import void SetLastMode(uint8 mode) from "client_mapper_animation";
 import bool ToggleWallRoofTransparency() from "client_interface";
+import void ToggleInventoryTracker() from "client_InventoryTracker";
+import bool IsEnabled() from "client_InventoryTracker";
 
 shared interface IBind
 {
@@ -269,7 +271,7 @@ class SSOtherBind : BaseBind
             return;
 
         ItemCl@ ss = cr.GetItem(PID_SUPER_STIMPAK, -1);
-        
+
         if(!valid(ss))
         {
             Message("No super stimpak in inventory.");
@@ -278,6 +280,19 @@ class SSOtherBind : BaseBind
 
         uint[] action = { CHOSEN_USE_ITEM, ss.Id, ss.GetProtoId(), TARGET_CRITTER, target.Id, ITEM_MODE_USE, 0 };
         SetChosenActions(action);
+    }
+}
+
+class InventoryTrackerBind : BaseBind
+{
+    void Exec()
+    {
+        ToggleInventoryTracker();
+        if (IsEnabled()) {
+            Message("Inventory Tracker enabled.");
+        } else {
+            Message("Inventory Tracker disabled.");
+        }
     }
 }
 
