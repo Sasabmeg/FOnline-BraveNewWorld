@@ -5142,6 +5142,11 @@ void FOClient::Net_OnChosenClearItems()
     CollectContItems();
 }
 
+/**
+*	AS item add/remove callbacks:
+*	Here we have an issue when splitting items, AS will show same amount removed as added, it is bugged somehow.
+*	This does not happen when buying with barter for example. 
+*/
 void FOClient::Net_OnChosenAddItem()
 {
     uint   item_id;
@@ -5150,6 +5155,9 @@ void FOClient::Net_OnChosenAddItem()
     Bin >> item_id;
     Bin >> pid;
     Bin >> slot;
+
+	int itemsRemoved = 0;
+	int itemsAdded = 0;
 
     Item* item = NULL;
     uint8 prev_slot = SLOT_INV;
@@ -5161,7 +5169,8 @@ void FOClient::Net_OnChosenAddItem()
         {
             prev_slot = item->AccCritter.Slot;
             prev_light_hash = item->LightGetHash();
-            Chosen->EraseItem( item, false );
+			itemsRemoved = item->GetCount();
+			Chosen->EraseItem( item, false );
             item = NULL;
         }
 
@@ -5187,15 +5196,31 @@ void FOClient::Net_OnChosenAddItem()
     item->AccCritter.Slot = slot;
     if( item != Chosen->ItemSlotMain || !item->IsWeapon() )
         item->SetMode( item->Data.Mode );
+
+	itemsAdded = item->GetCount();
+	//	Need to do this shit in case of stackables
+
     Chosen->AddItem( item );
-	addItemASCallback(item, 0, "Net_OnChosenAddItem() :: NET GAIN");
+																 
 
     if( slot == SLOT_HAND1 || prev_slot == SLOT_HAND1 )
         RebuildLookBorders = true;
     if( item->LightGetHash() != prev_light_hash && (slot != SLOT_INV || prev_slot != SLOT_INV) )
         HexMngr.RebuildLight();
-    if( item->IsHidden() )
-        Chosen->EraseItem( item, true );
+	if (item->IsHidden()) {
+		Chosen->EraseItem(item, true);
+	} else {
+		//	Need to do this shit in case of stackables									   
+		float netGain = itemsAdded - itemsRemoved;
+		if (itemsAdded > itemsRemoved) {
+			//	Player received an item
+			addItemASCallback(item, netGain, "Net_OnChosenAddItem() :: NET GAIN");
+		}
+		else {
+			//	Player lost items, return their currnet item amount in case of stackables
+			addItemASCallback(item, netGain, "Net_OnChosenAddItem() :: NET LOSS");
+		}
+	}
     CollectContItems();
 }
 
@@ -5238,7 +5263,7 @@ void FOClient::Net_OnChosenEraseItem()
         return;
     }
 
-	removeItemASCallback(item, 0, "Net_OnChosenEraseItem()");
+	removeItemASCallback(item, -(float)(item->GetCount()), "Net_OnChosenEraseItem()");
 
 	if( item->IsLight() && item->AccCritter.Slot != SLOT_INV )
         HexMngr.RebuildLight();
@@ -8112,8 +8137,10 @@ label_EndMove:
                 Chosen->Action( CRITTER_ACTION_DROP_ITEM, from_slot, item );
                 if( item_count < item->GetCount() )
                     item->Count_Sub( item_count );
-                else
-                    Chosen->EraseItem( item, true );
+				else {
+					removeItemASCallback(item, -(float)(item->GetCount()), "CrittersProcess()");
+					Chosen->EraseItem(item, true);
+				}
             }
             else
             {

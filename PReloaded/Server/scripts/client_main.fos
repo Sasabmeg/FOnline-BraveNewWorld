@@ -27,6 +27,7 @@ import void InitCritterOnHead() from "client_critter_onhead";
 
 import void InitChosenTabs() from "chosen_tabs";
 import void InitQuestTracker() from "client_QuestTracker";
+import void InitInventoryTracker() from "client_InventoryTracker";
 
 import void BroadcastProcess() from "client_broadcast";
 
@@ -144,6 +145,8 @@ bool start()
         Message("There were errors when initializing keybinds.");
     InitChosenTabs();
     InitQuestTracker();
+    InitInventoryTracker();
+
     InitBarterFilters();
     InitFixboyAddons();
     InitOnlineStats();

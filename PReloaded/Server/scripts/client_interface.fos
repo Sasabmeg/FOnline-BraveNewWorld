@@ -41,6 +41,7 @@ import void changedParam_Hide(CritterCl& cr, uint, int oldValue) from "parameter
 
 import void DrawChosenTabs() from "chosen_tabs";
 import void DrawQuestTracker() from "client_QuestTracker";
+import void DrawInventoryTracker() from "client_InventoryTracker";
 
 import bool IsPossessMode() from "client_dev_menu";
 import bool IsAuthorized() from "client_dev_menu";
@@ -101,8 +102,11 @@ import void SmartCursorDraw( uint layer ) from "client/smart_cursor";
 import void DrawFog() from "client_fov";
 import void DrawMsFov() from "client_fov";
 import void DrawCustomBorder() from "client_fov";
+
 import void ActivateQuestTracker() from "client_QuestTracker";
-import void SetQuestTrackerText(string& header, string& progress) from "client_QuestTracker";																  
+import void SetQuestTrackerText(string& header, string& progress) from "client_QuestTracker";
+import void ActivateInventoryTracker() from "client_InventoryTracker";
+import void AddItemToInventoryTracker(Item& item, int netGain) from "client_InventoryTracker";
 
 import string DateTimeToString(uint gameTime) from "time";
 
@@ -495,7 +499,7 @@ void render_iface(uint layer)
 
         if(__ConfigOnHeadAwareness > 0)
             DrawCritterOnHead();
-        
+
 		GUI_Render( true );
 
 		if( !__WorldmapActive)
@@ -510,7 +514,7 @@ void render_iface(uint layer)
 
     if(layer == 3)
     {
-    
+
         if( mainsc == CLIENT_MAIN_SCREEN_GAME )
         {
             // Most Important Feature Ever Made By Human Race For FOnline Game
@@ -601,19 +605,19 @@ void render_iface(uint layer)
 
 					if(IsLexem(cr, LEXEM_CRITTER_FACTION) && cr.IsPlayer())
 					{
-						if(cr.Stat[ST_FACTION_RANK]==1) 
+						if(cr.Stat[ST_FACTION_RANK]==1)
 							DrawText("Recruit", __MouseX + 15, __MouseY + dy, __ScreenWidth, 20, AW_COLOR_FACTION_RANK, FONT_TYPE_DEFAULT, FONT_FLAG_ALIGN | FONT_FLAG_BORDERED);
-						else if(cr.Stat[ST_FACTION_RANK]==2) 
+						else if(cr.Stat[ST_FACTION_RANK]==2)
 							DrawText("Member", __MouseX + 15, __MouseY + dy, __ScreenWidth, 20, AW_COLOR_FACTION_RANK, FONT_TYPE_DEFAULT, FONT_FLAG_ALIGN | FONT_FLAG_BORDERED);
-						else if(cr.Stat[ST_FACTION_RANK]==3) 
+						else if(cr.Stat[ST_FACTION_RANK]==3)
 							DrawText("Trusted", __MouseX + 15, __MouseY + dy, __ScreenWidth, 20, AW_COLOR_FACTION_RANK, FONT_TYPE_DEFAULT, FONT_FLAG_ALIGN | FONT_FLAG_BORDERED);
-						else if(cr.Stat[ST_FACTION_RANK]==4) 
+						else if(cr.Stat[ST_FACTION_RANK]==4)
 							DrawText("Officer", __MouseX + 15, __MouseY + dy, __ScreenWidth, 20, AW_COLOR_FACTION_RANK, FONT_TYPE_DEFAULT, FONT_FLAG_ALIGN | FONT_FLAG_BORDERED);
-						else if(cr.Stat[ST_FACTION_RANK]==5) 
-							DrawText("Leader", __MouseX + 15, __MouseY + dy, __ScreenWidth, 20, AW_COLOR_FACTION_RANK, FONT_TYPE_DEFAULT, FONT_FLAG_ALIGN | FONT_FLAG_BORDERED);								
+						else if(cr.Stat[ST_FACTION_RANK]==5)
+							DrawText("Leader", __MouseX + 15, __MouseY + dy, __ScreenWidth, 20, AW_COLOR_FACTION_RANK, FONT_TYPE_DEFAULT, FONT_FLAG_ALIGN | FONT_FLAG_BORDERED);
 						dy -= 10;
 					}
-					
+
 					string factionname;
 					if(IsLexem(cr, LEXEM_CRITTER_FACTION))
 					{
@@ -621,7 +625,7 @@ void render_iface(uint layer)
 					    DrawText(factionname, __MouseX + 15, __MouseY + dy, __ScreenWidth, 20, AW_COLOR_FACTION_NAME, FONT_TYPE_DEFAULT, FONT_FLAG_ALIGN | FONT_FLAG_BORDERED);
                         dy -= 10;
 					}
-					
+
                     if(cr.IsDead())
                     {
                         DrawText("Dead", __MouseX + 15, __MouseY + dy, __ScreenWidth, 20, COLOR_DARK, FONT_TYPE_DEFAULT, FONT_FLAG_ALIGN | FONT_FLAG_BORDERED);
@@ -637,7 +641,7 @@ void render_iface(uint layer)
                             else
                                 _item = GetMsgStr(TEXTMSG_ITEM, STR_ITEM_INFO(item));
 
-                                                            
+
                             if(cr.IsPlayer() && item.GetType() == ITEM_TYPE_WEAPON)
                             {
                                 if(_WeaponSkill(item.Proto, _WeaponModeUse(item.Mode)) == SK_THROWING)
@@ -655,7 +659,7 @@ void render_iface(uint layer)
                            cr.Stat[ST_BODY_TYPE] == BT_GHOUL || cr.Stat[ST_BODY_TYPE] == BT_SUPER_MUTANT ||
                            valid(armor) || valid(helmet))
                         {
-                            
+
                             if(valid(armor))
                             {
                                 string _armor = "No armor";
@@ -663,11 +667,11 @@ void render_iface(uint layer)
                                     _armor = GetLexem(armor, "$-");
                                 else
                                     _armor = GetMsgStr(TEXTMSG_ITEM, STR_ITEM_INFO(armor));
-                            
+
                                 DrawText(_armor, __MouseX + 15, __MouseY + dy, __ScreenWidth, 20, valid(armor) && armor.GetType() == ITEM_TYPE_ARMOR ? AW_COLOR_ARMOR : COLOR_GRAY, FONT_TYPE_DEFAULT, FONT_FLAG_ALIGN | FONT_FLAG_BORDERED);
                                 dy -= 10;
                             }
-                            
+
                             if(valid(helmet))
                             {
                                 string _helmet = "No helmet";
@@ -688,7 +692,7 @@ void render_iface(uint layer)
 
                             dy -= 10;
                         }
-                        
+
                         if(_CritIsInjured(cr))
                         {
                             if((!__ConfigShowNpcAwareness && cr.IsNpc()) || !__ConfigShowPlayerAwareness && cr.IsPlayer())
@@ -714,12 +718,12 @@ void render_iface(uint layer)
                         }
                     }
                 }
-            } 
+            }
 
         }
 
         GUI_Render( false );
-         
+
         #ifdef GUI_REWORK
         GUI_Draw();
         #endif
@@ -729,8 +733,7 @@ void render_iface(uint layer)
 
         DrawChosenTabs();
 		DrawQuestTracker();
-
-
+        DrawInventoryTracker();
     }
 
     if((layer == 100 || layer == 101) && __WorldmapActive)
@@ -753,7 +756,7 @@ void render_iface(uint layer)
         {
             WorldmapElements[e].Draw(layer);
         }
-        
+
         EncountersDraw();
     }
 }
@@ -808,15 +811,15 @@ string generic_description(int descType, int& offsX, int& offsY)
 				int wpnMinDmg = _WeaponDmgMin(weaponMain.Proto, use);
                 if(_WeaponIsHtHAttack(weaponMain.Proto, use))
 				{
-                    //if (wpnMinDmg==0) 
-					//	wpnMinDmg += MAX(1,chosen.Stat[ST_MELEE_DAMAGE]/2); 
-					//else 
+                    //if (wpnMinDmg==0)
+					//	wpnMinDmg += MAX(1,chosen.Stat[ST_MELEE_DAMAGE]/2);
+					//else
 					//	wpnMinDmg += chosen.Stat[ST_MELEE_DAMAGE]/2;
 					wpnMinDmg += chosen.Stat[ST_MELEE_DAMAGE];
 				}
                 wpnMinDmg += wpnMinDmg * SelectWeaponBonus(weaponMain, BONUS_WEAPON_MIN_DMG) / 100;
-				result += wpnMinDmg+"-";		
-                
+				result += wpnMinDmg+"-";
+
                 int wpnMaxDmg = _WeaponDmgMax(weaponMain.Proto, use);
                 if(_WeaponIsHtHAttack(weaponMain.Proto, use))
 				{
@@ -880,12 +883,12 @@ string generic_description(int descType, int& offsX, int& offsY)
             ProtoItem@ unarmed = chosen.GetSlotProto(SLOT_HAND1, mode);
             result += GetMsgStr(TEXTMSG_GAME, STR_INV_NO_ITEM) + "\n";
             result += GetMsgStr(TEXTMSG_GAME, STR_INV_UNARMED_DMG) + " ";
-            
-			//if(_WeaponDmgMin(unarmed,_WeaponModeUse(mode))==0) 
-			//	result += MAX(1, chosen.Stat[ST_MELEE_DAMAGE]/1) + "-"; 
-			//else 
-			//	result += _WeaponDmgMin(unarmed,_WeaponModeUse(mode)) + chosen.Stat[ST_MELEE_DAMAGE]/1 + "-";	
-			
+
+			//if(_WeaponDmgMin(unarmed,_WeaponModeUse(mode))==0)
+			//	result += MAX(1, chosen.Stat[ST_MELEE_DAMAGE]/1) + "-";
+			//else
+			//	result += _WeaponDmgMin(unarmed,_WeaponModeUse(mode)) + chosen.Stat[ST_MELEE_DAMAGE]/1 + "-";
+
             result += _WeaponDmgMin(unarmed, _WeaponModeUse(mode)) + chosen.Stat[ST_MELEE_DAMAGE] + "-";
 			result += _WeaponDmgMax(unarmed, _WeaponModeUse(mode)) + chosen.Stat[ST_MELEE_DAMAGE];
             result += "\n\n";
@@ -911,16 +914,16 @@ string generic_description(int descType, int& offsX, int& offsY)
                 //result += _WeaponDmgMin(weaponExt.Proto, use) + "-";
 				int wpnMinDmg=_WeaponDmgMin(weaponExt.Proto,use);
 				if(_WeaponIsHtHAttack(weaponExt.Proto,use))
-				{		
-					//if (wpnMinDmg==0) 
-					//	wpnMinDmg += MAX(1, chosen.Stat[ST_MELEE_DAMAGE]/1); 
-					//else 
+				{
+					//if (wpnMinDmg==0)
+					//	wpnMinDmg += MAX(1, chosen.Stat[ST_MELEE_DAMAGE]/1);
+					//else
 					//	wpnMinDmg += chosen.Stat[ST_MELEE_DAMAGE]/1;
 					wpnMinDmg += chosen.Stat[ST_MELEE_DAMAGE];
 				}
-                wpnMinDmg += wpnMinDmg * SelectWeaponBonus(weaponExt, BONUS_WEAPON_MIN_DMG) / 100;			
-				result+=wpnMinDmg+"-";				
-				
+                wpnMinDmg += wpnMinDmg * SelectWeaponBonus(weaponExt, BONUS_WEAPON_MIN_DMG) / 100;
+				result+=wpnMinDmg+"-";
+
                 int wpnMaxDmg = _WeaponDmgMax(weaponExt.Proto, use);
                 if(_WeaponIsHtHAttack(weaponExt.Proto, use))
                     wpnMaxDmg += chosen.Stat[ST_MELEE_DAMAGE];
@@ -981,14 +984,14 @@ string generic_description(int descType, int& offsX, int& offsY)
             ProtoItem@ unarmed = chosen.GetSlotProto(SLOT_HAND2, mode);
             result += GetMsgStr(TEXTMSG_GAME, STR_INV_NO_ITEM) + "\n";
             result += GetMsgStr(TEXTMSG_GAME, STR_INV_UNARMED_DMG) + " ";
-			
-			//if(_WeaponDmgMin(unarmed,_WeaponModeUse(mode))==0) 
-			//	result += MAX(1, chosen.Stat[ST_MELEE_DAMAGE]/1) + "-"; 
-			//else 
-			//	result += _WeaponDmgMin(unarmed,_WeaponModeUse(mode)) + chosen.Stat[ST_MELEE_DAMAGE]/1 + "-";	
-			
-            result += _WeaponDmgMin(unarmed, _WeaponModeUse(mode)) + chosen.Stat[ST_MELEE_DAMAGE] + "-";			
-			
+
+			//if(_WeaponDmgMin(unarmed,_WeaponModeUse(mode))==0)
+			//	result += MAX(1, chosen.Stat[ST_MELEE_DAMAGE]/1) + "-";
+			//else
+			//	result += _WeaponDmgMin(unarmed,_WeaponModeUse(mode)) + chosen.Stat[ST_MELEE_DAMAGE]/1 + "-";
+
+            result += _WeaponDmgMin(unarmed, _WeaponModeUse(mode)) + chosen.Stat[ST_MELEE_DAMAGE] + "-";
+
             result += (_WeaponDmgMax(unarmed, _WeaponModeUse(mode)) + chosen.Stat[ST_MELEE_DAMAGE]);
             result += "\n\n";
         }
@@ -1075,7 +1078,7 @@ string item_description(ItemCl& item, int lookType)
         string _name = showPrefix(item)+GetMsgStr(TEXTMSG_ITEM, STR_ITEM_INFO(item));
         if(IsLexem(item, "$-"))
             _name = GetLexem(item, "$-");
-        if(item.GetProtoId() == PID_BOOK_OF_ACHIEVEMENT && item.Val1 != 0) 
+        if(item.GetProtoId() == PID_BOOK_OF_ACHIEVEMENT && item.Val1 != 0)
             _name += " |"+COLOR_RED+" (USED)|"+COLOR_TEXT+" ";
         result += ReplaceText(GetMsgStr(TEXTMSG_GAME, STR_ITEM_LOOK), "NAME", _name);
         // Message("!"+GUI_GetActiveScreen());
@@ -1092,8 +1095,8 @@ string item_description(ItemCl& item, int lookType)
     {
         if(lookType == ITEM_LOOK_INVENTORY && GUI_IsKeyPressed(0x2A))
         {
-            if(item.GetProtoId()==PID_ADVANCED_BENCH || item.GetProtoId()==PID_WORKBENCH_RAIDERS || item.GetProtoId()==PID_AMMO_FACILITY || item.GetProtoId()==PID_WORKBENCH 
-            || item.GetProtoId()==PID_MED_MACHINE || item.GetProtoId()==PID_WORKBENCH_PRIMITIVE || item.GetProtoId()==PID_CARAVAN_BOX || item.GetProtoId()==PID_ACTIVE_DYNAMITE 
+            if(item.GetProtoId()==PID_ADVANCED_BENCH || item.GetProtoId()==PID_WORKBENCH_RAIDERS || item.GetProtoId()==PID_AMMO_FACILITY || item.GetProtoId()==PID_WORKBENCH
+            || item.GetProtoId()==PID_MED_MACHINE || item.GetProtoId()==PID_WORKBENCH_PRIMITIVE || item.GetProtoId()==PID_CARAVAN_BOX || item.GetProtoId()==PID_ACTIVE_DYNAMITE
             || item.GetProtoId()==PID_ACTIVE_PLASTIC_EXPLOSIVE || item.GetProtoId()==PID_ACTIVE_MINE || item.GetProtoId() == PID_ACTIVE_PERSONNEL_MINE || item.GetType()==ITEM_TYPE_CONTAINER)
                 return "";
 
@@ -1114,8 +1117,8 @@ string item_description(ItemCl& item, int lookType)
 
         if(GUI_GetActiveScreen() == CLIENT_SCREEN_PICKUP && GUI_IsKeyPressed(0x2A))
         {
-            if(item.GetProtoId()==PID_ADVANCED_BENCH || item.GetProtoId()==PID_WORKBENCH_RAIDERS || item.GetProtoId()==PID_AMMO_FACILITY || item.GetProtoId()==PID_WORKBENCH 
-            || item.GetProtoId()==PID_MED_MACHINE || item.GetProtoId()==PID_WORKBENCH_PRIMITIVE || item.GetProtoId()==PID_CARAVAN_BOX || item.GetProtoId()==PID_ACTIVE_DYNAMITE 
+            if(item.GetProtoId()==PID_ADVANCED_BENCH || item.GetProtoId()==PID_WORKBENCH_RAIDERS || item.GetProtoId()==PID_AMMO_FACILITY || item.GetProtoId()==PID_WORKBENCH
+            || item.GetProtoId()==PID_MED_MACHINE || item.GetProtoId()==PID_WORKBENCH_PRIMITIVE || item.GetProtoId()==PID_CARAVAN_BOX || item.GetProtoId()==PID_ACTIVE_DYNAMITE
             || item.GetProtoId()==PID_ACTIVE_PLASTIC_EXPLOSIVE || item.GetProtoId()==PID_ACTIVE_MINE || item.GetProtoId() == PID_ACTIVE_PERSONNEL_MINE || item.GetType()==ITEM_TYPE_CONTAINER)
                 return "";
 
@@ -1145,9 +1148,9 @@ string item_description(ItemCl& item, int lookType)
             if(disableItemMove)
                 return "";
             disableItemMove = true;
-            
+
             uint contId = GetContainerId();
-            
+
             if(contId > 0)
             {
                 if(!chosen.IsKnockout() && !chosen.IsDead())
@@ -1196,7 +1199,7 @@ string item_description(ItemCl& item, int lookType)
             if(IsLexem(item, "$-"))
                 _name = GetLexem(item, "$-");
 
-            if(item.GetProtoId() == PID_BOOK_OF_ACHIEVEMENT && item.Val1 != 0) 
+            if(item.GetProtoId() == PID_BOOK_OF_ACHIEVEMENT && item.Val1 != 0)
                 _name += " |"+COLOR_RED+" (USED) |"+COLOR_TEXT+" ";
 
             result += (lookType == ITEM_LOOK_DEFAULT) ? ("\n" + _name + "\n") : (_name + "\n");
@@ -1360,7 +1363,7 @@ string item_description(ItemCl& item, int lookType)
 			result += showItemBonus(item, item.Val1, item.Val6);
 			result += showItemBonus(item, item.Val2, item.Val7);
 			result += showItemBonus(item, item.Val3, item.Val8);
-			result += showItemBonus(item, item.Val4, item.Val9);									
+			result += showItemBonus(item, item.Val4, item.Val9);
 
             //Achievement book levels
             if(item.GetProtoId() == PID_BOOK_OF_ACHIEVEMENT)
@@ -2683,10 +2686,28 @@ void item_map_out(ItemCl& item)
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Called on something critter in/out chosen inventory.
 void item_inv_in(ItemCl& item, float netGain, string& debugMessage)
-{}
+{
+    /*  We have to ignore any kind of workbench, because if character uses one, it gets added secretly into their inventory (I think) */
+    if (item.GetProtoId() != PID_WORKBENCH_PRIMITIVE &&
+        item.GetProtoId() != PID_WORKBENCH &&
+        item.GetProtoId() != PID_WORKBENCH_RAIDERS)
+    {
+        AddItemToInventoryTracker(item, netGain);
+        ActivateInventoryTracker();
+    }
+}
 
 void item_inv_out(ItemCl& item, float netGain, string& debugMessage)
-{}
+{
+    /*  We have to ignore any kind of workbench, because if character uses one, it gets added secretly into their inventory (I think) */
+    if (item.GetProtoId() != PID_WORKBENCH_PRIMITIVE &&
+        item.GetProtoId() != PID_WORKBENCH &&
+        item.GetProtoId() != PID_WORKBENCH_RAIDERS)
+    {
+        AddItemToInventoryTracker(item, netGain);
+        ActivateInventoryTracker();
+    }
+}
 
 /**
 *   FOClassic: Brave New World - Quest tracker
