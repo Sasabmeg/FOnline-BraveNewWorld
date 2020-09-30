@@ -70,8 +70,8 @@ void InitQuestTracker() {
     questTracker.active = false;
     questTracker.firstActivationDelay = 3000;   //  wait for a few seconds before first activation
     questTracker.activeDuration = 10000;        //  let's start at 10 seconds
-    questTracker.extraActiveDuration = 10000;    //  make sure short description quests are still readable
-    questTracker.lettersReadPerSecond = 15;
+    questTracker.extraActiveDuration = 7000;    //  make sure short description quests are still readable
+    questTracker.lettersReadPerSecond = 25;
     questTracker.fadeInDuration = 1500;
     questTracker.fadeOutDuration = 3500;
 }
