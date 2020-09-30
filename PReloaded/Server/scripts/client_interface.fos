@@ -2717,7 +2717,7 @@ void item_inv_out(ItemCl& item, float netGain, string& debugMessage)
 void quest_change(string& header, string& progress)
 {
     //Message("QUEST CHANGED! \nHEADER:    " + header + "\nPROGRESS:    " + progress + "\n\n");
-    Log("QUEST CHANGED! HEADER (" + header + "), PROGRESS (" + progress + ")");
+    //Log("QUEST CHANGED! HEADER (" + header + "), PROGRESS (" + progress + ")");
     SetQuestTrackerText(header, progress);
     ActivateQuestTracker();
 }

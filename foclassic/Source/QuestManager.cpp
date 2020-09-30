@@ -153,7 +153,7 @@ void QuestTab::AddQuest( uint16 num, string info )
 {
 	Quest quest = Quest(num, info);
     quests.push_back( quest );
-	WriteLog("info [%d] [%s]\n", info.length(), info.c_str());
+	//WriteLog("info [%d] [%s]\n", info.length(), info.c_str());
 	//quest.refreshQuestTypeAndProgress();
 	ReparseText();
 }
@@ -163,7 +163,7 @@ void QuestTab::RefreshQuest( uint16 num, string str )
     if( !quest )
         return;
     quest->str = str;
-	WriteLog("text [%s] - info [%s] - str [%s]\n", text.c_str(), quest->info.c_str(), quest->str.c_str());
+	//WriteLog("text [%s] - info [%s] - str [%s]\n", text.c_str(), quest->info.c_str(), quest->str.c_str());
 	quest->refreshQuestTypeAndProgress();
 	ReparseText();
 }
