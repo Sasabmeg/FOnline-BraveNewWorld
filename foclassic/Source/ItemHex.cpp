@@ -273,7 +273,21 @@ void ItemHex::RefreshAlpha()
     maxAlpha = (IsColorize() ? GetAlpha() : 0xFF);
 }
 
-void ItemHex::SetSprite( Sprite* spr )
+void ItemHex::SetSprite(Sprite* spr)
+{
+	if (spr)
+		SprDraw = spr;
+	if (SprDrawValid)
+	{
+		SprDraw->SetColor(IsColorize() ? GetColor() : 0);
+		SprDraw->SetEgg(GetEggType());
+		if (IsBadItem())
+			SprDraw->SetContour(CONTOUR_RED);
+	}
+}
+
+//	Could have defaulted 2nd param to false and use func above, but was having runtime error on Reloaded S3. Maybe not from that, but stays like this for now.
+void ItemHex::SetSprite(Sprite* spr, bool forceContourColoring)
 {
     if( spr )
         SprDraw = spr;
@@ -281,9 +295,14 @@ void ItemHex::SetSprite( Sprite* spr )
     {
         SprDraw->SetColor( IsColorize() ? GetColor() : 0 );
         SprDraw->SetEgg( GetEggType() );
-        if( IsBadItem() )
-            SprDraw->SetContour( CONTOUR_RED );
-    }
+		if (IsBadItem())
+			SprDraw->SetContour(CONTOUR_RED);
+		else
+			if ( forceContourColoring && ( IsAmmo() || IsArmor() || IsWeapon() || IsMisc() || IsKey() || IsDrug() ) )
+			{
+				SprDraw->SetContour(CONTOUR_YELLOW);
+			}
+	}
 }
 
 int ItemHex::GetEggType()
