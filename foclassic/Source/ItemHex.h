@@ -60,7 +60,8 @@ public:
     void   SetMaxAlpha( uint8 alpha );
     void   RestoreAlpha();
     void   RefreshAlpha();
-    void   SetSprite( Sprite* spr );
+	void   SetSprite(Sprite* spr);
+	void   SetSprite(Sprite* spr, bool forceContourColoring);
     int    GetEggType();
 
     // Finish

@@ -362,7 +362,7 @@ bool HexManager::AddItem( uint id, uint16 pid, uint16 hx, uint16 hy, bool is_add
                                                  &item->DrawEffect, &item->SprDrawValid );
             if( !item->IsNoLightInfluence() && !(item->IsFlat() && item->IsScenOrGrid() ) )
                 spr.SetLight( hexLight, maxHexX, maxHexY );
-            item->SetSprite( &spr );
+			item->SetSprite(&spr, ItemHighlightActive);
         }
 
         if( item->IsLight() || !item->IsLightThru() )
@@ -1003,7 +1003,13 @@ void HexManager::RebuildMap( int rx, int ry )
                                                       &item->DrawEffect, &item->SprDrawValid );
                     if( !item->IsNoLightInfluence() && !(item->IsFlat() && item->IsScenOrGrid() ) )
                         spr.SetLight( hexLight, maxHexX, maxHexY );
-                    item->SetSprite( &spr );
+					//    Set contour color to show visible items on map (Item detection feature)
+					if (item->IsItem()) {
+						item->SetSprite(&spr, ItemHighlightActive);
+					}
+					else {
+						item->SetSprite(&spr);
+					}
                 }
             }
 

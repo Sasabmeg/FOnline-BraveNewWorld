@@ -1349,7 +1349,7 @@ void FOClient::ParseKeyboard()
                                 TryExit();
                             continue;
                         }
-                    case DIK_F:
+                    case DIK_U:
                         if( GetActiveScreen() == CLIENT_SCREEN_FIXBOY )
                         {
                             TryExit();
@@ -1363,14 +1363,18 @@ void FOClient::ParseKeyboard()
                             continue;
                         }
                         break;
-                    case DIK_Q:
+					case DIK_W:
+						HexMngr.ItemHighlightActive = !HexMngr.ItemHighlightActive;
+						HexMngr.RefreshMap();
+						break;
+                    case DIK_LBRACKET:
                         if( IsMainScreen( CLIENT_MAIN_SCREEN_GAME ) && GetActiveScreen() == CLIENT_SCREEN_NONE )
                         {
                             DrawLookBorders = !DrawLookBorders;
                             RebuildLookBorders = true;
                         }
                         break;
-                    case DIK_W:
+                    case DIK_RBRACKET:
                         if( IsMainScreen( CLIENT_MAIN_SCREEN_GAME ) && GetActiveScreen() == CLIENT_SCREEN_NONE )
                         {
                             DrawShootBorders = !DrawShootBorders;
@@ -3049,6 +3053,7 @@ void FOClient::NetProcess()
         {
             case NETMSG_LOGIN_SUCCESS:
                 Net_OnLoginSuccess();
+				HexMngr.ItemHighlightActive = false;
                 break;
             case NETMSG_REGISTER_SUCCESS:
                 if( !Singleplayer )

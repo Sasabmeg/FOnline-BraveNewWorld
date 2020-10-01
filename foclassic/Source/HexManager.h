@@ -273,13 +273,14 @@ public:
 
     // Items
 private:
-    ItemHexVec hexItems;
+    ItemHexVec	hexItems;
 
     void PlaceItemBlocks( uint16 hx, uint16 hy, ProtoItem* proto_item );
     void ReplaceItemBlocks( uint16 hx, uint16 hy, ProtoItem* proto_item );
 
 public:
-    bool        AddItem( uint id, uint16 pid, uint16 hx, uint16 hy, bool is_added, Item::ItemData* data );
+	bool		ItemHighlightActive;
+	bool        AddItem( uint id, uint16 pid, uint16 hx, uint16 hy, bool is_added, Item::ItemData* data );
     void        ChangeItem( uint id, const Item::ItemData& data );
     void        FinishItem( uint id, bool is_deleted );
     auto        DeleteItem( ItemHex* item, bool with_delete = true )->ItemHexVec::iterator;
