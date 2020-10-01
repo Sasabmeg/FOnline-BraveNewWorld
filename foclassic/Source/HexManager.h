@@ -280,6 +280,8 @@ private:
 
 public:
 	bool		ItemHighlightActive;
+	uint16      MouseXLastHexMoveClick;
+	uint16      MouseYLastHexMoveClick;
 	bool        AddItem( uint id, uint16 pid, uint16 hx, uint16 hy, bool is_added, Item::ItemData* data );
     void        ChangeItem( uint id, const Item::ItemData& data );
     void        FinishItem( uint id, bool is_deleted );
@@ -360,6 +362,8 @@ public:
 
     // Cursor
 public:
+	int ChosenDistanceHex(uint16 x, uint16 y);        //    Checks in game distance from player, needed for smart combat cursor
+	void SetCursorPos_Hex(uint16 x, uint16 y, bool show_steps, bool refresh);
     void SetCursorPos( int x, int y, bool show_steps, bool refresh );
     void SetCursorVisible( bool visible ) { isShowCursor = visible; }
     void DrawCursor( uint spr_id );

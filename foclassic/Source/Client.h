@@ -646,6 +646,8 @@ public:
 /************************************************************************/
 /* Interface                                                            */
 /************************************************************************/
+	bool      SmartMouseLastClick;
+	bool      LegacyMouseCursor;
     int       IfaceHold;
     StrVec    IfaceIniNames;
     IniParser IfaceIni;
@@ -780,6 +782,9 @@ public:
     void GameLMouseUp();
     void GameRMouseDown();
     void GameRMouseUp();
+	void GameMouseCrosshairToLook();
+	void GameMouseCrosshairToMove();
+	void HideSmartCursorLastPosition();
 
 /************************************************************************/
 /* Main iface                                                           */
