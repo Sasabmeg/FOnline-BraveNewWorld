@@ -13,7 +13,8 @@ lang=engl russ
 1 1000 None 0 #
 4 1010 D _var p name_mem_npc_player = 0 D _var p noob_camp_rebec { 1 #
 10 1020 D _var p name_mem_npc_player = 1 D _var p noob_camp_rebec { 3 #
-12 1030 D _var p noob_camp_rebec = 99 @
+12 1030 D _var p noob_camp_rebec = 99 D _script dialog@d_QuestTimeoutNotReady 0  #
+14 1040 D _var p noob_camp_rebec = 99 D _script dialog@d_QuestTimeoutReady 0  @
 4 2000 None 0 #
 2 2010 #
 2 2020 #
@@ -42,7 +43,12 @@ lang=engl russ
 0 10010 @
 11 11000 None 0 @
 12 12000 None 0 @
-13 13000 None 0 &
+13 13000 None 0 @
+14 14000 None 0 #
+15 14010 R _script dialog@r_QuestTimeout 1 1 R _item p PID_XANDER_ROOT + 2 #
+15 14020 R _script dialog@r_QuestTimeout 1 1 R _item p PID_BROC_FLOWER + 2 #
+0 14030 R _script dialog@r_QuestTimeout 1 1 @
+15 15000 None 0 &
 
 [engl]
 {100}{}{Rebecca, the gardener}
@@ -51,7 +57,8 @@ lang=engl russ
 {1000}{}{Predialogue installations}
 {1010}{}{not known}
 {1020}{}{known}
-{1030}{}{completed}
+{1030}{}{completed, no herbs to get}
+{1040}{}{completed, new batch of herbs to choose from}
 {2000}{}{[This girl appears to be lost in another world] My pretties! Grow! Grow, I say! Oh how will I ever feed all of my children! Ah! You there! Could you please spare a moment of your time?}
 {2010}{}{Sure thing ma'am, what do you need?}
 {2020}{}{Ugh... Maybe...}
@@ -81,6 +88,11 @@ lang=engl russ
 {11000}{}{But the Earth dies! You must hurry!}
 {12000}{}{@@Now the flowers will grow!@@Thank you again! Ever so much!}
 {13000}{}{These are empty! Go find what looks like a post and fill it up.}
+{14000}{}{My pretties have grown! Take some with you!}
+{14010}{}{[Succumb to her madness] Anything that's green is good!}
+{14020}{}{[Succumb to her madness] Orange, I love the orange!}
+{14030}{}{Argggh.. not again.}
+{15000}{}{@@Now go and sprout!@@Visit us later!@@Loves the sand this one!}
 {100000001}{}{Better wash the counter again...}
 {100000002}{}{That's 5 caps buddy. Hey did you hear me? Cough em' up.}
 {100000003}{}{Better change the keg...}
@@ -111,6 +123,7 @@ lang=engl russ
 {1010}{}{Answer text}
 {1020}{}{known}
 {1030}{}{completed}
+{1040}{}{completed, new batch of herbs to choose from}
 {2000}{}{Thank you! Thank you! }
 {2010}{}{Head to the camp}
 {2020}{}{Exit into the wasteland}
@@ -140,5 +153,10 @@ lang=engl russ
 {11000}{}{The Earth dies! You must hurry!}
 {12000}{}{Now the flowers will grow!}
 {13000}{}{These are empty! Go find what looks like a post and fill it up.}
+{14000}{}{My pretties have grown! Want any?}
+{14010}{}{I'll take the some green ones!}
+{14020}{}{Orange, I love the orange!}
+{14030}{}{Argggh.. Later.}
+{15000}{}{Now go and sprout! Visit us later!}
 {100000006}{}{Fuckin' dust is getting everywhere. Hey close the fuckin' door!}
 
