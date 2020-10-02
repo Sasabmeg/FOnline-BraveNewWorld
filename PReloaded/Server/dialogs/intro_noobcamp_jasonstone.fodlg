@@ -50,10 +50,10 @@ lang=engl russ
 15 13010 D _var p noob_camp_knife = 99 D _var p noob_camp_armorer } 2 D _var p noob_camp_thunderjo } 2 D _var p job_lp_caravan_box } 2 R _script noob_camp_dialog@r_JasonNotifiesQuestsSecondWave 0  #
 15 13020 D _var p noob_camp_trapper } 2 D _var p noob_camp_simon } 2 D _var p noob_camp_edquest } 2 R _script noob_camp_dialog@r_JasonNotifiesQuestsThirdWave 0  #
 32 13030 D _var p noob_camp_plague { 1 R _var p noob_camp_plague = 1 #
-16 13040 #
+16 13040 D _var p noob_camp_jessica < 99 #
 17 13050 #
-29 13060 #
-33 13070 D _var p noob_camp_plague = 99 #
+33 13060 D _var p noob_camp_plague = 99 #
+29 13070 #
 0 13080 @
 15 14000 None 0 #
 14 14010 @
@@ -138,13 +138,13 @@ lang=engl russ
 }
 {12010}{}{Thanks for the help. }
 {13000}{}{Ah, you're still here? I hope you're finding the camp to be accommodating. Did you need a refresher on what we talked about? }
-{13010}{}{Actually could you tell me more about the camp?}
-{13020}{}{Actually could you tell me more about the camp?}
+{13010}{}{I checked up with Albert, Thunder Jo, Samantha and the caravan packer. Could you tell me more about the camp?}
+{13020}{}{I checked up with Simon, the old trapper and Ed, is there anyone else I could help out?}
 {13030}{}{You mentioned something about a plague? What can you tell me about that?}
 {13040}{}{You mentioned something about a couple of injured men? What can you tell me about that?}
 {13050}{}{Anything to hunt around here?}
-{13060}{}{I think I'm ready to get going.}
-{13070}{}{I solved the plague issue!}
+{13060}{}{I solved the plague issue!}
+{13070}{}{I think I'm ready to get going and leave this camp.}
 {13080}{}{No, I'm fine. Just wanted to say hello. }
 {14000}{}{You're here to learn and contribute to the camp, everything you gather, build, or destroy falls on you. As we're all responsible for helping keep this place alive. With that said all the work you do for the camp stays in the camp, but when you decide to leave we'll have a backpack ready for you equal to the amount of work you put in. You can find work scattered across the tents inside the camp, and when you're ready to check out the rest of the wasteland you're allowed. But there's no shooting, stabbing, punching, yelling, raping, stealing, or killing allowed on base, copy? 
 }
@@ -256,8 +256,8 @@ lang=engl russ
 {13030}{}{You mentioned something about a plague? What can you tell me about that.}
 {13040}{}{You mentioned something about a couple of injured men? What can you tell me about that?}
 {13050}{}{Anything to hunt around here?}
-{13060}{}{I think I'm ready to get going.}
-{13070}{}{I solved the plague issue!}
+{13060}{}{I solved the plague issue!}
+{13070}{}{I think I'm ready to get going.}
 {13080}{}{No, I'm fine. Just wanted to say hello. }
 {14000}{}{You're here to learn and contribute to the camp, everything you gather, build, or destroy falls on you. As we're all responsible for helping keep this place alive. With that said all the work you do for the camp stays in the camp, but when you decide to leave we'll have a backpack ready for you equal to the amount of work you put in. You can find work scattered across the tents inside the camp, and when you're ready to check out the rest of the wasteland you're allowed. But there's no shooting, stabbing, punching, yelling, raping, stealing, or killing allowed on base, copy? 
 }
