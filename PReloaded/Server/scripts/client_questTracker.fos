@@ -54,23 +54,23 @@ void InitQuestTracker() {
 
     //  Init colors -  possible colors of the header text, depending on quest type and current progress
     //  based on header type
-    questTracker.colorStory = COLOR_ORANGE;
-    questTracker.colorJob = COLOR_TEAL;
+    questTracker.colorStory = (COLOR_RGB(0xef, 0xcf, 30));  // golden yellow
+    questTracker.colorJob = (COLOR_RGB(0x6D, 0xD9, 0xC6));  // teal
     questTracker.colorQuest = COLOR_TEXT_SAND;
     //  based on current progress
     questTracker.colorDone = COLOR_LGREEN;
-    questTracker.colorSoftFailed = COLOR_DDORANGE;
-    questTracker.colorHardFailed = COLOR_RED;
-    questTracker.colorSoftCompleted = COLOR_DTEAL;
-    questTracker.colorHardCompleted = COLOR_DGREEN;
+    questTracker.colorSoftFailed = (COLOR_RGB(0xea, 0x46, 0));  // dark orange
+    questTracker.colorHardFailed = (COLOR_RGB(0xee, 0x05, 0));  // red
+    questTracker.colorSoftCompleted = (COLOR_RGB(0x4D, 0xA9, 0x96));    // dark teal
+    questTracker.colorHardCompleted = (COLOR_RGB(0x00, 0x77, 0x00));    // dark green
 
     questTracker.colorProgress = COLOR_WHITE;           //  possible?! color of the progress texts, always white for visibility
     questTracker.colorBackground = COLOR_CHANGE_ALPHA(COLOR_RGB(0, 0, 0), 150);
 
     questTracker.active = false;
     questTracker.firstActivationDelay = 3000;   //  wait for a few seconds before first activation
-    questTracker.activeDuration = 10000;        //  let's start at 10 seconds
-    questTracker.extraActiveDuration = 7000;    //  make sure short description quests are still readable
+    questTracker.activeDuration = 10000;        //  let's start at 10 seconds, this will be overriden, so useless, just in case
+    questTracker.extraActiveDuration = 2000;    //  make sure short description quests are still readable
     questTracker.lettersReadPerSecond = 25;
     questTracker.fadeInDuration = 1500;
     questTracker.fadeOutDuration = 3500;

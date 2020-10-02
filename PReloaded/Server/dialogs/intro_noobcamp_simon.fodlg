@@ -12,9 +12,9 @@ lang=engl russ
 [dialog]
 &
 1 1000 None 0 #
-4 1010 D _var p name_mem_npc_player = 0 D _var p noob_camp_simon = 0 #
-22 1020 D _var p name_mem_npc_player = 1 D _var p noob_camp_simon = 0 #
-20 1030 D _var p noob_camp_simon = 1 @
+4 1010 D _var p name_mem_npc_player = 0 D _var p noob_camp_simon { 1 #
+22 1020 D _var p name_mem_npc_player = 1 D _var p noob_camp_simon { 3 #
+20 1030 D _var p noob_camp_simon = 99 @
 4 2000 None 0 #
 2 2010 #
 3 2020 #
@@ -54,13 +54,13 @@ lang=engl russ
 15 14010 #
 16 14020 #
 17 14030 #
-0 14040 R _var p name_mem_npc_player = 1 @
+0 14040 R _var p name_mem_npc_player = 1 R _var p noob_camp_simon = 2 @
 15 15000 None 0 #
-0 15010 R _var p name_mem_npc_player = 1 @
+0 15010 R _var p name_mem_npc_player = 1 R _var p noob_camp_simon = 2 @
 16 16000 None 0 #
-0 16010 R _var p name_mem_npc_player = 1 @
+0 16010 R _var p name_mem_npc_player = 1 R _var p noob_camp_simon = 2 @
 17 17000 None 0 #
-0 17010 R _var p name_mem_npc_player = 1 @
+0 17010 R _var p name_mem_npc_player = 1 R _var p noob_camp_simon = 2 @
 21 18000 None 0 #
 11 18010 @
 20 19000 None 0 @
@@ -68,7 +68,7 @@ lang=engl russ
 23 20010 D _item p PID_AXE > 2 #
 0 20020 @
 23 21000 None 0 #
-0 21010 R _item p PID_AXE - 3 R _script dialog@r_AddExperience 1 300 R _var p noob_camp_simon = 1 &
+0 21010 R _item p PID_AXE - 3 R _script dialog@r_AddExperience 1 300 R _var p noob_camp_simon = 99 &
 
 [engl]
 {100}{}{Simon, the Woodsman}

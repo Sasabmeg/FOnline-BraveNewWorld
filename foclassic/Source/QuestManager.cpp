@@ -105,9 +105,6 @@ uint Quest::getQuestColor() {
 		case HARD_FAILED:
 			color = 0xFFEE0500;		//	COLOR_RED
 			break;
-		case DONE:
-			color = COLOR_TEXT;		//	COLOR_TEXT
-			break;
 		default:
 			if (type == JOB) {
 				color = 0xFF6DD9C6;			//	COLOR_TEAL

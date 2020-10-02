@@ -165,7 +165,7 @@ bool _OnUseCaravan(Critter& player, Scenery& scen, int skill, Item@ item)
 
         if ( valid(caravanOfficer) && (GetLvar(player, LVAR_job_lp_caravan_box) >= BOX_STATUS_STARTED) )
         {
-            if (GetLvar(player, LVAR_job_lp_caravan_box) > BOX_STATUS_MAX)
+            if (GetLvar(player, LVAR_job_lp_caravan_box) >= BOX_STATUS_MAX)
             {
                 player.Say(SAY_NETMSG, "You've completed the task assigned, speak to the caravan packer.");
                 return false;
