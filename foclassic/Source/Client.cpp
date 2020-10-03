@@ -751,7 +751,7 @@ int FOClient::MainLoop()
         #endif
     }
 
-    CHECK_MULTIPLY_WINDOWS0;
+    //CHECK_MULTIPLY_WINDOWS0;
 
     // Network
     // Init Net
@@ -780,8 +780,10 @@ int FOClient::MainLoop()
             Net_SendCreatePlayer( RegNewCr );
         else if( reason == INIT_NET_REASON_LOAD )
             Net_SendSaveLoad( false, SaveLoadFileName.c_str(), NULL );
-        else
-            NetDisconnect();
+		else {
+			WriteLog("DC: After connect things");
+			NetDisconnect();
+		}
     }
 
     // Parse Net
@@ -798,7 +800,7 @@ int FOClient::MainLoop()
     ParseKeyboard();
     ParseMouse();
 
-    CHECK_MULTIPLY_WINDOWS1;
+    //CHECK_MULTIPLY_WINDOWS1;
 
     // Process
     SoundProcess();
@@ -840,7 +842,7 @@ int FOClient::MainLoop()
     if( IsScreenPresent( CLIENT_SCREEN_ELEVATOR ) )
         ElevatorProcess();
 
-    CHECK_MULTIPLY_WINDOWS2;
+    //CHECK_MULTIPLY_WINDOWS2;
 
     // Script loop
     static uint next_call = 0;
@@ -868,7 +870,7 @@ int FOClient::MainLoop()
     }
     #endif
 
-    CHECK_MULTIPLY_WINDOWS3;
+    //CHECK_MULTIPLY_WINDOWS3;
 
     // Render
     if( !SprMngr.BeginScene( COLOR_XRGB( 0, 0, 0 ) ) )
@@ -893,7 +895,7 @@ int FOClient::MainLoop()
     ConsoleDraw();
     MessBoxDraw();
 
-    CHECK_MULTIPLY_WINDOWS4;
+    //CHECK_MULTIPLY_WINDOWS4;
 
     DrawIfaceLayer( 3 );
 
@@ -905,7 +907,7 @@ int FOClient::MainLoop()
     SprMngr.Flush();
     ProcessScreenEffectFading();
 
-    CHECK_MULTIPLY_WINDOWS5;
+    //CHECK_MULTIPLY_WINDOWS5;
 
     SprMngr.EndScene();
 
@@ -2838,8 +2840,10 @@ void FOClient::ParseSocket()
         NetOutput();
     }
 
-    if( !IsConnected )
-        NetDisconnect();
+	if (!IsConnected) {
+		WriteLog("DC: FOClient::ParseSocket()");
+		NetDisconnect();
+	}
 }
 
 bool FOClient::NetOutput()
@@ -5548,8 +5552,8 @@ void FOClient::Net_OnPing()
         PingCallTick = Timer::FastTick() + GameOpt.PingPeriod;
     }
 
-    CHECK_MULTIPLY_WINDOWS8;
-    CHECK_MULTIPLY_WINDOWS9;
+    //CHECK_MULTIPLY_WINDOWS8;
+    //CHECK_MULTIPLY_WINDOWS9;
 }
 
 void FOClient::Net_OnChosenTalk()
@@ -5705,7 +5709,7 @@ void FOClient::Net_OnCheckUID2()
     CHECKUIDBIN;
     if( CHECK_UID2( uid ) )
         UIDFail = true;
-    CHECK_MULTIPLY_WINDOWS6;
+    //CHECK_MULTIPLY_WINDOWS6;
 }
 
 void FOClient::Net_OnGameInfo()
@@ -6861,7 +6865,7 @@ void FOClient::Net_OnCheckUID3()
     CHECKUIDBIN;
     if( CHECK_UID1( uid ) )
         Net_SendPing( PING_UID_FAIL );
-    CHECK_MULTIPLY_WINDOWS7;
+    //CHECK_MULTIPLY_WINDOWS7;
 }
 
 void FOClient::Net_OnMsgData()
@@ -8711,6 +8715,7 @@ void FOClient::TryExit()
                 ShowMainScreen( CLIENT_MAIN_SCREEN_LOGIN );
                 break;
             case CLIENT_MAIN_SCREEN_WAIT:
+				WriteLog("DC: FOClient::TryExit()");
                 NetDisconnect();
                 break;
             case CLIENT_MAIN_SCREEN_WORLDMAP:

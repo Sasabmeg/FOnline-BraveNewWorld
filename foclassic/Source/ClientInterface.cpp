@@ -7128,8 +7128,10 @@ void FOClient::MoptLMouseUp()
     }
     else if( IfaceHold == IFACE_MOPT_OPTIONS && IsCurInRect( MoptOptions, 0, 0 ) )
         AddMess( MSGBOX_GAME, MsgGame->GetStr( STR_OPTIONS_NOT_AVIABLE ) );
-    else if( IfaceHold == IFACE_MOPT_EXIT && IsCurInRect( MoptExit, 0, 0 ) )
-        NetDisconnect();
+	else if (IfaceHold == IFACE_MOPT_EXIT && IsCurInRect(MoptExit, 0, 0)) {
+		WriteLog("DC: FOClient::MoptLMouseUp()");
+		NetDisconnect();
+	}
     else if( IfaceHold == IFACE_MOPT_RESUME && IsCurInRect( MoptResume, 0, 0 ) )
         ShowScreen( CLIENT_SCREEN_NONE );
 
