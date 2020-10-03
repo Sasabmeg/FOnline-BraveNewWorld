@@ -80,15 +80,18 @@ lang=engl russ
 31 23040 D _var p noob_camp_mrhandy } 2 #
 32 23050 D _var p noob_camp_mrhandy } 2 #
 33 23060 D _var p noob_camp_mrhandy } 2 #
-0 23070 R _var p noob_camp_mrhandy = 99 R _item p PID_ELECTRONIC_PARTS + 5 #
-0 23080 @
+41 23070 #
+0 23080 R _var p noob_camp_mrhandy = 99 R _item p PID_ELECTRONIC_PARTS + 5 #
+0 23090 @
 31 24000 None 0 #
 0 24010 @
 32 25000 None 0 #
 0 25010 @
 33 26000 None 0 #
 0 26010 @
-40 27000 None 0 &
+40 27000 None 0 @
+41 28000 None 0 #
+0 28010 &
 
 [engl]
 {100}{}{Mister Handy, the teacher}
@@ -1173,8 +1176,9 @@ within only a few minutes of starting!}
 {23040}{}{Tell me again, where can I get some Electronic Parts?}
 {23050}{}{Tell me again, where can I get some Metal Parts?}
 {23060}{}{Tell me again, where can I get some Junk?}
-{23070}{}{[Rip some parts off the robot] FOR SCIENCE!}
-{23080}{}{Stare dazzled at the robot a bit then leave.}
+{23070}{}{I want a Laser Pistol!}
+{23080}{}{[Rip some parts off the robot] FOR SCIENCE!}
+{23090}{}{Stare dazzled at the robot a bit then leave.}
 {24000}{}{The most efficient way to get Electronic Parts is from broken terminals. You can find one outside the fence near the west gate, just a bit north of the Old Trappers tent. [Use your Science Skill on Broken Computers to get Electronic Parts] }
 {24010}{}{Thanks. I'll try that.}
 {25000}{}{The most efficient way to get Metal Parts is to gather raw iron in a mine and refine it at a Workbench. Check with Ed the miner in the caves up north. The second most efficient way is scavenging.[Have a Primitive Tool or a Sledge Hammer in your inventory, then click on Iron Ore nodes to harvest.] }
@@ -1182,6 +1186,8 @@ within only a few minutes of starting!}
 {26000}{}{You can find plenty Junk lying around in city ruins but you can also scavenge it from old barrels, cars, computers, basically anything. For that you need to have a Tool in your inventory. You can get craft a Tool using your fix-boy. [If you have a Tool in your inventory, hovering you mouse over scavengeable resources, they will show.]}
 {26010}{}{Thanks. I'll try that.}
 {27000}{}{Your PipBoy comes standard with a universal ...::error:::...@@By pushing "F6" on your PipBoy's keyboard you can...:: error::... @@Did you know that your PipBoy can access basic body move...::error::...@@Your PipBoy can help you identify your...::error::...@@A happy face means friend, and an angry...::error::...@@Don't log out in...::error::...@@You can form a travelling...::error::...@@If you'd like to follow someone, you can...::error::...@@Your PipBoy comes standard with some basic hotkeys! Try th...::error::...@@Check out the nifty wik...::error::...@@...::error::...@@Need to  cut the veins? ~suicide...But there's...::error::...@@Better check your ~partypoi...::error::...@@You can shout, whisper, emote, or use a rad...::error::...@@You can quickly swit...::error::...@@}
+{28000}{}{The Wattz 1000 Civilian Model Laser Pistol requires 4 Metal Parts, 2 Alloys, 1 Wood, 2 Electronic Parts and can be assembled at a Regular or Advanced Workshop. }
+{28010}{}{Thanks, I'll try that.}
 {100000001}{}{Better wash the counter again...}
 {100000002}{}{That's 5 caps buddy. Hey did you hear me? Cough em' up.}
 {100000003}{}{Better change the keg...}
@@ -2230,8 +2236,9 @@ within only a few minutes of starting!}
 {23040}{}{Tell me again, where can I get some Electronic Parts?}
 {23050}{}{Tell me again, where can I get some Metal Parts?}
 {23060}{}{Tell me again, where can I get some Junk?}
-{23070}{}{It was for.. science!?}
-{23080}{}{Stare dazzled at the robot a bit then leave.}
+{23070}{}{I want a Laser Pistol!}
+{23080}{}{It was for.. science!?}
+{23090}{}{Stare dazzled at the robot a bit then leave.}
 {24000}{}{The most efficient way to get Electronic Parts is from broken terminals. You can find one outside the fence near the west gate, just a bit north of the Old Trappers tent. [Use your Science Skill on Broken Computers to get Electronic Parts] }
 {24010}{}{Thanks. I'll try that.}
 {25000}{}{The most efficient way to get Metal Parts is to gather raw iron in a mine and refine it at a Workbench. Check with Ed the miner in the caves up north. The second most efficient way is scavenging.[Have a Primitive Tool or a Sledge Hammer in your inventory, then click on Iron Ore nodes to harvest.] }
@@ -2239,4 +2246,6 @@ within only a few minutes of starting!}
 {26000}{}{You can find plenty Junk lying around in city ruins but you can also scavenge it from old barrels, cars, computers, basically anything. For that you need to have a Tool in your inventory. You can get craft a Tool using your fix-boy. [If you have a Tool in your inventory, hovering you mouse over scavengeable resources, they will show.]}
 {26010}{}{Thanks. I'll try that.}
 {27000}{}{Your PipBoy comes standard with a universal ...::error:::...@@By pushing "F6" on your PipBoy's keyboard you can...:: error::... @@Did you know that your PipBoy can access basic body movements? Such as turning your body for you by pushing the "< or >" key!@@Your PipBoy can help you identify your friends, and enemies! Highlight another PipBoy customer and enter the action menu from your PipBoy!@@A happy face means friend, and an angry face means enemy! Highlight and release over the perferred icon!@@Don't log out in public locations! You remain active for almost ten whole minutes!@@You can form a travelling party by selecting a leader, following him close to the exit grid then selecting "yes" when prompted@@If you'd like to follow someone, you can find this option in the drop down action menu, it's the one with three people with an arrow over the middle one's head!@@Your PipBoy comes standard with some basic hotkeys! Try them today! "A" enters the aiming system, "C" shows you your character information, "G" will quickly pick up items from the ground, and the number keys "1-8" allow you to quickly select a skill to use.@@Check out the nifty wikipedia on your PipBoy today!@@Need to talk to a real person? Type ~requesthelp "Start Typing"@@You can go delete yourself! By typing ~deleteself "password"!!@@Need to  cut the veins? ~suicide...But there's always hope!@@Better check your ~partypoints, or ~pp.@@You can shout, whisper, emote, or use a radio by pushing the first letter of it's word! ~s HEY ~w hey ~e, ~r, etc.@@You can quickly switch from Real Time Combat to Turn Based Combat by typing ~combatmode [rt or tb]@@}
+{28000}{}{The Wattz 1000 Civilian Model Laser Pistol requires 4 Metal Parts, 2 Alloys, 1 Wood and 2 Electronic Parts. }
+{28010}{}{Thanks, I'll try that.}
 
