@@ -49,7 +49,21 @@ int main( int argc, char** argv )
 
     // Logging
     Timer::Init();
-    LogToFile( "Client.log" );
+
+	//	Separate log files by adding timestamp
+	time_t rawtime;
+	struct tm * timeinfo;
+	char buffer[80];
+
+	time(&rawtime);
+	timeinfo = localtime(&rawtime);
+
+	strftime(buffer, sizeof(buffer), "clientlogs/client_%d-%m-%Y_%H-%M-%S.log", timeinfo);
+	std::string str(buffer);
+	fl_mkdir("clientlogs", 0);
+
+    LogToFile(str.c_str());
+	//LogToFile("Client_1:2:3.log");
     WriteLog( "Starting Client (%s)...\n", FOCLASSIC_VERSION_LOGSTRING );
 
     // Command line
@@ -134,12 +148,14 @@ int main( int argc, char** argv )
     // Check for already opened window
     #ifndef DEV_VERSION
     # ifdef FO_WINDOWS
+	/*
     HANDLE h = CreateEvent( NULL, FALSE, FALSE, "foclassic_instance" ); // last change 20.09.2018
     if( !h || h == INVALID_HANDLE_VALUE || GetLastError() == ERROR_ALREADY_EXISTS )
     {
         ShowMessage( "FOClassic client is already running." );
         return 0;
     }
+	*/
     # else
     // Todo: Linux
     # endif

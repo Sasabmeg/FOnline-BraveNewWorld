@@ -359,7 +359,7 @@ uint UIDDUMMY10 = -1;
 
 uint       MulWndArray[100] = { 0 };
 Randomizer MulWndRandom;
-#define MULTIPLY_WINDOWS_FAIL0             NetDisconnect();
+#define MULTIPLY_WINDOWS_FAIL0             WriteLog("DC: MULTIPLY_WINDOWS_FAIL0");
 #define MULTIPLY_WINDOWS_FAIL1             CritterCl::DefaultAnim = NULL;
 #define MULTIPLY_WINDOWS_FAIL2             HexMngr.UnloadMap();
 #define MULTIPLY_WINDOWS_FAIL3             SprMngr.Restore();
