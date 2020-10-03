@@ -1524,13 +1524,17 @@ public:
         std::string Name;
         uint        Num;
         bool        IsTrue;
+		bool		HaveMats;
+		uint		MaxPossibleCrafts;
 
-        SCraft( Rect& pos, std::string& name, uint num, bool is_true )
+        SCraft( Rect& pos, std::string& name, uint num, bool is_true, bool haveMats, uint maxPossibleCrafts)
         {
             Pos = pos;
             Name = name;
             Num = num;
             IsTrue = is_true;
+			HaveMats = haveMats;
+			MaxPossibleCrafts = maxPossibleCrafts;
         }
         SCraft( const SCraft& _right )
         {
@@ -1538,14 +1542,18 @@ public:
             Name = _right.Name;
             Num = _right.Num;
             IsTrue = _right.IsTrue;
-        }
+			HaveMats = _right.HaveMats;
+			MaxPossibleCrafts = _right.MaxPossibleCrafts;
+		}
         SCraft& operator=( const SCraft& _right )
         {
             Pos = _right.Pos;
             Name = _right.Name;
             Num = _right.Num;
             IsTrue = _right.IsTrue;
-            return *this;
+			HaveMats = _right.HaveMats;
+			MaxPossibleCrafts = _right.MaxPossibleCrafts;
+			return *this;
         }
     };
     typedef std::vector<SCraft>    SCraftVec;

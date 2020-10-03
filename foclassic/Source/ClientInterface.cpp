@@ -8630,58 +8630,7 @@ void FOClient::PipDraw()
         }
         case PIP__STATUS:
         {
-            // Status
-            PIP_DRAW_TEXT( FmtGameText( STR_PIP_STATUS ), FONT_FLAG_CENTERX, COLOR_TEXT_DGREEN );
-            scr++;
-            PIP_DRAW_TEXT( FmtGameText( STR_PIP_REPLICATION_MONEY ), 0, COLOR_TEXT );
-            PIP_DRAW_TEXTR( FmtGameText( STR_PIP_REPLICATION_MONEY_VAL, Chosen->GetParam( ST_REPLICATION_MONEY ) ), 0, COLOR_TEXT );
-            scr++;
-            PIP_DRAW_TEXT( FmtGameText( STR_PIP_REPLICATION_COST ), 0, COLOR_TEXT );
-            PIP_DRAW_TEXTR( FmtGameText( STR_PIP_REPLICATION_COST_VAL, Chosen->GetParam( ST_REPLICATION_COST ) ), 0, COLOR_TEXT );
-            scr++;
-            PIP_DRAW_TEXT( FmtGameText( STR_PIP_REPLICATION_COUNT ), 0, COLOR_TEXT );
-            PIP_DRAW_TEXTR( FmtGameText( STR_PIP_REPLICATION_COUNT_VAL, Chosen->GetParam( ST_REPLICATION_COUNT ) ), 0, COLOR_TEXT );
-            scr++;
-
-            // Timeouts
-            scr++;
-            PIP_DRAW_TEXT( FmtGameText( STR_PIP_TIMEOUTS ), FONT_FLAG_CENTERX, COLOR_TEXT_DGREEN );
-            scr++;
-            for( uint j = TIMEOUT_END; j >= TIMEOUT_BEGIN; j-- )
-            {
-                if( !MsgGame->Count( STR_PARAM_NAME_( j ) ) )
-                    continue;
-                uint val = Chosen->GetParam( j );
-
-                if( j == TO_REMOVE_FROM_GAME )
-                {
-                    uint to_battle = Chosen->GetParam( TO_BATTLE );
-                    if( val < to_battle )
-                        val = to_battle;
-                }
-
-                val /= (GameOpt.TimeMultiplier ? GameOpt.TimeMultiplier : 1);           // Convert to seconds
-                if( j == TO_REMOVE_FROM_GAME && val < GameOpt.MinimumOfflineTime / 1000 )
-                    val = GameOpt.MinimumOfflineTime / 1000;
-                if( j == TO_REMOVE_FROM_GAME && NoLogOut )
-                    val = 1000000;                                                  // Infinity
-
-                uint str_num = STR_TIMEOUT_SECONDS;
-                if( val > 300 )
-                {
-                    val /= 60;
-                    str_num = STR_TIMEOUT_MINUTES;
-                }
-                PIP_DRAW_TEXT( FmtGameText( STR_PARAM_NAME_( j ) ), 0, COLOR_TEXT );
-                if( val > 1440 )
-                    PIP_DRAW_TEXTR( FmtGameText( str_num, "?" ), 0, COLOR_TEXT );
-                else
-                    PIP_DRAW_TEXTR( FmtGameText( str_num, Str::FormatBuf( "%u", val ) ), 0, COLOR_TEXT );
-                scr++;
-            }
-
             // Quests
-            scr++;
             if( scr >= 0 && scr < ml )
                 SprMngr.DrawStr( Rect( PipWMonitor[0], PipWMonitor[1] + scr * h, PipWMonitor[2], PipWMonitor[1] + scr * h + h, PipX, PipY ), FmtGameText( STR_PIP_QUESTS ), FONT_FLAG_CENTERX, COLOR_TEXT_DGREEN );
             scr++;
@@ -8712,7 +8661,6 @@ void FOClient::PipDraw()
             if( !tab )
                 break;
 			const char* tabText = QuestManager::removeFormat(std::string(tab->GetText())).c_str();
-			//WriteLogF(_FUNC_, " PIP__STATUS_QUESTS: %s\n", tabText);
 			uint color = 0U;
 			Quest* quest = &((tab->GetQuests())->front());
 			if (quest != NULL) {
@@ -8891,7 +8839,6 @@ void FOClient::PipLMouseDown()
     IfaceHold = IFACE_NONE;
     if( !Chosen )
         return;
-
     Rect& r = PipWMonitor;
     int ml = SprMngr.GetLinesCount( 0, r.H(), NULL, FONT_TYPE_DEFAULT );
     int h = r.H() / ml;
@@ -8912,10 +8859,7 @@ void FOClient::PipLMouseDown()
         {
             case PIP__STATUS:
             {
-                scr += 8;
-                for( uint j = TIMEOUT_END; j >= TIMEOUT_BEGIN; j-- )
-                    if( MsgGame->Count( STR_PARAM_NAME_( j ) ) )
-                        scr++;
+				scr += 1;
                 int scr_ = scr;
 
                 QuestTabMap* tabs = QuestMngr.GetTabs();
@@ -8923,10 +8867,10 @@ void FOClient::PipLMouseDown()
                 {
                     if( scr >= 0 && scr < ml && IsCurInRect( Rect( r[0], r[1] + scr * h, r[2], r[1] + scr * h + h ), PipX, PipY ) )
                     {
-                        QuestNumTab = scr - scr_ + PipScroll[PipMode];
-                        PipMode = PIP__STATUS_QUESTS;
+						QuestNumTab = scr - scr_;
+						PipMode = PIP__STATUS_QUESTS;
                         PipScroll[PipMode] = 0;
-                        break;
+						break;
                     }
                     scr++;
                 }
@@ -8935,7 +8879,7 @@ void FOClient::PipLMouseDown()
                     scr++;
                     if( scr >= 0 && scr < ml && IsCurInRect( Rect( r[0], r[1] + scr * h, r[2], r[1] + scr * h + h ), PipX, PipY ) )
                     {
-                        PipMode = PIP__STATUS_SCORES;
+						PipMode = PIP__STATUS_SCORES;
                         PipScroll[PipMode] = 0;
                         if( Timer::FastTick() >= ScoresNextUploadTick )
                         {
@@ -10946,7 +10890,8 @@ void FOClient::FixGenerate( int fix_mode )
                 cur_height = line_height;
             }
 
-            scraft_vec.push_back( SCraft( pos, craft->Name, craft->Num, MrFixit.IsTrueCraft( Chosen, craft->Num ) ) );
+            scraft_vec.push_back( SCraft( pos, craft->Name, craft->Num, MrFixit.IsTrueCraft( Chosen, craft->Num ),
+				MrFixit.IsTrueItems(Chosen, craft->NeedItems, craft->NeedItemsVal, craft->NeedItemsOr), MrFixit.GetMaxNumCrafts(Chosen, craft->NeedItems, craft->NeedItemsVal) ) );
         }
 
         if( !scraft_vec.empty() )
@@ -11222,8 +11167,12 @@ void FOClient::FixDraw()
             {
                 SCraft* scraft = &(*cur_vec)[i];
                 uint col = COLOR_TEXT;
-                if( !scraft->IsTrue )
-                    col = COLOR_TEXT_DRED;
+				if (!scraft->IsTrue) {
+					if (scraft->HaveMats)
+						col = 0xFFEA4600;		//	COLOR_DARKORANGE
+					else
+						col = COLOR_TEXT_DRED;
+				}
                 if( i == (uint)FixCurCraft )
                 {
                     if( IfaceHold == IFACE_FIX_CHOOSE )
@@ -11233,12 +11182,16 @@ void FOClient::FixDraw()
                 }
 
                 SprMngr.DrawStr( Rect( scraft->Pos, FixX, FixY ), scraft->Name.c_str(), 0, col );
+				if (scraft->MaxPossibleCrafts > 0) {
+					Rect amountDrawPos = Rect(scraft->Pos.R - 50, scraft->Pos.T, scraft->Pos.R, scraft->Pos.B);
+					SprMngr.DrawStr(Rect(amountDrawPos, FixX, FixY), std::to_string(static_cast<unsigned long long>(scraft->MaxPossibleCrafts)).c_str(), FONT_FLAG_CENTERX, col);
+				}
             }
 
             // Number of page
             char str[64];
             Str::Format( str, "%u/%u", FixScrollLst + 1, FixCraftLst.size() );
-            SprMngr.DrawStr( Rect( FixWWin[2] - 30 + FixX, FixWWin[3] - 15 + FixY, FixWWin[2] + FixX, FixWWin[3] + FixY ), str, FONT_FLAG_NOBREAK );
+            SprMngr.DrawStr( Rect( FixWWin[2] - 10 + FixX, FixWWin[3] - 5 + FixY, FixWWin[2] + 20 + FixX, FixWWin[3] + FixY ), str, FONT_FLAG_NOBREAK | FONT_FLAG_CENTERR );
             break;
         }
         case FIX_MODE_FIXIT:
