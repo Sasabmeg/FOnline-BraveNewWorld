@@ -798,6 +798,17 @@ void CraftManager::GetShowCrafts( CritterCl* cr, CraftItemVec& craft_vec )
 }
 # endif
 # ifdef FOCLASSIC_SERVER
+uint CraftManager::GetMaxNumCrafts(Critter* cr, UInt16Vec& pid_vec, UIntVec& count_vec)
+{
+	uint max = 999999;
+	for (uint i = 0; i < (uint)pid_vec.size(); i++) {
+		uint16 item_pid = pid_vec[i];
+		uint item_count = count_vec[i];
+		max = max < (cr->CountItemPid(item_pid) / item_count) ? max : (cr->CountItemPid(item_pid) / item_count);
+	}
+	return max;
+}
+
 bool CraftManager::IsTrueCraft( Critter* cr, uint num )
 {
     CraftItem* craft = GetCraft( num );
@@ -810,6 +821,17 @@ bool CraftManager::IsTrueCraft( Critter* cr, uint num )
 }
 # endif
 # ifdef FOCLASSIC_CLIENT
+uint CraftManager::GetMaxNumCrafts(CritterCl* cr, UInt16Vec& pid_vec, UIntVec& count_vec)
+{
+	uint max = 999999;
+	for (uint i = 0; i < (uint)pid_vec.size(); i++) {
+		uint16 item_pid = pid_vec[i];
+		uint item_count = count_vec[i];
+		max = max < (cr->CountItemPid(item_pid) / item_count) ? max : (cr->CountItemPid(item_pid) / item_count);
+	}
+	return max;
+}
+
 bool CraftManager::IsTrueCraft( CritterCl* cr, uint num )
 {
     CraftItem* craft = GetCraft( num );

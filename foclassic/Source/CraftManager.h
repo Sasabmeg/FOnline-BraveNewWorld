@@ -127,19 +127,21 @@ public:
     void GetShowCrafts( Critter* cr, CraftItemVec& craft_vec );
     bool IsTrueCraft( Critter* cr, uint num );
     void GetTrueCrafts( Critter* cr, CraftItemVec& craft_vec );
+	bool IsTrueItems(Critter* cr, UInt16Vec& pid_vec, UIntVec& count_vec, UInt8Vec& or_vec);
+	uint GetMaxNumCrafts(Critter* cr, UInt16Vec& pid_vec, UIntVec& count_vec);
 private:
     bool IsTrueParams( Critter* cr, UIntVec& num_vec, IntVec& val_vec, UInt8Vec& or_vec );
-    bool IsTrueItems( Critter* cr, UInt16Vec& pid_vec, UIntVec& count_vec, UInt8Vec& or_vec );
     #endif
     #ifdef FOCLASSIC_CLIENT
 public:
     bool IsShowCraft( CritterCl* cr, uint num );
     void GetShowCrafts( CritterCl* cr, CraftItemVec& craft_vec );
-    bool IsTrueCraft( CritterCl* cr, uint num );
+    bool IsTrueCraft( CritterCl* cr, uint num);
     void GetTrueCrafts( CritterCl* cr, CraftItemVec& craft_vec );
+	bool IsTrueItems(CritterCl* cr, UInt16Vec& pid_vec, UIntVec& count_vec, UInt8Vec& or_vec);
+	uint GetMaxNumCrafts(CritterCl* cr, UInt16Vec& pid_vec, UIntVec& count_vec);
 private:
     bool IsTrueParams( CritterCl* cr, UIntVec& num_vec, IntVec& val_vec, UInt8Vec& or_vec );
-    bool IsTrueItems( CritterCl* cr, UInt16Vec& pid_vec, UIntVec& count_vec, UInt8Vec& or_vec );
     #endif
 
     #ifdef FOCLASSIC_SERVER
