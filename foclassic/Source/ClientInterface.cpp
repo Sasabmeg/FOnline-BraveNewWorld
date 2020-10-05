@@ -356,7 +356,7 @@ int FOClient::InitIface()
     DlgMainTextLinesReal = 1;
     IfaceLoadRect( DlgWMain, "DlgMain" );
     IfaceLoadRect( DlgWText, "DlgText" );
-    DlgMainTextLinesRect = SprMngr.GetLinesCount( 0, DlgWText.H(), NULL );
+    DlgMainTextLinesRect = SprMngr.GetLinesCount( 0, DlgWText.H(), NULL, dialogFont );
     IfaceLoadRect( DlgBScrUp, "DlgScrUp" );
     IfaceLoadRect( DlgBScrDn, "DlgScrDn" );
     IfaceLoadRect( DlgAnsw, "DlgAnsw" );
@@ -3608,9 +3608,9 @@ void FOClient::DlgDraw( bool is_dialog )
     const char scr_up[] = { (char)TEXT_SYMBOL_UP, 0 };
     const char scr_down[] = { (char)TEXT_SYMBOL_DOWN, 0 };
     if( DlgMainTextCur )
-        SprMngr.DrawStr( Rect( DlgBScrUp, DlgX, DlgY ), scr_up, 0, IfaceHold == IFACE_DLG_SCR_UP ? COLOR_TEXT_DGREEN : COLOR_TEXT, FONT_TYPE_DIALOG );
+        SprMngr.DrawStr( Rect( DlgBScrUp, DlgX, DlgY ), scr_up, 0, IfaceHold == IFACE_DLG_SCR_UP ? COLOR_TEXT_DGREEN : COLOR_TEXT, dialogFont );
     if( DlgMainTextCur < DlgMainTextLinesReal - DlgMainTextLinesRect )
-        SprMngr.DrawStr( Rect( DlgBScrDn, DlgX, DlgY ), scr_down, 0, IfaceHold == IFACE_DLG_SCR_DN ? COLOR_TEXT_DGREEN : COLOR_TEXT, FONT_TYPE_DIALOG );
+        SprMngr.DrawStr( Rect( DlgBScrDn, DlgX, DlgY ), scr_down, 0, IfaceHold == IFACE_DLG_SCR_DN ? COLOR_TEXT_DGREEN : COLOR_TEXT, dialogFont );
 
     // Dialog
     if( is_dialog )
@@ -3632,21 +3632,21 @@ void FOClient::DlgDraw( bool is_dialog )
         SprMngr.DrawStr( Rect( DlgBSayText, DlgX, DlgY ), MsgGame->GetStr( STR_DIALOG_SAY ), FONT_FLAG_CENTERX | FONT_FLAG_CENTERY, COLOR_TEXT_SAND, FONT_TYPE_FAT );
 
         // Npc text
-        SprMngr.DrawStr( Rect( DlgWText, DlgX, DlgY ), DlgMainText.c_str(), FONT_FLAG_SKIPLINES( DlgMainTextCur ), COLOR_TEXT, FONT_TYPE_DIALOG );
+        SprMngr.DrawStr( Rect( DlgWText, DlgX, DlgY ), DlgMainText.c_str(), FONT_FLAG_SKIPLINES( DlgMainTextCur ), COLOR_TEXT, dialogFont);
 
         // Answers
         for( uint i = 0; i < DlgAnswers.size(); i++ )
         {
             Answer& a = DlgAnswers[i];
             if( i == (uint)DlgCurAnsw )
-                SprMngr.DrawStr( Rect( a.Position, DlgX, DlgY ), DlgAnswers[i].Text.c_str(), a.AnswerNum < 0 ? FONT_FLAG_CENTERX : 0, IfaceHold == IFACE_DLG_ANSWER && DlgCurAnsw == DlgHoldAnsw ? COLOR_TEXT_DDGREEN : (IfaceHold != IFACE_DLG_ANSWER ? COLOR_TEXT_DGREEN : COLOR_TEXT), FONT_TYPE_DIALOG );
+                SprMngr.DrawStr( Rect( a.Position, DlgX, DlgY ), DlgAnswers[i].Text.c_str(), a.AnswerNum < 0 ? FONT_FLAG_CENTERX : 0, IfaceHold == IFACE_DLG_ANSWER && DlgCurAnsw == DlgHoldAnsw ? COLOR_TEXT_DDGREEN : (IfaceHold != IFACE_DLG_ANSWER ? COLOR_TEXT_DGREEN : COLOR_TEXT), dialogFont);
             else
-                SprMngr.DrawStr( Rect( a.Position, DlgX, DlgY ), DlgAnswers[i].Text.c_str(), a.AnswerNum < 0 ? FONT_FLAG_CENTERX : 0, COLOR_TEXT, FONT_TYPE_DIALOG );
+                SprMngr.DrawStr( Rect( a.Position, DlgX, DlgY ), DlgAnswers[i].Text.c_str(), a.AnswerNum < 0 ? FONT_FLAG_CENTERX : 0, COLOR_TEXT, dialogFont);
         }
 
         // Chosen money
         if( Chosen )
-            SprMngr.DrawStr( Rect( DlgWMoney, DlgX, DlgY ), Chosen->GetMoneyStr(), FONT_FLAG_CENTERX | FONT_FLAG_CENTERY, COLOR_TEXT_WHITE, FONT_TYPE_DIALOG );
+            SprMngr.DrawStr( Rect( DlgWMoney, DlgX, DlgY ), Chosen->GetMoneyStr(), FONT_FLAG_CENTERX | FONT_FLAG_CENTERY, COLOR_TEXT_WHITE, dialogFont);
     }
     // Barter
     else
@@ -3708,12 +3708,12 @@ void FOClient::DlgDraw( bool is_dialog )
         if( BarterIsPlayers )
         {
             SprMngr.DrawStr( Rect( BarterBTalkText, DlgX, DlgY ), MsgGame->GetStr( STR_BARTER_END ), FONT_FLAG_NOBREAK | FONT_FLAG_CENTERX | FONT_FLAG_CENTERY, COLOR_TEXT_SAND, FONT_TYPE_FAT );
-            SprMngr.DrawStr( Rect( DlgWText, DlgX, DlgY ), BarterText.c_str(), FONT_FLAG_UPPER, 0, FONT_TYPE_DIALOG );
+            SprMngr.DrawStr( Rect( DlgWText, DlgX, DlgY ), BarterText.c_str(), FONT_FLAG_UPPER, 0, dialogFont);
         }
         else
         {
             SprMngr.DrawStr( Rect( BarterBTalkText, DlgX, DlgY ), MsgGame->GetStr( STR_BARTER_TALK ), FONT_FLAG_NOBREAK | FONT_FLAG_CENTERX | FONT_FLAG_CENTERY, COLOR_TEXT_SAND, FONT_TYPE_FAT );
-            SprMngr.DrawStr( Rect( DlgWText, DlgX, DlgY ), BarterText.c_str(), 0, 0, FONT_TYPE_DIALOG );
+            SprMngr.DrawStr( Rect( DlgWText, DlgX, DlgY ), BarterText.c_str(), 0, 0, dialogFont);
         }
 
         // Cost
@@ -3722,24 +3722,24 @@ void FOClient::DlgDraw( bool is_dialog )
         ContainerCalcInfo( BarterCont2o, c2, w2, v2, Chosen->IsRawParam( PE_MASTER_TRADER ) ? 0 : BarterK, false );
         if( !BarterIsPlayers && BarterK )
         {
-            SprMngr.DrawStr( Rect( BarterWCost1, DlgX, DlgY ), Str::FormatBuf( "$%u", c1 ), FONT_FLAG_NOBREAK | FONT_FLAG_CENTERX, COLOR_TEXT_WHITE, FONT_TYPE_DIALOG ); // BarterCost1<BarterCost2?COLOR_TEXT_RED:COLOR_TEXT_WHITE);
-            SprMngr.DrawStr( Rect( BarterWCost2, DlgX, DlgY ), Str::FormatBuf( "$%u", c2 ), FONT_FLAG_NOBREAK | FONT_FLAG_CENTERX, COLOR_TEXT_WHITE, FONT_TYPE_DIALOG ); // BarterCost1<BarterCost2?COLOR_TEXT_RED:COLOR_TEXT_WHITE);
+            SprMngr.DrawStr( Rect( BarterWCost1, DlgX, DlgY ), Str::FormatBuf( "$%u", c1 ), FONT_FLAG_NOBREAK | FONT_FLAG_CENTERX, COLOR_TEXT_WHITE, dialogFont); // BarterCost1<BarterCost2?COLOR_TEXT_RED:COLOR_TEXT_WHITE);
+            SprMngr.DrawStr( Rect( BarterWCost2, DlgX, DlgY ), Str::FormatBuf( "$%u", c2 ), FONT_FLAG_NOBREAK | FONT_FLAG_CENTERX, COLOR_TEXT_WHITE, dialogFont); // BarterCost1<BarterCost2?COLOR_TEXT_RED:COLOR_TEXT_WHITE);
         }
         else
         {
-            SprMngr.DrawStr( Rect( BarterWCost1, DlgX, DlgY ), Str::FormatBuf( "%u", w1 / 1000 ), FONT_FLAG_NOBREAK | FONT_FLAG_CENTERX, COLOR_TEXT_WHITE, FONT_TYPE_DIALOG ); // BarterCost1<BarterCost2?COLOR_TEXT_RED:COLOR_TEXT_WHITE);
-            SprMngr.DrawStr( Rect( BarterWCost2, DlgX, DlgY ), Str::FormatBuf( "%u", w2 / 1000 ), FONT_FLAG_NOBREAK | FONT_FLAG_CENTERX, COLOR_TEXT_WHITE, FONT_TYPE_DIALOG ); // BarterCost1<BarterCost2?COLOR_TEXT_RED:COLOR_TEXT_WHITE);
+            SprMngr.DrawStr( Rect( BarterWCost1, DlgX, DlgY ), Str::FormatBuf( "%u", w1 / 1000 ), FONT_FLAG_NOBREAK | FONT_FLAG_CENTERX, COLOR_TEXT_WHITE, dialogFont); // BarterCost1<BarterCost2?COLOR_TEXT_RED:COLOR_TEXT_WHITE);
+            SprMngr.DrawStr( Rect( BarterWCost2, DlgX, DlgY ), Str::FormatBuf( "%u", w2 / 1000 ), FONT_FLAG_NOBREAK | FONT_FLAG_CENTERX, COLOR_TEXT_WHITE, dialogFont); // BarterCost1<BarterCost2?COLOR_TEXT_RED:COLOR_TEXT_WHITE);
         }
         // Overweight, oversize indicate
         if( Chosen->GetFreeWeight() + (int)w1 < (int)w2 )
-            SprMngr.DrawStr( Rect( DlgWText.L, DlgWText.B - 5, DlgWText.R, DlgWText.B + 10, DlgX, DlgY ), MsgGame->GetStr( STR_OVERWEIGHT_TITLE ), FONT_FLAG_NOBREAK | FONT_FLAG_CENTERX, COLOR_TEXT_DDGREEN, FONT_TYPE_DIALOG );
+            SprMngr.DrawStr( Rect( DlgWText.L, DlgWText.B - 5, DlgWText.R, DlgWText.B + 10, DlgX, DlgY ), MsgGame->GetStr( STR_OVERWEIGHT_TITLE ), FONT_FLAG_NOBREAK | FONT_FLAG_CENTERX, COLOR_TEXT_DDGREEN, dialogFont);
         else if( Chosen->GetFreeVolume() + (int)v1 < (int)v2 )
-            SprMngr.DrawStr( Rect( DlgWText.L, DlgWText.B - 5, DlgWText.R, DlgWText.B + 10, DlgX, DlgY ), MsgGame->GetStr( STR_OVERVOLUME_TITLE ), FONT_FLAG_NOBREAK | FONT_FLAG_CENTERX, COLOR_TEXT_DDGREEN, FONT_TYPE_DIALOG );
+            SprMngr.DrawStr( Rect( DlgWText.L, DlgWText.B - 5, DlgWText.R, DlgWText.B + 10, DlgX, DlgY ), MsgGame->GetStr( STR_OVERVOLUME_TITLE ), FONT_FLAG_NOBREAK | FONT_FLAG_CENTERX, COLOR_TEXT_DDGREEN, dialogFont);
     }
 
     // Timer
     if( !BarterIsPlayers && DlgEndTick && DlgEndTick > Timer::GameTick() )
-        SprMngr.DrawStr( Rect( DlgWTimer, DlgX, DlgY ), Str::FormatBuf( "%u", (DlgEndTick - Timer::GameTick() ) / 1000 ), FONT_FLAG_NOBREAK | FONT_FLAG_CENTERX | FONT_FLAG_CENTERY, COLOR_TEXT_DGREEN, FONT_TYPE_DIALOG );
+        SprMngr.DrawStr( Rect( DlgWTimer, DlgX, DlgY ), Str::FormatBuf( "%u", (DlgEndTick - Timer::GameTick() ) / 1000 ), FONT_FLAG_NOBREAK | FONT_FLAG_CENTERX | FONT_FLAG_CENTERY, COLOR_TEXT_DGREEN, dialogFont);
 }
 
 void FOClient::DlgLMouseDown( bool is_dialog )
@@ -3922,7 +3922,7 @@ void FOClient::DlgLMouseUp( bool is_dialog )
             {
                 DlgMainText = MsgGame->GetStr( STR_BARTER_NO_BARTER_MODE );
                 DlgMainTextCur = 0;
-                DlgMainTextLinesReal = SprMngr.GetLinesCount( DlgWText.W(), 0, DlgMainText.c_str(), FONT_TYPE_DIALOG );
+                DlgMainTextLinesReal = SprMngr.GetLinesCount( DlgWText.W(), 0, DlgMainText.c_str(), dialogFont);
             }
             else
             {
@@ -3936,7 +3936,7 @@ void FOClient::DlgLMouseUp( bool is_dialog )
                 BarterCont2o.clear();
                 BarterText = "";
                 DlgMainTextCur = 0;
-                DlgMainTextLinesReal = SprMngr.GetLinesCount( DlgWText.W(), 0, BarterText.c_str(), FONT_TYPE_DIALOG );
+                DlgMainTextLinesReal = SprMngr.GetLinesCount( DlgWText.W(), 0, BarterText.c_str(), dialogFont);
             }
         }
         else if( IfaceHold == IFACE_DLG_SAY && IsCurInRect( DlgBSay, DlgX, DlgY ) )
@@ -4249,7 +4249,7 @@ void FOClient::BarterTryOffer()
             return;
         }
         DlgMainTextCur = 0;
-        DlgMainTextLinesReal = SprMngr.GetLinesCount( DlgWText.W(), 0, BarterText.c_str(), FONT_TYPE_DIALOG );
+        DlgMainTextLinesReal = SprMngr.GetLinesCount( DlgWText.W(), 0, BarterText.c_str(), dialogFont);
     }
 }
 
@@ -4621,7 +4621,7 @@ void FOClient::LMenuTryCreate()
                         {
                             BarterText += str;
                             BarterText += "\n";
-                            DlgMainTextLinesReal = SprMngr.GetLinesCount( DlgWText.W(), 0, BarterText.c_str(), FONT_TYPE_DIALOG );
+                            DlgMainTextLinesReal = SprMngr.GetLinesCount( DlgWText.W(), 0, BarterText.c_str(), dialogFont);
                         }
                     }
                     else
@@ -4631,7 +4631,7 @@ void FOClient::LMenuTryCreate()
                         {
                             BarterText = FmtItemLook( cont_item, ITEM_LOOK_BARTER );
                             DlgMainTextCur = 0;
-                            DlgMainTextLinesReal = SprMngr.GetLinesCount( DlgWText.W(), 0, BarterText.c_str(), FONT_TYPE_DIALOG );
+                            DlgMainTextLinesReal = SprMngr.GetLinesCount( DlgWText.W(), 0, BarterText.c_str(), dialogFont);
                         }
                     }
                 }
@@ -5288,7 +5288,7 @@ void FOClient::LMenuMouseUp()
                             {
                                 BarterText += str;
                                 BarterText += "\n";
-                                DlgMainTextLinesReal = SprMngr.GetLinesCount( DlgWText.W(), 0, BarterText.c_str(), FONT_TYPE_DIALOG );
+                                DlgMainTextLinesReal = SprMngr.GetLinesCount( DlgWText.W(), 0, BarterText.c_str(), dialogFont);
                             }
                         }
                         else
@@ -5298,7 +5298,7 @@ void FOClient::LMenuMouseUp()
                             {
                                 BarterText = str;
                                 DlgMainTextCur = 0;
-                                DlgMainTextLinesReal = SprMngr.GetLinesCount( DlgWText.W(), 0, BarterText.c_str(), FONT_TYPE_DIALOG );
+                                DlgMainTextLinesReal = SprMngr.GetLinesCount( DlgWText.W(), 0, BarterText.c_str(), dialogFont);
                             }
                         }
                     }
@@ -8613,14 +8613,14 @@ void FOClient::PipDraw()
 
     int scr = -(int)PipScroll[PipMode];
     Rect& r = PipWMonitor;
-    int ml = SprMngr.GetLinesCount( 0, r.H(), NULL, FONT_TYPE_DEFAULT );
+    int ml = SprMngr.GetLinesCount( 0, r.H(), NULL, pipboyFont);
     int h = r.H() / ml;
-    #define PIP_DRAW_TEXT( text, flags, color ) \
+    #define PIP_DRAW_TEXT( text, flags, color, font ) \
         do { if( scr >= 0 && scr < ml )         \
-                 SprMngr.DrawStr( Rect( r[0], r[1] + scr * h, r[2], r[1] + scr * h + h, PipX, PipY ), text, flags, color ); } while( 0 )
-    #define PIP_DRAW_TEXTR( text, flags, color ) \
+                 SprMngr.DrawStr( Rect( r[0], r[1] + scr * h, r[2], r[1] + scr * h + h, PipX, PipY ), text, flags, color, font ); } while( 0 )
+    #define PIP_DRAW_TEXTR( text, flags, color, font ) \
         do { if( scr >= 0 && scr < ml )          \
-                 SprMngr.DrawStr( Rect( r[2] - r.W() / 3, r[1] + scr * h, r[2], r[1] + scr * h + h, PipX, PipY ), text, flags, color ); } while( 0 )
+                 SprMngr.DrawStr( Rect( r[2] - r.W() / 3, r[1] + scr * h, r[2], r[1] + scr * h + h, PipX, PipY ), text, flags, color, font); } while( 0 )
 
     switch( PipMode )
     {
@@ -8634,7 +8634,7 @@ void FOClient::PipDraw()
         {
             // Quests
             if( scr >= 0 && scr < ml )
-                SprMngr.DrawStr( Rect( PipWMonitor[0], PipWMonitor[1] + scr * h, PipWMonitor[2], PipWMonitor[1] + scr * h + h, PipX, PipY ), FmtGameText( STR_PIP_QUESTS ), FONT_FLAG_CENTERX, COLOR_TEXT_DGREEN );
+                SprMngr.DrawStr( Rect( PipWMonitor[0], PipWMonitor[1] + scr * h, PipWMonitor[2], PipWMonitor[1] + scr * h + h, PipX, PipY ), FmtGameText( STR_PIP_QUESTS ), FONT_FLAG_CENTERX, COLOR_TEXT_DGREEN, pipboyFont);
             scr++;
             QuestTabMap* tabs = QuestMngr.GetTabs();
             for( auto it = tabs->begin(), end = tabs->end(); it != end; ++it )
@@ -8648,13 +8648,13 @@ void FOClient::PipDraw()
 				else {
 					WriteLogF(_FUNC_, " PIP__STATUS_QUESTS: '&((tab->GetQuests())->front());' == NULL\n");
 				}
-                PIP_DRAW_TEXT(QuestManager::removeFormat((*it).first).c_str(), FONT_FLAG_NOBREAK, color);
+                PIP_DRAW_TEXT(QuestManager::removeFormat((*it).first).c_str(), FONT_FLAG_NOBREAK, color, pipboyFont);
                 scr++;
             }
 
             // Scores title
             scr++;
-            PIP_DRAW_TEXT( FmtGameText( STR_PIP_SCORES ), FONT_FLAG_CENTERX, COLOR_TEXT_DGREEN );
+            PIP_DRAW_TEXT( FmtGameText( STR_PIP_SCORES ), FONT_FLAG_CENTERX, COLOR_TEXT_DGREEN, pipboyFont);
             break;
         }
         case PIP__STATUS_QUESTS:
@@ -8671,7 +8671,7 @@ void FOClient::PipDraw()
 			else {
 				WriteLogF(_FUNC_, " PIP__STATUS_QUESTS: '&((tab->GetQuests())->front());' == NULL\n");
 			}
-            SprMngr.DrawStr( Rect( PipWMonitor, PipX, PipY ), tabText, FONT_FLAG_SKIPLINES( PipScroll[PipMode] ), color );
+            SprMngr.DrawStr( Rect( PipWMonitor, PipX, PipY ), tabText, FONT_FLAG_SKIPLINES( PipScroll[PipMode] ), color, pipboyFont);
             break;
         }
         case PIP__STATUS_SCORES:
@@ -8689,14 +8689,14 @@ void FOClient::PipDraw()
                 {
                     if( !is_first_title )
                         scr++;
-                    PIP_DRAW_TEXT( last_title, FONT_FLAG_CENTERX, COLOR_TEXT_DGREEN );
+                    PIP_DRAW_TEXT( last_title, FONT_FLAG_CENTERX, COLOR_TEXT_DGREEN, pipboyFont);
                     scr += 2;
                     last_title[0] = '\0';
                     is_first_title = false;
                 }
-                PIP_DRAW_TEXT( MsgGame->GetStr( STR_SCORES_NAME_( i ) ), FONT_FLAG_CENTERX, COLOR_TEXT );
+                PIP_DRAW_TEXT( MsgGame->GetStr( STR_SCORES_NAME_( i ) ), FONT_FLAG_CENTERX, COLOR_TEXT, pipboyFont);
                 scr++;
-                PIP_DRAW_TEXT( name, FONT_FLAG_CENTERX, COLOR_TEXT );
+                PIP_DRAW_TEXT( name, FONT_FLAG_CENTERX, COLOR_TEXT, pipboyFont);
                 scr++;
             }
             break;
@@ -8705,17 +8705,17 @@ void FOClient::PipDraw()
 //		break;
         case PIP__AUTOMAPS:
         {
-            PIP_DRAW_TEXT( FmtGameText( STR_PIP_MAPS ), FONT_FLAG_CENTERX, COLOR_TEXT_DGREEN );
+            PIP_DRAW_TEXT( FmtGameText( STR_PIP_MAPS ), FONT_FLAG_CENTERX, COLOR_TEXT_DGREEN, pipboyFont);
             scr += 2;
             for( uint i = 0, j = (uint)Automaps.size(); i < j; i++ )
             {
                 Automap& amap = Automaps[i];
-                PIP_DRAW_TEXT( amap.LocName.c_str(), FONT_FLAG_CENTERX, COLOR_TEXT );
+                PIP_DRAW_TEXT( amap.LocName.c_str(), FONT_FLAG_CENTERX, COLOR_TEXT, pipboyFont);
                 scr++;
 
                 for( uint k = 0, l = (uint)amap.MapNames.size(); k < l; k++ )
                 {
-                    PIP_DRAW_TEXT( amap.MapNames[k].c_str(), FONT_FLAG_CENTERX, COLOR_TEXT_GREEN );
+                    PIP_DRAW_TEXT( amap.MapNames[k].c_str(), FONT_FLAG_CENTERX, COLOR_TEXT_GREEN, pipboyFont);
                     scr++;
                 }
                 scr++;
@@ -8733,7 +8733,7 @@ void FOClient::PipDraw()
             const char* map_name = AutomapSelected.MapNames[AutomapSelected.CurMap].c_str();
 
             scr = 0;
-            PIP_DRAW_TEXT( map_name, FONT_FLAG_CENTERX, COLOR_TEXT_GREEN );
+            PIP_DRAW_TEXT( map_name, FONT_FLAG_CENTERX, COLOR_TEXT_GREEN, pipboyFont);
             scr += 2;
 
             // Draw already builded minimap
@@ -8748,7 +8748,7 @@ void FOClient::PipDraw()
             // Check wait of data
             if( AutomapWaitPids.count( map_pid ) )
             {
-                PIP_DRAW_TEXT( MsgGame->GetStr( STR_AUTOMAP_LOADING ), FONT_FLAG_CENTERX, COLOR_TEXT );
+                PIP_DRAW_TEXT( MsgGame->GetStr( STR_AUTOMAP_LOADING ), FONT_FLAG_CENTERX, COLOR_TEXT, pipboyFont);
                 break;
             }
 
@@ -8760,7 +8760,7 @@ void FOClient::PipDraw()
                 // Check for already received
                 if( AutomapReceivedPids.count( map_pid ) )
                 {
-                    PIP_DRAW_TEXT( MsgGame->GetStr( STR_AUTOMAP_LOADING_ERROR ), FONT_FLAG_CENTERX, COLOR_TEXT );
+                    PIP_DRAW_TEXT( MsgGame->GetStr( STR_AUTOMAP_LOADING_ERROR ), FONT_FLAG_CENTERX, COLOR_TEXT, pipboyFont);
                     break;
                 }
 
@@ -8804,7 +8804,7 @@ void FOClient::PipDraw()
         }
         case PIP__ARCHIVES:
         {
-            PIP_DRAW_TEXT( FmtGameText( STR_PIP_INFO ), FONT_FLAG_CENTERX, COLOR_TEXT_DGREEN );
+            PIP_DRAW_TEXT( FmtGameText( STR_PIP_INFO ), FONT_FLAG_CENTERX, COLOR_TEXT_DGREEN, pipboyFont);
             scr++;
             for( int i = 0; i < MAX_HOLO_INFO; i++ )
             {
@@ -8814,7 +8814,7 @@ void FOClient::PipDraw()
                     scr++;
                     continue;
                 }
-                PIP_DRAW_TEXT( GetHoloText( STR_HOLO_INFO_NAME_( num ) ), 0, COLOR_TEXT );
+                PIP_DRAW_TEXT( GetHoloText( STR_HOLO_INFO_NAME_( num ) ), 0, COLOR_TEXT, pipboyFont);
                 scr++;
             }
             break;
@@ -8842,7 +8842,7 @@ void FOClient::PipLMouseDown()
     if( !Chosen )
         return;
     Rect& r = PipWMonitor;
-    int ml = SprMngr.GetLinesCount( 0, r.H(), NULL, FONT_TYPE_DEFAULT );
+    int ml = SprMngr.GetLinesCount( 0, r.H(), NULL, pipboyFont);
     int h = r.H() / ml;
     int scr = -(int)PipScroll[PipMode];
 
@@ -10873,7 +10873,8 @@ void FOClient::FixGenerate( int fix_mode )
             }
 
             Rect pos( FixWWin[0], FixWWin[1] + cur_height, FixWWin[2], FixWWin[1] + cur_height + 100 );
-            int line_height = SprMngr.GetLinesHeight( FixWWin.W(), 0, craft->Name.c_str() );
+            int line_height = SprMngr.GetLinesHeight( FixWWin.W(), 0, craft->Name.c_str(), fixboyFont );
+			line_height += 2;
 
             cur_height += line_height;
             pos.B = FixWWin[1] + cur_height;
@@ -11035,10 +11036,11 @@ void FOClient::FixGenerateItems( UInt16Vec& items_vec, UIntVec& val_vec, UInt8Ve
         if( Chosen->CountItemPid( items_vec[i] ) < val_vec[i] )
             color = COLOR_TEXT_DGREEN;
 
+		
         str += "|";
         str += Str::FormatBuf( "%u", color );
         str += " ";
-
+		
         if( i > 0 )
         {
             if( or_vec[i - 1] )
@@ -11183,17 +11185,17 @@ void FOClient::FixDraw()
                         col = COLOR_TEXT_DGREEN;
                 }
 
-                SprMngr.DrawStr( Rect( scraft->Pos, FixX, FixY ), scraft->Name.c_str(), 0, col );
+                SprMngr.DrawStr( Rect( scraft->Pos, FixX, FixY ), scraft->Name.c_str(), 0, col, fixboyFont );
 				if (scraft->MaxPossibleCrafts > 0) {
 					Rect amountDrawPos = Rect(scraft->Pos.R - 50, scraft->Pos.T, scraft->Pos.R, scraft->Pos.B);
-					SprMngr.DrawStr(Rect(amountDrawPos, FixX, FixY), std::to_string(static_cast<unsigned long long>(scraft->MaxPossibleCrafts)).c_str(), FONT_FLAG_CENTERX, col);
+					SprMngr.DrawStr(Rect(amountDrawPos, FixX, FixY), std::to_string(static_cast<unsigned long long>(scraft->MaxPossibleCrafts)).c_str(), FONT_FLAG_CENTERX, col, fixboyFont);
 				}
             }
 
             // Number of page
             char str[64];
             Str::Format( str, "%u/%u", FixScrollLst + 1, FixCraftLst.size() );
-            SprMngr.DrawStr( Rect( FixWWin[2] - 10 + FixX, FixWWin[3] - 5 + FixY, FixWWin[2] + 20 + FixX, FixWWin[3] + FixY ), str, FONT_FLAG_NOBREAK | FONT_FLAG_CENTERR );
+            SprMngr.DrawStr( Rect( FixWWin[2] - 10 + FixX, FixWWin[3] - 5 + FixY, FixWWin[2] + 20 + FixX, FixWWin[3] + FixY ), str, FONT_FLAG_NOBREAK | FONT_FLAG_CENTERR, COLOR_TEXT, fixboyFont);
             break;
         }
         case FIX_MODE_FIXIT:
@@ -11201,14 +11203,15 @@ void FOClient::FixDraw()
             for( uint i = 0, j = (uint)FixDrawComp.size(); i < j; i++ )
             {
                 FixDrawComponent* c = FixDrawComp[i];
-                if( c->IsText )
-                    SprMngr.DrawStr( Rect( c->Place, FixX, FixY ), c->Text.c_str(), FONT_FLAG_CENTERX );
+				if (c->IsText) {
+					SprMngr.DrawStr(Rect(c->Place, FixX, FixY), c->Text.c_str(), FONT_FLAG_CENTERX);
+				}
             }
             break;
         }
         case FIX_MODE_RESULT:
         {
-            SprMngr.DrawStr( Rect( FixWWin, FixX, FixY ), FixResultStr.c_str(), FONT_FLAG_CENTERX );
+            SprMngr.DrawStr( Rect( FixWWin, FixX, FixY ), FixResultStr.c_str(), FONT_FLAG_CENTERX);
             break;
         }
         default:
@@ -11339,6 +11342,23 @@ void FOClient::FixLMouseUp()
     }
 
     IfaceHold = IFACE_NONE;
+}
+
+void FOClient::FixRMouseDown() {
+	/*
+	if (FixMode == FIX_MODE_FIXIT && IsCurInRect(FixWWin, FixX, FixY)) {
+		FixGenerate(FIX_MODE_LIST);
+	}
+	*/
+}
+
+void FOClient::FixRMouseUp() {
+	if (FixMode == FIX_MODE_FIXIT && IsCurInRect(FixWWin, FixX, FixY)) {
+		FixGenerate(FIX_MODE_LIST);
+	}
+	if (FixMode == FIX_MODE_RESULT && IsCurInRect(FixWWin, FixX, FixY)) {
+		FixGenerate(FIX_MODE_LIST);
+	}
 }
 
 void FOClient::FixMouseMove()
