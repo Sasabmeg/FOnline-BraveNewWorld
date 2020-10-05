@@ -23,6 +23,9 @@
 class FOClient
 {
 public:
+	int pipboyFont;
+	int dialogFont;
+	int fixboyFont;
     static FOClient* Self;
     FOClient();
     bool Init();
@@ -898,6 +901,15 @@ public:
     int                 DlgX, DlgY;
     Rect                DlgWMain, DlgWText, DlgBScrUp, DlgBScrDn, DlgAnsw, DlgAnswText, DlgWMoney, DlgBBarter,
                         DlgBBarterText, DlgBSay, DlgBSayText, DlgWAvatar, DlgWTimer;
+	char fstr[MAX_FOTEXT];
+	UIntVec answers_texts;
+	CritterCl* npc;
+	char   lexems[MAX_DLG_LEXEMS_TEXT + 1];
+	uint8 count_answ;
+
+	void RecalcDlgMainTextLinesReal();
+	void RecalcDlgMainTextLinesRect();
+	void FOClient::RecalcDlgAnswerPositions();
 
     // Barter
     AnyFrames* BarterPMain, * BarterPBOfferDn, * BarterPBTalkDn,
@@ -1598,6 +1610,8 @@ public:
     void FixDraw();
     void FixLMouseDown();
     void FixLMouseUp();
+	void FixRMouseDown();
+	void FixRMouseUp();
     void FixMouseMove();
 
 /************************************************************************/

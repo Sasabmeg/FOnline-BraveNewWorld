@@ -133,6 +133,10 @@ bool FOClient::Init()
 {
     WriteLog( "Engine initialization...\n" );
 
+	pipboyFont = FONT_TYPE_DEFAULT;
+	dialogFont = FONT_TYPE_DEFAULT;
+	fixboyFont = FONT_TYPE_DEFAULT;
+
     // Check the sizes of base types
     #include "StaticAssert.h"
 
@@ -331,7 +335,22 @@ bool FOClient::Init()
             return false;
     }
 
-    // BMF to FOFNT convertation
+	if (!SprMngr.LoadFontFO(FONT_TYPE_DEFAULT_125, "Default_125")) {
+		if (!SprMngr.LoadFontFO(FONT_TYPE_DEFAULT_125, "Default"))
+			return false;
+	}
+
+	if (!SprMngr.LoadFontFO(FONT_TYPE_DEFAULT_150, "Default_150")) {
+		if (!SprMngr.LoadFontFO(FONT_TYPE_DEFAULT_150, "Default"))
+			return false;
+	}
+
+	if (!SprMngr.LoadFontFO(FONT_TYPE_DEFAULT_200, "Default_200")) {
+		if (!SprMngr.LoadFontFO(FONT_TYPE_DEFAULT_200, "Default"))
+			return false;
+	}
+
+	// BMF to FOFNT convertation
     if( false )
         SprMngr.LoadFontBMF( 11111, "DefaultExt" );
 
@@ -2139,6 +2158,9 @@ void FOClient::ParseMouse()
                     case CLIENT_SCREEN_PIPBOY:
                         PipRMouseDown();
                         break;
+					case CLIENT_SCREEN_FIXBOY:
+						FixRMouseDown();
+						break;
                     default:
                         break;
                 }
@@ -2164,8 +2186,17 @@ void FOClient::ParseMouse()
         // Right Button Up
         if( event == FL_RELEASE && event_button == FL_RIGHT_MOUSE )
         {
-            if( !GetActiveScreen() )
-            {
+			if (GetActiveScreen())
+			{
+				switch (GetActiveScreen())
+				{
+					case CLIENT_SCREEN_FIXBOY:
+						FixRMouseUp();
+						break;
+					default:
+						break;
+				}
+			} else {
                 switch( GetMainScreen() )
                 {
                     case CLIENT_MAIN_SCREEN_GAME:
@@ -2354,39 +2385,82 @@ void FOClient::ProcessMouseWheel( int data )
 /************************************************************************/
     else if( screen == CLIENT_SCREEN_DIALOG )
     {
-        if( IsCurInRect( DlgWText, DlgX, DlgY ) )
-        {
-            if( data > 0 && DlgMainTextCur > 0 )
-                DlgMainTextCur--;
-            else if( data < 0 && DlgMainTextCur < DlgMainTextLinesReal - DlgMainTextLinesRect )
-                DlgMainTextCur++;
-        }
-        else if( IsCurInRect( DlgAnswText, DlgX, DlgY ) )
-        {
-            DlgCollectAnswers( data < 0 );
-        }
+		if (Keyb::CtrlDwn) {
+			
+			if (IsCurInRect(DlgWText, DlgX, DlgY) || IsCurInRect(DlgAnswText, DlgX, DlgY)) {
+				if (dialogFont == FONT_TYPE_DEFAULT_125) {
+					if (data > 0) {
+						dialogFont = FONT_TYPE_DEFAULT;
+						RecalcDlgMainTextLinesRect();
+						RecalcDlgMainTextLinesReal();
+						RecalcDlgAnswerPositions();
+					}
+				}
+				if (dialogFont == FONT_TYPE_DEFAULT) {
+					if (data < 0) {
+						dialogFont = FONT_TYPE_DEFAULT_125;
+						RecalcDlgMainTextLinesRect();
+						RecalcDlgMainTextLinesReal();
+						RecalcDlgAnswerPositions();
+					}
+				}
+			}
+		} else {
+			if (IsCurInRect(DlgWText, DlgX, DlgY))
+			{
+				if (data > 0 && DlgMainTextCur > 0)
+					DlgMainTextCur--;
+				else if (data < 0 && DlgMainTextCur < DlgMainTextLinesReal - DlgMainTextLinesRect + 2)
+					DlgMainTextCur++;
+			}
+			else if (IsCurInRect(DlgAnswText, DlgX, DlgY))
+			{
+				DlgCollectAnswers(data < 0);
+			}
+		}
     }
 /************************************************************************/
 /* Barter scroll                                                        */
 /************************************************************************/
-    else if( screen == CLIENT_SCREEN_BARTER )
-    {
-        if( IsCurInRect( BarterWCont1, DlgX, DlgY ) )
-            ContainerWheelScroll( (int)BarterCont1.size(), BarterWCont1.H(), BarterCont1HeightItem, BarterScroll1, data );
-        else if( IsCurInRect( BarterWCont2, DlgX, DlgY ) )
-            ContainerWheelScroll( (int)BarterCont2.size(), BarterWCont2.H(), BarterCont2HeightItem, BarterScroll2, data );
-        else if( IsCurInRect( BarterWCont1o, DlgX, DlgY ) )
-            ContainerWheelScroll( (int)BarterCont1o.size(), BarterWCont1o.H(), BarterCont1oHeightItem, BarterScroll1o, data );
-        else if( IsCurInRect( BarterWCont2o, DlgX, DlgY ) )
-            ContainerWheelScroll( (int)BarterCont2o.size(), BarterWCont2o.H(), BarterCont2oHeightItem, BarterScroll2o, data );
-        else if( IsCurInRect( DlgWText, DlgX, DlgY ) )
-        {
-            if( data > 0 && DlgMainTextCur > 0 )
-                DlgMainTextCur--;
-            else if( data < 0 && DlgMainTextCur < DlgMainTextLinesReal - DlgMainTextLinesRect )
-                DlgMainTextCur++;
-        }
-    }
+	else if (screen == CLIENT_SCREEN_BARTER)
+	{
+		if (Keyb::CtrlDwn) {
+
+			if (IsCurInRect(DlgWText, DlgX, DlgY)) {
+				if (dialogFont == FONT_TYPE_DEFAULT_125) {
+					if (data > 0) {
+						dialogFont = FONT_TYPE_DEFAULT;
+						RecalcDlgMainTextLinesRect();
+						RecalcDlgMainTextLinesReal();
+					}
+				}
+				if (dialogFont == FONT_TYPE_DEFAULT) {
+					if (data < 0) {
+						dialogFont = FONT_TYPE_DEFAULT_125;
+						RecalcDlgMainTextLinesRect();
+						RecalcDlgMainTextLinesReal();
+					}
+				}
+			}
+		}
+		else {
+			if (IsCurInRect(BarterWCont1, DlgX, DlgY))
+				ContainerWheelScroll((int)BarterCont1.size(), BarterWCont1.H(), BarterCont1HeightItem, BarterScroll1, data);
+			else if (IsCurInRect(BarterWCont2, DlgX, DlgY))
+				ContainerWheelScroll((int)BarterCont2.size(), BarterWCont2.H(), BarterCont2HeightItem, BarterScroll2, data);
+			else if (IsCurInRect(BarterWCont1o, DlgX, DlgY))
+				ContainerWheelScroll((int)BarterCont1o.size(), BarterWCont1o.H(), BarterCont1oHeightItem, BarterScroll1o, data);
+			else if (IsCurInRect(BarterWCont2o, DlgX, DlgY))
+				ContainerWheelScroll((int)BarterCont2o.size(), BarterWCont2o.H(), BarterCont2oHeightItem, BarterScroll2o, data);
+			else if (IsCurInRect(DlgWText, DlgX, DlgY))
+			{
+				if (data > 0 && DlgMainTextCur > 0)
+					DlgMainTextCur--;
+				else if (data < 0 && DlgMainTextCur < DlgMainTextLinesReal - DlgMainTextLinesRect)
+					DlgMainTextCur++;
+			}
+		}
+	}
 /************************************************************************/
 /* PickUp scroll                                                        */
 /************************************************************************/
@@ -2444,9 +2518,22 @@ void FOClient::ProcessMouseWheel( int data )
         {
             if( PipMode != PIP__AUTOMAPS_MAP )
             {
-                int scroll = 1;
-                if( Keyb::ShiftDwn )
-                    scroll = SprMngr.GetLinesCount( 0, PipWMonitor.H(), NULL, FONT_TYPE_DEFAULT );
+				if (Keyb::CtrlDwn) {
+					if (pipboyFont == FONT_TYPE_DEFAULT_125) {
+						if (data > 0) {
+							pipboyFont = FONT_TYPE_DEFAULT;
+						}
+					}
+					if (pipboyFont == FONT_TYPE_DEFAULT) {
+						if (data < 0) {
+							pipboyFont = FONT_TYPE_DEFAULT_125;
+						}
+					}
+					return;
+				}
+				int scroll = 1;
+				if( Keyb::ShiftDwn )
+                    scroll = SprMngr.GetLinesCount( 0, PipWMonitor.H(), NULL, pipboyFont);
                 if( data > 0 )
                     scroll = -scroll;
                 PipScroll[PipMode] += scroll;
@@ -2468,6 +2555,46 @@ void FOClient::ProcessMouseWheel( int data )
             }
         }
     }
+	/************************************************************************/
+	/* FixBoy scroll                                                        */
+	/************************************************************************/
+	else if (screen == CLIENT_SCREEN_FIXBOY)
+	{
+		if (IsCurInRect(FixWWin, FixX, FixY))
+		{
+			//	font increase/decrease
+			if (Keyb::CtrlDwn) {
+				if (fixboyFont == FONT_TYPE_DEFAULT_125) {
+					if (data > 0) {
+						fixboyFont = FONT_TYPE_DEFAULT;
+						if (FixMode == FIX_MODE_LIST) 
+							FixGenerate(FIX_MODE_LIST);
+					}
+				}
+				if (fixboyFont == FONT_TYPE_DEFAULT) {
+					if (data < 0) {
+						fixboyFont = FONT_TYPE_DEFAULT_125;
+						if (FixMode == FIX_MODE_LIST)
+							FixGenerate(FIX_MODE_LIST);
+					}
+				}
+				return;
+			} else {
+				if (FixMode == FIX_MODE_LIST)
+				{
+					if (data < 0) {
+						//	scroll down
+						if (FixScrollLst < (int)FixCraftLst.size() - 1)
+							FixScrollLst++;
+					} else {
+						//	scroll up	
+						if (FixScrollLst > 0)
+							FixScrollLst--;
+					}
+				}
+			}
+		}
+	}
 /************************************************************************/
 /* Save/Load                                                            */
 /************************************************************************/
@@ -4146,7 +4273,6 @@ void FOClient::Net_OnTextMsg( bool with_lexems )
 
 void FOClient::OnText( const char* str, uint crid, int how_say, uint16 intellect )
 {
-    char fstr[MAX_FOTEXT];
     Str::Copy( fstr, str );
     uint len = Str::Length( str );
     if( !len )
@@ -4261,7 +4387,7 @@ void FOClient::OnText( const char* str, uint crid, int how_say, uint16 intellect
                 BarterText += FmtGameText( fstr_mb, crit_name.c_str(), fstr );
             BarterText += "\n";
             BarterText += Str::FormatBuf( "|%u ", COLOR_TEXT );
-            DlgMainTextLinesReal = SprMngr.GetLinesCount( DlgWText.W(), 0, BarterText.c_str(), FONT_TYPE_DIALOG );
+            DlgMainTextLinesReal = SprMngr.GetLinesCount( DlgWText.W(), 0, BarterText.c_str(), dialogFont );
         }
     }
 
@@ -4279,7 +4405,7 @@ void FOClient::OnText( const char* str, uint crid, int how_say, uint16 intellect
                 DlgMainText += fstr;
             else
                 DlgMainText = fstr;
-            DlgMainTextLinesReal = SprMngr.GetLinesCount( DlgWText.W(), 0, DlgMainText.c_str(), FONT_TYPE_DIALOG );
+            DlgMainTextLinesReal = SprMngr.GetLinesCount( DlgWText.W(), 0, DlgMainText.c_str(), dialogFont );
         }
         else if( is_barter )
         {
@@ -4287,7 +4413,7 @@ void FOClient::OnText( const char* str, uint crid, int how_say, uint16 intellect
                 BarterText += fstr;
             else
                 BarterText = fstr;
-            DlgMainTextLinesReal = SprMngr.GetLinesCount( DlgWText.W(), 0, BarterText.c_str(), FONT_TYPE_DIALOG );
+            DlgMainTextLinesReal = SprMngr.GetLinesCount( DlgWText.W(), 0, BarterText.c_str(), dialogFont);
         }
         if( how_say != SAY_APPEND )
             DlgMainTextCur = 0;
@@ -5561,7 +5687,7 @@ void FOClient::Net_OnChosenTalk()
     uint  msg_len;
     uint8 is_npc;
     uint  talk_id;
-    uint8 count_answ;
+    //uint8 count_answ;
     uint  text_id;
     uint  talk_time;
 
@@ -5574,6 +5700,7 @@ void FOClient::Net_OnChosenTalk()
     DlgMaxAnswPage = 0;
     DlgAllAnswers.clear();
     DlgAnswers.clear();
+	answers_texts.clear();
 
     if( !count_answ )
     {
@@ -5587,7 +5714,7 @@ void FOClient::Net_OnChosenTalk()
 
     // Text params
     uint16 lexems_len;
-    char   lexems[MAX_DLG_LEXEMS_TEXT + 1] = { 0 };
+    memset(lexems, 0, MAX_DLG_LEXEMS_TEXT + 1);
     Bin >> lexems_len;
     if( lexems_len && lexems_len <= MAX_DLG_LEXEMS_TEXT )
     {
@@ -5598,7 +5725,7 @@ void FOClient::Net_OnChosenTalk()
     // Find critter
     DlgIsNpc = is_npc;
     DlgNpcId = talk_id;
-    CritterCl* npc = (is_npc ? GetCritter( talk_id ) : NULL);
+    npc = (is_npc ? GetCritter( talk_id ) : NULL);
 
     // Avatar
     DlgAvatarPic = NULL;
@@ -5613,10 +5740,10 @@ void FOClient::Net_OnChosenTalk()
     FormatTags( str, MAX_FOTEXT, Chosen, npc, lexems );
     DlgMainText = str;
     DlgMainTextCur = 0;
-    DlgMainTextLinesReal = SprMngr.GetLinesCount( DlgWText.W(), 0, str, FONT_TYPE_DIALOG );
+    DlgMainTextLinesReal = SprMngr.GetLinesCount( DlgWText.W(), 0, str, dialogFont);
 
     // Answers
-    UIntVec answers_texts;
+    //UIntVec answers_texts;
     for( int i = 0; i < count_answ; i++ )
     {
         Bin >> text_id;
@@ -5625,9 +5752,9 @@ void FOClient::Net_OnChosenTalk()
 
     const char answ_beg[] = { ' ', ' ', (char)TEXT_SYMBOL_DOT, ' ', 0 };
     const char page_up[] = { (char)TEXT_SYMBOL_UP, (char)TEXT_SYMBOL_UP, (char)TEXT_SYMBOL_UP, 0 };
-    const int  page_up_height = SprMngr.GetLinesHeight( DlgAnswText.W(), 0, page_up, FONT_TYPE_DIALOG );
+    const int  page_up_height = SprMngr.GetLinesHeight( DlgAnswText.W(), 0, page_up, dialogFont);
     const char page_down[] = { (char)TEXT_SYMBOL_DOWN, (char)TEXT_SYMBOL_DOWN, (char)TEXT_SYMBOL_DOWN, 0 };
-    const int  page_down_height = SprMngr.GetLinesHeight( DlgAnswText.W(), 0, page_down, FONT_TYPE_DIALOG );
+    const int  page_down_height = SprMngr.GetLinesHeight( DlgAnswText.W(), 0, page_down, dialogFont);
 
     int        line = 0, height = 0, page = 0, answ = 0;
     while( true )
@@ -5652,7 +5779,7 @@ void FOClient::Net_OnChosenTalk()
         FormatTags( str, MAX_FOTEXT, Chosen, npc, lexems );
         Str::Insert( str, answ_beg );      // TODO: GetStr
 
-        height += SprMngr.GetLinesHeight( DlgAnswText.W(), 0, str, FONT_TYPE_DIALOG );
+        height += SprMngr.GetLinesHeight( DlgAnswText.W(), 0, str, dialogFont);
         pos.B = DlgAnswText.T + DlgNextAnswY * line + height;
 
         if( pos.B >= DlgAnswText.B && line > 1 )
@@ -6286,7 +6413,7 @@ void FOClient::Net_OnContainerInfo()
             BarterScroll2 = 0;
             BarterText = "";
             DlgMainTextCur = 0;
-            DlgMainTextLinesReal = SprMngr.GetLinesCount( DlgWText.W(), 0, BarterText.c_str(), FONT_TYPE_DIALOG );
+            DlgMainTextLinesReal = SprMngr.GetLinesCount( DlgWText.W(), 0, BarterText.c_str(), dialogFont);
         }
     }
     else
@@ -6390,7 +6517,7 @@ void FOClient::Net_OnPlayersBarter()
                                       !FLAG( param_ext, 2 ) ? MsgGame->GetStr( STR_BARTER_OPEN_MODE ) : MsgGame->GetStr( STR_BARTER_HIDE_MODE ) );
             BarterText += "\n";
             DlgMainTextCur = 0;
-            DlgMainTextLinesReal = SprMngr.GetLinesCount( DlgWText.W(), 0, BarterText.c_str(), FONT_TYPE_DIALOG );
+            DlgMainTextLinesReal = SprMngr.GetLinesCount( DlgWText.W(), 0, BarterText.c_str(), dialogFont);
             param_ext = (FLAG( param_ext, 2 ) ? true : false);
         }
         case BARTER_REFRESH:
@@ -6558,7 +6685,7 @@ void FOClient::Net_OnPlayersBarter()
                     break;
                 BarterText += FmtGameText( STR_BARTER_READY_OFFER, cr->GetName() );
                 BarterText += "\n";
-                DlgMainTextLinesReal = SprMngr.GetLinesCount( DlgWText.W(), 0, BarterText.c_str(), FONT_TYPE_DIALOG );
+                DlgMainTextLinesReal = SprMngr.GetLinesCount( DlgWText.W(), 0, BarterText.c_str(), dialogFont);
             }
             break;
         }
