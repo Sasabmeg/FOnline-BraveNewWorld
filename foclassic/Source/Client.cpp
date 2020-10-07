@@ -143,7 +143,7 @@ bool FOClient::Init()
 	fontManager.add(FONT_TYPE_DEFAULT_125_THIN);
 	fontManager.add(FONT_TYPE_DEFAULT_125);
 
-	showTimestamps = true;
+	showTimestamps = false;
 
 	InitMessTabs();
 
