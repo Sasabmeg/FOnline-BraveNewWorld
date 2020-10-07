@@ -19,6 +19,7 @@
 #include "QuestManager.h"
 #include "Random.h"
 #include "Types.h"
+#include "FontManager.h"
 
 class FOClient
 {
@@ -26,9 +27,13 @@ public:
 	int pipboyFont;
 	int dialogFont;
 	int fixboyFont;
+	int messboxFont;
+	FontManager fontManager;
     static FOClient* Self;
     FOClient();
     bool Init();
+	void InitMessTabs();
+	void RecalcMessTabs();
     void Finish();
     void TryExit();
     bool IsScroll();
@@ -803,6 +808,7 @@ public:
     Rect       IntBItem, IntWApCost;
     Rect       IntBChangeSlot, IntBInv, IntBMenu, IntBSkill, IntBMap, IntBChar, IntBPip, IntBFix;
     Rect       IntWMess, IntWMessLarge;
+	Rect	   IntWMessTabs, IntWMessTabAll, IntWMessTabLocal, IntWMessTabRadio, IntWMessTabSocial, IntWMessTabCombat;
     Rect       IntAP, IntHP, IntAC, IntBreakTime;
     int        IntAPstepX, IntAPstepY, IntAPMax;
     AnyFrames* IntBItemPicDn;
@@ -817,6 +823,8 @@ public:
     Rect       IntWAmmoCount, IntWWearProcent, IntWAmmoCountStr, IntWWearProcentStr;
     PointVec   IntAmmoPoints, IntWearPoints;
     uint       IntAmmoTick, IntWearTick;
+
+	int		   IntMessBoxActiveTab;
 
     void IntDraw();
     int  IntLMouseDown();
@@ -901,11 +909,12 @@ public:
     int                 DlgX, DlgY;
     Rect                DlgWMain, DlgWText, DlgBScrUp, DlgBScrDn, DlgAnsw, DlgAnswText, DlgWMoney, DlgBBarter,
                         DlgBBarterText, DlgBSay, DlgBSayText, DlgWAvatar, DlgWTimer;
-	char fstr[MAX_FOTEXT];
-	UIntVec answers_texts;
-	CritterCl* npc;
-	char   lexems[MAX_DLG_LEXEMS_TEXT + 1];
-	uint8 count_answ;
+
+	char				fstr[MAX_FOTEXT];
+	UIntVec				answers_texts;
+	uint8				count_answ;
+	CritterCl*			npc;
+	char				lexems[MAX_DLG_LEXEMS_TEXT + 1];
 
 	void RecalcDlgMainTextLinesReal();
 	void RecalcDlgMainTextLinesRect();
@@ -1757,13 +1766,16 @@ public:
     std::string       MessBoxCurText;
     int               MessBoxScroll, MessBoxMaxScroll, MessBoxScrollLines;
     IntVec            MessBoxFilters;
+	bool			  showTimestamps;
 
     void MessBoxGenerate();
     void AddMess( int mess_type, const char* msg );
     void MessBoxDraw();
+	std::string FormatMessBoxMessage(MessBoxMessage& msg);
     Rect MessBoxCurRectDraw();
     Rect MessBoxCurRectScroll();
     bool MessBoxLMouseDown();
+	void MessBoxTabLMouseDown();
 
 /************************************************************************/
 /*                                                                      */

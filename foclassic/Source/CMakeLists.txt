@@ -202,7 +202,11 @@ set( CLIENT_SOURCES
 	Client.cpp
 	Client.h
 	ClientInterface.cpp
+	ClientInterface_MessBox.cpp
+	ClientInterfaceDialog.cpp
 	Defence.h
+	FontManager.cpp
+	FontManager.h
 	MainClient.cpp
 	QuestManager.cpp
 	QuestManager.h

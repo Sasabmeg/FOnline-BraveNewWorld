@@ -3606,6 +3606,10 @@ bool HexManager::LoadMap( uint16 map_pid )
 {
     WriteLog( "Load map..." );
 
+	//	to prevent crashes when entering tiny map after a huge one
+	MouseXLastHexMoveClick = 0;
+	MouseYLastHexMoveClick = 0;
+
     // Unload previous
     UnloadMap();
 
@@ -3823,6 +3827,7 @@ bool HexManager::LoadMap( uint16 map_pid )
     curPidMap = map_pid;
     curMapTime = -1;
     AutoScroll.Active = false;
+	
     WriteLog( "Load map success.\n" );
     return true;
 }

@@ -136,6 +136,16 @@ bool FOClient::Init()
 	pipboyFont = FONT_TYPE_DEFAULT;
 	dialogFont = FONT_TYPE_DEFAULT;
 	fixboyFont = FONT_TYPE_DEFAULT;
+	messboxFont = FONT_TYPE_DEFAULT;
+
+	fontManager = FontManager();
+	fontManager.add(FONT_TYPE_DEFAULT);
+	fontManager.add(FONT_TYPE_DEFAULT_125_THIN);
+	fontManager.add(FONT_TYPE_DEFAULT_125);
+
+	showTimestamps = true;
+
+	InitMessTabs();
 
     // Check the sizes of base types
     #include "StaticAssert.h"
@@ -337,6 +347,11 @@ bool FOClient::Init()
 
 	if (!SprMngr.LoadFontFO(FONT_TYPE_DEFAULT_125, "Default_125")) {
 		if (!SprMngr.LoadFontFO(FONT_TYPE_DEFAULT_125, "Default"))
+			return false;
+	}
+
+	if (!SprMngr.LoadFontFO(FONT_TYPE_DEFAULT_125_THIN, "Default_125_thin")) {
+		if (!SprMngr.LoadFontFO(FONT_TYPE_DEFAULT_125_THIN, "Default"))
 			return false;
 	}
 
@@ -1344,7 +1359,12 @@ void FOClient::ParseKeyboard()
                     break;
 
                 case DIK_ESCAPE:
-                    TryExit();
+					if (ConsoleActive) {
+						ConsoleActive = false;
+					}
+					else {
+						TryExit();
+					}
                     continue;
                 default:
                     break;
@@ -2019,7 +2039,10 @@ void FOClient::ParseMouse()
                 }
             }
 
-            if( MessBoxLMouseDown() )
+			if (IsCurInRect(IntWMessTabs)) {
+				MessBoxTabLMouseDown();
+			}
+			if( MessBoxLMouseDown() )
                 Timer::StartAccelerator( ACCELERATE_MESSBOX );
             continue;
         }
@@ -2283,28 +2306,40 @@ void FOClient::ProcessMouseWheel( int data )
     else if( screen == CLIENT_SCREEN_NONE || screen == CLIENT_SCREEN_WM_TOWNVIEW )
     {
         Rect r = MessBoxCurRectDraw();
-        if( !r.IsZero() && IsCurInRect( r ) )
+		if( !r.IsZero() && IsCurInRect( r ) )
         {
-            if( data > 0 )
-            {
-                if( GameOpt.MsgboxInvert && MessBoxScroll > 0 )
-                    MessBoxScroll--;
-                if( !GameOpt.MsgboxInvert && MessBoxScroll < MessBoxMaxScroll )
-                    MessBoxScroll++;
-                MessBoxGenerate();
-            }
-            else
-            {
-                if( GameOpt.MsgboxInvert && MessBoxScroll < MessBoxMaxScroll )
-                    MessBoxScroll++;
-                if( !GameOpt.MsgboxInvert && MessBoxScroll > 0 )
-                    MessBoxScroll--;
-                MessBoxGenerate();
-            }
+			if (Keyb::CtrlDwn) {
+				if (data > 0) {
+					messboxFont = fontManager.getPrev(messboxFont);
+					MessBoxGenerate();
+				}
+				if (data < 0) {
+					messboxFont = fontManager.getNext(messboxFont);
+					MessBoxGenerate();
+				}
+			}
+			else {
+				if (data > 0)
+				{
+					if (GameOpt.MsgboxInvert && MessBoxScroll > 0)
+						MessBoxScroll--;
+					if (!GameOpt.MsgboxInvert && MessBoxScroll < MessBoxMaxScroll)
+						MessBoxScroll++;
+					MessBoxGenerate();
+				}
+				else
+				{
+					if (GameOpt.MsgboxInvert && MessBoxScroll < MessBoxMaxScroll)
+						MessBoxScroll++;
+					if (!GameOpt.MsgboxInvert && MessBoxScroll > 0)
+						MessBoxScroll--;
+					MessBoxGenerate();
+				}
+			}
         }
         else if( IsMainScreen( CLIENT_MAIN_SCREEN_GAME ) )
         {
-            if( IntVisible && Chosen && IsCurInRect( IntBItem ) )
+			if( IntVisible && Chosen && IsCurInRect( IntBItem ) )
             {
                 bool send = false;
                 if( data > 0 )
@@ -2323,7 +2358,7 @@ void FOClient::ProcessMouseWheel( int data )
         }
         else if( IsMainScreen( CLIENT_MAIN_SCREEN_WORLDMAP ) )
         {
-            GmapChangeZoom( (float)-data / 20.0f );
+			GmapChangeZoom( (float)-data / 20.0f );
             if( IsCurInRect( WorldmapWTabs ) )
             {
                 if( data > 0 )
@@ -2388,21 +2423,19 @@ void FOClient::ProcessMouseWheel( int data )
 		if (Keyb::CtrlDwn) {
 			
 			if (IsCurInRect(DlgWText, DlgX, DlgY) || IsCurInRect(DlgAnswText, DlgX, DlgY)) {
-				if (dialogFont == FONT_TYPE_DEFAULT_125) {
-					if (data > 0) {
-						dialogFont = FONT_TYPE_DEFAULT;
-						RecalcDlgMainTextLinesRect();
-						RecalcDlgMainTextLinesReal();
-						RecalcDlgAnswerPositions();
-					}
+				//	scrolled up
+				if (data > 0) {
+					dialogFont = fontManager.getPrev(dialogFont);
+					RecalcDlgMainTextLinesRect();
+					RecalcDlgMainTextLinesReal();
+					RecalcDlgAnswerPositions();
 				}
-				if (dialogFont == FONT_TYPE_DEFAULT) {
-					if (data < 0) {
-						dialogFont = FONT_TYPE_DEFAULT_125;
-						RecalcDlgMainTextLinesRect();
-						RecalcDlgMainTextLinesReal();
-						RecalcDlgAnswerPositions();
-					}
+				//	scrolled down
+				if (data < 0) {
+					dialogFont = fontManager.getNext(dialogFont);
+					RecalcDlgMainTextLinesRect();
+					RecalcDlgMainTextLinesReal();
+					RecalcDlgAnswerPositions();
 				}
 			}
 		} else {
@@ -2427,19 +2460,17 @@ void FOClient::ProcessMouseWheel( int data )
 		if (Keyb::CtrlDwn) {
 
 			if (IsCurInRect(DlgWText, DlgX, DlgY)) {
-				if (dialogFont == FONT_TYPE_DEFAULT_125) {
-					if (data > 0) {
-						dialogFont = FONT_TYPE_DEFAULT;
-						RecalcDlgMainTextLinesRect();
-						RecalcDlgMainTextLinesReal();
-					}
+				//	scrolled up
+				if (data > 0) {
+					dialogFont = fontManager.getPrev(dialogFont);
+					RecalcDlgMainTextLinesRect();
+					RecalcDlgMainTextLinesReal();
 				}
-				if (dialogFont == FONT_TYPE_DEFAULT) {
-					if (data < 0) {
-						dialogFont = FONT_TYPE_DEFAULT_125;
-						RecalcDlgMainTextLinesRect();
-						RecalcDlgMainTextLinesReal();
-					}
+				//	scrolled down
+				if (data < 0) {
+					dialogFont = fontManager.getNext(dialogFont);
+					RecalcDlgMainTextLinesRect();
+					RecalcDlgMainTextLinesReal();
 				}
 			}
 		}
@@ -2519,15 +2550,14 @@ void FOClient::ProcessMouseWheel( int data )
             if( PipMode != PIP__AUTOMAPS_MAP )
             {
 				if (Keyb::CtrlDwn) {
-					if (pipboyFont == FONT_TYPE_DEFAULT_125) {
-						if (data > 0) {
-							pipboyFont = FONT_TYPE_DEFAULT;
-						}
+
+					//	scrolled up
+					if (data > 0) {
+						pipboyFont = fontManager.getPrev(pipboyFont);
 					}
-					if (pipboyFont == FONT_TYPE_DEFAULT) {
-						if (data < 0) {
-							pipboyFont = FONT_TYPE_DEFAULT_125;
-						}
+					//	scrolled down
+					if (data < 0) {
+						pipboyFont = fontManager.getNext(pipboyFont);
 					}
 					return;
 				}
@@ -2564,19 +2594,17 @@ void FOClient::ProcessMouseWheel( int data )
 		{
 			//	font increase/decrease
 			if (Keyb::CtrlDwn) {
-				if (fixboyFont == FONT_TYPE_DEFAULT_125) {
-					if (data > 0) {
-						fixboyFont = FONT_TYPE_DEFAULT;
-						if (FixMode == FIX_MODE_LIST) 
-							FixGenerate(FIX_MODE_LIST);
-					}
+				//	scrolled up
+				if (data > 0) {
+					fixboyFont = fontManager.getPrev(fixboyFont);
+					if (FixMode == FIX_MODE_LIST)
+						FixGenerate(FIX_MODE_LIST);
 				}
-				if (fixboyFont == FONT_TYPE_DEFAULT) {
-					if (data < 0) {
-						fixboyFont = FONT_TYPE_DEFAULT_125;
-						if (FixMode == FIX_MODE_LIST)
-							FixGenerate(FIX_MODE_LIST);
-					}
+				//	scrolled down
+				if (data < 0) {
+					fixboyFont = fontManager.getNext(fixboyFont);
+					if (FixMode == FIX_MODE_LIST)
+						FixGenerate(FIX_MODE_LIST);
 				}
 				return;
 			} else {
@@ -3579,6 +3607,8 @@ void FOClient::Net_SendText( const char* send_str, uint8 how_say )
     bool result = false;
     if( Script::PrepareContext( ClientFunctions.OutMessage, _FUNC_, "Game" ) )
     {
+		//WriteLog("Before crash");
+		//WriteLog("SayType = , Message = %s", str_buf);
         int           say_type = how_say;
         ScriptString* sstr = new ScriptString( str );
         Script::SetArgObject( sstr );
@@ -3588,7 +3618,8 @@ void FOClient::Net_SendText( const char* send_str, uint8 how_say )
         Str::Copy( str, MAX_FOTEXT, sstr->c_str() );
         sstr->Release();
         how_say = say_type;
-    }
+		//WriteLog("SayType = , Message = %s\n", str);
+	}
 
     if( !result || !str[0] )
         return;
@@ -4359,6 +4390,13 @@ void FOClient::OnText( const char* str, uint crid, int how_say, uint16 intellect
     // Message box text
     if( fstr_mb )
     {
+		/*
+		if (true) {
+			char tmp2[MAX_FOTEXT] = { 0 };
+			Str::Format(tmp2, "Team ID = %d", cr->Params[ST_TEAM_ID]);
+			AddMess (1, tmp2);
+		}
+		*/
         if( how_say == SAY_NETMSG )
         {
             AddMess( mess_type, FmtGameText( fstr_mb, fstr ) );
@@ -10872,7 +10910,7 @@ void FOClient::SScriptFunc::Global_Message( ScriptString& msg )
 
 void FOClient::SScriptFunc::Global_MessageType( ScriptString& msg, int type )
 {
-    if( type < MSGBOX_GAME || type > MSGBOX_VIEW )
+    if( type < MSGBOX_GAME || type > MSGBOX_RADIO )
         type = MSGBOX_GAME;
     Self->AddMess( type, msg.c_str() );
 }
@@ -10888,7 +10926,7 @@ void FOClient::SScriptFunc::Global_MessageMsgType( int text_msg, uint str_num, i
 {
     if( text_msg >= TEXTMSG_MAX )
         SCRIPT_ERROR_R( "Invalid text msg arg." );
-    if( type < MSGBOX_GAME || type > MSGBOX_VIEW )
+    if( type < MSGBOX_GAME || type > MSGBOX_RADIO )
         type = MSGBOX_GAME;
     Self->AddMess( type, Self->CurLang.Msg[text_msg].GetStr( str_num ) );
 }
