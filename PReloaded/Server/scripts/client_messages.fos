@@ -466,7 +466,7 @@ bool out_message(string& message, int& sayType)
                 RunServerScriptUnsafe( "unsafe_client@unsafe_ExecShowFactionInfluence", 0, 0, 0, null, null );
                 return false;
         }
-   
+
         else if(message == "~logautosave")
         {
             LogAutoSave = !LogAutoSave;
@@ -666,6 +666,7 @@ bool out_message(string& message, int& sayType)
 
     CritterCl@ chosen = GetChosen();
 
+    //  if sneaking?
     if(valid(chosen) && chosen.Param[MODE_HIDE] > 0 && GetCurrentMapPid() != 0 &&
        (sayType == SAY_NORM || sayType == SAY_SHOUT || sayType == SAY_EMOTE))
     {
@@ -709,6 +710,17 @@ bool out_message(string& message, int& sayType)
                 sayType = SAY_WHISP;
             //else if(ch=="с" || ch=="С" || ch=="$" )
 			//	sayType=SAY_SOCIAL;
+			//  faction chat
+            /*
+            else if(ch == "f" || ch== "F")
+				sayType=SAY_FACTION;
+            //  party chat
+            else if(ch == "p" || ch== "P")
+				sayType=SAY_PARTY;
+            //  direct message
+            else if(ch == "d" || ch== "D")
+				sayType=SAY_DIRECT;
+				*/
             else if(ch == "р" || ch == "Р" || ch == "r" || ch == "R")
                 sayType = SAY_RADIO;
             else if(ch == "щ" || ch == "o" || ch == "O")
@@ -753,7 +765,7 @@ bool out_message(string& message, int& sayType)
                 return false;
             }
         }
-        else if(         // RegExp: [*]([^*].*[^*])[*]
+        else if(         // Emote? RegExp: [*]([^*].*[^*])[*]
             message.length() >= 4 && message[0] == "*" && message[1] != "*" &&
             message[message.length() - 2] != "*" && message[message.length() - 1] == "*")
         {
@@ -761,7 +773,7 @@ bool out_message(string& message, int& sayType)
             message = substring(message, 1, message.length() - 2);
         }
     }
-	
+
 	ItemCl@ headItem = chosen.GetItem( 0, SLOT_HEAD );
 	if( valid(headItem) && headItem.Proto.ProtoId == 470 ) // PID_BALL_GAG
 	{
@@ -774,18 +786,18 @@ bool out_message(string& message, int& sayType)
 			if( message[s] == " " && rand >= 50 )
 				continue;
 
-		if( rand <= 20 )
-		{
-			if( Random( 1, 100 ) <= 35 )
-				message[s] = (Random(0,5)==0?"R":"r");
-			else
-				message[s] = (Random(0,2)==0?"H":"h");
-		}
-		else if( rand <= 30 )
-			message[s] = (Random(0,7)==0?"G":"g");
-		else
-			message[s] = (Random(0,10)<=3?"M":"m");
-	}
+            if( rand <= 20 )
+            {
+                if( Random( 1, 100 ) <= 35 )
+                    message[s] = (Random(0,5)==0?"R":"r");
+                else
+                    message[s] = (Random(0,2)==0?"H":"h");
+            }
+            else if( rand <= 30 )
+                message[s] = (Random(0,7)==0?"G":"g");
+            else
+                message[s] = (Random(0,10)<=3?"M":"m");
+        }
 	}
 
     bool result = false;
