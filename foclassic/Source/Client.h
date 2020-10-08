@@ -824,7 +824,8 @@ public:
     PointVec   IntAmmoPoints, IntWearPoints;
     uint       IntAmmoTick, IntWearTick;
 
-	int		   IntMessBoxActiveTab;
+	int			IntMessBoxActiveTab;
+	bool		IntMessBoxTabsShown;
 
     void IntDraw();
     int  IntLMouseDown();

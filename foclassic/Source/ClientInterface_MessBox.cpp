@@ -6,7 +6,8 @@
 #include "Log.h"
 
 void FOClient::InitMessTabs() {
-	IntMessBoxActiveTab = 1;
+	IntMessBoxActiveTab = 1;	//	All tab is active by default
+	IntMessBoxTabsShown = true;
 }
 
 void FOClient::RecalcMessTabs() {
@@ -18,8 +19,8 @@ void FOClient::RecalcMessTabs() {
 	else
 		msgBoxRect = IntWMess;
 
-	int top = msgBoxRect.T - 15;
-	int bot = msgBoxRect.T;
+	int top = msgBoxRect.T;
+	int bot = msgBoxRect.T + 5 + SprMngr.GetLineHeight(messboxFont);;
 	int width = msgBoxRect.R - msgBoxRect.L;
 
 	//	" All  Local  Radio  Social  Combat ";
@@ -164,7 +165,8 @@ void FOClient::MessBoxGenerate()
 
 void FOClient::MessBoxDraw()
 {
-	if (IsMainScreen(CLIENT_MAIN_SCREEN_GAME)) {
+	if (IntMessBoxTabsShown && IntVisible && IsMainScreen(CLIENT_MAIN_SCREEN_GAME)) {
+		RecalcMessTabs();
 		SprMngr.DrawStr(IntWMessTabAll, "All", FONT_FLAG_CENTERX, IntMessBoxActiveTab == 1 ? 0xFFF8F993 : COLOR_TEXT_DGREEN, messboxFont);
 		SprMngr.DrawStr(IntWMessTabLocal, "Local", FONT_FLAG_CENTERX, IntMessBoxActiveTab == 2 ? 0xFFF8F993 : COLOR_TEXT_DGREEN, messboxFont);
 		SprMngr.DrawStr(IntWMessTabRadio, "Radio", FONT_FLAG_CENTERX, IntMessBoxActiveTab == 3 ? 0xFFF8F993 : COLOR_TEXT_DGREEN, messboxFont);
@@ -182,9 +184,7 @@ void FOClient::MessBoxDraw()
 	Rect ir = MessBoxCurRectDraw();
 	if (ir.IsZero())
 		return;
-
-	RecalcMessTabs();
-	
+		
 	//	draw messages
 	SprMngr.DrawStr(ir, MessBoxCurText.c_str(), flags | (GameOpt.MsgboxInvert ? FONT_FLAG_SKIPLINES(MessBoxScrollLines) : FONT_FLAG_SKIPLINES_END(MessBoxScrollLines)), 0, messboxFont);
 }
@@ -202,9 +202,15 @@ Rect FOClient::MessBoxCurRectDraw()
 	else if (IsMainScreen(CLIENT_MAIN_SCREEN_GAME) && IntVisible && !IsScreenPresent(CLIENT_SCREEN_WM_TOWNVIEW))
 	{
 		if (IntAddMess)
-			return IntWMessLarge;
+			if (IntMessBoxTabsShown) 
+				return Rect (IntWMessLarge.L, IntWMessLarge.T + IntWMessTabAll.H(), IntWMessLarge.R, IntWMessLarge.B);
+			else
+				return IntWMessLarge;
 		else
-			return IntWMess;
+			if (IntMessBoxTabsShown)
+				return Rect(IntWMess.L, IntWMess.T + IntWMessTabAll.H(), IntWMess.R, IntWMess.B);
+			else
+				return IntWMess;
 	}
 
 	return r(0, 0, 0, 0);
@@ -226,9 +232,15 @@ Rect FOClient::MessBoxCurRectScroll()
 		else if (IsMainScreen(CLIENT_MAIN_SCREEN_GAME) && IntVisible && !IsScreenPresent(CLIENT_SCREEN_WM_TOWNVIEW))
 		{
 			if (IntAddMess)
-				return IntWMessLarge;
+				if (IntMessBoxTabsShown)
+					return Rect(IntWMessLarge.L, IntWMessLarge.T + IntWMessTabAll.H(), IntWMessLarge.R, IntWMessLarge.B);
+				else
+					return IntWMessLarge;
 			else
-				return IntWMess;
+				if (IntMessBoxTabsShown)
+					return Rect(IntWMess.L, IntWMess.T + IntWMessTabAll.H(), IntWMess.R, IntWMess.B);
+				else
+					return IntWMess;
 		}
 	}
 
@@ -236,6 +248,8 @@ Rect FOClient::MessBoxCurRectScroll()
 }
 
 void FOClient::MessBoxTabLMouseDown() {
+	if (!IntMessBoxTabsShown)
+		return;
 	if (IsCurInRect(IntWMessTabAll)) {
 		IntMessBoxActiveTab = 1;
 		MessBoxGenerate();
