@@ -3607,8 +3607,6 @@ void FOClient::Net_SendText( const char* send_str, uint8 how_say )
     bool result = false;
     if( Script::PrepareContext( ClientFunctions.OutMessage, _FUNC_, "Game" ) )
     {
-		//WriteLog("Before crash");
-		//WriteLog("SayType = , Message = %s", str_buf);
         int           say_type = how_say;
         ScriptString* sstr = new ScriptString( str );
         Script::SetArgObject( sstr );
@@ -3618,7 +3616,6 @@ void FOClient::Net_SendText( const char* send_str, uint8 how_say )
         Str::Copy( str, MAX_FOTEXT, sstr->c_str() );
         sstr->Release();
         how_say = say_type;
-		//WriteLog("SayType = , Message = %s\n", str);
 	}
 
     if( !result || !str[0] )
@@ -4410,11 +4407,11 @@ void FOClient::OnText( const char* str, uint crid, int how_say, uint16 intellect
                 if( radio )
                     channel = radio->Data.RadioChannel;
             }
-            AddMess( mess_type, FmtGameText( fstr_mb, channel, fstr ) );
+            AddMess(MSGBOX_RADIO, FmtGameText( fstr_mb, channel, fstr ) );
         }
         else
         {
-            AddMess( mess_type, FmtGameText( fstr_mb, crit_name.c_str(), fstr ) );
+            AddMess(mess_type, FmtGameText( fstr_mb, crit_name.c_str(), fstr ) );
         }
 
         if( IsScreenPlayersBarter() && Chosen && (crid == BarterOpponentId || crid == Chosen->GetId() ) )

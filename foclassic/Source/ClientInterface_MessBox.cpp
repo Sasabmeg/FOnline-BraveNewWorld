@@ -71,12 +71,14 @@ void FOClient::AddMess(int mess_type, const char* msg)
 
 std::string FOClient::FormatMessBoxMessage(MessBoxMessage& msg) {
 	// Text
-	const uint str_color[] = { COLOR_TEXT_DGREEN, COLOR_TEXT, COLOR_TEXT_DRED, COLOR_TEXT_DDGREEN };
+	const uint str_color[] = { COLOR_TEXT_DGREEN, COLOR_TEXT, COLOR_TEXT_DRED, COLOR_TEXT_DDGREEN, COLOR_TEXT };
 	char strBuff[MAX_FOTEXT];
 	memset(strBuff, 0, MAX_FOTEXT);
-	if (msg.Type < 0 || msg.Type > MSGBOX_RADIO)
+
+	if (msg.Type < 0 || msg.Type > MSGBOX_RADIO) {
 		//Str::Format(strBuff, "%s\n", msg.Mess);
 		sprintf(strBuff, "%s\n", msg.Mess.c_str());
+	}
 	else
 		//Str::Format(strBuff, "|%u %s |%u %s\n", str_color[msg.Type], msg.Time, COLOR_TEXT, msg.Mess);
 		if (showTimestamps) {
@@ -123,7 +125,7 @@ void FOClient::MessBoxGenerate()
 		}
 
 		if (IsMainScreen(CLIENT_MAIN_SCREEN_GAME) && IntMessBoxActiveTab == 3	//	Radio
-			&& m.Type != SAY_RADIO) {
+			&& m.Type != MSGBOX_RADIO) {
 			continue;
 		}
 		
