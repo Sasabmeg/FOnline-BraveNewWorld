@@ -710,10 +710,13 @@ bool out_message(string& message, int& sayType)
                 sayType = SAY_WHISP;
             //else if(ch=="с" || ch=="С" || ch=="$" )
 			//	sayType=SAY_SOCIAL;
-			//  faction chat
-            /*
+
+			//  faction chat (same as guild chat)
             else if(ch == "f" || ch== "F")
 				sayType=SAY_FACTION;
+            else if(ch == "g" || ch== "G")
+				sayType=SAY_FACTION;
+            /*
             //  party chat
             else if(ch == "p" || ch== "P")
 				sayType=SAY_PARTY;

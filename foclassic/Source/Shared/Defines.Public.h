@@ -1059,7 +1059,7 @@
 #define MSGBOX_TALK                                       (1)
 #define MSGBOX_COMBAT_RESULT                              (2)
 #define MSGBOX_VIEW                                       (3)
-#define MSGBOX_RADIO                                      (4)
+#define MSGBOX_RADIO									  (4)
 
 // Client and mapper paths
 #define PATH_ROOT                                         (0)
