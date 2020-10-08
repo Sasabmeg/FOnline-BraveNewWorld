@@ -3175,23 +3175,13 @@ void FOClient::IntLMouseUp()
     {
 		showTimestamps = !showTimestamps;
         MessBoxScroll = 0;
-		/*
-        auto it = std::find( MessBoxFilters.begin(), MessBoxFilters.end(), MSGBOX_COMBAT_RESULT );
-        if( it != MessBoxFilters.end() )
-            MessBoxFilters.erase( it );
-        else
-            MessBoxFilters.push_back( MSGBOX_COMBAT_RESULT );
-			*/
         MessBoxGenerate();
     }
     else if( IfaceHold == IFACE_INT_FILTER2 && IsCurInRect( IntBMessFilter2 ) )
     {
         MessBoxScroll = 0;
-        auto it = std::find( MessBoxFilters.begin(), MessBoxFilters.end(), MSGBOX_TALK );
-        if( it != MessBoxFilters.end() )
-            MessBoxFilters.erase( it );
-        else
-            MessBoxFilters.push_back( MSGBOX_TALK );
+		IntMessBoxTabsShown = !IntMessBoxTabsShown;
+		IntMessBoxActiveTab = 1;
         MessBoxGenerate();
     }
     else if( IfaceHold == IFACE_INT_FILTER3 && IsCurInRect( IntBMessFilter3 ) )
