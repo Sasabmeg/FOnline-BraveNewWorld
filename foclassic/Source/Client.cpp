@@ -4363,7 +4363,11 @@ void FOClient::OnText( const char* str, uint crid, int how_say, uint16 intellect
             fstr_cr = STR_CRSOCIAL;
             fstr_mb = STR_MBSOCIAL;
             break;
-        case SAY_RADIO:
+		case SAY_FACTION:
+			mess_type = MSGBOX_SOCIAL;
+			fstr_mb = STR_MBFACTION;
+			break;
+		case SAY_RADIO:
             fstr_mb = STR_MBRADIO;
             break;
         case SAY_NETMSG:
@@ -4387,14 +4391,10 @@ void FOClient::OnText( const char* str, uint crid, int how_say, uint16 intellect
     // Message box text
     if( fstr_mb )
     {
-		/*
-		if (true) {
-			char tmp2[MAX_FOTEXT] = { 0 };
-			Str::Format(tmp2, "Team ID = %d", cr->Params[ST_TEAM_ID]);
-			AddMess (1, tmp2);
+		if (how_say == SAY_FACTION) {
+			AddMess(mess_type, FmtGameText(fstr_mb, fstr));
 		}
-		*/
-        if( how_say == SAY_NETMSG )
+		else if( how_say == SAY_NETMSG )
         {
             AddMess( mess_type, FmtGameText( fstr_mb, fstr ) );
         }

@@ -1060,6 +1060,7 @@
 #define MSGBOX_COMBAT_RESULT                              (2)
 #define MSGBOX_VIEW                                       (3)
 #define MSGBOX_RADIO									  (4)
+#define MSGBOX_SOCIAL									  (5)
 
 // Client and mapper paths
 #define PATH_ROOT                                         (0)
@@ -1174,6 +1175,7 @@
 #define SAY_SAY_TITLE                                     (39)
 #define SAY_SAY_TEXT                                      (40)
 #define SAY_FLASH_WINDOW                                  (41)
+#define SAY_FACTION										  (50)
 
 // Max 20 buttons (0..19)
 

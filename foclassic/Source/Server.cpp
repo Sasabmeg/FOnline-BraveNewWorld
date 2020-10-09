@@ -687,6 +687,8 @@ void FOServer::Logic_Work( void* data )
             // Disconnect
             if( cl->IsOffline() )
             {
+				NotifyFactionMemberOffline(cl->GetParam(ST_TEAM_ID), cl->GetName());
+
                 #if defined (USE_LIBEVENT)
                 cl->Bout.Lock();
                 bool empty = cl->Bout.IsEmpty();
@@ -717,7 +719,6 @@ void FOServer::Logic_Work( void* data )
             #endif
             {
                 DisconnectClient( cl );
-
                 ConnectedClientsLocker.Lock();
                 auto it = std::find( ConnectedClients.begin(), ConnectedClients.end(), cl );
                 if( it != ConnectedClients.end() )
@@ -1974,6 +1975,34 @@ void FOServer::Process_Text( Client* cl )
             return;
             break;
         }
+		case SAY_FACTION:
+		{
+			ClVec players_;
+			CrVec players__;
+			CrMngr.GetCopyPlayers(players_, true);
+			players__.reserve(players_.size());
+			for (auto it = players_.begin(), end = players_.end(); it != end; ++it)
+			{
+				Critter* player_ = *it;
+				if (!player_->IsNotValid && player_->IsPlayer()
+					&& player_->GetParam(ST_TEAM_ID) == cl->GetParam(ST_TEAM_ID)) {
+					players__.push_back(player_);
+				}
+			}
+			if (cl->GetParam(ST_TEAM_ID) <= 1) {
+				cl->Send_TextMsg(cl, STR_SOCIAL_NOT_IN_ANY_FACTION, SAY_FACTION, TEXTMSG_GAME);
+				return;
+			}
+			if (players__.size() <= 1) {
+				//	player is the only one online
+				cl->Send_TextMsg(cl, STR_SOCIAL_NOBODY_LISTENING, SAY_FACTION, TEXTMSG_GAME);
+				return;
+			}
+			else {
+				cl->SendAA_Text(players__, str, SAY_FACTION, true);
+			}
+			break;
+		}
         case SAY_RADIO:
         {
             if( cl->GetMap() )
@@ -2023,10 +2052,11 @@ void FOServer::Process_Text( Client* cl )
         uint16 pid = cl->GetProtoMap();
         for( uint i = 0; i < TextListeners.size(); i++ )
         {
-            TextListen& tl = TextListeners[i];
+
+			TextListen& tl = TextListeners[i];
             if( tl.SayType == how_say && tl.Parameter == pid && Str::CompareCaseCountUTF8( str, tl.FirstStr, tl.FirstStrLen ) )
             {
-                licten_func_id[listen_count] = tl.FuncId;
+				licten_func_id[listen_count] = tl.FuncId;
                 licten_str[listen_count] = new ScriptString( str );
                 if( ++listen_count >= 100 )
                     break;
@@ -2040,7 +2070,7 @@ void FOServer::Process_Text( Client* cl )
     {
         if( Script::PrepareContext( licten_func_id[i], _FUNC_, cl->GetInfo() ) )
         {
-            Script::SetArgObject( cl );
+			Script::SetArgObject( cl );
             Script::SetArgObject( licten_str[i] );
             Script::RunPrepared();
         }
@@ -5792,6 +5822,45 @@ string FOServer::GetAnyDataStatistics()
         result += "\n";
     }
     return result;
+}
+
+
+void FOServer::NotifyFactionMemberOffline(int factionId, const char* name) {
+	if (factionId <= 1) {
+		//	not in a faction, nothing to do
+		return;
+	}
+	ClVec players_;
+	CrMngr.GetCopyPlayers(players_, true);
+	for (auto it = players_.begin(), end = players_.end(); it != end; ++it)
+	{
+		Critter* player_ = *it;
+		if (!player_->IsNotValid && player_->IsPlayer()
+			&& player_->GetParam(ST_TEAM_ID) == factionId) {
+			char str[100];
+			Str::Format(str, "|0x00AA00 Member |0x006600 %s |0x00AA00 went offline.", name);
+			player_->Send_Text(player_,  str , SAY_FACTION);
+		}
+	}
+}
+
+void FOServer::NotifyFactionMemberOnline(int factionId, const char* name) {
+	if (factionId <= 1) {
+		//	not in a faction, nothing to do
+		return;
+	}
+	ClVec players_;
+	CrMngr.GetCopyPlayers(players_, true);
+	for (auto it = players_.begin(), end = players_.end(); it != end; ++it)
+	{
+		Critter* player_ = *it;
+		if (!player_->IsNotValid && player_->IsPlayer()
+			&& player_->GetParam(ST_TEAM_ID) == factionId && std::strncmp(player_->GetName(), name, 50) != 0) {
+			char str[100];
+			Str::Format(str, "|0x00AA00 Member |0x00EE00 %s |0x00AA00 came online.", name);
+			player_->Send_Text(player_, str, SAY_FACTION);
+		}
+	}
 }
 
 /************************************************************************/

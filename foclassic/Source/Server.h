@@ -257,6 +257,9 @@ public:
     static void EraseSaveClient( uint crid );
     static void Process( ClientPtr& cl );
 
+	static void NotifyFactionMemberOffline(int factionId, const char* name);
+	static void NotifyFactionMemberOnline(int factionId, const char* name);
+
     // Log to client
     static ClVec LogClients;
     static void LogToClients( const char* str );
