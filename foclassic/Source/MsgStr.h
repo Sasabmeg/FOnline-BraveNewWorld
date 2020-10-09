@@ -56,6 +56,7 @@
 #define STR_MBSOCIAL                               (128)
 #define STR_MBRADIO                                (130)
 #define STR_MBNET                                  (132)
+#define STR_MBFACTION							   (150)
 
 // FixBoy
 #define STR_FIX_PARAMS                             (200)
@@ -307,6 +308,10 @@
 #define STR_SP_LOAD_FAIL                           (1073)
 #define STR_SP_NEW_GAME_SUCCESS                    (1074)
 #define STR_SP_NEW_GAME_FAIL                       (1075)
+
+//	Social: Faction, Party, Direct Messages
+#define STR_SOCIAL_NOT_IN_ANY_FACTION			   (1100)
+#define STR_SOCIAL_NOBODY_LISTENING				   (1101)
 
 // Parameters
 #define STR_PARAM_NAME_( index )                   (100000 + (index) * 10 + 1)

@@ -324,8 +324,9 @@ bool in_message(string& message, int& sayType, uint& critterId, uint& delay)
                                       "%s", message);
                 sayType = SAY_NORM_ON_HEAD;
             }
-            if(!floater)
+            if(!floater) {
 				ForceSay(sayType - 1, GetLexem(critter, LEXEM_CRITTER_NAME), message);
+            }
         }
     }
     return true;
@@ -775,6 +776,10 @@ bool out_message(string& message, int& sayType)
             sayType = SAY_EMOTE;
             message = substring(message, 1, message.length() - 2);
         }
+    }
+
+    if (sayType == SAY_FACTION) {
+        message = "|0x00EE00 " + chosen.Name + ": |0xFFEFCF30 " + message;
     }
 
 	ItemCl@ headItem = chosen.GetItem( 0, SLOT_HEAD );

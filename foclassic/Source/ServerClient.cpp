@@ -2452,6 +2452,8 @@ void FOServer::Process_UserLogin( ClientPtr& cl )
     cl->Bin.SetEncryptKey( bin_seed + NETSALT_BIN );
     cl->Bout.SetEncryptKey( bout_seed + NETSALT_BOUT );
     cl->Send_LoadMap( NULL );
+
+	NotifyFactionMemberOnline(cl->GetParam(ST_TEAM_ID), cl->GetName());
 }
 
 void FOServer::Process_SingleplayerSaveLoad( Client* cl )

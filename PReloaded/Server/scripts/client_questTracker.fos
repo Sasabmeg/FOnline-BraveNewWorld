@@ -54,7 +54,7 @@ void InitQuestTracker() {
 
     //  Init colors -  possible colors of the header text, depending on quest type and current progress
     //  based on header type
-    questTracker.colorStory = (COLOR_RGB(0xef, 0xcf, 30));  // golden yellow
+    questTracker.colorStory = (COLOR_RGB(0xef, 0xcf, 0x20));  // golden yellow
     questTracker.colorJob = (COLOR_RGB(0x6D, 0xD9, 0xC6));  // teal
     questTracker.colorQuest = COLOR_TEXT_SAND;
     //  based on current progress

@@ -23,22 +23,22 @@ void FOClient::RecalcMessTabs() {
 	int bot = msgBoxRect.T + 5 + SprMngr.GetLineHeight(messboxFont);;
 	int width = msgBoxRect.R - msgBoxRect.L;
 
-	//	" All  Local  Radio  Social  Combat ";
+	//	" All  Public  Radio  Social  Combat ";
 	IntWMessTabs = Rect(msgBoxRect.L, top, msgBoxRect.R, bot);
 
-	int allWidth = (width * 5) / 35;
+	int allWidth = (width * 6) / 36;
 	IntWMessTabAll = Rect(msgBoxRect.L, top, msgBoxRect.L + allWidth, bot);
 
-	int localWidth = (width * 7) / 35;
+	int localWidth = (width * 7) / 36;
 	IntWMessTabLocal = Rect(IntWMessTabAll.R + 1, top, IntWMessTabAll.R + localWidth, bot);
 
-	int radioWidth = (width * 7) / 35;
+	int radioWidth = (width * 7) / 36;
 	IntWMessTabRadio = Rect(IntWMessTabLocal.R + 1, top, IntWMessTabLocal.R + radioWidth, bot);
 
-	int socialWidth = (width * 8) / 35;
+	int socialWidth = (width * 8) / 36;
 	IntWMessTabSocial = Rect(IntWMessTabRadio.R + 1, top, IntWMessTabRadio.R + socialWidth, bot);
 
-	int combatWidth = (width * 8) / 35;
+	int combatWidth = (width * 8) / 36;
 	IntWMessTabCombat = Rect(IntWMessTabSocial.R + 1, top, IntWMessTabSocial.R + combatWidth, bot);
 }
 
@@ -71,21 +71,21 @@ void FOClient::AddMess(int mess_type, const char* msg)
 
 std::string FOClient::FormatMessBoxMessage(MessBoxMessage& msg) {
 	// Text
-	const uint str_color[] = { COLOR_TEXT_DGREEN, COLOR_TEXT, COLOR_TEXT_DRED, COLOR_TEXT_DDGREEN, COLOR_TEXT };
+	const uint str_color[] = { COLOR_TEXT_DGREEN, COLOR_TEXT, COLOR_TEXT_DRED, COLOR_TEXT_DGREEN, COLOR_TEXT };
 	char strBuff[MAX_FOTEXT];
 	memset(strBuff, 0, MAX_FOTEXT);
 
-	if (msg.Type < 0 || msg.Type > MSGBOX_RADIO) {
+	if (msg.Type < 0 || msg.Type > MSGBOX_SOCIAL) {
 		//Str::Format(strBuff, "%s\n", msg.Mess);
 		sprintf(strBuff, "%s\n", msg.Mess.c_str());
 	}
 	else
 		//Str::Format(strBuff, "|%u %s |%u %s\n", str_color[msg.Type], msg.Time, COLOR_TEXT, msg.Mess);
 		if (showTimestamps) {
-			sprintf(strBuff, "|%u %s |%u %s\n", str_color[msg.Type], msg.Time.c_str(), COLOR_TEXT, msg.Mess.c_str());
+			sprintf(strBuff, "|%u %s|%u %s\n", str_color[msg.Type], msg.Time.c_str(), COLOR_TEXT, msg.Mess.c_str());
 		}
 		else {
-			sprintf(strBuff, "|%u %c |%u %s\n", str_color[msg.Type], TEXT_SYMBOL_DOT, COLOR_TEXT, msg.Mess.c_str());
+			sprintf(strBuff, "|%u %c|%u %s\n", str_color[msg.Type], TEXT_SYMBOL_DOT, COLOR_TEXT, msg.Mess.c_str());
 		}
 	return std::string(strBuff);
 }
@@ -119,7 +119,7 @@ void FOClient::MessBoxGenerate()
 		if (check_filters && std::find(MessBoxFilters.begin(), MessBoxFilters.end(), m.Type) != MessBoxFilters.end())
 			continue;
 				
-		if (IsMainScreen(CLIENT_MAIN_SCREEN_GAME) && IntMessBoxActiveTab == 2	//	Local
+		if (IsMainScreen(CLIENT_MAIN_SCREEN_GAME) && IntMessBoxActiveTab == 2	//	Public
 			&& m.Type != MSGBOX_TALK) {
 			continue;
 		}
@@ -130,7 +130,7 @@ void FOClient::MessBoxGenerate()
 		}
 		
 		if (IsMainScreen(CLIENT_MAIN_SCREEN_GAME) && IntMessBoxActiveTab == 4	//	Social
-			&& m.Type != SAY_SOCIAL) {
+			&& (m.Type != MSGBOX_SOCIAL)) {
 			continue;
 		}
 
@@ -170,7 +170,7 @@ void FOClient::MessBoxDraw()
 	if (IntMessBoxTabsShown && IntVisible && IsMainScreen(CLIENT_MAIN_SCREEN_GAME)) {
 		RecalcMessTabs();
 		SprMngr.DrawStr(IntWMessTabAll, "All", FONT_FLAG_CENTERX, IntMessBoxActiveTab == 1 ? 0xFFF8F993 : COLOR_TEXT_DGREEN, messboxFont);
-		SprMngr.DrawStr(IntWMessTabLocal, "Local", FONT_FLAG_CENTERX, IntMessBoxActiveTab == 2 ? 0xFFF8F993 : COLOR_TEXT_DGREEN, messboxFont);
+		SprMngr.DrawStr(IntWMessTabLocal, "Public", FONT_FLAG_CENTERX, IntMessBoxActiveTab == 2 ? 0xFFF8F993 : COLOR_TEXT_DGREEN, messboxFont);
 		SprMngr.DrawStr(IntWMessTabRadio, "Radio", FONT_FLAG_CENTERX, IntMessBoxActiveTab == 3 ? 0xFFF8F993 : COLOR_TEXT_DGREEN, messboxFont);
 		SprMngr.DrawStr(IntWMessTabSocial, "Social", FONT_FLAG_CENTERX, IntMessBoxActiveTab == 4 ? 0xFFF8F993 : COLOR_TEXT_DGREEN, messboxFont);
 		SprMngr.DrawStr(IntWMessTabCombat, "Combat", FONT_FLAG_CENTERX, IntMessBoxActiveTab == 5 ? 0xFFF8F993 : COLOR_TEXT_DGREEN, messboxFont);
