@@ -7830,7 +7830,7 @@ void FOClient::CrittersProcess()
             else if( !GameOpt.RunOnTransfer && Chosen->GetParam( TO_TRANSFER ) )
                 is_run = false;
             else if( IsTurnBased )
-                is_run = false;
+                is_run = true;
             else if( Chosen->IsDmgLeg() || Chosen->IsOverweight() )
                 is_run = false;
             else if( wait_click && Timer::GameTick() - start_tick < (GameOpt.DoubleClickTime ? GameOpt.DoubleClickTime : GetDoubleClickTicks() ) )
