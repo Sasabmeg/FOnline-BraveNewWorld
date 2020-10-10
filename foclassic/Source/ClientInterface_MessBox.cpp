@@ -26,10 +26,10 @@ void FOClient::RecalcMessTabs() {
 	//	" All  Public  Radio  Social  Combat ";
 	IntWMessTabs = Rect(msgBoxRect.L, top, msgBoxRect.R, bot);
 
-	int allWidth = (width * 6) / 36;
+	int allWidth = (width * 5) / 36;
 	IntWMessTabAll = Rect(msgBoxRect.L, top, msgBoxRect.L + allWidth, bot);
 
-	int localWidth = (width * 7) / 36;
+	int localWidth = (width * 8) / 36;
 	IntWMessTabLocal = Rect(IntWMessTabAll.R + 1, top, IntWMessTabAll.R + localWidth, bot);
 
 	int radioWidth = (width * 7) / 36;

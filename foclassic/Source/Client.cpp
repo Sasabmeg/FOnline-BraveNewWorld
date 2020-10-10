@@ -147,6 +147,8 @@ bool FOClient::Init()
 
 	InitMessTabs();
 
+	activeQuestTab = FOClient::ActiveQuestTab::ALL;
+
     // Check the sizes of base types
     #include "StaticAssert.h"
 

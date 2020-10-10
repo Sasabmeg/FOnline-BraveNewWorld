@@ -2526,6 +2526,7 @@ void FOClient::GameKeyDown( uint8 dik, const char* dik_text )
                 ShowScreen( CLIENT_SCREEN_INVENTORY );
                 break;
             case DIK_P:
+				RecalcPipQuestTabRectangles();
                 ShowScreen( CLIENT_SCREEN_PIPBOY );
                 break;
             case DIK_U:
@@ -7484,6 +7485,10 @@ void FOClient::PipDraw()
     #define PIP_DRAW_TEXTR( text, flags, color, font ) \
         do { if( scr >= 0 && scr < ml )          \
                  SprMngr.DrawStr( Rect( r[2] - r.W() / 3, r[1] + scr * h, r[2], r[1] + scr * h + h, PipX, PipY ), text, flags, color, font); } while( 0 )
+	#define PIP_DRAW_QUESTS_TEXT( text, flags, color, font ) \
+        do { if( scr >= 0 && scr < ml - 2 )         \
+                 SprMngr.DrawStr( Rect( r[0], r[1] + (scr + 2) * h, r[2], r[1] + (scr + 2) * h + h, PipX, PipY ), text, flags, color, font ); } while( 0 )
+
 
     switch( PipMode )
     {
@@ -7495,29 +7500,51 @@ void FOClient::PipDraw()
         }
         case PIP__STATUS:
         {
-            // Quests
-            if( scr >= 0 && scr < ml )
-                SprMngr.DrawStr( Rect( PipWMonitor[0], PipWMonitor[1] + scr * h, PipWMonitor[2], PipWMonitor[1] + scr * h + h, PipX, PipY ), FmtGameText( STR_PIP_QUESTS ), FONT_FLAG_CENTERX, COLOR_TEXT_DGREEN, pipboyFont);
-            scr++;
-            QuestTabMap* tabs = QuestMngr.GetTabs();
+			SprMngr.DrawStr(Rect(IntWPipQuestTabAll, PipX, PipY), "All", FONT_FLAG_CENTERX, activeQuestTab == FOClient::ActiveQuestTab::ALL ? 0xFFF8F993 : COLOR_TEXT_DGREEN, pipboyFont);
+			SprMngr.DrawStr(Rect(IntWPipQuestTabActive, PipX, PipY), "Active", FONT_FLAG_CENTERX, activeQuestTab == FOClient::ActiveQuestTab::ACTIVE ? 0xFFF8F993 : COLOR_TEXT_DGREEN, pipboyFont);
+			SprMngr.DrawStr(Rect(IntWPipQuestTabJobs, PipX, PipY), "Jobs", FONT_FLAG_CENTERX, activeQuestTab == FOClient::ActiveQuestTab::JOBS ? 0xFFF8F993 : COLOR_TEXT_DGREEN, pipboyFont);
+			SprMngr.DrawStr(Rect(IntWPipQuestTabCompleted, PipX, PipY), "Completed", FONT_FLAG_CENTERX, activeQuestTab == FOClient::ActiveQuestTab::COMPLETED ? 0xFFF8F993 : COLOR_TEXT_DGREEN, pipboyFont);
+			SprMngr.DrawStr(Rect(IntWPipQuestTabFailed, PipX, PipY), "Failed", FONT_FLAG_CENTERX, activeQuestTab == FOClient::ActiveQuestTab::FAILED ? 0xFFF8F993 : COLOR_TEXT_DGREEN, pipboyFont);
+			QuestTabMap* tabs = QuestMngr.GetTabs();
             for( auto it = tabs->begin(), end = tabs->end(); it != end; ++it )
             {
 				uint color = COLOR_TEXT;
 				QuestTab* tab = &((*it).second);
 				Quest* quest = &((tab->GetQuests())->front());
 				if (quest != NULL) {
+					if (activeQuestTab == FOClient::ActiveQuestTab::ACTIVE) {
+						if (quest->progress == SOFT_COMPLETED || quest->progress == HARD_COMPLETED ||
+							quest->progress == SOFT_FAILED || quest->progress == HARD_FAILED) {
+							continue;
+						}
+					}
+					if (activeQuestTab == FOClient::ActiveQuestTab::JOBS) {
+						if (quest->type != JOB) {
+							continue;
+						}
+					}
+					if (activeQuestTab == FOClient::ActiveQuestTab::COMPLETED) {
+						if (quest->progress != SOFT_COMPLETED && quest->progress != HARD_COMPLETED) {
+							continue;
+						}
+					}
+					if (activeQuestTab == FOClient::ActiveQuestTab::FAILED) {
+						if (quest->progress != SOFT_FAILED && quest->progress != HARD_FAILED) {
+							continue;
+						}
+					}
 					color = quest->getQuestColor();
 				}
 				else {
 					WriteLogF(_FUNC_, " PIP__STATUS_QUESTS: '&((tab->GetQuests())->front());' == NULL\n");
 				}
-                PIP_DRAW_TEXT(QuestManager::removeFormat((*it).first).c_str(), FONT_FLAG_NOBREAK, color, pipboyFont);
+				PIP_DRAW_QUESTS_TEXT(QuestManager::removeFormat((*it).first).c_str(), FONT_FLAG_NOBREAK, color, pipboyFont);
                 scr++;
             }
 
             // Scores title
             scr++;
-            PIP_DRAW_TEXT( FmtGameText( STR_PIP_SCORES ), FONT_FLAG_CENTERX, COLOR_TEXT_DGREEN, pipboyFont);
+			PIP_DRAW_QUESTS_TEXT( FmtGameText( STR_PIP_SCORES ), FONT_FLAG_CENTERX, COLOR_TEXT_DGREEN, pipboyFont);
             break;
         }
         case PIP__STATUS_QUESTS:
@@ -7724,15 +7751,71 @@ void FOClient::PipLMouseDown()
         {
             case PIP__STATUS:
             {
-				scr += 1;
+				scr += 2;
                 int scr_ = scr;
+				int skipped = 0;
+			
+				RecalcPipQuestTabRectangles();
 
+				if (IsCurInRect(IntWPipQuestTabs, PipX, PipY)) {
+					if (IsCurInRect(IntWPipQuestTabAll, PipX, PipY)) {
+						activeQuestTab = FOClient::ActiveQuestTab::ALL;
+						PipScroll[PipMode] = 0;
+					}
+					else if (IsCurInRect(IntWPipQuestTabActive, PipX, PipY)) {
+						activeQuestTab = FOClient::ActiveQuestTab::ACTIVE;
+						PipScroll[PipMode] = 0;
+					}
+					else if (IsCurInRect(IntWPipQuestTabJobs, PipX, PipY)) {
+						activeQuestTab = FOClient::ActiveQuestTab::JOBS;
+						PipScroll[PipMode] = 0;
+					}
+					else if (IsCurInRect(IntWPipQuestTabCompleted, PipX, PipY)) {
+						activeQuestTab = FOClient::ActiveQuestTab::COMPLETED;
+						PipScroll[PipMode] = 0;
+					}
+					else if (IsCurInRect(IntWPipQuestTabFailed, PipX, PipY)) {
+						activeQuestTab = FOClient::ActiveQuestTab::FAILED;
+						PipScroll[PipMode] = 0;
+					}
+					return;
+				}
                 QuestTabMap* tabs = QuestMngr.GetTabs();
                 for( auto it = tabs->begin(), end = tabs->end(); it != end; ++it )
                 {
+					QuestTab* tab = &((*it).second);
+					Quest* quest = &((tab->GetQuests())->front());
+					if (quest != NULL) {
+						if (activeQuestTab == FOClient::ActiveQuestTab::ACTIVE) {
+							if (quest->progress == SOFT_COMPLETED || quest->progress == HARD_COMPLETED ||
+								quest->progress == SOFT_FAILED || quest->progress == HARD_FAILED) {
+								skipped++;
+								continue;
+							}
+						}
+						if (activeQuestTab == FOClient::ActiveQuestTab::JOBS) {
+							if (quest->type != JOB) {
+								skipped++;
+								continue;
+							}
+						}
+						if (activeQuestTab == FOClient::ActiveQuestTab::COMPLETED) {
+							if (quest->progress != SOFT_COMPLETED && quest->progress != HARD_COMPLETED) {
+								skipped++;
+								continue;
+							}
+						}
+						if (activeQuestTab == FOClient::ActiveQuestTab::FAILED) {
+							if (quest->progress != SOFT_FAILED && quest->progress != HARD_FAILED) {
+								skipped++;
+								continue;
+							}
+						}
+					}
+
                     if( scr >= 0 && scr < ml && IsCurInRect( Rect( r[0], r[1] + scr * h, r[2], r[1] + scr * h + h ), PipX, PipY ) )
                     {
-						QuestNumTab = scr - scr_;
+						QuestNumTab = scr - scr_ + skipped;
 						PipMode = PIP__STATUS_QUESTS;
                         PipScroll[PipMode] = 0;
 						break;
@@ -10856,6 +10939,31 @@ void FOClient::SaveLoadMouseMove()
         if( SaveLoadY + SaveLoadMain[3] > MODE_HEIGHT )
             SaveLoadY = MODE_HEIGHT - SaveLoadMain[3];
     }
+}
+
+void FOClient::RecalcPipQuestTabRectangles() {
+	int left = PipWMonitor.L;
+	int top = PipWMonitor.T;
+	int bot = PipWMonitor.T + SprMngr.GetLineHeight(pipboyFont);
+	int width = PipWMonitor.R - PipWMonitor.L;
+		
+	//	" All  Active  Jobs  Completed  Failed ";
+	IntWPipQuestTabs = Rect(left, top, left + width, bot + SprMngr.GetLineHeight(pipboyFont) + 1);
+
+	int allWidth = (width * 5) / 38;
+	IntWPipQuestTabAll = Rect(left, top, left + allWidth, bot);
+
+	int activeWidth = (width * 8) / 38;
+	IntWPipQuestTabActive = Rect(IntWPipQuestTabAll.R + 1, top, IntWPipQuestTabAll.R + activeWidth, bot);
+
+	int jobsWidth = (width * 6) / 38;
+	IntWPipQuestTabJobs = Rect(IntWPipQuestTabActive.R + 1, top, IntWPipQuestTabActive.R + jobsWidth, bot);
+
+	int completedWidth = (width * 11) / 38;
+	IntWPipQuestTabCompleted = Rect(IntWPipQuestTabJobs.R + 1, top, IntWPipQuestTabJobs.R + completedWidth, bot);
+
+	int failedWidth = (width * 8) / 38;
+	IntWPipQuestTabFailed = Rect(IntWPipQuestTabCompleted.R + 1, top, IntWPipQuestTabCompleted.R + failedWidth, bot);
 }
 
 // ==============================================================================================================================
