@@ -827,6 +827,11 @@ public:
 	int			IntMessBoxActiveTab;
 	bool		IntMessBoxTabsShown;
 
+	enum ActiveQuestTab { ALL, ACTIVE, JOBS, COMPLETED, FAILED };
+	ActiveQuestTab activeQuestTab;
+	Rect		IntWPipQuestTabs, IntWPipQuestTabAll, IntWPipQuestTabActive, IntWPipQuestTabJobs, IntWPipQuestTabCompleted, IntWPipQuestTabFailed;
+	void FOClient::RecalcPipQuestTabRectangles();
+
     void IntDraw();
     int  IntLMouseDown();
     void IntRMouseDown();
