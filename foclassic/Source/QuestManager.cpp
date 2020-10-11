@@ -128,7 +128,9 @@ void QuestTab::ReparseText()
     text = "";
 
     char str[128];
-    for( uint i = 0; i < quests.size(); ++i )
+	memset(str, 0, 128);
+
+	for( uint i = 0; i < quests.size(); ++i )
     {
         Str::Format( str, msg->GetStr( STR_QUEST_NUMBER ), i + 1 );
 
