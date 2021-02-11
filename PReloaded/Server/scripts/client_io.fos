@@ -128,63 +128,67 @@ bool key_down(uint8 key,string& keyText)
     if(key == DIK_Z)
         __MapZooming = true;
 
-    switch(key)
+    if (NoCtrl && NoAlt && NoShift)
     {
-    case DIK_F1:
-        __ForceHelpInfo = !__ForceHelpInfo;
-        break;
-    case DIK_F4:
-        ToggleInterfaceShown();
-        break;
-    // case DIK_F5: ToggleInterfaceExpanded(); break;
-    
-    case DIK_F6:
-        if(SetConfigValue(CONFIG_FILE, CONFIG_RELOADED, "DisplayNames", !__ShowPlayerNames) &&
-           string2bool(GetConfigValue(CONFIG_FILE, CONFIG_RELOADED, "Autosave")))
+        switch(key)
         {
-            SaveConfig(CONFIG_FILE);
-            Message("Display player names: " + GetConfigValue(CONFIG_FILE, CONFIG_RELOADED, "DisplayNames"));
+        case DIK_F1:
+            __ForceHelpInfo = !__ForceHelpInfo;
+            break;
+        case DIK_F4:
+            ToggleInterfaceShown();
+            break;
+        // case DIK_F5: ToggleInterfaceExpanded(); break;
+
+        case DIK_F6:
+            if(SetConfigValue(CONFIG_FILE, CONFIG_RELOADED, "DisplayNames", !__ShowPlayerNames) &&
+               string2bool(GetConfigValue(CONFIG_FILE, CONFIG_RELOADED, "Autosave")))
+            {
+                SaveConfig(CONFIG_FILE);
+                Message("Display player names: " + GetConfigValue(CONFIG_FILE, CONFIG_RELOADED, "DisplayNames"));
+            }
+            break;
+
+        case DIK_F7:
+            ChangeOnHeadAwarenessNPC();
+            break;
+
+        case DIK_F8:
+            if(SetConfigValue(CONFIG_FILE, CONFIG_RELOADED, "MouseScroll", !__MouseScroll) &&
+               string2bool(GetConfigValue(CONFIG_FILE, CONFIG_RELOADED, "Autosave")))
+            {
+                SaveConfig(CONFIG_FILE);
+                Message("Mouse scroll: " + GetConfigValue(CONFIG_FILE, CONFIG_RELOADED, "MouseScroll"));
+            }
+            break;
+
+        case DIK_F9:
+            ChangeOnHeadAwarenessPlayer();
+            break;
+
+
+        case DIK_F10:
+            __ConfigDisplayTCZones++;
+            __ConfigDisplayTCZones %= 3;
+            if(SetConfigValue(CONFIG_FILE, CONFIG_RELOADED, "DisplayTCZones", __ConfigDisplayTCZones) &&
+               string2bool(GetConfigValue(CONFIG_FILE, CONFIG_RELOADED, "Autosave")))
+            {
+                SaveConfig(CONFIG_FILE);
+                Message("Display TC zones: " + GetConfigValue(CONFIG_FILE, CONFIG_RELOADED, "DisplayTCZones"));
+            }
+            break;
+        case DIK_F11:
+            __ConfigDisplayTC = !__ConfigDisplayTC;
+            if(SetConfigValue(CONFIG_FILE, CONFIG_RELOADED, "DisplayTC", __ConfigDisplayTC) &&
+               string2bool(GetConfigValue(CONFIG_FILE, CONFIG_RELOADED, "Autosave")))
+            {
+                SaveConfig(CONFIG_FILE);
+                Message("Display TC messages: " + GetConfigValue(CONFIG_FILE, CONFIG_RELOADED, "DisplayTC"));
+            }
+            break;
         }
-        break;
-
-    case DIK_F7:
-        ChangeOnHeadAwarenessNPC();
-        break;
-
-    case DIK_F8:
-        if(SetConfigValue(CONFIG_FILE, CONFIG_RELOADED, "MouseScroll", !__MouseScroll) &&
-           string2bool(GetConfigValue(CONFIG_FILE, CONFIG_RELOADED, "Autosave")))
-        {
-            SaveConfig(CONFIG_FILE);
-            Message("Mouse scroll: " + GetConfigValue(CONFIG_FILE, CONFIG_RELOADED, "MouseScroll"));
-        }
-        break;
-
-    case DIK_F9:
-        ChangeOnHeadAwarenessPlayer();
-        break;
-
-
-    case DIK_F10:
-        __ConfigDisplayTCZones++;
-        __ConfigDisplayTCZones %= 3;
-        if(SetConfigValue(CONFIG_FILE, CONFIG_RELOADED, "DisplayTCZones", __ConfigDisplayTCZones) &&
-           string2bool(GetConfigValue(CONFIG_FILE, CONFIG_RELOADED, "Autosave")))
-        {
-            SaveConfig(CONFIG_FILE);
-            Message("Display TC zones: " + GetConfigValue(CONFIG_FILE, CONFIG_RELOADED, "DisplayTCZones"));
-        }
-        break;
-    case DIK_F11:
-        __ConfigDisplayTC = !__ConfigDisplayTC;
-        if(SetConfigValue(CONFIG_FILE, CONFIG_RELOADED, "DisplayTC", __ConfigDisplayTC) &&
-           string2bool(GetConfigValue(CONFIG_FILE, CONFIG_RELOADED, "Autosave")))
-        {
-            SaveConfig(CONFIG_FILE);
-            Message("Display TC messages: " + GetConfigValue(CONFIG_FILE, CONFIG_RELOADED, "DisplayTC"));
-        }
-        break;
     }
+
 
     return(GUI_KeyDown(key,keyText));
 }
@@ -368,7 +372,7 @@ void filename_screenshot(string& filename)
 
 bool EndTurnBasedTurn()
 {
-   if(__ConsoleActive) 
+   if(__ConsoleActive)
       return false;
 
    CritterCl@ chosen = GetChosen();
@@ -377,13 +381,13 @@ bool EndTurnBasedTurn()
       RunServerScriptUnsafe( "unsafe_client@unsafe_EndTurnBasedTurn", 0, 0, 0, null, null );
       return true;
    }
-   
+
    return false;
 }
 
 bool EndTurnBasedCombat()
 {
-   if(__ConsoleActive) 
+   if(__ConsoleActive)
       return false;
 
    CritterCl@ chosen = GetChosen();
