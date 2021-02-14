@@ -2003,6 +2003,30 @@ void FOServer::Process_Text( Client* cl )
 			}
 			break;
 		}
+		case SAY_SQUAD:
+		{
+			ClVec players_;
+			CrVec players__;
+			CrMngr.GetCopyPlayers(players_, true);
+			players__.reserve(players_.size());
+			for (auto it = players_.begin(), end = players_.end(); it != end; ++it)
+			{
+				Critter* player_ = *it;
+				if (!player_->IsNotValid && player_->IsPlayer() &&
+					( player_->GetParam(ST_FOLLOW_CRIT) == cl->GetId()
+						|| player_->GetId() == cl->GetParam(ST_FOLLOW_CRIT)) ) {
+					players__.push_back(player_);
+				}
+			}
+			if (players__.size() <= 0) {
+				cl->Send_TextMsg(cl, STR_SOCIAL_NOT_IN_ANY_SQUAD, SAY_SQUAD, TEXTMSG_GAME);
+				return;
+			}
+			else {
+				cl->SendAA_Text(players__, str, SAY_SQUAD, true);
+			}
+			break;
+		}
         case SAY_RADIO:
         {
             if( cl->GetMap() )

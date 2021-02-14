@@ -4369,6 +4369,10 @@ void FOClient::OnText( const char* str, uint crid, int how_say, uint16 intellect
 			mess_type = MSGBOX_SOCIAL;
 			fstr_mb = STR_MBFACTION;
 			break;
+		case SAY_SQUAD:
+			mess_type = MSGBOX_SOCIAL;
+			fstr_mb = STR_MBSQUAD;
+			break;
 		case SAY_RADIO:
             fstr_mb = STR_MBRADIO;
             break;
@@ -4394,6 +4398,10 @@ void FOClient::OnText( const char* str, uint crid, int how_say, uint16 intellect
     if( fstr_mb )
     {
 		if (how_say == SAY_FACTION) {
+			AddMess(mess_type, FmtGameText(fstr_mb, fstr));
+		}
+		else if (how_say == SAY_SQUAD)
+		{
 			AddMess(mess_type, FmtGameText(fstr_mb, fstr));
 		}
 		else if( how_say == SAY_NETMSG )
