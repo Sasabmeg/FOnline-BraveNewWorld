@@ -1176,6 +1176,8 @@
 #define SAY_SAY_TEXT                                      (40)
 #define SAY_FLASH_WINDOW                                  (41)
 #define SAY_FACTION										  (50)
+#define SAY_SQUAD										  (51)
+
 
 // Max 20 buttons (0..19)
 

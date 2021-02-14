@@ -717,10 +717,11 @@ bool out_message(string& message, int& sayType)
 				sayType=SAY_FACTION;
             else if(ch == "g" || ch== "G")
 				sayType=SAY_FACTION;
-            /*
+
             //  party chat
-            else if(ch == "p" || ch== "P")
-				sayType=SAY_PARTY;
+            else if(ch == "q" || ch== "Q")
+				sayType=SAY_SQUAD;
+            /*
             //  direct message
             else if(ch == "d" || ch== "D")
 				sayType=SAY_DIRECT;
@@ -780,6 +781,10 @@ bool out_message(string& message, int& sayType)
 
     if (sayType == SAY_FACTION) {
         message = "|0x00EE00 " + chosen.Name + ": |0xFFEFCF30 " + message;
+    }
+
+     if (sayType == SAY_SQUAD) {
+        message = "|0x00EE00 " + chosen.Name + ": |0xFF3050EF " + message;
     }
 
 	ItemCl@ headItem = chosen.GetItem( 0, SLOT_HEAD );
