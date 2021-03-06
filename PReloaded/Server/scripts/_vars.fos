@@ -40,7 +40,10 @@
 #define LVAR_q_hub_sidewinder                   (401)
 #define LVAR_duel_status                        (500)
 #define LVAR_current_task                       (501)
-
+#define LVAR_q_redd_christopher_low_level       (1000)
+#define LVAR_q_redd_christopher_good_karma      (1001)
+#define LVAR_q_redd_christopher_bad_karma       (1002)
+#define LVAR_q_hub_henry_quest                  (1003)
 #define GVAR_sierra_backup_power                (1150)
 #define LVAR_killer_admin                       (1207)
 #define GVAR_event_status                       (1234)
@@ -125,12 +128,39 @@
 #define LVAR_redding_morton_brothers            (5386)
 #define UVAR_q_box_unload_status                (6500)
 #define UVAR_q_box_unload_count                 (6501)
+#define LVAR_bar_drink                          (7000)
+#define LVAR_give_grenade                       (7001)
+#define LVAR_crimson_caravan_job                (7003)
+#define LVAR_q_bunker_base                      (7004)
+#define LVAR_q_bunker_base2                     (7007)
+#define LVAR_q_hub_sadwife                      (7008)
+#define LVAR_q_hub_wasteland_band               (7009)
 #define LVAR_q_spawn_hub                        (7032)
 #define LVAR_q_spawn_hub_water                  (7034)
 #define LVAR_free_slave                         (7053)
+#define LVAR_q_iguana_pete_message              (7070)
+#define LVAR_q_iguana_pete_ban                  (7071)
 #define LVAR_faction_farmer                     (7085)
+#define LVAR_hub_job_waterboy                   (7109)
 #define LVAR_ncr_gold_exchange                  (7119)
+#define LVAR_q_hub_watertaxes                   (7120)
+#define LVAR_q_jt_power_house                   (7122)
+#define LVAR_q_jt_power_house_mp                (7123)
+#define LVAR_q_jt_power_house_handy             (7124)
+#define LVAR_q_jt_power_house_handy_talk        (7125)
+#define LVAR_q_jt_generators_flags              (7126)
+#define LVAR_q_jt_power_house_handy_special     (7127)
+#define LVAR_q_hub_gunrunner_supplies           (7128)
+#define LVAR_q_jt_sneakeater                    (7139)
+#define LVAR_q_jt_sneakeater_locid              (7140)
+#define LVAR_q_jt_sneakeater_perk               (7141)
+#define LVAR_q_la_gunr_courier                  (7147)
+#define LVAR_q_la_gunr_courier_reward           (7148)
+#define LVAR_q_jt_power_house_attempts          (7200)
 #define LVAR_q_nr_corsican_tattoo               (7301)
+#define LVAR_q_first_tent                       (7322)
+#define LVAR_q_first_tent_loc1_id               (7323)
+#define LVAR_q_first_tent_loc2_id               (7324)
 #define LVAR_nc_inlair	                        (8000)
 #define LVAR_blood_type                         (9001)
 #define LVAR_birth_year                         (9002)
@@ -375,6 +405,26 @@
    $	501	1	current_task	0	0	0	4
 **********
    Stores the current task the NPC is at.
+**********
+
+   $	1000	1	q_redd_christopher_low_level	0	-1	3	0
+**********
+
+**********
+
+   $	1001	1	q_redd_christopher_good_karma	0	-1	3	1
+**********
+
+**********
+
+   $	1002	1	q_redd_christopher_bad_karma	0	-1	3	1
+**********
+
+**********
+
+   $	1003	1	q_hub_henry_quest	0	-2	2	1
+**********
+
 **********
 
    $	1150	0	sierra_backup_power	0	0	3	0
@@ -836,6 +886,42 @@ $ 1800 1 q_jt_talked 0 0 3 1
 
 **********
 
+   $	7000	1	bar_drink	0	0	0	4
+**********
+
+**********
+
+   $	7001	1	give_grenade	0	0	0	4
+**********
+
+**********
+
+   $	7003	1	crimson_caravan_job	0	0	0	4
+**********
+
+**********
+
+   $	7004	1	q_bunker_base	0	0	0	5
+**********
+
+**********
+
+   $	7007	1	q_bunker_base2	0	0	5	1
+**********
+
+**********
+
+
+   $	7008	1	q_hub_sadwife	0	0	5	1
+**********
+
+**********
+
+   $	7009	1	q_hub_wasteland_band	0	0	7	1
+**********
+
+**********
+
    $	7032	1	q_spawn_hub	0	0	5	1
 **********
    Quest variable for spawn quest.
@@ -851,7 +937,22 @@ $ 1800 1 q_jt_talked 0 0 3 1
    Variable is set to 1, if player frees the slave.
 **********
 
+   $	7070	1	q_iguana_pete_message	0	0	0	5
+**********
+
+**********
+
+   $	7071	1	q_iguana_pete_ban	0	0	0	5
+**********
+
+**********
+
    $	7085	1	faction_farmer	0	0	0	4
+**********
+
+**********
+
+   $	7109	1	hub_job_waterboy	0	0	12	0
 **********
 
 **********
@@ -861,9 +962,134 @@ $ 1800 1 q_jt_talked 0 0 3 1
    var for dialog, nothing big.
 **********
 
+   $	7120	1	q_hub_watertaxes	0	0	3	1
+**********
+   q var for mini-quest for water merchants. waterboy in central hub pays too high taxes, try to change his contract.
+**********
+
+   $	7122	1	q_jt_power_house	0	0	5	1
+**********
+   0 == inactive
+   1 == active
+   2 == generators repaired
+   3 == generators optimized
+   4 == switch used / generators activated
+   5 == quest finished.
+**********
+
+   $	7123	1	q_jt_power_house_mp	0	0	2	0
+**********
+   0 == inactive
+   1 == got the parts
+   2 == parts given.
+**********
+
+   $	7124	1	q_jt_power_house_handy	0	0	4	1
+**********
+   0 == inactive
+   1 == active
+   2 == motivator from Hub
+   3 == handy repaired
+   4 == quest done
+**********
+
+   $	7125	1	q_jt_power_house_handy_talk	0	0	1	0
+**********
+
+**********
+
+   $	7126	1	q_jt_generators_flags	0	0	0	4
+**********
+
+**********
+
+   $	7127	1	q_jt_power_house_handy_special	0	0	1	0
+**********
+   Special object in Mr. Handy robot. :>
+**********
+
+
+   $	7128	1	q_hub_gunrunner_supplies	0	0	6	1
+**********
+   0 == Inactive
+   1 == Active  / Jacob needs moar supplies
+   2 == Stage 2	/ Marshal not happy about it
+   3 == Stage 3	/ Jacob Agrees on delivery
+   4 == Stage 4	/ Marshal can't send out faster
+   5 == Deal made
+   6 == Quest done
+**********
+
+   $	7129	1	q_hub_gunrunner_supplies_deal	0	0	4	0
+**********
+   0 == no deal
+   1 == player used fancy words
+   2 == Marshal can't send faster
+   3 == Marshal sends faster
+   4 == normal deal
+**********
+
+   $	7130	1	q_hub_gunrunner_supplies_parts	0	0	2	0
+**********
+   0 == no parts
+   1 == search parts
+   2 == found parts
+**********
+
+   $	7139	1	q_jt_sneakeater	0	0	4	1
+**********
+   0 == inactive
+   1 == active
+   2 == eggs given - not used
+   3 == quest done
+   4 == quest failed
+**********
+
+   $	7140	1	q_jt_sneakeater_locid	0	0	0	4
+**********
+
+**********
+
+   $	7141	1	q_jt_sneakeater_perk	0	0	1	0
+**********
+   0 == inactive
+   1 == active
+**********
+
+   $	7147	1	q_la_gunr_courier	0	0	9	1
+**********
+
+**********
+
+   $	7148	1	q_la_gunr_courier_reward	0	0	6	0
+**********
+
+**********
+
    $	7301	1	q_nr_corsican_tattoo	0	0	3	1
 **********
 
+**********
+
+   $	7322	1	q_first_tent	0	0	0	5
+**********
+   State of the First Tent quest.
+   0: Quest not started
+   1: Tent location spawned (quest started)
+   2: Farmhouse location spawned (quest accepted)
+   3: Rats in farmhouse killed
+   4: Quest finished
+   5: Quest failed (family tent garbaged)
+**********
+
+   $	7323	1	q_first_tent_loc1_id	0	0	0	5
+**********
+   Id of the family tent location for the First Tent quest.
+**********
+
+   $	7324	1	q_first_tent_loc2_id	0	0	0	5
+**********
+   Id of the farmhouse location for the First Tent quest.
 **********
 
    $	8000  	1	nc_inlair	0	0	1	0

@@ -189,6 +189,11 @@
 #define SLOT_PERK_MOTION_SENSOR                  (0x04) // +20 outdoorsman
 #define SLOT_PERK_STEALTH_BOY                    (0x08) // +20 sneak
 
+// In SendMessage - Reloaded S2 merge
+#define MESSAGE_TO_VISIBLE_ME                    (0)    // Отослать сообщения всем кто видет криттера.
+#define MESSAGE_TO_IAM_VISIBLE                   (1)    // Отослать сообщения всем кого видит криттер.
+#define MESSAGE_TO_ALL_ON_MAP                    (2)    // Отослать всем на карте.
+
 // more eng-friendly aliases
 #define SENDMESSAGE_TO_WHO_SEES_ME                   (SENDMESSAGE_TO_VISIBLE_ME)
 #define SENDMESSAGE_TO_I_SEE                         (SENDMESSAGE_TO_IAM_VISIBLE)
