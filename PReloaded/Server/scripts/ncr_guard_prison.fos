@@ -71,65 +71,69 @@ void _Idle(Critter& guard)
 {
     GuardOnIdle(guard);
 
-    // NCR PRISON GUARDS START
-    if(guard.Stat[ST_NPC_ROLE] == ROLE_NCR_GUARD_PRISON_PATROL1)
-    {
-        _GetNextNode(guard, 14)
-    }
-    if(guard.Stat[ST_NPC_ROLE] == ROLE_NCR_GUARD_PRISON_PATROL2)
-    {
-        _GetNextNode(guard, 15)
-    }
-    if(guard.Stat[ST_NPC_ROLE] == ROLE_NCR_GUARD_PRISON_PATROL3)
-    {
-        _GetNextNode(guard, 16)
-    }
-    if(guard.Stat[ST_NPC_ROLE] == ROLE_NCR_GUARD_PRISON_PATROL4)
-    {
-        _GetNextNode(guard, 17)
-    }
-    if(guard.Stat[ST_NPC_ROLE] == ROLE_NCR_GUARD_PRISON_PATROL5)
-    {
-        _GetNextNode(guard, 18)
-    }
-    if(guard.Stat[ST_NPC_ROLE] == ROLE_NCR_GUARD_PRISON_PATROL6)
-    {
-        _GetNextNode(guard, 19)
-    }
-    if(guard.Stat[ST_NPC_ROLE] == ROLE_NCR_GUARD_PRISON_PATROL7)
-    {
-        _GetRandomNode(guard, 20)
-    }
-    if(guard.Stat[ST_NPC_ROLE] == ROLE_NCR_GUARD_PRISON_PATROL8)
-    {
-        _GetNextNode(guard, 21)
-    }
-    if(guard.Stat[ST_NPC_ROLE] == ROLE_NCR_GUARD_PRISON_PATROL9)
-    {
-        _GetNextNode(guard, 22)
-    }
-    if(guard.Stat[ST_NPC_ROLE] == ROLE_NCR_GUARD_PRISON_PATROL10)
-    {
-        _GetNextNode(guard, 23)
-    }
-    if(guard.Stat[ST_NPC_ROLE] == ROLE_NCR_GUARD_PRISON_PATROL11)
-    {
-        _GetNextNode(guard, 24)
-    }
-    if(guard.Stat[ST_NPC_ROLE] == ROLE_NCR_GUARD_PRISON_PATROL12)
-    {
-        _GetNextNode(guard, 25)
-    }
-    if(guard.Stat[ST_NPC_ROLE] == ROLE_NCR_GUARD_PRISON_PATROL13)
-    {
-        _GetNextNode(guard, 26)
-    }
-    // NCR PRISON GUARDS END
+    if (valid(node)) {
+        // NCR PRISON GUARDS START
+        if(guard.Stat[ST_NPC_ROLE] == ROLE_NCR_GUARD_PRISON_PATROL1)
+        {
+            _GetNextNode(guard, 14)
+        }
+        if(guard.Stat[ST_NPC_ROLE] == ROLE_NCR_GUARD_PRISON_PATROL2)
+        {
+            _GetNextNode(guard, 15)
+        }
+        if(guard.Stat[ST_NPC_ROLE] == ROLE_NCR_GUARD_PRISON_PATROL3)
+        {
+            _GetNextNode(guard, 16)
+        }
+        if(guard.Stat[ST_NPC_ROLE] == ROLE_NCR_GUARD_PRISON_PATROL4)
+        {
+            _GetNextNode(guard, 17)
+        }
+        if(guard.Stat[ST_NPC_ROLE] == ROLE_NCR_GUARD_PRISON_PATROL5)
+        {
+            _GetNextNode(guard, 18)
+        }
+        if(guard.Stat[ST_NPC_ROLE] == ROLE_NCR_GUARD_PRISON_PATROL6)
+        {
+            _GetNextNode(guard, 19)
+        }
+        if(guard.Stat[ST_NPC_ROLE] == ROLE_NCR_GUARD_PRISON_PATROL7)
+        {
+            _GetRandomNode(guard, 20)
+        }
+        if(guard.Stat[ST_NPC_ROLE] == ROLE_NCR_GUARD_PRISON_PATROL8)
+        {
+            _GetNextNode(guard, 21)
+        }
+        if(guard.Stat[ST_NPC_ROLE] == ROLE_NCR_GUARD_PRISON_PATROL9)
+        {
+            _GetNextNode(guard, 22)
+        }
+        if(guard.Stat[ST_NPC_ROLE] == ROLE_NCR_GUARD_PRISON_PATROL10)
+        {
+            _GetNextNode(guard, 23)
+        }
+        if(guard.Stat[ST_NPC_ROLE] == ROLE_NCR_GUARD_PRISON_PATROL11)
+        {
+            _GetNextNode(guard, 24)
+        }
+        if(guard.Stat[ST_NPC_ROLE] == ROLE_NCR_GUARD_PRISON_PATROL12)
+        {
+            _GetNextNode(guard, 25)
+        }
+        if(guard.Stat[ST_NPC_ROLE] == ROLE_NCR_GUARD_PRISON_PATROL13)
+        {
+            _GetNextNode(guard, 26)
+        }
+        // NCR PRISON GUARDS END
 
-    if(IsPatrolling(guard))
-    {
-        AddWalkPlane(guard, 0, node.GetX(), node.GetY(), node.GetDir(), false, 0);
-        AddWaitPlan(guard, node.GetWait());
+        if(IsPatrolling(guard))
+        {
+            AddWalkPlane(guard, 0, node.GetX(), node.GetY(), node.GetDir(), false, 0);
+            AddWaitPlan(guard, node.GetWait());
+        }
+    } else {
+        DLog("NCR prison guard patrol fail - node is null!");
     }
 }
 
@@ -194,7 +198,7 @@ void _OnShowCritter(Critter& guard, Critter& player)
 // =============================================
 void _OnShowCritter1Prison(Critter& guard, Critter& target)
 {
-    if(guard.Cond == COND_DEAD || guard.Timeout[TO_BATTLE] > 0)
+    if(guard.Cond == CRITTER_CONDITION_DEAD || guard.Timeout[TO_BATTLE] > 0)
         return;
 
     if(GetGroupIndex(target) != FACTION_NCR || GetGroupIndex(target) != FACTION_NCR_RANGERS)
@@ -230,7 +234,7 @@ void _OnShowCritter1Prison(Critter& guard, Critter& target)
 
 void _OnHideCritter1Prison(Critter& guard, Critter& target)
 {
-    if(guard.Cond == COND_DEAD || guard.Timeout[TO_BATTLE] > 0)
+    if(guard.Cond == CRITTER_CONDITION_DEAD || guard.Timeout[TO_BATTLE] > 0)
         return;
 
     if(_IsTrueNpc(target) || _GroupIndex(guard) == _GroupIndex(target))
