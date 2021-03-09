@@ -89,19 +89,24 @@ void _Idle(Critter& guard)
 {
     GuardOnIdle(guard);
 
-    if(guard.Stat[ST_NPC_ROLE] == ROLE_VC_GUARD_PATROL1)
-    {
-        _GetNextNode(guard, 11)         // Route 11 as defined in patrolroutes.fos
-    }
-    else if(guard.Stat[ST_NPC_ROLE] == ROLE_VC_GUARD_PATROL2)
-    {
-        _GetNextNode(guard, 12)         // Route 12 as defined in patrolroutes.fos
-    }
+    if (valid(node)) {
 
-    if(IsPatrolling(guard))
-    {
-        AddWalkPlane(guard, 0, node.GetX(), node.GetY(), node.GetDir(), false, 0);
-        AddWaitPlan(guard, node.GetWait());
+        if(guard.Stat[ST_NPC_ROLE] == ROLE_VC_GUARD_PATROL1)
+        {
+            _GetNextNode(guard, 11)         // Route 11 as defined in patrolroutes.fos
+        }
+        else if(guard.Stat[ST_NPC_ROLE] == ROLE_VC_GUARD_PATROL2)
+        {
+            _GetNextNode(guard, 12)         // Route 12 as defined in patrolroutes.fos
+        }
+
+        if(IsPatrolling(guard))
+        {
+            AddWalkPlane(guard, 0, node.GetX(), node.GetY(), node.GetDir(), false, 0);
+            AddWaitPlan(guard, node.GetWait());
+        }
+    } else {
+        DLog("NCR guard patrol fail - node is null!");
     }
 }
 

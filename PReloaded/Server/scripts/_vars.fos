@@ -14,6 +14,7 @@
 
 #define GVAR_car_id                             (1)
 #define GVAR_is_first_time                      (2)
+#define LVAR_q_bos_injured                      (10)
 #define LVAR_bos_trainer                        (13)
 #define LVAR_faction_bos_home                   (14)
 #define UVAR_guard_illegal_flag                 (15)
@@ -141,10 +142,19 @@
 #define LVAR_q_la_waterpump                     (7042)
 #define LVAR_free_slave                         (7053)
 #define LVAR_q_glow_holodisk                    (7055)
+#define LVAR_se_bosbattleground                 (7056)
+#define LVAR_se_boscrashedhummer                (7057)
 #define LVAR_q_iguana_pete_message              (7070)
 #define LVAR_q_iguana_pete_ban                  (7071)
+#define LVAR_q_bos_initiatequest_start          (7074)
 #define LVAR_faction_farmer                     (7085)
+#define LVAR_q_bos_initiatequest_start_key      (7090)
+#define LVAR_q_bosbunker_locid                  (7100)
 #define LVAR_hub_job_waterboy                   (7109)
+#define LVAR_q_la_gunrunners_caravan            (7112)
+#define LVAR_q_la_gunrunners_caravan_locid      (7113)
+#define LVAR_q_la_gunrunners_team               (7114)
+#define LVAR_q_la_gunrunners_box                (7115)
 #define LVAR_ncr_gold_exchange                  (7119)
 #define LVAR_q_hub_watertaxes                   (7120)
 #define LVAR_q_jt_power_house                   (7122)
@@ -154,6 +164,8 @@
 #define LVAR_q_jt_generators_flags              (7126)
 #define LVAR_q_jt_power_house_handy_special     (7127)
 #define LVAR_q_hub_gunrunner_supplies           (7128)
+#define LVAR_q_la_gunrunners_facility_access    (7136)
+#define LVAR_q_la_gunrunners_facility_inside    (7137)
 #define LVAR_q_ncr_westin_wpump                 (7138)
 #define LVAR_q_jt_sneakeater                    (7139)
 #define LVAR_q_jt_sneakeater_locid              (7140)
@@ -268,6 +280,11 @@
 **********
    1 = game was never initialized before (after wipe)
    0 = it was
+**********
+
+   $	10	1	q_bos_injured	0	0	6	1
+**********
+   Var for se_bos_injured quest.
 **********
 
    $	13	1	bos_trainer	0	0	3	0
@@ -951,12 +968,52 @@ $ 1800 1 q_jt_talked 0 0 3 1
 
 **********
 
+   $	7074	1	q_bos_initiatequest_start	0	0	30	1
+**********
+
+**********
+
    $	7085	1	faction_farmer	0	0	0	4
 **********
 
 **********
 
+   $	7090	1	q_bos_initiatequest_start_key	0	0	0	4
+**********
+
+**********
+
    $	7109	1	hub_job_waterboy	0	0	12	0
+**********
+
+**********
+
+   $	7112	1	q_la_gunrunners_caravan	0	0	8	1
+**********
+   quest variable for caravan robbery.
+
+   0 == Inactive
+   1 == Active
+   2 == Squad together
+   3 == Box given to Gun Runners
+   4 == Box given to BoS
+   5 == Box given to Khans
+   6 == Mutants left their base, box can't be obtained now.
+   7 == The box is lost.
+   8 == If box given to Gun Runners, reward at Ralph chosen.
+**********
+
+   $	7113	1	q_la_gunrunners_caravan_locid	0	0	0	4
+**********
+
+**********
+
+   $	7114	1	q_la_gunrunners_team	0	0	2	0
+**********
+   used for team dialog check. nothing fancy.
+**********
+
+   $	7115	1	q_la_gunrunners_box	0	0	1	0
 **********
 
 **********
@@ -1038,6 +1095,20 @@ $ 1800 1 q_jt_talked 0 0 3 1
    0 == no parts
    1 == search parts
    2 == found parts
+**********
+
+   $	7136	1	q_la_gunrunners_facility_access	0	0	2	0
+**********
+   0 == not allowed to enter gun runner facility
+   1 == allowed
+   2 == second talk
+**********
+
+   $	7137	1	q_la_gunrunners_facility_inside	0	0	1	0
+**********
+   0 == outside
+   1 == inside
+
 **********
 
    $	7139	1	q_jt_sneakeater	0	0	4	1
