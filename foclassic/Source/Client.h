@@ -798,14 +798,15 @@ public:
 /* Main iface                                                           */
 /************************************************************************/
     AnyFrames* IntMainPic, * IntPWAddMess, * IntPBAddMessDn, * IntPBMessFilter1Dn, * IntPBMessFilter2Dn, * IntPBMessFilter3Dn,
-             * IntPBScrUpDn, * IntPBScrDnDn, * IntPBSlotsDn,
+             * IntPBScrUpDn, * IntPBScrDnDn, * IntPBSlotsDn, *IntMessPanelPic, *IntActionPanelPic,
              * IntPBInvDn, * IntPBMenuDn, * IntPBSkillDn, * IntPBMapDn, * IntPBChaDn, * IntPBPipDn, * IntPBFixDn,
              * IntDiodeG, * IntDiodeY, * IntDiodeR, * IntBreakTimePic, * IntWApCostPicNone;
 
     int        IntX, IntY;
+	bool		legacyMessageBox;	//	used for backward compatibility with interfaces, if false, messbox should be moveable, resizeable, separated from the actionpoints/weapon/menu interface on right side
     bool       IntVisible, IntAddMess;
     Rect       IntWMain, IntWAddMess, IntBAddMess, IntBMessFilter1, IntBMessFilter2, IntBMessFilter3;
-    Rect       IntBItem, IntWApCost;
+    Rect       IntWMessPanel, IntWActionPanel, IntBItem, IntWApCost;
     Rect       IntBChangeSlot, IntBInv, IntBMenu, IntBSkill, IntBMap, IntBChar, IntBPip, IntBFix;
     Rect       IntWMess, IntWMessLarge;
 	Rect	   IntWMessTabs, IntWMessTabAll, IntWMessTabLocal, IntWMessTabRadio, IntWMessTabSocial, IntWMessTabCombat;
@@ -1773,6 +1774,7 @@ public:
     int               MessBoxScroll, MessBoxMaxScroll, MessBoxScrollLines;
     IntVec            MessBoxFilters;
 	bool			  showTimestamps;
+	int			IntMessBoxX, IntMessBoxY, IntMessBoxMoveX, IntMessBoxMoveY;
 
     void MessBoxGenerate();
     void AddMess( int mess_type, const char* msg );
@@ -1782,6 +1784,13 @@ public:
     Rect MessBoxCurRectScroll();
     bool MessBoxLMouseDown();
 	void MessBoxTabLMouseDown();
+	void MessBoxMouseMove();
+
+/************************************************************************/
+/* Action Panel                                                         */
+/************************************************************************/
+
+	int			IntActionPanelX, IntActionPanelY, IntActionPanelMoveX, IntActionPanelMoveY;
 
 /************************************************************************/
 /*                                                                      */

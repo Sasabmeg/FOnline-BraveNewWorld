@@ -7400,11 +7400,21 @@ bool FOClient::IsCurInRectNoTransp( uint spr_id, Rect& rect, int ax, int ay )
 
 bool FOClient::IsCurInInterface()
 {
-    if( IntVisible && IsCurInRectNoTransp( IntMainPic->GetCurSprId(), IntWMain, 0, 0 ) )
-        return true;
-    if( IntVisible && IntAddMess && IsCurInRectNoTransp( IntPWAddMess->GetCurSprId(), IntWAddMess, 0, 0 ) )
-        return true;
-    // if( ConsoleActive && IsCurInRectNoTransp( ConsolePic, Main, 0, 0 ) ) // Todo: need check console?
+	if (legacyMessageBox) {
+		if (IntVisible && IsCurInRectNoTransp(IntMainPic->GetCurSprId(), IntWMain, 0, 0))
+			return true;
+		if (IntVisible && IntAddMess && IsCurInRectNoTransp(IntPWAddMess->GetCurSprId(), IntWAddMess, 0, 0))
+			return true;
+		// if( ConsoleActive && IsCurInRectNoTransp( ConsolePic, Main, 0, 0 ) ) // Todo: need check console?
+	}
+	else {
+		if (IntVisible && IsCurInRectNoTransp(IntMessPanelPic->GetCurSprId(), IntWMessPanel, 0, 0))
+			return true;
+		if (IntVisible && IsCurInRectNoTransp(IntActionPanelPic->GetCurSprId(), IntWActionPanel, 0, 0))
+			return true;
+		if (IntVisible && IntAddMess && IsCurInRectNoTransp(IntPWAddMess->GetCurSprId(), IntWAddMess, 0, 0))
+			return true;
+	}
     return false;
 }
 

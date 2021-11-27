@@ -240,12 +240,15 @@ int FOClient::InitIface()
     // Interface
     IfaceLoadRect( IntWMain, "IntMain" );
     IntX = IfaceIni.GetInt( "IntX", -1 );
-    if( IntX == -1 )
-        IntX = (MODE_WIDTH - IntWMain.W() ) / 2;
-    else if( IntX == -2 )
-        IntX = MODE_WIDTH - IntWMain.W();
-    else if( IntX == -3 )
-        IntX = 0;
+	legacyMessageBox = true;
+	if (IntX == -1)
+		IntX = (MODE_WIDTH - IntWMain.W()) / 2;
+	else if (IntX == -2)
+		IntX = MODE_WIDTH - IntWMain.W();
+	else if (IntX == -3) {
+		legacyMessageBox = false;
+		IntX = 0;
+	}
     else
     {
         if( IntX < 0 )
@@ -253,61 +256,134 @@ int FOClient::InitIface()
         if( IntX + IntWMain.W() > MODE_WIDTH )
             IntX = 0;
     }
-    IntY = MODE_HEIGHT - IntWMain.B;
-    IfaceLoadRect2( IntWMain, "IntMain", IntX, IntY );
-    IfaceLoadRect2( IntWAddMess, "IntAddMessWindow", IntX, IntY );
-    IfaceLoadRect2( IntBAddMess, "IntAddMess", IntX, IntY );
-    IfaceLoadRect2( IntBMessFilter1, "IntMessFilter1", IntX, IntY );
-    IfaceLoadRect2( IntBMessFilter2, "IntMessFilter2", IntX, IntY );
-    IfaceLoadRect2( IntBMessFilter3, "IntMessFilter3", IntX, IntY );
-    IfaceLoadRect2( IntBItem, "IntItem", IntX, IntY );
-    IfaceLoadRect2( IntBChangeSlot, "IntChangeSlot", IntX, IntY );
-    IfaceLoadRect2( IntBInv, "IntInv", IntX, IntY );
-    IfaceLoadRect2( IntBMenu, "IntMenu", IntX, IntY );
-    IfaceLoadRect2( IntBSkill, "IntSkill", IntX, IntY );
-    IfaceLoadRect2( IntBMap, "IntMap", IntX, IntY );
-    IfaceLoadRect2( IntBChar, "IntCha", IntX, IntY );
-    IfaceLoadRect2( IntBPip, "IntPip", IntX, IntY );
-    IfaceLoadRect2( IntBFix, "IntFix", IntX, IntY );
-    IfaceLoadRect2( IntWMess, "IntMess", IntX, IntY );
-    IfaceLoadRect2( IntWMessLarge, "IntMessLarge", IntX, IntY );
-    IfaceLoadRect2( IntHP, "IntHp", IntX, IntY );
-    IfaceLoadRect2( IntAC, "IntAc", IntX, IntY );
-    IfaceLoadRect2( IntAP, "IntAp", IntX, IntY );
-    IfaceLoadRect2( IntBreakTime, "IntBreakTime", IntX, IntY );
-    IntAPstepX = IfaceIni.GetInt( "IntApStepX", 9 );
-    IntAPstepY = IfaceIni.GetInt( "IntApStepY", 0 );
-    IntAPMax = IfaceIni.GetInt( "IntApMax", 10 );
-    IfaceLoadRect2( IntWCombat, "IntCombat", IntX, IntY );
-    IfaceLoadRect2( IntBCombatTurn, "IntCombatTurn", IntX, IntY );
-    IfaceLoadRect2( IntBCombatEnd, "IntCombatEnd", IntX, IntY );
-    IfaceLoadRect2( IntWApCost, "IntApCost", IntX, IntY );
-    IfaceLoadRect2( IntWAmmoCount, "IntAmmoCount", IntX, IntY );
-    IfaceLoadRect2( IntWWearProcent, "IntWearProcent", IntX, IntY );
-    IntWAmmoCountStr = Rect( IntBItem, 7, 8 );
-    IntWWearProcentStr = Rect( IntBItem, 7, 19 );
-    IfaceLoadRect2( IntWAmmoCountStr, "IntAmmoCountText", IntX, IntY );
-    IfaceLoadRect2( IntWWearProcentStr, "IntWearProcentText", IntX, IntY );
-    IntVisible = true;
-    IntAddMess = false;
-    MessBoxFilters.clear();
-    MessBoxScroll = 0;
-    MessBoxMaxScroll = 0;
-    MessBoxScrollLines = 0;
-    IntBItemOffsX = IfaceIni.GetInt( "IntItemOffsX", 0 );
-    IntBItemOffsY = IfaceIni.GetInt( "IntItemOffsY", -2 );
-    IntAimX = IfaceIni.GetInt( "IntAimX", 0 );
-    IntAimX += IntX;
-    IntAimY = IfaceIni.GetInt( "IntAimY", 0 );
-    IntAimY += IntY;
-    IntUseX = IfaceIni.GetInt( "IntUseX", 0 );
-    IntUseX += IntX;
-    IntUseY = IfaceIni.GetInt( "IntUseY", 0 );
-    IntUseY += IntY;
-    IntAmmoPoints.clear();
-    IntWearPoints.clear();
-    IntAmmoTick = 0;
-    IntWearTick = 0;
+
+	if (!legacyMessageBox) {
+		IfaceLoadRect(IntWMessPanel, "IntMessPanel");
+		IntMessBoxX = 0;
+		IntMessBoxY = MODE_HEIGHT - IntWMessPanel.H();
+		//	message box
+		IfaceLoadRect2(IntWMain, "IntMain", IntMessBoxX, IntMessBoxY);
+		IfaceLoadRect2(IntWMessPanel, "IntMessPanel", IntMessBoxX, IntMessBoxY);
+		IfaceLoadRect2(IntWAddMess, "IntAddMessWindow", IntMessBoxX, IntMessBoxY);
+		IfaceLoadRect2(IntBAddMess, "IntAddMess", IntMessBoxX, IntMessBoxY);
+		IfaceLoadRect2(IntBMessFilter1, "IntMessFilter1", IntMessBoxX, IntMessBoxY);
+		IfaceLoadRect2(IntBMessFilter2, "IntMessFilter2", IntMessBoxX, IntMessBoxY);
+		IfaceLoadRect2(IntBMessFilter3, "IntMessFilter3", IntMessBoxX, IntMessBoxY);
+		IfaceLoadRect2(IntWMess, "IntMess", IntMessBoxX, IntMessBoxY);
+		IfaceLoadRect2(IntWMessLarge, "IntMessLarge", IntMessBoxX, IntMessBoxY);
+		//	action panel
+		IfaceLoadRect(IntWActionPanel, "IntActionPanel");
+		IntActionPanelX = MODE_WIDTH - IntWActionPanel.W();
+		IntActionPanelY = MODE_HEIGHT - IntWActionPanel.H();
+		IfaceLoadRect2(IntWActionPanel, "IntActionPanel", IntActionPanelX, IntActionPanelY);
+		IfaceLoadRect2(IntBItem, "IntItem", IntActionPanelX, IntActionPanelY);
+		IfaceLoadRect2(IntBChangeSlot, "IntChangeSlot", IntActionPanelX, IntActionPanelY);
+		IfaceLoadRect2(IntBInv, "IntInv", IntActionPanelX, IntActionPanelY);
+		IfaceLoadRect2(IntBMenu, "IntMenu", IntActionPanelX, IntActionPanelY);
+		IfaceLoadRect2(IntBSkill, "IntSkill", IntActionPanelX, IntActionPanelY);
+		IfaceLoadRect2(IntBMap, "IntMap", IntActionPanelX, IntActionPanelY);
+		IfaceLoadRect2(IntBChar, "IntCha", IntActionPanelX, IntActionPanelY);
+		IfaceLoadRect2(IntBPip, "IntPip", IntActionPanelX, IntActionPanelY);
+		IfaceLoadRect2(IntBFix, "IntFix", IntActionPanelX, IntActionPanelY);
+		IfaceLoadRect2(IntHP, "IntHp", IntActionPanelX, IntActionPanelY);
+		IfaceLoadRect2(IntAC, "IntAc", IntActionPanelX, IntActionPanelY);
+		IfaceLoadRect2(IntAP, "IntAp", IntActionPanelX, IntActionPanelY);
+		IfaceLoadRect2(IntBreakTime, "IntBreakTime", IntActionPanelX, IntActionPanelY);
+		IntAPstepX = IfaceIni.GetInt("IntApStepX", 9);
+		IntAPstepY = IfaceIni.GetInt("IntApStepY", 0);
+		IntAPMax = IfaceIni.GetInt("IntApMax", 10);
+		IfaceLoadRect2(IntWCombat, "IntCombat", IntActionPanelX, IntActionPanelY);
+		IfaceLoadRect2(IntBCombatTurn, "IntCombatTurn", IntActionPanelX, IntActionPanelY);
+		IfaceLoadRect2(IntBCombatEnd, "IntCombatEnd", IntActionPanelX, IntActionPanelY);
+		IfaceLoadRect2(IntWApCost, "IntApCost", IntActionPanelX, IntActionPanelY);
+		IfaceLoadRect2(IntWAmmoCount, "IntAmmoCount", IntActionPanelX, IntActionPanelY);
+		IfaceLoadRect2(IntWWearProcent, "IntWearProcent", IntActionPanelX, IntActionPanelY);
+		IntWAmmoCountStr = Rect(IntBItem, 7, 8);
+		IntWWearProcentStr = Rect(IntBItem, 7, 19);
+		IfaceLoadRect2(IntWAmmoCountStr, "IntAmmoCountText", IntActionPanelX, IntActionPanelY);
+		IfaceLoadRect2(IntWWearProcentStr, "IntWearProcentText", IntActionPanelX, IntActionPanelY);
+		IntVisible = true;
+		IntAddMess = false;
+		MessBoxFilters.clear();
+		MessBoxScroll = 0;
+		MessBoxMaxScroll = 0;
+		MessBoxScrollLines = 0;
+		IntBItemOffsX = IfaceIni.GetInt("IntItemOffsX", 0);
+		IntBItemOffsY = IfaceIni.GetInt("IntItemOffsY", -2);
+		IntAimX = IfaceIni.GetInt("IntAimX", 0);
+		IntAimX += IntActionPanelX;
+		IntAimY = IfaceIni.GetInt("IntAimY", 0);
+		IntAimY += IntActionPanelY;
+		IntUseX = IfaceIni.GetInt("IntUseX", 0);
+		IntUseX += IntActionPanelX;
+		IntUseY = IfaceIni.GetInt("IntUseY", 0);
+		IntUseY += IntActionPanelY;
+		IntAmmoPoints.clear();
+		IntWearPoints.clear();
+		IntAmmoTick = 0;
+		IntWearTick = 0;
+	}
+	else {
+		//	message box
+		IntY = MODE_HEIGHT - IntWMain.B;
+		IfaceLoadRect2(IntWMain, "IntMain", IntX, IntY);
+		IfaceLoadRect2(IntWAddMess, "IntAddMessWindow", IntX, IntY);
+		IfaceLoadRect2(IntBAddMess, "IntAddMess", IntX, IntY);
+		IfaceLoadRect2(IntBMessFilter1, "IntMessFilter1", IntX, IntY);
+		IfaceLoadRect2(IntBMessFilter2, "IntMessFilter2", IntX, IntY);
+		IfaceLoadRect2(IntBMessFilter3, "IntMessFilter3", IntX, IntY);
+		IfaceLoadRect2(IntWMess, "IntMess", IntX, IntY);
+		IfaceLoadRect2(IntWMessLarge, "IntMessLarge", IntX, IntY);
+		//	action panel
+		IfaceLoadRect2(IntBItem, "IntItem", IntX, IntY);
+		IfaceLoadRect2(IntBChangeSlot, "IntChangeSlot", IntX, IntY);
+		IfaceLoadRect2(IntBInv, "IntInv", IntX, IntY);
+		IfaceLoadRect2(IntBMenu, "IntMenu", IntX, IntY);
+		IfaceLoadRect2(IntBSkill, "IntSkill", IntX, IntY);
+		IfaceLoadRect2(IntBMap, "IntMap", IntX, IntY);
+		IfaceLoadRect2(IntBChar, "IntCha", IntX, IntY);
+		IfaceLoadRect2(IntBPip, "IntPip", IntX, IntY);
+		IfaceLoadRect2(IntBFix, "IntFix", IntX, IntY);
+		IfaceLoadRect2(IntHP, "IntHp", IntX, IntY);
+		IfaceLoadRect2(IntAC, "IntAc", IntX, IntY);
+		IfaceLoadRect2(IntAP, "IntAp", IntX, IntY);
+		IfaceLoadRect2(IntBreakTime, "IntBreakTime", IntX, IntY);
+		IntAPstepX = IfaceIni.GetInt("IntApStepX", 9);
+		IntAPstepY = IfaceIni.GetInt("IntApStepY", 0);
+		IntAPMax = IfaceIni.GetInt("IntApMax", 10);
+		IfaceLoadRect2(IntWCombat, "IntCombat", IntX, IntY);
+		IfaceLoadRect2(IntBCombatTurn, "IntCombatTurn", IntX, IntY);
+		IfaceLoadRect2(IntBCombatEnd, "IntCombatEnd", IntX, IntY);
+		IfaceLoadRect2(IntWApCost, "IntApCost", IntX, IntY);
+		IfaceLoadRect2(IntWAmmoCount, "IntAmmoCount", IntX, IntY);
+		IfaceLoadRect2(IntWWearProcent, "IntWearProcent", IntX, IntY);
+		IntWAmmoCountStr = Rect(IntBItem, 7, 8);
+		IntWWearProcentStr = Rect(IntBItem, 7, 19);
+		IfaceLoadRect2(IntWAmmoCountStr, "IntAmmoCountText", IntX, IntY);
+		IfaceLoadRect2(IntWWearProcentStr, "IntWearProcentText", IntX, IntY);
+		IntVisible = true;
+		IntAddMess = false;
+		MessBoxFilters.clear();
+		MessBoxScroll = 0;
+		MessBoxMaxScroll = 0;
+		MessBoxScrollLines = 0;
+		IntBItemOffsX = IfaceIni.GetInt("IntItemOffsX", 0);
+		IntBItemOffsY = IfaceIni.GetInt("IntItemOffsY", -2);
+		IntAimX = IfaceIni.GetInt("IntAimX", 0);
+		IntAimX += IntX;
+		IntAimY = IfaceIni.GetInt("IntAimY", 0);
+		IntAimY += IntY;
+		IntUseX = IfaceIni.GetInt("IntUseX", 0);
+		IntUseX += IntX;
+		IntUseY = IfaceIni.GetInt("IntUseY", 0);
+		IntUseY += IntY;
+		IntAmmoPoints.clear();
+		IntWearPoints.clear();
+		IntAmmoTick = 0;
+		IntWearTick = 0;
+	}
+
+
 
     // Console
     ConsolePicX = IfaceIni.GetInt( "ConsoleMainPicX", 0 );
@@ -1004,6 +1080,8 @@ int FOClient::InitIface()
     IfaceLoadSpr( IntBCombatTurnPicDown, "IntCombatTurnPicDn" );
     IfaceLoadSpr( IntBCombatEndPicDown, "IntCombatEndPicDn" );
     IfaceLoadSpr( IntMainPic, "IntMainPic" );
+	IfaceLoadSpr(IntMessPanelPic, "IntMessPanelPic");
+	IfaceLoadSpr(IntActionPanelPic, "IntActionPanelPic");
 
     // Console
     IfaceLoadSpr( ConsolePic, "ConsoleMainPic" );
@@ -2084,9 +2162,9 @@ void FOClient::ConsoleDraw()
     if( ConsoleActive && is_game_screen )
     {
         if( IsMainScreen( CLIENT_MAIN_SCREEN_GAME ) )
-            SprMngr.DrawSprite( ConsolePic, IntX + ConsolePicX, (IntVisible ? (IntAddMess ? IntWAddMess[1] : IntY) : MODE_HEIGHT) + ConsolePicY );
+            SprMngr.DrawSprite( ConsolePic, IntMessBoxX + ConsolePicX, (IntVisible ? (IntAddMess ? IntWAddMess[1] : IntY) : MODE_HEIGHT) + ConsolePicY );
 
-        Rect rect( IntX + ConsoleTextX, (IntVisible ? (IntAddMess ? IntWAddMess[1] : IntY) : MODE_HEIGHT) + ConsoleTextY, MODE_WIDTH, MODE_HEIGHT );
+        Rect rect(IntMessBoxX + ConsoleTextX, (IntVisible ? (IntAddMess ? IntWAddMess[1] : IntY) : MODE_HEIGHT) + ConsoleTextY, MODE_WIDTH, MODE_HEIGHT );
         if( IsMainScreen( CLIENT_MAIN_SCREEN_WORLDMAP ) )
             rect = WorldmapWPanel;
 
@@ -2783,9 +2861,14 @@ void FOClient::GameRMouseDown()
 	}
 	else {
 		IfaceHold = IFACE_NONE;
+		if (!IsCurInInterface()) {
+			IfaceHold = IFACE_GAME_MNEXT;
+		}
+		/*
 		if (!(IntVisible && ((IsCurInRect(IntWMain) && SprMngr.IsPixNoTransp(IntMainPic->GetCurSprId(), GameOpt.MouseX - IntWMain[0], GameOpt.MouseY - IntWMain[1], false)) ||
 			(IntAddMess && IsCurInRect(IntWAddMess) && SprMngr.IsPixNoTransp(IntPWAddMess->GetCurSprId(), GameOpt.MouseX - IntWAddMess[0], GameOpt.MouseY - IntWAddMess[1], false)))))
 			IfaceHold = IFACE_GAME_MNEXT;
+			*/
 	}
 }
 
@@ -2862,7 +2945,11 @@ void FOClient::IntDraw()
     if( !Chosen || !IntVisible )
         return;
 
-    SprMngr.DrawSprite( IntMainPic, IntX, IntY );
+    //SprMngr.DrawSprite( IntMainPic, IntX, IntY );
+
+	SprMngr.DrawSprite(IntMessPanelPic, IntWMessPanel.L, IntWMessPanel.T);
+	SprMngr.DrawSprite(IntActionPanelPic, IntWActionPanel.L, IntWActionPanel.T);
+
     SprMngr.DrawSprite( AnimGetCurSpr( IntWCombatAnim ), IntWCombat[0], IntWCombat[1] );
 
     if( IntAddMess )
@@ -3088,8 +3175,12 @@ int FOClient::IntLMouseDown()
         IfaceHold = IFACE_INT_COMBAT_TURN;
     else if( IsCurInRect( IntBCombatEnd ) && IsTurnBased )
         IfaceHold = IFACE_INT_COMBAT_END;
-    else if( IsCurInRectNoTransp( IntMainPic->GetCurSprId(), IntWMain, 0, 0 ) )
+	else if (IsCurInInterface())
+		IfaceHold = IFACE_INT_MAIN;
+	/*
+	else if( IsCurInRectNoTransp( IntMainPic->GetCurSprId(), IntWMain, 0, 0 ) )
         IfaceHold = IFACE_INT_MAIN;
+		*/
     else if( IntAddMess && IsCurInRectNoTransp( IntPWAddMess->GetCurSprId(), IntWAddMess, 0, 0 ) )
         IfaceHold = IFACE_INT_MAIN;
 
@@ -3139,6 +3230,7 @@ void FOClient::IntLMouseUp()
     }
     else if( IfaceHold == IFACE_INT_PIP && IsCurInRect( IntBPip ) )
     {
+		RecalcPipQuestTabRectangles();
         ShowScreen( CLIENT_SCREEN_PIPBOY );
     }
     else if( IfaceHold == IFACE_INT_FIX && IsCurInRect( IntBFix ) )
@@ -3645,10 +3737,15 @@ void FOClient::LMenuCollect()
             {
                 if( IntVisible )
                 {
+					if (IsCurInInterface()) {
+						break;
+					}
+					/*
                     if( IsCurInRectNoTransp( IntMainPic->GetCurSprId(), IntWMain, 0, 0 ) )
                         break;
                     if( IntAddMess && IsCurInRectNoTransp( IntPWAddMess->GetCurSprId(), IntWAddMess, 0, 0 ) )
                         break;
+						*/
                 }
 
                 CritterCl* cr;

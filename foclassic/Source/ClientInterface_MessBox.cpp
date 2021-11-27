@@ -276,6 +276,13 @@ void FOClient::MessBoxTabLMouseDown() {
 
 bool FOClient::MessBoxLMouseDown()
 {
+	//	used when moving message box
+	if (IsCurInRect(IntWMessPanel, IntMessBoxX, IntMessBoxY))
+	{
+		IntMessBoxMoveX = GameOpt.MouseX - IntMessBoxX;
+		IntMessBoxMoveY = GameOpt.MouseY - IntMessBoxY;
+	}
+
 	Rect rmb = MessBoxCurRectScroll();
 	if (!rmb.IsZero() && IsCurInRect(rmb))
 	{
@@ -298,4 +305,31 @@ bool FOClient::MessBoxLMouseDown()
 		return true;
 	}
 	return false;
+}
+
+
+
+void FOClient::MessBoxMouseMove()
+{
+	if (IfaceHold == IFACE_NONE)
+	{
+		PipX = GameOpt.MouseX - PipVectX;
+		PipY = GameOpt.MouseY - PipVectY;
+
+		if (PipX < 0)
+			PipX = 0;
+		if (PipX + PipWMain[2] > MODE_WIDTH)
+			PipX = MODE_WIDTH - PipWMain[2];
+		if (PipY < 0)
+			PipY = 0;
+		if (PipY + PipWMain[3] > MODE_HEIGHT)
+			PipY = MODE_HEIGHT - PipWMain[3];
+		AutomapScrX += (float)PipX;
+		AutomapScrY += (float)PipY;
+	}
+	else if (IfaceHold == IFACE_PIP_AUTOMAPS_SCR)
+	{
+		AutomapScrX = (float)(GameOpt.MouseX - PipVectX);
+		AutomapScrY = (float)(GameOpt.MouseY - PipVectY);
+	}
 }
