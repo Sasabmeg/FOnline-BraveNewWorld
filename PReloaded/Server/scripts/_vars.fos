@@ -137,13 +137,37 @@
 #define LVAR_q_bunker_base2                     (7007)
 #define LVAR_q_hub_sadwife                      (7008)
 #define LVAR_q_hub_wasteland_band               (7009)
+#define LVAR_boneyard_train_trader_story        (7010)
+#define LVAR_train_coc_mad                      (7016)
+#define LVAR_q_coc_train                        (7017)
+#define LVAR_q_vc_train_doc                     (7018)
+#define LVAR_q_la_train_caesar                  (7019)
+#define LVAR_q_la_train1                        (7022)
+#define LVAR_q_la_train2                        (7023)
+#define LVAR_q_la_train3                        (7024)
+#define LVAR_q_la_train4                        (7025)
+#define LVAR_q_la_train_camp_locid              (7026)
+#define LVAR_q_vc_train1                        (7027)
+#define LVAR_q_vc_train2                        (7028)
+#define LVAR_q_vc_train3                        (7029)
+#define LVAR_q_vc_train4                        (7030)
 #define LVAR_q_spawn_hub                        (7032)
 #define LVAR_q_spawn_hub_water                  (7034)
+#define LVAR_q_la_train_count                   (7041)
 #define LVAR_q_la_waterpump                     (7042)
+#define LVAR_q_la_dogs                          (7043)
+#define LVAR_q_la_train_caesar2                 (7044)
+#define LVAR_q_la_train_caesar_ambush           (7045)
+#define LVAR_q_la_howitzer                      (7047)
+#define LVAR_q_la_train_caesar_leg              (7048)
+#define LVAR_q_la_dogs_locid                    (7049)
 #define LVAR_free_slave                         (7053)
 #define LVAR_q_glow_holodisk                    (7055)
 #define LVAR_se_bosbattleground                 (7056)
 #define LVAR_se_boscrashedhummer                (7057)
+#define LVAR_q_la_ady_lorraine_pistol           (7060)
+#define LVAR_q_la_ady_lorraine_fornication      (7061)
+#define LVAR_q_la_ady_lorraine_science          (7062)
 #define LVAR_q_iguana_pete_message              (7070)
 #define LVAR_q_iguana_pete_ban                  (7071)
 #define LVAR_q_bos_initiatequest_start          (7074)
@@ -157,6 +181,7 @@
 #define LVAR_q_la_gunrunners_box                (7115)
 #define LVAR_ncr_gold_exchange                  (7119)
 #define LVAR_q_hub_watertaxes                   (7120)
+#define LVAR_q_la_library_book                  (7121)
 #define LVAR_q_jt_power_house                   (7122)
 #define LVAR_q_jt_power_house_mp                (7123)
 #define LVAR_q_jt_power_house_handy             (7124)
@@ -170,8 +195,11 @@
 #define LVAR_q_jt_sneakeater                    (7139)
 #define LVAR_q_jt_sneakeater_locid              (7140)
 #define LVAR_q_jt_sneakeater_perk               (7141)
+#define LVAR_q_la_ady_lorraine_magazine         (7145)
 #define LVAR_q_la_gunr_courier                  (7147)
 #define LVAR_q_la_gunr_courier_reward           (7148)
+#define LVAR_perk_junk_merchant                 (7149)
+#define LVAR_q_la_junk_merchant                 (7150)
 #define LVAR_q_jt_power_house_attempts          (7200)
 #define LVAR_q_nr_corsican_tattoo               (7301)
 #define LVAR_q_first_tent                       (7322)
@@ -943,6 +971,76 @@ $ 1800 1 q_jt_talked 0 0 3 1
 
 **********
 
+   $	7010	1	boneyard_train_trader_story	0	0	0	0
+**********
+
+**********
+
+   $	7016	1	train_coc_mad	0	0	5	0
+**********
+
+**********
+
+   $	7017	1	q_coc_train	0	0	5	1
+**********
+
+**********
+
+   $	7018	1	q_vc_train_doc	0	0	0	5
+**********
+   Quest variable for train introducing quest 2.
+**********
+
+   $	7019	1	q_la_train_caesar	0	0	0	5
+**********
+   The quest variable for Caesar's Legion "find and kill"-quest. Train introducing quest 1.
+**********
+
+   $	7022	1	q_la_train1	0	1	5	1
+**********
+   This variable is for checking the NPC conversation at the Frisco train station.
+**********
+
+   $	7023	1	q_la_train2	0	1	5	1
+**********
+   This variable is for checking the NPC conversation at the LA train station.
+**********
+
+   $	7024	1	q_la_train3	0	1	5	1
+**********
+   This variable is for checking the NPC conversation at the NCR train station.
+**********
+
+   $	7025	1	q_la_train4	0	2	5	1
+**********
+   This variable is for checking the NPC conversation at the Vault City train station.
+**********
+
+   $	7026	1	q_la_train_camp_locid	0	0	0	4
+**********
+
+**********
+
+   $	7027	1	q_vc_train1	0	0	5	1
+**********
+   This variable is for checking the NPC conversation at the Frisco train station.
+**********
+
+   $	7028	1	q_vc_train2	0	0	5	1
+**********
+   This variable is for checking the NPC conversation at the LA train station.
+**********
+
+   $	7029	1	q_vc_train3	0	0	5	1
+**********
+   This variable is for checking the NPC conversation at the NCR train station.
+**********
+
+   $	7030	1	q_vc_train4	0	0	5	1
+**********
+   This variable is for checking the NPC conversation at the Vault City train station.
+**********
+
    $	7032	1	q_spawn_hub	0	0	5	1
 **********
    Quest variable for spawn quest.
@@ -953,9 +1051,64 @@ $ 1800 1 q_jt_talked 0 0 3 1
    Quest variable for spawn quest.
 **********
 
+   $	7041	1	q_la_train_count	0	0	0	4
+**********
+
+**********
+
+   $	7042	1	q_la_waterpump	0	0	5	1
+**********
+   This variable is for "fix water pump!" in boneyard.
+**********
+
+   $	7043	1	q_la_dogs	0	0	0	5
+**********
+   This variable is for "Dogs of LA" quest.
+**********
+
+   $	7044	1	q_la_train_caesar2	0	0	2	0
+**********
+   Will be set to "1" after train introducing quest #1 is done. This var is just for additional asking stuff.
+**********
+
+   $	7045	1	q_la_train_caesar_ambush	0	0	3	0
+**********
+   If "1", ambush will be triggered.
+**********
+
+   $	7047	1	q_la_howitzer	0	0	5	1
+**********
+   This variable is for "howitzer amunition" quest in boneyard / replication map 8.
+**********
+
+   $	7048	1	q_la_train_caesar_leg	0	0	1	0
+**********
+   Broken leg, yes / now...
+**********
+
+   $	7049	1	q_la_dogs_locid	0	0	0	4
+**********
+   Location id of la dogs map
+**********
+
    $	7053	1	free_slave	0	0	1	0
 **********
    Variable is set to 1, if player frees the slave.
+**********
+
+   $	7060	1	q_la_ady_lorraine_pistol	0	0	0	5
+**********
+
+**********
+
+   $	7061	1	q_la_ady_lorraine_fornication	0	0	0	5
+**********
+
+**********
+
+   $	7062	1	q_la_ady_lorraine_science	0	0	0	5
+**********
+
 **********
 
    $	7070	1	q_iguana_pete_message	0	0	0	5
@@ -1026,6 +1179,11 @@ $ 1800 1 q_jt_talked 0 0 3 1
    $	7120	1	q_hub_watertaxes	0	0	3	1
 **********
    q var for mini-quest for water merchants. waterboy in central hub pays too high taxes, try to change his contract.
+**********
+
+   $	7121	1	q_la_library_book	0	0	3	0
+**********
+   quest var for mini quest.
 **********
 
    $	7122	1	q_jt_power_house	0	0	5	1
@@ -1131,12 +1289,27 @@ $ 1800 1 q_jt_talked 0 0 3 1
    1 == active
 **********
 
+   $	7145	1	q_la_ady_lorraine_magazine	0	0	0	4
+**********
+
+**********
+
    $	7147	1	q_la_gunr_courier	0	0	9	1
 **********
 
 **********
 
    $	7148	1	q_la_gunr_courier_reward	0	0	6	0
+**********
+
+**********
+
+   $	7149	1	perk_junk_merchant	0	0	1	0
+**********
+
+**********
+
+   $	7150	1	q_la_junk_merchant	0	0	10	0
 **********
 
 **********
