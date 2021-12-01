@@ -876,6 +876,41 @@ void r_GunRunnerInsult(Critter& player, Critter@ npc)
             AttackCritter(crits[i], player);
         }
 }
+/*
+ * Used by some dialogs as quest reward, example Dog quest for Hendriks in Adytum
+*/
+void r_DogsQuestReward(Critter& player, Critter@ npc)
+{
+    switch(Random(0, 6))
+    {
+    case 0:
+        player.AddItem(PID_5MM_JHP, 50);
+        break;                                    // 12
+    case 1:
+        player.AddItem(PID_5MM_AP, 45);
+        break;                                    // 14
+    case 2:
+        player.AddItem(PID_10MM_JHP, 60);
+        break;                                    // 10
+    case 3:
+        player.AddItem(PID_10MM_AP, 50);
+        break;                                    // 12
+    case 4:
+        player.AddItem(PID_9MM_BALL, 100);
+        break;                                    // 6
+    case 5:
+        player.AddItem(PID_EXPLOSIVE_ROCKET, 1);
+        player.AddItem(PID_ROCKET_AP, 1);
+        break;
+    case 6:
+        player.AddItem(PID_SHOTGUN_SHELLS, 45);
+        break;                                            // 14
+    default:
+        break;
+    }
+    if(Random(1, 1000000) == 1)
+        player.AddItem(PID_HOWITZER_SHELL, 1);
+}
 
 void ProcessRewardTable( Critter& player, const uint[][][]& table )
 {
