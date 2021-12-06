@@ -127,6 +127,8 @@
 #define LVAR_factions_q_nav_mfc                 (4207)
 #define LVAR_hub_arena_inside                   (4212)
 #define LVAR_redding_morton_brothers            (5386)
+#define LVAR_q_ncr_buster_smokes                (6111)
+#define LVAR_q_ncr_mira_money                   (6112)
 #define LVAR_q_den_becky_table                  (6200)
 #define UVAR_q_box_unload_status                (6500)
 #define UVAR_q_box_unload_count                 (6501)
@@ -138,6 +140,11 @@
 #define LVAR_q_hub_sadwife                      (7008)
 #define LVAR_q_hub_wasteland_band               (7009)
 #define LVAR_boneyard_train_trader_story        (7010)
+#define LVAR_q_spawn_ncr                        (7011)
+#define LVAR_den_metzger_blind                  (7012)
+#define LVAR_q_ncr_rail_gang                    (7013)
+#define LVAR_q_ncr_rail_gang_locid              (7014)
+#define LVAR_q_ncr_trainstation_known           (7015)
 #define LVAR_train_coc_mad                      (7016)
 #define LVAR_q_coc_train                        (7017)
 #define LVAR_q_vc_train_doc                     (7018)
@@ -153,6 +160,7 @@
 #define LVAR_q_vc_train4                        (7030)
 #define LVAR_q_spawn_hub                        (7032)
 #define LVAR_q_spawn_hub_water                  (7034)
+#define LVAR_q_ncr_geigercounter                (7039)
 #define LVAR_q_la_train_count                   (7041)
 #define LVAR_q_la_waterpump                     (7042)
 #define LVAR_q_la_dogs                          (7043)
@@ -171,6 +179,7 @@
 #define LVAR_q_iguana_pete_message              (7070)
 #define LVAR_q_iguana_pete_ban                  (7071)
 #define LVAR_q_bos_initiatequest_start          (7074)
+#define LVAR_faction_bos_quartermaster          (7076)
 #define LVAR_faction_farmer                     (7085)
 #define LVAR_q_bos_initiatequest_start_key      (7090)
 #define LVAR_q_bosbunker_locid                  (7100)
@@ -179,6 +188,7 @@
 #define LVAR_q_la_gunrunners_caravan_locid      (7113)
 #define LVAR_q_la_gunrunners_team               (7114)
 #define LVAR_q_la_gunrunners_box                (7115)
+#define LVAR_faction_ghoul_hymag                (7118)
 #define LVAR_ncr_gold_exchange                  (7119)
 #define LVAR_q_hub_watertaxes                   (7120)
 #define LVAR_q_la_library_book                  (7121)
@@ -189,13 +199,21 @@
 #define LVAR_q_jt_generators_flags              (7126)
 #define LVAR_q_jt_power_house_handy_special     (7127)
 #define LVAR_q_hub_gunrunner_supplies           (7128)
+#define LVAR_q_ncr_westin_inside                (7131)
+#define LVAR_q_ncr_westin_quest1                (7132)
+#define LVAR_q_ncr_westin_quest1_billboard      (7133)
+#define LVAR_q_ncr_westin_quest1_locid          (7134)
+#define LVAR_q_ncr_westin_quest2                (7135)
 #define LVAR_q_la_gunrunners_facility_access    (7136)
 #define LVAR_q_la_gunrunners_facility_inside    (7137)
 #define LVAR_q_ncr_westin_wpump                 (7138)
 #define LVAR_q_jt_sneakeater                    (7139)
 #define LVAR_q_jt_sneakeater_locid              (7140)
 #define LVAR_q_jt_sneakeater_perk               (7141)
+#define LVAR_q_ncr_explorer_perk                (7142)
+#define LVAR_ncrcf_prison_points                (7144)
 #define LVAR_q_la_ady_lorraine_magazine         (7145)
+#define LVAR_q_ncr_shaenin                      (7146)
 #define LVAR_q_la_gunr_courier                  (7147)
 #define LVAR_q_la_gunr_courier_reward           (7148)
 #define LVAR_perk_junk_merchant                 (7149)
@@ -925,6 +943,16 @@ $ 1800 1 q_jt_talked 0 0 3 1
    GVAR_REDDING_MORTON_BROTHERS            :=0;    //      (386)
 **********
 
+   $	6111	1	q_ncr_buster_smokes	0	0	5	1
+**********
+
+**********
+
+   $	6112	1	q_ncr_mira_money	0	0	3	1
+**********
+   Mira owes Dusty 100 caps. Give it back.
+**********
+
    $	6500	2	q_box_unload_status	0	0	0	4
 **********
 
@@ -972,6 +1000,31 @@ $ 1800 1 q_jt_talked 0 0 3 1
 **********
 
    $	7010	1	boneyard_train_trader_story	0	0	0	0
+**********
+
+**********
+
+   $	7011	1	q_spawn_ncr	0	0	5	1
+**********
+   Quest variable for spawn quest.
+**********
+
+   $	7012	1	den_metzger_blind	0	0	1	0
+**********
+
+**********
+
+   $	7013	1	q_ncr_rail_gang	0	0	0	5
+**********
+   Quest variable for train introducing quest 3.
+**********
+
+   $	7014	1	q_ncr_rail_gang_locid	0	0	0	4
+**********
+
+**********
+
+   $	7015	1	q_ncr_trainstation_known	0	0	1	0
 **********
 
 **********
@@ -1051,6 +1104,11 @@ $ 1800 1 q_jt_talked 0 0 3 1
    Quest variable for spawn quest.
 **********
 
+   $	7039	1	q_ncr_geigercounter	0	0	0	4
+**********
+
+**********
+
    $	7041	1	q_la_train_count	0	0	0	4
 **********
 
@@ -1126,6 +1184,11 @@ $ 1800 1 q_jt_talked 0 0 3 1
 
 **********
 
+   $	7076	1	faction_bos_quartermaster	0	0	10	0
+**********
+   Used in various parts of BoS quartermaster dialog.
+**********
+
    $	7085	1	faction_farmer	0	0	0	4
 **********
 
@@ -1169,6 +1232,11 @@ $ 1800 1 q_jt_talked 0 0 3 1
    $	7115	1	q_la_gunrunners_box	0	0	1	0
 **********
 
+**********
+
+   $	7118	1	faction_ghoul_hymag	0	0	1	0
+**********
+   for factions_geck_kelvin dialog. 0 == Got no Hymag yet, 1== got it already, get no new one.
 **********
 
    $	7119	1	ncr_gold_exchange	0	0	1	0
@@ -1255,6 +1323,44 @@ $ 1800 1 q_jt_talked 0 0 3 1
    2 == found parts
 **********
 
+   $	7131	1	q_ncr_westin_inside	0	0	1	0
+**********
+   0 == player is not inside the ranch
+   1 == player is inside the ranch.
+**********
+
+   $	7132	1	q_ncr_westin_quest1	0	0	8	1
+**********
+   0 == inactive
+   1 == active
+   2 == found out nothing
+   3 == chased off the children
+   4 == killed the children
+   5 == quest done
+   6 == quest done, children killed
+   7 == killed at least one brahmin in the willow, before talking to guard
+   8 == killed at least one brahmin in the willow, after talking to guard
+**********
+
+   $	7133	1	q_ncr_westin_quest1_billboard	0	0	1	0
+**********
+   0 == no quest
+   1 == know about quest
+**********
+
+   $	7134	1	q_ncr_westin_quest1_locid	0	0	0	4
+**********
+
+**********
+
+   $	7135	1	q_ncr_westin_quest2	0	0	3	1
+**********
+   0 == inactive
+   1 == active
+   2 == holodisk given to target in VC
+   3 == quest done
+**********
+
    $	7136	1	q_la_gunrunners_facility_access	0	0	2	0
 **********
    0 == not allowed to enter gun runner facility
@@ -1289,7 +1395,24 @@ $ 1800 1 q_jt_talked 0 0 3 1
    1 == active
 **********
 
+   $	7142	1	q_ncr_explorer_perk	0	0	2	0
+**********
+   0 == inactive
+   1 == step 1
+   2 == perk gained
+**********
+
+   $	7144	1	ncrcf_prison_points	0	0	1000	0
+**********
+   Counter for PC prison points.
+**********
+
    $	7145	1	q_la_ady_lorraine_magazine	0	0	0	4
+**********
+
+**********
+
+   $	7146	1	q_ncr_shaenin	0	0	5	0
 **********
 
 **********
