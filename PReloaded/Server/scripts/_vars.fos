@@ -15,6 +15,8 @@
 #define GVAR_car_id                             (1)
 #define GVAR_is_first_time                      (2)
 #define LVAR_q_bos_injured                      (10)
+#define LVAR_q_bos_bunker                       (11)
+#define LVAR_q_vegeir_bos                       (12)
 #define LVAR_bos_trainer                        (13)
 #define LVAR_faction_bos_home                   (14)
 #define UVAR_guard_illegal_flag                 (15)
@@ -331,6 +333,16 @@
    $	10	1	q_bos_injured	0	0	6	1
 **********
    Var for se_bos_injured quest.
+**********
+
+   $	11	1	q_bos_bunker	0	0	5	0
+**********
+   Used for the terminals
+**********
+
+   $	12	1	q_vegeir_bos	0	0	3	0
+**********
+
 **********
 
    $	13	1	bos_trainer	0	0	3	0
