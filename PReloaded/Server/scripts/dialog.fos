@@ -817,6 +817,28 @@ void r_TransferItemsFromContainer(Critter& player, Critter@npc, int mappid, int 
     TransferItemsFromContOnMap(player, map, entid, contpid);
 }
 
+
+/////////////////
+//  Scenarios  //
+/////////////////
+
+// A general purpose function, gives all num party members val/num exp (rounded down)
+// Used by:
+// Scenario: MFC Crafting - Gives XP according to MFC you hand over to your superiors (Enclave/BoS)
+void r_AddExpTeam(Critter& player, Critter@ npc, int val)
+{
+    AddExpTeam(player, val);
+
+    Location@ loc = GetLocation(LOCATION_Navarro);
+    Map@      map = loc.GetMapByIndex(1);   // Navarro sublevel
+    Item@     locker;                       // = map.GetItem(63, 90, PID_LOCKER_CLEAN_RIGHT);	// Commander's locker
+    int       mfc = val / 25;               // 20% for Enclave, do not edit! val/25 is correct!
+    locker.AddItem(PID_MICRO_FUSION_CELL, mfc, 0);
+
+    // the rest 80% go to Renesco's inventory (not to new reno limbo, but his inventory)
+
+}
+
 /////////////////
 //   SOUNDS    //
 /////////////////
