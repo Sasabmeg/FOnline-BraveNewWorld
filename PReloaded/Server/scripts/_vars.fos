@@ -160,8 +160,13 @@
 #define LVAR_q_vc_train2                        (7028)
 #define LVAR_q_vc_train3                        (7029)
 #define LVAR_q_vc_train4                        (7030)
+#define LVAR_q_spawn_gecko                      (7031)
 #define LVAR_q_spawn_hub                        (7032)
+#define LVAR_q_cock_fuelcontroller              (7033)
 #define LVAR_q_spawn_hub_water                  (7034)
+#define LVAR_q_strandedrust                     (7036)
+#define LVAR_q_strandedrust_locid               (7037)
+#define LVAR_q_strandedrust_terminal            (7038)
 #define LVAR_q_ncr_geigercounter                (7039)
 #define LVAR_q_la_train_count                   (7041)
 #define LVAR_q_la_waterpump                     (7042)
@@ -171,7 +176,9 @@
 #define LVAR_q_la_howitzer                      (7047)
 #define LVAR_q_la_train_caesar_leg              (7048)
 #define LVAR_q_la_dogs_locid                    (7049)
+#define LVAR_q_gecko_spawn_xp                   (7051)
 #define LVAR_free_slave                         (7053)
+#define LVAR_q_strandedrust_terminal_timeout    (7054)
 #define LVAR_q_glow_holodisk                    (7055)
 #define LVAR_se_bosbattleground                 (7056)
 #define LVAR_se_boscrashedhummer                (7057)
@@ -184,8 +191,22 @@
 #define LVAR_faction_bos_quartermaster          (7076)
 #define LVAR_faction_farmer                     (7085)
 #define LVAR_q_bos_initiatequest_start_key      (7090)
+#define LVAR_q_rail_raider_conductor            (7095)
+#define LLVAR_q_rail_raider_path                (7096)
+#define LVAR_q_rail_raider_status               (7097)
+#define LVAR_q_rail_raider_money                (7098)
 #define LVAR_q_bosbunker_locid                  (7100)
+#define LVAR_q_la_warehouse_locid               (7101)
+#define LVAR_q_la_warehouse                     (7102)
+#define LVAR_q_la_warehouse_fuck_loop           (7103)
+#define LVAR_q_la_warehouse_trigger             (7104)
+#define LVAR_q_la_warehouse_rape_points         (7105)
+#define LVAR_q_cath_basement                    (7106)
+#define LVAR_q_cath_basement_locid              (7107)
+#define LVAR_q_cath_entrance_paid               (7108)
 #define LVAR_hub_job_waterboy                   (7109)
+#define LVAR_cath_job_flowers                   (7110)
+#define LVAR_q_la_warehouse_dialog_status       (7111)
 #define LVAR_q_la_gunrunners_caravan            (7112)
 #define LVAR_q_la_gunrunners_caravan_locid      (7113)
 #define LVAR_q_la_gunrunners_team               (7114)
@@ -220,8 +241,16 @@
 #define LVAR_q_la_gunr_courier_reward           (7148)
 #define LVAR_perk_junk_merchant                 (7149)
 #define LVAR_q_la_junk_merchant                 (7150)
+#define LVAR_player_is_raped                    (7151)
 #define LVAR_q_jt_power_house_attempts          (7200)
 #define LVAR_q_nr_corsican_tattoo               (7301)
+#define LVAR_q_brahmin_run                      (7311)
+#define LVAR_q_brahmin_run_counter              (7312)
+#define LVAR_q_brahmin_run_faction              (7313)
+#define LVAR_q_brahmin_run_length               (7314)
+#define LVAR_q_brahmin_run_loc_id               (7315)
+#define LVAR_q_brahmin_run_cooldown             (7316)
+#define LVAR_q_brahmin_run_herd_loc_id          (7317)
 #define LVAR_q_first_tent                       (7322)
 #define LVAR_q_first_tent_loc1_id               (7323)
 #define LVAR_q_first_tent_loc2_id               (7324)
@@ -1106,14 +1135,39 @@ $ 1800 1 q_jt_talked 0 0 3 1
    This variable is for checking the NPC conversation at the Vault City train station.
 **********
 
+   $	7031	1	q_spawn_gecko	0	0	5	1
+**********
+   Quest variable for spawn quest.
+**********
+
    $	7032	1	q_spawn_hub	0	0	5	1
 **********
    Quest variable for spawn quest.
 **********
 
+   $	7033	1	q_cock_fuelcontroller	0	0	5	0
+**********
+   Check variable for cockroach car / fuel controller.
+**********
+
    $	7034	1	q_spawn_hub_water	0	0	1	0
 **********
    Quest variable for spawn quest.
+**********
+
+   $	7036	1	q_strandedrust	0	0	0	5
+**********
+   Quest variable for stranded tanker quest.
+**********
+
+   $	7037	1	q_strandedrust_locid	0	0	0	4
+**********
+
+**********
+
+   $	7038	1	q_strandedrust_terminal	0	0	1	4
+**********
+
 **********
 
    $	7039	1	q_ncr_geigercounter	0	0	0	4
@@ -1161,9 +1215,37 @@ $ 1800 1 q_jt_talked 0 0 3 1
    Location id of la dogs map
 **********
 
+   $	7051	1	q_gecko_spawn_xp	0	0	1	0
+**********
+
+**********
+
+
    $	7053	1	free_slave	0	0	1	0
 **********
    Variable is set to 1, if player frees the slave.
+**********
+
+   $	7054	1	q_strandedrust_terminal_timeout	0	0	0	4
+**********
+
+**********
+
+   $	7055	1	q_glow_holodisk	0	0	0	1
+**********
+
+**********
+
+   $	7056	1	se_bosbattleground	0	0	0	4
+**********
+   0 = Not encountered
+   >0 = Location Id
+**********
+
+   $	7057	1	se_boscrashedhummer	0	0	0	4
+**********
+   0 = Not encountered
+   >0 = Location Id
 **********
 
    $	7060	1	q_la_ady_lorraine_pistol	0	0	0	5
@@ -1211,7 +1293,86 @@ $ 1800 1 q_jt_talked 0 0 3 1
 
 **********
 
+   $	7095	1	q_rail_raider_conductor	0	0	1	0
+**********
+   0 == Conductor scared.
+   1 == Not scared anymore.
+**********
+
+   $	7096	3	q_rail_raider_path	0	0	1	0
+**********
+   0 == Path blocked.
+   1 == Path cleaned.
+**********
+
+   $	7097	1	q_rail_raider_status	0	0	7	1
+**********
+   0 == Inactive
+   1 == Ambush begins!
+   2 == Raiders gone / dead
+   3 == Raiders gone / scared
+   4 == Raiders gone / paid money
+   5 == Raiders gone / talked over
+   6 == Player left map, filthy punk!
+**********
+
+   $	7098	1	q_rail_raider_money	0	0	1	1
+**********
+   0 == No money offer
+   1 == Money offer
+**********
+
+   $	7101	1	q_la_warehouse_locid	0	0	0	4
+**********
+
+**********
+
+   $	7102	1	q_la_warehouse	0	0	5	1
+**********
+
+**********
+
+   $	7103	1	q_la_warehouse_fuck_loop	0	0	5	1
+**********
+
+**********
+
+   $	7104	1	q_la_warehouse_trigger	0	0	1	0
+**********
+
+**********
+
+   $	7105	1	q_la_warehouse_rape_points	0	0	50	0
+**********
+
+**********
+
+   $	7106	1	q_cath_basement	0	0	5	1
+**********
+
+**********
+
+   $	7107	1	q_cath_basement_locid	0	0	0	4
+**********
+
+**********
+
+   $	7108	1	q_cath_entrance_paid	0	0	1	0
+**********
+
+**********
+
    $	7109	1	hub_job_waterboy	0	0	12	0
+**********
+
+**********
+
+   $	7110	1	cath_job_flowers	0	0	15	0
+**********
+   give flowers to the people outside of the cathedral.
+**********
+
+   $	7111	1	q_la_warehouse_dialog_status	0	0	0	4
 **********
 
 **********
@@ -1449,8 +1610,71 @@ $ 1800 1 q_jt_talked 0 0 3 1
 
 **********
 
+   $	7151	1	player_is_raped	0	0	1	0
+**********
+
+**********
+
    $	7301	1	q_nr_corsican_tattoo	0	0	3	1
 **********
+
+**********
+
+   $	7311	1	q_brahmin_run	0	0	9	1
+**********
+   Main quest variable for Brahmin run quest:
+        0 == inactive
+        1 == active
+        2 == all brahmin dead
+        3 == herdsman npc dead
+        4 == wrong target reached
+                5 == player ran away
+                6 == player died
+        7 == target reached
+        8 == reward paid
+                9 == quest timed out
+**********
+
+   $	7312	1	q_brahmin_run_counter	0	0	10	4
+**********
+   Variable for Brahmin run quest:
+   Counts amount of brahmin for Brahmin run quest.
+
+**********
+
+   $	7313	1	q_brahmin_run_faction	0	0	0	4
+**********
+   Variable for Brahmin run quest:
+   Index of faction, which gave player this quest.
+
+**********
+
+   $	7314	1	q_brahmin_run_length	0	0	0	4
+**********
+   Variable for Brahmin run quest:
+   Distance between starting and target location.
+
+**********
+
+   $	7315	1	q_brahmin_run_loc_id	0	0	0	4
+**********
+   Variable for Brahmin run quest:
+   Id of destination location.
+
+**********
+
+   $	7316	1	q_brahmin_run_cooldown	0	0	0	4
+**********
+   Variable for Brahmin run quest:
+   Quest cooldown.
+   Also used for cooldown before player can leave encounter via dialog with herdsman.
+
+**********
+
+   $	7317	1	q_brahmin_run_herd_loc_id	0	0	0	4
+**********
+   Variable for Brahmin run quest:
+   Actual location of herd.
 
 **********
 
