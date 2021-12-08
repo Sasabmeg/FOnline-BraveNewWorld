@@ -131,6 +131,8 @@
 #define LVAR_redding_morton_brothers            (5386)
 #define LVAR_q_ncr_buster_smokes                (6111)
 #define LVAR_q_ncr_mira_money                   (6112)
+#define LVAR_q_redding_mcgrew_runner            (6122)
+#define LVAR_q_redding_johnson_humanitarian     (6123)
 #define LVAR_q_den_becky_table                  (6200)
 #define UVAR_q_box_unload_status                (6500)
 #define UVAR_q_box_unload_count                 (6501)
@@ -138,6 +140,8 @@
 #define LVAR_give_grenade                       (7001)
 #define LVAR_crimson_caravan_job                (7003)
 #define LVAR_q_bunker_base                      (7004)
+#define LVAR_q_redd_rats                        (7005)
+#define GVAR_q_redd_rats2                       (7006)
 #define LVAR_q_bunker_base2                     (7007)
 #define LVAR_q_hub_sadwife                      (7008)
 #define LVAR_q_hub_wasteland_band               (7009)
@@ -994,6 +998,16 @@ $ 1800 1 q_jt_talked 0 0 3 1
    Mira owes Dusty 100 caps. Give it back.
 **********
 
+   $	6122	1	q_redding_mcgrew_runner	0	0	0	5
+**********
+   shitty variable for a shitty running quest!
+**********
+
+   $	6123	1	q_redding_johnson_humanitarian	0	0	0	5
+**********
+   shitty variable for a shitty running quest!
+**********
+
    $	6500	2	q_box_unload_status	0	0	0	4
 **********
 
@@ -1022,6 +1036,16 @@ $ 1800 1 q_jt_talked 0 0 3 1
    $	7004	1	q_bunker_base	0	0	0	5
 **********
 
+**********
+
+   $	7005	1	q_redd_rats	0	0	9	1
+**********
+
+**********
+
+   $	7006	0	q_redd_rats2	0	0	0	0
+**********
+   The rats quest has been done at least once.
 **********
 
    $	7007	1	q_bunker_base2	0	0	5	1
