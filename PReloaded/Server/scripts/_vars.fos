@@ -129,6 +129,8 @@
 #define LVAR_factions_q_nav_mfc                 (4207)
 #define LVAR_hub_arena_inside                   (4212)
 #define LVAR_redding_morton_brothers            (5386)
+#define LVAR_q_raiders_induction                (6001)
+#define LVAR_q_raiders_induction_locid          (6002)
 #define LVAR_q_ncr_buster_smokes                (6111)
 #define LVAR_q_ncr_mira_money                   (6112)
 #define LVAR_q_redding_mcgrew_runner            (6122)
@@ -191,6 +193,8 @@
 #define LVAR_q_la_ady_lorraine_science          (7062)
 #define LVAR_q_iguana_pete_message              (7070)
 #define LVAR_q_iguana_pete_ban                  (7071)
+#define LVAR_q_iguana_son_message               (7072)
+#define LVAR_q_iguana_mutant_message            (7073)
 #define LVAR_q_bos_initiatequest_start          (7074)
 #define LVAR_q_necro_gecko                      (7075)
 #define LVAR_faction_bos_quartermaster          (7076)
@@ -278,6 +282,17 @@
 #define LVAR_Book_SmallGuns	                    (9952)
 #define LVAR_current_followers                  (10010)
 #define LVAR_patrol_currentnode                 (10100)
+#define LVAR_slaverun_status                    (11100)
+#define LVAR_slaverun_current_loctype           (11101)
+#define LVAR_slaverun_current_loc               (11102)
+#define LVAR_slaverun_last_time                 (11103)
+#define LVAR_slaverun_hostiles                  (11104)
+#define LVAR_slaverun_normals                   (11105)
+#define LVAR_slaverun_slavers                   (11106)
+#define LVAR_slaverun_hostiles_killed           (11107)
+#define LVAR_slaverun_normals_killed            (11108)
+#define LVAR_slaverun_slavers_killed            (11109)
+#define LVAR_slaverun_eventnum                  (11110)
 #define UVAR_proximity_check                    (11200)
 #define LVAR_noob_camp_alecquest				(11801)
 #define LVAR_noob_camp_breederquest				(11802)
@@ -989,6 +1004,16 @@ $ 1800 1 q_jt_talked 0 0 3 1
    GVAR_REDDING_MORTON_BROTHERS            :=0;    //      (386)
 **********
 
+   $	6001	1	q_raiders_induction	0	0	0	5
+**********
+   the fucking variable for the fucking quest to join the fucking raiders
+**********
+
+   $	6002	1	q_raiders_induction_locid	0	0	0	4
+**********
+
+**********
+
    $	6111	1	q_ncr_buster_smokes	0	0	5	1
 **********
 
@@ -1294,6 +1319,16 @@ $ 1800 1 q_jt_talked 0 0 3 1
 **********
 
    $	7071	1	q_iguana_pete_ban	0	0	0	5
+**********
+
+**********
+
+   $	7072	1	q_iguana_son_message	0	0	0	5
+**********
+
+**********
+
+   $	7073	1	q_iguana_mutant_message	0	0	0	5
 **********
 
 **********
@@ -1828,6 +1863,98 @@ $	9952	1	LVAR_FO2077_Book_SmallGuns  0	0	10	0
    Current patrolnode in the patrolroute that the critter is on. This variable is only used in the patrol script
 **********
 
+   $	11100	1	slaverun_status	0	0	0	4
+**********
+
+**********
+
+   $	11101	1	slaverun_current_loctype	0	0	0	4
+**********
+				 
+
+**********
+				 
+				 
+
+   $	11102	1	slaverun_current_loc	0	0	0	4
+**********
+				 
+
+**********
+				 
+				 
+
+   $	11103	1	slaverun_last_time	0	0	0	4
+**********
+				 
+
+**********
+				 
+				 
+
+   $	11104	1	slaverun_hostiles	0	0	0	4
+**********
+				 
+
+**********
+				 
+				 
+
+   $	11105	1	slaverun_normals	0	0	0	4
+**********
+				 
+
+**********
+				 
+				 
+
+   $	11106	1	slaverun_slavers	0	0	0	4
+**********
+				 
+
+**********
+				 
+				 
+
+   $	11107	1	slaverun_hostiles_killed	0	0	0	4
+**********
+				 
+
+**********
+				 
+				 
+
+   $	11108	1	slaverun_normals_killed	0	0	0	4
+**********
+				 
+
+**********
+				 
+				 
+
+   $	11109	1	slaverun_slavers_killed	0	0	0	4
+**********
+			
+			 
+		   
+		   
+		   
+		   
+		   
+		   
+			 
+				 
+
+**********
+				 
+				 
+
+   $	11110	1	slaverun_eventnum	0	0	0	4
+**********
+				 
+
+**********
+				 
    $	11200	2	proximity_check	0	0	1	0
 **********
 

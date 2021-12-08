@@ -1,0 +1,28 @@
+//
+// FOnline: Reloaded
+// Kilgore
+//
+// map_bhcave.fos
+//
+
+#include "_maps.fos"
+#include "utils.fos"
+#include "_macros.fos"
+
+// =============================================
+// Map
+// =============================================
+void map_init(Map& map, bool firstTime)
+{
+    Location@ current_loc=map.GetLocation();
+	CreateTimeEvent(AFTER(REAL_SECOND(60)), "e_RespawnLocation", current_loc.Id, false);
+}
+
+uint e_RespawnLocation(array<uint>@ values)
+{
+    Location@ loc = GetLocation(values[0]);
+    if(!valid(loc))	return 0;
+    int new_location = CreateLocation(LOCATION_BountyHuntersCave, 315, 505, null);
+	DeleteLocation(loc.Id);
+    return 0;
+}

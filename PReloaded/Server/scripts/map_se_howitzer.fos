@@ -1,0 +1,45 @@
+//
+// FOnline: Reloaded
+// Cubik
+//
+// map_se_secret_shelter.fos
+//
+
+// skrzynka1 w ścianie ) Special EncounterProtoId 139, HexXx, HexY = 50, 52 - losowe itemy w skrytce, zamiast statycznego pistol gaussa 
+
+#include "_macros.fos"
+//#include "mapdata_h.fos"
+//#include "messages_h.fos"
+//#include "npc_planes_h.fos"
+//#include "npc_roles_h.fos"
+
+
+
+
+void _MapInit(Map& map, bool firstTime)
+{
+    //if(firstTime)
+    {
+		//map.SetEvent(MAP_EVENT_IN_CRITTER,"_Map_InCritter");
+		uint los=Random(1,2);
+		Item@ skrzynka1= (los==1) ? map.GetItem(79, 57, 368) : map.GetItem(77, 62, 370); 
+		Item@ skrzynka2= (los==1) ? map.GetItem(77, 62, 370) : map.GetItem(79, 57, 368);
+				
+		if(valid(skrzynka1))
+		{		
+			switch (Random(1,4))
+			{
+				case 1: 	{ skrzynka1.AddItem(PID_BROTHERHOOD_COMBAT_ARMOR, 1, 0); skrzynka1.AddItem(PID_BROTHERHOOD_HELMET, 1, 0); break;}
+				case 2: 	{ skrzynka1.AddItem(PID_ENCLAVE_COMBAT_ARMOR, 1, 0); skrzynka1.AddItem(PID_ENCLAVE_COMBAT_HELMET, 1, 0); break;}
+				case 3: 	{ skrzynka1.AddItem(PID_NCR_ARMOR, 1, 0); skrzynka1.AddItem(PID_NCR_HELMET, 1, 0); break;}
+				case 4: 	{ skrzynka1.AddItem(PID_NCR_ARMOR, 1, 0); skrzynka1.AddItem(PID_MIRROR_SHADES, 1, 0); break;}
+				
+				default: break;
+			}
+		}
+		
+		if(valid(skrzynka2)) 
+			skrzynka2.AddItem(PID_HOWITZER_SHELL, 10, 0);
+    }
+}
+
