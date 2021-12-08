@@ -1,0 +1,6 @@
+#include "mapdata_h.fos"
+
+void _MapInit( Map& map, bool firstTime )
+{
+    _MapSetMode(map, MAP_MODE_NO_PVP);
+}
