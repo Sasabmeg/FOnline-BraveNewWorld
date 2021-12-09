@@ -106,7 +106,8 @@ dictionary Maps;
 array<int> eventItems;
 array<int> eventCritters;
 
-array<string> pidList;
+array<string> itemList;
+array<string> locationList;
 
 // Remember to wear protective goggles :)
 string[] commandlist =
@@ -133,14 +134,14 @@ string[] commandlist =
     "givekey", "goto", "gototeam",
     "heal", "healall", "help", "hideloc", "hidemap",
     "id2name", "iddqd", "idkfa", "inspect", "irradiate", "itemflags", "itemlight",
-    "itemproto",
+    "itemproto", "itemlist", "items",
     "karma", "karmateam", "kill", "killeradmin", "killmobs",
     "la", "lastregistered", "lastspawned", "listauthenticated",     "listcommands",
     "listfollowers", "listfactions", "listmaps", "listplayers",     "listtents",
     "listtracked", "lock", "lockcar", "log",  "lootdrop", "lp", "lt",
-    "makeencounter", "mapinfo", "masssetanim", "massslap", "modchar", "move",
+    "makeencounter", "maps", "mapinfo", "maplist", "masssetanim", "massslap", "modchar", "move",
     "name2id", "netmsg", "normaldeadly", "numplayers",
-    "param", "perkadjust", "pickitems", "pidlist", "pids", "phase", "phaseteam", "playerkarma",
+    "param", "perkadjust", "pickitems", "phase", "phaseteam", "playerkarma",
     "playmusic", "playsound", "playspeech", "poison", "profadjust",
     "registerfaction", "removebankmoney", "removefaction", "removeitems",
     "reservednickname", "resetalldisguises", "resetprices", "resetreputations",
@@ -183,7 +184,7 @@ string[] gmcommandlist =
     "listtracked", "lp", "lt", "lock", "lockcar", "log", "lootdrop",
     "makeencounter", "mapinfo", "massslap", "modchar",
     "name2id", "netmsg", "normaldeadly", "numplayers",
-    "param", "pickitems", "pidlist", "pids", "phase", "phaseteam", "playerkarma", "playmusic",
+    "param", "pickitems", "phase", "phaseteam", "playerkarma", "playmusic",
     "playsound", "playspeech", "poison",
     "reservednickname", "resetreputations", "respawn", "revive", "respawnall",
     "respawnallplayers", "rotate", "rundialog",
@@ -3822,29 +3823,51 @@ void ExecFactionOnlineCommand(array<string@>@ command, Critter& player)
         player.Say(SAY_NETMSG, "Found no members from faction " + faction + " online.");
 }
 
-void ExecPidListCommand(array<string@>@ command, Critter& player)
-{
-    if (pidList.isEmpty()) {
-        player.Say(SAY_NETMSG, "Initializing PID list.");
-        InitPidList();
+void ExecLocationListCommand(array<string@>@ command, Critter& player) {
+    if (locationList.isEmpty()) {
+        player.Say(SAY_NETMSG, "Initializing LOCATION list.");
+        InitLocationList();
     }
     if(command.length() > 2)
     {
-        player.Say(SAY_NETMSG, "Listing Item ID's with filter '" + command[2] + "':");
-        for (uint i = 0; i < pidList.length(); i++) {
-            if (findFirst(pidList[i], upperCase(command[2]), 3) > -1) {
-                player.Say(SAY_NETMSG, pidList[i]);
+        player.Say(SAY_NETMSG, "\nListing Location ID's with filter '" + command[2] + "':");
+        for (uint i = 0; i < locationList.length(); i++) {
+            if (findFirst(locationList[i], command[2], 0) > -1) {
+                player.Say(SAY_NETMSG, locationList[i]);
             }
         }
     } else {
-        player.Say(SAY_NETMSG, "Listing Item ID's without filter:");
-        for (uint i = 0; i < pidList.length(); i++) {
+        player.Say(SAY_NETMSG, "\nListing Item ID's without filter (top 30):");
+        for (uint i = 0; i < locationList.length(); i++) {
             if (i < 30) {
-                player.Say(SAY_NETMSG, pidList[i]);
+                player.Say(SAY_NETMSG, locationList[i]);
             }
         }
     }
 
+}
+
+void ExecItemListCommand(array<string@>@ command, Critter& player) {
+    if (itemList.isEmpty()) {
+        player.Say(SAY_NETMSG, "Initializing ITEM list.");
+        InitItemList();
+    }
+    if(command.length() > 2)
+    {
+        player.Say(SAY_NETMSG, "\nListing Item ID's with filter '" + command[2] + "':");
+        for (uint i = 0; i < itemList.length(); i++) {
+            if (findFirst(itemList[i], upperCase(command[2]), 3) > -1) {
+                player.Say(SAY_NETMSG, itemList[i]);
+            }
+        }
+    } else {
+        player.Say(SAY_NETMSG, "\nListing Item ID's without filter (top 30):");
+        for (uint i = 0; i < itemList.length(); i++) {
+            if (i < 30) {
+                player.Say(SAY_NETMSG, itemList[i]);
+            }
+        }
+    }
 }
 
 //  piece of shit AS code... getting a char and removing 32 from it to make it uppercase didnt work out.
@@ -3881,967 +3904,41 @@ string@ upperCase(const string& str) {
     return ret;
 }
 
-void InitPidList() {
-    pidList.insertLast("PID_LEATHER_JACKET                  (74)		");
-    pidList.insertLast("PID_LEATHER_ARMOR                   (1)        ");
-    pidList.insertLast("PID_LEATHER_ARMOR_MK_II             (379)      ");
-    pidList.insertLast("PID_CURED_LEATHER_ARMOR             (265)      ");
-    pidList.insertLast("PID_THERMAL_LEATHER_ARMOR           (779)      ");
-    pidList.insertLast("PID_METAL_ARMOR                     (2)        ");
-    pidList.insertLast("PID_METAL_ARMOR_MK_II               (380)      ");
-    pidList.insertLast("PID_TESLA_ARMOR                     (240)      ");
-    pidList.insertLast("PID_COMBAT_ARMOR                    (17)       ");
-    pidList.insertLast("PID_COMBAT_ARMOR_MK_II              (381)      ");
-    pidList.insertLast("PID_BROTHERHOOD_COMBAT_ARMOR        (239)      ");
-    pidList.insertLast("PID_NCR_ARMOR                       (9654)     ");
-    pidList.insertLast("PID_ENVIROMENTAL_ARMOR              (751)      ");
-    pidList.insertLast("PID_ENCLAVE_COMBAT_ARMOR            (752)      ");
-    pidList.insertLast("PID_DESERT_COMBAT_ARMOR             (778)      ");
-    pidList.insertLast("PID_VAULT_13_SUIT                   (753)      ");
-    pidList.insertLast("PID_VAULT_SUIT                      (754)      ");
-    pidList.insertLast("PID_WORN_ROBE                       (755)      ");
-    pidList.insertLast("PID_MOBSTER_BLUE                    (759)      ");
-    pidList.insertLast("PID_MOBSTER_GRAY                    (760)      ");
-    pidList.insertLast("PID_CLOTHES_POLICE                  (761)      ");
-    pidList.insertLast("PID_CLOTHES_GENERIC1                (762)      ");
-    pidList.insertLast("PID_CLOTHES_GENERIC2                (763)      ");
-    pidList.insertLast("PID_CLOTHES_SCIENTIST1              (764)      ");
-    pidList.insertLast("PID_CLOTHES_SCIENTIST2              (765)      ");
-    pidList.insertLast("PID_CLOTHES_ELEGANT_SUIT            (766)      ");
-    pidList.insertLast("PID_CLOTHES_RAGS                    (767)      ");
-    pidList.insertLast("PID_CLOTHES_DWARF                   (768)      ");
-    pidList.insertLast("PID_CLOTHES_RED_SHIRT               (769)      ");
-    pidList.insertLast("PID_CLOTHES_DOCTOR                  (770)      ");
-    pidList.insertLast("PID_CLOTHES_CHILD                   (771)      ");
-    pidList.insertLast("PID_CLOTHES_GRAY_SHIRT              (772)      ");
-    pidList.insertLast("PID_CLOTHES_FAT1                    (773)      ");
-    pidList.insertLast("PID_CLOTHES_BOXER                   (774)      ");
-    pidList.insertLast("PID_SF_COMBAT_JACKET                (775)      ");
-    pidList.insertLast("PID_MORDINO_METAL_JACKET            (776)      ");
-    pidList.insertLast("PID_CLOTHES_GENERIC3                (777)      ");
-    pidList.insertLast("PID_NPC_SKIN                        (799)      ");
-    pidList.insertLast("PID_POWERED_ARMOR                   (3)        ");
-    pidList.insertLast("PID_HARDENED_POWER_ARMOR            (232)      ");
-    pidList.insertLast("PID_ADVANCED_POWER_ARMOR            (348)      ");
-    pidList.insertLast("PID_ADVANCED_POWER_ARMOR_MK2        (349)      ");
-    pidList.insertLast("PID_PURPLE_ROBE                     (113)      ");
-    pidList.insertLast("PID_BRIDGEKEEPER_ROBE               (524)      ");
-    pidList.insertLast("PID_SAND_ROBE                       (750)      ");
-    pidList.insertLast("PID_BLACK_ROBE                      (780)      ");
-    pidList.insertLast("PID_STRAWHAT                        (719)      ");
-    pidList.insertLast("PID_ARMIN_CAP                       (720)      ");
-    pidList.insertLast("PID_POWER_HELMET                    (721)      ");
-    pidList.insertLast("PID_MOTORCYCLE_HELMET               (722)      ");
-    pidList.insertLast("PID_TIBBETS_PRISON                  (723)      ");
-    pidList.insertLast("PID_VAULT_SUIT2                     (724)      ");
-    pidList.insertLast("PID_COMBAT_HELMET                   (725)      ");
-    pidList.insertLast("PID_COMBAT_HELMET_MK_II             (726)      ");
-    pidList.insertLast("PID_BROTHERHOOD_HELMET              (727)      ");
-    pidList.insertLast("PID_LEATHER_JACKET_HELMET           (728)      ");
-    pidList.insertLast("PID_COMBAT_LEATHER_JACKET_HELMET    (729)      ");
-    pidList.insertLast("PID_LEATHER_ARMOR_HELMET            (730)      ");
-    pidList.insertLast("PID_LEATHER_ARMOR_HELMET_MK2        (731)      ");
-    pidList.insertLast("PID_METAL_HELMET                    (732)      ");
-    pidList.insertLast("PID_METAL_HELMET_MK2                (733)      ");
-    pidList.insertLast("PID_TESLA_HELMET                    (734)      ");
-    pidList.insertLast("PID_APA_HELMET                      (735)      ");
-    pidList.insertLast("PID_APA_HELMET_MK2                  (736)      ");
-    pidList.insertLast("PID_HARDENED_POWER_HELMET           (737)      ");
-    pidList.insertLast("PID_ENCLAVE_COMBAT_HELMET           (738)      ");
-    pidList.insertLast("PID_ENCLAVE_COMBAT_HELMET_MK2       (739)      ");
-    pidList.insertLast("PID_DESERT_COMBAT_HELMET            (740)      ");
-    pidList.insertLast("PID_NCR_HELMET                      (741)      ");
-    pidList.insertLast("PID_ZIP_GUN                         (300)      ");
-    pidList.insertLast("PID_9MM_MAUSER                      (122)      ");
-    pidList.insertLast("PID_10MM_PISTOL                     (8)        ");
-    pidList.insertLast("PID_14MM_PISTOL                     (22)       ");
-    pidList.insertLast("PID_DESERT_EAGLE                    (18)       ");
-    pidList.insertLast("PID_DESERT_EAGLE_EXT_MAG            (404)      ");
-    pidList.insertLast("PID_223_PISTOL                      (241)      ");
-    pidList.insertLast("PID_44_MAGNUM_REVOLVER              (313)      ");
-    pidList.insertLast("PID_44_MAGNUM_SPEEDLOADER           (398)      ");
-    pidList.insertLast("PID_NEEDLER_PISTOL                  (388)      ");
-    pidList.insertLast("PID_PK12_GAUSS_PISTOL               (394)      ");
-    pidList.insertLast("PID_GRENADE_PISTOL					 (619)      ");
-    pidList.insertLast("PID_HUNTING_RIFLE                   (10)       ");
-    pidList.insertLast("PID_SCOPED_HUNTING_RIFLE            (287)      ");
-    pidList.insertLast("PID_SPRINGER_RIFLE                  (299)      ");
-    pidList.insertLast("PID_ASSAULT_RIFLE                   (23)       ");
-    pidList.insertLast("PID_ASSAULT_RIFLE_EXT_MAG           (405)      ");
-    pidList.insertLast("PID_SNIPER_RIFLE                    (143)      ");
-    pidList.insertLast("PID_FN_FAL                          (351)      ");
-    pidList.insertLast("PID_FN_FAL_NIGHT_SCOPE              (403)      ");
-    pidList.insertLast("PID_FN_FAL_HPFA                     (500)      ");
-    pidList.insertLast("PID_RED_RYDER_BB_GUN                (161)      ");
-    pidList.insertLast("PID_RED_RYDER_LE_BB_GUN             (162)      ");
-    pidList.insertLast("PID_JONNY_BB_GUN                    (261)      ");
-    pidList.insertLast("PID_INDEPENDENT                     (353)      ");
-    pidList.insertLast("PID_M72_GAUSS_RIFLE                 (392)      ");
-    pidList.insertLast("PID_GRENADE_LAUNCHER				 (620)      ");
-    pidList.insertLast("PID_SHOTGUN                         (94)       ");
-    pidList.insertLast("PID_SAWED_OFF_SHOTGUN               (385)      ");
-    pidList.insertLast("PID_COMBAT_SHOTGUN                  (242)      ");
-    pidList.insertLast("PID_HK_CAWS                         (268)      ");
-    pidList.insertLast("PID_PANCOR_JACKHAMMER               (354)      ");
-    pidList.insertLast("PID_10MM_SMG                        (9)        ");
-    pidList.insertLast("PID_HK_P90C                         (296)      ");
-    pidList.insertLast("PID_TOMMY_GUN                       (283)      ");
-    pidList.insertLast("PID_HK_G11                          (352)      ");
-    pidList.insertLast("PID_HK_G11E                         (391)      ");
-    pidList.insertLast("PID_GREASE_GUN                      (332)      ");
-    pidList.insertLast("PID_FLAMER                          (11)       ");
-    pidList.insertLast("PID_IMPROVED_FLAMETHROWER           (400)      ");
-    pidList.insertLast("PID_ROCKET_LAUNCHER                 (13)       ");
-    pidList.insertLast("PID_MINIGUN                         (12)       ");
-    pidList.insertLast("PID_AVENGER_MINIGUN                 (389)      ");
-    pidList.insertLast("PID_VINDICATOR_MINIGUN              (395)      ");
-    pidList.insertLast("PID_BOZAR                           (350)      ");
-    pidList.insertLast("PID_LIGHT_SUPPORT_WEAPON            (355)      ");
-    pidList.insertLast("PID_M60                             (387)      ");
-    pidList.insertLast("PID_LASER_PISTOL                    (16)       ");
-    pidList.insertLast("PID_MAGNETO_LASER_PISTOL            (402)      ");
-    pidList.insertLast("PID_SOLAR_SCORCHER                  (390)      ");
-    pidList.insertLast("PID_LASER_RIFLE                     (118)      ");
-    pidList.insertLast("PID_LASER_RIFLE_EXT_CAP             (401)      ");
-    pidList.insertLast("PID_GATLING_LASER                   (28)       ");
-    pidList.insertLast("PID_ALIEN_LASER_PISTOL              (120)      ");
-    pidList.insertLast("PID_DUAL_LASER_CANNON               (9659)     ");
-    pidList.insertLast("PID_LASER_SUPPORT_WEAPON            (624)      ");
-    pidList.insertLast("PID_LASER_SMG                       (625)      ");
-    pidList.insertLast("PID_PLASMA_PISTOL                   (24)       ");
-    pidList.insertLast("PID_PLASMA_PISTOL_EXT_CART          (406)      ");
-    pidList.insertLast("PID_PLASMA_RIFLE                    (15)       ");
-    pidList.insertLast("PID_TURBO_PLASMA_RIFLE              (233)      ");
-    pidList.insertLast("PID_YK32_PULSE_PISTOL               (396)      ");
-    pidList.insertLast("PID_YK42B_PULSE_RIFLE               (397)      ");
-    pidList.insertLast("PID_MOLOTOV_COCKTAIL                (159)      ");
-    pidList.insertLast("PID_FRAG_GRENADE                    (25)       ");
-    pidList.insertLast("PID_PLASMA_GRENADE                  (26)       ");
-    pidList.insertLast("PID_PULSE_GRENADE                   (27)       ");
-    pidList.insertLast("PID_FIRE_GRENADE                    (626)      ");
-    pidList.insertLast("PID_FLARE                           (79)       ");
-    pidList.insertLast("PID_ACTIVE_FLARE                    (205)      ");
-    pidList.insertLast("PID_FLARE_GREEN                     (9721)     ");
-    pidList.insertLast("PID_ACTIVE_FLARE_GREEN              (9722)     ");
-    pidList.insertLast("PID_FLARE_WHITE                     (9723)     ");
-    pidList.insertLast("PID_ACTIVE_FLARE_WHITE              (9724)     ");
-    pidList.insertLast("PID_FLARE_YELLOW                    (9725)     ");
-    pidList.insertLast("PID_ACTIVE_FLARE_YELLOW             (9726)     ");
-    pidList.insertLast("PID_PLANT_SPIKE                     (365)      ");
-    pidList.insertLast("PID_THROWING_KNIFE                  (45)       ");
-    pidList.insertLast("PID_POISONED_THROWING_KNIFE         (584)      ");
-    pidList.insertLast("PID_ROCK                            (19)       ");
-    pidList.insertLast("PID_FOOLS_GOLD                      (423)      ");
-    pidList.insertLast("PID_GOLD_NUGGET                     (572)      ");
-    pidList.insertLast("PID_PASHTSHUUR_SPIKE                (573)      ");
-    pidList.insertLast("PID_URANIUM_ORE                     (426)      ");
-    pidList.insertLast("PID_REFINED_ORE                     (486)      ");
-    pidList.insertLast("PID_DYNACORD                        (1834)     ");
-    pidList.insertLast("PID_FAKE_FRAG_GRENADE               (9674)     ");
-    pidList.insertLast("PID_FAKE_PLASMA_GRENADE             (9675)     ");
-    pidList.insertLast("PID_FAKE_SUPER_SLEDGE               (9676)     ");
-    pidList.insertLast("PID_FAKE_SPEAR                      (9916)     ");
-    pidList.insertLast("PID_FAKE_THROWING_KNIFE             (9917)     ");
-    pidList.insertLast("PID_FAKE_FIRE_GRENADE               (9941)     ");
-    pidList.insertLast("PID_KNIFE                           (4)        ");
-    pidList.insertLast("PID_COMBAT_KNIFE                    (236)      ");
-    pidList.insertLast("PID_LIL_JESUS_WEAPON                (517)      ");
-    pidList.insertLast("PID_SHIV                            (383)      ");
-    pidList.insertLast("PID_SWITCHBLADE                     (319)      ");
-    pidList.insertLast("PID_WAKIZASHI_BLADE                 (522)      ");
-    pidList.insertLast("PID_SPEAR                           (7)        ");
-    pidList.insertLast("PID_SHARP_SPEAR                     (280)      ");
-    pidList.insertLast("PID_SHARPENED_POLE                  (320)      ");
-    pidList.insertLast("PID_CLUB                            (5)        ");
-    pidList.insertLast("PID_CROWBAR                         (20)       ");
-    pidList.insertLast("PID_WRENCH                          (384)      ");
-    pidList.insertLast("PID_SLEDGEHAMMER                    (6)        ");
-    pidList.insertLast("PID_LOUISVILLE_SLUGGER              (386)      ");
-    pidList.insertLast("PID_SUPER_SLEDGE                    (115)      ");
-    pidList.insertLast("PID_CATTLE_PROD                     (160)      ");
-    pidList.insertLast("PID_SUPER_CATTLE_PROD               (399)      ");
-    pidList.insertLast("PID_RIPPER                          (116)      ");
-    pidList.insertLast("PID_PLASMA_TORCH                    (610)      ");
-    pidList.insertLast("PID_BOXING_GLOVES                   (292)      ");
-    pidList.insertLast("PID_PLATED_BOXING_GLOVES            (293)      ");
-    pidList.insertLast("PID_RING_BOXING_GLOVES              (496)      ");
-    pidList.insertLast("PID_RING_PLATED_BOXING_GLOVES       (497)      ");
-    pidList.insertLast("PID_POWER_FIST                      (235)      ");
-    pidList.insertLast("PID_BRASS_KNUCKLES                  (21)       ");
-    pidList.insertLast("PID_SPIKED_KNUCKLES                 (234)      ");
-    pidList.insertLast("PID_MEGA_POWER_FIST                 (407)      ");
-    pidList.insertLast("PID_ROBO_ROCKET_LAUNCHER            (270)      ");
-    pidList.insertLast("PID_PHAZER                          (393)      ");
-    pidList.insertLast("PID_DEATHCLAW_CLAW_1                (371)      ");
-    pidList.insertLast("PID_DEATHCLAW_CLAW_2                (372)      ");
-    pidList.insertLast("PID_FIRE_GECKO_FLAME_WEAPON         (427)      ");
-    pidList.insertLast("PID_FLAME_BREATH                    (427)      ");
-    pidList.insertLast("PID_WEAK_FLAME_BREATH               (616)      ");
-    pidList.insertLast("PID_SPECIAL_BOXER_WEAPON            (489)      ");
-    pidList.insertLast("PID_GUN_TURRET_WEAPON               (498)      ");
-    pidList.insertLast("PID_EYEBALL_FIST_1                  (290)      ");
-    pidList.insertLast("PID_EYEBALL_FIST_2                  (291)      ");
-    pidList.insertLast("PID_DUAL_MINIGUN                    (518)      ");
-    pidList.insertLast("PID_HEAVY_DUAL_MINIGUN              (520)      ");
-    pidList.insertLast("PID_END_BOSS_KIFE                   (530)      ");
-    pidList.insertLast("PID_END_BOSS_PLASMA_GUN             (531)      ");
-    pidList.insertLast("PID_HOLY_HAND_GRENADE               (421)      ");
-    pidList.insertLast("PID_BAN_HAMMER		                 (617)      ");
-    pidList.insertLast("PID_HOLY_SPEAR		                 (618)      ");
-    pidList.insertLast("PID_4_7MM_CASELESS                  (359)      ");
-    pidList.insertLast("PID_5MM_JHP                         (35)       ");
-    pidList.insertLast("PID_5MM_AP                          (36)       ");
-    pidList.insertLast("PID_7_62MM_AMMO                     (363)      ");
-    pidList.insertLast("PID_9MM_AMMO                        (360)      ");
-    pidList.insertLast("PID_9MM_BALL                        (121)      ");
-    pidList.insertLast("PID_10MM_JHP                        (29)       ");
-    pidList.insertLast("PID_10MM_AP                         (30)       ");
-    pidList.insertLast("PID_14MM_AP                         (33)       ");
-    pidList.insertLast("PID_44_MAGNUM_JHP                   (31)       ");
-    pidList.insertLast("PID_44_FMJ_MAGNUM                   (111)      ");
-    pidList.insertLast("PID_44_MAGNUM_FMJ           		 (111)      ");
-    pidList.insertLast("PID_45_CALIBER_AMMO                 (357)      ");
-    pidList.insertLast("PID_223_FMJ                         (34)       ");
-    pidList.insertLast("PID_SHOTGUN_DRAGON_BREATH_SHELLS    (850)      ");
-    pidList.insertLast("PID_SHOTGUN_SHELLS                  (95)       ");
-    pidList.insertLast("PID_2MM_EC_AMMO                     (358)      ");
-    pidList.insertLast("PID_SHOTGUN_SHELLS_FLECHETTE        (574)      ");
-    pidList.insertLast("PID_SHOTGUN_SHELLS_SLUG             (575)      ");
-    pidList.insertLast("PID_SHOTGUN_SHELLS_EMP              (576)      ");
-    pidList.insertLast("PID_40MM_GRENADE					 (621)      ");
-    pidList.insertLast("PID_EXPLOSIVE_ROCKET                (14)       ");
-    pidList.insertLast("PID_ROCKET_AP                       (37)       ");
-    pidList.insertLast("PID_FLAMETHROWER_FUEL               (32)       ");
-    pidList.insertLast("PID_FLAMETHROWER_FUEL_MK_II         (382)      ");
-    pidList.insertLast("PID_SMALL_ENERGY_CELL               (38)       ");
-    pidList.insertLast("PID_SEC                             (38)       ");
-    pidList.insertLast("PID_MICRO_FUSION_CELL               (39)       ");
-    pidList.insertLast("PID_MFC                             (39)       ");
-    pidList.insertLast("PID_BBS                             (163)      ");
-    pidList.insertLast("PID_HN_NEEDLER_CARTRIDGE            (361)      ");
-    pidList.insertLast("PID_HN_AP_NEEDLER_CARTRIDGE         (362)      ");
-    pidList.insertLast("PID_ROBO_ROCKET_AMMO                (274)      ");
-    pidList.insertLast("PID_STIMPAK                         (40)       ");
-    pidList.insertLast("PID_RADAWAY                         (48)       ");
-    pidList.insertLast("PID_ANTIDOTE                        (49)       ");
-    pidList.insertLast("PID_RAD_X                           (109)      ");
-    pidList.insertLast("PID_SUPER_STIMPAK                   (144)      ");
-    pidList.insertLast("PID_JET_ANTIDOTE                    (260)      ");
-    pidList.insertLast("PID_HEALING_POWDER                  (273)      ");
-    pidList.insertLast("PID_HYPO                            (525)      ");
-    pidList.insertLast("PID_WEAK_HEALING_POWDER             (9655)     ");
-    pidList.insertLast("PID_NUKA_COLA                       (106)      ");
-    pidList.insertLast("PID_BEER                            (124)      ");
-    pidList.insertLast("PID_BOOZE                           (125)      ");
-    pidList.insertLast("PID_GAMMA_GULP_BEER                 (310)      ");
-    pidList.insertLast("PID_ROENTGEN_RUM                    (311)      ");
-    pidList.insertLast("PID_ROT_GUT                         (469)      ");
-    pidList.insertLast("PID_MENTATS                         (53)       ");
-    pidList.insertLast("PID_BUFFOUT                         (87)       ");
-    pidList.insertLast("PID_PSYCHO                          (110)      ");
-    pidList.insertLast("PID_JET                             (259)      ");
-    pidList.insertLast("PID_MUTATED_FRUIT                   (71)       ");
-    pidList.insertLast("PID_IGUANA_ON_A_STICK               (81)       ");
-    pidList.insertLast("PID_MEAT_ON_A_STICK                 (103)      ");
-    pidList.insertLast("PID_COOKIE                          (378)      ");
-    pidList.insertLast("PID_HYPO_POISON                     (334)      ");
-    pidList.insertLast("PID_MUTATED_TOE                     (473)      ");
-    pidList.insertLast("PID_KITTY_SEX_DRUG_AGILITY          (480)      ");
-    pidList.insertLast("PID_KITTY_SEX_DRUG_INTELLIGENCE     (481)      ");
-    pidList.insertLast("PID_KITTY_SEX_DRUG_STRENGTH         (482)      ");
-    pidList.insertLast("PID_MONUMENT_CHUNCK                 (424)      ");
-    pidList.insertLast("PID_FRIDGE                          (42)       ");
-    pidList.insertLast("PID_ICE_CHEST_LEFT                  (43)       ");
-    pidList.insertLast("PID_ICE_CHEST_RIGHT                 (44)       ");
-    pidList.insertLast("PID_BAG                             (46)       ");
-    pidList.insertLast("PID_BACKPACK                        (90)       ");
-    pidList.insertLast("PID_BROWN_BAG                       (93)       ");
-    pidList.insertLast("PID_FOOTLOCKER_CLEAN_LEFT           (128)      ");
-    pidList.insertLast("PID_FOOTLOCKER_RUSTY_LEFT           (129)      ");
-    pidList.insertLast("PID_FOOTLOCKER_CLEAN_RIGHT          (130)      ");
-    pidList.insertLast("PID_FOOTLOCKER_RUSTY_RIGHT          (131)      ");
-    pidList.insertLast("PID_LOCKER_CLEAN_LEFT               (132)      ");
-    pidList.insertLast("PID_LOCKER_RUSTY_LEFT               (133)      ");
-    pidList.insertLast("PID_LOCKER_CLEAN_RIGHT              (134)      ");
-    pidList.insertLast("PID_LOCKER_RUSTY_RIGHT              (135)      ");
-    pidList.insertLast("PID_WALL_LOCKER_CLEAN_LEFT          (136)      ");
-    pidList.insertLast("PID_WALL_LOCKER_CLEAN_RIGHT         (137)      ");
-    pidList.insertLast("PID_WALL_LOCKER_RUSTY_LEFT          (138)      ");
-    pidList.insertLast("PID_WALL_LOCKER_RUSTY_RIGHT         (139)      ");
-    pidList.insertLast("PID_CONTAINER_WOOD_CRATE            (180)      ");
-    pidList.insertLast("PID_VAULT_DWELLER_BONES             (211)      ");
-    pidList.insertLast("PID_SMALL_POT                       (243)      ");
-    pidList.insertLast("PID_TALL_POT                        (244)      ");
-    pidList.insertLast("PID_CHEST                           (245)      ");
-    pidList.insertLast("PID_LEFT_ARROYO_BOOKCASE            (246)      ");
-    pidList.insertLast("PID_RIGHT_ARROYO_BOOKCASE           (247)      ");
-    pidList.insertLast("PID_OLIVE_POT                       (248)      ");
-    pidList.insertLast("PID_FLOWER_POT                      (249)      ");
-    pidList.insertLast("PID_HUMAN_BONES                     (250)      ");
-    pidList.insertLast("PID_CRASHED_VERTI_BIRD              (330)      ");
-    pidList.insertLast("PID_GRAVESITE_V                     (344)      ");
-    pidList.insertLast("PID_GRAVESITE_H                     (345)      ");
-    pidList.insertLast("PID_LG_LT_AMMO_CRATE                (367)      ");
-    pidList.insertLast("PID_SM_LT_AMMO_CRATE                (368)      ");
-    pidList.insertLast("PID_LG_RT_AMMO_CRATE                (369)      ");
-    pidList.insertLast("PID_SM_RT_AMMO_CRATE                (370)      ");
-    pidList.insertLast("PID_HIDDEN_CONTAINER                (467)      ");
-    pidList.insertLast("PID_ALIEN_SIDE                      (107)      ");
-    pidList.insertLast("PID_ALIEN_FORWARD                   (108)      ");
-    pidList.insertLast("PID_STONE_HEAD                      (425)      ");
-    pidList.insertLast("PID_WAGON_RED                       (434)      ");
-    pidList.insertLast("PID_WAGON_GREY                      (435)      ");
-    pidList.insertLast("PID_CAR_TRUNK                       (455)      ");
-    pidList.insertLast("PID_WALL_SAFE                       (501)      ");
-    pidList.insertLast("PID_FLOOR_SAFE                      (502)      ");
-    pidList.insertLast("PID_POOL_TABLE_1                    (510)      ");
-    pidList.insertLast("PID_POOL_TABLE_2                    (511)      ");
-    pidList.insertLast("PID_POOL_TABLE_3                    (512)      ");
-    pidList.insertLast("PID_POOL_TABLE_4                    (513)      ");
-    pidList.insertLast("PID_POOL_TABLE_5                    (514)      ");
-    pidList.insertLast("PID_POOL_TABLE_6                    (515)      ");
-    pidList.insertLast("PID_POOR_BOX                        (521)      ");
-    pidList.insertLast("PID_BOOKCASE_0                      (60)       ");
-    pidList.insertLast("PID_BOOKCASE_1                      (61)       ");
-    pidList.insertLast("PID_BOOKCASE_2                      (62)       ");
-    pidList.insertLast("PID_BOOKCASE_3                      (63)       ");
-    pidList.insertLast("PID_BOOKCASE_4                      (64)       ");
-    pidList.insertLast("PID_BOOKCASE_5                      (65)       ");
-    pidList.insertLast("PID_DESK_0                          (66)       ");
-    pidList.insertLast("PID_DESK_1                          (67)       ");
-    pidList.insertLast("PID_DRESSER_0                       (68)       ");
-    pidList.insertLast("PID_DRESSER_1                       (69)       ");
-    pidList.insertLast("PID_DRESSER_2                       (70)       ");
-    pidList.insertLast("PID_BOOKSELF_0                      (145)      ");
-    pidList.insertLast("PID_BOOKSELF_1                      (146)      ");
-    pidList.insertLast("PID_BOOKSELF_2                      (147)      ");
-    pidList.insertLast("PID_BOOKSELF_3                      (149)      ");
-    pidList.insertLast("PID_SHELVES_0                       (151)      ");
-    pidList.insertLast("PID_SHELVES_1                       (152)      ");
-    pidList.insertLast("PID_SHELVES_2                       (153)      ");
-    pidList.insertLast("PID_SHELVES_3                       (155)      ");
-    pidList.insertLast("PID_WORKBENCH                       (157)      ");
-    pidList.insertLast("PID_TOOL_BOARD                      (158)      ");
-    pidList.insertLast("PID_IGUANA_STAND                    (165)      ");
-    pidList.insertLast("PID_TABLE_0                         (166)      ");
-    pidList.insertLast("PID_TABLE_1                         (167)      ");
-    pidList.insertLast("PID_STUFF_0                         (168)      ");
-    pidList.insertLast("PID_STUFF_1                         (169)      ");
-    pidList.insertLast("PID_STUFF_2                         (170)      ");
-    pidList.insertLast("PID_STUFF_3                         (171)      ");
-    pidList.insertLast("PID_STUFF_4                         (172)      ");
-    pidList.insertLast("PID_STUFF_5                         (173)      ");
-    pidList.insertLast("PID_STUFF_6                         (174)      ");
-    pidList.insertLast("PID_STUFF_7                         (175)      ");
-    pidList.insertLast("PID_STUFF_8                         (176)      ");
-    pidList.insertLast("PID_STUFF_9                         (177)      ");
-    pidList.insertLast("PID_STUFF_10                        (178)      ");
-    pidList.insertLast("PID_STUFF_11                        (179)      ");
-    pidList.insertLast("PID_DESK_3                          (181)      ");
-    pidList.insertLast("PID_DESK_4                          (182)      ");
-    pidList.insertLast("PID_DESK_5                          (183)      ");
-    pidList.insertLast("PID_DESK_6                          (184)      ");
-    pidList.insertLast("PID_DESK_7                          (185)      ");
-    pidList.insertLast("PID_DESK_8                          (186)      ");
-    pidList.insertLast("PID_DESK_9                          (187)      ");
-    pidList.insertLast("PID_LOCKER_7                        (188)      ");
-    pidList.insertLast("PID_LOCKER_8                        (189)      ");
-    pidList.insertLast("PID_BOX_0                           (197)      ");
-    pidList.insertLast("PID_BOX_1                           (198)      ");
-    pidList.insertLast("PID_BOX_2                           (199)      ");
-    pidList.insertLast("PID_BOX_3                           (200)      ");
-    pidList.insertLast("PID_BOX_4                           (201)      ");
-    pidList.insertLast("PID_BOX_5                           (202)      ");
-    pidList.insertLast("PID_BOX_6                           (203)      ");
-    pidList.insertLast("PID_BOX_7                           (204)      ");
-    pidList.insertLast("PID_REMAINSOF_GIZMO                 (213)      ");
-    pidList.insertLast("PID_DESK_10                         (214)      ");
-    pidList.insertLast("PID_DEAD_REDSHIRT_0                 (526)      ");
-    pidList.insertLast("PID_DEAD_REDSHIRT_1                 (527)      ");
-    pidList.insertLast("PID_DEAD_REDSHIRT_2                 (528)      ");
-    pidList.insertLast("PID_MINING_MACHINE                  (529)      ");
-    pidList.insertLast("PID_TOBACCO_BENCH                   (9636)     ");
-    pidList.insertLast("PID_CAMPFIRE                        (9913)     ");
-    pidList.insertLast("PID_ADVANCED_BENCH                  (9914)     ");
-    pidList.insertLast("PID_HUMMER_BAG                      (801)      ");
-    pidList.insertLast("PID_VERTIBIRD_BAG                   (809)      ");
-    pidList.insertLast("PID_HIGHWAYMAN_BAG                  (817)      ");
-    pidList.insertLast("PID_BUGGY_BAG                       (818)      ");
-    pidList.insertLast("PID_SCOUT_BAG                       (819)      ");
-    pidList.insertLast("PID_CARAVAN_WHITE_BAG               (603)      ");
-    pidList.insertLast("PID_CARAVAN_ORANGE_BAG              (604)      ");
-    pidList.insertLast("PID_BOAT_BAG                        (823)      ");
-    pidList.insertLast("PID_POLICE_BAG                      (9747)     ");
-    pidList.insertLast("PID_MOTORCYCLE_BAG                  (9926      ");
-    pidList.insertLast("PID_FIRETRUCK_BAG                   (9928      ");
-    pidList.insertLast("PID_TRUCK_BAG                       (9930)     ");
-    pidList.insertLast("PID_BARGE_BAG                       (9933)     ");
-    pidList.insertLast("PID_KEY                             (82)       ");
-    pidList.insertLast("PID_KEYS                            (83)       ");
-    pidList.insertLast("PID_RED_PASS_KEY                    (96)       ");
-    pidList.insertLast("PID_BLUE_PASS_KEY                   (97)       ");
-    pidList.insertLast("PID_NUKE_KEY                        (105)      ");
-    pidList.insertLast("PID_YELLOW_PASS_KEY                 (223)      ");
-    pidList.insertLast("PID_TEMPLE_KEY                      (438)      ");
-    pidList.insertLast("PID_JAIL_KEY                        (456)      ");
-    pidList.insertLast("PID_BOTTLE_CAPS                     (41)       ");
-    pidList.insertLast("PID_MORNING_STAR_MINE               (420)      ");
-    pidList.insertLast("PID_KOKOWEEF_MINE_SCRIP             (494)      ");
-    pidList.insertLast("PID_REAL_BOTTLE_CAPS                (519)      ");
-    pidList.insertLast("PID_DOLLAR                          (9715)     ");
-    pidList.insertLast("PID_PUMP_PARTS                      (98)       ");
-    pidList.insertLast("PID_JUNK                            (98)       ");
-    pidList.insertLast("PID_SCORPION_TAIL                   (92)       ");
-    pidList.insertLast("PID_ROPE                            (127)      ");
-    pidList.insertLast("PID_BROC_FLOWER                     (271)      ");
-    pidList.insertLast("PID_XANDER_ROOT                     (272)      ");
-    pidList.insertLast("PID_GECKO_PELT                      (276)      ");
-    pidList.insertLast("PID_GOLDEN_GECKO_PELT               (277)      ");
-    pidList.insertLast("PID_FLINT                           (278)      ");
-    pidList.insertLast("PID_MEAT_JERKY                      (284)      ");
-    pidList.insertLast("PID_RADSCORPION_PARTS               (285)      ");
-    pidList.insertLast("PID_FIREWOOD                        (286)      ");
-    pidList.insertLast("PID_HYPODERMIC_NEEDLE               (318)      ");
-    pidList.insertLast("PID_EMPTY_JET                       (416)      ");
-    pidList.insertLast("PID_BOTTLE_GLASS                    (542)      ");
-    pidList.insertLast("PID_BOTTLE_EMPTY                    (532)      ");
-    pidList.insertLast("PID_PART_OF_ROPE                    (534)      ");
-    pidList.insertLast("PID_METAL_TRASH                     (475)      ");
-    pidList.insertLast("PID_GUNPOWDER                       (535)      ");
-    pidList.insertLast("PID_METAL_ORE                       (536)      ");
-    pidList.insertLast("PID_MINERAL                         (537)      ");
-    pidList.insertLast("PID_TUBE                            (538)      ");
-    pidList.insertLast("PID_STEEL                           (50)       ");
-    pidList.insertLast("PID_BRAHMIN_SKIN                    (449)      ");
-    pidList.insertLast("PID_MEAT                            (539)      ");
-    pidList.insertLast("PID_CIGARETTES                      (541)      ");
-    pidList.insertLast("PID_SCORPION_EGG                    (9911)     ");
-    pidList.insertLast("PID_MOTOR                           (89)       ");
-    pidList.insertLast("PID_MOTIVATOR                       (229)      ");
-    pidList.insertLast("PID_PLASMA_TRANSFORMER              (307)      ");
-    pidList.insertLast("PID_MINE_PART                       (419)      ");
-    pidList.insertLast("PID_EXPLOSIVE_SWITCH                (454)      ");
-    pidList.insertLast("PID_ROBOT_MOTIVATOR                 (364)      ");
-    pidList.insertLast("PID_EXCAVATOR_CHIP                  (422)      ");
-    pidList.insertLast("PID_NAVCOM_PARTS                    (479)      ");
-    pidList.insertLast("PID_K9_MOTIVATOR                    (488)      ");
-    pidList.insertLast("PID_WATER_CHIP                      (55)       ");
-    pidList.insertLast("PID_CAR_FUEL_CELL_CONTROLLER        (253)      ");
-    pidList.insertLast("PID_CAR_FUEL_INJECTION              (254)      ");
-    pidList.insertLast("PID_HY_MAG_PART                     (258)      ");
-    pidList.insertLast("PID_ROBOT_PARTS                     (269)      ");
-    pidList.insertLast("PID_COMPUTER_VOICE_MODULE           (356)      ");
-    pidList.insertLast("PID_V15_COMPUTER_PART               (377)      ");
-    pidList.insertLast("PID_TANKER_METALLBOX                (705)      ");
-    pidList.insertLast("PID_TANKER_PUMPPART                 (706)      ");
-    pidList.insertLast("PID_CARAVAN_BOX                     (9626)     ");
-    pidList.insertLast("PID_Q_LA_WAREHOUSE_LETTER           (9729)     ");
-    pidList.insertLast("PID_Q_GUNRUNNER_BOX                 (9741)     ");
-    pidList.insertLast("PID_Q_WESTIN_HOLO                   (9909)     ");
-    pidList.insertLast("PID_Q_GUNRUNNER_COURIER_BOX         (9912)     ");
-    pidList.insertLast("PID_TANGLERS_HAND                   (114)      ");
-    pidList.insertLast("PID_BONES                           (251)      ");
-    pidList.insertLast("PID_DIXON_EYE                       (281)      ");
-    pidList.insertLast("PID_CLIFTON_EYE                     (282)      ");
-    pidList.insertLast("PID_CYBERNETIC_BRAIN                (321)      ");
-    pidList.insertLast("PID_HUMAN_BRAIN                     (322)      ");
-    pidList.insertLast("PID_CHIMP_BRAIN                     (323)      ");
-    pidList.insertLast("PID_ABNORMAL_BRAIN                  (324)      ");
-    pidList.insertLast("PID_GOLD_TOOTH                      (429)      ");
-    pidList.insertLast("PID_PLAYERS_EAR                     (484)      ");
-    pidList.insertLast("PID_MASTICATORS_EAR                 (485)      ");
-    pidList.insertLast("PID_DECOMPOSING_BODY                (507)      ");
-    pidList.insertLast("PID_DR_HENRY_PAPERS                 (340)      ");
-    pidList.insertLast("PID_VERTIBIRD_PLANS                 (446)      ");
-    pidList.insertLast("PID_MEM_CHIP_BLUE                   (503)      ");
-    pidList.insertLast("PID_MEM_CHIP_GREEN                  (504)      ");
-    pidList.insertLast("PID_MEM_CHIP_RED                    (505)      ");
-    pidList.insertLast("PID_MEM_CHIP_YELLOW                 (506)      ");
-    pidList.insertLast("PID_DERMAL_PIP_BOY_DISK             (499)      ");
-    pidList.insertLast("PID_PIP_BOY_MEDICAL_ENHANCER        (516)      ");
-    pidList.insertLast("PID_MULTI_TOOL                      (75)       ");
-    pidList.insertLast("PID_SUPER_TOOL_KIT                  (308)      ");
-    pidList.insertLast("PID_OIL_CAN                         (412)      ");
-    pidList.insertLast("PID_LOCKPICKS                       (84)       ");
-    pidList.insertLast("PID_EXP_LOCKPICK_SET                (410)      ");
-    pidList.insertLast("PID_ELECTRONIC_LOCKPICKS            (77)       ");
-    pidList.insertLast("PID_ELEC_LOCKPICK_MKII              (411)      ");
-    pidList.insertLast("PID_LOCK                            (549)      ");
-    pidList.insertLast("PID_FIRST_AID_KIT                   (47)       ");
-    pidList.insertLast("PID_FIELD_MEDIC_KIT                 (408)      ");
-    pidList.insertLast("PID_DOCTORS_BAG                     (91)       ");
-    pidList.insertLast("PID_PARAMEDICS_BAG                  (409)      ");
-    pidList.insertLast("PID_MEDICAL_SUPPLIES                (428)      ");
-    pidList.insertLast("PID_BIO_GEL                         (440)      ");
-    pidList.insertLast("PID_SHOVEL                          (289)      ");
-    pidList.insertLast("PID_PLANK                           (297)      ");
-    pidList.insertLast("PID_AXE                             (543)      ");
-    pidList.insertLast("PID_GEIGER_COUNTER                  (52)       ");
-    pidList.insertLast("PID_ACTIVE_GEIGER_COUNTER           (207)      ");
-    pidList.insertLast("PID_STEALTH_BOY                     (54)       ");
-    pidList.insertLast("PID_ACTIVE_STEALTH_BOY              (210)      ");
-    pidList.insertLast("PID_MOTION_SENSOR                   (59)       ");
-    pidList.insertLast("PID_ACTIVE_MOTION_SENSOR            (208)      ");
-    pidList.insertLast("PID_WATER_BAG                       (605)      ");
-    pidList.insertLast("PID_BINOCULARS                      (827)      ");
-    pidList.insertLast("PID_BIG_BOOK_OF_SCIENCE             (73)       ");
-    pidList.insertLast("PID_DEANS_ELECTRONICS               (76)       ");
-    pidList.insertLast("PID_FIRST_AID_BOOK                  (80)       ");
-    pidList.insertLast("PID_SCOUT_HANDBOOK                  (86)       ");
-    pidList.insertLast("PID_GUNS_AND_BULLETS                (102)      ");
-    pidList.insertLast("PID_CATS_PAW                        (225)      ");
-    pidList.insertLast("PID_TECHNICAL_MANUAL                (228)      ");
-    pidList.insertLast("PID_CHEMISTRY_MANUAL                (237)      ");
-    pidList.insertLast("PID_CATS_PAW_ISSUE_5                (331)      ");
-    pidList.insertLast("PID_BECKY_BOOK                      (471)      ");
-    pidList.insertLast("PID_BOOK                            (828)      ");
-    pidList.insertLast("PID_BARTER_BOOK				     (22050)    ");
-    pidList.insertLast("PID_IMPLANT_DERMAL					 (22051)    ");
-    pidList.insertLast("PID_IMPLANT_PHOENIX				 (22052)    ");
-    pidList.insertLast("PID_IMPLANT_NEMEAN					 (22053)    ");
-    pidList.insertLast("PID_IMPLANT_STRENGTH				 (22054)    ");
-    pidList.insertLast("PID_IMPLANT_PERCEPTION				 (22055)    ");
-    pidList.insertLast("PID_IMPLANT_ENDURANCE				 (22056)    ");
-    pidList.insertLast("PID_IMPLANT_CHARISMA				 (22057)    ");
-    pidList.insertLast("PID_IMPLANT_INTELLIGENCE			 (22058)    ");
-    pidList.insertLast("PID_IMPLANT_AGILITY			     (22059)    ");
-    pidList.insertLast("PID_IMPLANT_LUCK					 (22060)    ");
-    pidList.insertLast("PID_SMALL_STATUETTE                 (224)      ");
-    pidList.insertLast("PID_MR_NIXON_DOLL                   (491)      ");
-    pidList.insertLast("PID_BLOW_UP_DOLL                    (508)      ");
-    pidList.insertLast("PID_POPPED_BLOW_UP_DOLL             (509)      ");
-    pidList.insertLast("PID_LIGHTER                         (101)      ");
-    pidList.insertLast("PID_FLOWER                          (117)      ");
-    pidList.insertLast("PID_WATER_FLASK                     (126)      ");
-    pidList.insertLast("PID_BOX_OF_NOODLES                  (226)      ");
-    pidList.insertLast("PID_FROZEN_DINNER                   (227)      ");
-    pidList.insertLast("PID_RUBBER_BOOTS                    (262)      ");
-    pidList.insertLast("PID_CHEEZY_POOFS                    (295)      ");
-    pidList.insertLast("PID_BLUE_CONDOM                     (314)      ");
-    pidList.insertLast("PID_GREEN_CONDOM                    (315)      ");
-    pidList.insertLast("PID_RED_CONDOM                      (316)      ");
-    pidList.insertLast("PID_COSMETIC_CASE                   (317)      ");
-    pidList.insertLast("PID_DICE                            (325)      ");
-    pidList.insertLast("PID_LOADED_DICE                     (326)      ");
-    pidList.insertLast("PID_DECK_OF_CARDS                   (436)      ");
-    pidList.insertLast("PID_MARKED_DECK_OF_CARDS            (437)      ");
-    pidList.insertLast("PID_BRIEFCASE                       (72)       ");
-    pidList.insertLast("PID_MUTAGENIC_SYRUM                 (329)      ");
-    pidList.insertLast("PID_HEART_PILLS                     (333)      ");
-    pidList.insertLast("PID_SPECTACLES                      (415)      ");
-    pidList.insertLast("PID_OXYGEN_TANK                     (417)      ");
-    pidList.insertLast("PID_POISON_TANK                     (418)      ");
-    pidList.insertLast("PID_HOWITZER_SHELL                  (430)      ");
-    pidList.insertLast("PID_MIRROR_SHADES                   (433)      ");
-    pidList.insertLast("PID_POCKET_LINT                     (439)      ");
-    pidList.insertLast("PID_BALL_GAG                        (470)      ");
-    pidList.insertLast("PID_DAISIES                         (474)      ");
-    pidList.insertLast("PID_BOTTLE_FULL                     (533)      ");
-    pidList.insertLast("PID_GOGGLES                         (570)      ");
-    pidList.insertLast("PID_DOG_TAGS                        (56)       ");
-    pidList.insertLast("PID_ELECTRONIC_BUG                  (57)       ");
-    pidList.insertLast("PID_FUZZY_PAINTING                  (78)       ");
-    pidList.insertLast("PID_GOLD_LOCKET                     (99)       ");
-    pidList.insertLast("PID_TAPE_RECORDER                   (104)      ");
-    pidList.insertLast("PID_URN                             (112)      ");
-    pidList.insertLast("PID_NECKLACE                        (119)      ");
-    pidList.insertLast("PID_PSYCHIC_NULLIFIER               (123)      ");
-    pidList.insertLast("PID_BLACK_COC_BADGE                 (141)      ");
-    pidList.insertLast("PID_RED_COC_BADGE                   (142)      ");
-    pidList.insertLast("PID_BARTER_TANDI                    (212)      ");
-    pidList.insertLast("PID_ANNA_GOLD_LOCKET                (252)      ");
-    pidList.insertLast("PID_DAY_PASS                        (255)      ");
-    pidList.insertLast("PID_FAKE_CITIZENSHIP                (256)      ");
-    pidList.insertLast("PID_CORNELIUS_GOLD_WATCH            (257)      ");
-    pidList.insertLast("PID_VIC_RADIO                       (266)      ");
-    pidList.insertLast("PID_VIC_WATER_FLASK                 (267)      ");
-    pidList.insertLast("PID_TROPHY_OF_RECOGNITION           (275)      ");
-    pidList.insertLast("PID_NEURAL_INTERFACE                (279)      ");
-    pidList.insertLast("PID_CLIPBOARD                       (301)      ");
-    pidList.insertLast("PID_DECK_OF_TRAGIC_CARDS            (304)      ");
-    pidList.insertLast("PID_TALISMAN                        (309)      ");
-    pidList.insertLast("PID_SLAG_MESSAGE                    (263)      ");
-    pidList.insertLast("PID_PART_REQUISITION_FORM           (312)      ");
-    pidList.insertLast("PID_EASTER_EGG                      (327)      ");
-    pidList.insertLast("PID_MAGIC_8_BALL                    (328)      ");
-    pidList.insertLast("PID_MOORE_BAD_BRIEFCASE             (335)      ");
-    pidList.insertLast("PID_MOORE_GOOD_BRIEFCASE            (336)      ");
-    pidList.insertLast("PID_PRESIDENTIAL_PASS               (341)      ");
-    pidList.insertLast("PID_RANGER_PIN                      (342)      ");
-    pidList.insertLast("PID_RANGER_MAP                      (343)      ");
-    pidList.insertLast("PID_GECK                            (366)      ");
-    pidList.insertLast("PID_STABLES_ID_BADGE                (413)      ");
-    pidList.insertLast("PID_RAMIREZ_BOX_CLOSED              (431)      ");
-    pidList.insertLast("PID_RAMIREZ_BOX_OPEN                (432)      ");
-    pidList.insertLast("PID_BLONDIE_DOG_TAG                 (441)      ");
-    pidList.insertLast("PID_ANGEL_EYES_DOG_TAG              (442)      ");
-    pidList.insertLast("PID_TUCO_DOG_TAG                    (443)      ");
-    pidList.insertLast("PID_RAIDERS_MAP                     (444)      ");
-    pidList.insertLast("PID_SHERIFF_BADGE                   (445)      ");
-    pidList.insertLast("PID_ACCOUNT_BOOK                    (448)      ");
-    pidList.insertLast("PID_TORN_PAPER_1                    (450)      ");
-    pidList.insertLast("PID_TORN_PAPER_2                    (451)      ");
-    pidList.insertLast("PID_TORN_PAPER_3                    (452)      ");
-    pidList.insertLast("PID_PASSWORD_PAPER                  (453)      ");
-    pidList.insertLast("PID_ELRON_FIELD_REP                 (457)      ");
-    pidList.insertLast("PID_SMITTY_MEAL                     (468)      ");
-    pidList.insertLast("PID_ENLIGHTENED_ONE_LETTER          (476)      ");
-    pidList.insertLast("PID_FALLOUT_2_HINTBOOK              (483)      ");
-    pidList.insertLast("PID_MOUSE_SKIN                      (540)      ");
-    pidList.insertLast("PID_MEAT_BAG                        (546)      ");
-    pidList.insertLast("PID_METZGERS_CASE                   (547)      ");
-    pidList.insertLast("PID_MORDINOS_CASE                   (548)      ");
-    pidList.insertLast("PID_BOS_DOG_TAGS                    (577)      ");
-    pidList.insertLast("PID_ENCLAVE_DOG_TAGS                (578)      ");
-    pidList.insertLast("PID_NCR_ARMY_DOG_TAGS               (579)      ");
-    pidList.insertLast("PID_RAIDERS_DOG_TAGS                (580)      ");
-    pidList.insertLast("PID_VAULT_CITY_PATROL_DOG_TAGS      (581)      ");
-    pidList.insertLast("PID_UNITY_PATROL_DOG_TAGS           (582)      ");
-    pidList.insertLast("PID_BOOK_OF_ACHIEVEMENT             (623)      ");
-    pidList.insertLast("PID_LIQUID_GREASE 		             (9021)     ");
-    pidList.insertLast("PID_WATER_BARREL                    (9637)     ");
-    pidList.insertLast("PID_ACCESS_CARD                     (140)      ");
-    pidList.insertLast("PID_SECURITY_CARD                   (221)      ");
-    pidList.insertLast("PID_TRAPPER_TOWN_KEY                (298)      ");
-    pidList.insertLast("PID_YELLOW_REACTOR_KEYCARD          (305)      ");
-    pidList.insertLast("PID_RED_REACTOR_KEYCARD             (306)      ");
-    pidList.insertLast("PID_V15_KEYCARD                     (373)      ");
-    pidList.insertLast("PID_VAULT_13_SHACK_KEY              (414)      ");
-    pidList.insertLast("PID_PRES_ACCESS_KEY                 (495)      ");
-    pidList.insertLast("PID_TANKER_FOB                      (492)      ");
-    pidList.insertLast("PID_BROTHERHOOD_TAPE                (164)      ");
-    pidList.insertLast("PID_DISK_FEV                        (190)      ");
-    pidList.insertLast("PID_DISK_SECURITY                   (191)      ");
-    pidList.insertLast("PID_DISK_ALPHA_EXPERIMENT           (192)      ");
-    pidList.insertLast("PID_DISK_DELTA_EXPERIMENT           (193)      ");
-    pidList.insertLast("PID_DISK_VREES_EXPERIMENT           (194)      ");
-    pidList.insertLast("PID_DISK_MUTANT_TRANSMISSIONS       (196)      ");
-    pidList.insertLast("PID_DISK_BROTHERHOOD_HISTORY        (215)      ");
-    pidList.insertLast("PID_DISK_MAXSON_HISTORY             (216)      ");
-    pidList.insertLast("PID_DISK_MAXSON_JOURNAL             (217)      ");
-    pidList.insertLast("PID_DISK_VAULT_RECORDS              (230)      ");
-    pidList.insertLast("PID_DISK_MILITARY_BASE_SEC_CODE     (231)      ");
-    pidList.insertLast("PID_DISK_REGULATOR_TRANSMISSIONS    (238)      ");
-    pidList.insertLast("PID_HOLODISK_FAKE_V13               (294)      ");
-    pidList.insertLast("PID_GECKO_DATA_DISK                 (302)      ");
-    pidList.insertLast("PID_REACTOR_DATA_DISK               (303)      ");
-    pidList.insertLast("PID_LYNETTE_HOLO                    (337)      ");
-    pidList.insertLast("PID_WESTIN_HOLO                     (338)      ");
-    pidList.insertLast("PID_SPY_HOLO                        (339)      ");
-    pidList.insertLast("PID_BISHOPS_HOLODISK                (447)      ");
-    pidList.insertLast("PID_ENCLAVE_HOLODISK_5              (458)      ");
-    pidList.insertLast("PID_ENCLAVE_HOLODISK_1              (459)      ");
-    pidList.insertLast("PID_ENCLAVE_HOLODISK_2              (460)      ");
-    pidList.insertLast("PID_ENCLAVE_HOLODISK_3              (461)      ");
-    pidList.insertLast("PID_ENCLAVE_HOLODISK_4              (462)      ");
-    pidList.insertLast("PID_EVACUATION_HOLODISK             (463)      ");
-    pidList.insertLast("PID_EXPERIMENT_HOLODISK             (464)      ");
-    pidList.insertLast("PID_MEDICAL_HOLODISK                (465)      ");
-    pidList.insertLast("PID_PASSWORD_HOLODISK               (466)      ");
-    pidList.insertLast("PID_ELRON_MEMBER_HOLO               (472)      ");
-    pidList.insertLast("PID_BROADCAST_HOLODISK              (477)      ");
-    pidList.insertLast("PID_SIERRA_MISSION_HOLODISK         (478)      ");
-    pidList.insertLast("PID_NCR_HISTORY_HOLODISK            (490)      ");
-    pidList.insertLast("PID_ELRON_TEACH_HOLO                (493)      ");
-    pidList.insertLast("PID_WATCH                           (88)       ");
-    pidList.insertLast("PID_MISC_BOOKCASE_0                 (148)      ");
-    pidList.insertLast("PID_MISC_BOOKCASE_1                 (150)      ");
-    pidList.insertLast("PID_MISC_SHELVES_0                  (154)      ");
-    pidList.insertLast("PID_MISC_SHELVES_1                  (156)      ");
-    pidList.insertLast("PID_DISK_BROTHERHOOD_HONOR_CODE     (195)      ");
-    pidList.insertLast("PID_BARTER_LIGHT_HEALING            (218)      ");
-    pidList.insertLast("PID_BARTER_MEDIUM_HEALING           (219)      ");
-    pidList.insertLast("PID_BARTER_HEAVY_HEALING            (220)      ");
-    pidList.insertLast("PID_SMITH_COOL_ITEM                 (264)      ");
-    pidList.insertLast("PID_CAR_FUEL_CELL                   (288)      ");
-    pidList.insertLast("PID_POWER_SERVOS                    (707)      ");
-    pidList.insertLast("PID_ADV_SUPERBURN                   (708)      ");
-    pidList.insertLast("PID_DETONATOR_PARTS                 (709)      ");
-    pidList.insertLast("PID_EXTENDED_MAGAZINE               (710)      ");
-    pidList.insertLast("PID_EXT_CAPACITOR_BATTERY           (711)      ");
-    pidList.insertLast("PID_PLASMA_BOLT_CHAMBER             (712)      ");
-    pidList.insertLast("PID_IMP_CAPACITOR_BATTERY           (713)      ");
-    pidList.insertLast("PID_MFT_SYSTEM                      (714)      ");
-    pidList.insertLast("PID_HEATERCHAMBER                   (715)      ");
-    pidList.insertLast("PID_SCOPE                           (716)      ");
-    pidList.insertLast("PID_SPEED_LOADER                    (717)      ");
-    pidList.insertLast("PID_LASER_POINTER                   (718)      ");
-    pidList.insertLast("PID_DYNAMITE                        (51)       ");
-    pidList.insertLast("PID_PLASTIC_EXPLOSIVES              (85)       ");
-    pidList.insertLast("PID_MINE                            (544)      ");
-    pidList.insertLast("PID_PERSONNEL_MINE                  (9852)     ");
-    pidList.insertLast("PID_BLUEPRINT_14MM_PISTOL           (9750)     ");
-    pidList.insertLast("PID_BLUEPRINT_NEEDLER_PISTOL        (9751)     ");
-    pidList.insertLast("PID_BLUEPRINT_223_PISTOL            (9752)     ");
-    pidList.insertLast("PID_BLUEPRINT_ASSAULT_RIFLE         (9753)     ");
-    pidList.insertLast("PID_BLUEPRINT_FN_FAL                (9754)     ");
-    pidList.insertLast("PID_BLUEPRINT_SNIPER_RIFLE          (9755)     ");
-    pidList.insertLast("PID_BLUEPRINT_P90                   (9756)     ");
-    pidList.insertLast("PID_BLUEPRINT_HK_CAWS               (9757)     ");
-    pidList.insertLast("PID_BLUEPRINT_PANCOR_JACKHAMMER     (9758)     ");
-    pidList.insertLast("PID_BLUEPRINT_PLASMA_PISTOL         (9759)     ");
-    pidList.insertLast("PID_BLUEPRINT_LASER_RIFLE           (9760)     ");
-    pidList.insertLast("PID_BLUEPRINT_PLASMA_RIFLE          (9761)     ");
-    pidList.insertLast("PID_BLUEPRINT_MEGA_POWER_FIST       (9762)     ");
-    pidList.insertLast("PID_BLUEPRINT_SUPER_CATTLE_PROD     (9763)     ");
-    pidList.insertLast("PID_BLUEPRINT_RIPPER                (9764)     ");
-    pidList.insertLast("PID_BLUEPRINT_ROCKET_LAUNCHER       (9765)     ");
-    pidList.insertLast("PID_BLUEPRINT_LIGHT_SUPPORT_WEAPON  (9766)     ");
-    pidList.insertLast("PID_BLUEPRINT_MINIGUN               (9767)     ");
-    pidList.insertLast("PID_BLUEPRINT_PLASMA_GRENADE        (9768)     ");
-    pidList.insertLast("PID_BLUEPRINT_DYNAMITE              (9769)     ");
-    pidList.insertLast("PID_BLUEPRINT_PLASTIC_EXPLOSIVES    (9770)     ");
-    pidList.insertLast("PID_BLUEPRINT_SUPER_SLEDGE          (9771)     ");
-    pidList.insertLast("PID_BLUEPRINT_IMPROVED_FLAMETHROWER (9772)     ");
-    pidList.insertLast("PID_BLUEPRINT_FIRE_GRENADE          (9773)     ");
-    pidList.insertLast("PID_BLUEPRINT_LASER_SMG             (9774)     ");
-    pidList.insertLast("PID_BLUEPRINT_LASER_SUPPORT_WEAPON  (9775)     ");
-    pidList.insertLast("PID_BLUEPRINT_PULSE_PISTOL          (9776)     ");
-    pidList.insertLast("PID_BLUEPRINT_METAL_ARMOR_MK_II     (9780)     ");
-    pidList.insertLast("PID_BLUEPRINT_TESLA_ARMOR           (9781)     ");
-    pidList.insertLast("PID_BLUEPRINT_COMBAT_ARMOR          (9782)     ");
-    pidList.insertLast("PID_BLUEPRINT_THERMAL_LEATHER_ARMOR (9783)     ");
-    pidList.insertLast("PID_BLUEPRINT_METAL_HELMET_MK2      (9810)     ");
-    pidList.insertLast("PID_BLUEPRINT_TESLA_HELMET          (9811)     ");
-    pidList.insertLast("PID_BLUEPRINT_COMBAT_HELMET         (9812)     ");
-    pidList.insertLast("PID_BLUEPRINT_SUPER_STIMPAK         (9790)     ");
-    pidList.insertLast("PID_BLUEPRINT_STIMPAK               (9791)     ");
-    pidList.insertLast("PID_BLUEPRINT_JET                   (9792)     ");
-    pidList.insertLast("PID_BLUEPRINT_BUFFOUT               (9793)     ");
-    pidList.insertLast("PID_BLUEPRINT_MENTATS               (9794)     ");
-    pidList.insertLast("PID_BLUEPRINT_PSYCHO                (9795)     ");
-    pidList.insertLast("PID_BLUEPRINT_RADAWAY               (9796)     ");
-    pidList.insertLast("PID_BLUEPRINT_RADX                  (9797)     ");
-    pidList.insertLast("PID_BLUEPRINT_RANDOM_1              (9800)     ");
-    pidList.insertLast("PID_BLUEPRINT_RANDOM_2              (9801)     ");
-    pidList.insertLast("PID_BLUEPRINT_RANDOM_3              (9802)     ");
-    pidList.insertLast("PID_BLUEPRINT_ARMOR_1              (11004)     ");
-    pidList.insertLast("PID_BLUEPRINT_ARMOR_2              (11005)     ");
-    pidList.insertLast("PID_BLUEPRINT_ARMOR_3              (11006)     ");
-    pidList.insertLast("PID_BLUEPRINT_DRUG_1               (11007)     ");
-    pidList.insertLast("PID_BLUEPRINT_DRUG_2               (11008)     ");
-    pidList.insertLast("PID_BLUEPRINT_DRUG_3               (11009)     ");
-    pidList.insertLast("PID_BLUEPRINT_WEAPON_1             (11010)     ");
-    pidList.insertLast("PID_BLUEPRINT_WEAPON_2             (11011)     ");
-    pidList.insertLast("PID_BLUEPRINT_WEAPON_3             (11012)     ");
-    pidList.insertLast("PID_BLUEPRINT_AMMO_1               (11013)     ");
-    pidList.insertLast("PID_BLUEPRINT_AMMO_2               (11014)     ");
-    pidList.insertLast("PID_BLUEPRINT_AMMO_3               (11015)     ");
-    pidList.insertLast("PID_HOLODISK                        (58)       ");
-    pidList.insertLast("PID_RADIO                           (100)      ");
-    pidList.insertLast("PID_MEMO                            (487)      ");
-    pidList.insertLast("PID_MAP                             (523)      ");
-    pidList.insertLast("PID_TICKET                          (564)      ");
-    pidList.insertLast("PID_DOGTAGS                         (9601)     ");
-    pidList.insertLast("PID_TANKER_STEAM                    (615)      ");
-    pidList.insertLast("PID_TANKER_HOLE                     (703)      ");
-    pidList.insertLast("PID_TANKER_ROPE_HOLE                (704)      ");
-    pidList.insertLast("PID_HUMMER                          (800)      ");
-    pidList.insertLast("PID_BUGGY                           (802)      ");
-    pidList.insertLast("PID_SCOUT                           (805)      ");
-    pidList.insertLast("PID_VERTIBIRD                       (808)      ");
-    pidList.insertLast("PID_HIGHWAYMAN                      (816)      ");
-    pidList.insertLast("PID_RUSTY_HIGHWAYMAN                (550)      ");
-    pidList.insertLast("PID_CARAVAN_WHITE                   (558)      ");
-    pidList.insertLast("PID_CARAVAN_ORANGE                  (559)      ");
-    pidList.insertLast("PID_COCKROACH                       (560)      ");
-    pidList.insertLast("PID_WRECKED_CAR                     (563)      ");
-    pidList.insertLast("PID_BOAT                            (824)      ");
-    pidList.insertLast("PID_CORVEGA					     (831)      ");
-    pidList.insertLast("PID_TARDIS                          (9673)     ");
-    pidList.insertLast("PID_TRAIN                           (9688)     ");
-    pidList.insertLast("PID_TRAIN2                          (9689)     ");
-    pidList.insertLast("PID_POLICE_CAR                      (9746)     ");
-    pidList.insertLast("PID_MOTORCYCLE                      (9925)     ");
-    pidList.insertLast("PID_FIRETRUCK                       (9927)     ");
-    pidList.insertLast("PID_TRUCK                           (9929)     ");
-    pidList.insertLast("PID_BARGE                           (9931)     ");
-    pidList.insertLast("PID_ACTIVE_DYNAMITE                 (206)      ");
-    pidList.insertLast("PID_TOGGLE_SWITCH                   (222)      ");
-    pidList.insertLast("PID_ACTIVE_PLASTIC_EXPLOSIVE        (209)      ");
-    pidList.insertLast("PID_ACTIVE_MINE                     (545)      ");
-    pidList.insertLast("PID_ACTIVE_PERSONNEL_MINE           (9853)     ");
-    pidList.insertLast("PID_STILL_B_BROKEN                  (810)      ");
-    pidList.insertLast("PID_STILL_S_BROKEN                  (811)      ");
-    pidList.insertLast("PID_STILL_B                         (812)      ");
-    pidList.insertLast("PID_STILL_B_ACTIVE                  (813)      ");
-    pidList.insertLast("PID_STILL_S                         (814)      ");
-    pidList.insertLast("PID_STILL_S_ACTIVE                  (815)      ");
-    pidList.insertLast("PID_VAULT_CITY_GATE                 (3337)     ");
-    pidList.insertLast("PID_CORRUGATED_GATE                 (3818)     ");
-    pidList.insertLast("PID_ACCESS_GATE_1                   (3999)     ");
-    pidList.insertLast("PID_ACCESS_GATE_2                   (4000)     ");
-    pidList.insertLast("PID_OLD_SHOVEL                      (600)      ");
-    pidList.insertLast("PID_QUESTIONNAIRE                   (1800)     ");
-    pidList.insertLast("PID_ELECTRONIC_PARTS                (1801)     ");
-    pidList.insertLast("PID_ALLOYS                          (1802)     ");
-    pidList.insertLast("PID_BRAHMIN_HIDE                    (1803)     ");
-    pidList.insertLast("PID_METAL_PARTS                     (1804)     ");
-    pidList.insertLast("PID_DAY_PASS2                       (1805)     ");
-    pidList.insertLast("PID_BOUNTY_DOG_TAG                  (1806)     ");
-    pidList.insertLast("PID_LOST_HILLS_DISK                 (1807)     ");
-    pidList.insertLast("PID_BOS_DISK                        (1808)     ");
-    pidList.insertLast("PID_PROCESSED_BOS_DISK              (1809)     ");
-    pidList.insertLast("PID_BARREL_JUNK                     (1810)     ");
-    pidList.insertLast("PID_PLANT_TOBACCO                   (1812)     ");
-    pidList.insertLast("PID_PLANT_FIBER                     (1817)     ");
-    pidList.insertLast("PID_STILL_ROTGUT                    (1819)     ");
-    pidList.insertLast("PID_TREE1_FIREWOOD                  (1820)     ");
-    pidList.insertLast("PID_TREE2_FIREWOOD                  (1821)     ");
-    pidList.insertLast("PID_TREE3_FIREWOOD                  (1822)     ");
-    pidList.insertLast("PID_TABLE_BRAHMIN                   (1823)     ");
-    pidList.insertLast("PID_FIBER                           (1824)     ");
-    pidList.insertLast("PID_PROD_BROC                       (1825)     ");
-    pidList.insertLast("PID_PROD_XANDER                     (1826)     ");
-    pidList.insertLast("PID_PROD_FLINT              		 (1827)     ");
-    pidList.insertLast("PID_BRAHMINSHIT                     (9627)     ");
-    pidList.insertLast("PID_ALLOYS2                         (9628)     ");
-    pidList.insertLast("PID_CHEMICALS                       (9629)     ");
-    pidList.insertLast("PID_FIREGECKO_PELT                  (9630)     ");
-    pidList.insertLast("PID_GUNPOWDER2                      (9631)     ");
-    pidList.insertLast("PID_FIBRE2                          (9632)     ");
-    pidList.insertLast("PID_ORE2                            (9633)     ");
-    pidList.insertLast("PID_MINERALS2                       (9634)     ");
-    pidList.insertLast("PID_TOBACCO                         (9635)     ");
-    pidList.insertLast("PID_METAL_PARTS2                    (9653)     ");
-    pidList.insertLast("PID_CAR_REPLACEMENT_PARTS           (9681)     ");
-    pidList.insertLast("PID_ELECTRONIC_PARTS2               (9918)     ");
-    pidList.insertLast("PID_CHEMICALS2                      (9919)     ");
-    pidList.insertLast("PID_PLANT_APPLE_TREE                (9910)     ");
-    pidList.insertLast("PID_PLANT_BARLEY                    (9920)     ");
-    pidList.insertLast("PID_BARLEY                          (9921)     ");
-    pidList.insertLast("PID_POLYMER                         (9960)     ");
-    pidList.insertLast("PID_NUKA_COLA_MACHINE               (9961)     ");
-    pidList.insertLast("PID_BEAR_TRAP                       (9850)     ");
-    pidList.insertLast("PID_BEAR_TRAP_SPRUNG                (9851)     ");
-    pidList.insertLast("PID_CONTAINER_ICE_CHEST_R           (1828)     ");
-    pidList.insertLast("PID_CONTAINER_ICE_CHEST_L           (1829)     ");
-    pidList.insertLast("PID_CONTAINER_FOOTLOCKER_R          (1830)     ");
-    pidList.insertLast("PID_CONTAINER_FOOTLOCKER_L          (1831)     ");
-    pidList.insertLast("PID_CONTAINER_AMMOBOX_R             (1832)     ");
-    pidList.insertLast("PID_CONTAINER_AMMOBOX_L             (1833)     ");
-    pidList.insertLast("PID_PROSPECT_MAP                    (1850)     ");
-    pidList.insertLast("PID_BRAHMIN_SHIT_1                  (1854)     ");
-    pidList.insertLast("PID_BRAHMIN_SHIT_2                  (1855)     ");
-    pidList.insertLast("PID_BRAHMIN_SHIT_3                  (1856)     ");
-    pidList.insertLast("PID_BRAHMIN_SHIT_4                  (1857)     ");
-    pidList.insertLast("PID_BARF_1                          (1858)     ");
-    pidList.insertLast("PID_BARF_2                          (1859)     ");
-    pidList.insertLast("PID_CARAVAN_SPAWNPOINT              (1860)     ");
-    pidList.insertLast("PID_PRIMITIVE_TOOL                  (1863)     ");
-    pidList.insertLast("PID_WORKBENCH_RAIDERS               (1864)     ");
-    pidList.insertLast("PID_AMMO_FACILITY                   (1865)     ");
-    pidList.insertLast("PID_MED_MACHINE                     (4608)     ");
-    pidList.insertLast("PID_WORKBENCH_PRIMITIVE             (571)      ");
-    pidList.insertLast("PID_WANTED_SIGN                     (3228)     ");
-    pidList.insertLast("PID_UNVISIBLE_BLOCK                 (820)      ");
-    pidList.insertLast("PID_RESPAWN_POINT                   (821)      ");
-    pidList.insertLast("PID_TRAP                            (822)      ");
-    pidList.insertLast("PID_MFC_MACHINE                     (3167)     ");
-    pidList.insertLast("PID_NUKA_VENDING_MACHINE            (2194)     ");
-    pidList.insertLast("PID_BED1                            (3854)     ");
-    pidList.insertLast("PID_BED2                            (3855)     ");
-    pidList.insertLast("PID_TENT                            (3856)     ");
-    pidList.insertLast("PID_MAP_TO_LOCATION                 (3857)     ");
-    pidList.insertLast("PID_WAYPOINT                        (1851)     ");
-    pidList.insertLast("PID_ITEM_SPAWNING_HEX               (1867)     ");
-    pidList.insertLast("PID_LEAFLET_CADILLAC                (1866)     ");
-    pidList.insertLast("PID_BLOCK_BARREL1                   (9670)     ");
-    pidList.insertLast("PID_BLOCK_BARREL2                   (9671)     ");
-    pidList.insertLast("PID_BLOCK_BARREL3                   (9672)     ");
-    pidList.insertLast("PID_TREASURE1                       (553)      ");
-    pidList.insertLast("PID_TREASURE2                       (554)      ");
-    pidList.insertLast("PID_TREASURE3                       (555)      ");
-    pidList.insertLast("PID_TREASURE4                       (556)      ");
-    pidList.insertLast("PID_TREASURE5                       (557)      ");
-    pidList.insertLast("PID_BRAHMIN_HIDE_TROPHY             (9932)     ");
-    pidList.insertLast("PID_WATERBAG                        (605)      ");
-    pidList.insertLast("PID_WATERPIPE                       (606)      ");
-    pidList.insertLast("PID_WATERBAG_EMPTY                  (609)      ");
-    pidList.insertLast("PID_Q_CORS_BROS_DEAD_BODY           (9924)     ");
-    pidList.insertLast("PID_POW_DIS_CIRCUIT			     (9000)     ");
-    pidList.insertLast("PID_MAIN_COMP_HOLO				     (9001)     ");
-    pidList.insertLast("PID_NUCLEAR_STOR_DATA			     (9002)     ");
-    pidList.insertLast("PID_BIOLOG_STOR_DATA			     (9003)     ");
-    pidList.insertLast("PID_mgl_chem_stuff				     (9010)     ");
-    pidList.insertLast("PID_GECKO_GHOUL_BLOOD_SAMPLE	     (9011)     ");
-    pidList.insertLast("PID_BROKEN_HILLS_GHOUL_BLOOD_SAMPLE (9012)     ");
-    pidList.insertLast("PID_XIV_PASSWORD_PAPER			     (9020)     ");
-    pidList.insertLast("PID_EXPLODE_FIRE_BIG                (4027)     ");
-    pidList.insertLast("PID_EXPLODE_FIRE_SMALL              (4028)     ");
-    pidList.insertLast("PID_EXPLODE_PLASMA                  (4029)     ");
-    pidList.insertLast("PID_EXPLODE_EMP                     (4008)     ");
-    pidList.insertLast("PID_EXPLODE_ROCKET                  (4011)     ");
-    pidList.insertLast("PID_FIRE_HEX                        (4051)     ");
-    pidList.insertLast("PID_FLYING_ROCKET                   (4001)     ");
-    pidList.insertLast("PID_FLYING_PLASMA_BALL              (4002)     ");
-    pidList.insertLast("PID_FLYING_KNIFE                    (4006)     ");
-    pidList.insertLast("PID_FLYING_SPEAR                    (4007)     ");
-    pidList.insertLast("PID_FLYING_LASER_BLAST              (4009)     ");
-    pidList.insertLast("PID_FLYING_PLASMA_BLAST             (4010)     ");
-    pidList.insertLast("PID_FLYING_ELECTRICITY_BOLT         (4013)     ");
-    pidList.insertLast("PID_TANKER_ROPE                     (9624)     ");
-    pidList.insertLast("PID_SHAFT_WITH_ROPE                 (9677)     ");
-    pidList.insertLast("PID_FORCEFIELD_YELLOW_1             (9678)     ");
-    pidList.insertLast("PID_FORCEFIELD_YELLOW_2             (9679)     ");
-    pidList.insertLast("PID_TRIGGER                         (825)      ");
-    pidList.insertLast("PID_MHEX                            (826)      ");
-    pidList.insertLast("PID_SPECIAL_SCEN_LIGHT              (2141)     ");
-    pidList.insertLast("PID_SPECIAL_SCEN_LIGHT_STOP         (4592)     ");
-    pidList.insertLast("PID_SPECIAL_SCEN_BLOCK              (2067)     ");
-    pidList.insertLast("PID_SPECIAL_SCEN_IBLOCK             (2344)     ");
-    pidList.insertLast("PID_SPECIAL_SCEN_TRIGGER            (3852)     ");
-    pidList.insertLast("PID_SPECIAL_WALL_BLOCK_LIGHT        (5621)     ");
-    pidList.insertLast("PID_SPECIAL_WALL_BLOCK              (5622)     ");
-    pidList.insertLast("PID_SPECIAL_GRID_EXITGRID           (2049)     ");
-    pidList.insertLast("PID_SPECIAL_GRID_ENTIRE             (3853)     ");
-    pidList.insertLast("PID_SPECIAL_MISC_SCRBLOCK           (4012)     ");
-    pidList.insertLast("PID_MOVABLE_FRIDGE                  (650)      ");
-    pidList.insertLast("PID_MOVABLE_AMMO_BOX_L1             (652)      ");
-    pidList.insertLast("PID_MOVABLE_AMMO_BOX_L2             (653)      ");
-    pidList.insertLast("PID_MOVABLE_AMMO_BOX_S1             (654)      ");
-    pidList.insertLast("PID_MOVABLE_AMMO_BOX_S2             (655)      ");
-    pidList.insertLast("PID_MOVABLE_SAFE                    (656)      ");
-    pidList.insertLast("PID_MOVABLE_POOR_BOX                (658)      ");
-    pidList.insertLast("PID_MOVABLE_CRATE                   (660)      ");
-    pidList.insertLast("PID_MOVABLE_CHEST                   (662)      ");
-    pidList.insertLast("PID_MOVABLE_FOOTLOCKER1             (664)      ");
-    pidList.insertLast("PID_MOVABLE_FOOTLOCKER2             (665)      ");
-    pidList.insertLast("PID_MOVABLE_LOCKER1                 (666)      ");
-    pidList.insertLast("PID_MOVABLE_LOCKER2                 (667)      ");
-    pidList.insertLast("PID_MOVABLE_WOODLOCKER1             (668)      ");
-    pidList.insertLast("PID_MOVABLE_WOODLOCKER2             (669)      ");
-    pidList.insertLast("PID_SPOT_GENERIC                    (21000)    ");
-    pidList.insertLast("PID_SPOT_MOB_WAVE                   (21001)    ");
-    pidList.insertLast("PID_SPOT_SHUFFLER                   (21002)    ");
-    pidList.insertLast("PID_SPOT_ENTRY_BEGIN                (21100)    ");
-    pidList.insertLast("PID_SPOT_ENTRY_0                    (21100)    ");
-    pidList.insertLast("PID_SPOT_ENTRY_1                    (21101)    ");
-    pidList.insertLast("PID_SPOT_ENTRY_2                    (21102)    ");
-    pidList.insertLast("PID_SPOT_ENTRY_3                    (21103)    ");
-    pidList.insertLast("PID_SPOT_ENTRY_4                    (21104)    ");
-    pidList.insertLast("PID_SPOT_ENTRY_5                    (21105)    ");
-    pidList.insertLast("PID_SPOT_ENTRY_6                    (21106)    ");
-    pidList.insertLast("PID_SPOT_ENTRY_7                    (21107)    ");
-    pidList.insertLast("PID_SPOT_ENTRY_8                    (21108)    ");
-    pidList.insertLast("PID_SPOT_ENTRY_9                    (21109)    ");
-    pidList.insertLast("PID_SPOT_ENTRY_10                   (21110)    ");
-    pidList.insertLast("PID_SPOT_ENTRY_11                   (21111)    ");
-    pidList.insertLast("PID_SPOT_ENTRY_12                   (21112)    ");
-    pidList.insertLast("PID_SPOT_ENTRY_13                   (21113)    ");
-    pidList.insertLast("PID_SPOT_ENTRY_14                   (21114)    ");
-    pidList.insertLast("PID_SPOT_ENTRY_15                   (21115)    ");
-    pidList.insertLast("PID_SPOT_ENTRY_END                  (21355)    ");
-    pidList.insertLast("PID_SCHEDULE_PATH					 (21400)    ");
-    pidList.insertLast("PID_SCHEDULE_MARKER			     (21401)    ");
-    pidList.insertLast("PID_VEIN_IRON                       (22000)    ");
-    pidList.insertLast("PID_VEIN_IRON2                      (22001)    ");
-    pidList.insertLast("PID_VEIN_MINERALS                   (22002)    ");
-    pidList.insertLast("PID_VEIN_MINERALS2                  (22003)    ");
-    pidList.insertLast("PID_VEIN_URANIUM                    (22004)    ");
-    pidList.insertLast("PID_VEIN_GOLD                       (22005)    ");
-    pidList.insertLast("PID_PILE_CHEMICALS                  (22006)    ");
-    pidList.insertLast("PID_PILE_CHEMICALS2                 (22007)    ");
+void InitItemList() {
+    string filename = "scripts\\ITEMPID.H";
+    string line = "";
+    file f;
+    if(f.open(filename, "r") == 0)
+    {
+        while(!f.isEndOfFile())
+        {
+            f.readLine(line);
+            if(substring(line, 0, 8) == "#define ") {
+                int commentIndex = findFirst(line, "//");
+                if (commentIndex > -1) {
+                    line = substring(line, 8, commentIndex - 8);
+                    itemList.insertLast(line);
+                } else {
+                    line = substring(line, 8, line.length() - 9);
+                    itemList.insertLast(line);
+                }
+            }
+        }
+    }
+    f.close();
+}
+
+void InitLocationList() {
+    string name = "";
+    array<Map@> allMaps;
+    uint allMapsCount = GetAllMaps(0, allMaps);
+
+    if (allMapsCount > 0) {
+        for (uint i = 0; i < allMapsCount; i++) {
+            allMaps[i].ProtoName(name);
+            locationList.insertLast(" " + (i + 1) + "        " + name);
+        }
+    }
 }
 
 void ExecFindItemsCommand(array<string@>@ command, Critter& player)
@@ -10439,9 +9536,13 @@ bool ExecCommand(Critter& player, string@ commandString)
     {
         ExecFactionOnlineCommand(command, player);
     }
-    else if(command[1] == "pids" || command[1] == "pidlist")
+    else if(command[1] == "items" || command[1] == "itemlist")
     {
-        ExecPidListCommand(command, player);
+        ExecItemListCommand(command, player);
+    }
+    else if(command[1] == "maps" || command[1] == "maplist")
+    {
+        ExecLocationListCommand(command, player);
     }
     else if(command[1] == "findchars")
         ExecFindCharsCommand(command, player);
