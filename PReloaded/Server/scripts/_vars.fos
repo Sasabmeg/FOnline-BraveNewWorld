@@ -150,6 +150,7 @@
 #define LVAR_q_modoc_balthas_fetcher            (6121)
 #define LVAR_q_redding_mcgrew_runner            (6122)
 #define LVAR_q_redding_johnson_humanitarian     (6123)
+#define LVAR_nr_wright_boozequest               (6150)
 #define LVAR_q_vc_collectrent                   (6155)
 #define LVAR_q_den_becky_table                  (6200)
 #define LVAR_q_den_becky_clubs                  (6201)
@@ -272,7 +273,17 @@
 #define LVAR_q_la_junk_merchant                 (7150)
 #define LVAR_player_is_raped                    (7151)
 #define LVAR_q_jt_power_house_attempts          (7200)
+#define LVAR_q_nr_corsican_initiate             (7300)
 #define LVAR_q_nr_corsican_tattoo               (7301)
+#define LVAR_q_nr_corsican_execution            (7302)
+#define LVAR_q_nr_corsican_replacement          (7303)
+#define LVAR_q_nr_corsican_better_one           (7304)
+#define LVAR_q_nr_corsican_gambler              (7305)
+#define LVAR_q_nr_corsican_jet_quality          (7306)
+#define LVAR_q_nr_corsican_reserved1            (7307)
+#define LVAR_q_nr_corsican_reserved2            (7308)
+#define LVAR_q_nr_corsican_reserved3            (7309)
+#define LVAR_q_nr_corsican_reserved4            (7310)
 #define LVAR_q_brahmin_run                      (7311)
 #define LVAR_q_brahmin_run_counter              (7312)
 #define LVAR_q_brahmin_run_faction              (7313)
@@ -314,6 +325,7 @@
 #define LVAR_slaverun_slavers_killed            (11109)
 #define LVAR_slaverun_eventnum                  (11110)
 #define UVAR_proximity_check                    (11200)
+#define LVAR_newr_incasino                      (11201)
 #define LVAR_noob_camp_alecquest				(11801)
 #define LVAR_noob_camp_breederquest				(11802)
 #define LVAR_noob_camp_robodog					(11803)
@@ -1140,6 +1152,11 @@ $ 1800 1 q_jt_talked 0 0 3 1
    shitty variable for a shitty running quest!
 **********
 
+   $	6150	1	nr_wright_boozequest	0	0	0	5
+**********
+
+**********
+
    $	6155	1	q_vc_collectrent	0	0	0	5
 **********
    VC quest: collect rent from courtyard residents. By RoadWarrior. Any problems? Blame Roadwarrior
@@ -1816,7 +1833,62 @@ $ 1800 1 q_jt_talked 0 0 3 1
 
 **********
 
+   $	7200	1	q_jt_power_house_attempts	0	0	5	0
+**********
+
+**********
+
+   $	7300	1	q_nr_corsican_initiate	0	0	7	1
+**********
+
+**********
+
    $	7301	1	q_nr_corsican_tattoo	0	0	3	1
+**********
+
+**********
+
+   $	7302	1	q_nr_corsican_execution	0	0	17	1
+**********
+
+**********
+
+   $	7303	1	q_nr_corsican_replacement	0	0	4	1
+**********
+
+**********
+
+   $	7304	1	q_nr_corsican_better_one	0	0	4	1
+**********
+
+**********
+
+   $	7305	1	q_nr_corsican_gambler	0	0	4	1
+**********
+
+**********
+
+   $	7306	1	q_nr_corsican_jet_quality	0	0	4	1
+**********
+
+**********
+
+   $	7307	1	q_nr_corsican_reserved1	0	0	4	1
+**********
+
+**********
+
+   $	7308	1	q_nr_corsican_reserved2	0	0	4	1
+**********
+
+**********
+
+   $	7309	1	q_nr_corsican_reserved3	0	0	4	1
+**********
+
+**********
+
+   $	7310	1	q_nr_corsican_reserved4	0	0	4	1
 **********
 
 **********
@@ -2094,6 +2166,12 @@ $	9952	1	LVAR_FO2077_Book_SmallGuns  0	0	10	0
    $	11200	2	proximity_check	0	0	1	0
 **********
 
+**********
+
+   $	11201	1	newr_incasino	0	0	1	0
+**********
+   0 == player is not in casino
+   1 == player is in casino
 **********
 
 $ 11801 1 noob_camp_alecquest 0 0 99 1
