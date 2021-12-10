@@ -131,13 +131,29 @@
 #define LVAR_redding_morton_brothers            (5386)
 #define LVAR_q_raiders_induction                (6001)
 #define LVAR_q_raiders_induction_locid          (6002)
+#define LVAR_q_raiders_hernandez_sister         (6000)
+#define LVAR_q_raiders_induction                (6001)
+#define LVAR_q_raiders_induction_locid          (6002)
+#define LVAR_q_raiders_kazen_gambler            (6003)
+#define LVAR_q_raiders_kazen_notgambler         (6004)
+#define LVAR_q_raiders_king                     (6005)
+#define LVAR_q_mordinos_induction_doctor        (6050)
+#define LVAR_q_mordinos_induction               (6051)
+#define LVAR_q_mordinos_metzger_delivery        (6054)
+#define LVAR_q_mordinos_joining_quest           (6055)
+#define LVAR_q_bos_eldridge                     (6077)
+#define LVAR_q_klam_aldobooze                   (6110)
 #define LVAR_q_ncr_buster_smokes                (6111)
 #define LVAR_q_ncr_mira_money                   (6112)
+#define LVAR_q_klam_maida_pelts                 (6113)
+#define LVAR_q_klam_bob_thehole                 (6120)
 #define LVAR_q_modoc_balthas_fetcher            (6121)
 #define LVAR_q_redding_mcgrew_runner            (6122)
 #define LVAR_q_redding_johnson_humanitarian     (6123)
 #define LVAR_q_vc_collectrent                   (6155)
 #define LVAR_q_den_becky_table                  (6200)
+#define LVAR_q_den_becky_clubs                  (6201)
+#define LVAR_q_den_mom_orphanage                (6202)
 #define UVAR_q_box_unload_status                (6500)
 #define UVAR_q_box_unload_count                 (6501)
 #define LVAR_bar_drink                          (7000)
@@ -1008,6 +1024,11 @@ $ 1800 1 q_jt_talked 0 0 3 1
    GVAR_REDDING_MORTON_BROTHERS            :=0;    //      (386)
 **********
 
+   $	6000	1	q_raiders_hernandez_sister	0	0	0	5
+**********
+   Determining how far you are along in Hernandez' Sister quest
+**********
+
    $	6001	1	q_raiders_induction	0	0	0	5
 **********
    the fucking variable for the fucking quest to join the fucking raiders
@@ -1018,6 +1039,57 @@ $ 1800 1 q_jt_talked 0 0 3 1
 
 **********
 
+   $	6003	1	q_raiders_kazen_gambler	0	0	0	5
+**********
+   the kazenzakis variable for people who can already gamble a little
+**********
+
+   $	6004	1	q_raiders_kazen_notgambler	0	0	0	5
+**********
+   the kazenzakis variable for people who can't gamble
+**********
+
+   $	6005	1	q_raiders_king	0	0	0	5
+**********
+   tracking players progress with king the beefcake khan
+**********
+
+   $	6050	1	q_mordinos_induction_doctor	0	0	0	5
+**********
+   clue's in the name sukkadix
+**********
+
+   $	6051	1	q_mordinos_induction	0	0	0	5
+**********
+
+**********
+
+   $	6054	1	q_mordinos_metzger_delivery	0	0	0	5
+**********
+
+**********
+
+   $	6055	1	q_mordinos_joining_quest	0	0	0	5
+**********
+   deliver the drugs motherfuckerrrr
+**********
+
+   $	6077	1	q_bos_eldridge	0	0	10	1
+**********
+
+**********
+
+   $	6110	1	q_klam_aldobooze	0	0	5	1
+**********
+   0 - not assigned
+
+   1 - assigned
+
+   go get aldo some hooch
+
+   repeatable
+**********
+
    $	6111	1	q_ncr_buster_smokes	0	0	5	1
 **********
 
@@ -1026,6 +1098,31 @@ $ 1800 1 q_jt_talked 0 0 3 1
    $	6112	1	q_ncr_mira_money	0	0	3	1
 **********
    Mira owes Dusty 100 caps. Give it back.
+**********
+
+   $	6113	1	q_klam_maida_pelts	0	0	5	1
+**********
+   get maida 4 golden/regular pelts
+
+   0 - not assigned
+
+   1 - assigned
+
+   repeatable
+**********
+
+   $	6120	1	q_klam_bob_thehole	0	0	5	1
+**********
+   quest to deliver a message from whiskey bob to frankie in the hole
+
+   0 - not assigned
+
+   1 - Bob has asked you to deliver a message to Frankie in the Den
+
+   2 - You have successfully delivered the message and need go back to bob
+
+
+   Quest repeatable
 **********
 
    $	6121	1	q_modoc_balthas_fetcher	0	0	0	5
@@ -1046,6 +1143,21 @@ $ 1800 1 q_jt_talked 0 0 3 1
    $	6155	1	q_vc_collectrent	0	0	0	5
 **********
    VC quest: collect rent from courtyard residents. By RoadWarrior. Any problems? Blame Roadwarrior
+**********
+
+   $	6200	1	q_den_becky_table	0	0	5	1
+**********
+
+**********
+
+   $	6201	1	q_den_becky_clubs	0	0	4	1
+**********
+
+**********
+
+   $	6202	1	q_den_mom_orphanage	0	0	4	1
+**********
+
 **********
 
    $	6500	2	q_box_unload_status	0	0	0	4
