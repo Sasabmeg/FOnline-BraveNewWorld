@@ -78,9 +78,9 @@ lang=engl
 0 23010 R _var p q_klam_aldobooze = 1 #
 0 23020 @
 26 24000 None 0 #
-28 24010 D _item p PID_BEER > 4 R _item p PID_BEER - 5 R _script dialog@r_QuestTimeout 1 20 R _script town@r_ModifyInfluenceBuffer 1 5 #
-28 24020 D _item p PID_BOOZE > 4 R _item p PID_BOOZE - 5 R _script dialog@r_QuestTimeout 1 20 R _script town@r_ModifyInfluenceBuffer 1 5 #
-28 24030 D _item p PID_ROT_GUT > 4 R _item p PID_ROT_GUT - 5 R _script dialog@r_QuestTimeout 1 20 R _script town@r_ModifyInfluenceBuffer 1 5 #
+28 24010 D _item p PID_BEER > 4 R _item p PID_BEER - 5 R _script dialog@r_QuestTimeout 1 20 R _script town@r_ModifyInfluenceBuffer 1 5 R _var p q_klam_aldobooze = 2 #
+28 24020 D _item p PID_BOOZE > 4 R _item p PID_BOOZE - 5 R _script dialog@r_QuestTimeout 1 20 R _script town@r_ModifyInfluenceBuffer 1 5 R _var p q_klam_aldobooze = 2 #
+28 24030 D _item p PID_ROT_GUT > 4 R _item p PID_ROT_GUT - 5 R _script dialog@r_QuestTimeout 1 20 R _script town@r_ModifyInfluenceBuffer 1 5 R _var p q_klam_aldobooze = 2 #
 27 24040 @
 27 25000 None 0 #
 0 25010 @
@@ -100,60 +100,60 @@ lang=engl
 {2000}{}{Hello there, I haven't seen you in Klamath before. I'm Aldo, the town greeter. (hic) It's my job to greet anyone new in town and to answer any questions they might have about
  our bucolic little burg. Welcome to Klamath. (hic) Who might you be?}
 {2010}{}{Oh, hi there. I'm @pname@.}
-{2020}{}{You don’t need to know my name or anything else about me. Go away, you filthy drunkard.}
+{2020}{}{You donï¿½t need to know my name or anything else about me. Go away, you filthy drunkard.}
 {2030}{}{There any work to be had in this town?}
 {2040}{}{I got you some 'medicine', Aldo.}
 {3000}{}{@pname@, you say? You seem like a seasoned traveller. Someone who's seen and done (hic) great things. Surely one of your great (hic) stature would be happy to follow our custom of tipping the town greeter. (urp)}
 {3010}{}{Tip? Get out of here before I kick your ass.}
-{3020}{}{A tip, huh? Well I guess it’s worth $5 to get you off my back.}
+{3020}{}{A tip, huh? Well I guess itï¿½s worth $5 to get you off my back.}
 {3030}{}{Sorry buddy, I haven't got the cash.}
 {3040}{}{Nevermind that, you got any work that needs doing?}
 {3050}{}{I got you some 'medicine', Aldo.}
-{4000}{}{Thanks for the money, friend. (urp) I’m going to use it to get some (hic) medicine for my dry throat. Consider yourself officially (hic) greeted to the town of Klamath. Do you have any questions about our fair (urp) metropolis?}
+{4000}{}{Thanks for the money, friend. (urp) Iï¿½m going to use it to get some (hic) medicine for my dry throat. Consider yourself officially (hic) greeted to the town of Klamath. Do you have any questions about our fair (urp) metropolis?}
 {4010}{}{No thanks, I think I can figure things out here on my own.}
 {4020}{}{Well, actually, I was curious about a thing or two.}
 {5000}{}{Ask away, oh (burp) benefactor of mine.}
 {5010}{}{What do folks do here in Klamath?}
 {5020}{}{Where can I trade things or find healing?}
 {5030}{}{Where do you buy your booze?}
-{5040}{}{Thanks, I think that’s all I need to know for now.}
+{5040}{}{Thanks, I think thatï¿½s all I need to know for now.}
 {5050}{}{How about you set me up with some work?}
 {5060}{}{I got you some 'medicine', Aldo.}
 {6000}{}{Thanks for nothing. How can you be so cruel to someone as unwell as myself? (Aldo spits on the ground at your feet, dribbling a bit on his scruffy chin)}
 {7000}{}{Here in Klamath some people farm, some raise brahmin, but trapping geckos is what (hic) most of the people do.}
-{7010}{}{What’s a gecko?}
-{7020}{}{Oh, thanks. I guess that’s all I need to know.}
-{7030}{}{That’s interesting. I have another question, though.}
-{8000}{}{A gecko is a large lizard that’s hunted by the trappers round these parts for its meat and hide. But, it sure is a lot of work to catch them dang critters - and (bleargh) dangerous too. My advice to a friend...avoid it. It's far too much work.}
-{8010}{}{Oh, thanks. I guess that’s all I need to know.}
+{7010}{}{Whatï¿½s a gecko?}
+{7020}{}{Oh, thanks. I guess thatï¿½s all I need to know.}
+{7030}{}{Thatï¿½s interesting. I have another question, though.}
+{8000}{}{A gecko is a large lizard thatï¿½s hunted by the trappers round these parts for its meat and hide. But, it sure is a lot of work to catch them dang critters - and (bleargh) dangerous too. My advice to a friend...avoid it. It's far too much work.}
+{8010}{}{Oh, thanks. I guess thatï¿½s all I need to know.}
 {8020}{}{Hmm. One more thing, Aldo.}
-{9000}{}{You can buy or trade things at Buckner House and also the Golden Gecko. Sometimes they even have healing herbs available -- not that they’d give me any for my (hic) condition. They’re both run by real skinflints. Just get a little behind on your (hic) tab and out you go, into the cold and rain.}
-{9010}{}{Thanks for the information, that’s all I need for now.}
-{9020}{}{I’ve always found the fresh air invigorating. Hmm, I have another question for you.}
-{10000}{}{I know that you couldn’t spare any money for the official town greeter earlier, but perhaps (hic) this time you are feeling more generous and are ready to be greeted ‘officially’ to Klamath.}
-{10010}{}{I felt that something was missing. Here’s $5; I’m ready to be Greeted.}
-{10020}{}{No, thanks, I don’t think I need your official greeting.}
+{9000}{}{You can buy or trade things at Buckner House and also the Golden Gecko. Sometimes they even have healing herbs available -- not that theyï¿½d give me any for my (hic) condition. Theyï¿½re both run by real skinflints. Just get a little behind on your (hic) tab and out you go, into the cold and rain.}
+{9010}{}{Thanks for the information, thatï¿½s all I need for now.}
+{9020}{}{Iï¿½ve always found the fresh air invigorating. Hmm, I have another question for you.}
+{10000}{}{I know that you couldnï¿½t spare any money for the official town greeter earlier, but perhaps (hic) this time you are feeling more generous and are ready to be greeted ï¿½officiallyï¿½ to Klamath.}
+{10010}{}{I felt that something was missing. Hereï¿½s $5; Iï¿½m ready to be Greeted.}
+{10020}{}{No, thanks, I donï¿½t think I need your official greeting.}
 {10030}{}{There any work to be had in this town?}
 {10040}{}{I got you some 'medicine', Aldo.}
 {11000}{}{Hey there, friend, good to see you again. Can you spare some money for a bit of medicine? My throat is getting dryer and scratchier (hic) all the time. I could even throw in another official (urp) greeting.}
-{11010}{}{Sure, I can always spare $5 for a friend’s medicine.}
-{11020}{}{Sorry, Aldo I can’t spare any right now.}
+{11010}{}{Sure, I can always spare $5 for a friendï¿½s medicine.}
+{11020}{}{Sorry, Aldo I canï¿½t spare any right now.}
 {11030}{}{You got any work for me?}
 {11040}{}{I got you some 'medicine', Aldo.}
 {12000}{}{What the (urp) hell? We don't need your kind around here. Scram.}
-{13000}{}{I’m certain that your generosity to someone as needful as myself (hic) will bring you good luck. I hope to see you again soon.}
-{14000}{}{I could sure use some money for medicine. I feel pretty weak - but if you can’t (cough, cough) spare any (cough), I guess I understand. Maybe next time, if I’m still around (cough) by then.}
-{15000}{}{You mean my much needed medicine? (hic) Well, I used to buy it at either the Golden Gecko or the Buckner Place (urp), but they won’t sell it to me until I pay some money on my bill. Lucky for me, Whiskey Bob's been making a bit of medicine for some of his friends}
-{15010}{}{I’m glad you found a source for your medicine. I guess that’s all I need to know for now.}
+{13000}{}{Iï¿½m certain that your generosity to someone as needful as myself (hic) will bring you good luck. I hope to see you again soon.}
+{14000}{}{I could sure use some money for medicine. I feel pretty weak - but if you canï¿½t (cough, cough) spare any (cough), I guess I understand. Maybe next time, if Iï¿½m still around (cough) by then.}
+{15000}{}{You mean my much needed medicine? (hic) Well, I used to buy it at either the Golden Gecko or the Buckner Place (urp), but they wonï¿½t sell it to me until I pay some money on my bill. Lucky for me, Whiskey Bob's been making a bit of medicine for some of his friends}
+{15010}{}{Iï¿½m glad you found a source for your medicine. I guess thatï¿½s all I need to know for now.}
 {15020}{}{Interesting. Where would I find this Whiskey Bob?}
 {15030}{}{Thanks, Aldo. Tell me about something else, though.}
-{16000}{}{Whiskey Bob is usually (urp) at Buckner’s Place right here in downtown. I don't think he's often able to get out to tend his still lately. He's just not a reliable source of medicine for someone as (hic) unwell as myself.}
-{16010}{}{Thanks for the information, Aldo. That’s about all I need to know.}
-{16020}{}{Glad you found another supplier. Uh, could you breathe a bit more downwind? I’ve got another question for you.}
-{17000}{}{Hello there, Friend -- you look a bit perplexed. What you need is an friend here in town. (hic) I’m Aldo, the town greeter.}
+{16000}{}{Whiskey Bob is usually (urp) at Bucknerï¿½s Place right here in downtown. I don't think he's often able to get out to tend his still lately. He's just not a reliable source of medicine for someone as (hic) unwell as myself.}
+{16010}{}{Thanks for the information, Aldo. Thatï¿½s about all I need to know.}
+{16020}{}{Glad you found another supplier. Uh, could you breathe a bit more downwind? Iï¿½ve got another question for you.}
+{17000}{}{Hello there, Friend -- you look a bit perplexed. What you need is an friend here in town. (hic) Iï¿½m Aldo, the town greeter.}
 {17010}{}{Friend? Heh, heh, me @pname@}
 {17020}{}{Urk, (sniff, sniff) bad smell. Go away now.}
-{18000}{}{If you give me $20 I’ll be your friend and I’ll make sure everyone else is, too. That’s how it works here in the (urp) big city.}
+{18000}{}{If you give me $20 Iï¿½ll be your friend and Iï¿½ll make sure everyone else is, too. Thatï¿½s how it works here in the (urp) big city.}
 {18010}{}{Me no haff munny. You wann pretty leef?}
 {18020}{}{Toowa-eee-nty? Ook?  Beeg Cee-tee? Ook?}
 {19000}{}{Thanks, idiot. I'll be sure they look after you as well as I do.}
