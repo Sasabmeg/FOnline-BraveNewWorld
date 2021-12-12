@@ -107,7 +107,8 @@ array<int> eventItems;
 array<int> eventCritters;
 
 array<string> itemList;
-array<string> locationList;
+array<string> mapList;
+array<string> questVarList;
 
 // Remember to wear protective goggles :)
 string[] commandlist =
@@ -143,6 +144,7 @@ string[] commandlist =
     "name2id", "netmsg", "normaldeadly", "numplayers",
     "param", "perkadjust", "pickitems", "phase", "phaseteam", "playerkarma",
     "playmusic", "playsound", "playspeech", "poison", "profadjust",
+    "questVars", "qvars",
     "registerfaction", "removebankmoney", "removefaction", "removeitems",
     "reservednickname", "resetalldisguises", "resetprices", "resetreputations",
     "resettown", "resettowns", "respawn", "revive", "respawnall", "reviveall",
@@ -3823,28 +3825,51 @@ void ExecFactionOnlineCommand(array<string@>@ command, Critter& player)
         player.Say(SAY_NETMSG, "Found no members from faction " + faction + " online.");
 }
 
-void ExecLocationListCommand(array<string@>@ command, Critter& player) {
-    if (locationList.isEmpty()) {
+void ExecMapListCommand(array<string@>@ command, Critter& player) {
+    if (mapList.isEmpty()) {
         player.Say(SAY_NETMSG, "Initializing LOCATION list.");
-        InitLocationList();
+        InitMapList();
     }
     if(command.length() > 2)
     {
         player.Say(SAY_NETMSG, "\nListing Location ID's with filter '" + command[2] + "':");
-        for (uint i = 0; i < locationList.length(); i++) {
-            if (findFirst(locationList[i], command[2], 0) > -1) {
-                player.Say(SAY_NETMSG, locationList[i]);
+        for (uint i = 0; i < mapList.length(); i++) {
+            if (findFirst(mapList[i], command[2], 0) > -1) {
+                player.Say(SAY_NETMSG, mapList[i]);
             }
         }
     } else {
         player.Say(SAY_NETMSG, "\nListing Item ID's without filter (top 30):");
-        for (uint i = 0; i < locationList.length(); i++) {
+        for (uint i = 0; i < mapList.length(); i++) {
             if (i < 30) {
-                player.Say(SAY_NETMSG, locationList[i]);
+                player.Say(SAY_NETMSG, mapList[i]);
             }
         }
     }
 
+}
+
+void ExecQuestVarListCommand(array<string@>@ command, Critter& player) {
+    if (questVarList.isEmpty()) {
+        player.Say(SAY_NETMSG, "Initializing ITEM list.");
+        InitQuestVarList();
+    }
+    if(command.length() > 2)
+    {
+        player.Say(SAY_NETMSG, "\nListing Item ID's with filter '" + command[2] + "':");
+        for (uint i = 0; i < questVarList.length(); i++) {
+            if (findFirst(questVarList[i], command[2], 0) > -1) {
+                player.Say(SAY_NETMSG, questVarList[i]);
+            }
+        }
+    } else {
+        player.Say(SAY_NETMSG, "\nListing Item ID's without filter (top 30):");
+        for (uint i = 0; i < questVarList.length(); i++) {
+            if (i < 30) {
+                player.Say(SAY_NETMSG, questVarList[i]);
+            }
+        }
+    }
 }
 
 void ExecItemListCommand(array<string@>@ command, Critter& player) {
@@ -3904,6 +3929,30 @@ string@ upperCase(const string& str) {
     return ret;
 }
 
+void InitQuestVarList() {
+    string filename = "scripts\\_vars.fos";
+    string line = "";
+    file f;
+    if(f.open(filename, "r") == 0)
+    {
+        while(!f.isEndOfFile())
+        {
+            f.readLine(line);
+            if(substring(line, 0, 8) == "#define ") {
+                int commentIndex = findFirst(line, "//");
+                if (commentIndex > -1) {
+                    line = substring(line, 8, commentIndex - 8);
+                    questVarList.insertLast(line);
+                } else {
+                    line = substring(line, 8, line.length() - 9);
+                    questVarList.insertLast(line);
+                }
+            }
+        }
+    }
+    f.close();
+}
+
 void InitItemList() {
     string filename = "scripts\\ITEMPID.H";
     string line = "";
@@ -3928,7 +3977,7 @@ void InitItemList() {
     f.close();
 }
 
-void InitLocationList() {
+void InitMapList() {
     string name = "";
     array<Map@> allMaps;
     uint allMapsCount = GetAllMaps(0, allMaps);
@@ -3936,7 +3985,7 @@ void InitLocationList() {
     if (allMapsCount > 0) {
         for (uint i = 0; i < allMapsCount; i++) {
             allMaps[i].ProtoName(name);
-            locationList.insertLast(" " + (i + 1) + "        " + name);
+            mapList.insertLast(" " + (i + 1) + "        " + name);
         }
     }
 }
@@ -9542,7 +9591,11 @@ bool ExecCommand(Critter& player, string@ commandString)
     }
     else if(command[1] == "maps" || command[1] == "maplist")
     {
-        ExecLocationListCommand(command, player);
+        ExecMapListCommand(command, player);
+    }
+    else if(command[1] == "questvars" || command[1] == "qvars")
+    {
+        ExecQuestVarListCommand(command, player);
     }
     else if(command[1] == "findchars")
         ExecFindCharsCommand(command, player);
