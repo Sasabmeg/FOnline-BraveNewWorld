@@ -61,18 +61,18 @@ Current progress:
 
 
 #=======================================
-# 6001
-# Raiders induction quest
+# 6001 / q_raiders_induction
+# Den, Raiders induction quest
 #=======================================
 {6001001}{}{Metzger pointed me to his business contact, Stokes. Stokes is said to spend his time in The Hole.}
 {6001002}{}{Stokes told me to visit the Khans' southern outpost and talk to Raynes, the local leader.}
 {6001003}{}{Deal with the renegade raider.}
 {6001101}{}{Den: Join the raiders}
-{6001102}{}{Join the raiders}
+{6001102}{}{QUEST:Join the raiders}
 
 #=======================================
-# 6111
-# NCR, pick up a few smokes for buster
+# 6111 / q_ncr_buster_smokes
+# NCR, pick up a few smokes for Buster
 #=======================================
 {6111001}{}{Buster wants me to buy him some cigarettes from the Rawhide.}
 {6111002}{}{DONE:I have to return the cigarettes to Buster.}
@@ -83,13 +83,12 @@ Current progress:
 {6111102}{}{QUEST:Buy cigarettes for Buster}
 
 #=======================================
-# 6112
+# 6112 / ncr_mira_money
 # NCR, return Mira's debt
 #=======================================
 
 {6112001}{}{Mira asked me to return the debt she owes to Dusty.}
 {6112002}{}{DONE:I've returned the debt. I should go back and speak to Mira.}
-							  
 {6112003}{}{HARD_COMPLETED:I've helped Mira return the debt.
 
 :: Quest Completed ::}
@@ -97,7 +96,7 @@ Current progress:
 {6112102}{}{QUEST:Return Mira's debt}
 
 #=======================================
-# 6121
+# 6121 / q_modoc_balthas_fetcher
 # Modoc, Modoc's tannery supply shortage
 #=======================================
 
@@ -108,12 +107,12 @@ Current progress:
 {6121005}{}{HARD_COMPLETED:The Modoc Tannery supply shortage has been solved. Ed the local herd trader in Vault City gave a discount to Modoc in hopes of future profit. Balthas was very happy about this.
 
 ::Quest Completed::}
-{6121101}{}{Modoc: Tannery supply shortag}
-{6121102}{}{QUEST:Modoc's Tannery supply shortagy}
+{6121101}{}{Modoc: Tannery supply shortage}
+{6121102}{}{QUEST:Modoc's Tannery supply shortage}
 
 
 #=======================================
-# 6122
+# 6122 / q_redding_mcgrew_runner
 # Redding, Resupply Redding with Jet
 #=======================================
 
@@ -128,7 +127,7 @@ Current progress:
 {6122102}{}{QUEST:Redding's Jet supply}
 
 #=======================================
-# 6200
+# 6200 / q_den_becky_table
 # Den, repair Becky's gaming table
 #=======================================
 
@@ -145,7 +144,7 @@ Current progress:
 {6200102}{}{QUEST:Repair one of Becky's gaming tables}
 
 #=======================================
-# 7004
+# 7004 / q_bunker_base
 # Junktown, abandoned bunker
 #=======================================
 {7004001}{}{A scout in Junktown told me stories about an old trapper who might know some nice places to hang around.}
@@ -153,11 +152,11 @@ Current progress:
 {7004016}{}{The name of that trapper is Wally. Wonder where he is now...}
 {7004021}{}{Finally. The ghouls say that I can find Wally at the Watershed. He has to live there somewhere.}
 # Questlog deactivated for now, because it's all messed up.
-#{7004101}{}{Junktown: The old trapper}
-#{7004102}{}{The old trapper.}
+{7004101}{}{Junktown: The old trapper}
+{7004102}{}{QUEST:The old trapper.}
 
 #=======================================
-# 7005
+# 7005 / q_redd_rats
 # Redding, Rats in Mines
 #=======================================
 {7005001}{}{In order to help Marge Le Barge in Redding with some rats in mines, I have to prove myself by taking care of a job for Caminetto, a guy hanging around in Redding's Malamute Saloon.}
@@ -173,7 +172,7 @@ Current progress:
 {7005102}{}{QUEST:Rats in Mines}
 
 #=======================================
-# 7008
+# 7008 / q_hub_sadwife
 # Hub, sad wife quest
 #=======================================
 {7008001}{}{There was a sad woman in the Hub, Oldtown. She told me she was worried about her Husband who was traveling to the Boneyard. I will keep my eyes open for him.}
@@ -188,7 +187,7 @@ Current progress:
 {7008102}{}{QUEST:Find Joseph, the scavenger}
 
 #=======================================
-#7009
+#7009 / q_hub_wasteland_band
 #Hub, Wasteland Band
 #=======================================
 {7009001}{}{A peculiar man named Mick has asked me to find his friend Ronnie in Junktown and ask him to form a band. He is known to hang around the Skum Pitt, so I should start there.}
@@ -215,7 +214,7 @@ Current progress:
 {7011102}{}{The Message}
 
 #=======================================
-# 7013
+# 7013 / q_ncr_rail_gang
 # NCR, Horatius Rail Line Gang
 #=======================================
 {7013001}{}{Feargus in the foreroom told me, Gunther might have a special job for me...}
@@ -227,14 +226,14 @@ Current progress:
 {7013011}{}{HARD_COMPLETED:Feargus gave me my reward and with this, the job is done.
 
 :: Quest Completed ::}
-{7013012}{}{SOFT_COMPLETED:Someone else took care of the rail line gang. Seems like I was too late.
+{7013012}{}{HARD_FAILED:Someone else took care of the rail line gang. Seems like I was too late.
 
 :: Quest Failed ::}
 {7013101}{}{NCR: The Rail Line Gang}
 {7013102}{}{QUEST:The Rail Line Gang}
 
 #=======================================
-# 7017
+# 7017 / q_coc_train
 # Boneyard Train Station, CoC Administrator
 #=======================================
 {7017001}{}{A member from the Children of the Cathedral told me that someone from the Boneyard train station administration might have some work for me.}
@@ -246,7 +245,7 @@ Current progress:
 {7017102}{}{QUEST:Train Station Maintenance}
 
 #=======================================
-# 7018
+# 7018 / q_vc_train_doc
 # Vault City, Medical Investigation
 #=======================================
 {7018001}{}{Doctor Andrew in Vault City gave me an interesting job. He told me about the New Californian Republic rail line and where I can find the next closest train station. From there I should start asking everyone if they are ill or know someone who is ill. After that, I have to report back to doctor Andrew. I guess talking to four people in each station should be enough...}
@@ -261,7 +260,7 @@ Current progress:
 {7018102}{}{QUEST:Medical Investigation}
 
 #=======================================
-# 7019
+# 7019 / q_la_train_caesar
 # Boneyard, A Man's Job
 #=======================================
 {7019001}{}{Hammilton, quite a busy man in the Library of the Followers of the Apocalypse, gave me a job, where one "has to be a tough motherfucker", as he said. I have to find a middle-aged man in leather armor with a black bull painted on it. Hammilton said it's one of his... workers. He wants me to find and kill him. I should ask around at the train stations. Maybe someone saw him there.}
@@ -270,7 +269,6 @@ Current progress:
 {7019004}{}{The man in the leather armor with the black bull on it is dead. My job here is done. Guess I should report back to Hammilton for my reward.}
 {7019007}{}{I decided not to kill Greg. I doubt Hammilton will be very happy about it... Maybe I should try to lie about this.}
 {7019009}{}{I've killed Gregs daughter. I am a goddamn motherfucker.}
-
 {7019010}{}{Frisco done}
 {7019011}{}{LA done}
 {7019012}{}{NCR done}
@@ -288,7 +286,7 @@ Current progress:
 {7019102}{}{QUEST:A Man's Job}
 
 #=======================================
-# 7021
+# 7021 / q_san_antlair
 # Frisco ant lair quest
 #=======================================
 {7021001}{}{Doctor Wong gave me the task to smoke out the ant lair in the north east of San Francisco.}
@@ -310,7 +308,7 @@ Current progress:
 {7031102}{}{The Vault City Contact}
 
 #=======================================
-# 7032
+# 7032 / q_spawn_hub
 # Hub, Spawn Quest
 #=======================================
 {7032001}{}{I met a big caravan that was on its way to the Hub, a big trade center in this area. The caravan leader asked me to be a messenger for them. I should go to the Far Go Traders and tell them that the caravan will need some more time.}
@@ -321,7 +319,7 @@ Current progress:
 {7032102}{}{QUEST:Far Go Scout}
 
 #=======================================
-# 7036
+# 7036 / q_strandedrust
 # Klamath, Stranded Rust quest
 #=======================================
 {7036001}{}{I've met a stinky trapper in Klamath who told me something about a kind of stranded ship. I should bring him a metallic brief case from there. He will show me the position when I look strong enough and have some backup with me.}
@@ -336,7 +334,7 @@ Current progress:
 {7036102}{}{JOB:Stranded Rust}
 
 #=======================================
-# 7042
+# 7042 / q_la_waterpump
 # Boneyard, repair the waterpump
 #=======================================
 {7042001}{}{I've asked Montag, if I should take a look at his water pump. Maybe I can fix it.}
@@ -352,7 +350,7 @@ Current progress:
 {7042102}{}{QUEST:Montag's Water Pump}
 
 #=======================================
-# 7043
+# 7043 / q_la_dogs
 # Boneyard, Dogs of LA
 #=======================================
 {7043001}{}{Hendriks, one of the regulators, gave me the job to kill one of the local dog groups. He gave me the position on my PipBoy.}
@@ -362,7 +360,7 @@ Current progress:
 {7043102}{}{JOB:Dogs of LA}
 
 #=======================================
-# 7047
+# 7047 / q_la_howitzer
 # Boneyard, Howitzer Shells
 #=======================================
 {7047001}{}{Sergeant from the scavenger camp asked me to get him some more shells for his howitzer. Jargo, the gunsmith in Adytum, is in charge of the ammunition production. I should try to convince him.}
@@ -379,7 +377,7 @@ Current progress:
 {7047102}{}{QUEST:Howitzer Shells}
 
 #=======================================
-# 7070
+# 7070 / q_iguana_pete_message
 # Hub, Iguana Pete missing son
 #=======================================
 {7070001}{}{Iguana Pete is upset because he misses his son. I should visit his son in the New California Republic.}
@@ -395,8 +393,8 @@ Current progress:
 {7070102}{}{QUEST:Find Iguana Pete's Missing Son}
 
 #=======================================
-# 7074
-# NCR,Den, or SF
+# 7074 / q_bos_initiatequest_start
+# NCR, Den or San Francisco, Brotherhood of Steel faction questline 
 #=======================================
 {7074001}{}{My first assignment as a Recruit in the Brotherhood of Steel is to collect ten radscorpion tails and return with them.}
 {7074011}{}{I've turned in all of the scorpion tails.}
@@ -423,7 +421,7 @@ Current progress:
 {7074102}{}{QUEST:Among the ranks of the Brotherhood of Steel}
 
 #=======================================
-# 7075
+# 7075 / q_necro_gecko
 # Necropolis, Elmer and Skeeter holo tape deliveries
 #=======================================
 {7075001}{}{Elmer in Necropolis asked me to deliver a holo tape to Skeeter in Gecko.}
@@ -435,7 +433,7 @@ Current progress:
 {7075102}{}{QUEST:Ghoul solidarity}
 
 #=======================================
-# 7077
+# 7077 / TODO missing
 # Modoc, Kill the Rancher
 #=======================================
 {7077001}{}{A strange looking man in Modoc has hired me to kill a rancher at his ranch nearby. The ranch is guarded so I should disguise myself as a delivery boy to gain access. He mentioned there would be a bonus if I destroy the ranch.}
@@ -449,7 +447,7 @@ Current progress:
 {7077102}{}{QUEST:Kill the Rancher}
 
 #=======================================
-# 7082
+# 7082 / TODO missing
 # Redding, Wilson the conman
 #=======================================
 {7082001}{}{A card cheat named Wilson offered me a large sum of caps if I exchange some chips for him at the local casino.}
@@ -461,7 +459,7 @@ Current progress:
 {7082102}{}{QUEST:Cash Wilson's chips}
 
 #=======================================
-#7091
+#7091 / TODO missing
 # Raiders, MAIN QUEST
 #=======================================
 {7091001}{}{My first assignment as a Raider prospect is to get a beer. I should go find a beer.}
@@ -508,7 +506,7 @@ Current progress:
 {7091102}{}{QUEST:Raiders main quest}
 
 #=======================================
-# 7097
+# 7097 / q_rail_raider_status TODO: finish it?
 # Train Ambush, Rail Raiders
 #=======================================
 {7097001}{}{Beginning text}
@@ -531,7 +529,7 @@ Current progress:
 {7097102}{}{QUEST:Train Ambush - Rail Raiders}
 
 #=======================================
-# 7102
+# 7102 / q_la_warehouse
 # Boneyard, Warehouse Rape Party :>
 #=======================================
 {7102001}{}{I've got the job to deliver a message to some folks in the industrial park, Boneyard westside.}
@@ -554,7 +552,7 @@ Current progress:
 {7102102}{}{QUEST:Deliver the message to the Industrial Park}
 
 #=======================================
-# 7106
+# 7106 / q_cath_basement
 # Cathedral, Cellar Dwellar
 #=======================================
 {7106001}{}{Patrick, one of the hobos in the Cathedral, told me about a rat plague in the basement cellar of the Cathedral. It seems like the rats grow stronger and stronger over time. If nothing will be done in time, the rats will fully take over the underground.}
@@ -570,7 +568,7 @@ Current progress:
 {7106102}{}{QUEST:Explore the Cathedral Cellar}
 
 #=======================================
-# 7112
+# 7112 / q_la_gunrunners_caravan
 # Boneyard, Gun Runners Caravan
 #=======================================
 {7112001}{}{Marshall from the Gun Runners got a job for me. It's about a package that has been stolen by a group of Super Mutant remnants. He suggested to get a team of at least three people. It's dangerous but should be worth it.}
@@ -595,7 +593,7 @@ The mutants are using some heavy weaponry- our group should prepare for that.}
 {7112102}{}{JOB:Gun Runners Caravan Package}
 
 #=======================================
-# 7116
+# 7116 / q_frisco_subway
 # Frisco Replication, Squatter Subway
 #=======================================
 {7116001}{}{The San Francisco Subway Station has been taken over by radscorpions. As long as the place is occupied, the squatters can't get back to their homes. Chen told me about a lot dead people, who got poisoned or killed by the scorpions while trying to exterminate them.}
@@ -612,7 +610,7 @@ The mutants are using some heavy weaponry- our group should prepare for that.}
 {7116102}{}{JOB:Radscorpion Subway}
 
 #=======================================
-# 7120
+# 7120 / q_hub_watertaxes
 # Hub, Water Merchant Contracts
 #=======================================
 {7120001}{}{The independent merchants in the Hub have to pay high taxes on given out water galons to the Water Merchants. I could try and setup new terms for their contracts.}
@@ -627,7 +625,7 @@ The mutants are using some heavy weaponry- our group should prepare for that.}
 {7120102}{}{QUEST:Water Merchant Contracts}
 
 #=======================================
-# 7122
+# 7122 / q_jt_power_house
 # Junktown, Optimize the power house
 #=======================================
 {7122001}{}{Junktown is struggeling with being close to an energy crisis. Thomas, the person in charge, asked me to help him with repairing and optimizing the power house generators. 
@@ -643,7 +641,7 @@ In order to do this, I have to find new electronic parts with that I can repair 
 {7122102}{}{QUEST:Optimizing the Power House}
 
 #=======================================
-# 7124
+# 7124 / q_jt_power_house_handy
 # Junktown, Repairing the Mr. Handy Robot
 #=======================================
 {7124001}{}{Thomas' Mr. Handy robot isn't working. He told me that there might be a problem with the motivator unit and that Mitch in the Hub most likely has a working replacement part.}
@@ -656,7 +654,7 @@ In order to do this, I have to find new electronic parts with that I can repair 
 {7124102}{}{QUEST:The inoperative Mr. Handy Robot}
 
 #=======================================
-# 7128
+# 7128 / q_hub_gunrunner_supplies
 # Hub, Gun Runner Delivery
 #=======================================
 {7128001}{}{Jacob in the Hub, Oldtown, needs more weapons and ammunition in his next supply delivery from the Gun Runners. He has sent me to talk with Marshal about it, the head honcho of the Gun Runners in the Angel's Boneyard.}
@@ -672,7 +670,7 @@ In order to do this, I have to find new electronic parts with that I can repair 
 {7128102}{}{QUEST:The Gun Runner Delivery}
 
 #=======================================
-# 7132
+# 7132 / q_ncr_westin_quest1
 # NCR, Westin Ranch Quest 1, Brahmin herdsman
 #=======================================
 {7132001}{}{Got a new job as brahmin herdsman for the Roger Westin. I've been told to talk to Felix, the foreman. He will guide me to the willow, where I am supposed to take care of the brahmin herd.}
@@ -696,7 +694,7 @@ In order to do this, I have to find new electronic parts with that I can repair 
 {7132102}{}{QUEST:A Brahmin Herdsman' Job}
 
 #=======================================
-# 7135
+# 7135 / q_ncr_westin_quest2
 # NCR, Westin Ranch Quest 2, Holodisk Delivery
 #=======================================
 {7135001}{}{My second job from Roger Westin is to deliver a special Holodisk to a man named Thomas Moore in Vault City.}
@@ -710,7 +708,7 @@ In order to do this, I have to find new electronic parts with that I can repair 
 
 
 #=======================================
-# 7139
+# 7139 / q_jt_sneakeater
 # Junktown, Bring Scorpion Eggs
 #=======================================
 {7139001}{}{Close to Junktown is a cave with highly venomous Black Claw Radscorpions. Doc Larrikin wants me to go there and collect at least five Radscorpion eggs for him, as he isn't able to do it by himself.}
@@ -726,7 +724,7 @@ In order to do this, I have to find new electronic parts with that I can repair 
 {7139102}{}{QUEST:Collect the Radscorpion Eggs}
 
 #=======================================
-# 7147
+# 7147 / q_la_gunr_courier
 # Boneyard, Gun Runners Courier
 #=======================================
 {7147001}{}{Marshal from the Gun Runners gave me a special shipment for Jargo, the local gunsmith in New Adytum.}
@@ -747,8 +745,8 @@ In order to do this, I have to find new electronic parts with that I can repair 
 {7147102}{}{JOB:Deliver the Gun Runners package}
 
 #=======================================
-# 7300
-# New Reno, Corsican Brothers, Dissapear
+# 7300 / q_nr_corsican_initiate
+# New Reno, Corsican Brothers, Disappear
 #=======================================
 {7300001}{}{Marti, the head of the Corsican Brothers in New Reno wants me to get rid of a dead body. I should talk to Snake about it.}
 {7300002}{}{Snake passed the dead body on to me and mentioned a creepy place known as Golgotha, just a bit south of New Reno. I should drop it off there and get rid of it somehow.}
@@ -767,7 +765,7 @@ In order to do this, I have to find new electronic parts with that I can repair 
 {7300102}{}{QUEST:Corsican Brothers - Make it disappear}
 
 #=======================================
-# 7301
+# 7301 / q_nr_corsican_tattoo
 # New Reno, Corsican Brothers, Tattoo
 #=======================================
 {7301001}{}{Marti thinks I could lend a hand to them Corsican Brothers and invites me to join the bunch. I should immidiately visit a tattoo shop and ask for the official Corsican Brothers tattoo there.}
@@ -779,10 +777,10 @@ In order to do this, I have to find new electronic parts with that I can repair 
 {7301102}{}{QUEST:Join the Corsican Brothers}
 
 #=======================================
-# 7311
+# 7311 / q_brahmin_run
 # Brahmin Run quest
 #=======================================
-{7311001}{}{I was asked to lead brahmin herd to a ranch. I shouldn't stop in any towns on my way or the herdsman will go without me.}
+{7311001}{}{I was asked to lead brahmin herd to a ranch by Martin. I shouldn't stop in any towns on my way or the herdsman will go without me.}
 {7311002}{}{I wasn't able to protect the brahmin.
 
 :: Quest Failed ::}
@@ -803,11 +801,11 @@ In order to do this, I have to find new electronic parts with that I can repair 
 
 :: Quest Completed ::}
 {7311009}{}{It took me too long to take brahmin where I was supposed to. Herdsman took brahmin and continued journey without me.}
-{7311101}{}{Brahmin Run}
-{7311102}{}{Lead herd of brahmin to a ranch.}
+{7311101}{}{NCR: Brahmin Run}
+{7311102}{}{JOB:Lead herd of brahmin to a ranch.}
 
 #=======================================
-# 7322
+# 7322 / q_first_tent
 # First Tent quest
 #=======================================
 {7322001}{}{During my journeys through the wasteland I noticed a small tent in this area. Maybe I should check it out.
@@ -831,7 +829,7 @@ In order to do this, I have to find new electronic parts with that I can repair 
 ##########################################
 
 #=======================================
-# 11801
+# 11801 / noob_camp_alecquest
 # Landers Point: Alec quest
 #=======================================
 {11801001}{}{I got word that a young man named Alec formed a gang. Cpt. Stone specifically told me to stay away from that kid and his gang, but can I resist? Maybe I should get some new friends, if only I knew where to look for him.
@@ -846,7 +844,7 @@ In order to do this, I have to find new electronic parts with that I can repair 
 {11801102}{}{QUEST:Join Alec's gang The Trashers}
 
 #=======================================
-# 11802
+# 11802 / noob_camp_breederquest
 # Landers Point: Brahmin breeder quest
 #=======================================
 {11802001}{}{I got word that the local herdsman needs some help. Sounds like a good opportunity to familiarize with docile animals first.
@@ -861,7 +859,7 @@ In order to do this, I have to find new electronic parts with that I can repair 
 {11802102}{}{QUEST:One rope, two heads}
 
 #=======================================
-# 11803
+# 11803 / noob_camp_robodog
 # Landers Point: Man's best friend
 #=======================================
 {11803001}{}{I got word that there is a non functional cyber-dog in the camp. Sounds interesting...
@@ -877,7 +875,7 @@ In order to do this, I have to find new electronic parts with that I can repair 
 {11803102}{}{QUEST:Man's best friend}
 
 #=======================================
-# 11804
+# 11804 / noob_camp_edquest
 # Landers Point: Sledgehammer for Ed
 #=======================================
 {11804001}{}{I got word that Ed the miner is looking for a new Sledgehammer. Maybe I should talk to him. He usually is in the west wing of the mining cave to the north.
@@ -895,10 +893,10 @@ In order to do this, I have to find new electronic parts with that I can repair 
 
 :: Quest Completed ::}
 {11804101}{}{Landers Point: Sledgehammer for Ed}
-{11804102}{}{QUEST:Sledgehammer for Ed}
+{11804102}{}{QUEST:If Ed had a hammer...}
 
 #=======================================
-# 11805
+# 11805 / noob_camp_jessica
 # Landers Point: Jessica, poisoned by Radscorpions
 #=======================================
 {11805002}{}{The guard told you that Jessica was attacked by a giant Radscorpion. Without some kind of antidote, you will not be able to help her. Maybe I should check in with the local doctor about this.}
@@ -912,7 +910,7 @@ In order to do this, I have to find new electronic parts with that I can repair 
 {11805102}{}{QUEST:Saving Jessica}
 
 #=======================================
-# 11806
+# 11806 / noob_camp_jimmy
 # Landers Point: Jimmy, the cripple (Looney Tunes)
 #=======================================
 {11806001}{}{Investigate the lonely crippled young man singing at the edge of the camp.}
@@ -928,7 +926,7 @@ In order to do this, I have to find new electronic parts with that I can repair 
 {11806102}{}{QUEST:Looney Tunes}
 
 #=======================================
-# 11807
+# 11807 / noob_camp_kid
 # Landers Point: The kid / One apple a day
 #=======================================
 {11807002}{}{I found a kid playing some kind of nuclear war game. Is this what the next generation will grow up on? I must do something about it, he wanted some apples. Maybe that will take his mind off from that stupid game. Five apples should do, now, where do I find an apple tree?}
@@ -939,7 +937,7 @@ In order to do this, I have to find new electronic parts with that I can repair 
 {11807102}{}{QUEST:One apple a day, keeps nuclear war games away}
 
 #=======================================
-# 11808
+# 11808 / noob_camp_knife
 # Landers Point: Knife for Albert
 #=======================================
 {11808001}{}{I got word that Albert the tool maker could need some help. He is in the building behind Cpt. Stone near the workbench.
@@ -962,7 +960,7 @@ Hint: To track quests, open your Pip-boy by pressing P and click on 'status'.
 {11808102}{}{QUEST:Basics of Crafting: Knife for Albert}
 
 #=======================================
-# 11809
+# 11809 / noob_camp_lawrence
 # Landers Point: Lawrence cards
 #=======================================
 {11809002}{}{I bumped into Lawrence in his tent. He seemed to be in shock and upset about his relationship. I promised to get his cards back from his ex.}
@@ -983,7 +981,7 @@ Hint: To track quests, open your Pip-boy by pressing P and click on 'status'.
 
 
 #=======================================
-# 11810
+# 11810 / noob_camp_trapper
 # Landers Point: Gecko Skinning
 #=======================================
 {11810001}{}{I got word that the Old Trapper at the west gate would teach newcomers how to skin a gecko. Maybe I should check it out.
@@ -999,7 +997,7 @@ Hint: To track quests, open your Pip-boy by pressing P and click on 'status'.
 {11810102}{}{QUEST:Learn how to skin geckos from the Old Trapper}
 
 #=======================================
-# 11811
+# 11811 / noob_camp_rebec
 # Landers Point: Spiritual aggriculture
 #=======================================
 {11811002}{}{Rebecca the gardener asked me to get her 2 filled water bags to water her plants. All I need to do is find or craft some empty water bags and fill them up at the nearest waterpipe. I should check my fix-boy on crafting empty water bags.}
@@ -1011,7 +1009,7 @@ Hint: To track quests, open your Pip-boy by pressing P and click on 'status'.
 {11811102}{}{QUEST:Spiritual aggriculture}
 
 #=======================================
-# 11812
+# 11812 / noob_camp_simon
 # Landers Point: Craft Hatchet for Simon
 #=======================================
 {11812001}{}{I got word that Simon the Woodsman needs to restock his hatchet supply. Maybe I should check it out, he resides near the west gate of the encampment.
@@ -1026,7 +1024,7 @@ Hint: To track quests, open your Pip-boy by pressing P and click on 'status'.
 {11812102}{}{QUEST:Basics of Crafting: Hatchets for Simon}
 
 #=======================================
-# 11813
+# 11813 / noob_camp_stanley
 # Landers Point: Responsible drinking
 #=======================================
 {11813002}{}{I tried to talk to Stanley the local drunk but he wasn't focused enough to make sense. Maybe if I show him a bottle of Rot Gut, I'll be able to talk to him.
@@ -1040,7 +1038,7 @@ Hint: You can use the distilery to brew spirits in nearby room. Ask someone arou
 {11813102}{}{QUEST:Responsible drinking}
 
 #=======================================
-# 11814
+# 11814 / noob_camp_thunderjo
 # Landers Point: Ammo for Thunder Jo
 #=======================================
 {11814001}{}{I got word that Thunder Jo is looking for recruits to craft some ammo for the armory. He resides in the north-east building, maybe I should go and talk to him.
@@ -1061,7 +1059,7 @@ Hint: You can use the distilery to brew spirits in nearby room. Ask someone arou
 {11814102}{}{QUEST:Resupply the armory with ammo for Thunder Jo}
 
 #=======================================
-# 11815
+# 11815 / noob_camp_hunter
 # Landers Point: Tribal Hunter quest / Ancestral knowledge
 #=======================================
 {11815001}{}{I got word that there is a friendly Tribal Hunter across the Gecko Fields. To learn more about the natives tribes after the fallout, I feel like I should investigate.
@@ -1082,7 +1080,7 @@ Hint: You can use the distilery to brew spirits in nearby room. Ask someone arou
 {11815102}{}{QUEST:Ancestral knowledge}
 
 #=======================================
-# 11816
+# 11816 / noob_camp_plague
 # Landers Point: Encampment plague 
 #=======================================
 {11816001}{}{I got word that there is a sickness in the encampment. Maybe I should seek out the local medic, she is said to reside in the building behind Cpt. Jason Stone.
@@ -1098,7 +1096,7 @@ Hint: You can use the distilery to brew spirits in nearby room. Ask someone arou
 
 
 #=======================================
-# 11818
+# 11818 / noob_camp_armorer
 # Landers Point: Golden Gecko Pelts for Samantha 
 #=======================================
 {11818001}{}{I got word that Samantha at the tannery is looking for help. She resides in the north-east building, maybe I should go and talk to her.
@@ -1115,7 +1113,7 @@ She also mentioned that if I need help skinning Geckos, I should talk to an old 
 {11818102}{}{QUEST:Golden Gecko Pelts for Samantha}
 
 #=======================================
-# 11819
+# 11819 / noob_camp_resource_trader
 # Landers Point: Camp resource trader bonus reward quest
 #=======================================
 {11819001}{}{There is a resource trader named Henry somewhere in the camp. I could do some trading with him if I have or need anything.}
@@ -1134,7 +1132,7 @@ She also mentioned that if I need help skinning Geckos, I should talk to an old 
 {11819102}{}{QUEST:A bottle cap saved is a bottle cap earned}
 
 #=======================================
-# 11820
+# 11820 / noob_camp_mrhandy
 # Landers Point: Tutorial robot / Mr. Handy / Rage against the Machine
 #=======================================
 {11820001}{}{There is a tutorial in the camp. If I ever get stuck with my tasks I should look for it.}
@@ -1146,7 +1144,7 @@ She also mentioned that if I need help skinning Geckos, I should talk to an old 
 {11820102}{}{QUEST:Man against Machine.}
 
 #=======================================
-# 11821
+# 11821 / job_lp_caravan_box
 # Landers Point: Caravan Packing Job (repeatable)
 #=======================================
 {11821001}{}{I got word of job that requires heavy lifting and pays well for the invested time. I should check the Caravan Foreman at north-west part of Landers Point if I am interested. 
