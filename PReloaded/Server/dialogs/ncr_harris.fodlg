@@ -7,8 +7,8 @@ lang=engl
 [dialog]
 &
 1 1000 None 0 #
-3 1010 D _var p q_spawn_ncr = 1 D _var p name_mem_npc_player = 0 #
-11 1020 D _var p q_spawn_ncr = 1 D _var p name_mem_npc_player = 1 #
+3 1010 D _var p q_ncr_spawn = 1 D _var p name_mem_npc_player = 0 #
+11 1020 D _var p q_ncr_spawn = 1 D _var p name_mem_npc_player = 1 #
 2 1030 @
 2 2000 None 0 @
 3 3000 None 0 #
@@ -16,7 +16,7 @@ lang=engl
 9 3020 R _var p name_mem_npc_player = 1 #
 0 3030 @
 4 4000 None 0 #
-5 4010 R _var p q_spawn_ncr + 1 R _param p ST_EXPERIENCE + 250 @
+5 4010 R _var p q_ncr_spawn + 1 R _param p ST_EXPERIENCE + 250 @
 5 5000 None 0 #
 6 5010 #
 0 5020 @

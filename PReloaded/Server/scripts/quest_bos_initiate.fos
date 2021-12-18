@@ -42,7 +42,7 @@ void r_SpawnBunker(Critter& player, Critter@ npc)
     SetRootMapData(map, MAP_DATA_OWNER, player.Id);
     if(player.Mode[MODE_DEFAULT_COMBAT] == COMBAT_MODE_TURN_BASED)
         SetTurnBasedAvailability(location);
-    SetQuestGarbager(0, player.Id, loc, LVAR_q_bos_initiatequest_start, 999);
+    SetQuestGarbager(0, player.Id, loc, LVAR_q_bos_initiate_start, 999);
     // player.SetKnownLoc(true, loc);
 }
 
@@ -156,7 +156,7 @@ void _GhostFarmCritterIn(Map& map, Critter& cr)
 {
     if(cr.IsNpc())
         return;
-    GameVar@ var = GetLocalVar(LVAR_q_bos_initiatequest_start, cr.Id);
+    GameVar@ var = GetLocalVar(LVAR_q_bos_initiate_start, cr.Id);
     if(!valid(var) || var.GetValue() != 15)
         return;
     var = 16;
@@ -164,7 +164,7 @@ void _GhostFarmCritterIn(Map& map, Critter& cr)
 
 void r_GiveKey(Critter& player, Critter@ npc)
 {
-    GameVar@ var2 = GetLocalVar(LVAR_q_bos_initiatequest_start_key, player.Id);
+    GameVar@ var2 = GetLocalVar(LVAR_q_bos_initiate_start_key, player.Id);
     Item@    item = player.AddItem(PID_KEY, 1);
     var2 = item.Id;
     item.LockerId = 0;
@@ -182,10 +182,10 @@ void _ChrisUseSkillOn(Critter& cr, Critter& fromCr, int skill, Critter@ onCritte
         return;
     if(skill != SK_STEAL)
         return;
-    GameVar@ var = GetLocalVar(LVAR_q_bos_initiatequest_start, fromCr.Id);
+    GameVar@ var = GetLocalVar(LVAR_q_bos_initiate_start, fromCr.Id);
     if(!valid(var) || var.GetValue() != 12)
         return;
-    GameVar@ var2 = GetLocalVar(LVAR_q_bos_initiatequest_start_key, fromCr.Id);
+    GameVar@ var2 = GetLocalVar(LVAR_q_bos_initiate_start_key, fromCr.Id);
     if(!valid(var2) || var2.GetValue() != 0)
         return;
     int sk = fromCr.Skill[SK_STEAL];
@@ -208,7 +208,7 @@ void _ChrisDead(Critter& cr, Critter@ killer)
 {
     if(!valid(killer) || killer.IsNpc())
         return;
-    GameVar@ var = GetLocalVar(LVAR_q_bos_initiatequest_start, killer.Id);
+    GameVar@ var = GetLocalVar(LVAR_q_bos_initiate_start, killer.Id);
     if(!valid(var) || var.GetValue() != 12)
         return;
     var = 999;
@@ -228,10 +228,10 @@ bool _FenceDoorSkill(Item& item, Critter& crit, int skill)
         return false;
     if(crit.Dir != 2)
     {
-        GameVar@ var = GetLocalVar(LVAR_q_bos_initiatequest_start, crit.Id);
+        GameVar@ var = GetLocalVar(LVAR_q_bos_initiate_start, crit.Id);
         if(!valid(var) || var.GetValue() != 12)
             return false;
-        GameVar@ var2 = GetLocalVar(LVAR_q_bos_initiatequest_start_key, crit.Id);
+        GameVar@ var2 = GetLocalVar(LVAR_q_bos_initiate_start_key, crit.Id);
         if(!valid(var2) || var2.GetValue() == 0)
             return false;
         Item@ it = crit.GetItemById(var2.GetValue());
@@ -248,7 +248,7 @@ bool _FenceDoorSkill(Item& item, Critter& crit, int skill)
 
 void t_NukaColaMachine(Critter& player, Scenery& trigger, bool entered, uint8 dir)
 {
-    GameVar@ var = GetLocalVar(LVAR_q_bos_initiatequest_start, player.Id);
+    GameVar@ var = GetLocalVar(LVAR_q_bos_initiate_start, player.Id);
     if(!valid(var) || var.GetValue() != 12)
         return;
     // player.Say(SAY_NETMSG,"You see a Nuka-Cola machine. The great Brotherhood of Steel mystery has been solved.");
@@ -257,7 +257,7 @@ void t_NukaColaMachine(Critter& player, Scenery& trigger, bool entered, uint8 di
 
 uint e_ResetVar(array<uint>@ values)
 {
-    GameVar@ var = GetLocalVar(LVAR_q_bos_initiatequest_start, values[0]);
+    GameVar@ var = GetLocalVar(LVAR_q_bos_initiate_start, values[0]);
     if(valid(var) && var.GetValue() == 999)
         var = 12;
     return 0;

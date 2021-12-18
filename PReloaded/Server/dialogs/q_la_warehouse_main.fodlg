@@ -7,13 +7,13 @@ lang=engl
 [dialog]
 &
 1 1000 None 0 #
-13 1010 D _var p q_la_warehouse_dialog_status = 1 #
-20 1020 D _var p q_la_warehouse_dialog_status = 2 #
-30 1030 D _var p q_la_warehouse_dialog_status = 3 #
-40 1040 D _var p q_la_warehouse_dialog_status = 4 #
-50 1050 D _var p q_la_warehouse_dialog_status = 5 #
-60 1060 D _var p q_la_warehouse_dialog_status = 6 #
-61 1070 D _var p q_la_warehouse_dialog_status = 7 #
+13 1010 D _var p q_la_ware_dialog_status = 1 #
+20 1020 D _var p q_la_ware_dialog_status = 2 #
+30 1030 D _var p q_la_ware_dialog_status = 3 #
+40 1040 D _var p q_la_ware_dialog_status = 4 #
+50 1050 D _var p q_la_ware_dialog_status = 5 #
+60 1060 D _var p q_la_ware_dialog_status = 6 #
+61 1070 D _var p q_la_ware_dialog_status = 7 #
 9 1080 @
 9 2000 None 0 #
 10 2010 D _param p ST_CHARISMA > 3 #
@@ -34,65 +34,65 @@ lang=engl
 12 5000 None 0 #
 80 5010 @
 13 6000 None 0 #
-20 6010 R _script dialog@r_RemoveWeapon 0  R _var p q_la_warehouse_dialog_status = 2 @
+20 6010 R _script dialog@r_RemoveWeapon 0  R _var p q_la_ware_dialog_status = 2 @
 14 7000 None 0 #
 13 7010 #
 13 7020 @
 15 8000 None 0 #
-20 8010 R _script dialog@r_RemoveWeapon 0  R _var p q_la_warehouse_dialog_status = 2 @
+20 8010 R _script dialog@r_RemoveWeapon 0  R _var p q_la_ware_dialog_status = 2 @
 20 9000 None 0 #
-21 9010 R _var p q_la_warehouse_rape_points + 5 R _script dialog@r_RemoveArmor 0  R _script dialog@r_RemoveWeapon 0  #
-22 9020 R _var p q_la_warehouse_rape_points + 10 R _script dialog@r_RemoveArmor 0  R _script dialog@r_RemoveWeapon 0  #
-30 9030 R _script dialog@r_RemoveArmor 0  R _script dialog@r_RemoveWeapon 0  R _var p q_la_warehouse_dialog_status = 3 @
+21 9010 R _var p q_la_ware_rape_points + 5 R _script dialog@r_RemoveArmor 0  R _script dialog@r_RemoveWeapon 0  #
+22 9020 R _var p q_la_ware_rape_points + 10 R _script dialog@r_RemoveArmor 0  R _script dialog@r_RemoveWeapon 0  #
+30 9030 R _script dialog@r_RemoveArmor 0  R _script dialog@r_RemoveWeapon 0  R _var p q_la_ware_dialog_status = 3 @
 21 10000 None 0 #
-30 10010 R _var p q_la_warehouse_dialog_status = 3 @
+30 10010 R _var p q_la_ware_dialog_status = 3 @
 22 11000 None 0 #
-30 11010 R _var p q_la_warehouse_dialog_status = 3 @
+30 11010 R _var p q_la_ware_dialog_status = 3 @
 30 12000 None 0 #
-31 12010 R _script dialog@r_RemoveArmor 0  R _var p q_la_warehouse_rape_points + 2 R _script dialog@r_RemoveWeapon 0  #
-32 12020 R _var p q_la_warehouse_rape_points + 5 R _script dialog@r_RemoveArmor 0  R _script dialog@r_RemoveWeapon 0  #
-33 12030 R _var p q_la_warehouse_rape_points + 2 R _script dialog@r_RemoveArmor 0  R _script dialog@r_RemoveWeapon 0  #
+31 12010 R _script dialog@r_RemoveArmor 0  R _var p q_la_ware_rape_points + 2 R _script dialog@r_RemoveWeapon 0  #
+32 12020 R _var p q_la_ware_rape_points + 5 R _script dialog@r_RemoveArmor 0  R _script dialog@r_RemoveWeapon 0  #
+33 12030 R _var p q_la_ware_rape_points + 2 R _script dialog@r_RemoveArmor 0  R _script dialog@r_RemoveWeapon 0  #
 34 12040 R _script dialog@r_RemoveArmor 0  R _script dialog@r_RemoveWeapon 0  @
 31 13000 None 0 #
-40 13010 R _script dialog@r_RemoveArmor 0  R _var p q_la_warehouse_dialog_status = 4 @
+40 13010 R _script dialog@r_RemoveArmor 0  R _var p q_la_ware_dialog_status = 4 @
 32 14000 None 0 #
-40 14010 R _script dialog@r_RemoveArmor 0  R _var p q_la_warehouse_dialog_status = 4 @
+40 14010 R _script dialog@r_RemoveArmor 0  R _var p q_la_ware_dialog_status = 4 @
 33 15000 None 0 #
-40 15010 R _script dialog@r_RemoveArmor 0  R _var p q_la_warehouse_dialog_status = 4 @
+40 15010 R _script dialog@r_RemoveArmor 0  R _var p q_la_ware_dialog_status = 4 @
 34 16000 None 0 #
-40 16010 R _script dialog@r_RemoveArmor 0  R _var p q_la_warehouse_dialog_status = 4 @
+40 16010 R _script dialog@r_RemoveArmor 0  R _var p q_la_ware_dialog_status = 4 @
 40 17000 None 0 #
-41 17010 R _var p q_la_warehouse_rape_points + 10 R _script dialog@r_RemoveArmor 0  R _script dialog@r_RemoveWeapon 0  #
-42 17020 R _var p q_la_warehouse_rape_points + 5 R _script dialog@r_RemoveArmor 0  R _script dialog@r_RemoveWeapon 0  #
-50 17030 R _script dialog@r_RemoveArmor 0  R _script dialog@r_RemoveWeapon 0  R _var p q_la_warehouse_dialog_status = 5 @
+41 17010 R _var p q_la_ware_rape_points + 10 R _script dialog@r_RemoveArmor 0  R _script dialog@r_RemoveWeapon 0  #
+42 17020 R _var p q_la_ware_rape_points + 5 R _script dialog@r_RemoveArmor 0  R _script dialog@r_RemoveWeapon 0  #
+50 17030 R _script dialog@r_RemoveArmor 0  R _script dialog@r_RemoveWeapon 0  R _var p q_la_ware_dialog_status = 5 @
 41 18000 None 0 #
-50 18010 R _var p q_la_warehouse_dialog_status = 5 @
+50 18010 R _var p q_la_ware_dialog_status = 5 @
 42 19000 None 0 #
-50 19010 R _var p q_la_warehouse_dialog_status = 5 @
+50 19010 R _var p q_la_ware_dialog_status = 5 @
 50 20000 None 0 #
-60 20010 R _var p q_la_warehouse_rape_points + 5 R _script dialog@r_RemoveArmor 0  R _script dialog@r_RemoveWeapon 0  R _var p q_la_warehouse_dialog_status = 6 #
-60 20020 R _var p q_la_warehouse_rape_points + 2 R _script dialog@r_RemoveArmor 0  R _script dialog@r_RemoveWeapon 0  R _var p q_la_warehouse_dialog_status = 6 #
-61 20030 R _script dialog@r_RemoveArmor 0  R _script dialog@r_RemoveWeapon 0  R _var p q_la_warehouse_dialog_status = 7 @
+60 20010 R _var p q_la_ware_rape_points + 5 R _script dialog@r_RemoveArmor 0  R _script dialog@r_RemoveWeapon 0  R _var p q_la_ware_dialog_status = 6 #
+60 20020 R _var p q_la_ware_rape_points + 2 R _script dialog@r_RemoveArmor 0  R _script dialog@r_RemoveWeapon 0  R _var p q_la_ware_dialog_status = 6 #
+61 20030 R _script dialog@r_RemoveArmor 0  R _script dialog@r_RemoveWeapon 0  R _var p q_la_ware_dialog_status = 7 @
 60 21000 None 0 #
-70 21010 D _var p q_la_warehouse_rape_points } 30 R _script quest_la_warehouse@r_FlushScreen 0  R _param p ST_EXPERIENCE + 250 R _script dialog@r_RemoveArmor 0  R _script dialog@r_RemoveWeapon 0  #
-71 21020 D _var p q_la_warehouse_rape_points > 15 D _var p q_la_warehouse_rape_points < 30 R _script quest_la_warehouse@r_FlushScreen 0  R _param p ST_EXPERIENCE + 250 R _script dialog@r_RemoveArmor 0  R _script dialog@r_RemoveWeapon 0  #
-72 21030 D _var p q_la_warehouse_rape_points < 15 R _script quest_la_warehouse@r_FlushScreen 0  R _param p ST_EXPERIENCE + 250 R _script dialog@r_RemoveArmor 0  R _script dialog@r_RemoveWeapon 0  @
+70 21010 D _var p q_la_ware_rape_points } 30 R _script quest_la_warehouse@r_FlushScreen 0  R _param p ST_EXPERIENCE + 250 R _script dialog@r_RemoveArmor 0  R _script dialog@r_RemoveWeapon 0  #
+71 21020 D _var p q_la_ware_rape_points > 15 D _var p q_la_ware_rape_points < 30 R _script quest_la_warehouse@r_FlushScreen 0  R _param p ST_EXPERIENCE + 250 R _script dialog@r_RemoveArmor 0  R _script dialog@r_RemoveWeapon 0  #
+72 21030 D _var p q_la_ware_rape_points < 15 R _script quest_la_warehouse@r_FlushScreen 0  R _param p ST_EXPERIENCE + 250 R _script dialog@r_RemoveArmor 0  R _script dialog@r_RemoveWeapon 0  @
 61 22000 None 0 #
-70 22010 D _var p q_la_warehouse_rape_points } 30 R _script quest_la_warehouse@r_FlushScreen 0  R _param p ST_EXPERIENCE + 250 R _script dialog@r_RemoveArmor 0  R _script dialog@r_RemoveWeapon 0  #
-71 22020 D _var p q_la_warehouse_rape_points > 15 D _var p q_la_warehouse_rape_points < 30 R _script quest_la_warehouse@r_FlushScreen 0  R _param p ST_EXPERIENCE + 250 R _script dialog@r_RemoveArmor 0  R _script dialog@r_RemoveWeapon 0  #
-72 22030 D _var p q_la_warehouse_rape_points < 15 R _script quest_la_warehouse@r_FlushScreen 0  R _param p ST_EXPERIENCE + 250 R _script dialog@r_RemoveArmor 0  R _script dialog@r_RemoveWeapon 0  @
+70 22010 D _var p q_la_ware_rape_points } 30 R _script quest_la_warehouse@r_FlushScreen 0  R _param p ST_EXPERIENCE + 250 R _script dialog@r_RemoveArmor 0  R _script dialog@r_RemoveWeapon 0  #
+71 22020 D _var p q_la_ware_rape_points > 15 D _var p q_la_ware_rape_points < 30 R _script quest_la_warehouse@r_FlushScreen 0  R _param p ST_EXPERIENCE + 250 R _script dialog@r_RemoveArmor 0  R _script dialog@r_RemoveWeapon 0  #
+72 22030 D _var p q_la_ware_rape_points < 15 R _script quest_la_warehouse@r_FlushScreen 0  R _param p ST_EXPERIENCE + 250 R _script dialog@r_RemoveArmor 0  R _script dialog@r_RemoveWeapon 0  @
 70 23000 None 0 #
-65507 23010 R _script dialog@r_RemoveArmor 0  R _script dialog@r_RemoveWeapon 0  R _var p q_la_warehouse = 4 R _var p player_is_raped = 1 @
+65507 23010 R _script dialog@r_RemoveArmor 0  R _script dialog@r_RemoveWeapon 0  R _var p q_la_ware = 4 R _var p q_la_ware_player_raped = 1 @
 71 24000 None 0 #
-0 24010 R _var p q_la_warehouse = 4 R _script quest_la_warehouse@r_RemovePunks 0  R _var p player_is_raped = 1 @
+0 24010 R _var p q_la_ware = 4 R _script quest_la_warehouse@r_RemovePunks 0  R _var p q_la_ware_player_raped = 1 @
 72 25000 None 0 #
-0 25010 R _var p q_la_warehouse = 4 R _script quest_la_warehouse@r_RemovePunks 0  R _var p player_is_raped = 1 @
+0 25010 R _var p q_la_ware = 4 R _script quest_la_warehouse@r_RemovePunks 0  R _var p q_la_ware_player_raped = 1 @
 80 26000 None 0 #
 81 26010 #
 81 26020 #
 81 26030 @
 81 27000 None 0 #
-0 27010 R _var p q_la_warehouse = 6 R _script quest_la_warehouse@r_RemovePunks 0  &
+0 27010 R _var p q_la_ware = 6 R _script quest_la_warehouse@r_RemovePunks 0  &
 
 [engl]
 {100}{}{Punk}

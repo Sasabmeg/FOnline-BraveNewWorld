@@ -6,8 +6,8 @@ lang=engl
 [dialog]
 &
 1 1000 None 0 #
-3 1010 D _var p q_la_warehouse } 2 #
-15 1020 D _var p q_la_warehouse = 1 #
+3 1010 D _var p q_la_ware } 2 #
+15 1020 D _var p q_la_ware = 1 #
 8 1030 D _param p ST_CHARISMA < 4 D _param p ST_GENDER = 1 D _var p name_mem_npc_player = 0 R _var p name_mem_npc_player = 1 #
 8 1040 D _param p ST_CHARISMA < 4 D _param p ST_GENDER = 0 D _var p name_mem_npc_player = 0 R _var p name_mem_npc_player = 1 #
 2 1050 D _var p name_mem_npc_player = 0 R _var p name_mem_npc_player = 1 #
@@ -17,7 +17,7 @@ lang=engl
 12 2020 @
 3 3000 None 0 @
 4 4000 None 0 #
-0 4010 R _script quest_la_warehouse@r_SpawnMap 0  R _var p q_la_warehouse = 1 R _item p PID_Q_LA_WAREHOUSE_LETTER + 1 @
+0 4010 R _script quest_la_warehouse@r_SpawnMap 0  R _var p q_la_ware = 1 R _item p PID_Q_LA_WAREHOUSE_LETTER + 1 @
 6 5000 None 0 #
 11 5010 #
 12 5020 @
@@ -25,9 +25,9 @@ lang=engl
 10 6010 #
 9 6020 R _var p name_mem_npc_player = 0 @
 9 7000 None 0 #
-9 7010 R _var p q_la_warehouse_fuck_loop + 1 #
-0 7020 D _var p q_la_warehouse_fuck_loop > 2 #
-0 7030 D _var p q_la_warehouse_fuck_loop { 2 @
+9 7010 R _var p q_la_ware_fuck_loop + 1 #
+0 7020 D _var p q_la_ware_fuck_loop > 2 #
+0 7030 D _var p q_la_ware_fuck_loop { 2 @
 10 8000 None 0 #
 11 8010 #
 12 8020 @

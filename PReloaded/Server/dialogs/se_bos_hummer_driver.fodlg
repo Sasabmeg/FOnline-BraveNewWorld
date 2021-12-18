@@ -10,7 +10,7 @@ lang=engl
 11 1010 D _script dialog@d_IsNotLocationOwner 0  #
 10 1020 D _var p q_bos_hummer = 4 #
 6 1030 D _var p name_mem_npc_player = 1 D _var p q_bos_hummer = 1 D or D _var p q_bos_hummer = 2 #
-2 1040 D _var p name_mem_npc_player = 0 D _var p q_bos_initiatequest_start = 21 D _script dialog@d_IsLocationOwner 0  @
+2 1040 D _var p name_mem_npc_player = 0 D _var p q_bos_initiate_start = 21 D _script dialog@d_IsLocationOwner 0  @
 2 2000 None 0 #
 3 2010 R _var p name_mem_npc_player = 1 #
 9 2020 R _var p name_mem_npc_player = 1 @
@@ -21,12 +21,12 @@ lang=engl
 4 4000 None 0 #
 5 4010 @
 5 5000 None 0 #
-0 5010 R _var p q_bos_initiatequest_start = 23 R _param p ST_EXPERIENCE + 350 R _script quest_bos_initiate@r_RetireMap 0  R _var p q_bos_hummer = 4 @
+0 5010 R _var p q_bos_initiate_start = 23 R _param p ST_EXPERIENCE + 350 R _script quest_bos_initiate@r_RetireMap 0  R _var p q_bos_hummer = 4 @
 6 6000 None 0 #
 7 6010 D _var p q_bos_hummer = 2 D _item p PID_CAR_REPLACEMENT_PARTS = 1 R _item p PID_CAR_REPLACEMENT_PARTS - 1 #
 0 6020 @
 7 7000 None 0 #
-0 7010 R _var p q_bos_initiatequest_start = 22 R _param p ST_EXPERIENCE + 250 R _script quest_bos_initiate@r_RetireMap 0  R _var p q_bos_hummer = 4 @
+0 7010 R _var p q_bos_initiate_start = 22 R _param p ST_EXPERIENCE + 250 R _script quest_bos_initiate@r_RetireMap 0  R _var p q_bos_hummer = 4 @
 9 8000 None 0 #
 3 8010 @
 10 9000 None 0 @

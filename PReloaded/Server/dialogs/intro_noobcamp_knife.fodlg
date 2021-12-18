@@ -1,7 +1,7 @@
 [comment]
 Intro knife quest
 
-noob_camp_knife
+q_lp_knife
 
 23010
 
@@ -11,9 +11,9 @@ lang=engl russ
 [dialog]
 &
 1 1000 None 0 #
-4 1010 D _var p name_mem_npc_player = 0 D _var p noob_camp_knife < 99 #
-12 1020 D _var p name_mem_npc_player = 1 D _var p noob_camp_knife < 99 #
-17 1030 D _var p noob_camp_knife = 99 @
+4 1010 D _var p name_mem_npc_player = 0 D _var p q_lp_knife < 99 #
+12 1020 D _var p name_mem_npc_player = 1 D _var p q_lp_knife < 99 #
+17 1030 D _var p q_lp_knife = 99 @
 4 2000 None 0 #
 2 2010 #
 3 2020 #
@@ -53,14 +53,14 @@ lang=engl russ
 11 10030 #
 11 10040 @
 11 11000 None 0 #
-0 11010 R _var p name_mem_npc_player = 1 R _var p noob_camp_knife = 2 R _item p PID_FLINT + 5 R _item p PID_PUMP_PARTS + 5 R _item p PID_FIREWOOD + 3 R _item p PID_METAL_PARTS + 2 #
-0 11020 R _var p name_mem_npc_player = 1 R _var p noob_camp_knife = 2 R _item p PID_PUMP_PARTS + 5 R _item p PID_FLINT + 5 R _item p PID_FIREWOOD + 3 R _item p PID_METAL_PARTS + 2 @
+0 11010 R _var p name_mem_npc_player = 1 R _var p q_lp_knife = 2 R _item p PID_FLINT + 5 R _item p PID_PUMP_PARTS + 5 R _item p PID_FIREWOOD + 3 R _item p PID_METAL_PARTS + 2 #
+0 11020 R _var p name_mem_npc_player = 1 R _var p q_lp_knife = 2 R _item p PID_PUMP_PARTS + 5 R _item p PID_FLINT + 5 R _item p PID_FIREWOOD + 3 R _item p PID_METAL_PARTS + 2 @
 12 12000 None 0 #
 13 12010 D _item p PID_KNIFE > 0 #
 14 12020 #
 0 12030 @
 13 13000 None 0 #
-0 13010 R _item p PID_KNIFE - 1 R _script dialog@r_AddExperience 1 400 R _param p SK_REPAIR + 6 R _var p noob_camp_knife = 99 @
+0 13010 R _item p PID_KNIFE - 1 R _script dialog@r_AddExperience 1 400 R _param p SK_REPAIR + 6 R _var p q_lp_knife = 99 @
 14 14000 None 0 #
 0 14010 @
 17 15000 None 0 &

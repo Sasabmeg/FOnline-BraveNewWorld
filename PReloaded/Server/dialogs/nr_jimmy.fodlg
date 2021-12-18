@@ -25,7 +25,7 @@ lang=engl
 6 5020 @
 6 6000 None 0 #
 48 6010 #
-19 6020 D _var n acquaintance = 0 D _var p q_mordinos_joining_quest = 1 #
+19 6020 D _var n acquaintance = 0 D _var p q_nr_mord_joining_quest = 1 #
 65506 6030 #
 7 6040 #
 15 6050 #
@@ -76,7 +76,7 @@ lang=engl
 0 16030 @
 17 17000 None 0 #
 48 17010 #
-19 17020 D _var n acquaintance = 0 D _var p q_mordinos_joining_quest = 1 R _var n acquaintance = 1 #
+19 17020 D _var n acquaintance = 0 D _var p q_nr_mord_joining_quest = 1 R _var n acquaintance = 1 #
 65506 17030 #
 7 17040 #
 15 17050 #
@@ -92,7 +92,7 @@ lang=engl
 24 21020 #
 25 21030 @
 22 22000 None 0 #
-23 22010 R _var p q_mordinos_induction_doctor + 150 R _var p acquaintance = 1 @
+23 22010 R _var p q_nr_mord_induction_doctor + 150 R _var p acquaintance = 1 @
 23 23000 None 0 #
 0 23010 #
 0 23020 @
@@ -100,7 +100,7 @@ lang=engl
 22 24010 #
 25 24020 @
 25 25000 None 0 #
-26 25010 D _item p PID_MORDINOS_CASE } 1 R _param p ST_EXPERIENCE + 1000 R _var p q_mordinos_joining_quest = 3 R _param p REPUTATION_MORDINOS - 900 R _item p PID_MORDINOS_CASE - 1 R _var p acquaintance = 1 R _script dialog@r_AddMoney 1 2000 #
+26 25010 D _item p PID_MORDINOS_CASE } 1 R _param p ST_EXPERIENCE + 1000 R _var p q_nr_mord_joining_quest = 3 R _param p REPUTATION_MORDINOS - 900 R _item p PID_MORDINOS_CASE - 1 R _var p acquaintance = 1 R _script dialog@r_AddMoney 1 2000 #
 22 25020 @
 26 26000 None 0 #
 0 26010 @

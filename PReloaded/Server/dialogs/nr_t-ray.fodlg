@@ -13,7 +13,7 @@ lang=engl
 10 2020 R _script car_seller@r_CheckCar 1 0 #
 30 2030 #
 40 2040 R _script car_seller@r_CopyKey 1 0 #
-51 2050 D _var n acquaintance = 0 D _var p q_mordinos_joining_quest = 1 #
+51 2050 D _var n acquaintance = 0 D _var p q_nr_mord_joining_quest = 1 #
 500 2060 D _script perks@d_PerkCheck 1 400 R _param p PE_NEGOTIATOR = 1 #
 0 2070 @
 3 3000 car_seller@dlg_PrepareBuy 0 #
@@ -80,7 +80,7 @@ lang=engl
 57 28010 #
 0 28020 @
 57 29000 None 0 #
-0 29010 R _var p q_mordinos_induction_doctor + 100 R _var p acquaintance = 1 @
+0 29010 R _var p q_nr_mord_induction_doctor + 100 R _var p acquaintance = 1 @
 58 30000 None 0 @
 500 31000 None 0 #
 2 31010 #

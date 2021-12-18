@@ -12,12 +12,12 @@ lang=engl
 2 2000 None 0 @
 3 3000 None 0 #
 5 3010 R _var n acquaintance = 1 #
-90 3020 D _var p q_necro_gecko = 1 D _script dialog@d_HasHoloInfo 1 43 D or D _var p q_necro_gecko = 1 D _script dialog@d_HasHolodisk 1 43 #
+90 3020 D _var p q_necro_elmer_holo = 1 D _script dialog@d_HasHoloInfo 1 43 D or D _var p q_necro_elmer_holo = 1 D _script dialog@d_HasHolodisk 1 43 #
 0 3030 @
 4 4000 None 0 #
 5 4010 R _var n acquaintance = 1 #
 80 4020 D _param p PE_PROFESSION_GUNSMITH_S < 2 D _var n acquaintance = 1 #
-90 4030 D _var p q_necro_gecko = 1 D _script dialog@d_HasHolodisk 1 43 D or D _var p q_necro_gecko = 1 D _script dialog@d_HasHoloInfo 1 43 #
+90 4030 D _var p q_necro_elmer_holo = 1 D _script dialog@d_HasHolodisk 1 43 D or D _var p q_necro_elmer_holo = 1 D _script dialog@d_HasHoloInfo 1 43 #
 0 4040 @
 5 5000 None 0 #
 4 5010 #
@@ -38,7 +38,7 @@ lang=engl
 90 10000 None 0 #
 91 10010 @
 91 11000 None 0 #
-92 11010 R _var p q_necro_gecko = 2 R _script dialog@r_GiveHolodisk 1 44 @
+92 11010 R _var p q_necro_elmer_holo = 2 R _script dialog@r_GiveHolodisk 1 44 @
 92 12000 None 0 &
 
 [engl]

@@ -6,8 +6,8 @@ lang=engl
 [dialog]
 &
 1 1000 None 0 #
-22 1010 D _var p q_spawn_gecko = 5 #
-21 1020 D _var p q_spawn_gecko > 0 #
+22 1010 D _var p q_gecko_spawn = 5 #
+21 1020 D _var p q_gecko_spawn > 0 #
 5 1030 D _param p ST_CHARISMA < 4 #
 2 1040 D _var n name_mem_npc_player = 0 R _var n name_mem_npc_player = 1 #
 20 1050 @
@@ -32,17 +32,17 @@ lang=engl
 7 9000 None 0 #
 4 9010 @
 8 10000 None 0 #
-0 10010 R _var p q_spawn_gecko = 5 #
+0 10010 R _var p q_gecko_spawn = 5 #
 4 10020 @
 9 11000 None 0 #
 10 11010 @
 10 12000 None 0 #
-11 12010 R _var p q_spawn_gecko = 1 #
+11 12010 R _var p q_gecko_spawn = 1 #
 0 12020 @
 11 13000 None 0 #
 0 13010 @
 22 14000 None 0 #
-23 14010 R _var p q_spawn_gecko = 0 #
+23 14010 R _var p q_gecko_spawn = 0 #
 0 14020 @
 23 15000 None 0 #
 3 15010 #

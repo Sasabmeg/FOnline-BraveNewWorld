@@ -43,26 +43,26 @@ lang=engl
 &
 1 1000 None 1 #
 620 1010 D _var p name_mem_npc_player < 0 #
-620 1020 D _param p ST_INTELLECT < 4 #
-620 1030 D _param p ST_CHARISMA > 99 #
-10 1040 D _var p name_mem_npc_player = 0 D _var p q_redd_christopher_good_karma = 1 D _item p PID_10MM_PISTOL > 0 #
-10 1050 D _var p name_mem_npc_player = 0 D _var p q_redd_christopher_bad_karma = 1 D _item p PID_10MM_PISTOL > 0 #
-30 1060 D _var p q_redd_christopher_good_karma = 1 D _var p q_hub_henry_quest = 0 D _item p PID_10MM_PISTOL > 0 #
-30 1070 D _var p q_redd_christopher_bad_karma = 1 D _var p q_hub_henry_quest = 0 D _item p PID_10MM_PISTOL > 0 #
-310 1080 D _var p q_hub_henry_quest = 2 #
-210 1090 D _var p q_hub_henry_quest = 1 #
-410 1100 D _var p q_hub_henry_quest = -1 #
-510 1110 D _var p q_hub_henry_quest = -2 #
+620 1020 D _param p ST_INTELLECT < 4 D _param p SK_SCIENCE < 40 D _param p SK_REPAIR < 40 #
+620 1030 D _param p ST_CHARISMA < 4 D _param p SK_SPEECH < 40 D _param p SK_BARTER < 40 #
+10 1040 D _var p name_mem_npc_player = 0 D _item p PID_10MM_PISTOL > 0 D _var p q_redd_christopher_henry = 11 #
+10 1050 D _var p name_mem_npc_player = 0 D _item p PID_10MM_PISTOL > 0 D _var p q_redd_christopher_henry = 21 #
+30 1060 D _item p PID_10MM_PISTOL > 0 D _var p q_redd_christopher_henry = 11 #
+30 1070 D _item p PID_10MM_PISTOL > 0 D _var p q_redd_christopher_henry = 21 #
+310 1080 D _var p q_redd_christopher_henry = 14 D or D _var p q_redd_christopher_henry = 24 #
+210 1090 D _var p q_redd_christopher_henry = 13 D or D _var p q_redd_christopher_henry = 23 #
+410 1100 D _var p q_redd_christopher_henry = 15 D or D _var p q_redd_christopher_henry = 25 #
+510 1110 D _var p q_redd_christopher_henry = 16 D or D _var p q_redd_christopher_henry = 26 #
 620 1120 @
 10 2000 None 0 #
 620 2010 #
 20 2020 R _var p name_mem_npc_player = 1 #
 620 2030 #
-65507 2040 R _var p name_mem_npc_player = -1 #
+65507 2040 R _var p name_mem_npc_player = -1 R _var p q_redd_christopher_henry = 92 #
 0 2050 @
 20 3000 None 0 #
 30 3010 #
-65507 3020 R _var p name_mem_npc_player = -1 #
+65507 3020 R _var p name_mem_npc_player = -1 R _var p q_redd_christopher_henry = 92 #
 0 3030 @
 30 4000 None 0 #
 40 4010 #
@@ -78,22 +78,25 @@ lang=engl
 0 6050 @
 199 7000 None 0 @
 200 8000 None 0 #
-0 8010 R _var p q_hub_henry_quest = 1 R _param p REPUTATION_NCR - 500 R _param p REPUTATION_VAULT_CITY - 500 R _param p REPUTATION_NCR_RANGERS - 500 R _param p REPUTATION_REGULATORS - 500 R _param p REPUTATION_CHILDREN - 500 R _param p REPUTATION_KLAMATH - 500 R _param p REPUTATION_MODOC - 500 R _param p REPUTATION_GECKO - 500 R _param p REPUTATION_JUNKTOWN - 500 R _param p REPUTATION_HUB - 500 R _param p REPUTATION_LA - 500 #
-500 8020 @
+0 8010 D _var p q_redd_christopher_henry = 11 R _var p q_redd_christopher_henry = 13 R _param p REPUTATION_NCR - 500 R _param p REPUTATION_VAULT_CITY - 500 R _param p REPUTATION_NCR_RANGERS - 500 R _param p REPUTATION_REGULATORS - 500 R _param p REPUTATION_CHILDREN - 500 R _param p REPUTATION_KLAMATH - 500 R _param p REPUTATION_MODOC - 500 R _param p REPUTATION_GECKO - 500 R _param p REPUTATION_JUNKTOWN - 500 R _param p REPUTATION_HUB - 500 R _param p REPUTATION_LA - 500 #
+0 8020 D _var p q_redd_christopher_henry = 21 R _var p q_redd_christopher_henry = 23 R _param p REPUTATION_NCR - 500 #
+500 8030 @
 210 9000 None 0 @
 299 10000 None 0 @
 300 11000 None 0 #
-0 11010 D _item p PID_10MM_PISTOL } 1 R _var p q_hub_henry_quest = 2 R _item p PID_10MM_PISTOL - 1 #
-0 11020 @
+0 11010 D _item p PID_10MM_PISTOL } 1 D _var p q_redd_christopher_henry = 11 R _item p PID_10MM_PISTOL - 1 R _var p q_redd_christopher_henry = 14 #
+0 11020 D _var p q_redd_christopher_henry = 21 D _item p PID_10MM_PISTOL } 1 R _var p q_redd_christopher_henry = 24 R _item p PID_10MM_PISTOL - 1 #
+0 11030 @
 310 12000 None 0 @
 399 13000 None 0 @
 400 14000 None 0 #
-0 14010 D _item p PID_10MM_PISTOL } 1 R _var p q_hub_henry_quest = -1 R _item p PID_10MM_PISTOL - 1 #
-0 14020 @
+0 14010 D _item p PID_10MM_PISTOL } 1 D _var p q_redd_christopher_henry = 11 R _item p PID_10MM_PISTOL - 1 R _var p q_redd_christopher_henry = 15 #
+0 14020 D _var p q_redd_christopher_henry = 21 D _item p PID_10MM_PISTOL } 1 R _var p q_redd_christopher_henry = 25 R _item p PID_10MM_PISTOL - 1 #
+0 14030 @
 410 15000 None 0 @
 499 16000 None 0 @
 500 17000 None 0 #
-65507 17010 R _var p q_hub_henry_quest = -2 #
+65507 17010 R _var p q_redd_christopher_henry = 92 #
 0 17020 @
 510 18000 None 0 @
 600 19000 None 0 @
@@ -142,17 +145,20 @@ lang=engl
 {7000}{}{----------------------------------------------[ OPTION:TakeHisGuilt ]----------------------------------------------}
 {8000}{}{Maybe this is my only way out, thank you. Be aware you are now going to be wanted in many towns. My family and I will always remember you, and what you've done here. Keep the gun, my son would like it that way. Hide yourself, and be safe.}
 {8010}{}{Thank you, I will be fine. Take care Henry.}
-{8020}{}{No, forget it Henry. I can't do it. I must go. Bye}
+{8020}{}{Thank you, I will be fine. Take care Henry.}
+{8030}{}{No, forget it Henry. I can't do it. I must go. Bye}
 {9000}{}{Run my friend!@@They are coming!@@Thank you@@We really appreciate what you did.@@We will never forget you. }
 {10000}{}{----------------------------------------------[ OPTION:MakeHimAvenge ]----------------------------------------------}
 {11000}{}{I always loved him, he was my first son! You are right, they deserve to die as he did. My family will be safer without them stalking around... They must pay for what they did to us!}
 {11010}{}{"As your son did" you say? [You give him the gun] Avenge him, using the same gun with which he was murdered. Go Henry, make them pay, go!}
-{11020}{}{No, forget it. I cannot do this, I must leave.}
+{11020}{}{"As your son did" you say? [You give him the gun] Avenge him, using the same gun with which he was murdered. Go Henry, make them pay, go!}
+{11030}{}{No, forget it. I cannot do this, I must leave.}
 {12000}{}{As my son did...@@They will pay, you'll see.@@Soon my friend, soon...@@Blood for his blood.@@With the same gun...the same gun...@@Ill kill them all!@@Dieeee cowards! Dieeeeee!}
 {13000}{}{----------------------------------------------[ OPTION:MakeHimSuicide ]----------------------------------------------}
 {14000}{}{I taught my children to be good, honest men. I never thought Robert would work for scum like you. Robert... My older son... How could he! [He starts to cry] This is terrible! How can a man stand such a betrayal... Nothing matters now. [He cries more and more]}
 {14010}{}{You are still on time Henry, take the gun... c'mon... take it... [You slowly give him the gun] You wont regret it. As you said...Nothing matters now...nothing. [You leave him, he might commit suicide soon.]}
-{14020}{}{No, forget it. I can't do this, see ya.}
+{14020}{}{You are still on time Henry, take the gun... c'mon... take it... [You slowly give him the gun] You wont regret it. As you said...Nothing matters now...nothing. [You leave him, he might commit suicide soon.]}
+{14030}{}{No, forget it. I can't do this, see ya.}
 {15000}{}{Nothing matters now...nothing...@@I cant stand it...@@Too much troubles, I must rest...@@Yes...give it to me...yes...@@I will do it, I will@@I'm still on time...}
 {16000}{}{----------------------------------------------[ OPTION:TryMurderHim ]----------------------------------------------}
 {17000}{}{No! No wait, you're wrong! You can't do this to me! Don't...}

@@ -8,7 +8,7 @@ lang=engl
 &
 1 1000 None 0 #
 3 1010 D _param p ST_CHARISMA > 99 #
-12 1020 D _var p nr_wright_boozequest > 0 #
+12 1020 D _var p q_nr_wright_booze > 0 #
 8 1030 #
 2 1040 D _var p name_mem_npc_player = 0 @
 2 2000 None 0 #
@@ -32,21 +32,21 @@ lang=engl
 17 8020 D _script dialog@d_QuestTimeoutNotReady 0  #
 0 8030 @
 9 9000 None 0 #
-10 9010 R _var p nr_wright_boozequest = 1 R _script dialog@r_QuestTimeout 1 20 #
+10 9010 R _var p q_nr_wright_booze = 1 R _script dialog@r_QuestTimeout 1 20 #
 0 9020 @
 10 10000 None 0 #
 11 10010 @
 11 11000 None 0 #
 0 11010 @
 12 12000 None 0 #
-13 12010 D _var p nr_wright_boozequest = 4 #
+13 12010 D _var p q_nr_wright_booze = 4 #
 0 12020 @
 13 13000 None 0 #
 14 13010 @
 14 14000 None 0 #
 15 14010 @
 15 15000 None 0 #
-16 15010 R _var p nr_wright_boozequest = 0 R _script dialog@r_QuestTimeout 1 168 @
+16 15010 R _var p q_nr_wright_booze = 0 R _script dialog@r_QuestTimeout 1 168 @
 16 16000 None 0 #
 0 16010 D _param p SK_SPEECH > 81 D _item p PID_SAWED_OFF_SHOTGUN < 1 R _item p PID_SAWED_OFF_SHOTGUN + 1 R _item p PID_SHOTGUN_SHELLS + 24 R _param p ST_EXPERIENCE + 1000 R _script dialog@r_AddMoney 1 495 #
 0 16020 D _param p SK_SPEECH < 80 D _param p SK_SPEECH > 51 D _item p PID_10MM_PISTOL < 1 R _item p PID_10MM_PISTOL + 1 R _item p PID_10MM_JHP + 24 R _param p ST_EXPERIENCE + 800 R _script dialog@r_AddMoney 1 395 #

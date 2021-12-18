@@ -15,7 +15,7 @@ void map_init(Map& map, bool firstTime)
 
 void OnInCritter(Map& map, Critter& player)
 {
-    GameVar@ var = GetLocalVar(LVAR_q_iguana_mutant_message, player.Id);
+    GameVar@ var = GetLocalVar(LVAR_q_hub_iguana_mutant_msg, player.Id);
     if(var != 3)
         return;
     var = 5;

@@ -51,8 +51,8 @@ lang=engl
 12 12000 None 0 #
 3 12010 #
 13 12020 #
-100 12030 D _var p factions_q_vc_kohl_books = 1 #
-102 12040 D _var p factions_q_vc_kohl_books > 9 D _var p factions_q_vc_kohl_books < 11111 #
+100 12030 D _var p q_vc_kohl_books = 1 #
+102 12040 D _var p q_vc_kohl_books > 9 D _var p q_vc_kohl_books < 11111 #
 0 12050 @
 13 13000 None 0 #
 14 13010 #
@@ -63,8 +63,8 @@ lang=engl
 15 15000 None 0 #
 3 15010 #
 12 15020 #
-100 15030 D _var p factions_q_vc_kohl_books = 1 #
-102 15040 D _var p factions_q_vc_kohl_books > 9 D _var p factions_q_vc_kohl_books < 11111 #
+100 15030 D _var p q_vc_kohl_books = 1 #
+102 15040 D _var p q_vc_kohl_books > 9 D _var p q_vc_kohl_books < 11111 #
 0 15050 @
 20 16000 None 0 #
 65507 16010 #
@@ -82,10 +82,10 @@ lang=engl
 101 21010 #
 0 21020 @
 101 22000 None 0 #
-12 22010 R _var p factions_q_vc_kohl_books = 10 #
-0 22020 R _var p factions_q_vc_kohl_books = 10 @
+12 22010 R _var p q_vc_kohl_books = 10 #
+0 22020 R _var p q_vc_kohl_books = 10 @
 102 23000 None 0 #
-103 23010 D _item p PID_SCOUT_HANDBOOK > 0 D _item p PID_FIRST_AID_BOOK > 0 D _item p PID_DEANS_ELECTRONICS > 0 D _item p PID_BIG_BOOK_OF_SCIENCE > 0 R _var p factions_q_vc_kohl_books = 11111 R _item p PID_SCOUT_HANDBOOK - 1 R _item p PID_FIRST_AID_BOOK - 1 R _item p PID_DEANS_ELECTRONICS - 1 R _item p PID_BIG_BOOK_OF_SCIENCE - 1 #
+103 23010 D _item p PID_SCOUT_HANDBOOK > 0 D _item p PID_FIRST_AID_BOOK > 0 D _item p PID_DEANS_ELECTRONICS > 0 D _item p PID_BIG_BOOK_OF_SCIENCE > 0 R _var p q_vc_kohl_books = 11111 R _item p PID_SCOUT_HANDBOOK - 1 R _item p PID_FIRST_AID_BOOK - 1 R _item p PID_DEANS_ELECTRONICS - 1 R _item p PID_BIG_BOOK_OF_SCIENCE - 1 #
 0 23020 @
 103 24000 None 0 #
 12 24010 D _var n acquaintance = 0 #

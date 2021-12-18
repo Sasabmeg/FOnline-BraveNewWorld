@@ -37,7 +37,7 @@ void r_SpawnTanker(Critter& player, Critter@ npc)
     int loc = CreateLocation(LOCATION_StrandedTanker, 122, 223, crits);
     if(loc == 0)
         return;
-    GameVar@ locidv = GetLocalVar(LVAR_q_strandedrust_locid, player.Id);
+    GameVar@ locidv = GetLocalVar(LVAR_q_klam_stranded_locid, player.Id);
     locidv = loc;
     // player.SetKnownLoc(true, loc);
     Location@ location = GetLocation(loc);
@@ -46,13 +46,13 @@ void r_SpawnTanker(Critter& player, Critter@ npc)
     Map@      map = location.GetMapByIndex(0);
     if(player.Mode[MODE_DEFAULT_COMBAT] == COMBAT_MODE_TURN_BASED)
         SetTurnBasedAvailability(location);
-    SetQuestGarbager(0, player.Id, loc, LVAR_q_strandedrust, 4);
+    SetQuestGarbager(0, player.Id, loc, LVAR_q_klam_stranded, 4);
     // player.SetKnownLoc(true, loc);
 }
 
 void r_DeleteTanker(Critter& player, Critter@ npc)
 {
-    GameVar@ var = GetLocalVar(LVAR_q_strandedrust_locid, player.Id);
+    GameVar@ var = GetLocalVar(LVAR_q_klam_stranded_locid, player.Id);
     DeleteLocation(var.GetValue());
 }
 
@@ -338,20 +338,20 @@ uint r_ToggleHandys(Critter& player, Critter@ npc, int successnode)
 
 bool d_QuestTimeoutReady(Critter& player, Critter@ npc)
 {
-    GameVar@ var = GetLocalVar(LVAR_q_strandedrust_terminal_timeout, player.Id);
+    GameVar@ var = GetLocalVar(LVAR_q_klam_stranded_terminal_timeout, player.Id);
     DLog("var value: " + var.GetValue());
     return var.GetValue() == 0 || uint(var.GetValue()) <= ELAPSED_TIME;
 }
 
 bool d_QuestTimeoutNotReady(Critter& player, Critter@ npc)
 {
-    GameVar@ var = GetLocalVar(LVAR_q_strandedrust_terminal_timeout, player.Id);
+    GameVar@ var = GetLocalVar(LVAR_q_klam_stranded_terminal_timeout, player.Id);
     return var.GetValue() != 0 && uint(var.GetValue()) > ELAPSED_TIME;
 }
 
 void r_QuestTimeout(Critter& player, Critter@ npc, int timeout)
 {
-    GameVar@ var = GetLocalVar(LVAR_q_strandedrust_terminal_timeout, player.Id);
+    GameVar@ var = GetLocalVar(LVAR_q_klam_stranded_terminal_timeout, player.Id);
     var = ELAPSED_TIME + GAME_HOUR(timeout);
 }
 
@@ -360,7 +360,7 @@ void r_QuestTimeout(Critter& player, Critter@ npc, int timeout)
 //
 void r_QuestCD(Critter& player, Critter@ npc)
 {
-	GameVar@ var = GetLocalVar(LVAR_q_strandedrust, player.Id);
+	GameVar@ var = GetLocalVar(LVAR_q_klam_stranded, player.Id);
 	var = 3; // zakończenie questu
 	uint[] values = { player.Id, npc.Id };
 	CreateTimeEvent(AFTER(REAL_HOUR(Random(6,9))), "e_reset_quest_var", values, true);
@@ -375,7 +375,7 @@ uint e_reset_quest_var(array<uint>@ values)
 
     if(player.IsPlayer())
 	{
-		GameVar@ var = GetLocalVar(LVAR_q_strandedrust, player.Id);
+		GameVar@ var = GetLocalVar(LVAR_q_klam_stranded, player.Id);
 		var = 0;
 	}
 	else

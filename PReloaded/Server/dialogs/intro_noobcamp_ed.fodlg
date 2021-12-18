@@ -1,7 +1,7 @@
 [comment]
 needs a sledge, gives elec part
 
-noob_camp_edquest
+q_lp_edquest
 
 23006
 
@@ -11,9 +11,9 @@ lang=engl russ
 [dialog]
 &
 1 1000 None 0 #
-4 1010 D _var p name_mem_npc_player = 0 D _var p noob_camp_edquest { 1 #
-3 1020 D _var p name_mem_npc_player = 1 D _var p noob_camp_edquest < 99 #
-7 1030 D _var p noob_camp_edquest = 99 @
+4 1010 D _var p name_mem_npc_player = 0 D _var p q_lp_edquest { 1 #
+3 1020 D _var p name_mem_npc_player = 1 D _var p q_lp_edquest < 99 #
+7 1030 D _var p q_lp_edquest = 99 @
 4 2000 None 0 #
 2 2010 #
 2 2020 #
@@ -22,12 +22,12 @@ lang=engl russ
 2 3000 None 0 #
 5 3010 @
 5 4000 None 0 #
-0 4010 R _var p name_mem_npc_player = 1 R _var p noob_camp_edquest = 2 @
+0 4010 R _var p name_mem_npc_player = 1 R _var p q_lp_edquest = 2 @
 3 5000 None 0 #
 6 5010 D _item p PID_SLEDGEHAMMER > 0 #
 0 5020 @
 6 6000 None 0 #
-0 6010 R _item p PID_SLEDGEHAMMER - 1 R _script dialog@r_AddExperience 1 300 R _item p PID_ELECTRONIC_PARTS + 5 R _var p noob_camp_edquest = 99 @
+0 6010 R _item p PID_SLEDGEHAMMER - 1 R _script dialog@r_AddExperience 1 300 R _item p PID_ELECTRONIC_PARTS + 5 R _var p q_lp_edquest = 99 @
 7 7000 None 0 &
 
 [engl]

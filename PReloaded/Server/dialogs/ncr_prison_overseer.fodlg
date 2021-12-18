@@ -10,13 +10,13 @@ lang=engl
 2 2000 None 0 #
 3 2010 D _item p PID_MINERAL > 0 #
 4 2020 #
-7 2030 D _var p ncrcf_prison_points < 500 #
-8 2040 D _var p ncrcf_prison_points < 750 D _var p ncrcf_prison_points } 500 #
-9 2050 D _var p ncrcf_prison_points } 1000 D _var p ncrcf_prison_points } 750 #
+7 2030 D _var p q_ncr_cf_prison_points < 500 #
+8 2040 D _var p q_ncr_cf_prison_points < 750 D _var p q_ncr_cf_prison_points } 500 #
+9 2050 D _var p q_ncr_cf_prison_points } 1000 D _var p q_ncr_cf_prison_points } 750 #
 0 2060 @
 3 3000 None 0 #
-2 3010 D _item p PID_MINERAL > 0 R _item p PID_MINERAL - 1 R _var p ncrcf_prison_points + 15 #
-0 3020 R _item p PID_MINERAL - 1 R _var p ncrcf_prison_points + 15 @
+2 3010 D _item p PID_MINERAL > 0 R _item p PID_MINERAL - 1 R _var p q_ncr_cf_prison_points + 15 #
+0 3020 R _item p PID_MINERAL - 1 R _var p q_ncr_cf_prison_points + 15 @
 4 4000 None 0 #
 5 4010 #
 6 4020 @
@@ -29,7 +29,7 @@ lang=engl
 8 8000 None 0 #
 6 8010 @
 9 9000 None 0 #
-0 9010 R _var p ncrcf_prison_points = 0 #
+0 9010 R _var p q_ncr_cf_prison_points = 0 #
 0 9020 &
 
 [engl]

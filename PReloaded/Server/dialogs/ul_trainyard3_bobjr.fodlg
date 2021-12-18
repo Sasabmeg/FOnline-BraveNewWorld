@@ -1,5 +1,5 @@
 [comment]
-7070 q_iguana_pete_message:
+7070 q_hub_iguana_pete_message:
 1 = Recieved Quest
 2 = Spoken to NCR Miky
 3 = Spoken to NCR Mutant Lenny
@@ -17,9 +17,9 @@ lang=engl
 [dialog]
 &
 1 1000 None 1 #
-3 1010 D _var p name_mem_npc_player = 0 D _var p q_iguana_pete_message = 5 #
-3 1020 D _var p name_mem_npc_player = 0 D _var p q_iguana_pete_message = 3 #
-8 1030 D _var p q_iguana_pete_message = 6 D _var p name_mem_npc_player = 1 #
+3 1010 D _var p name_mem_npc_player = 0 D _var p q_hub_iguana_pete_message = 5 #
+3 1020 D _var p name_mem_npc_player = 0 D _var p q_hub_iguana_pete_message = 3 #
+8 1030 D _var p q_hub_iguana_pete_message = 6 D _var p name_mem_npc_player = 1 #
 2 1040 D _var p name_mem_npc_player = 0 @
 2 2000 None 0 @
 3 3000 None 0 #
@@ -29,7 +29,7 @@ lang=engl
 5 4010 #
 7 4020 @
 5 5000 None 0 #
-6 5010 R _item p PID_DESERT_EAGLE + 1 R _item p PID_44_MAGNUM_JHP + 20 R _var p q_iguana_pete_message = 6 R _var p name_mem_npc_player = 1 R _script dialog@r_AddMoney 1 500 R _param p ST_EXPERIENCE + 2000 R _item p PID_COMBAT_ARMOR_MK_II + 1 @
+6 5010 R _item p PID_DESERT_EAGLE + 1 R _item p PID_44_MAGNUM_JHP + 20 R _var p q_hub_iguana_pete_message = 6 R _var p name_mem_npc_player = 1 R _script dialog@r_AddMoney 1 500 R _param p ST_EXPERIENCE + 2000 R _item p PID_COMBAT_ARMOR_MK_II + 1 @
 6 6000 None 0 #
 0 6010 @
 7 7000 None 0 #

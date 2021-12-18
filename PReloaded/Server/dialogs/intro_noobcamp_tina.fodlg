@@ -8,21 +8,21 @@ lang=engl russ
 &
 1 1000 None 0 #
 2 1010 D _var p name_mem_npc_player = 0 #
-5 1020 D _var p name_mem_npc_player = 1 D _var p noob_camp_lawrence ! 91 #
-2 1030 D _var p noob_camp_lawrence = 91 D _var p name_mem_npc_player = 1 @
+5 1020 D _var p name_mem_npc_player = 1 D _var p q_lp_lawrence ! 91 #
+2 1030 D _var p q_lp_lawrence = 91 D _var p name_mem_npc_player = 1 @
 2 2000 None 0 #
 3 2010 #
-3 2020 D _var p noob_camp_lawrence = 2 R _var p name_mem_npc_player = 1 R _var p noob_camp_lawrence = 92 #
-6 2030 D _param p SK_SPEECH } 25 D _var p noob_camp_lawrence = 2 #
-7 2040 D _param p SK_STEAL } 25 D _var p noob_camp_plague < 99 D _var p noob_camp_lawrence = 2 R _var p noob_camp_lawrence = 91 R _var p name_mem_npc_player = 1 #
-8 2050 D _param p SK_STEAL } 25 D _var p noob_camp_plague } 99 R _var p noob_camp_lawrence = 12 R _item p PID_DECK_OF_CARDS + 1 R _var p name_mem_npc_player = 1 R _param p SK_STEAL + 6 #
-4 2060 D _item p PID_DECK_OF_CARDS = 0 D _var p noob_camp_lawrence = 2 @
+3 2020 D _var p q_lp_lawrence = 2 R _var p name_mem_npc_player = 1 R _var p q_lp_lawrence = 92 #
+6 2030 D _param p SK_SPEECH } 25 D _var p q_lp_lawrence = 2 #
+7 2040 D _param p SK_STEAL } 25 D _var p q_lp_plague < 99 D _var p q_lp_lawrence = 2 R _var p q_lp_lawrence = 91 R _var p name_mem_npc_player = 1 #
+8 2050 D _param p SK_STEAL } 25 D _var p q_lp_plague } 99 R _var p q_lp_lawrence = 12 R _item p PID_DECK_OF_CARDS + 1 R _var p name_mem_npc_player = 1 R _param p SK_STEAL + 6 #
+4 2060 D _item p PID_DECK_OF_CARDS = 0 D _var p q_lp_lawrence = 2 @
 3 3000 None 0 @
 4 4000 None 0 #
-0 4010 R _var p name_mem_npc_player = 1 R _item p PID_DECK_OF_CARDS + 1 R _var p noob_camp_lawrence = 13 @
+0 4010 R _var p name_mem_npc_player = 1 R _item p PID_DECK_OF_CARDS + 1 R _var p q_lp_lawrence = 13 @
 5 5000 None 0 @
 6 6000 None 0 #
-0 6010 R _var p name_mem_npc_player = 1 R _var p noob_camp_lawrence = 11 R _param p SK_SPEECH + 6 R _item p PID_DECK_OF_CARDS + 1 @
+0 6010 R _var p name_mem_npc_player = 1 R _var p q_lp_lawrence = 11 R _param p SK_SPEECH + 6 R _item p PID_DECK_OF_CARDS + 1 @
 7 7000 None 0 #
 0 7010 @
 8 8000 None 0 #

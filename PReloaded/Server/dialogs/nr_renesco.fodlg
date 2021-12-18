@@ -11,7 +11,7 @@ lang=engl
 [dialog]
 &
 1 1000 None 0 #
-54 1010 D _var p q_redding_mcgrew_runner = 3 #
+54 1010 D _var p q_redd_mcgrew_runner = 3 #
 42 1020 D _var n name_mem_npc_player > 0 D _param p ST_INTELLECT < 4 #
 40 1030 D _var n name_mem_npc_player = 0 D _param p ST_INTELLECT < 4 #
 2 1040 @
@@ -22,7 +22,7 @@ lang=engl
 5 2040 D _var p factions_player_faction > 6 D _var n name_mem_npc_player = 0 #
 15 2050 D _var n name_mem_npc_player > 0 #
 7 2060 D _var n name_mem_npc_player > 0 #
-100 2070 D _var n name_mem_npc_player = 1 D _var n acquaintance = 0 D _var p factions_q_vc_kohl_books = 11 #
+100 2070 D _var n name_mem_npc_player = 1 D _var n acquaintance = 0 D _var p q_vc_kohl_books = 11 #
 23 2080 D _var n name_mem_npc_player > 0 #
 21 2090 D _var n name_mem_npc_player > 0 #
 70 2100 #
@@ -52,8 +52,8 @@ lang=engl
 23 6040 #
 0 6050 @
 7 7000 None 0 #
-43 7010 D _var n acquaintance = 0 D _var p q_mordinos_joining_quest = 1 R _var n acquaintance = 1 #
-51 7020 D _var p q_redding_mcgrew_runner = 1 #
+43 7010 D _var n acquaintance = 0 D _var p q_nr_mord_joining_quest = 1 R _var n acquaintance = 1 #
+51 7020 D _var p q_redd_mcgrew_runner = 1 #
 8 7030 #
 65506 7040 #
 22 7050 #
@@ -143,11 +143,11 @@ lang=engl
 48 33020 D _param p ST_CHARISMA < 7 D _param p ST_CHARISMA > 4 #
 49 33030 D _param p ST_CHARISMA < 5 @
 47 34000 None 0 #
-50 34010 R _var p q_mordinos_induction_doctor + 200 @
+50 34010 R _var p q_nr_mord_induction_doctor + 200 @
 48 35000 None 0 #
-50 35010 R _var p q_mordinos_induction_doctor + 150 @
+50 35010 R _var p q_nr_mord_induction_doctor + 150 @
 49 36000 None 0 #
-50 36010 R _var p q_mordinos_induction_doctor + 100 @
+50 36010 R _var p q_nr_mord_induction_doctor + 100 @
 50 37000 None 0 #
 0 37010 @
 51 38000 None 0 #
@@ -155,13 +155,13 @@ lang=engl
 52 39000 None 0 #
 53 39010 @
 53 40000 None 0 #
-0 40010 R _var p q_redding_mcgrew_runner = 2 @
+0 40010 R _var p q_redd_mcgrew_runner = 2 @
 54 41000 None 0 #
 55 41010 @
 55 42000 None 0 #
 56 42010 @
 56 43000 None 0 #
-0 43010 R _var p q_redding_mcgrew_runner = 4 R _param p ST_EXPERIENCE + 2000 @
+0 43010 R _var p q_redd_mcgrew_runner = 4 R _param p ST_EXPERIENCE + 2000 @
 57 44000 None 0 @
 70 45000 None 0 #
 71 45010 D _item p PID_BOTTLE_CAPS > 7499 R _script dialog@r_RemoveMoney 1 7500 R _item p PID_BLUEPRINT_BUFFOUT + 1 #

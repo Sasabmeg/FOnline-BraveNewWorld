@@ -48,8 +48,8 @@ lang=engl
 0 14010 R _script vaul_guard@r_AssignQuest 1 0 #
 65507 14020 @
 120 15000 None 0 #
-121 15010 D _var p factions_q_vc_scoutsf = 111 D _param p SK_OUTDOORSMAN < 51 #
-121 15020 D _var p factions_q_vc_scoutsf = 111 D _param p SK_OUTDOORSMAN > 50 #
+121 15010 D _var p q_vc_scoutsf = 111 D _param p SK_OUTDOORSMAN < 51 #
+121 15020 D _var p q_vc_scoutsf = 111 D _param p SK_OUTDOORSMAN > 50 #
 98 15030 D _script vaul_guard@d_QuestInProgress 1 0 R _var p factions_player_score - 1 R _script vaul_guard@r_CancelQuest 1 0 #
 0 15040 @
 121 16000 None 0 #
@@ -65,8 +65,8 @@ lang=engl
 202 19000 None 0 #
 0 19010 R _var p factions_player_score + 1 R _param p ST_EXPERIENCE + 200 @
 220 20000 None 0 #
-221 20010 D _var p factions_q_vc_questionnaire = 151 R _script vaul_guard@r_FinishQuest 1 0 R _param p ST_EXPERIENCE + 500 R _var p factions_player_score + 2 #
-222 20020 D _var p factions_q_vc_questionnaire < 151 D _item p PID_QUESTIONNAIRE = 0 R _script vaul_guard@r_FinishQuest 1 0 R _param p ST_EXPERIENCE + 200 R _var p factions_player_score + 1 #
+221 20010 D _var p q_vc_questionnaire = 151 R _script vaul_guard@r_FinishQuest 1 0 R _param p ST_EXPERIENCE + 500 R _var p factions_player_score + 2 #
+222 20020 D _var p q_vc_questionnaire < 151 D _item p PID_QUESTIONNAIRE = 0 R _script vaul_guard@r_FinishQuest 1 0 R _param p ST_EXPERIENCE + 200 R _var p factions_player_score + 1 #
 98 20030 D _script vaul_guard@d_QuestInProgress 1 0 R _var p factions_player_score - 1 R _script vaul_guard@r_CancelQuest 1 0 #
 0 20040 @
 221 21000 None 0 #
@@ -86,7 +86,7 @@ lang=engl
 0 25010 #
 0 25020 @
 320 26000 None 0 #
-321 26010 D _var p factions_q_vc_kohl_books = 11111 R _var p factions_player_score + 4 R _param p ST_EXPERIENCE + 1000 R _script vaul_guard@r_FinishQuest 1 0 #
+321 26010 D _var p q_vc_kohl_books = 11111 R _var p factions_player_score + 4 R _param p ST_EXPERIENCE + 1000 R _script vaul_guard@r_FinishQuest 1 0 #
 98 26020 D _script vaul_guard@d_QuestInProgress 1 0 R _var p factions_player_score - 1 R _script vaul_guard@r_CancelQuest 1 0 #
 0 26030 @
 321 27000 None 0 #

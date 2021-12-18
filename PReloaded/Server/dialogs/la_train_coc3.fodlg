@@ -6,7 +6,7 @@ lang=engl
 [dialog]
 &
 1 1000 None 0 #
-14 1010 D _var p train_coc_mad = 1 #
+14 1010 D _var p q_la_train_coc_mad = 1 #
 15 1020 D _var p name_mem_npc_player = 1 D _script dialog@d_CheckNight 0  #
 13 1030 D _var p name_mem_npc_player = 1 #
 4 1040 D _var p name_mem_npc_player = 0 @
@@ -16,13 +16,13 @@ lang=engl
 5 4010 #
 6 4020 R _param p REPUTATION_CHILDREN + 100 R _var p name_mem_npc_player = 1 R _item p PID_FLOWER + 1 #
 12 4030 R _item p PID_FLOWER + 1 R _var p name_mem_npc_player = 1 R _param p REPUTATION_CHILDREN + 100 #
-16 4040 R _var p train_coc_mad = 1 #
+16 4040 R _var p q_la_train_coc_mad = 1 #
 0 4050 @
 5 5000 None 0 #
 9 5010 #
 7 5020 #
 10 5030 R _item p PID_FLOWER + 1 R _var p name_mem_npc_player = 1 R _param p REPUTATION_CHILDREN + 100 #
-16 5040 R _var p train_coc_mad = 1 #
+16 5040 R _var p q_la_train_coc_mad = 1 #
 0 5050 @
 6 6000 None 0 #
 7 6010 #
@@ -33,11 +33,11 @@ lang=engl
 0 7030 @
 8 8000 None 0 #
 10 8010 #
-16 8020 R _var p train_coc_mad = 1 #
+16 8020 R _var p q_la_train_coc_mad = 1 #
 0 8030 @
 9 9000 None 0 #
 10 9010 R _item p PID_FLOWER + 1 R _var p name_mem_npc_player = 1 R _param p REPUTATION_CHILDREN + 100 #
-16 9020 R _var p train_coc_mad = 1 #
+16 9020 R _var p q_la_train_coc_mad = 1 #
 0 9030 @
 10 10000 None 0 #
 0 10010 @
@@ -55,14 +55,14 @@ lang=engl
 17 15010 #
 0 15020 @
 16 16000 None 0 #
-0 16010 R _var p train_coc_mad = 1 @
+0 16010 R _var p q_la_train_coc_mad = 1 @
 17 17000 None 0 #
 18 17010 #
 19 17020 #
 21 17030 #
 0 17040 @
 19 18000 None 0 #
-20 18010 D _param p ST_CHARISMA > 3 D _var p q_coc_train = 0 R _var p q_coc_train = 1 #
+20 18010 D _param p ST_CHARISMA > 3 D _var p q_la_train_coc = 0 R _var p q_la_train_coc = 1 #
 17 18020 #
 0 18030 @
 20 19000 None 0 #

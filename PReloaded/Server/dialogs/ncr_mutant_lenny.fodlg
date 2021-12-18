@@ -1,5 +1,5 @@
 [comment]
-7070 q_iguana_pete_message:
+7070 q_hub_iguana_pete_message:
 1 = Recieved Quest
 2 = Spoken to NCR Miky
 3 = Spoken to NCR Mutant Lenny
@@ -12,13 +12,13 @@ lang=engl
 [dialog]
 &
 1 1000 None 1 #
-11 1010 D _var p q_iguana_pete_message = 3 #
-2 1020 D _var p q_iguana_pete_message = 2 #
+11 1010 D _var p q_hub_iguana_pete_message = 3 #
+2 1020 D _var p q_hub_iguana_pete_message = 2 #
 10 1030 @
 2 2000 None 0 #
 0 2010 #
-4 2020 D _var p q_iguana_pete_message = 2 #
-3 2030 D _var p q_iguana_pete_message = 2 @
+4 2020 D _var p q_hub_iguana_pete_message = 2 #
+3 2030 D _var p q_hub_iguana_pete_message = 2 @
 3 3000 None 0 #
 5 3010 #
 4 3020 @
@@ -38,7 +38,7 @@ lang=engl
 8 8000 None 0 #
 9 8010 @
 9 9000 None 0 #
-0 9010 R _var p q_iguana_pete_message = 3 @
+0 9010 R _var p q_hub_iguana_pete_message = 3 @
 10 10000 None 0 @
 11 11000 None 0 &
 

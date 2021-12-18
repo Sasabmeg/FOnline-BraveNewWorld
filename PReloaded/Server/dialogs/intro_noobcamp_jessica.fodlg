@@ -1,7 +1,7 @@
 [comment]
 jes needs help 
 
-noob_camp_jessica
+q_lp_jessica
 
 23007
 
@@ -11,9 +11,9 @@ lang=engl russ
 [dialog]
 &
 1 1000 None 0 #
-4 1010 D _var p name_mem_npc_player = 0 D _var p noob_camp_jessica { 1 #
-7 1020 D _var p name_mem_npc_player = 1 D _var p noob_camp_jessica { 3 #
-11 1030 D _var p noob_camp_jessica = 99 @
+4 1010 D _var p name_mem_npc_player = 0 D _var p q_lp_jessica { 1 #
+7 1020 D _var p name_mem_npc_player = 1 D _var p q_lp_jessica { 3 #
+11 1030 D _var p q_lp_jessica = 99 @
 4 2000 None 0 #
 3 2010 #
 5 2020 #
@@ -25,7 +25,7 @@ lang=engl russ
 5 5000 None 0 #
 6 5010 @
 6 6000 None 0 #
-0 6010 R _var p name_mem_npc_player = 1 R _var p noob_camp_jessica = 2 @
+0 6010 R _var p name_mem_npc_player = 1 R _var p q_lp_jessica = 2 @
 7 7000 None 0 #
 8 7010 #
 9 7020 D _item p PID_ANTIDOTE > 0 #
@@ -38,7 +38,7 @@ lang=engl russ
 10 10000 None 0 #
 12 10010 @
 12 11000 None 0 #
-0 11010 R _param p ST_POISON_RESISTANCE + 5 R _script dialog@r_AddExperience 1 500 R _var p noob_camp_jessica = 99 R _item p PID_ANTIDOTE - 1 R _param p SK_FIRST_AID + 6 @
+0 11010 R _param p ST_POISON_RESISTANCE + 5 R _script dialog@r_AddExperience 1 500 R _var p q_lp_jessica = 99 R _item p PID_ANTIDOTE - 1 R _param p SK_FIRST_AID + 6 @
 11 12000 None 0 &
 
 [engl]

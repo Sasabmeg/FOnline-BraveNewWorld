@@ -11,24 +11,24 @@ lang=engl
 10 1030 @
 2 2000 None 0 #
 3 2010 #
-2 2020 D _var p factions_q_nav_mfc = 0 #
-6 2030 D _var p factions_q_nav_mfc > 1 D _script dialog@d_IsLowerRankThan 1 3 #
-6 2040 D _var p factions_q_nav_mfc > 1 #
+2 2020 D _var p q_nav_mfc = 0 #
+6 2030 D _var p q_nav_mfc > 1 D _script dialog@d_IsLowerRankThan 1 3 #
+6 2040 D _var p q_nav_mfc > 1 #
 0 2050 @
 3 3000 None 0 #
 9 3010 #
 0 3020 @
 4 4000 None 0 #
-5 4010 R _var p factions_q_nav_mfc = 1 #
+5 4010 R _var p q_nav_mfc = 1 #
 0 4020 @
 5 5000 None 0 #
 0 5010 @
 6 6000 None 0 #
-7 6010 D _var p factions_q_nav_mfc > 10 D _item p PID_MICRO_FUSION_CELL > 9 R _item p PID_MICRO_FUSION_CELL - 10 R _var p factions_q_nav_mfc - 10 R _script dialog@r_AddExpTeam 1 50 #
-7 6020 D _var p factions_q_nav_mfc > 20 D _item p PID_MICRO_FUSION_CELL > 19 R _item p PID_MICRO_FUSION_CELL - 20 R _var p factions_q_nav_mfc - 20 R _script dialog@r_AddExpTeam 1 100 #
-7 6030 D _var p factions_q_nav_mfc > 40 D _item p PID_MICRO_FUSION_CELL > 39 R _item p PID_MICRO_FUSION_CELL - 40 R _var p factions_q_nav_mfc - 40 R _script dialog@r_AddExpTeam 1 200 #
-7 6040 D _var p factions_q_nav_mfc > 80 D _item p PID_MICRO_FUSION_CELL > 79 R _item p PID_MICRO_FUSION_CELL - 80 R _var p factions_q_nav_mfc - 80 R _script dialog@r_AddExpTeam 1 400 #
-7 6050 D _var p factions_q_nav_mfc > 160 D _item p PID_MICRO_FUSION_CELL > 159 R _item p PID_MICRO_FUSION_CELL - 160 R _var p factions_q_nav_mfc - 160 R _script dialog@r_AddExpTeam 1 800 #
+7 6010 D _var p q_nav_mfc > 10 D _item p PID_MICRO_FUSION_CELL > 9 R _item p PID_MICRO_FUSION_CELL - 10 R _var p q_nav_mfc - 10 R _script dialog@r_AddExpTeam 1 50 #
+7 6020 D _var p q_nav_mfc > 20 D _item p PID_MICRO_FUSION_CELL > 19 R _item p PID_MICRO_FUSION_CELL - 20 R _var p q_nav_mfc - 20 R _script dialog@r_AddExpTeam 1 100 #
+7 6030 D _var p q_nav_mfc > 40 D _item p PID_MICRO_FUSION_CELL > 39 R _item p PID_MICRO_FUSION_CELL - 40 R _var p q_nav_mfc - 40 R _script dialog@r_AddExpTeam 1 200 #
+7 6040 D _var p q_nav_mfc > 80 D _item p PID_MICRO_FUSION_CELL > 79 R _item p PID_MICRO_FUSION_CELL - 80 R _var p q_nav_mfc - 80 R _script dialog@r_AddExpTeam 1 400 #
+7 6050 D _var p q_nav_mfc > 160 D _item p PID_MICRO_FUSION_CELL > 159 R _item p PID_MICRO_FUSION_CELL - 160 R _var p q_nav_mfc - 160 R _script dialog@r_AddExpTeam 1 800 #
 0 6060 @
 7 7000 None 0 #
 6 7010 #

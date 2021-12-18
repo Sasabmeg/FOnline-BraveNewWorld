@@ -13,13 +13,13 @@ lang=engl
 2 2000 None 0 #
 3 2010 #
 3 2020 #
-53 2030 D _var n acquaintance = 0 D _var p q_mordinos_joining_quest = 1 @
+53 2030 D _var n acquaintance = 0 D _var p q_nr_mord_joining_quest = 1 @
 3 3000 None 0 #
 4 3010 #
 49 3020 #
 49 3030 #
 0 3040 #
-53 3050 D _var n acquaintance = 0 D _var p q_mordinos_joining_quest = 1 @
+53 3050 D _var n acquaintance = 0 D _var p q_nr_mord_joining_quest = 1 @
 4 4000 None 0 #
 5 4010 #
 40 4020 #
@@ -27,7 +27,7 @@ lang=engl
 46 4040 #
 47 4050 #
 48 4060 #
-53 4070 D _var n acquaintance = 0 D _var p q_mordinos_joining_quest = 1 #
+53 4070 D _var n acquaintance = 0 D _var p q_nr_mord_joining_quest = 1 #
 60 4080 #
 70 4090 #
 0 4100 @
@@ -197,7 +197,7 @@ lang=engl
 58 57010 #
 0 57020 @
 58 58000 None 0 #
-0 58010 R _var p q_mordinos_induction_doctor + 50 R _var n acquaintance = 1 @
+0 58010 R _var p q_nr_mord_induction_doctor + 50 R _var n acquaintance = 1 @
 60 59000 None 0 #
 61 59010 D _item p PID_BOTTLE_CAPS > 9 R _item p PID_HYPODERMIC_NEEDLE + 1 R _script dialog@r_RemoveMoney 1 10 #
 62 59020 D _item p PID_BOTTLE_CAPS > 179 R _item p PID_HYPODERMIC_NEEDLE + 20 R _script dialog@r_RemoveMoney 1 180 #

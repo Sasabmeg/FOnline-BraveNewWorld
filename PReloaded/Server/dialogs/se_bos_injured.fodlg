@@ -12,7 +12,7 @@ lang=engl
 10 1030 D _var p q_bos_injured = 3 D _item p PID_SUPER_STIMPAK } 1 #
 12 1040 D _var p q_bos_injured = 3 D _item p PID_SUPER_STIMPAK = 0 #
 9 1050 D _var p q_bos_injured = 1 #
-2 1060 D _var p q_bos_initiatequest_start = 21 D _script dialog@d_IsLocationOwner 0  D _var p q_bos_injured = 0 @
+2 1060 D _var p q_bos_initiate_start = 21 D _script dialog@d_IsLocationOwner 0  D _var p q_bos_injured = 0 @
 2 2000 None 0 #
 3 2010 @
 3 3000 None 0 #
@@ -30,11 +30,11 @@ lang=engl
 8 8000 None 0 #
 0 8010 R _var p q_bos_injured = 1 R _script quest_bos_initiate@r_HealSoldier 1 80 @
 9 9000 None 0 #
-0 9010 R _var p q_bos_initiatequest_start = 25 R _var p q_bos_injured = 4 R _script quest_bos_initiate@r_RetireMap 0  @
+0 9010 R _var p q_bos_initiate_start = 25 R _var p q_bos_injured = 4 R _script quest_bos_initiate@r_RetireMap 0  @
 10 10000 None 0 #
 11 10010 D _item p PID_SUPER_STIMPAK } 1 R _item p PID_SUPER_STIMPAK - 1 R _script quest_bos_initiate@r_HealSoldier 1 40 @
 11 11000 None 0 #
-0 11010 R _var p q_bos_injured = 4 R _var p q_bos_initiatequest_start = 24 R _script quest_bos_initiate@r_RetireMap 0  @
+0 11010 R _var p q_bos_injured = 4 R _var p q_bos_initiate_start = 24 R _script quest_bos_initiate@r_RetireMap 0  @
 12 12000 None 0 #
 0 12010 @
 13 13000 None 0 @

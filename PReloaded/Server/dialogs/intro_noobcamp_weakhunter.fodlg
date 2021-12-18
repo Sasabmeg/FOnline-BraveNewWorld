@@ -1,6 +1,6 @@
 [comment]
 weak hunter
-noob_camp_hunter
+q_lp_hunter
 23017
 
 needs 3 max vars
@@ -11,15 +11,15 @@ lang=engl russ
 [dialog]
 &
 1 1000 None 0 #
-4 1010 D _var p noob_camp_hunter { 1 #
-4 1020 D _var p noob_camp_hunter = 2 #
-7 1030 D _var p noob_camp_hunter = 3 #
-8 1040 D _var p noob_camp_hunter = 4 #
-13 1050 D _var p noob_camp_hunter = 5 #
-2 1060 D _var p noob_camp_hunter = 98 #
-20 1070 D _var p noob_camp_hunter = 99 @
+4 1010 D _var p q_lp_hunter { 1 #
+4 1020 D _var p q_lp_hunter = 2 #
+7 1030 D _var p q_lp_hunter = 3 #
+8 1040 D _var p q_lp_hunter = 4 #
+13 1050 D _var p q_lp_hunter = 5 #
+2 1060 D _var p q_lp_hunter = 98 #
+20 1070 D _var p q_lp_hunter = 99 @
 4 2000 None 0 #
-7 2010 D _var p noob_camp_hunter = 2 R _var p noob_camp_hunter = 3 #
+7 2010 D _var p q_lp_hunter = 2 R _var p q_lp_hunter = 3 #
 3 2020 #
 3 2030 D _param p SK_DOCTOR > 40 #
 2 2040 #
@@ -28,17 +28,17 @@ lang=engl russ
 5 3010 @
 5 4000 None 0 @
 3 5000 None 0 #
-0 5010 R _var p noob_camp_hunter = 2 #
+0 5010 R _var p q_lp_hunter = 2 #
 6 5020 @
 6 6000 None 0 #
-0 6010 R _var p noob_camp_hunter = 2 @
+0 6010 R _var p q_lp_hunter = 2 @
 7 7000 None 0 #
-8 7010 D _item p PID_HEALING_POWDER > 2 R _script dialog@r_AddExperience 1 350 R _item p PID_HEALING_POWDER - 3 R _var p noob_camp_hunter = 4 #
-0 7020 R _var p noob_camp_hunter = 3 @
+8 7010 D _item p PID_HEALING_POWDER > 2 R _script dialog@r_AddExperience 1 350 R _item p PID_HEALING_POWDER - 3 R _var p q_lp_hunter = 4 #
+0 7020 R _var p q_lp_hunter = 3 @
 8 8000 None 0 #
 10 8010 D _item p PID_SHARPENED_POLE > 9 #
 9 8020 #
-0 8030 R _var p noob_camp_hunter = 98 @
+0 8030 R _var p q_lp_hunter = 98 @
 9 9000 None 0 #
 0 9010 #
 0 9020 @
@@ -48,14 +48,14 @@ lang=engl russ
 12 11010 #
 0 11020 @
 12 12000 None 0 #
-0 12010 R _item p PID_SHARPENED_POLE - 10 R _var p noob_camp_hunter = 5 @
+0 12010 R _item p PID_SHARPENED_POLE - 10 R _var p q_lp_hunter = 5 @
 13 13000 None 0 #
 14 13010 D _item p PID_TENT > 0 #
 0 13020 @
 14 14000 None 0 #
 15 14010 @
 15 15000 None 0 #
-0 15010 R _param p SK_OUTDOORSMAN + 6 R _script dialog@r_AddExperience 1 500 R _item p PID_TENT - 1 R _var p noob_camp_hunter = 99 @
+0 15010 R _param p SK_OUTDOORSMAN + 6 R _script dialog@r_AddExperience 1 500 R _item p PID_TENT - 1 R _var p q_lp_hunter = 99 @
 20 16000 None 0 &
 
 [engl]

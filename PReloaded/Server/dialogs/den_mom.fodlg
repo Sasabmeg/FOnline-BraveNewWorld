@@ -15,7 +15,7 @@ lang=engl
 4 2010 #
 65506 2020 #
 6 2030 #
-7 2040 D _var p mod_q_meat_jerky = 1 D _item p PID_MEAT_BAG > 0 R _var p mod_q_meat_jerky = 2 R _item p PID_MEAT_BAG - 1 R _param p ST_EXPERIENCE + 525 R _script dialog@r_AddMoney 1 225 #
+7 2040 D _var p q_mod_meat_jerky = 1 D _item p PID_MEAT_BAG > 0 R _var p q_mod_meat_jerky = 2 R _item p PID_MEAT_BAG - 1 R _param p ST_EXPERIENCE + 525 R _script dialog@r_AddMoney 1 225 #
 0 2050 @
 3 3000 None 0 #
 4 3010 #

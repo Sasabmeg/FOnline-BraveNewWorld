@@ -11,9 +11,9 @@ lang=engl
 3 2000 None 0 #
 4 2010 #
 7 2020 #
-9 2030 D _var p cath_job_flowers = 0 #
-11 2040 D _var p cath_job_flowers = 13 #
-12 2050 D _var p cath_job_flowers > 0 D _var p cath_job_flowers < 13 #
+9 2030 D _var p q_cath_job_flowers = 0 #
+11 2040 D _var p q_cath_job_flowers = 13 #
+12 2050 D _var p q_cath_job_flowers > 0 D _var p q_cath_job_flowers < 13 #
 0 2060 @
 4 3000 None 0 #
 5 3010 D _item p PID_BOTTLE_CAPS > 49 D _param p ST_GENDER = 0 D _script npc_barber@d_IsNotCrType 1 CRTYPE_LHD_JUMPSUIT R _script dialog@r_RemoveMoney 1 50 R _script npc_barber@r_Haircut 1 CRTYPE_LHD_JUMPSUIT #
@@ -34,11 +34,11 @@ lang=engl
 10 8010 #
 0 8020 @
 10 9000 None 0 #
-0 9010 R _var p cath_job_flowers = 1 R _item p PID_FLOWER + 12 @
+0 9010 R _var p q_cath_job_flowers = 1 R _item p PID_FLOWER + 12 @
 11 10000 None 0 #
-0 10010 R _item p PID_FLOWER + 1 R _item p PID_WATERBAG + 1 R _var p cath_job_flowers = 14 R _param p REPUTATION_CATHEDRAL + 100 R _item p PID_SAND_ROBE + 1 @
+0 10010 R _item p PID_FLOWER + 1 R _item p PID_WATERBAG + 1 R _var p q_cath_job_flowers = 14 R _param p REPUTATION_CATHEDRAL + 100 R _item p PID_SAND_ROBE + 1 @
 12 11000 None 0 #
-0 11010 R _var p cath_job_flowers = 14 &
+0 11010 R _var p q_cath_job_flowers = 14 &
 
 [engl]
 {100}{}{Scrubber}

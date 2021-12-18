@@ -7,21 +7,21 @@ lang=engl
 &
 1 1000 None 0 #
 2 1010 D _param p ST_INTELLECT > 3 D _var n name_mem_npc_player = 0 R _var n name_mem_npc_player = 1 #
-22 1020 D _param p ST_INTELLECT > 3 D _var p crimson_caravan_job = 2 #
-2 1030 D _param p ST_INTELLECT > 3 D _var p name_mem_npc_player = 1 D _var p crimson_caravan_job = 1 #
-2 1040 D _param p ST_INTELLECT > 3 D _var p name_mem_npc_player = 1 D _var p crimson_caravan_job = 1 #
+22 1020 D _param p ST_INTELLECT > 3 D _var p q_hub_crimson_caravan_job = 2 #
+2 1030 D _param p ST_INTELLECT > 3 D _var p name_mem_npc_player = 1 D _var p q_hub_crimson_caravan_job = 1 #
+2 1040 D _param p ST_INTELLECT > 3 D _var p name_mem_npc_player = 1 D _var p q_hub_crimson_caravan_job = 1 #
 23 1050 D _param p ST_INTELLECT > 3 D _var n name_mem_npc_player = 1 #
 3 1060 D _param p ST_INTELLECT < 4 @
 2 2000 None 0 #
-4 2010 D _var p crimson_caravan_job = 1 #
+4 2010 D _var p q_hub_crimson_caravan_job = 1 #
 0 2020 @
 3 3000 None 0 @
 4 4000 None 0 #
 5 4010 #
 0 4020 @
 5 5000 None 0 #
-7 5010 R _var p crimson_caravan_job = 1 #
-8 5020 R _var p crimson_caravan_job = 1 #
+7 5010 R _var p q_hub_crimson_caravan_job = 1 #
+8 5020 R _var p q_hub_crimson_caravan_job = 1 #
 0 5030 @
 6 6000 None 0 #
 19 6010 #
@@ -79,7 +79,7 @@ lang=engl
 22 22000 None 0 #
 0 22010 @
 23 23000 None 0 #
-4 23010 D _var p crimson_caravan_job = 1 #
+4 23010 D _var p q_hub_crimson_caravan_job = 1 #
 0 23020 &
 
 [engl]

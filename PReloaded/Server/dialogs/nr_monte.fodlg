@@ -18,7 +18,7 @@ lang=engl
 11 2030 D _item n PID_MARKED_DECK_OF_CARDS > 0 D _var p acquaintance = 1 R _item n PID_MARKED_DECK_OF_CARDS = 0 #
 0 2040 D _param p SK_GAMBLING > 74 R _var p acquaintance = 2 #
 0 2050 #
-16 2060 D _var n acquaintance = 0 D _var p q_mordinos_joining_quest = 1 R _var n acquaintance = 1 @
+16 2060 D _var n acquaintance = 0 D _var p q_nr_mord_joining_quest = 1 R _var n acquaintance = 1 @
 3 3000 None 0 #
 4 3010 D _item p PID_BOTTLE_CAPS > 19 R _script dialog@r_RemoveMoney 1 20 R _script dialog@r_StatRoll 2 Perception 9 #
 0 3020 @
@@ -80,7 +80,7 @@ lang=engl
 65507 19010 #
 0 19020 @
 21 20000 None 0 #
-0 20010 R _var p q_mordinos_induction_doctor + 100 &
+0 20010 R _var p q_nr_mord_induction_doctor + 100 &
 
 [engl]
 {100}{}{Monte}

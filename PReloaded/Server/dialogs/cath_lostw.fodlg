@@ -6,11 +6,11 @@ lang=engl
 [dialog]
 &
 1 1000 None 0 #
-3 1010 D _var p cath_job_flowers > 0 D _var p cath_job_flowers < 13 D _var n name_mem_npc_player = 0 #
+3 1010 D _var p q_cath_job_flowers > 0 D _var p q_cath_job_flowers < 13 D _var n name_mem_npc_player = 0 #
 2 1020 @
 2 2000 None 0 @
 3 3000 None 0 #
-4 3010 R _var n name_mem_npc_player + 1 R _item p PID_FLOWER - 1 R _var p cath_job_flowers + 1 R _param p REPUTATION_CATHEDRAL + 5 @
+4 3010 R _var n name_mem_npc_player + 1 R _item p PID_FLOWER - 1 R _var p q_cath_job_flowers + 1 R _param p REPUTATION_CATHEDRAL + 5 @
 4 4000 None 0 &
 
 [engl]

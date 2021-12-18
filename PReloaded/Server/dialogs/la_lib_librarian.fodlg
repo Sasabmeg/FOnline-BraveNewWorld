@@ -14,14 +14,14 @@ lang=engl
 4 2010 #
 17 2020 D _script dialog@d_QuestTimeoutReady 0  #
 20 2030 D _script dialog@d_QuestTimeoutNotReady 0  #
-21 2040 D _var p q_la_library_book = 0 R _var p q_la_library_book = 1 #
-0 2050 D _var p q_la_library_book ! 0 @
+21 2040 D _var p q_la_lib_book = 0 R _var p q_la_lib_book = 1 #
+0 2050 D _var p q_la_lib_book ! 0 @
 3 3000 None 0 #
 4 3010 #
 17 3020 D _script dialog@d_QuestTimeoutReady 0  #
 20 3030 D _script dialog@d_QuestTimeoutNotReady 0  #
-21 3040 D _var p q_la_library_book = 0 R _var p q_la_library_book = 1 #
-0 3050 D _var p q_la_library_book ! 0 @
+21 3040 D _var p q_la_lib_book = 0 R _var p q_la_lib_book = 1 #
+0 3050 D _var p q_la_lib_book ! 0 @
 4 4000 None 0 #
 9 4010 #
 10 4020 #
@@ -87,7 +87,7 @@ lang=engl
 23 21010 #
 0 21020 @
 23 22000 None 0 #
-0 22010 R _item p PID_DEANS_ELECTRONICS + 1 R _var p q_la_library_book = 2 @
+0 22010 R _item p PID_DEANS_ELECTRONICS + 1 R _var p q_la_lib_book = 2 @
 24 23000 None 0 #
 15 23010 D _item p PID_BOTTLE_CAPS > 1999 R _item p PID_BARTER_BOOK + 1 R _script dialog@r_RemoveMoney 1 2000 #
 16 23020 D _item p PID_BOTTLE_CAPS < 2000 #
