@@ -62,7 +62,7 @@ void r_SpawnLoc(Critter& player, Critter@ npc)
     if(loc == 0)
         return;
     player.SetKnownLoc(true, loc);
-    GameVar@  locidv = GetLocalVar(LVAR_q_la_dogs_locid, player.Id);
+    GameVar@  locidv = GetLocalVar(LVAR_q_la_ady_dogs_locid, player.Id);
     locidv = loc;
     Location@ location = GetLocation(loc);
     location.Color = COLOR_WM_QUEST;
@@ -103,7 +103,7 @@ void r_SpawnLoc(Critter& player, Critter@ npc)
             }
         }
     }
-    SetQuestGarbager(12 * 60, player.Id, loc, LVAR_q_la_dogs, 3);
+    SetQuestGarbager(12 * 60, player.Id, loc, LVAR_q_la_ady_dogs, 3);
     // player.SetKnownLoc(true, loc);
 }
 void test(Critter& cr, int, int, int)
@@ -114,7 +114,7 @@ void test(Critter& cr, int, int, int)
 
 void r_DeleteLoc(Critter& player, Critter@ npc)
 {
-    GameVar@ var = GetLocalVar(LVAR_q_la_dogs_locid, player.Id);
+    GameVar@ var = GetLocalVar(LVAR_q_la_ady_dogs_locid, player.Id);
     DeleteLocation(var.GetValue());
 }
 
@@ -146,7 +146,7 @@ void _DogDead(Critter& cr, Critter@ killer)
     Map@ map = cr.GetMap();
     if(MobsDead(map, pids))
     {
-        GameVar@ var = GetLocalVar(LVAR_q_la_dogs, GetOwnerId(map));
+        GameVar@ var = GetLocalVar(LVAR_q_la_ady_dogs, GetOwnerId(map));
         var = ALL_KILLED;
         // remove one dog group from given zone
         IZone@ zone = GetZone(cr.WorldX, cr.WorldY);

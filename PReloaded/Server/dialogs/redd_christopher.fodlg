@@ -52,109 +52,107 @@ lang=engl
 [dialog]
 &
 1 1000 None 1 #
-500 1010 D _param p ST_INTELLECT < 4 #
-510 1020 D _param p ST_CHARISMA > 99 #
+500 1010 D _param p ST_INTELLECT < 4 D _param p SK_SCIENCE < 40 D _param p SK_REPAIR < 40 #
+510 1020 D _param p ST_CHARISMA < 4 D _param p SK_SPEECH < 40 D _param p SK_BARTER < 40 #
 10 1030 D _var p name_mem_npc_player = 0 R _var p name_mem_npc_player = 1 #
-180 1040 D _var p q_redd_christopher_low_level < 0 #
-520 1050 D _var p q_redd_christopher_good_karma < 0 #
-280 1060 D _var p q_hub_henry_quest = 2 D _var p q_redd_christopher_good_karma = 1 #
-280 1070 D _var p q_redd_christopher_good_karma = 1 D _var p q_hub_henry_quest = -1 #
-280 1080 D _var p q_redd_christopher_good_karma = 1 D _var p q_hub_henry_quest = -2 #
-520 1090 D _var p q_redd_christopher_bad_karma < 0 #
-380 1100 D _var p q_hub_henry_quest = 1 D _var p q_redd_christopher_bad_karma = 1 #
-380 1110 D _var p q_redd_christopher_bad_karma = 1 D _var p q_hub_henry_quest = -1 #
-380 1120 D _var p q_hub_henry_quest = -2 D _var p q_redd_christopher_bad_karma = 1 #
-40 1130 D _var p q_redd_christopher_good_karma = 1 D _var p q_hub_henry_quest = 0 #
-40 1140 D _var p q_redd_christopher_bad_karma = 1 D _var p q_hub_henry_quest = 0 #
-10 1150 D _var p q_redd_christopher_low_level = 0 D _var p q_redd_christopher_good_karma = 0 D _var p q_redd_christopher_bad_karma = 0 D _var p name_mem_npc_player = 1 #
-130 1160 D _var p q_redd_christopher_low_level = 1 #
-230 1170 D _var p q_redd_christopher_good_karma = 1 D _var p q_hub_henry_quest = 1 #
-330 1180 D _var p q_redd_christopher_bad_karma = 1 D _var p q_hub_henry_quest = 2 #
-190 1190 D _var p q_redd_christopher_low_level = 2 #
-290 1200 D _var p q_redd_christopher_good_karma = 2 #
-390 1210 D _var p q_redd_christopher_bad_karma = 2 #
-520 1220 D _var p name_mem_npc_player < 0 #
-10 1230 @
+180 1040 D _var p q_redd_christopher_low_level = 2 #
+520 1050 D _var p q_redd_christopher_henry = 12 #
+280 1060 D _var p q_redd_christopher_henry = 14 #
+280 1070 D _var p q_redd_christopher_henry = 15 #
+280 1080 D _var p q_redd_christopher_henry = 16 #
+380 1090 D _var p q_redd_christopher_henry = 23 #
+380 1100 D _var p q_redd_christopher_henry = 25 #
+380 1110 D _var p q_redd_christopher_henry = 26 #
+40 1120 D _var p q_redd_christopher_henry = 11 #
+40 1130 D _var p q_redd_christopher_henry = 21 #
+130 1140 D _var p q_redd_christopher_low_level = 3 #
+230 1150 D _var p q_redd_christopher_henry = 13 #
+330 1160 D _var p q_redd_christopher_henry = 24 #
+190 1170 D _var p q_redd_christopher_low_level = 5 #
+290 1180 D _var p q_redd_christopher_henry = 98 #
+390 1190 D _var p q_redd_christopher_henry = 99 #
+520 1200 D _var p name_mem_npc_player < 0 #
+10 1210 @
 10 2000 None 0 #
 65506 2010 #
 20 2020 #
-0 2030 R _var p name_mem_npc_player = -1 #
+0 2030 R _var p q_redd_christopher_low_level = 2 R _var p name_mem_npc_player = 1 #
 0 2040 @
 20 3000 None 0 #
 65506 3010 #
 30 3020 #
 0 3030 #
-0 3040 R _var p name_mem_npc_player = -1 #
-65507 3050 R _var p name_mem_npc_player = -1 #
-0 3060 R _var p name_mem_npc_player = -1 @
+0 3040 D _var p q_redd_christopher_low_level = 0 R _var p q_redd_christopher_low_level = 2 #
+65507 3050 D _var p q_redd_christopher_low_level = 0 R _var p q_redd_christopher_low_level = 2 #
+0 3060 D _var p q_redd_christopher_low_level = 0 R _var p q_redd_christopher_low_level = 2 @
 30 4000 None 0 #
-110 4010 D _param p ST_LEVEL < 5 #
-210 4020 #
-310 4030 #
-65507 4040 R _var p name_mem_npc_player = -1 #
-0 4050 R _var p name_mem_npc_player = -1 #
+110 4010 D _param p ST_LEVEL < 9 #
+210 4020 D _var p q_redd_christopher_henry = 0 D _param p ST_LEVEL > 9 #
+310 4030 D _var p q_redd_christopher_henry = 0 D _param p ST_LEVEL > 9 #
+65507 4040 D _var p q_redd_christopher_low_level = 0 R _var p q_redd_christopher_low_level = 2 #
+0 4050 D _var p q_redd_christopher_low_level = 0 R _var p q_redd_christopher_low_level = 2 #
 0 4060 @
 40 5000 None 0 #
-420 5010 #
-430 5020 #
+420 5010 R _var p q_redd_christopher_henry = 91 #
+430 5020 R _var p q_redd_christopher_henry = 92 #
 0 5030 #
 0 5040 @
 100 6000 None 0 @
 110 7000 None 0 #
 120 7010 #
-180 7020 R _var p q_redd_christopher_low_level = -1 #
+180 7020 R _var p q_redd_christopher_low_level = 2 #
 0 7030 @
 120 8000 None 0 #
-0 8010 R _var p q_redd_christopher_low_level = 1 R _param p ST_CURRENT_HP = -100 #
-180 8020 R _var p q_redd_christopher_low_level = -1 #
+0 8010 R _param p ST_CURRENT_HP = -100 R _var p q_redd_christopher_low_level = 3 #
+180 8020 R _var p q_redd_christopher_low_level = 2 #
 0 8030 D _param p ST_INTELLECT > 6 @
 130 9000 None 0 #
-65507 9010 R _var p q_redd_christopher_low_level = -1 #
+65507 9010 R _var p q_redd_christopher_low_level = 4 #
 140 9020 @
 140 10000 None 0 #
-0 10010 R _var p q_redd_christopher_low_level = 2 R _item p PID_BRAHMIN_HIDE + 5 R _param p ST_EXPERIENCE + 800 @
+0 10010 R _item p PID_BRAHMIN_HIDE + 5 R _param p ST_EXPERIENCE + 800 R _var p q_redd_christopher_low_level = 5 @
 180 11000 None 0 @
 190 12000 None 0 @
 200 13000 None 0 @
 210 14000 None 0 #
 280 14010 #
 220 14020 #
-65507 14030 R _var p name_mem_npc_player = -1 #
+65507 14030 R _var p q_redd_christopher_henry = 91 #
 0 14040 @
 220 15000 None 0 #
-0 15010 R _var p q_redd_christopher_good_karma = 1 R _item p PID_10MM_PISTOL + 1 #
+0 15010 R _item p PID_10MM_PISTOL + 1 R _var p q_redd_christopher_henry = 11 #
 0 15020 #
-280 15030 R _var p name_mem_npc_player = -1 @
+280 15030 R _var p q_redd_christopher_henry = 91 @
 230 16000 None 0 #
-65507 16010 R _var p name_mem_npc_player = -1 #
+65507 16010 R _var p q_redd_christopher_henry = 91 #
 240 16020 @
 240 17000 None 0 #
-0 17010 R _var p q_redd_christopher_good_karma = 2 R _param p REPUTATION_NCR + 500 R _param p REPUTATION_VAULT_CITY + 500 R _param p REPUTATION_NCR_RANGERS + 500 R _param p REPUTATION_REGULATORS + 500 R _param p REPUTATION_CHILDREN + 500 R _param p REPUTATION_KLAMATH + 500 R _param p REPUTATION_MODOC + 500 R _param p REPUTATION_GECKO + 500 R _param p REPUTATION_JUNKTOWN + 500 R _param p REPUTATION_HUB + 500 R _param p REPUTATION_LA + 500 R _param p ST_EXPERIENCE + 2500 @
+0 17010 R _param p REPUTATION_NCR + 500 R _param p REPUTATION_VAULT_CITY + 500 R _param p REPUTATION_NCR_RANGERS + 500 R _param p REPUTATION_REGULATORS + 500 R _param p REPUTATION_CHILDREN + 500 R _param p REPUTATION_KLAMATH + 500 R _param p REPUTATION_MODOC + 500 R _param p REPUTATION_GECKO + 500 R _param p REPUTATION_JUNKTOWN + 500 R _param p REPUTATION_HUB + 500 R _param p REPUTATION_LA + 500 R _param p ST_EXPERIENCE + 2500 R _var p q_redd_christopher_henry = 98 @
 280 18000 None 0 @
 290 19000 None 0 @
 300 20000 None 0 @
 310 21000 None 0 #
 320 21010 #
-0 21020 R _var p name_mem_npc_player = -1 #
-65507 21030 R _var p name_mem_npc_player = -1 #
+0 21020 R _var p q_redd_christopher_henry = 92 #
+65507 21030 R _var p q_redd_christopher_henry = 92 #
 0 21040 @
 320 22000 None 0 #
-0 22010 R _var p q_redd_christopher_bad_karma = 1 R _item p PID_10MM_PISTOL + 1 #
-0 22020 R _var p q_redd_christopher_bad_karma = -1 #
+0 22010 R _item p PID_10MM_PISTOL + 1 R _var p q_redd_christopher_henry = 21 #
+0 22020 R _var p q_redd_christopher_henry = 92 #
 0 22030 @
 330 23000 None 0 #
 340 23010 #
-380 23020 R _var p q_redd_christopher_bad_karma = -1 @
+380 23020 R _var p q_redd_christopher_henry = 92 @
 340 24000 None 0 #
-0 24010 R _var p q_redd_christopher_bad_karma = -1 R _item p PID_SHOTGUN + 1 R _item p PID_SHOTGUN_SHELLS + 10 #
-0 24020 R _var p q_redd_christopher_bad_karma = 2 R _param p ST_EXPERIENCE + 2000 @
+0 24010 R _item p PID_SHOTGUN + 1 R _item p PID_SHOTGUN_SHELLS + 10 R _var p q_redd_christopher_henry = 93 #
+0 24020 R _param p ST_EXPERIENCE + 2000 R _var p q_redd_christopher_henry = 99 @
 380 25000 None 0 @
 390 26000 None 0 @
 400 27000 None 0 @
 420 28000 None 0 #
-0 28010 R _var p name_mem_npc_player = -1 @
+0 28010 @
 430 29000 None 0 #
-0 29010 R _var p name_mem_npc_player = -1 @
+0 29010 @
 440 30000 None 0 @
 450 31000 None 0 @
 460 32000 None 0 @
@@ -175,21 +173,19 @@ lang=engl
 {1060}{}{Failed Quest: GOOD_KARMA_QUEST (Failed helping Henry, assuming his uncommited crime, instead player made him avenge his son)}
 {1070}{}{Failed Quest: GOOD_KARMA_QUEST (Failed helping Henry, assuming his uncommited crime, instead player made him suicide)}
 {1080}{}{Failed Quest: GOOD_KARMA_QUEST (Failed helping Henry, assuming his uncommited crime, instead player tried to kill him)}
-{1090}{}{Failed Quest: BAD_KARMA_QUEST (Failed because posible several reasons, for example, player missunderstood one of Christopher's leassons )}
-{1100}{}{Failed Quest: BAD_KARMA_QUEST (Failed turning Henry into a murderer by making him avenge his son, instead player assumed Henry's uncommited crime)}
-{1110}{}{Failed Quest: BAD_KARMA_QUEST (Failed turning Henry into a murderer by making him avenge his son, instead player made him suicide)}
-{1120}{}{Failed Quest: BAD_KARMA_QUEST (Failed turning Henry into a murderer by making him avenge his son, instead player tried to kill him)}
-{1130}{}{Incompleted Quest: GOOD_KARMA_QUEST (Didn't decide what to do with Henry yet. Remains on Stage 1)}
-{1140}{}{Incompleted Quest: BAD_KARMA_QUEST (Didn't decide what to do with Henry yet. Remains on Stage 1)}
-{1150}{}{No quest picked up yet}
-{1160}{}{Stage 1: LOW_LEVEL_QUEST}
-{1170}{}{Stage 1: GOOD_KARMA_QUEST}
-{1180}{}{Stage 1: BAD_KARMA_QUEST}
-{1190}{}{Stage 2: LOW_LEVEL_QUEST (Finished)}
-{1200}{}{Stage 2: GOOD_KARMA_QUEST (Finished)}
-{1210}{}{Stage 2: BAD_KARMA_QUEST (Finished)}
-{1220}{}{Rejected}
-{1230}{}{Default}
+{1090}{}{Failed Quest: BAD_KARMA_QUEST (Failed turning Henry into a murderer by making him avenge his son, instead player assumed Henry's uncommited crime)}
+{1100}{}{Failed Quest: BAD_KARMA_QUEST (Failed turning Henry into a murderer by making him avenge his son, instead player made him suicide)}
+{1110}{}{Failed Quest: BAD_KARMA_QUEST (Failed turning Henry into a murderer by making him avenge his son, instead player tried to kill him)}
+{1120}{}{Incompleted Quest: GOOD_KARMA_QUEST (Didn't decide what to do with Henry yet. Remains on Stage 1)}
+{1130}{}{Incompleted Quest: BAD_KARMA_QUEST (Didn't decide what to do with Henry yet. Remains on Stage 1)}
+{1140}{}{Stage 1: LOW_LEVEL_QUEST}
+{1150}{}{Stage 1: GOOD_KARMA_QUEST}
+{1160}{}{Stage 1: BAD_KARMA_QUEST}
+{1170}{}{Stage 2: LOW_LEVEL_QUEST (Finished)}
+{1180}{}{Stage 2: GOOD_KARMA_QUEST (Finished)}
+{1190}{}{Stage 2: BAD_KARMA_QUEST (Finished)}
+{1200}{}{Rejected}
+{1210}{}{Default}
 {2000}{}{[He stares at you] You have approached me, seemingly willing to start a conversation, son. I know exactly what we should talk about, but before we proceed, I need you to hear and accept some rules. Shall I continue?}
 {2010}{}{Hey, no! Wait... I just want to do business with you. Can you hear me, old man? B.U.S.I.N.E.S.S. [You spell it for him.]}
 {2020}{}{Ehh... Yeah, sure. }

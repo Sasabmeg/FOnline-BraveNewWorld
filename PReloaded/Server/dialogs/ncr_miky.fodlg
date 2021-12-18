@@ -1,5 +1,5 @@
 [comment]
-7070 q_iguana_pete_message:
+7070 q_hub_iguana_pete_message:
 1 = Recieved Quest
 2 = Spoken to NCR Miky
 3 = Spoken to NCR Mutant Lenny
@@ -16,8 +16,8 @@ lang=engl
 2 2000 None 0 #
 65506 2010 #
 3 2020 #
-4 2030 D _var p mod_q_meat_jerky = 1 D _item p PID_MEAT_BAG > 0 R _var p mod_q_meat_jerky = 2 R _item p PID_MEAT_BAG - 1 R _param p ST_EXPERIENCE + 720 R _script dialog@r_AddMoney 1 320 #
-5 2040 D _var p q_iguana_pete_message = 1 #
+4 2030 D _var p q_mod_meat_jerky = 1 D _item p PID_MEAT_BAG > 0 R _var p q_mod_meat_jerky = 2 R _item p PID_MEAT_BAG - 1 R _param p ST_EXPERIENCE + 720 R _script dialog@r_AddMoney 1 320 #
+5 2040 D _var p q_hub_iguana_pete_message = 1 #
 0 2050 @
 3 3000 None 0 #
 65506 3010 #
@@ -30,7 +30,7 @@ lang=engl
 7 6010 #
 10 6020 @
 7 7000 None 0 #
-8 7010 R _var p q_iguana_pete_message = 2 @
+8 7010 R _var p q_hub_iguana_pete_message = 2 @
 8 8000 None 0 #
 9 8010 D _item p PID_BOTTLE_CAPS > 0 R _script dialog@r_RemoveMoney 1 1 #
 11 8020 @

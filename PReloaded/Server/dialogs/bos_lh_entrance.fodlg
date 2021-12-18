@@ -15,7 +15,7 @@ lang=engl
 3 2000 None 0 @
 2 3000 None 0 #
 4 3010 #
-50 3020 D _var p q_la_gunrunners_caravan > 0 D _item p PID_Q_GUNRUNNER_BOX > 0 D _var p q_la_gunrunners_caravan ! 3 D _var p q_la_gunrunners_caravan ! 4 D _var p q_la_gunrunners_caravan ! 5 #
+50 3020 D _var p q_la_gunr_caravan > 0 D _item p PID_Q_GUNRUNNER_BOX > 0 D _var p q_la_gunr_caravan ! 3 D _var p q_la_gunr_caravan ! 4 D _var p q_la_gunr_caravan ! 5 #
 0 3030 @
 4 4000 None 0 #
 5 4010 #
@@ -70,7 +70,7 @@ lang=engl
 51 19010 #
 0 19020 @
 51 20000 None 0 #
-0 20010 D _item p PID_Q_GUNRUNNER_BOX > 0 R _item p PID_Q_GUNRUNNER_BOX - 1 R _var p q_la_gunrunners_caravan = 4 R _param p REPUTATION_BOS + 300 R _param p REPUTATION_GUNRUNNERS - 50 R _item p PID_BLUEPRINT_MINIGUN + 1 R _item p PID_BLUEPRINT_SUPER_SLEDGE + 1 R _item p PID_BLUEPRINT_ASSAULT_RIFLE + 1 &
+0 20010 D _item p PID_Q_GUNRUNNER_BOX > 0 R _item p PID_Q_GUNRUNNER_BOX - 1 R _var p q_la_gunr_caravan = 4 R _param p REPUTATION_BOS + 300 R _param p REPUTATION_GUNRUNNERS - 50 R _item p PID_BLUEPRINT_MINIGUN + 1 R _item p PID_BLUEPRINT_SUPER_SLEDGE + 1 R _item p PID_BLUEPRINT_ASSAULT_RIFLE + 1 &
 
 [engl]
 {100}{}{Brotherhood Guard}

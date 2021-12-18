@@ -12,13 +12,13 @@ lang=engl
 2 1030 D _script dialog@d_IsNotMemberOf 1 FACTION_BOS D _script dialog@d_BigFactionMember 0  #
 3 1040 @
 2 2000 None 0 #
-50 2010 D _var p q_la_gunrunners_caravan > 0 D _item p PID_Q_GUNRUNNER_BOX > 0 D _var p q_la_gunrunners_caravan ! 3 D _var p q_la_gunrunners_caravan ! 4 D _var p q_la_gunrunners_caravan ! 5 #
-0 2020 D _item p PID_Q_GUNRUNNER_BOX > 0 D _var p q_la_gunrunners_caravan > 0 D _var p q_la_gunrunners_caravan < 3 @
+50 2010 D _var p q_la_gunr_caravan > 0 D _item p PID_Q_GUNRUNNER_BOX > 0 D _var p q_la_gunr_caravan ! 3 D _var p q_la_gunr_caravan ! 4 D _var p q_la_gunr_caravan ! 5 #
+0 2020 D _item p PID_Q_GUNRUNNER_BOX > 0 D _var p q_la_gunr_caravan > 0 D _var p q_la_gunr_caravan < 3 @
 3 3000 None 0 #
 11 3010 D _var p name_mem_npc_player = 1 D _item p PID_5MM_AP } 200 R _item p PID_5MM_AP - 200 R _script dialog@r_AddMember 0  #
 5 3020 D _var p acquaintance = 0 #
 90 3030 #
-50 3040 D _item p PID_Q_GUNRUNNER_BOX > 0 D _var p q_la_gunrunners_caravan > 0 D _var p q_la_gunrunners_caravan ! 3 D _var p q_la_gunrunners_caravan ! 4 D _var p q_la_gunrunners_caravan ! 5 #
+50 3040 D _item p PID_Q_GUNRUNNER_BOX > 0 D _var p q_la_gunr_caravan > 0 D _var p q_la_gunr_caravan ! 3 D _var p q_la_gunr_caravan ! 4 D _var p q_la_gunr_caravan ! 5 #
 0 3050 @
 5 4000 None 0 #
 6 4010 D _param p SK_DOCTOR } 100 D or D _param p SK_FIRST_AID } 120 #
@@ -41,15 +41,15 @@ lang=engl
 99 10000 None 0 #
 0 10010 @
 101 11000 None 0 #
-50 11010 D _item p PID_Q_GUNRUNNER_BOX > 0 D _var p q_la_gunrunners_caravan > 0 D _var p q_la_gunrunners_caravan ! 3 D _var p q_la_gunrunners_caravan ! 4 D _var p q_la_gunrunners_caravan ! 5 #
-0 11020 D _var p q_la_gunrunners_caravan > 0 D _var p q_la_gunrunners_caravan < 3 D _item p PID_Q_GUNRUNNER_BOX > 0 @
+50 11010 D _item p PID_Q_GUNRUNNER_BOX > 0 D _var p q_la_gunr_caravan > 0 D _var p q_la_gunr_caravan ! 3 D _var p q_la_gunr_caravan ! 4 D _var p q_la_gunr_caravan ! 5 #
+0 11020 D _var p q_la_gunr_caravan > 0 D _var p q_la_gunr_caravan < 3 D _item p PID_Q_GUNRUNNER_BOX > 0 @
 90 12000 None 0 #
 0 12010 @
 50 13000 None 0 #
 51 13010 #
 0 13020 @
 51 14000 None 0 #
-0 14010 D _item p PID_Q_GUNRUNNER_BOX > 0 R _item p PID_Q_GUNRUNNER_BOX - 1 R _var p q_la_gunrunners_caravan = 4 R _param p REPUTATION_BOS + 300 R _param p REPUTATION_GUNRUNNERS - 50 R _item p PID_BLUEPRINT_MINIGUN + 1 R _item p PID_BLUEPRINT_SUPER_SLEDGE + 1 R _item p PID_BLUEPRINT_ASSAULT_RIFLE + 1 @
+0 14010 D _item p PID_Q_GUNRUNNER_BOX > 0 R _item p PID_Q_GUNRUNNER_BOX - 1 R _var p q_la_gunr_caravan = 4 R _param p REPUTATION_BOS + 300 R _param p REPUTATION_GUNRUNNERS - 50 R _item p PID_BLUEPRINT_MINIGUN + 1 R _item p PID_BLUEPRINT_SUPER_SLEDGE + 1 R _item p PID_BLUEPRINT_ASSAULT_RIFLE + 1 @
 201 15000 None 0 &
 
 [engl]

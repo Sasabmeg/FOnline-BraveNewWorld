@@ -106,7 +106,7 @@ lang=engl
 214 32020 D _param p ST_STRENGTH > 7 #
 216 32030 R _script vaul_guard@r_CancelQuest 1 0 @
 214 33000 None 0 #
-12 33010 D _item p PID_BOTTLE_CAPS > 3999 D _script vaul_guard@d_QuestInProgress 1 0 R _var p factions_q_vc_exam = 11 R _script dialog@r_RemoveMoney 1 4000 R _script vaul_guard@r_FinishQuest 1 0 R _script dialog@r_AddMember 0  #
+12 33010 D _item p PID_BOTTLE_CAPS > 3999 D _script vaul_guard@d_QuestInProgress 1 0 R _var p q_vc_exam = 11 R _script dialog@r_RemoveMoney 1 4000 R _script vaul_guard@r_FinishQuest 1 0 R _script dialog@r_AddMember 0  #
 0 33020 D _item p PID_BOTTLE_CAPS < 4000 R _script vaul_guard@r_CancelQuest 1 0 #
 0 33030 R _script vaul_guard@r_CancelQuest 1 0 @
 215 34000 None 0 #

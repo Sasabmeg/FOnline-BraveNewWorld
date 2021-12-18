@@ -25,28 +25,28 @@ lang=engl
 4 5020 #
 0 5030 @
 6 6000 None 0 #
-11 6010 D _var p q_modoc_balthas_fetcher = 1 #
+11 6010 D _var p q_mod_balthas_tannery = 1 #
 4 6020 #
-7 6030 D _var p mod_q_meat_jerky = 2 #
-8 6040 D _var p mod_q_meat_jerky = 0 #
-10 6050 D _var p mod_q_meat_jerky = 1 D _item p PID_MEAT_BAG < 1 D _script dialog@d_QuestTimeoutReady 0  R _script dialog@r_QuestTimeout 1 20 #
+7 6030 D _var p q_mod_meat_jerky = 2 #
+8 6040 D _var p q_mod_meat_jerky = 0 #
+10 6050 D _var p q_mod_meat_jerky = 1 D _item p PID_MEAT_BAG < 1 D _script dialog@d_QuestTimeoutReady 0  R _script dialog@r_QuestTimeout 1 20 #
 3 6060 #
 0 6070 @
 7 7000 None 0 #
-0 7010 R _var p mod_q_meat_jerky = 1 R _item p PID_MEAT_BAG + 1 @
+0 7010 R _var p q_mod_meat_jerky = 1 R _item p PID_MEAT_BAG + 1 @
 8 8000 None 0 #
 9 8010 #
 0 8020 @
 9 9000 None 0 #
-0 9010 R _var p mod_q_meat_jerky = 1 R _item p PID_MEAT_BAG + 1 R _script town@r_ModifyInfluenceBuffer 1 5 @
+0 9010 R _var p q_mod_meat_jerky = 1 R _item p PID_MEAT_BAG + 1 R _script town@r_ModifyInfluenceBuffer 1 5 @
 10 10000 None 0 #
 0 10010 R _item p PID_MEAT_BAG + 1 #
-0 10020 R _var p mod_q_meat_jerky = 0 @
+0 10020 R _var p q_mod_meat_jerky = 0 @
 11 11000 None 0 #
-0 11010 R _var p q_modoc_balthas_fetcher = 2 #
+0 11010 R _var p q_mod_balthas_tannery = 2 #
 12 11020 @
 12 12000 None 0 #
-0 12010 R _var p q_modoc_balthas_fetcher = 2 &
+0 12010 R _var p q_mod_balthas_tannery = 2 &
 
 [engl]
 {100}{}{Grisham}

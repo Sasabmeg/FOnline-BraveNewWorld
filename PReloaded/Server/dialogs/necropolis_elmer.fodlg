@@ -8,10 +8,10 @@ lang=engl
 &
 1 1000 None 0 #
 3 1010 D _param p REPUTATION_NECROPOLIS < 0 #
-10 1020 D _var p q_necro_gecko = 1 #
-7 1030 D _var p q_necro_gecko = 3 #
-6 1040 D _var p q_necro_gecko = 2 #
-2 1050 R _var p q_necro_gecko = 0 @
+10 1020 D _var p q_necro_elmer_holo = 1 #
+7 1030 D _var p q_necro_elmer_holo = 3 #
+6 1040 D _var p q_necro_elmer_holo = 2 #
+2 1050 R _var p q_necro_elmer_holo = 0 @
 2 2000 None 0 #
 4 2010 #
 65507 2020 #
@@ -20,10 +20,10 @@ lang=engl
 4 4000 None 0 #
 5 4010 @
 5 5000 None 0 #
-0 5010 R _var p q_necro_gecko = 1 R _script dialog@r_GiveHolodisk 1 43 #
+0 5010 R _var p q_necro_elmer_holo = 1 R _script dialog@r_GiveHolodisk 1 43 #
 0 5020 @
 6 6000 None 0 #
-8 6010 D _script dialog@d_HasHolodisk 1 44 D or D _script dialog@d_HasHoloInfo 1 44 R _param p ST_EXPERIENCE + 3000 R _param p REPUTATION_NECROPOLIS + 250 R _var p q_necro_gecko = 3 R _item p PID_GEIGER_COUNTER + 1 #
+8 6010 D _script dialog@d_HasHolodisk 1 44 D or D _script dialog@d_HasHoloInfo 1 44 R _param p ST_EXPERIENCE + 3000 R _param p REPUTATION_NECROPOLIS + 250 R _var p q_necro_elmer_holo = 3 R _item p PID_GEIGER_COUNTER + 1 #
 9 6020 @
 8 7000 None 0 @
 7 8000 None 0 @

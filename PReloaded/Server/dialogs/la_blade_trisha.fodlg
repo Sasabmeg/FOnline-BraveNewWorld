@@ -7,7 +7,7 @@ lang=engl
 [dialog]
 &
 1 1000 None 0 #
-8 1010 D _param p SK_BARTER > 99 D _var p perk_junk_merchant = 0 D _var p q_la_junk_merchant > 9 D _param p ST_STRENGTH > 10 R _var p perk_junk_merchant = 1 R _param p PE_JUNK_MERCHANT = 1 #
+8 1010 D _param p SK_BARTER > 99 D _var p perk_junk_merchant = 0 D _var p q_la_scav_junk_merchant > 9 D _param p ST_STRENGTH > 10 R _var p perk_junk_merchant = 1 R _param p PE_JUNK_MERCHANT = 1 #
 2 1020 D _var p name_mem_npc_player = 0 #
 3 1030 @
 2 2000 None 0 #
@@ -23,18 +23,18 @@ lang=engl
 6 5010 #
 0 5020 @
 6 6000 None 0 #
-7 6010 D _item p PID_PUMP_PARTS > 0 R _script dialog@r_AddMoney 1 40 R _item p PID_PUMP_PARTS - 1 R _param p REPUTATION_SCAVENGERS + 1 R _var p q_la_junk_merchant + 1 #
-7 6020 D _item p PID_ELECTRONIC_PARTS > 0 R _script dialog@r_AddMoney 1 50 R _item p PID_ELECTRONIC_PARTS - 1 R _param p REPUTATION_SCAVENGERS + 1 R _var p q_la_junk_merchant + 1 #
-7 6030 D _item p PID_GOLD_LOCKET > 0 R _script dialog@r_AddMoney 1 100 R _item p PID_GOLD_LOCKET - 1 R _param p REPUTATION_SCAVENGERS + 1 R _var p q_la_junk_merchant + 1 #
-7 6040 D _item p PID_WATER_CHIP > 0 R _script dialog@r_AddMoney 1 200 R _item p PID_WATER_CHIP - 1 R _param p REPUTATION_SCAVENGERS + 20 R _var p q_la_junk_merchant + 1 #
-7 6050 D _item p PID_TAPE_RECORDER > 0 R _script dialog@r_AddMoney 1 30 R _item p PID_TAPE_RECORDER - 1 R _param p REPUTATION_SCAVENGERS + 1 R _var p q_la_junk_merchant + 1 #
-7 6060 D _item p PID_MOTIVATOR > 0 R _script dialog@r_AddMoney 1 50 R _item p PID_MOTIVATOR - 1 R _param p REPUTATION_SCAVENGERS + 20 R _var p q_la_junk_merchant + 1 #
-7 6070 D _item p PID_HOLODISK > 0 R _script dialog@r_AddMoney 1 100 R _item p PID_HOLODISK - 1 R _param p REPUTATION_SCAVENGERS + 1 R _var p q_la_junk_merchant + 1 #
-7 6080 D _item p PID_CAR_FUEL_CELL_CONTROLLER > 0 R _script dialog@r_AddMoney 1 500 R _item p PID_CAR_FUEL_CELL_CONTROLLER - 1 R _param p REPUTATION_SCAVENGERS + 20 R _var p q_la_junk_merchant + 1 #
-7 6090 D _item p PID_CAR_FUEL_INJECTION > 0 R _script dialog@r_AddMoney 1 100 R _item p PID_CAR_FUEL_INJECTION - 1 R _param p REPUTATION_SCAVENGERS + 20 R _var p q_la_junk_merchant + 1 #
-7 6100 D _item p PID_ROBOT_PARTS > 0 R _script dialog@r_AddMoney 1 50 R _item p PID_ROBOT_PARTS - 1 R _param p REPUTATION_SCAVENGERS + 20 R _var p q_la_junk_merchant + 1 #
-7 6110 D _item p PID_MOTIVATOR > 0 R _script dialog@r_AddMoney 1 250 R _item p PID_ROBOT_MOTIVATOR - 1 R _param p REPUTATION_SCAVENGERS + 20 R _var p q_la_junk_merchant + 1 #
-7 6120 D _item p PID_EXCAVATOR_CHIP > 0 R _script dialog@r_AddMoney 1 250 R _item p PID_EXCAVATOR_CHIP - 1 R _param p REPUTATION_SCAVENGERS + 20 R _var p q_la_junk_merchant + 1 #
+7 6010 D _item p PID_PUMP_PARTS > 0 R _script dialog@r_AddMoney 1 40 R _item p PID_PUMP_PARTS - 1 R _param p REPUTATION_SCAVENGERS + 1 R _var p q_la_scav_junk_merchant + 1 #
+7 6020 D _item p PID_ELECTRONIC_PARTS > 0 R _script dialog@r_AddMoney 1 50 R _item p PID_ELECTRONIC_PARTS - 1 R _param p REPUTATION_SCAVENGERS + 1 R _var p q_la_scav_junk_merchant + 1 #
+7 6030 D _item p PID_GOLD_LOCKET > 0 R _script dialog@r_AddMoney 1 100 R _item p PID_GOLD_LOCKET - 1 R _param p REPUTATION_SCAVENGERS + 1 R _var p q_la_scav_junk_merchant + 1 #
+7 6040 D _item p PID_WATER_CHIP > 0 R _script dialog@r_AddMoney 1 200 R _item p PID_WATER_CHIP - 1 R _param p REPUTATION_SCAVENGERS + 20 R _var p q_la_scav_junk_merchant + 1 #
+7 6050 D _item p PID_TAPE_RECORDER > 0 R _script dialog@r_AddMoney 1 30 R _item p PID_TAPE_RECORDER - 1 R _param p REPUTATION_SCAVENGERS + 1 R _var p q_la_scav_junk_merchant + 1 #
+7 6060 D _item p PID_MOTIVATOR > 0 R _script dialog@r_AddMoney 1 50 R _item p PID_MOTIVATOR - 1 R _param p REPUTATION_SCAVENGERS + 20 R _var p q_la_scav_junk_merchant + 1 #
+7 6070 D _item p PID_HOLODISK > 0 R _script dialog@r_AddMoney 1 100 R _item p PID_HOLODISK - 1 R _param p REPUTATION_SCAVENGERS + 1 R _var p q_la_scav_junk_merchant + 1 #
+7 6080 D _item p PID_CAR_FUEL_CELL_CONTROLLER > 0 R _script dialog@r_AddMoney 1 500 R _item p PID_CAR_FUEL_CELL_CONTROLLER - 1 R _param p REPUTATION_SCAVENGERS + 20 R _var p q_la_scav_junk_merchant + 1 #
+7 6090 D _item p PID_CAR_FUEL_INJECTION > 0 R _script dialog@r_AddMoney 1 100 R _item p PID_CAR_FUEL_INJECTION - 1 R _param p REPUTATION_SCAVENGERS + 20 R _var p q_la_scav_junk_merchant + 1 #
+7 6100 D _item p PID_ROBOT_PARTS > 0 R _script dialog@r_AddMoney 1 50 R _item p PID_ROBOT_PARTS - 1 R _param p REPUTATION_SCAVENGERS + 20 R _var p q_la_scav_junk_merchant + 1 #
+7 6110 D _item p PID_MOTIVATOR > 0 R _script dialog@r_AddMoney 1 250 R _item p PID_ROBOT_MOTIVATOR - 1 R _param p REPUTATION_SCAVENGERS + 20 R _var p q_la_scav_junk_merchant + 1 #
+7 6120 D _item p PID_EXCAVATOR_CHIP > 0 R _script dialog@r_AddMoney 1 250 R _item p PID_EXCAVATOR_CHIP - 1 R _param p REPUTATION_SCAVENGERS + 20 R _var p q_la_scav_junk_merchant + 1 #
 0 6130 @
 7 7000 None 0 #
 6 7010 #

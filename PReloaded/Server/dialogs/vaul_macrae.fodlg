@@ -22,7 +22,7 @@ lang=engl
 3 2020 R _var n name_mem_npc_player = 1 #
 4 2030 R _var n name_mem_npc_player = 1 #
 0 2040 #
-15 2050 D _var p mod_q_meat_jerky = 1 D _item p PID_MEAT_BAG > 0 @
+15 2050 D _var p q_mod_meat_jerky = 1 D _item p PID_MEAT_BAG > 0 @
 3 3000 dialog@dlg_SayBuyBeer 0 #
 8 3010 D _item p PID_BOTTLE_CAPS > 9 R _item p PID_BEER + 1 R _script dialog@r_RemoveMoney 1 10 #
 8 3020 D _item p PID_BOTTLE_CAPS > 29 R _item p PID_BOOZE + 1 R _script dialog@r_RemoveMoney 1 30 #
@@ -51,7 +51,7 @@ lang=engl
 4 9030 #
 0 9040 #
 11 9050 #
-15 9060 D _var p mod_q_meat_jerky = 1 D _item p PID_MEAT_BAG > 0 @
+15 9060 D _var p q_mod_meat_jerky = 1 D _item p PID_MEAT_BAG > 0 @
 60 10000 None 0 #
 61 10010 R _var n name_mem_npc_player = 1 #
 0 10020 @
@@ -70,7 +70,7 @@ lang=engl
 14 16000 None 0 #
 13 16010 @
 15 17000 None 0 #
-0 17010 D _item p PID_MEAT_BAG } 1 R _var p mod_q_meat_jerky = 2 R _item p PID_MEAT_BAG - 1 R _param p ST_EXPERIENCE + 550 R _script dialog@r_AddMoney 1 320 @
+0 17010 D _item p PID_MEAT_BAG } 1 R _var p q_mod_meat_jerky = 2 R _item p PID_MEAT_BAG - 1 R _param p ST_EXPERIENCE + 550 R _script dialog@r_AddMoney 1 320 @
 16 18000 None 0 @
 17 19000 None 0 #
 65507 19010 R _var p acquaintance = 1 R _script dialog@r_AddMoney 1 200 #

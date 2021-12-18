@@ -7,8 +7,8 @@ lang=engl
 [dialog]
 &
 1 1000 None 0 #
-8 1010 D _var p q_coc_train = 2 #
-3 1020 D _var p q_coc_train = 1 #
+8 1010 D _var p q_la_train_coc = 2 #
+3 1020 D _var p q_la_train_coc = 1 #
 2 1030 @
 2 2000 None 0 @
 3 3000 None 0 #
@@ -18,13 +18,13 @@ lang=engl
 5 4010 #
 0 4020 @
 5 5000 None 0 #
-6 5010 R _var p q_coc_train = 2 #
+6 5010 R _var p q_la_train_coc = 2 #
 0 5020 @
 6 6000 None 0 #
 0 6010 @
 8 7000 None 0 #
 9 7010 #
-10 7020 D _item p PID_DEANS_ELECTRONICS > 0 R _item p PID_DEANS_ELECTRONICS - 1 R _param p ST_EXPERIENCE + 1350 R _var p q_coc_train = 3 R _script dialog@r_AddMoney 1 800 @
+10 7020 D _item p PID_DEANS_ELECTRONICS > 0 R _item p PID_DEANS_ELECTRONICS - 1 R _param p ST_EXPERIENCE + 1350 R _var p q_la_train_coc = 3 R _script dialog@r_AddMoney 1 800 @
 9 8000 None 0 #
 0 8010 @
 10 9000 None 0 #

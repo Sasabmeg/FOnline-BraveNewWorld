@@ -10,8 +10,8 @@ lang=engl
 2 1010 D _param p ST_INTELLECT > 3 R _item n PID_HY_MAG_PART - 1 #
 20 1020 D _param p ST_INTELLECT < 4 @
 2 2000 None 0 #
-3 2010 D _param p ST_INTELLECT > 7 D _var p factions_q_vc_parts < 11 D _var p faction_ghoul_hymag = 0 D _var p factions_q_vc_parts > 0 #
-5 2020 D _param p ST_INTELLECT < 8 D _var p factions_q_vc_parts < 11 D _var p faction_ghoul_hymag = 0 D _var p factions_q_vc_parts > 0 #
+3 2010 D _param p ST_INTELLECT > 7 D _var p q_vc_parts < 11 D _var p faction_ghoul_hymag = 0 D _var p q_vc_parts > 0 #
+5 2020 D _param p ST_INTELLECT < 8 D _var p q_vc_parts < 11 D _var p faction_ghoul_hymag = 0 D _var p q_vc_parts > 0 #
 65507 2030 #
 0 2040 @
 3 3000 None 0 #
@@ -19,17 +19,17 @@ lang=engl
 6 3020 D _param p ST_CHARISMA < 5 #
 65507 3030 @
 4 4000 None 0 #
-0 4010 R _item p PID_HY_MAG_PART + 1 R _var p factions_q_vc_parts = 11 R _var p faction_ghoul_hymag = 1 @
+0 4010 R _item p PID_HY_MAG_PART + 1 R _var p q_vc_parts = 11 R _var p faction_ghoul_hymag = 1 @
 5 5000 None 0 #
 6 5010 @
 6 6000 None 0 #
 7 6010 #
-65507 6020 D _param p ST_STRENGTH < 8 R _item n PID_HY_MAG_PART + 1 R _var p factions_q_vc_parts = 11 #
-8 6030 D _param p ST_STRENGTH > 7 R _item p PID_HY_MAG_PART + 1 R _var p factions_q_vc_parts = 11 R _var p faction_ghoul_hymag = 1 #
+65507 6020 D _param p ST_STRENGTH < 8 R _item n PID_HY_MAG_PART + 1 R _var p q_vc_parts = 11 #
+8 6030 D _param p ST_STRENGTH > 7 R _item p PID_HY_MAG_PART + 1 R _var p q_vc_parts = 11 R _var p faction_ghoul_hymag = 1 #
 0 6040 @
 7 7000 None 0 #
-9 7010 D _item p PID_BOTTLE_CAPS > 2999 R _item p PID_HY_MAG_PART + 1 R _var p factions_q_vc_parts = 11 R _var p faction_ghoul_hymag = 1 R _script dialog@r_RemoveMoney 1 3000 #
-65507 7020 R _item n PID_HY_MAG_PART + 1 R _var p factions_q_vc_parts = 11 #
+9 7010 D _item p PID_BOTTLE_CAPS > 2999 R _item p PID_HY_MAG_PART + 1 R _var p q_vc_parts = 11 R _var p faction_ghoul_hymag = 1 R _script dialog@r_RemoveMoney 1 3000 #
+65507 7020 R _item n PID_HY_MAG_PART + 1 R _var p q_vc_parts = 11 #
 10 7030 D _param p ST_GENDER = 1 #
 0 7040 #
 0 7050 @
@@ -43,8 +43,8 @@ lang=engl
 11 10010 #
 0 10020 @
 11 11000 None 0 #
-9 11010 D _param p ST_CHARISMA > 4 R _item p PID_HY_MAG_PART + 1 R _var p factions_q_vc_parts = 11 R _var p faction_ghoul_hymag = 1 #
-12 11020 D _param p ST_CHARISMA < 5 R _item p PID_HY_MAG_PART + 1 R _var p factions_q_vc_parts = 11 R _var p faction_ghoul_hymag = 1 #
+9 11010 D _param p ST_CHARISMA > 4 R _item p PID_HY_MAG_PART + 1 R _var p q_vc_parts = 11 R _var p faction_ghoul_hymag = 1 #
+12 11020 D _param p ST_CHARISMA < 5 R _item p PID_HY_MAG_PART + 1 R _var p q_vc_parts = 11 R _var p faction_ghoul_hymag = 1 #
 0 11030 @
 12 12000 None 0 #
 9 12010 @

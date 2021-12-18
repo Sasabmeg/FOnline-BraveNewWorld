@@ -20,9 +20,9 @@ lang=engl russ
 4 4000 None 0 #
 5 4010 #
 7 4020 #
-9 4030 D _param p SK_BARTER } 25 D _var p noob_camp_resource_trader { 1 #
-8 4040 D _var p noob_camp_resource_trader } 2 D _var p noob_camp_resource_trader { 4 D _item p PID_GOLDEN_GECKO_PELT } 12 R _item p PID_BOTTLE_CAPS + 1300 R _var p noob_camp_resource_trader = 98 R _param p SK_BARTER + 6 R _item p PID_GOLDEN_GECKO_PELT - 12 #
-6 4050 D _var p noob_camp_resource_trader } 2 D _var p noob_camp_resource_trader { 4 D _item p PID_BOTTLE_CAPS } 1100 R _item p PID_PUMP_PARTS + 25 R _var p noob_camp_resource_trader = 99 R _param p SK_BARTER + 6 R _item p PID_BOTTLE_CAPS - 1100 #
+9 4030 D _param p SK_BARTER } 25 D _var p q_lp_resource_trader { 1 #
+8 4040 D _var p q_lp_resource_trader } 2 D _var p q_lp_resource_trader { 4 D _item p PID_GOLDEN_GECKO_PELT } 12 R _item p PID_BOTTLE_CAPS + 1300 R _var p q_lp_resource_trader = 98 R _param p SK_BARTER + 6 R _item p PID_GOLDEN_GECKO_PELT - 12 #
+6 4050 D _var p q_lp_resource_trader } 2 D _var p q_lp_resource_trader { 4 D _item p PID_BOTTLE_CAPS } 1100 R _item p PID_PUMP_PARTS + 25 R _var p q_lp_resource_trader = 99 R _param p SK_BARTER + 6 R _item p PID_BOTTLE_CAPS - 1100 #
 0 4060 @
 5 5000 None 0 #
 6 5010 D _item p PID_BOTTLE_CAPS } 50 R _item p PID_PUMP_PARTS + 1 R _item p PID_BOTTLE_CAPS - 50 #
@@ -56,7 +56,7 @@ lang=engl russ
 10 10000 None 0 #
 0 10010 @
 11 11000 None 0 #
-0 11010 R _var p noob_camp_resource_trader = 2 #
+0 11010 R _var p q_lp_resource_trader = 2 #
 4 11020 &
 
 [engl]

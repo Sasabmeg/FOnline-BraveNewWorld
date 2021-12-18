@@ -12,7 +12,7 @@ lang=engl
 4 1030 D _var n name_mem_npc_player = 1 @
 2 2000 None 0 #
 12 2010 D _var p acquaintance = 0 D _var p q_vc_collectrent = 1 #
-8 2020 D _var p q_modoc_balthas_fetcher = 2 #
+8 2020 D _var p q_mod_balthas_tannery = 2 #
 3 2030 #
 5 2040 #
 6 2050 #
@@ -22,8 +22,8 @@ lang=engl
 0 3020 @
 4 4000 None 0 #
 12 4010 D _var p acquaintance = 0 D _var p q_vc_collectrent = 1 #
-8 4020 D _var p q_modoc_balthas_fetcher = 2 #
-10 4030 D _var p q_modoc_balthas_fetcher = 3 #
+8 4020 D _var p q_mod_balthas_tannery = 2 #
+10 4030 D _var p q_mod_balthas_tannery = 3 #
 3 4040 #
 5 4050 #
 6 4060 #
@@ -41,11 +41,11 @@ lang=engl
 10 9010 @
 10 10000 None 0 #
 11 10010 D _param p SK_BARTER > 50 #
-20 10020 R _var p q_modoc_balthas_fetcher = 3 #
+20 10020 R _var p q_mod_balthas_tannery = 3 #
 11 10030 D _param p ST_CHARISMA > 4 D or D _param p SK_SPEECH > 50 #
 0 10040 @
 11 11000 None 0 #
-0 11010 R _var p q_modoc_balthas_fetcher = 4 @
+0 11010 R _var p q_mod_balthas_tannery = 4 @
 12 12000 None 0 #
 13 12010 #
 0 12020 @

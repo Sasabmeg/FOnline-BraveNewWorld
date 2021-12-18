@@ -7,56 +7,56 @@
 
 // questVars = { var, value, item, count, item, count... }
 array<array<uint>> questVars = {
-	{ LVAR_noob_camp_alecquest, 99, PID_LEATHER_JACKET, 1, PID_LEATHER_JACKET_HELMET, 1 },
-	{ LVAR_noob_camp_breederquest, 99, PID_ROPE, 1 },
-	{ LVAR_noob_camp_robodog, 99, PID_RADIO, 1, },
-	{ LVAR_noob_camp_edquest, 99, PID_SLEDGEHAMMER, 1 },
-	{ LVAR_noob_camp_jessica, 99, PID_ANTIDOTE, 2 },
-	{ LVAR_noob_camp_jimmy, 99, PID_FIRST_AID_KIT, 1 },
-	{ LVAR_noob_camp_kid, 99, PID_MUTATED_FRUIT, Random(2, 6) },
-	{ LVAR_noob_camp_knife, 99, PID_KNIFE, 1 },
-	{ LVAR_noob_camp_lawrence, 99, PID_GREEN_CONDOM, 1 },
-	{ LVAR_noob_camp_trapper, 99, PID_HEALING_POWDER, 3 },
-	{ LVAR_noob_camp_rebec, 99, PID_WATERBAG, 1 },
-	{ LVAR_noob_camp_simon, 99, PID_AXE, 1 },
-	{ LVAR_noob_camp_stanley, 99, PID_BEER, Random(1, 3) },
-	{ LVAR_noob_camp_thunderjo, 99, PID_10MM_PISTOL, 1, PID_10MM_JHP, Random(20, 30) },
-	{ LVAR_noob_camp_hunter, 99, PID_TENT, 1 },
-	{ LVAR_noob_camp_plague, 99, PID_STIMPAK, 3 },
-	{ LVAR_noob_camp_armorer, 99, PID_MULTI_TOOL, 1 }
+	{ LVAR_q_lp_alecquest, 99, PID_LEATHER_JACKET, 1, PID_LEATHER_JACKET_HELMET, 1 },
+	{ LVAR_q_lp_breederquest, 99, PID_ROPE, 1 },
+	{ LVAR_q_lp_robodog, 99, PID_RADIO, 1, },
+	{ LVAR_q_lp_edquest, 99, PID_SLEDGEHAMMER, 1 },
+	{ LVAR_q_lp_jessica, 99, PID_ANTIDOTE, 2 },
+	{ LVAR_q_lp_jimmy, 99, PID_FIRST_AID_KIT, 1 },
+	{ LVAR_q_lp_kid, 99, PID_MUTATED_FRUIT, Random(2, 6) },
+	{ LVAR_q_lp_knife, 99, PID_KNIFE, 1 },
+	{ LVAR_q_lp_lawrence, 99, PID_GREEN_CONDOM, 1 },
+	{ LVAR_q_lp_trapper, 99, PID_HEALING_POWDER, 3 },
+	{ LVAR_q_lp_rebec, 99, PID_WATERBAG, 1 },
+	{ LVAR_q_lp_simon, 99, PID_AXE, 1 },
+	{ LVAR_q_lp_stanley, 99, PID_BEER, Random(1, 3) },
+	{ LVAR_q_lp_thunderjo, 99, PID_10MM_PISTOL, 1, PID_10MM_JHP, Random(20, 30) },
+	{ LVAR_q_lp_hunter, 99, PID_TENT, 1 },
+	{ LVAR_q_lp_plague, 99, PID_STIMPAK, 3 },
+	{ LVAR_q_lp_armorer, 99, PID_MULTI_TOOL, 1 }
 };
 
 void r_JasonNotifiesQuestsFirstWave(Critter& player, Critter@ npc) {
-    if (GetLvar(player, LVAR_noob_camp_armorer) == 0)
-        SetLvar(player, LVAR_noob_camp_armorer, 1);
-    if (GetLvar(player, LVAR_noob_camp_thunderjo) == 0)
-        SetLvar(player, LVAR_noob_camp_thunderjo, 1);
-    if (GetLvar(player, LVAR_noob_camp_alecquest) == 0)
-        SetLvar(player, LVAR_noob_camp_alecquest, 1);
-    if (GetLvar(player, LVAR_job_lp_caravan_box) == 0)
-        SetLvar(player, LVAR_job_lp_caravan_box, 1);
-    if (GetLvar(player, LVAR_noob_camp_knife) == 0)
-        SetLvar(player, LVAR_noob_camp_knife, 1);
+    if (GetLvar(player, LVAR_q_lp_armorer) == 0)
+        SetLvar(player, LVAR_q_lp_armorer, 1);
+    if (GetLvar(player, LVAR_q_lp_thunderjo) == 0)
+        SetLvar(player, LVAR_q_lp_thunderjo, 1);
+    if (GetLvar(player, LVAR_q_lp_alecquest) == 0)
+        SetLvar(player, LVAR_q_lp_alecquest, 1);
+    if (GetLvar(player, LVAR_q_lp_caravan_box) == 0)
+        SetLvar(player, LVAR_q_lp_caravan_box, 1);
+    if (GetLvar(player, LVAR_q_lp_knife) == 0)
+        SetLvar(player, LVAR_q_lp_knife, 1);
 }
 
 void r_JasonNotifiesQuestsSecondWave(Critter& player, Critter@ npc) {
-    if (GetLvar(player, LVAR_noob_camp_trapper) == 0)
-        SetLvar(player, LVAR_noob_camp_trapper, 1);
-    if (GetLvar(player, LVAR_noob_camp_simon) == 0)
-        SetLvar(player, LVAR_noob_camp_simon, 1);
-    if (GetLvar(player, LVAR_noob_camp_edquest) == 0)
-        SetLvar(player, LVAR_noob_camp_edquest, 1);
+    if (GetLvar(player, LVAR_q_lp_trapper) == 0)
+        SetLvar(player, LVAR_q_lp_trapper, 1);
+    if (GetLvar(player, LVAR_q_lp_simon) == 0)
+        SetLvar(player, LVAR_q_lp_simon, 1);
+    if (GetLvar(player, LVAR_q_lp_edquest) == 0)
+        SetLvar(player, LVAR_q_lp_edquest, 1);
 }
 
 void r_JasonNotifiesQuestsThirdWave(Critter& player, Critter@ npc) {
-    if (GetLvar(player, LVAR_noob_camp_breederquest) == 0)
-        SetLvar(player, LVAR_noob_camp_breederquest, 1);
-    if (GetLvar(player, LVAR_noob_camp_rebec) == 0)
-        SetLvar(player, LVAR_noob_camp_rebec, 1);
-    if (GetLvar(player, LVAR_noob_camp_stanley) == 0)
-        SetLvar(player, LVAR_noob_camp_stanley, 1);
-    if (GetLvar(player, LVAR_noob_camp_jimmy) == 0)
-        SetLvar(player, LVAR_noob_camp_jimmy, 1);
+    if (GetLvar(player, LVAR_q_lp_breederquest) == 0)
+        SetLvar(player, LVAR_q_lp_breederquest, 1);
+    if (GetLvar(player, LVAR_q_lp_rebec) == 0)
+        SetLvar(player, LVAR_q_lp_rebec, 1);
+    if (GetLvar(player, LVAR_q_lp_stanley) == 0)
+        SetLvar(player, LVAR_q_lp_stanley, 1);
+    if (GetLvar(player, LVAR_q_lp_jimmy) == 0)
+        SetLvar(player, LVAR_q_lp_jimmy, 1);
 }
 
 void r_LeaveNoobCamp(Critter& player, Critter@ npc)
@@ -95,27 +95,27 @@ void r_LeaveNoobCamp(Critter& player, Critter@ npc)
     }
 
     //  Need to set all tutorial quests back to 0, to remove them from Pip-boy, else they will clutter it.
-    SetLvar(player, LVAR_noob_camp_alecquest, 0);
-    SetLvar(player, LVAR_noob_camp_breederquest, 0);
-    SetLvar(player, LVAR_noob_camp_robodog, 0);
-    SetLvar(player, LVAR_noob_camp_edquest, 0);
-    SetLvar(player, LVAR_noob_camp_jessica, 0);
-    SetLvar(player, LVAR_noob_camp_jimmy, 0);
-    SetLvar(player, LVAR_noob_camp_kid, 0);
-    SetLvar(player, LVAR_noob_camp_knife, 0);
-    SetLvar(player, LVAR_noob_camp_lawrence, 0);
-    SetLvar(player, LVAR_noob_camp_trapper, 0);
-    SetLvar(player, LVAR_noob_camp_rebec, 0);
-    SetLvar(player, LVAR_noob_camp_simon, 0);
-    SetLvar(player, LVAR_noob_camp_stanley, 0);
-    SetLvar(player, LVAR_noob_camp_thunderjo, 0);
-    SetLvar(player, LVAR_noob_camp_hunter, 0);
-    SetLvar(player, LVAR_noob_camp_plague, 0);
-    SetLvar(player, LLVAR_noob_camp_fetch, 0);
-    SetLvar(player, LVAR_noob_camp_armorer, 0);
-    SetLvar(player, LVAR_noob_camp_resource_trader, 0);
-    SetLvar(player, LVAR_noob_camp_mrhandy, 0);
-    SetLvar(player, LVAR_job_lp_caravan_box, 0);
+    SetLvar(player, LVAR_q_lp_alecquest, 0);
+    SetLvar(player, LVAR_q_lp_breederquest, 0);
+    SetLvar(player, LVAR_q_lp_robodog, 0);
+    SetLvar(player, LVAR_q_lp_edquest, 0);
+    SetLvar(player, LVAR_q_lp_jessica, 0);
+    SetLvar(player, LVAR_q_lp_jimmy, 0);
+    SetLvar(player, LVAR_q_lp_kid, 0);
+    SetLvar(player, LVAR_q_lp_knife, 0);
+    SetLvar(player, LVAR_q_lp_lawrence, 0);
+    SetLvar(player, LVAR_q_lp_trapper, 0);
+    SetLvar(player, LVAR_q_lp_rebec, 0);
+    SetLvar(player, LVAR_q_lp_simon, 0);
+    SetLvar(player, LVAR_q_lp_stanley, 0);
+    SetLvar(player, LVAR_q_lp_thunderjo, 0);
+    SetLvar(player, LVAR_q_lp_hunter, 0);
+    SetLvar(player, LVAR_q_lp_plague, 0);
+    SetLvar(player, LLVAR_q_lp_fetch, 0);
+    SetLvar(player, LVAR_q_lp_armorer, 0);
+    SetLvar(player, LVAR_q_lp_resource_trader, 0);
+    SetLvar(player, LVAR_q_lp_mrhandy, 0);
+    SetLvar(player, LVAR_q_lp_caravan_box, 0);
 
     player.TransitToMap(map.Id, 0);
 }

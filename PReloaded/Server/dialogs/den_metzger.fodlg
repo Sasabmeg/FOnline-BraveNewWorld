@@ -8,8 +8,8 @@ lang=engl
 &
 1 1000 None 0 #
 6 1010 D _script slaverun_dialog@d_SlaverunAttempted 1 0 D _param p KARMA_SLAVER > 0 R _script slaverun_dialog@r_SelectRewardNode 1 0 #
-38 1020 D _var p q_mordinos_metzger_delivery = 1 D _item p PID_METZGERS_CASE = 1 D _param p KARMA_SLAVER = 1 #
-33 1030 D _var p q_mordinos_metzger_delivery = 1 D _item p PID_METZGERS_CASE = 1 #
+38 1020 D _var p q_nr_mord_metzger_delivery = 1 D _item p PID_METZGERS_CASE = 1 D _param p KARMA_SLAVER = 1 #
+33 1030 D _var p q_nr_mord_metzger_delivery = 1 D _item p PID_METZGERS_CASE = 1 #
 19 1040 D _param p KARMA_SLAVER > 0 #
 22 1050 D _param p ST_INTELLECT < 4 D _param p ST_INTELLECT > 4 #
 26 1060 D _param p ST_CHARISMA < 4 D _var n name_mem_npc_player = 0 #
@@ -37,7 +37,7 @@ lang=engl
 4 6000 None 0 #
 44 6010 #
 0 6020 #
-43 6030 D _param p ST_CHARISMA > 3 D _var p den_metzger_blind = 0 D _param p DAMAGE_EYE > 0 R _var p den_metzger_blind = 1 @
+43 6030 D _param p ST_CHARISMA > 3 D _var p q_den_metzger_blind = 0 D _param p DAMAGE_EYE > 0 R _var p q_den_metzger_blind = 1 @
 40 7000 None 0 #
 65505 7010 #
 0 7020 #
@@ -170,7 +170,7 @@ lang=engl
 34 44010 #
 65507 44020 @
 34 45000 None 0 #
-35 45010 D _item p PID_METZGERS_CASE } 1 R _item p PID_METZGERS_CASE - 1 R _var p q_mordinos_metzger_delivery = 2 @
+35 45010 D _item p PID_METZGERS_CASE } 1 R _item p PID_METZGERS_CASE - 1 R _var p q_nr_mord_metzger_delivery = 2 @
 35 46000 None 0 #
 36 46010 @
 36 47000 None 0 #

@@ -9,9 +9,9 @@ lang=engl
 1 1000 None 0 #
 9 1010 D _script dialog@d_IsNotMemberOf 1 FACTION_BOS #
 2 1020 D _param p ST_CHARISMA < 4 #
-6 1030 D _var p q_bos_initiatequest_start } 1 D _var p q_bos_initiatequest_start { 10 #
-8 1040 D _var p q_bos_initiatequest_start } 11 #
-3 1050 R _var p q_bos_initiatequest_start = 0 @
+6 1030 D _var p q_bos_initiate_start } 1 D _var p q_bos_initiate_start { 10 #
+8 1040 D _var p q_bos_initiate_start } 11 #
+3 1050 R _var p q_bos_initiate_start = 0 @
 2 2000 None 0 @
 3 3000 None 0 #
 4 3010 #
@@ -25,8 +25,8 @@ lang=engl
 8 8000 None 0 @
 9 9000 Attack 0 @
 10 10000 None 0 #
-7 10010 D _var p q_bos_initiatequest_start = 11 R _param p REPUTATION_BOS + 300 R _param p ST_EXPERIENCE + 300 #
-11 10020 D _var p q_bos_initiatequest_start < 11 @
+7 10010 D _var p q_bos_initiate_start = 11 R _param p REPUTATION_BOS + 300 R _param p ST_EXPERIENCE + 300 #
+11 10020 D _var p q_bos_initiate_start < 11 @
 11 11000 None 0 &
 
 [engl]

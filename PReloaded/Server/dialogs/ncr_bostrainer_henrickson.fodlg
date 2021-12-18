@@ -6,37 +6,37 @@ lang=engl
 [dialog]
 &
 1 1000 None 0 #
-75 1010 D _var p q_bos_initiatequest_start } 27 #
-70 1020 D _var p q_bos_initiatequest_start = 26 #
-60 1030 D _var p q_bos_initiatequest_start = 20 #
-18 1040 D _var p q_bos_initiatequest_start } 15 D _var p q_bos_initiatequest_start { 19 D or D _var p q_bos_initiatequest_start } 21 D _var p q_bos_initiatequest_start { 25 #
-50 1050 D _var p faction_bos_quartermaster = 2 #
-24 1060 D _var p q_bos_initiatequest_start = 14 #
-20 1070 D _var p q_bos_initiatequest_start = 12 D _param p ST_LUCK } 9 #
-18 1080 D _var p q_bos_initiatequest_start = 12 D or D _var p q_bos_initiatequest_start = 13 #
+75 1010 D _var p q_bos_initiate_start } 27 #
+70 1020 D _var p q_bos_initiate_start = 26 #
+60 1030 D _var p q_bos_initiate_start = 20 #
+18 1040 D _var p q_bos_initiate_start } 15 D _var p q_bos_initiate_start { 19 D or D _var p q_bos_initiate_start } 21 D _var p q_bos_initiate_start { 25 #
+50 1050 D _var p q_bos_quartermaster = 2 #
+24 1060 D _var p q_bos_initiate_start = 14 #
+20 1070 D _var p q_bos_initiate_start = 12 D _param p ST_LUCK } 9 #
+18 1080 D _var p q_bos_initiate_start = 12 D or D _var p q_bos_initiate_start = 13 #
 9 1090 D _script dialog@d_IsNotMemberOf 1 FACTION_BOS #
-6 1100 D _var p q_bos_initiatequest_start ! 0 D _var p q_bos_initiatequest_start ! 11 #
-12 1110 D _var p q_bos_initiatequest_start = 11 #
-3 1120 D _var p faction_bos_home ! 1 D _var p faction_bos_home ! 3 R _var p q_bos_initiatequest_start = 0 R _var p faction_bos_home = 2 @
+6 1100 D _var p q_bos_initiate_start ! 0 D _var p q_bos_initiate_start ! 11 #
+12 1110 D _var p q_bos_initiate_start = 11 #
+3 1120 D _var p q_bos_faction_home ! 1 D _var p q_bos_faction_home ! 3 R _var p q_bos_initiate_start = 0 R _var p q_bos_faction_home = 2 @
 3 2000 None 0 #
 4 2010 #
 5 2020 @
 4 3000 None 0 #
-0 3010 R _var p q_bos_initiatequest_start = 1 #
+0 3010 R _var p q_bos_initiate_start = 1 #
 5 3020 @
 5 4000 None 0 @
 6 5000 None 0 #
-7 5010 D _item p PID_SCORPION_TAIL } 10 R _param p REPUTATION_BOS + 300 R _param p ST_EXPERIENCE + 300 R _var p q_bos_initiatequest_start = 11 R _item p PID_SCORPION_TAIL - 10 #
-10 5020 D _var p q_bos_initiatequest_start { 10 D _item p PID_SCORPION_TAIL } 1 R _var p q_bos_initiatequest_start + 1 R _item p PID_SCORPION_TAIL - 1 #
-10 5030 D _var p q_bos_initiatequest_start { 6 D _item p PID_SCORPION_TAIL } 5 R _var p q_bos_initiatequest_start + 5 R _item p PID_SCORPION_TAIL - 5 #
+7 5010 D _item p PID_SCORPION_TAIL } 10 R _param p REPUTATION_BOS + 300 R _param p ST_EXPERIENCE + 300 R _var p q_bos_initiate_start = 11 R _item p PID_SCORPION_TAIL - 10 #
+10 5020 D _var p q_bos_initiate_start { 10 D _item p PID_SCORPION_TAIL } 1 R _var p q_bos_initiate_start + 1 R _item p PID_SCORPION_TAIL - 1 #
+10 5030 D _var p q_bos_initiate_start { 6 D _item p PID_SCORPION_TAIL } 5 R _var p q_bos_initiate_start + 5 R _item p PID_SCORPION_TAIL - 5 #
 11 5040 @
 7 6000 None 0 #
 13 6010 @
 8 7000 None 0 @
 9 8000 Attack 0 @
 10 9000 None 0 #
-7 9010 D _var p q_bos_initiatequest_start = 11 R _param p REPUTATION_BOS + 300 R _param p ST_EXPERIENCE + 300 #
-11 9020 D _var p q_bos_initiatequest_start < 11 @
+7 9010 D _var p q_bos_initiate_start = 11 R _param p REPUTATION_BOS + 300 R _param p ST_EXPERIENCE + 300 #
+11 9020 D _var p q_bos_initiate_start < 11 @
 11 10000 None 0 @
 12 11000 None 0 #
 13 11010 @
@@ -47,25 +47,25 @@ lang=engl
 15 14000 None 0 #
 16 14010 #
 16 14020 #
-0 14030 R _var p q_bos_initiatequest_start = 12 @
+0 14030 R _var p q_bos_initiate_start = 12 @
 16 15000 None 0 #
-17 15010 R _var p q_bos_initiatequest_start = 12 @
+17 15010 R _var p q_bos_initiate_start = 12 @
 17 16000 None 0 @
 18 17000 None 0 #
-19 17010 D _var p q_bos_initiatequest_start = 13 R _var p q_bos_initiatequest_start = 14 R _param p REPUTATION_BOS + 500 R _param p ST_EXPERIENCE + 750 #
-54 17020 D _var p q_bos_initiatequest_start = 16 #
-55 17030 D _var p q_bos_initiatequest_start = 17 #
-56 17040 D _var p q_bos_initiatequest_start = 18 #
-57 17050 D _var p q_bos_initiatequest_start = 19 #
-64 17060 D _var p q_bos_initiatequest_start = 22 #
-65 17070 D _var p q_bos_initiatequest_start = 23 #
-66 17080 D _var p q_bos_initiatequest_start = 24 #
-67 17090 D _var p q_bos_initiatequest_start = 25 #
+19 17010 D _var p q_bos_initiate_start = 13 R _var p q_bos_initiate_start = 14 R _param p REPUTATION_BOS + 500 R _param p ST_EXPERIENCE + 750 #
+54 17020 D _var p q_bos_initiate_start = 16 #
+55 17030 D _var p q_bos_initiate_start = 17 #
+56 17040 D _var p q_bos_initiate_start = 18 #
+57 17050 D _var p q_bos_initiate_start = 19 #
+64 17060 D _var p q_bos_initiate_start = 22 #
+65 17070 D _var p q_bos_initiate_start = 23 #
+66 17080 D _var p q_bos_initiate_start = 24 #
+67 17090 D _var p q_bos_initiate_start = 25 #
 22 17100 @
 19 18000 None 0 #
 0 18010 @
 20 19000 None 0 #
-23 19010 R _var p q_bos_initiatequest_start = 14 R _param p REPUTATION_BOS + 500 R _param p ST_EXPERIENCE + 750 @
+23 19010 R _var p q_bos_initiate_start = 14 R _param p REPUTATION_BOS + 500 R _param p ST_EXPERIENCE + 750 @
 22 20000 None 0 @
 23 21000 None 0 #
 0 21010 @
@@ -78,15 +78,15 @@ lang=engl
 52 25000 None 0 #
 53 25010 @
 53 26000 None 0 #
-0 26010 R _var p q_bos_initiatequest_start = 15 @
+0 26010 R _var p q_bos_initiate_start = 15 @
 54 27000 None 0 #
-58 27010 R _var p q_bos_initiatequest_start = 20 R _var p factions_points_bos + 200 @
+58 27010 R _var p q_bos_initiate_start = 20 R _var p factions_points_bos + 200 @
 55 28000 None 0 #
-59 28010 R _var p q_bos_initiatequest_start = 20 R _var p factions_points_bos + 300 @
+59 28010 R _var p q_bos_initiate_start = 20 R _var p factions_points_bos + 300 @
 56 29000 None 0 #
-58 29010 R _var p q_bos_initiatequest_start = 20 R _var p factions_points_bos + 200 R _param p REPUTATION_BOS + 300 @
+58 29010 R _var p q_bos_initiate_start = 20 R _var p factions_points_bos + 200 R _param p REPUTATION_BOS + 300 @
 57 30000 None 0 #
-59 30010 R _var p q_bos_initiatequest_start = 20 R _var p factions_points_bos + 300 R _param p REPUTATION_BOS + 300 @
+59 30010 R _var p q_bos_initiate_start = 20 R _var p factions_points_bos + 300 R _param p REPUTATION_BOS + 300 @
 58 31000 None 0 #
 61 31010 #
 0 31020 @
@@ -100,7 +100,7 @@ lang=engl
 62 35000 None 0 #
 63 35010 @
 63 36000 None 0 #
-0 36010 R _var p q_bos_initiatequest_start = 21 @
+0 36010 R _var p q_bos_initiate_start = 21 @
 64 37000 None 0 #
 68 37010 @
 65 38000 None 0 #
@@ -110,9 +110,9 @@ lang=engl
 67 40000 None 0 #
 69 40010 @
 68 41000 None 0 #
-70 41010 R _var p factions_points_bos + 500 R _var p q_bos_initiatequest_start = 26 R _param p ST_EXPERIENCE + 750 R _param p REPUTATION_BOS + 500 @
+70 41010 R _var p factions_points_bos + 500 R _var p q_bos_initiate_start = 26 R _param p ST_EXPERIENCE + 750 R _param p REPUTATION_BOS + 500 @
 69 42000 None 0 #
-70 42010 R _var p factions_points_bos + 750 R _var p q_bos_initiatequest_start = 26 R _param p ST_EXPERIENCE + 1000 R _param p REPUTATION_BOS + 750 @
+70 42010 R _var p factions_points_bos + 750 R _var p q_bos_initiate_start = 26 R _param p ST_EXPERIENCE + 1000 R _param p REPUTATION_BOS + 750 @
 70 43000 None 0 #
 71 43010 #
 0 43020 @
@@ -121,7 +121,7 @@ lang=engl
 72 45000 None 0 #
 73 45010 @
 73 46000 None 0 #
-74 46010 R _var p q_bos_initiatequest_start = 27 R _item p PID_PULSE_GRENADE + 2 R _script quest_bos_initiate@r_SpawnBunker 0  @
+74 46010 R _var p q_bos_initiate_start = 27 R _item p PID_PULSE_GRENADE + 2 R _script quest_bos_initiate@r_SpawnBunker 0  @
 74 47000 None 0 #
 0 47010 @
 75 48000 None 0 &

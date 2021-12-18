@@ -10,8 +10,8 @@ lang=engl
 10 1010 D _script dialog@d_IsNotMemberOf 1 FACTION_BOS #
 2 1020 @
 2 2000 None 0 #
-3 2010 D _var p q_bos_initiatequest_start = 14 D _var p faction_bos_quartermaster = 0 #
-100 2020 D _var p faction_bos_quartermaster > 0 #
+3 2010 D _var p q_bos_initiate_start = 14 D _var p q_bos_quartermaster = 0 #
+100 2020 D _var p q_bos_quartermaster > 0 #
 0 2030 @
 3 3000 None 0 #
 4 3010 @
@@ -22,12 +22,12 @@ lang=engl
 6 6000 None 0 #
 7 6010 @
 7 7000 None 0 #
-8 7010 D _param p SK_ENERGY_WEAPONS } 50 R _item p PID_SMALL_ENERGY_CELL + 20 R _item p PID_LASER_PISTOL + 1 R _item p PID_LEATHER_JACKET + 1 R _var p faction_bos_quartermaster = 2 #
-8 7020 D _param p SK_BIG_GUNS } 50 R _item p PID_FLAMER + 1 R _item p PID_FLAMETHROWER_FUEL + 20 R _item p PID_LEATHER_JACKET + 1 R _var p faction_bos_quartermaster = 2 #
-8 7030 D _param p SK_SMALL_GUNS } 50 R _item p PID_DESERT_EAGLE + 1 R _item p PID_44_MAGNUM_JHP + 20 R _item p PID_LEATHER_JACKET + 1 R _var p faction_bos_quartermaster = 2 #
-9 7040 D _param p SK_UNARMED } 50 R _item p PID_SLEDGEHAMMER + 1 R _item p PID_LEATHER_JACKET + 1 R _var p faction_bos_quartermaster = 2 R _item p PID_HEALING_POWDER + 4 #
-9 7050 R _item p PID_LEATHER_JACKET + 1 R _item p PID_SPIKED_KNUCKLES + 1 R _var p faction_bos_quartermaster = 2 R _item p PID_HEALING_POWDER + 4 #
-8 7060 D _param p SK_THROWING } 50 R _item p PID_MOLOTOV_COCKTAIL + 25 R _item p PID_LEATHER_JACKET + 1 R _var p faction_bos_quartermaster = 2 @
+8 7010 D _param p SK_ENERGY_WEAPONS } 50 R _item p PID_SMALL_ENERGY_CELL + 20 R _item p PID_LASER_PISTOL + 1 R _item p PID_LEATHER_JACKET + 1 R _var p q_bos_quartermaster = 2 #
+8 7020 D _param p SK_BIG_GUNS } 50 R _item p PID_FLAMER + 1 R _item p PID_FLAMETHROWER_FUEL + 20 R _item p PID_LEATHER_JACKET + 1 R _var p q_bos_quartermaster = 2 #
+8 7030 D _param p SK_SMALL_GUNS } 50 R _item p PID_DESERT_EAGLE + 1 R _item p PID_44_MAGNUM_JHP + 20 R _item p PID_LEATHER_JACKET + 1 R _var p q_bos_quartermaster = 2 #
+9 7040 D _param p SK_UNARMED } 50 R _item p PID_SLEDGEHAMMER + 1 R _item p PID_LEATHER_JACKET + 1 R _var p q_bos_quartermaster = 2 R _item p PID_HEALING_POWDER + 4 #
+9 7050 R _item p PID_LEATHER_JACKET + 1 R _item p PID_SPIKED_KNUCKLES + 1 R _var p q_bos_quartermaster = 2 R _item p PID_HEALING_POWDER + 4 #
+8 7060 D _param p SK_THROWING } 50 R _item p PID_MOLOTOV_COCKTAIL + 25 R _item p PID_LEATHER_JACKET + 1 R _var p q_bos_quartermaster = 2 @
 8 8000 None 0 #
 0 8010 @
 9 9000 None 0 #

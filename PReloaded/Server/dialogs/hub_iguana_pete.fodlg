@@ -1,9 +1,9 @@
 [comment]
 vars
 
-q_iguana_pete_ban (player is banned from iguana pete)
+q_hub_iguana_pete_ban (player is banned from iguana pete)
 
-7070 q_iguana_pete_message:
+7070 q_hub_iguana_pete_message:
 1 = Recieved Quest
 2 = Spoken to NCR Miky
 3 = Spoken to NCR Mutant Lenny
@@ -19,14 +19,14 @@ lang=engl
 [dialog]
 &
 1 1000 None 0 #
-18 1010 D _var p q_iguana_pete_ban = 1 #
+18 1010 D _var p q_hub_iguana_pete_ban = 1 #
 2 1020 D _var p name_mem_npc_player = 1 #
 10 1030 D _var p name_mem_npc_player = 0 @
 2 2000 None 0 #
 3 2010 #
 4 2020 #
-9 2030 D _var p mod_q_meat_jerky = 1 D _item p PID_MEAT_BAG > 0 R _var p mod_q_meat_jerky = 2 R _item p PID_MEAT_BAG - 1 R _param p ST_EXPERIENCE + 745 R _script dialog@r_AddMoney 1 350 #
-19 2040 D _var p q_iguana_pete_message = 5 #
+9 2030 D _var p q_mod_meat_jerky = 1 D _item p PID_MEAT_BAG > 0 R _var p q_mod_meat_jerky = 2 R _item p PID_MEAT_BAG - 1 R _param p ST_EXPERIENCE + 745 R _script dialog@r_AddMoney 1 350 #
+19 2040 D _var p q_hub_iguana_pete_message = 5 #
 0 2050 @
 3 3000 None 0 #
 6 3010 #
@@ -57,7 +57,7 @@ lang=engl
 2 10010 #
 11 10020 @
 11 11000 None 0 #
-12 11010 R _item p PID_IGUANA_ON_A_STICK + 1 R _var p q_iguana_pete_ban = 1 #
+12 11010 R _item p PID_IGUANA_ON_A_STICK + 1 R _var p q_hub_iguana_pete_ban = 1 #
 21 11020 D _param p ST_CHARISMA } 3 #
 0 11030 @
 12 12000 None 0 @
@@ -74,10 +74,10 @@ lang=engl
 17 17010 #
 0 17020 R _var p name_mem_npc_player = 1 @
 17 18000 None 0 #
-0 18010 R _var p q_iguana_pete_message = 1 R _var p name_mem_npc_player = 1 @
+0 18010 R _var p q_hub_iguana_pete_message = 1 R _var p name_mem_npc_player = 1 @
 18 19000 None 0 @
 19 20000 None 0 #
-20 20010 R _param p ST_EXPERIENCE + 600 R _var p q_iguana_pete_message = 7 R _script dialog@r_AddMoney 1 400 @
+20 20010 R _param p ST_EXPERIENCE + 600 R _var p q_hub_iguana_pete_message = 7 R _script dialog@r_AddMoney 1 400 @
 20 21000 None 0 #
 0 21010 &
 

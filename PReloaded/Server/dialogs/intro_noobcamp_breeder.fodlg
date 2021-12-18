@@ -5,7 +5,7 @@ teaches how to make rope
 Rope to Noob Kit
 (Please script)
 
-noob_camp_breederquest 23004
+q_lp_breederquest 23004
 
 local quest
 0 min 2 min
@@ -19,9 +19,9 @@ lang=engl russ
 [dialog]
 &
 1 1000 None 0 #
-4 1010 D _var p name_mem_npc_player = 0 D _var p noob_camp_breederquest { 1 #
-12 1020 D _var p name_mem_npc_player = 1 D _var p noob_camp_breederquest { 3 #
-10 1030 D _var p noob_camp_breederquest = 99 @
+4 1010 D _var p name_mem_npc_player = 0 D _var p q_lp_breederquest { 1 #
+12 1020 D _var p name_mem_npc_player = 1 D _var p q_lp_breederquest { 3 #
+10 1030 D _var p q_lp_breederquest = 99 @
 4 2000 None 0 #
 2 2010 #
 3 2020 #
@@ -41,7 +41,7 @@ lang=engl russ
 11 8010 @
 10 9000 None 0 @
 11 10000 None 0 #
-0 10010 R _var p name_mem_npc_player = 1 R _var p noob_camp_breederquest = 2 @
+0 10010 R _var p name_mem_npc_player = 1 R _var p q_lp_breederquest = 2 @
 12 11000 None 0 #
 14 11010 D _item p PID_ROPE > 1 #
 13 11020 #
@@ -49,7 +49,7 @@ lang=engl russ
 13 12000 None 0 #
 12 12010 @
 14 13000 None 0 #
-0 13010 R _item p PID_ROPE - 2 R _script dialog@r_AddExperience 1 250 R _var p noob_camp_breederquest = 99 &
+0 13010 R _item p PID_ROPE - 2 R _script dialog@r_AddExperience 1 250 R _var p q_lp_breederquest = 99 &
 
 [engl]
 {100}{}{Tom, the brahmin herder}

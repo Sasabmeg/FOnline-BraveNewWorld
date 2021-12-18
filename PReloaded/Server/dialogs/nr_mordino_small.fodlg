@@ -7,10 +7,10 @@ lang=engl
 [dialog]
 &
 1 1000 None 1 #
-51 1010 D _var p q_mordinos_joining_quest = 3 #
-45 1020 D _var p q_mordinos_joining_quest = 1 #
-35 1030 D _var p q_mordinos_metzger_delivery = 2 #
-36 1040 D _var p q_mordinos_metzger_delivery = 1 #
+51 1010 D _var p q_nr_mord_joining_quest = 3 #
+45 1020 D _var p q_nr_mord_joining_quest = 1 #
+35 1030 D _var p q_nr_mord_metzger_delivery = 2 #
+36 1040 D _var p q_nr_mord_metzger_delivery = 1 #
 31 1050 D _param p ST_INTELLECT < 4 #
 30 1060 D _param p ST_CHARISMA > 99 #
 2 1070 D _var p name_mem_npc_player = 0 R _var p name_mem_npc_player = 1 #
@@ -27,8 +27,8 @@ lang=engl
 6 4020 #
 16 4030 #
 15 4040 #
-39 4050 D _var p q_mordinos_metzger_delivery = 3 D _var p q_mordinos_joining_quest = 0 D _param p ST_LEVEL > 9 #
-58 4060 D _param p ST_LEVEL < 10 D _var p q_mordinos_joining_quest = 0 D _var p q_mordinos_metzger_delivery = 3 #
+39 4050 D _var p q_nr_mord_metzger_delivery = 3 D _var p q_nr_mord_joining_quest = 0 D _param p ST_LEVEL > 9 #
+58 4060 D _param p ST_LEVEL < 10 D _var p q_nr_mord_joining_quest = 0 D _var p q_nr_mord_metzger_delivery = 3 #
 0 4070 @
 5 5000 None 0 #
 6 5010 #
@@ -67,7 +67,7 @@ lang=engl
 0 14030 @
 16 15000 None 0 #
 4 15010 #
-32 15020 D _var p q_mordinos_metzger_delivery = 0 #
+32 15020 D _var p q_nr_mord_metzger_delivery = 0 #
 0 15030 @
 26 16000 None 0 #
 29 16010 #
@@ -94,9 +94,9 @@ lang=engl
 34 23010 #
 0 23020 @
 34 24000 None 0 #
-0 24010 R _var p q_mordinos_metzger_delivery = 1 R _item p PID_METZGERS_CASE + 1 @
+0 24010 R _var p q_nr_mord_metzger_delivery = 1 R _item p PID_METZGERS_CASE + 1 @
 35 25000 None 0 #
-0 25010 R _var p q_mordinos_metzger_delivery = 3 R _param p ST_EXPERIENCE + 1500 @
+0 25010 R _var p q_nr_mord_metzger_delivery = 3 R _param p ST_EXPERIENCE + 1500 @
 36 26000 None 0 #
 0 26010 @
 37 27000 None 0 @
@@ -120,9 +120,9 @@ lang=engl
 44 33010 #
 0 33020 @
 44 34000 None 0 #
-0 34010 R _var p q_mordinos_joining_quest = 1 R _item p PID_MORDINOS_CASE = 1 #
-0 34020 R _var p q_mordinos_joining_quest = 1 R _item p PID_MORDINOS_CASE = 1 #
-0 34030 R _var p q_mordinos_joining_quest = 1 R _item p PID_MORDINOS_CASE = 1 @
+0 34010 R _var p q_nr_mord_joining_quest = 1 R _item p PID_MORDINOS_CASE = 1 #
+0 34020 R _var p q_nr_mord_joining_quest = 1 R _item p PID_MORDINOS_CASE = 1 #
+0 34030 R _var p q_nr_mord_joining_quest = 1 R _item p PID_MORDINOS_CASE = 1 @
 45 35000 None 0 #
 46 35010 #
 46 35020 #
@@ -139,32 +139,32 @@ lang=engl
 0 39010 #
 50 39020 @
 50 40000 None 0 #
-53 40010 D _var p q_mordinos_induction_doctor < 401 D _item p PID_MORDINOS_CASE } 1 R _var p q_mordinos_joining_quest = 6 R _item p PID_MORDINOS_CASE - 1 #
-54 40020 D _var p q_mordinos_induction_doctor < 501 D _var p q_mordinos_induction_doctor > 400 D _item p PID_MORDINOS_CASE } 1 R _item p PID_MORDINOS_CASE - 1 #
-55 40030 D _var p q_mordinos_induction_doctor < 601 D _var p q_mordinos_induction_doctor > 500 D _item p PID_MORDINOS_CASE } 1 R _item p PID_MORDINOS_CASE - 1 #
-56 40040 D _var p q_mordinos_induction_doctor < 701 D _var p q_mordinos_induction_doctor > 600 D _item p PID_MORDINOS_CASE } 1 R _item p PID_MORDINOS_CASE - 1 #
-57 40050 D _var p q_mordinos_induction_doctor > 700 D _item p PID_MORDINOS_CASE } 1 R _item p PID_MORDINOS_CASE - 1 @
+53 40010 D _var p q_nr_mord_induction_doctor < 401 D _item p PID_MORDINOS_CASE } 1 R _var p q_nr_mord_joining_quest = 6 R _item p PID_MORDINOS_CASE - 1 #
+54 40020 D _var p q_nr_mord_induction_doctor < 501 D _var p q_nr_mord_induction_doctor > 400 D _item p PID_MORDINOS_CASE } 1 R _item p PID_MORDINOS_CASE - 1 #
+55 40030 D _var p q_nr_mord_induction_doctor < 601 D _var p q_nr_mord_induction_doctor > 500 D _item p PID_MORDINOS_CASE } 1 R _item p PID_MORDINOS_CASE - 1 #
+56 40040 D _var p q_nr_mord_induction_doctor < 701 D _var p q_nr_mord_induction_doctor > 600 D _item p PID_MORDINOS_CASE } 1 R _item p PID_MORDINOS_CASE - 1 #
+57 40050 D _var p q_nr_mord_induction_doctor > 700 D _item p PID_MORDINOS_CASE } 1 R _item p PID_MORDINOS_CASE - 1 @
 51 41000 None 0 #
 52 41010 R _param p REPUTATION_MORDINOS - 1500 @
 52 42000 Attack 0 #
 65507 42010 @
 53 43000 None 0 #
-0 43010 R _var p q_mordinos_joining_quest = 6 R _param p REPUTATION_MORDINOS - 500 #
-0 43020 R _var p q_mordinos_joining_quest = 6 R _param p REPUTATION_MORDINOS - 500 #
-0 43030 R _var p q_mordinos_joining_quest = 6 R _param p REPUTATION_MORDINOS - 500 #
-0 43040 R _var p q_mordinos_joining_quest = 6 R _param p REPUTATION_MORDINOS - 500 @
+0 43010 R _var p q_nr_mord_joining_quest = 6 R _param p REPUTATION_MORDINOS - 500 #
+0 43020 R _var p q_nr_mord_joining_quest = 6 R _param p REPUTATION_MORDINOS - 500 #
+0 43030 R _var p q_nr_mord_joining_quest = 6 R _param p REPUTATION_MORDINOS - 500 #
+0 43040 R _var p q_nr_mord_joining_quest = 6 R _param p REPUTATION_MORDINOS - 500 @
 54 44000 None 0 #
-0 44010 R _param p ST_EXPERIENCE + 1500 R _item p PID_10MM_SMG + 1 R _item p PID_JET + 10 R _item p PID_10MM_JHP + 100 R _var p q_mordinos_joining_quest = 4 R _param p REPUTATION_MORDINOS + 200 #
-0 44020 R _param p ST_EXPERIENCE + 1500 R _item p PID_10MM_SMG + 1 R _item p PID_JET + 10 R _item p PID_10MM_JHP + 100 R _var p q_mordinos_joining_quest = 4 R _param p REPUTATION_MORDINOS + 200 R _script dialog@r_AddMember 0  @
+0 44010 R _param p ST_EXPERIENCE + 1500 R _item p PID_10MM_SMG + 1 R _item p PID_JET + 10 R _item p PID_10MM_JHP + 100 R _var p q_nr_mord_joining_quest = 4 R _param p REPUTATION_MORDINOS + 200 #
+0 44020 R _param p ST_EXPERIENCE + 1500 R _item p PID_10MM_SMG + 1 R _item p PID_JET + 10 R _item p PID_10MM_JHP + 100 R _var p q_nr_mord_joining_quest = 4 R _param p REPUTATION_MORDINOS + 200 R _script dialog@r_AddMember 0  @
 55 45000 None 0 #
-0 45010 R _param p ST_EXPERIENCE + 2000 R _item p PID_TOMMY_GUN + 1 R _item p PID_45_CALIBER_AMMO + 100 R _var p q_mordinos_joining_quest = 4 R _param p REPUTATION_MORDINOS + 300 R _item p PID_JET + 5 #
-0 45020 R _param p ST_EXPERIENCE + 2000 R _item p PID_TOMMY_GUN + 1 R _item p PID_45_CALIBER_AMMO + 100 R _var p q_mordinos_joining_quest = 4 R _param p REPUTATION_MORDINOS + 300 R _item p PID_JET + 5 @
+0 45010 R _param p ST_EXPERIENCE + 2000 R _item p PID_TOMMY_GUN + 1 R _item p PID_45_CALIBER_AMMO + 100 R _var p q_nr_mord_joining_quest = 4 R _param p REPUTATION_MORDINOS + 300 R _item p PID_JET + 5 #
+0 45020 R _param p ST_EXPERIENCE + 2000 R _item p PID_TOMMY_GUN + 1 R _item p PID_45_CALIBER_AMMO + 100 R _var p q_nr_mord_joining_quest = 4 R _param p REPUTATION_MORDINOS + 300 R _item p PID_JET + 5 @
 56 46000 None 0 #
-0 46010 R _param p ST_EXPERIENCE + 3000 R _item p PID_GREASE_GUN + 1 R _item p PID_45_CALIBER_AMMO + 100 R _var p q_mordinos_joining_quest = 4 R _param p REPUTATION_MORDINOS + 400 R _item p PID_JET + 8 #
-0 46020 R _param p ST_EXPERIENCE + 3000 R _item p PID_GREASE_GUN + 1 R _item p PID_45_CALIBER_AMMO + 100 R _var p q_mordinos_joining_quest = 4 R _param p REPUTATION_MORDINOS + 400 R _item p PID_JET + 8 @
+0 46010 R _param p ST_EXPERIENCE + 3000 R _item p PID_GREASE_GUN + 1 R _item p PID_45_CALIBER_AMMO + 100 R _var p q_nr_mord_joining_quest = 4 R _param p REPUTATION_MORDINOS + 400 R _item p PID_JET + 8 #
+0 46020 R _param p ST_EXPERIENCE + 3000 R _item p PID_GREASE_GUN + 1 R _item p PID_45_CALIBER_AMMO + 100 R _var p q_nr_mord_joining_quest = 4 R _param p REPUTATION_MORDINOS + 400 R _item p PID_JET + 8 @
 57 47000 None 0 #
-0 47010 R _param p ST_EXPERIENCE + 4500 R _item p PID_44_MAGNUM_SPEEDLOADER + 1 R _item p PID_44_MAGNUM_JHP + 100 R _var p q_mordinos_joining_quest = 4 R _param p REPUTATION_MORDINOS + 500 R _item p PID_M60 + 1 R _item p PID_7_62MM_AMMO + 30 R _item p PID_JET + 12 #
-0 47020 R _param p ST_EXPERIENCE + 4500 R _item p PID_LIGHT_SUPPORT_WEAPON + 1 R _item p PID_223_FMJ + 100 R _item p PID_44_MAGNUM_SPEEDLOADER + 1 R _item p PID_44_MAGNUM_JHP + 100 R _var p q_mordinos_joining_quest = 4 R _param p REPUTATION_MORDINOS + 500 R _item p PID_JET + 12 @
+0 47010 R _param p ST_EXPERIENCE + 4500 R _item p PID_44_MAGNUM_SPEEDLOADER + 1 R _item p PID_44_MAGNUM_JHP + 100 R _var p q_nr_mord_joining_quest = 4 R _param p REPUTATION_MORDINOS + 500 R _item p PID_M60 + 1 R _item p PID_7_62MM_AMMO + 30 R _item p PID_JET + 12 #
+0 47020 R _param p ST_EXPERIENCE + 4500 R _item p PID_LIGHT_SUPPORT_WEAPON + 1 R _item p PID_223_FMJ + 100 R _item p PID_44_MAGNUM_SPEEDLOADER + 1 R _item p PID_44_MAGNUM_JHP + 100 R _var p q_nr_mord_joining_quest = 4 R _param p REPUTATION_MORDINOS + 500 R _item p PID_JET + 12 @
 58 48000 None 0 #
 4 48010 #
 0 48020 &

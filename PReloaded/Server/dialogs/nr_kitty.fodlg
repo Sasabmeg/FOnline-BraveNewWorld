@@ -16,15 +16,15 @@ lang=engl
 6 2010 #
 12 2020 #
 22 2030 D _item p PID_CATS_PAW > 0 #
-29 2040 D _var p nr_wright_boozequest = 3 #
-30 2050 D _var n acquaintance = 0 D _var p q_mordinos_joining_quest = 1 R _var n acquaintance = 1 #
+29 2040 D _var p q_nr_wright_booze = 3 #
+30 2050 D _var n acquaintance = 0 D _var p q_nr_mord_joining_quest = 1 R _var n acquaintance = 1 #
 0 2060 @
 3 3000 None 0 #
 6 3010 #
 12 3020 #
 22 3030 D _item p PID_CATS_PAW > 0 #
-29 3040 D _var p nr_wright_boozequest = 3 #
-30 3050 D _var n acquaintance = 0 D _var p q_mordinos_joining_quest = 1 R _var n acquaintance = 1 #
+29 3040 D _var p q_nr_wright_booze = 3 #
+30 3050 D _var n acquaintance = 0 D _var p q_nr_mord_joining_quest = 1 R _var n acquaintance = 1 #
 0 3060 @
 4 4000 None 0 #
 5 4010 #
@@ -81,7 +81,7 @@ lang=engl
 12 15060 #
 0 15070 @
 16 16000 None 0 #
-17 16010 D _item p PID_BOTTLE_CAPS > 999 R _var p nr_catspaw_paid = 5 R _var p sex_exp + 30 R _script dialog@r_RemoveMoney 1 1000 #
+17 16010 D _item p PID_BOTTLE_CAPS > 999 R _var p q_nr_catspaw_paid = 5 R _var p sex_exp + 30 R _script dialog@r_RemoveMoney 1 1000 #
 12 16020 #
 0 16030 @
 17 17000 None 0 #
@@ -112,7 +112,7 @@ lang=engl
 28 28000 None 0 #
 0 28010 @
 29 29000 None 0 #
-0 29010 R _var p nr_wright_boozequest = 4 @
+0 29010 R _var p q_nr_wright_booze = 4 @
 30 30000 None 0 #
 31 30010 @
 31 31000 None 0 #
@@ -125,7 +125,7 @@ lang=engl
 34 34000 None 0 #
 0 34010 @
 35 35000 None 0 #
-36 35010 R _var p q_mordinos_induction_doctor + 50 @
+36 35010 R _var p q_nr_mord_induction_doctor + 50 @
 36 36000 None 0 #
 0 36010 @
 500 37000 None 0 #

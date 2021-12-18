@@ -6,7 +6,7 @@ lang=engl
 [dialog]
 &
 1 1000 None 0 #
-100 1010 D _var p q_bos_initiatequest_start = 16 D _var p q_vegeir_bos = 0 #
+100 1010 D _var p q_bos_initiate_start = 16 D _var p q_bos_vegeir = 0 #
 2 1020 D _var n name_mem_player_npc = 0 R _var n name_mem_player_npc = 1 #
 3 1030 D _var n name_mem_player_npc = 1 D _param p REPUTATION_SLAGS > 1499 #
 5 1040 D _var n name_mem_player_npc = 1 D _param p REPUTATION_SLAGS < 1500 D _param p REPUTATION_SLAGS > -500 #
@@ -115,11 +115,11 @@ lang=engl
 100 33000 None 0 #
 101 33010 @
 101 34000 None 0 #
-7 34010 R _param p REPUTATION_SLAGS + 500 R _var p q_vegeir_bos = 1 #
-7 34020 R _var p q_bos_initiatequest_start = 17 R _param p REPUTATION_SLAGS - 500 R _var p q_vegeir_bos = 1 #
+7 34010 R _param p REPUTATION_SLAGS + 500 R _var p q_bos_vegeir = 1 #
+7 34020 R _var p q_bos_initiate_start = 17 R _param p REPUTATION_SLAGS - 500 R _var p q_bos_vegeir = 1 #
 102 34030 @
 102 35000 None 0 #
-0 35010 R _param p REPUTATION_SLAGS + 400 R _var p q_vegeir_bos = 1 &
+0 35010 R _param p REPUTATION_SLAGS + 400 R _var p q_bos_vegeir = 1 &
 
 [engl]
 {100}{}{Vegeir}

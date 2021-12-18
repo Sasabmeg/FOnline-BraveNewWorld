@@ -7,14 +7,14 @@ lang=engl russ
 [dialog]
 &
 1 1000 None 0 #
-4 1010 D _var p noob_camp_plague { 2 #
-2 1020 D _var p noob_camp_plague = 3 #
-4 1030 D _var p noob_camp_plague = 99 @
+4 1010 D _var p q_lp_plague { 2 #
+2 1020 D _var p q_lp_plague = 3 #
+4 1030 D _var p q_lp_plague = 99 @
 4 2000 None 0 @
 2 3000 None 0 #
 3 3010 @
 3 4000 None 0 #
-0 4010 R _script dialog@r_AddExperience 1 800 R _item p PID_BEER + 1 R _var p noob_camp_plague = 99 &
+0 4010 R _script dialog@r_AddExperience 1 800 R _item p PID_BEER + 1 R _var p q_lp_plague = 99 &
 
 [engl]
 {100}{}{Lander's Point Bartender}

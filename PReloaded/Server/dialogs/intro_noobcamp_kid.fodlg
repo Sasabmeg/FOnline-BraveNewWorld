@@ -3,7 +3,7 @@ hungry kid
 
 easter egg -> wargames quotes
 
-noob_camp_kid
+q_lp_kid
 23009
 
 [data]
@@ -12,9 +12,9 @@ lang=engl russ
 [dialog]
 &
 1 1000 None 0 #
-4 1010 D _var p name_mem_npc_player = 0 D _var p noob_camp_kid { 1 #
-11 1020 D _var p name_mem_npc_player = 1 D _var p noob_camp_kid < 99 #
-18 1030 D _var p noob_camp_kid = 99 @
+4 1010 D _var p name_mem_npc_player = 0 D _var p q_lp_kid { 1 #
+11 1020 D _var p name_mem_npc_player = 1 D _var p q_lp_kid < 99 #
+18 1030 D _var p q_lp_kid = 99 @
 4 2000 None 0 #
 2 2010 #
 3 2020 #
@@ -35,11 +35,11 @@ lang=engl russ
 8 8000 None 0 #
 9 8010 @
 9 9000 None 0 #
-10 9010 R _var p name_mem_npc_player = 1 R _var p noob_camp_kid = 2 #
-10 9020 R _var p name_mem_npc_player = 1 R _var p noob_camp_kid = 2 @
+10 9010 R _var p name_mem_npc_player = 1 R _var p q_lp_kid = 2 #
+10 9020 R _var p name_mem_npc_player = 1 R _var p q_lp_kid = 2 @
 10 10000 None 0 @
 11 11000 None 0 #
-13 11010 D _item p PID_MUTATED_FRUIT > 4 R _item p PID_MUTATED_FRUIT - 5 R _script dialog@r_AddExperience 1 200 R _var p noob_camp_kid = 99 #
+13 11010 D _item p PID_MUTATED_FRUIT > 4 R _item p PID_MUTATED_FRUIT - 5 R _script dialog@r_AddExperience 1 200 R _var p q_lp_kid = 99 #
 12 11020 @
 14 12000 None 0 #
 15 12010 @

@@ -9,9 +9,9 @@ lang=engl
 1 1000 None 0 #
 2 1010 @
 2 2000 None 0 #
-63 2010 D _var p q_cock_fuelcontroller = 1 D _item p PID_CAR_FUEL_CELL_CONTROLLER > 0 #
-63 2020 D _var p q_cock_fuelcontroller = 2 D _item p PID_CAR_FUEL_CELL_CONTROLLER > 0 #
-60 2030 D _var p q_cock_fuelcontroller = 0 #
+63 2010 D _var p q_nr_cock_fuelcontroller = 1 D _item p PID_CAR_FUEL_CELL_CONTROLLER > 0 #
+63 2020 D _var p q_nr_cock_fuelcontroller = 2 D _item p PID_CAR_FUEL_CELL_CONTROLLER > 0 #
+60 2030 D _var p q_nr_cock_fuelcontroller = 0 #
 10 2040 R _script car_seller@r_CheckCar 1 0 #
 30 2050 #
 0 2060 @
@@ -40,23 +40,23 @@ lang=engl
 60 16000 None 0 #
 61 16010 @
 61 17000 None 0 #
-0 17010 R _var p q_cock_fuelcontroller = 1 #
+0 17010 R _var p q_nr_cock_fuelcontroller = 1 #
 62 17020 @
 62 18000 None 0 #
 61 18010 #
 0 18020 @
 63 19000 car_seller@dlg_PrepareBuy 0 #
-63 19010 D _script car_seller@d_CanAffordCockroach 0  D _item p PID_CAR_FUEL_CELL_CONTROLLER > 0 R _script car_seller@r_BuyCockroach 1 0 R _item p PID_CAR_FUEL_CELL_CONTROLLER - 1 R _var p q_cock_fuelcontroller = 2 #
+63 19010 D _script car_seller@d_CanAffordCockroach 0  D _item p PID_CAR_FUEL_CELL_CONTROLLER > 0 R _script car_seller@r_BuyCockroach 1 0 R _item p PID_CAR_FUEL_CELL_CONTROLLER - 1 R _var p q_nr_cock_fuelcontroller = 2 #
 0 19020 D _script car_seller@d_CanNotAffordCockroach 0  #
 65 19030 #
 64 19040 @
 64 20000 None 0 #
 0 20010 @
 65 21000 car_seller@dlg_PrepareBuy 0 #
-65 21010 D _item p PID_CAR_FUEL_CELL_CONTROLLER > 0 D _script car_seller@d_CanAffordPoliceCar 0  R _script car_seller@r_BuyPoliceCar 1 0 R _item p PID_CAR_FUEL_CELL_CONTROLLER - 1 R _var p q_cock_fuelcontroller = 2 #
-65 21020 D _script car_seller@d_CanAffordMotorcycle 0  D _item p PID_CAR_FUEL_CELL_CONTROLLER > 0 R _script car_seller@r_BuyMotorcycle 1 0 R _item p PID_CAR_FUEL_CELL_CONTROLLER - 1 R _var p q_cock_fuelcontroller = 2 #
-65 21030 D _script car_seller@d_CanAffordFiretruck 0  D _item p PID_CAR_FUEL_CELL_CONTROLLER > 0 R _var p q_cock_fuelcontroller = 2 R _script car_seller@r_BuyFiretruck 1 0 R _item p PID_CAR_FUEL_CELL_CONTROLLER - 1 #
-65 21040 D _script car_seller@d_CanAffordTruck 0  D _item p PID_CAR_FUEL_CELL_CONTROLLER > 0 R _item p PID_CAR_FUEL_CELL_CONTROLLER - 1 R _script car_seller@r_BuyTruck 1 0 R _var p q_cock_fuelcontroller = 2 #
+65 21010 D _item p PID_CAR_FUEL_CELL_CONTROLLER > 0 D _script car_seller@d_CanAffordPoliceCar 0  R _script car_seller@r_BuyPoliceCar 1 0 R _item p PID_CAR_FUEL_CELL_CONTROLLER - 1 R _var p q_nr_cock_fuelcontroller = 2 #
+65 21020 D _script car_seller@d_CanAffordMotorcycle 0  D _item p PID_CAR_FUEL_CELL_CONTROLLER > 0 R _script car_seller@r_BuyMotorcycle 1 0 R _item p PID_CAR_FUEL_CELL_CONTROLLER - 1 R _var p q_nr_cock_fuelcontroller = 2 #
+65 21030 D _script car_seller@d_CanAffordFiretruck 0  D _item p PID_CAR_FUEL_CELL_CONTROLLER > 0 R _var p q_nr_cock_fuelcontroller = 2 R _script car_seller@r_BuyFiretruck 1 0 R _item p PID_CAR_FUEL_CELL_CONTROLLER - 1 #
+65 21040 D _script car_seller@d_CanAffordTruck 0  D _item p PID_CAR_FUEL_CELL_CONTROLLER > 0 R _item p PID_CAR_FUEL_CELL_CONTROLLER - 1 R _script car_seller@r_BuyTruck 1 0 R _var p q_nr_cock_fuelcontroller = 2 #
 0 21050 &
 
 [engl]
