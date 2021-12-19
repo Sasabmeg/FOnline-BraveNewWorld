@@ -26,8 +26,10 @@ lang=engl
 3 2010 #
 4 2020 #
 9 2030 D _var p q_mod_meat_jerky = 1 D _item p PID_MEAT_BAG > 0 R _var p q_mod_meat_jerky = 2 R _item p PID_MEAT_BAG - 1 R _param p ST_EXPERIENCE + 745 R _script dialog@r_AddMoney 1 350 #
-19 2040 D _var p q_hub_iguana_pete_message = 5 #
-0 2050 @
+11 2040 D _var p q_hub_iguana_pete_message = 0 #
+13 2050 D _var p q_hub_iguana_pete_message = 10 #
+19 2060 D _var p q_hub_iguana_pete_message = 5 #
+0 2070 @
 3 3000 None 0 #
 6 3010 #
 4 3020 #
@@ -67,8 +69,9 @@ lang=engl
 14 14010 #
 0 14020 @
 14 15000 None 0 #
-16 15010 #
-15 15020 R _var p name_mem_npc_player = 1 @
+16 15010 D _script dialog@d_IsLocationVisible 1 10 #
+15 15020 D _var p q_hub_iguana_pete_message = 5 R _var p name_mem_npc_player = 1 #
+0 15030 @
 15 16000 None 0 @
 16 17000 None 0 #
 17 17010 #
@@ -94,8 +97,10 @@ lang=engl
 {2010}{}{Iguana Bob?}
 {2020}{}{Yeah, I'd love an iguana-on-a-stick!}
 {2030}{}{I'm actually here with a delivery of meat jerky from Modoc. Grisham sent me.}
-{2040}{}{I'm sorry Pete. Your son was squished by a by a Super Mutant and strung up at Golgotha. The wasteland can be harsh sometimes.}
-{2050}{}{Uhm no, thanks. I have other stuff to do.}
+{2040}{}{Why so glum?}
+{2050}{}{Still looking for your son?}
+{2060}{}{I'm sorry Pete. Your son was squished by a by a Super Mutant and strung up at Golgotha. The wasteland can be harsh sometimes.}
+{2070}{}{Uhm no, thanks. I have other stuff to do.}
 {3000}{}{Bob? No, my name is not Bob. My name is Pete. Iguana Pete! I come from a small settlement called Rattleville in the east of here.}
 {3010}{}{So... uhm... Pete. Why is Bob's Iguana Bits written on the board?}
 {3020}{}{Oh, ok. Then give me an iguana-on-a-stick, Pete.}
@@ -137,6 +142,7 @@ lang=engl
 {15000}{}{What?}
 {15010}{}{Well, he actually doesn't look like you that much... But he has a stand that says 'Son of Bob' and he sells dead iguanas.}
 {15020}{}{Yeah, but he didn't look so good. He was dangling from a cross in Golgotha with his guts all hangin' out... real shame... I got his shoes, do you wanna see?}
+{15030}{}{Never mind.}
 {16000}{}{That's horrible, you're horrible! Get out of here!}
 {17000}{}{That can't be my son, I'm Pete, Iguana Pete, just look at my sign. P...E...T... uhhh Bob? Oh, it must be him! Amazing! You've made my day!... I have to get a message to him, do you think you could visit him for me? I can pay you.}
 {17010}{}{Sure, caps are always good.}
