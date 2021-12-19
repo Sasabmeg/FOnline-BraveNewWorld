@@ -11,12 +11,13 @@ lang=engl
 4 1020 D _var p q_hub_wasteland_band = 7 #
 5 1030 D _var p q_hub_wasteland_band } 1 D _var p q_hub_wasteland_band { 5 #
 19 1040 D _var p q_hub_wasteland_band = 6 #
-3 1050 R _var p q_hub_wasteland_band = 0 @
+3 1050 D _var p q_hub_wasteland_band = 10 D or D _var p q_hub_wasteland_band = 0 @
 3 2000 None 0 #
-8 2010 D _param p ST_INTELLECT } 4 #
+8 2010 D _var p q_hub_wasteland_band = 10 #
 8 2020 D _param p ST_INTELLECT } 4 #
-12 2030 D _param p ST_INTELLECT < 4 #
-0 2040 D _param p ST_INTELLECT } 4 @
+8 2030 D _param p ST_INTELLECT } 4 #
+12 2040 D _param p ST_INTELLECT < 4 #
+0 2050 D _param p ST_INTELLECT } 4 @
 8 3000 None 0 #
 9 3010 #
 10 3020 #
@@ -42,7 +43,7 @@ lang=engl
 2 11000 None 0 @
 13 12000 None 0 @
 15 13000 None 0 #
-16 13010 D _param p SK_SPEECH } 60 #
+16 13010 D _param p SK_BARTER } 30 #
 0 13020 R _var p q_hub_wasteland_band = 3 R _param p ST_EXPERIENCE + 450 R _script dialog@r_AddMoney 1 250 @
 16 14000 None 0 #
 0 14010 R _var p q_hub_wasteland_band = 3 R _param p ST_EXPERIENCE + 950 R _script dialog@r_AddMoney 1 400 @
@@ -53,13 +54,13 @@ lang=engl
 19 17000 None 0 #
 20 17010 @
 20 18000 None 0 #
-4 18010 R _var p q_hub_wasteland_band = 7 R _param p ST_EXPERIENCE + 1500 R _item p PID_CIGARETTES + 5 R_item p PID_SCOUT_HANDBOOK + 1 R _param p REPUTATION_HUB + 250 R _script dialog@r_AddMoney 1 500 #
+4 18010 R _var p q_hub_wasteland_band = 7 R _param p ST_EXPERIENCE + 1500 R _item p PID_CIGARETTES + 5 R _item p PID_SCOUT_HANDBOOK + 1 R _param p REPUTATION_HUB + 250 R _script dialog@r_AddMoney 1 500 #
 21 18020 #
 22 18030 D _param p SK_SPEECH } 85 @
 21 19000 None 0 #
-0 19010 R _item p PID_CIGARETTES + 5 R _var p q_hub_wasteland_band = 7 R _param p ST_EXPERIENCE + 1500 R _param p REPUTATION_HUB + 250 R_item p PID_SCOUT_HANDBOOK + 1 R _item p PID_CURED_LEATHER_ARMOR + 1 @
+0 19010 R _item p PID_CIGARETTES + 5 R _var p q_hub_wasteland_band = 7 R _param p ST_EXPERIENCE + 1500 R _param p REPUTATION_HUB + 250 R _item p PID_SCOUT_HANDBOOK + 1 R _item p PID_CURED_LEATHER_ARMOR + 1 @
 22 20000 None 0 #
-0 20010 R _param p REPUTATION_HUB + 250 R _var p q_hub_wasteland_band = 7 R _item p PID_CIGARETTES + 5 R_item p PID_SCOUT_HANDBOOK + 1 R _item p PID_STIMPAK + 3 R _script dialog@r_AddMoney 1 750 R _param p ST_EXPERIENCE + 1500 &
+0 20010 R _param p REPUTATION_HUB + 250 R _var p q_hub_wasteland_band = 7 R _item p PID_CIGARETTES + 5 R _item p PID_SCOUT_HANDBOOK + 1 R _item p PID_STIMPAK + 3 R _script dialog@r_AddMoney 1 750 R _param p ST_EXPERIENCE + 1500 &
 
 [engl]
 {100}{}{Mick}
@@ -72,10 +73,11 @@ lang=engl
 {1040}{}{Non-Hostile, Found them all.}
 {1050}{}{Non-Hostile, Quest Not Started}
 {2000}{}{I've been lookin' around for someone to help me. Are you a cool enough cat to give me a hand?}
-{2010}{}{Yeah, man. You seem like you've got big plans, and I want in. Name's @pname@.}
-{2020}{}{Depends on what you need. @pname@. Nice to meet you.}
-{2030}{}{I's no cat. And yoo can't have one of my hands! I only haf too!}
-{2040}{}{Get away from me you damn junkie.}
+{2010}{}{I read your note on the billboard, tell me more.}
+{2020}{}{Yeah, man. You seem like you've got big plans, and I want in. Name's @pname@.}
+{2030}{}{Depends on what you need. @pname@. Nice to meet you.}
+{2040}{}{I's no cat. And yoo can't have one of my hands! I only haf too!}
+{2050}{}{Get away from me you damn junkie.}
 {3000}{}{Mama named me Michael, but everyone calls me Mick. How do you feel about music?
 }
 {3010}{}{Music's the expression of the soul, man.}
@@ -109,7 +111,7 @@ lang=engl
 {14010}{}{Now we're talking.}
 {15000}{}{I couldn't have found anyone better to spread the word. We're almost done here. One more guy, but it's gonna be a trip.}
 {15010}{}{I'm here, aren't I? What's his name?}
-{16000}{}{Keith, the most important part of this ensemble. Hangs around the Harp up in Gecko. Take 400 with you - he's gonna be hard to persuade.}
+{16000}{}{Keith, the most important part of this ensemble. Hangs around the Harp up in Gecko. Take 500 with you - he's gonna be hard to persuade.}
 {16010}{}{Time to put a band together.}
 {17000}{}{That look on your face tells me we're in business.}
 {17010}{}{Yes we are. And business should be good.}
