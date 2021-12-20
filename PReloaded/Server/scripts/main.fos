@@ -15,6 +15,7 @@
 #include "_vals.fos"
 
 #include "broadcast_h.fos"
+#include "caravans_h.fos"
 #include "config_h.fos"
 #include "config_file_h.fos"
 #include "critter_age_h.fos"
@@ -381,6 +382,7 @@ bool start()
     InitCaveRandomization();
 //    InitAmmoLog();
     InitCaveLog();
+	    InitCaravans();     // Uncomment if you want to have one caravan running Hub-Adytum-Lost Hills
     // reputations, alliances
     InitGroups();
     // scenariooos
@@ -2663,7 +2665,7 @@ void critter_dead(Critter& cr, Critter@ killer)
                         scriptName = GetScriptName(crits[i].GetScriptId());
 
                     //caravan guards will not loot
-                    if(crits[i].GetScriptId() == 0)
+                    if(crits[i].GetScriptId() == 0 || !(scriptName == "caravans@_CaravanGuard" || scriptName == "caravans@_CaravanDriver"))
                     {
                         DPlayerLog(cr, "Critter " + crits[i].Id + " will loot me.");
                         AddWalkPlane(crits[i], 0, PLANE_LOOT, cr.Id, cr.HexX, cr.HexY, 6, true, 1);
