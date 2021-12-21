@@ -197,7 +197,7 @@ class CCaravanStation
         @MapPtr = GetMapByPid(map_pid, 0);
         if(!valid(MapPtr))
         {
-            WLog("trains", "wrong map pid=" + map_pid, DEBUG_ERROR);
+            WLog("caravan stations", "wrong map pid=" + map_pid, DEBUG_ERROR);
             return;
         }
         @LocPtr = MapPtr.GetLocation();
@@ -250,6 +250,7 @@ class CaravanManager
         array<int>@ data2;
         for(uint i = 0, j = data.length(); i < j; i++)
         {
+            Log("i = " + i + ", data[i] = " + data[i]);
             CCaravanStation@ station = @CCaravanStation(i, data[i]);
             Stations.insertLast(station);
         }
