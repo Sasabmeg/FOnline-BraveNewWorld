@@ -1,0 +1,107 @@
+[comment]
+
+
+[data]
+lang=engl
+
+[dialog]
+&
+1 1000 None 0 #
+9 1010 D _var p name_mem_npc_player = 1 D _var p q_hub_sadwife < 3 #
+2 1020 D _var p name_mem_npc_player = 0 D _param p ST_INTELLECT > 3 #
+15 1030 @
+2 2000 None 0 #
+4 2010 #
+3 2020 #
+4 2030 #
+13 2040 #
+13 2050 #
+0 2060 @
+3 3000 None 0 #
+4 3010 #
+0 3020 @
+4 4000 None 0 #
+5 4010 #
+0 4020 @
+5 5000 None 0 #
+6 5010 @
+6 6000 None 0 #
+7 6010 #
+0 6020 @
+7 7000 None 0 #
+8 7010 #
+14 7020 @
+8 8000 None 0 #
+0 8010 R _var p name_mem_npc_player = 1 R _var p q_hub_sadwife = 1 @
+9 9000 None 0 #
+0 9010 #
+10 9020 D _var p q_hub_sadwife = 2 @
+10 10000 None 0 #
+16 10010 #
+11 10020 #
+13 10030 @
+11 11000 None 0 #
+12 11010 R _param p ST_EXPERIENCE + 250 R _var p q_hub_sadwife = 3 R _param p REPUTATION_HUB + 10 #
+12 11020 R _param p REPUTATION_HUB - 10 R _param p ST_EXPERIENCE + 300 R _var p q_hub_sadwife = 4 @
+12 12000 None 0 #
+14 12010 R _var p q_hub_sadwife = 3 R _param p REPUTATION_HUB + 10 #
+13 12020 R _param p REPUTATION_HUB - 10 R _var p q_hub_sadwife = 4 @
+13 13000 None 0 @
+14 14000 None 0 @
+15 15000 None 0 @
+16 16000 None 0 #
+11 16010 #
+14 16020 &
+
+[engl]
+{100}{}{Sad Wife}
+{200}{}{You see a sad wife.}
+{210}{}{Looks like she's been crying for days, and nobody seems to care.}
+{240}{}{Now she's dead. Huh.}
+{1000}{}{Predialogue installations}
+{1010}{}{Have you found him yet?}
+{1020}{}{Answer text}
+{1030}{}{floating}
+{2000}{}{[This woman is in tears, something is obviously very wrong with her. Maybe you could help?]}
+{2010}{}{Are you okay?}
+{2020}{}{Who are you?}
+{2030}{}{The world is a dark place, but I can help make it brighter.}
+{2040}{}{I bet your tears are quite tasty!}
+{2050}{}{Pfft! You call that sadness?! Cry woman! Cry!}
+{2060}{}{[You slowly move away from her]}
+{3000}{}{Please just go away, I'm not in the mood to talk to anybody!}
+{3010}{}{Just tell me what's wrong, I might be able to help you.}
+{3020}{}{Fine.}
+{4000}{}{Joseph? .... Oh, I am sorry. I just thought... No, nothing. Please go away.}
+{4010}{}{Who's Joseph? Is that why you're crying?}
+{4020}{}{Oh get over it! [You leave]}
+{5000}{}{Joseph? He's my husband. He told me that he'd only be gone for a few weeks! But it's been almost a month and he hasn't come back yet!}
+{5010}{}{Where was he going?}
+{6000}{}{He wanted to try his luck scavenging in the Boneyard, we've all heard the rumours.}
+{6010}{}{What rumors?}
+{6020}{}{That's too bad, see ya.}
+{7000}{}{The Boneyard is full of forgotten loot, there's thousands of buildings that no one's searched in years. That's why Joseph left.  He was looking for a footlocker rumoured to be full of caps.  }
+{7010}{}{I'll find him. But where in the Boneyard could he be? It's been a month. }
+{7020}{}{Forgotten loot?! Thanks! See ya!}
+{8000}{}{Really? You would do this? Thank you! I remember him talking about a scavenger camp outside of Adytum, he said that's where he would be sleeping. My cousin used to unload crates there, made quite the living. Joseph is probably over there! Working so hard he forgot how long it's been!}
+{8010}{}{Sounds like a good place to start. Don't worry ma'am I'll find your husband. }
+{9000}{}{Have you found my husband?!}
+{9010}{}{Not yet, he could be anywhere by now. But I'm still looking, don't give up!}
+{9020}{}{I've found your husband!}
+{10000}{}{Really? Where?! Tell me! [She looks at you with big sad eyes]}
+{10010}{}{Your husband is cheating on you with another man! I caught them in the act, it was gross! I'm sorry ma'am, but your husband is... How do I put this? Freddie Mercury.}
+{10020}{}{Unfortunately ma'am, he was shot and hung from a lamp post for stealing from the scavengers. He was dead by the time I got there, I'm sorry there was nothing I could do.  }
+{10030}{}{Just kidding!}
+{11000}{}{What? Oh... oh... oh god, no. Joseph, my Joseph... Nooooooooo. [She breaks down to the ground, crying.]}
+{11010}{}{[Console the woman and leave]}
+{11020}{}{You should have seen him! Hanging from that lamp post with all those bullets and shit. Hilarious! Just dangling there like a marionette, swaying to the symphony.}
+{12000}{}{[She can't stop crying and sobs, while crawling on the ground.]}
+{12010}{}{I'll leave you to your mourning. }
+{12020}{}{I tell you, BIG holes in his chest. You could put your entire hand through one! }
+{13000}{}{You goddamn bastard! Get out!}
+{14000}{}{*sob*}
+{15000}{}{Leave me alone! *sobs*@@*sobs* Leave me alone!}
+{16000}{}{My Joseph? I can't believe this! He can't even sing! Get the hell out of here! You bastard!}
+{16010}{}{Sorry ma'am I couldn't help myself. Joseph was actually shot and hung from a lamp post for stealing from the scavengers. I'm sorry but he's dead.}
+{16020}{}{Look your husbands a flit okay? Get over it. }
+

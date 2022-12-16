@@ -19,10 +19,18 @@
 #define QE_ADVENTURE9              (23194)
 #define QE_ADVENTURE11             (23196)
 
+//  FOnline: 2238 - used but useless
 bool s_Billboard(Critter& player, Scenery& terminal, int skill, Item@ item)
 {
     if(!player.IsPlayer() || skill != -1 || valid(item))
         return false;
 
+    return true;
+}
+
+// FOClassic: BNW
+bool s_Hub1(Critter& player, Scenery& console, int skill, Item@ item)
+{
+	RunDialog(player, DIALOG_hub_billboard1, player.HexX, player.HexY, true);
     return true;
 }

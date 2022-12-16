@@ -1,0 +1,52 @@
+[comment]
+
+
+[data]
+lang=engl
+
+[dialog]
+&
+1 1000 None 0 #
+2 1010 D _script dialog@d_WeaponInHand 0  #
+500 1020 D _script perks@d_PerkCheck 1 335 #
+3 1030 @
+2 2000 None 0 @
+3 3000 None 0 #
+4 3010 @
+4 4000 None 0 #
+3 4010 D _item p PID_BOTTLE_CAPS > 4999 R _script dialog@r_RemoveMoney 1 5000 R _script dialog_altruist@r_Give 1 3 #
+0 4020 @
+500 5000 None 0 #
+501 5010 #
+0 5020 @
+501 6000 None 0 #
+502 6010 R _param p PE_SPEAKER = 1 #
+502 6020 R _param p PE_SPEAKER = 1 #
+0 6030 @
+502 7000 None 0 #
+0 7010 &
+
+[engl]
+{100}{}{Greeter}
+{200}{}{You see the Cathedral Greeter.}
+{210}{}{He is the official greeter of the Cathedral. You wonder if they also have a hunchback somewhere around here.}
+{1000}{}{Initial preferences}
+{1010}{}{weapons}
+{1020}{}{Speaker Perk ** DO NOT CHANGE THE POSITION OF ANY ANSWERS IN THIS NODE **}
+{1030}{}{normal+dumb}
+{2000}{}{Please lay down your weapons. This is a peaceful place.}
+{3000}{}{Are you a lost soul?}
+{3010}{}{Yes, indeed. All people started to hate me.}
+{4000}{}{My child, I could give you a blessing, if you are willing to make a small donation of 5000 bottle caps for our charity.}
+{4010}{}{Yes, I need it very much! [You give him 5000 bottle caps. All of your reputations will be set to 0]}
+{4020}{}{Maybe some other time.}
+{5000}{}{Ah, but you my child! Hold it right there! There is something you seek here, if I may make the observation.}
+{5010}{}{I certainly do! I want to learn how to spread a word, like no one before me did!}
+{5020}{}{Nope, this looks just like any other sinkhole in the wasteland. See ya later, grandpa!}
+{6000}{}{And would you be ready to spread our word as well, my child?}
+{6010}{}{Why not? The words spoken here deserve to be echoed out there! [Truth] [Speaker]}
+{6020}{}{If there are words to be heard out there, those are the ones of the Cathedral! [Lie] [Speaker]}
+{6030}{}{That far I could not go. But thank you for your time nonetheless. Farewell.}
+{7000}{}{Then listen and learn. [The Greeter takes you aside to a room. It takes a while before he's finished explaining everything he knows about the arts of speaking.]}
+{7010}{}{For this lesson I will be forever grateful to you. Farewell.}
+

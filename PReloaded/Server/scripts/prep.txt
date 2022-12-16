@@ -375,31 +375,31 @@ import void FeedReputations(Critter@cr,uint index,int cap)from"reputations_modif
 
 bool d_IsOngoing(Critter&player,Critter@npc)
 {
-	player.Say((11),"d_IsOngoing - LVAR_job_lp_caravan_box = "+GetLvar(player,(6502)));
+	player.Say((11),"d_IsOngoing - LVAR_q_lp_caravan_box = "+GetLvar(player,(6502)));
 	return(GetLvar(player,(6502))>=(1));
 }
 
 bool d_NotStarted(Critter&player,Critter@npc)
 {
-	player.Say((11),"d_NotStarted - LVAR_job_lp_caravan_box = "+GetLvar(player,(6502)));
+	player.Say((11),"d_NotStarted - LVAR_q_lp_caravan_box = "+GetLvar(player,(6502)));
 	return(GetLvar(player,(6502))==(0));
 }
 
 bool d_IsDone(Critter&player,Critter@npc)
 {
-	player.Say((11),"d_IsDone - LVAR_job_lp_caravan_box = "+GetLvar(player,(6502)));
+	player.Say((11),"d_IsDone - LVAR_q_lp_caravan_box = "+GetLvar(player,(6502)));
 	return GetLvar(player,(6502))>(3);
 }
 
 void r_StartQuest(Critter&player,Critter@npc)
 {
 	SetLvar(player,(6502),(1));
-	player.Say((11),"r_StartQuest - LVAR_job_lp_caravan_box = "+GetLvar(player,(6502)));
+	player.Say((11),"r_StartQuest - LVAR_q_lp_caravan_box = "+GetLvar(player,(6502)));
 }
 
 void r_CompleteQuest(Critter&player,Critter@npc)
 {
-	player.Say((11),"r_CompleteQuest - LVAR_job_lp_caravan_box = "+GetLvar(player,(6502)));
+	player.Say((11),"r_CompleteQuest - LVAR_q_lp_caravan_box = "+GetLvar(player,(6502)));
 	player.AddItem((41),250);
 	player.StatBase[(76)]+=300;
 	

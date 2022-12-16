@@ -90,7 +90,7 @@
 #define DLGSTR                                   # (dialogId, strNum)(1000000000 + (dialogId) * 100000 + (strNum))
 
 // Critter conditions
-#define CRITTER_CONDITION_NOT_IN_GAME                         (4) // Криттер не в игре
+//#define CRITTER_CONDITION_NOT_IN_GAME            (4) // Криттер не в игре
 
 // Gender
 #define GENDER_IT                                (2)
@@ -188,6 +188,11 @@
 #define SLOT_PERK_COSMETIC_CASE                  (0x02) // +1 charisma to female
 #define SLOT_PERK_MOTION_SENSOR                  (0x04) // +20 outdoorsman
 #define SLOT_PERK_STEALTH_BOY                    (0x08) // +20 sneak
+
+// In SendMessage - Reloaded S2 merge
+#define MESSAGE_TO_VISIBLE_ME                    (0)    // Отослать сообщения всем кто видет криттера.
+#define MESSAGE_TO_IAM_VISIBLE                   (1)    // Отослать сообщения всем кого видит криттер.
+#define MESSAGE_TO_ALL_ON_MAP                    (2)    // Отослать всем на карте.
 
 // more eng-friendly aliases
 #define SENDMESSAGE_TO_WHO_SEES_ME                   (SENDMESSAGE_TO_VISIBLE_ME)

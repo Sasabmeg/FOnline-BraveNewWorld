@@ -1,0 +1,51 @@
+[comment]
+
+
+[data]
+lang=engl
+
+[dialog]
+&
+1 1000 None 0 #
+2 1010 @
+2 2000 None 0 #
+3 2010 #
+4 2020 D _var p q_hub_iguana_pete_message = 10 D or D _var p q_hub_iguana_pete_message { 5 #
+5 2030 D _var p q_hub_wasteland_band { 6 D or D _var p q_hub_wasteland_band = 10 #
+0 2040 @
+3 3000 None 0 #
+2 3010 #
+0 3020 @
+4 4000 None 0 #
+2 4010 D _var p q_hub_iguana_pete_message = 0 R _var p q_hub_iguana_pete_message = 10 #
+2 4020 D _var p q_hub_iguana_pete_message > 0 #
+0 4030 @
+5 5000 None 0 #
+2 5010 D _var p q_hub_wasteland_band = 0 R _var p q_hub_wasteland_band = 10 #
+2 5020 D _var p q_hub_wasteland_band > 0 #
+0 5030 &
+
+[engl]
+{100}{}{Caravan Packer}
+{200}{}{You see a Caravan packer.}
+{210}{}{He looks pretty busy with the caravans.}
+{1000}{}{Predialogue installations}
+{1010}{}{Default}
+{2000}{}{[You see several pinned notes on the billboard, but most of them are very old. Which note would like to examine in detail?]}
+{2010}{}{Unloading the caravan cart }
+{2020}{}{Help find my son. Pete.}
+{2030}{}{Talent required! Mick!}
+{2040}{}{Leave.}
+{3000}{}{Unload the caravan cart. Don't drop boxes! Northern entrance! Good pay!}
+{3010}{}{Yeah, same jobs everywhere....}
+{3020}{}{Leave.}
+{4000}{}{I miss my son. If you travel much maybe you have seen him.
+I'm standing at my iguanna table south side, Iguanna Pete.}
+{4010}{}{Hm, this one's new... maybe I should check this out.}
+{4020}{}{Yeah, I already know about this one.}
+{4030}{}{Leave.}
+{5000}{}{I'm Mick and I am looking for talent. Meet me at the Maltese Falcon if interested.}
+{5010}{}{Hm, this one's new... maybe I should check this out.}
+{5020}{}{Yeah, I already know about this one.}
+{5030}{}{Leave.}
+

@@ -15,6 +15,7 @@
 #include "_vals.fos"
 
 #include "broadcast_h.fos"
+#include "caravans_h.fos"
 #include "config_h.fos"
 #include "config_file_h.fos"
 #include "critter_age_h.fos"
@@ -381,6 +382,7 @@ bool start()
     InitCaveRandomization();
 //    InitAmmoLog();
     InitCaveLog();
+    InitCaravans();     // Uncomment if you want to have one caravan running Hub-Adytum-Lost Hills
     // reputations, alliances
     InitGroups();
     // scenariooos
@@ -1041,7 +1043,7 @@ bool critter_use_item(Critter& cr, Item& item, Critter@ targetCr, Item@ targetIt
     }
 
     // Drugs
-	
+
 	if (pid==PID_CIGARETTES)
 	{
         if(useOnSelf)
@@ -1055,7 +1057,7 @@ bool critter_use_item(Critter& cr, Item& item, Critter@ targetCr, Item@ targetIt
             cr.SayMsg(SAY_NETMSG, TEXTMSG_GAME, STR_USE_NOTHING);
 		return true;
 	}
-	
+
     if(item.GetType() == ITEM_TYPE_DRUG)
     {
 		/* Smoking required a lighter during some dark times
@@ -1074,12 +1076,12 @@ bool critter_use_item(Critter& cr, Item& item, Critter@ targetCr, Item@ targetIt
             cr.SayMsg(SAY_NETMSG, TEXTMSG_GAME, STR_USE_NOTHING);
         return true;
     }
-	
+
 	// Need a light?
 	if (pid==PID_LIGHTER && valid(targetCr) && targetCr.IsPlayer())
 	{
 		Item@ cigs=targetCr.GetItem(0,SLOT_HAND1);
-		if(valid(cigs) && cigs.GetProtoId()==PID_CIGARETTES && !targetCr.IsKnockout() && !targetCr.IsDead()) 
+		if(valid(cigs) && cigs.GetProtoId()==PID_CIGARETTES && !targetCr.IsKnockout() && !targetCr.IsDead())
 		{
 		UseDrug(targetCr, cigs);
 		targetCr.Animate(0, ANIM2_SMOKE , null, true, false);
@@ -1145,7 +1147,7 @@ bool critter_use_item(Critter& cr, Item& item, Critter@ targetCr, Item@ targetIt
         cr.SayMsg(SAY_EMOTE_ON_HEAD, TEXTMSG_TEXT, STR_DICE_THROW, "$result" + uint((item.Id % 6) + 1));
         return true;
     }
-	
+
 	// Cards
 	if (pid==PID_MARKED_DECK_OF_CARDS)
 	{
@@ -1155,13 +1157,13 @@ bool critter_use_item(Critter& cr, Item& item, Critter@ targetCr, Item@ targetIt
 		cr.SayMsg(SAY_EMOTE_ON_HEAD,TEXTMSG_TEXT,STR_CARD_QUEEN_DIAMONDS);
 		return true;
 	}
-	
+
 	if (pid==PID_DECK_OF_CARDS)
 	{
 		cr.SayMsg(SAY_EMOTE_ON_HEAD,TEXTMSG_TEXT,STR_SHOW_CARD+Random(0,51));
 		return true;
 	}
-	
+
 	if (pid==PID_BOTTLE_CAPS)
 	{
 		if(Random(0,1)==0) cr.Say(SAY_EMOTE_ON_HEAD, "Flips a bottle cap: top");
@@ -1195,7 +1197,7 @@ bool critter_use_item(Critter& cr, Item& item, Critter@ targetCr, Item@ targetIt
     {
         return UseProspectMap(cr, item);
     }
-	
+
 	// Book reading
 	if(useOnSelf && IsReadableBook(pid))
 	{
@@ -1331,7 +1333,7 @@ bool critter_use_skill(Critter& cr, int skill, Critter@ targetCr, Item@ targetIt
     {
         if(cr.Mode[MODE_HIDE] != 0 && cr.GetAccess() < ACCESS_TESTER)
             cr.ModeBase[MODE_HIDE] = 0;
-        
+
         return true;                     // Don't allow - hardcoded take all is replaced by unsafe_TakeAll called from button injected at position of original one
         //return false;                  // Allow transactions
     }
@@ -1771,7 +1773,7 @@ void critter_init(Critter& cr, bool firstTime)
     if(cr.IsPlayer())
     {
 		if((GetGroupIndex(cr)<200) && IsLexem(cr,"$faction")) UnsetLexem(cr, "$faction");
-		
+
         AddOnlinePlayer(cr);
         CreateTimeEvent(AFTER(REAL_SECOND(5)), "e_CritterInitRun", cr.Id, false);
         if(GetLvar(cr, LVAR_authed_char) == 0)
@@ -1886,7 +1888,7 @@ void critter_init(Critter& cr, bool firstTime)
 
 		cr.StatBase[ST_ALPHA] = 255;
 		//cr.ModeBase[MODE_HIDE] = Random( 0, 1 );
-		
+
 
         if(cr.IsPlayer())
         {
@@ -1896,7 +1898,7 @@ void critter_init(Critter& cr, bool firstTime)
             for(uint i = TRAIT_BEGIN; i <= TRAIT_END; i++)
                 if(cr.ParamBase[i] != 0)
                     charTraitsStr += " "+i;
-                    
+
             FLog(LOG_CHARS_CREATED, cr.Name+"("+cr.Id+") special: "+charSpecialStr+" traits:"+charTraitsStr+" tags: "+charTagsStr);
         }
 
@@ -1907,7 +1909,7 @@ void critter_init(Critter& cr, bool firstTime)
                 cr.StatBase[i] = CLAMP(cr.StatBase[i], 1, 10);
             cr.StatBase[ST_DAMAGE_TYPE] = DAMAGE_TYPE_NORMAL;
 			cr.ModeBase[MODE_NO_STEAL] = 1; // PvP steal disabled
-            
+
 			SetStartLocation(cr);
             // if(_CritCountItem(cr,PID_RADIO)==0) _CritAddItem(cr,PID_RADIO,1);
 
@@ -1930,7 +1932,7 @@ void critter_init(Critter& cr, bool firstTime)
                 it.Cost = 1;
             }
 			*/
-			
+
             SetGroupIndex(cr, FACTION_NONE);
         }
         else
@@ -2196,7 +2198,7 @@ void critter_finish(Critter& cr, bool toDelete)
                 if(valid(faction) && faction.get_Id() > 199)
                     RemovePlayer(faction.get_Id(), cr.Id);
             }
-    		
+
     		bool bookCreated = false;
     		string delMap = " mapId: 0";
     		string message = cr.Name + "(" + cr.Id + ") level: " + cr.Stat[ST_LEVEL];
@@ -2226,7 +2228,7 @@ void critter_finish(Critter& cr, bool toDelete)
     		message += delMap + " caps: " + delCaps + " book: " + (bookCreated == true ? "YES" : "NO");
     		FLog(LOG_CHARS_DELETED, message);
         }
-		
+
 		// Disabling VTDB for deleted character
 		GameVar@ var = GetLocalVar(LVAR_online_stats, cr.Id);
 		var=0;
@@ -2482,10 +2484,10 @@ void critter_dead(Critter& cr, Critter@ killer)
     /*
     if(valid(map) && (map.GetProtoId() == MAP_noob_camp_2 || map.GetProtoId() == MAP_noob_camp_3))
     {
-        cr.GetItems(SLOT_TROPHY, trophies);     
-            
+        cr.GetItems(SLOT_TROPHY, trophies);
+
         if (trophies.length()<=0)
-        {                   
+        {
             switch(cr.Stat[ST_BASE_CRTYPE])
             {
                 case CRTYPE_BRAHMIN:
@@ -2495,13 +2497,13 @@ void critter_dead(Critter& cr, Critter@ killer)
                 }
                 case CRTYPE_SCORPION:
                 case CRTYPE_SCORPION_SMALL:
-                    _AddTrophy(cr, PID_SCORPION_TAIL, 1, trophies);                 
+                    _AddTrophy(cr, PID_SCORPION_TAIL, 1, trophies);
                     break;
                 case CRTYPE_GECKO_SMALL:
-                    _AddTrophy(cr, PID_GECKO_PELT, 1, trophies);                    
+                    _AddTrophy(cr, PID_GECKO_PELT, 1, trophies);
                     break;
                 case CRTYPE_GECKO:
-                    _AddTrophy(cr, PID_GOLDEN_GECKO_PELT, 1, trophies);                 
+                    _AddTrophy(cr, PID_GOLDEN_GECKO_PELT, 1, trophies);
                     break;
                 case CRTYPE_GECKO_FIRE:
                     _AddTrophy(cr, PID_FIREGECKO_PELT, 1, trophies);
@@ -2583,7 +2585,7 @@ void critter_dead(Critter& cr, Critter@ killer)
         if(isHelmet)// && !_CritHasExtMode(cr, MODE_EXT_NO_DETERIORATION))
         {
             if(helmet.Val0 >= BONUS_ARMOR_CRIT_CHANCE && helmet.Val0 <= BONUS_ARMOR_HEALING_RATE)
-            { 
+            {
                 WearItem(cr, helmet, ((Random(10, 15) + (isArmorDestroyedDeath?5:0))*MAX_DETERIORATION/100));
             }
             else if(Random(0, 100) > 25 || !helmet.IsDeteriorable())
@@ -2596,7 +2598,7 @@ void critter_dead(Critter& cr, Critter@ killer)
         }
     }
     else
-    {    
+    {
         // damage armor on other critical death types
         if((isArmor || isHelmet) && isCriticalDeath && !(cr.IsPlayer() && !_PlayerDropEnabled(cr, map)) && !_CritHasExtMode(cr, MODE_EXT_NO_DETERIORATION))
         {
@@ -2663,7 +2665,7 @@ void critter_dead(Critter& cr, Critter@ killer)
                         scriptName = GetScriptName(crits[i].GetScriptId());
 
                     //caravan guards will not loot
-                    if(crits[i].GetScriptId() == 0)
+                    if(crits[i].GetScriptId() == 0 || !(scriptName == "caravans@_CaravanGuard" || scriptName == "caravans@_CaravanDriver"))
                     {
                         DPlayerLog(cr, "Critter " + crits[i].Id + " will loot me.");
                         AddWalkPlane(crits[i], 0, PLANE_LOOT, cr.Id, cr.HexX, cr.HexY, 6, true, 1);
@@ -2752,8 +2754,8 @@ void critter_dead(Critter& cr, Critter@ killer)
         if(valid(blocker))
             cr.StatBase[ST_DEAD_BLOCKER_ID] = blocker.Id;
     }
-	
-	
+
+
 	// Death from worldmap - from poison or other shit
 	if(!valid(map) && cr.IsPlayer())
 	{
@@ -2765,7 +2767,7 @@ void critter_dead(Critter& cr, Critter@ killer)
     loc.Visible = false;
     loc.GeckVisible = false;
     loc.AutoGarbage = true;
-	
+
 	cr.TransitToMap(loc.GetMapByIndex(0).Id, 0);
 	}
 }
@@ -3009,7 +3011,7 @@ void map_critter_out(Map& map, Critter& cr)
                 }
                 #endif
             }
-	
+
 		array<Critter@>@ players = WorldmapGetPlayers(ZONE_X(cr.WorldX), ZONE_Y(cr.WorldY));
 		string characters;
 		if(players.length()-1>0)
@@ -3155,7 +3157,7 @@ void items_crafted(array<Item@>& items, array<uint>& itemsCount, array<Item@>& r
             {
                 @items[i] = crafter.AddItem(items[i].GetProtoId(), itemsCount[i]);
             }
-            for(uint ri = 0, rj = resources.length(); ri < rj; ri++) 
+            for(uint ri = 0, rj = resources.length(); ri < rj; ri++)
             {
                 if((resources[ri].GetType()==ITEM_TYPE_WEAPON && !resources[ri].IsStackable()) || resources[ri].GetType()==ITEM_TYPE_ARMOR)
                 {
@@ -3183,40 +3185,40 @@ void items_crafted(array<Item@>& items, array<uint>& itemsCount, array<Item@>& r
                 item.AmmoCount = 0;
                 item.Update();
             }
-            
+
             bool upgradedWeapon=false;
-            for(uint ri = 0, rj = resources.length(); ri < rj; ri++) 
+            for(uint ri = 0, rj = resources.length(); ri < rj; ri++)
             {
-                if(resources[ri].GetType()==ITEM_TYPE_WEAPON && resources[ri].GetProtoId() != PID_SLEDGEHAMMER) 
+                if(resources[ri].GetType()==ITEM_TYPE_WEAPON && resources[ri].GetProtoId() != PID_SLEDGEHAMMER)
                 {
                     upgradedWeapon=true;
                     for(uint i=0,j=items.length();i<j;i++)
                     {
                         items[i].Val0 = resources[i].Val0;
-                        items[i].Val1 = resources[i].Val1;              
-                        items[i].Val2 = resources[i].Val2;              
-                        items[i].Val3 = resources[i].Val3;              
-                        items[i].Val4 = resources[i].Val4;              
+                        items[i].Val1 = resources[i].Val1;
+                        items[i].Val2 = resources[i].Val2;
+                        items[i].Val3 = resources[i].Val3;
+                        items[i].Val4 = resources[i].Val4;
                         items[i].Val5 = resources[i].Val5;
                         items[i].Val6 = resources[i].Val6;
                         items[i].Val7 = resources[i].Val7;
                         items[i].Val8 = resources[i].Val8;
-                        items[i].Val9 = resources[i].Val9;                  
+                        items[i].Val9 = resources[i].Val9;
                     }
                 }
             }
             string@ crafterName=""+crafter.Name;
-            if(!upgradedWeapon) 
+            if(!upgradedWeapon)
                 AddBonuses(item, crafterName);
-            else 
-                if(!item.IsStackable()) 
+            else
+                if(!item.IsStackable())
                     SetLexem(item, "$crafter", crafterName);
-            
+
             uint score=BonusNumber(item);
-            if(item.GetType()==ITEM_TYPE_ARMOR) 
+            if(item.GetType()==ITEM_TYPE_ARMOR)
                 AddScore(crafter, SCORE_ARMORER, score);
-            else 
-                if(item.GetType()==ITEM_TYPE_WEAPON) 
+            else
+                if(item.GetType()==ITEM_TYPE_WEAPON)
                     AddScore(crafter, SCORE_GUNSMITH, score);
         }
 
@@ -3238,7 +3240,7 @@ void items_crafted(array<Item@>& items, array<uint>& itemsCount, array<Item@>& r
 
         if(m > 0 && m == multiplier-1)
         {
-            for(uint ri = 0, rj = resources.length(); ri < rj; ri++) 
+            for(uint ri = 0, rj = resources.length(); ri < rj; ri++)
             {
                 if((resources[ri].GetType()==ITEM_TYPE_WEAPON && !resources[ri].IsStackable()) || resources[ri].GetType()==ITEM_TYPE_ARMOR)
                 {
@@ -3248,7 +3250,7 @@ void items_crafted(array<Item@>& items, array<uint>& itemsCount, array<Item@>& r
         }
 
         if(m > 0)
-        {    
+        {
             for(uint i = 0, j = recipePids.length(); i < j; i++)
             {
                 Item@ res = crafter.GetItem(recipePids[i], -1);
@@ -3321,11 +3323,11 @@ void player_levelup(Critter& player, uint skillIndex, uint skillUp, uint perkInd
             int skillVal = player.SkillBase[skillIndex];
             if(skillVal >= MAX_SKILL_VAL)
                 break;
-			
+
 			bool skillCap=((skillIndex==SK_FIRST_AID || skillIndex==SK_DOCTOR) && skillVal>=200) || (skillIndex==SK_OUTDOORSMAN && skillVal>=175) ||
 						  ((skillIndex==SK_LOCKPICK || skillIndex==SK_TRAPS || skillIndex==SK_STEAL || skillIndex==SK_BARTER || skillIndex==SK_GAMBLING)&& skillVal>=150) ||
 						  ((skillIndex==SK_SCIENCE || skillIndex==SK_REPAIR) && skillVal>=125) || (skillIndex==SK_SNEAK && skillVal >=270) || skillIndex==SK_SCAVENGING;
-						  
+
 			if(skillCap) break;
 
             int needPoints = 1;
@@ -3344,11 +3346,11 @@ void player_levelup(Critter& player, uint skillIndex, uint skillUp, uint perkInd
                 break;
 
             skillVal++;
-			
+
 			skillCap=((skillIndex==SK_FIRST_AID || skillIndex==SK_DOCTOR) && skillVal>=200) || (skillIndex==SK_OUTDOORSMAN && skillVal>=175) ||
 				     ((skillIndex==SK_LOCKPICK || skillIndex==SK_TRAPS || skillIndex==SK_STEAL || skillIndex==SK_BARTER || skillIndex==SK_GAMBLING)&& skillVal>=150) ||
 					 ((skillIndex==SK_SCIENCE || skillIndex==SK_REPAIR) && skillVal>=125) || (skillIndex==SK_SNEAK && skillVal >=270);
-						  
+
             if(_CritIsTagSkill(player, skillIndex) && skillVal < MAX_SKILL_VAL && !skillCap)
                 skillVal++;
             player.SkillBase[skillIndex] = skillVal;
@@ -3797,7 +3799,7 @@ bool player_allowcommand(Critter@ cr, string@ adminPanel, uint8 command)
         if(command == COMMAND_DELETE_ACCOUNT && cr.Stat[ST_LEVEL] > 1)
         {
 /* TODO:
-add: EXPORT bool PlayerToDelete( Critter* cr ) return( cr && cr->IsPlayer() && cr->ClientToDelete ); 
+add: EXPORT bool PlayerToDelete( Critter* cr ) return( cr && cr->IsPlayer() && cr->ClientToDelete );
 */
             if(valid(cr.GetMap()) && (IsBase(cr.GetMap()) || IsTent(cr.GetMap())))
             {
@@ -3813,7 +3815,7 @@ add: EXPORT bool PlayerToDelete( Critter* cr ) return( cr && cr->IsPlayer() && c
 		{
 			cr.Say(SAY_NETMSG, "|0xCC0000 WARNING: You are removing a character which is a leader of player faction. Faction's leadership will be lost. You can use ~deleteself command again to cancel.");
 		}
-		
+
         return(true);
 
     case COMMAND_EXIT:

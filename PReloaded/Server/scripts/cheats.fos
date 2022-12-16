@@ -106,6 +106,10 @@ dictionary Maps;
 array<int> eventItems;
 array<int> eventCritters;
 
+array<string> itemList;
+array<string> mapList;
+array<string> questVarList;
+
 // Remember to wear protective goggles :)
 string[] commandlist =
 {
@@ -131,15 +135,16 @@ string[] commandlist =
     "givekey", "goto", "gototeam",
     "heal", "healall", "help", "hideloc", "hidemap",
     "id2name", "iddqd", "idkfa", "inspect", "irradiate", "itemflags", "itemlight",
-    "itemproto",
+    "itemproto", "itemlist", "items",
     "karma", "karmateam", "kill", "killeradmin", "killmobs",
     "la", "lastregistered", "lastspawned", "listauthenticated",     "listcommands",
     "listfollowers", "listfactions", "listmaps", "listplayers",     "listtents",
     "listtracked", "lock", "lockcar", "log",  "lootdrop", "lp", "lt",
-    "makeencounter", "mapinfo", "masssetanim", "massslap", "modchar", "move",
+    "makeencounter", "maps", "mapinfo", "maplist", "masssetanim", "massslap", "modchar", "move",
     "name2id", "netmsg", "normaldeadly", "numplayers",
     "param", "perkadjust", "pickitems", "phase", "phaseteam", "playerkarma",
     "playmusic", "playsound", "playspeech", "poison", "profadjust",
+    "questVars", "qvars",
     "registerfaction", "removebankmoney", "removefaction", "removeitems",
     "reservednickname", "resetalldisguises", "resetprices", "resetreputations",
     "resettown", "resettowns", "respawn", "revive", "respawnall", "reviveall",
@@ -283,7 +288,7 @@ void RefreshAliases(Critter& player, int, int, int)   // ~runscript cheats Refre
 void SetAliases()
 {
     // Fallout 1
-    //SetMapId("junktown",    MAP_Junktown);    
+    //SetMapId("junktown",    MAP_Junktown);
 }
 
 class CNPC
@@ -3820,6 +3825,171 @@ void ExecFactionOnlineCommand(array<string@>@ command, Critter& player)
         player.Say(SAY_NETMSG, "Found no members from faction " + faction + " online.");
 }
 
+void ExecMapListCommand(array<string@>@ command, Critter& player) {
+    if (mapList.isEmpty()) {
+        player.Say(SAY_NETMSG, "Initializing LOCATION list.");
+        InitMapList();
+    }
+    if(command.length() > 2)
+    {
+        player.Say(SAY_NETMSG, "\nListing Location ID's with filter '" + command[2] + "':");
+        for (uint i = 0; i < mapList.length(); i++) {
+            if (findFirst(mapList[i], command[2], 0) > -1) {
+                player.Say(SAY_NETMSG, mapList[i]);
+            }
+        }
+    } else {
+        player.Say(SAY_NETMSG, "\nListing Item ID's without filter (top 30):");
+        for (uint i = 0; i < mapList.length(); i++) {
+            if (i < 30) {
+                player.Say(SAY_NETMSG, mapList[i]);
+            }
+        }
+    }
+
+}
+
+void ExecQuestVarListCommand(array<string@>@ command, Critter& player) {
+    if (questVarList.isEmpty()) {
+        player.Say(SAY_NETMSG, "Initializing ITEM list.");
+        InitQuestVarList();
+    }
+    if(command.length() > 2)
+    {
+        player.Say(SAY_NETMSG, "\nListing Item ID's with filter '" + command[2] + "':");
+        for (uint i = 0; i < questVarList.length(); i++) {
+            if (findFirst(questVarList[i], command[2], 0) > -1) {
+                player.Say(SAY_NETMSG, questVarList[i]);
+            }
+        }
+    } else {
+        player.Say(SAY_NETMSG, "\nListing Item ID's without filter (top 30):");
+        for (uint i = 0; i < questVarList.length(); i++) {
+            if (i < 30) {
+                player.Say(SAY_NETMSG, questVarList[i]);
+            }
+        }
+    }
+}
+
+void ExecItemListCommand(array<string@>@ command, Critter& player) {
+    if (itemList.isEmpty()) {
+        player.Say(SAY_NETMSG, "Initializing ITEM list.");
+        InitItemList();
+    }
+    if(command.length() > 2)
+    {
+        player.Say(SAY_NETMSG, "\nListing Item ID's with filter '" + command[2] + "':");
+        for (uint i = 0; i < itemList.length(); i++) {
+            if (findFirst(itemList[i], upperCase(command[2]), 3) > -1) {
+                player.Say(SAY_NETMSG, itemList[i]);
+            }
+        }
+    } else {
+        player.Say(SAY_NETMSG, "\nListing Item ID's without filter (top 30):");
+        for (uint i = 0; i < itemList.length(); i++) {
+            if (i < 30) {
+                player.Say(SAY_NETMSG, itemList[i]);
+            }
+        }
+    }
+}
+
+//  piece of shit AS code... getting a char and removing 32 from it to make it uppercase didnt work out.
+string@ upperCase(const string& str) {
+    string ret = str;
+    for (uint i = 0; i < str.length(); i++) {
+        if (ret[i] == "a") ret[i] = "A";
+        if (ret[i] == "b") ret[i] = "B";
+        if (ret[i] == "c") ret[i] = "C";
+        if (ret[i] == "d") ret[i] = "D";
+        if (ret[i] == "e") ret[i] = "E";
+        if (ret[i] == "f") ret[i] = "F";
+        if (ret[i] == "g") ret[i] = "G";
+        if (ret[i] == "h") ret[i] = "H";
+        if (ret[i] == "i") ret[i] = "I";
+        if (ret[i] == "j") ret[i] = "J";
+        if (ret[i] == "k") ret[i] = "K";
+        if (ret[i] == "l") ret[i] = "L";
+        if (ret[i] == "m") ret[i] = "M";
+        if (ret[i] == "n") ret[i] = "N";
+        if (ret[i] == "o") ret[i] = "O";
+        if (ret[i] == "p") ret[i] = "P";
+        if (ret[i] == "q") ret[i] = "Q";
+        if (ret[i] == "r") ret[i] = "R";
+        if (ret[i] == "s") ret[i] = "S";
+        if (ret[i] == "t") ret[i] = "T";
+        if (ret[i] == "u") ret[i] = "U";
+        if (ret[i] == "v") ret[i] = "V";
+        if (ret[i] == "w") ret[i] = "W";
+        if (ret[i] == "x") ret[i] = "X";
+        if (ret[i] == "y") ret[i] = "Y";
+        if (ret[i] == "z") ret[i] = "Z";
+    }
+    return ret;
+}
+
+void InitQuestVarList() {
+    string filename = "scripts\\_vars.fos";
+    string line = "";
+    file f;
+    if(f.open(filename, "r") == 0)
+    {
+        while(!f.isEndOfFile())
+        {
+            f.readLine(line);
+            if(substring(line, 0, 8) == "#define ") {
+                int commentIndex = findFirst(line, "//");
+                if (commentIndex > -1) {
+                    line = substring(line, 8, commentIndex - 8);
+                    questVarList.insertLast(line);
+                } else {
+                    line = substring(line, 8, line.length() - 9);
+                    questVarList.insertLast(line);
+                }
+            }
+        }
+    }
+    f.close();
+}
+
+void InitItemList() {
+    string filename = "scripts\\ITEMPID.H";
+    string line = "";
+    file f;
+    if(f.open(filename, "r") == 0)
+    {
+        while(!f.isEndOfFile())
+        {
+            f.readLine(line);
+            if(substring(line, 0, 8) == "#define ") {
+                int commentIndex = findFirst(line, "//");
+                if (commentIndex > -1) {
+                    line = substring(line, 8, commentIndex - 8);
+                    itemList.insertLast(line);
+                } else {
+                    line = substring(line, 8, line.length() - 9);
+                    itemList.insertLast(line);
+                }
+            }
+        }
+    }
+    f.close();
+}
+
+void InitMapList() {
+    string name = "";
+    array<Map@> allMaps;
+    uint allMapsCount = GetAllMaps(0, allMaps);
+
+    if (allMapsCount > 0) {
+        for (uint i = 0; i < allMapsCount; i++) {
+            allMaps[i].ProtoName(name);
+            mapList.insertLast(" " + (i + 1) + "        " + name);
+        }
+    }
+}
+
 void ExecFindItemsCommand(array<string@>@ command, Critter& player)
 {
     int  owner = 0; // spawner, if 0, by game, if not specified, all.
@@ -4931,11 +5101,11 @@ void ExecMapLootDrop(Critter& player, string mode)
     {
         if (mode == "status")
         {
-            player.Say(SAY_NETMSG, "Map PvP loot drop mode is " + (_MapHasMode(map, MAP_MODE_LOOT_DROP) ? "en" : "dis") + "abled.");   
+            player.Say(SAY_NETMSG, "Map PvP loot drop mode is " + (_MapHasMode(map, MAP_MODE_LOOT_DROP) ? "en" : "dis") + "abled.");
         }
         else if (mode == "list")
         {
-            player.Say(SAY_NETMSG, "Listing all maps with PvP loot drop mode enabled:");  
+            player.Say(SAY_NETMSG, "Listing all maps with PvP loot drop mode enabled:");
 
             array<Map@> allMaps;
             uint        allMapsCount = GetAllMaps(0, allMaps);
@@ -4947,12 +5117,12 @@ void ExecMapLootDrop(Critter& player, string mode)
 
                 if(_MapHasMode(allMaps[m], MAP_MODE_LOOT_DROP))
                 {
-                    player.Say(SAY_NETMSG, " - " + allMaps[m].Id);                      
+                    player.Say(SAY_NETMSG, " - " + allMaps[m].Id);
                     dropMaps++;
                 }
             }
 
-            player.Say(SAY_NETMSG, "Maps found: " + dropMaps);   
+            player.Say(SAY_NETMSG, "Maps found: " + dropMaps);
         }
         else if (mode == "off")
         {
@@ -8691,7 +8861,7 @@ void ExecAuraCommand(array<string@>@ command, Critter@ player)
         else if(Present(auraSwitch[AURA_GRAVITATION_WELL], command))
             aura = AURA_GRAVITATION_WELL;
         else if(Present(auraSwitch[AURA_SKIN_RANDOM_SAFE], command))
-            aura = AURA_SKIN_RANDOM_SAFE;			
+            aura = AURA_SKIN_RANDOM_SAFE;
         else
         {
             player.Say(SAY_NETMSG, "Missing/unknown aura switch");
@@ -8806,7 +8976,7 @@ uint cte_Aura(Critter& cr, int identifier, uint& value)
         findCritters = FIND_LIFE | FIND_ONLY_PLAYERS;
         #endif
         break;
-		
+
     default:
         SETFLAG(flags, AURA_FLAG_VISIBLE);
         break;
@@ -9415,6 +9585,18 @@ bool ExecCommand(Critter& player, string@ commandString)
     {
         ExecFactionOnlineCommand(command, player);
     }
+    else if(command[1] == "items" || command[1] == "itemlist")
+    {
+        ExecItemListCommand(command, player);
+    }
+    else if(command[1] == "maps" || command[1] == "maplist")
+    {
+        ExecMapListCommand(command, player);
+    }
+    else if(command[1] == "questvars" || command[1] == "qvars")
+    {
+        ExecQuestVarListCommand(command, player);
+    }
     else if(command[1] == "findchars")
         ExecFindCharsCommand(command, player);
     else if(command[1] == "finditems")
@@ -9797,7 +9979,7 @@ bool ExecCommand(Critter& player, string@ commandString)
     else if(command[1] == "setrain")
     {
         ExecSetRain(command, player);
-    }	
+    }
     else if(command[1] == "setreputation" || command[1] == "setrep")
     {
         ExecSetReputationCommand(command, player, target);
@@ -10380,10 +10562,10 @@ bool weapon_function_freeze(Item& item, Critter& sadist, Critter& victim)   // I
     LogCommandUsage(sadist, "ItemEventCheat: frozen " + victim.Name + "<" + victim.Id + ">");
 
 	uint czas=Random(1,2);
-	
+
 	if(victim.IsPlayer()) victim.RunClientScript("client_timeouts@_add_unsafe", czas, 0, 0, "Frozen", null);
     victim.Wait(1000 * czas);
-    
+
     return(true);
 }
 
@@ -10548,11 +10730,11 @@ bool weapon_function_disguise(Item& item, Critter& sadist, Critter& victim)   //
     LogCommandUsage(sadist, "ItemEventCheat: disguise " + victim.Name + "<" + victim.Id + ">");
 
     victim.Animate(0, ANIM2_DEAD_BURN_RUN, item, true, false);
-    
+
 	//'disguise 58 -p targetid
     uint bt = 58;
     bool res = false;
-   
+
     sadist.Say(SAY_NETMSG, "Changing from: " + victim.CrType + " to " + bt);
     res = victim.ChangeCrType(bt);
 
@@ -10562,9 +10744,9 @@ bool weapon_function_disguise(Item& item, Critter& sadist, Critter& victim)   //
     {
         victim.StatBase[ST_BASE_CRTYPE] = bt;
         victim.DisguisedBy = sadist.Id;
-    }	
-	
-	
+    }
+
+
     return(true);
 }
 
