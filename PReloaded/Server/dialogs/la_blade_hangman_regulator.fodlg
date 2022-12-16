@@ -1,0 +1,94 @@
+[comment]
+
+
+[data]
+lang=engl
+
+[dialog]
+&
+1 1000 None 0 #
+3 1010 D _var p q_hub_sadwife = 1 #
+2 1020 @
+2 2000 None 0 @
+3 3000 None 0 #
+25 3010 D _param p ST_INTELLECT > 3 #
+25 3020 D _param p ST_INTELLECT < 4 #
+23 3030 D _param p ST_INTELLECT > 3 #
+23 3040 D _param p ST_INTELLECT < 4 #
+18 3050 D _param p ST_INTELLECT > 3 #
+18 3060 D _param p ST_INTELLECT < 4 #
+24 3070 @
+18 4000 None 0 #
+19 4010 @
+19 5000 None 0 #
+20 5010 D _param p ST_INTELLECT > 3 R _var p q_hub_sadwife = 2 R _param p ST_EXPERIENCE + 500 #
+20 5020 D _param p ST_INTELLECT < 4 R _var p q_hub_sadwife = 2 R _param p ST_EXPERIENCE + 500 @
+20 6000 None 0 #
+21 6010 D _param p ST_INTELLECT > 3 #
+22 6020 D _param p ST_INTELLECT > 3 #
+21 6030 D _param p ST_INTELLECT < 4 #
+22 6040 D _param p ST_INTELLECT < 4 @
+21 7000 None 0 @
+22 8000 None 0 @
+23 9000 None 0 #
+24 9010 D _param p ST_INTELLECT > 3 #
+18 9020 D _param p ST_INTELLECT > 3 #
+18 9030 D _param p ST_INTELLECT < 4 @
+24 10000 None 0 @
+25 11000 None 0 #
+26 11010 D _param p ST_INTELLECT > 3 #
+23 11020 D _param p ST_INTELLECT > 3 #
+18 11030 D _param p ST_INTELLECT > 3 #
+18 11040 D _param p ST_INTELLECT < 4 #
+23 11050 D _param p ST_INTELLECT < 4 #
+24 11060 @
+26 12000 None 0 #
+23 12010 D _param p ST_INTELLECT > 3 #
+18 12020 D _param p ST_INTELLECT > 3 #
+0 12030 &
+
+[engl]
+{100}{}{Regulator}
+{200}{}{You see a Regulator.}
+{210}{}{You see a big guard. He doesn't look very nice.}
+{1000}{}{Predialogue installations}
+{1010}{}{Answer text}
+{1020}{}{floating}
+{2000}{}{You want to get shot? Get the hell out of here!@@Don't even think about drawing your weapons here.@@I said get the hell out of here you vault retard!@@You lookin' for trouble? Step off.@@Fuck off, Skag.@@Just get out of here before you get hurt.@@Damn scavengers, this is our turf!}
+{3000}{}{What the hell do you want?}
+{3010}{}{I've got a question for you...}
+{3020}{}{Me have question.}
+{3030}{}{Why is that guy hanging from the lamp post?}
+{3040}{}{Me wonder why dead man there.}
+{3050}{}{I'm looking for someone. His name's Joseph, he was a scavenger from the Hub...}
+{3060}{}{Me rescue Joseph from being lost, you see him?}
+{3070}{}{Nothing.}
+{4000}{}{Joseph? Haha! Yeah, I can tell you where he is...}
+{4010}{}{Oh?}
+{5000}{}{[He points to the lamp post] He's just hanging around by the neck over there.}
+{5010}{}{Why the hell did you do that?!}
+{5020}{}{You make man dead. This no good. This really no good.}
+{6000}{}{He was caught trying to steal from the other scavengers. We don't take too kindly to that around here so we had to make an exception. Feel free to use him like a pinata! Haha!}
+{6010}{}{Fuck you.}
+{6020}{}{This is sick! What's wrong with you people?}
+{6030}{}{You bad man.}
+{6040}{}{Me going.}
+{7000}{}{Fuck you too! Now get the hell out of here!}
+{8000}{}{You want to join him? Beat it, sissy!}
+{9000}{}{You mean my pal here? We felt like he could use a nap.}
+{9010}{}{Oh! Gosh!}
+{9020}{}{Was this guy's name Joseph by any chance?}
+{9030}{}{Is sleeping man name Joseph?}
+{10000}{}{Get lost, skag!}
+{11000}{}{@sex@| I don't answer questions, idiot.|| I don't answer questions, bitch.|}
+{11010}{}{Whoa, what's with the attitude?}
+{11020}{}{Why is that guy hanging from the lamp post?}
+{11030}{}{I'm looking for someone. His name's Joseph, he was a scavenger from the Hub...}
+{11040}{}{Me rescue Joseph from being lost, you see him?}
+{11050}{}{Me wonder why dead man there.}
+{11060}{}{Whatever, I'm leaving.}
+{12000}{}{Shove off! Me and the boys ain't in the mood to have a chit chat with you. }
+{12010}{}{Just tell me why that guy is hanging from the lamp post.}
+{12020}{}{I'm looking for a man named Joseph, he's a scavenger from the Hub...}
+{12030}{}{Alright fine, I'll leave you alone.}
+

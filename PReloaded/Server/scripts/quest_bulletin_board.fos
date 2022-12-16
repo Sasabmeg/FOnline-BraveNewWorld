@@ -1,0 +1,15 @@
+//
+// FOClassic: Brave New World
+// Sasabmeg
+//
+// quest_bulletin_board.fos
+//
+
+#include "_macros.fos"
+
+// Hub bulletin boards
+bool s_Hub1(Critter& player, Scenery& console, int skill, Item@ item)
+{
+	RunDialog(player, DIALOG_hub_billboard1, player.HexX, player.HexY, true);
+    return true;
+}

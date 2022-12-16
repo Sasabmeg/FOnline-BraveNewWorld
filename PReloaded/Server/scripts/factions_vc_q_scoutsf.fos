@@ -15,7 +15,7 @@ void ScoutSFMap(Map@ map, Critter@ player)
 
     // Quest: "Scouting in San Francisco"
     // The following code is all related to the quest mentioned above.
-    GameVar@ var = GetLocalVar(LVAR_factions_q_vc_scoutsf, player.Id);
+    GameVar@ var = GetLocalVar(LVAR_q_vc_scoutsf, player.Id);
 
     // The quest is active
     if(var == 1 || var > 9)

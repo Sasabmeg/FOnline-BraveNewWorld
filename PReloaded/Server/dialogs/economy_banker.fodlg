@@ -11,8 +11,8 @@ lang=engl
 2 2000 None 0 #
 3 2010 #
 5 2020 D _script economy_banker@d_HasAccount 1 0 #
-40 2030 D _var p ncr_gold_exchange = 0 D _script dialog@d_NpcInLocation 1 25 D _param p ST_INTELLECT > 100 R _var p ncr_gold_exchange = 1 #
-41 2040 D _var p ncr_gold_exchange = 1 D _script dialog@d_NpcInLocation 1 10 D _param p ST_INTELLECT > 100 #
+40 2030 D _var p q_ncr_gold_exchange = 0 D _script dialog@d_NpcInLocation 1 25 D _param p ST_INTELLECT > 100 R _var p q_ncr_gold_exchange = 1 #
+41 2040 D _var p q_ncr_gold_exchange = 1 D _script dialog@d_NpcInLocation 1 10 D _param p ST_INTELLECT > 100 #
 37 2050 D _param p ST_STRENGTH > 99 #
 43 2060 D _script dialog@d_NpcInLocation 1 13 D _item p PID_GOLD_NUGGET } 1 R _item p PID_GOLD_NUGGET - 1 R _script dialog@r_AddMoney 1 125 #
 44 2070 D _script dialog@d_NpcInLocation 1 13 D _item p PID_GOLD_NUGGET } 10 R _item p PID_GOLD_NUGGET - 10 R _script dialog@r_AddMoney 1 1250 #

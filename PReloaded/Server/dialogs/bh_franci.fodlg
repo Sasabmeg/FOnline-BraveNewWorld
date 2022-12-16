@@ -1,0 +1,99 @@
+[comment]
+
+
+[data]
+lang=engl
+
+[dialog]
+&
+1 1000 None 0 #
+3 1010 #
+13 1020 D _var p loyality < 0 #
+14 1030 D _param p ST_KARMA < -50 @
+3 2000 None 0 #
+5 2010 #
+6 2020 #
+500 2030 D _script perks@d_PerkCheck 1 314 R _param p PE_STRONG_BACK = 1 #
+0 2040 @
+4 3000 None 0 #
+0 3010 @
+5 4000 None 0 #
+3 4010 D _param p ST_INTELLECT > 4 #
+10 4020 D _param p ST_INTELLECT < 4 #
+0 4030 @
+6 5000 None 0 #
+9 5010 #
+3 5020 @
+9 6000 None 0 #
+0 6010 #
+0 6020 @
+10 7000 None 0 #
+11 7010 #
+12 7020 R _var p loyality - 10 #
+0 7030 @
+11 8000 None 0 #
+3 8010 #
+0 8020 @
+12 9000 None 0 #
+0 9010 @
+13 10000 None 0 @
+14 11000 None 0 @
+15 12000 None 0 #
+15 12010 #
+0 12020 @
+16 13000 None 0 #
+16 13010 @
+17 14000 None 0 #
+3 14010 #
+0 14020 @
+500 15000 None 0 #
+0 15010 &
+
+[engl]
+{100}{}{Francis}
+{200}{}{You see a powerfully-built super-mutant. He looks bored.}
+{210}{}{You see Francis, the mutant arm wrestler.}
+{210}{}{You see a powerfully built super-mutant. He is clad in black leather, and boredom is written across his face.}
+{1000}{}{Predialogue installations}
+{1010}{}{ioaao}
+{1020}{}{Hated}
+{1030}{}{Low Karma}
+{2000}{}{Help you out with something?}
+{2010}{}{What's there to do in this place?}
+{2020}{}{Hey, buddy. Who are you?}
+{2030}{}{Yeah, I've heard you are the strongest mutant here. How did you manage to do that? [Strong Back]}
+{2040}{}{Nothing, thanks. Bye.}
+{3000}{}{Pal, I've got no idea what you're trying to say. Sorry.}
+{3010}{}{Hurmmm.}
+{4000}{}{What's to do in town? Well, let's see: there's the saloon, the mines, the refinery, and the caravan. We haven't got much time for fun here, and what we do have, we generally devote to drinking. Also, we work on human/mutant relations.}
+{4010}{}{How exciting. I've got a few more questions.}
+{4020}{}{Human/mutant relations? What do you mean?}
+{4030}{}{All right, thanks.}
+{5000}{}{I'm Francis. I'm the arm-wrestling champ of this town.}
+{5010}{}{I'll bet you don't have many challengers, right?}
+{5020}{}{That good, huh? I got a couple other questions.}
+{6000}{}{That's the truth. Looks like there's no one in this whole godforsaken wasteland that's not a whimp.}
+{6010}{}{Pity, that. If I find anyone, I'll send them your way. Bye.}
+{6020}{}{Just because you're strong doesn't mean you're smart, pal. Remember that.}
+{7000}{}{You may've noticed that we got both mutants and humans in the city. We're trying to work it so that we all live in peace. Unfortunately, there are some who want to destroy that. Our leader, Marcus, helped found the city. Do you want to hear more?}
+{7010}{}{Yeah, tell me more.}
+{7020}{}{Frankly, I think you mutants are scum and these humans are traitors for working with you.}
+{7030}{}{No, not really.}
+{8000}{}{Sometimes I worry about the people here... it's too hard for some of them to get past their fear. Word has it there's a shit storm coming down the pike - but that might just be rumor.}
+{8010}{}{Got a few more questions.}
+{8020}{}{Thanks, bye.}
+{9000}{}{Really? That's a fascinating attitude. Too bad we didn't crush your shithole town when we controlled the wasteland. Get out of my sight, worm.}
+{9010}{}{Dick.}
+{10000}{}{::wheeze:: Are you hurt? Let me take a look at that. Do you have money?}
+{11000}{}{I've heard about you. I don't associate with scum.}
+{12000}{}{Heh, well, it was a couple years ago. The guy waltzed in, challenged me to an arm wrestle, thinkin' he could win this power first I was offering as an incentive.}
+{12010}{}{Then what?}
+{12020}{}{Interesting story, but I've gotta go.}
+{13000}{}{Well, the kid nearly got his arm broken was what happened. 'Course, you lose an arm wrestle to me, there is a certain, uh, unfortunate forfeit.}
+{13010}{}{I'm afraid to ask. But I will anyway.}
+{14000}{}{Heh, you just mind your own damn business. Next day, kid comes back looking all pumped up and pissed off, and wins the damn power fist. Damn kid was cranked up on chems, but I wasn't gonna call him on it. I wonder what the hell he's doing now.}
+{14010}{}{Interesting story. I've got a few more questions.}
+{14020}{}{Thanks, bye.}
+{15000}{}{You want to be strong, little human? Listen then.. [Francis explains how to become stronger]}
+{15010}{}{It sounds awesome! See you later.}
+

@@ -60,579 +60,382 @@ Current progress:
 ##############################################
 
 
-#=======================================
-# 6001
-# Raiders induction quest
-#=======================================
-{6001001}{}{Metzger pointed me to his business contact, Stokes. Stokes is said to spend his time in The Hole.}
-{6001002}{}{Stokes told me to visit the Khans' southern outpost and talk to Raynes, the local leader.}
-{6001003}{}{Deal with the renegade raider.}
-{6001101}{}{Den: Join the raiders}
-{6001102}{}{Join the raiders}
+
+#############################
+#		BONEYARD (LA)		#
+#############################
+
+
 
 #=======================================
-# 6111
-# NCR, pick up a few smokes for buster
+# 5001 / q_la_ady_dogs
+# Boneyard, Dogs of LA
 #=======================================
-{6111001}{}{Buster wants me to buy him some cigarettes from the Rawhide.}
-{6111002}{}{I have to return the cigarettes to Buster.}
-#{6111003}{}{Quest Completed.}
-{6111003}{}{I've given the cigarettes to Buster.
-
-:: Quest Completed ::}
-{6111101}{}{NCR: Buy cigarettes for Buster}
-{6111102}{}{Buy cigarettes for Buster}
+{5001001}{}{Hendriks, one of the regulators, gave me the job to kill one of the local dog groups. He gave me the position on my PipBoy.}
+{5001002}{}{DONE:I've wiped out the group of dogs. I should go back to Hendriks for my reward.}
+{5001003}{}{SOFT_COMPLETED:The pack of dogs is dead and I reported back to Hendriks. I can check back later, because he is sure that there will be more work.}
+{5001101}{}{Boneyard: Dogs of LA}
+{5001102}{}{JOB:Dogs of LA}
 
 #=======================================
-# 6112
-# NCR, return Mira's debt
+# 5003 / q_la_ady_howitzer
+# Boneyard, Howitzer Shells
 #=======================================
-
-{6112001}{}{Mira asked me to return the debt she owes to Dusty.}
-{6112002}{}{I've returned the debt. I should go back and speak to Mira.}
-#{6112003}{}{Quest Completed.}
-{6112003}{}{I've helped Mira return the debt.
+{5003001}{}{Sergeant from the scavenger camp asked me to get him some more shells for his howitzer. Jargo, the gunsmith in Adytum, is in charge of the ammunition production. I should try to convince him.}
+{5003002}{}{DONE:Jargo agreed to produce some extra howitzer shells. My job is done.
 
 :: Quest Completed ::}
-{6112101}{}{NCR: Return Mira's debt}
-{6112102}{}{Return Mira's debt}
+{5003003}{}{HARD_FAILED:Jargo doesn't want to produce extra howitzer shells, as they are too expensive. Anyway, my job is done...
+
+:: Quest Failed ::}
+{5003004}{}{HARD_COMPLETED:I've met Sergeant again. He was pretty happy about the additional howitzer ammunition and gave me an unused train ticket.
+
+:: Quest Completed ::}
+{5003101}{}{Boneyard: Howitzer Shells}
+{5003102}{}{QUEST:Howitzer Shells}
 
 #=======================================
-# 6122
-# Redding, Resupply Redding with Jet
+# 5009 / q_la_gunr_caravan
+# Boneyard, Gun Runners Caravan
 #=======================================
+{5009001}{}{Marshall from the Gun Runners got a job for me. It's about a package that has been stolen by a group of Super Mutant remnants. He suggested to get a team of at least three people. It's dangerous but should be worth it.}
+{5009002}{}{The deal is clear: Marshall from the Gun Runners told me to bring him back the Gun Runners metal box with weapon manufacturing plans inside. The metal case is rigged with explosives, so we shouldn't touch them or it goes BOOM! He also told me that nobody else should get the package... Not the Brotherhood and not the Khans, not anyone else. 
 
-{6122001}{}{There's hardly enough Jet for everyone in Redding. Dan McGrew wants me to talk to some doctor or pharmacist or something in New Reno about it.}
-{6122002}{}{Renesco wants a proof there will be enough costumers in Redding for his Jet shipments, before sending another one that way.}
-{6122003}{}{Doc. Johnson's list of Jet costumers in Redding could persuade Renesco there's a stable demand for Jet in Redding. I should bring it to him right away.}
-{6122004}{}{Renesco is going to send more Jet to Redding. I have to let Dan McGrew know about this as soon as possible.}
-{6122005}{}{The problem with Redding's Jet shipments has been solved.
+The mutants are using some heavy weaponry- our group should prepare for that.}
+{5009003}{}{DONE:The Gun Runners got their weapon manufacturing plans back. Marshall told me to visit Ralph for our payment.}
+{5009004}{}{SOFT_COMPLETED:The weapon manufacturing plans have been given to the Brotherhood of Steel. They made angry faces and played assholes, but at least they paid for it.
 
-::Quest Completed::}
-{6122101}{}{Redding: Increase Redding's Jet supply}
-{6122102}{}{Find out how to raise the current supply of Jet in Redding}
+:: Quest Completed ::}
+{5009005}{}{SOFT_COMPLETED:The weapon manufacturing plans have been given to the Khans. They seemed to be very happy about it.
+
+:: Quest Completed ::}
+{5009006}{}{The Super Mutant Remnants have abandoned their hideout. If we couldn't have picked up the Gun Runners package before, it is now gone forever.}
+{5009007}{}{SOFT_FAILED:The package is lost, quest failed.
+
+:: Quest Failed ::}
+{5009008}{}{SOFT_COMPLETED:I've got the payment from the Gun Runners, the job is done.
+
+:: Quest Completed ::}
+{5009101}{}{Boneyard: Gun Runners Caravan Package}
+{5009102}{}{JOB:Gun Runners Caravan Package}
 
 #=======================================
-# 6200
+# 5011 / q_la_gunr_courier
+# Boneyard, Gun Runners Courier
+#=======================================
+{5011001}{}{Marshal from the Gun Runners gave me a special shipment for Jargo, the local gunsmith in New Adytum.}
+{5011002}{}{Marshal from the Gun Runners gave me a special shipment for Jacob, the arms dealer in Oldtown.}
+{5011003}{}{Marshal from the Gun Runners gave me a special shipment for Mai Da Chiang in the Red 888 Guns shop.}
+{5011004}{}{Marshal from the Gun Runners gave me a special shipment for Eldridge at the New Reno Arms gun store in New Reno West Side.}
+{5011005}{}{Marshal from the Gun Runners gave me a special shipment for Buster, the local arms dealer at the NCR Bazaar.}
+{5011006}{}{Marshal from the Gun Runners gave me a special shipment for Jeremiah Darkwater in Junktown. I've been told, that his shop is at the center of the town and I can't miss it.}
+{5011007}{}{The package has been delivered and I am now on my way back to Marshal.}
+{5011008}{}{SOFT_COMPLETED:The package has been delivered and I've got my reward from the Gun Runners.
+
+:: Quest Completed ::}
+{5011009}{}{SOFT_FAILED:The package never arrived at it's target. The Gun Runners had been pretty angry. I should stay away from them for the next time.
+
+:: Quest Failed ::}
+
+{5011101}{}{Boneyard: Deliver the Gun Runners package}
+{5011102}{}{JOB:Deliver the Gun Runners package}
+
+#=======================================
+# 5022 / q_la_train_caesar
+# Boneyard, A Man's Job
+#=======================================
+{5022001}{}{Hammilton, quite a busy man in the Library of the Followers of the Apocalypse, gave me a job, where one "has to be a tough motherfucker", as he said. I have to find a middle-aged man in leather armor with a black bull painted on it. Hammilton said it's one of his... workers. He wants me to find and kill him. I should ask around at the train stations. Maybe someone saw him there.}
+{5022002}{}{Someone told me that I should check out a shady man in leather jacket at the NCR train station. He should know more about my target...}
+{5022003}{}{I've talked to the leather jacket man at the NCR train station. He told me where to find my target. The man is hiding somewhere between the mountains, west of the NCR.}
+{5022004}{}{The man in the leather armor with the black bull on it is dead. My job here is done. Guess I should report back to Hammilton for my reward.}
+{5022007}{}{I decided not to kill Greg. I doubt Hammilton will be very happy about it... Maybe I should try to lie about this.}
+{5022009}{}{I've killed Gregs daughter. I am a goddamn motherfucker.}
+{5022010}{}{Frisco done}
+{5022011}{}{LA done}
+{5022012}{}{NCR done}
+{5022013}{}{VC done}
+{5022014}{}{HARD_COMPLETED:I reported back to Hammilton and got my reward. It's good to be done with a Man's job.
+
+:: Quest Completed ::}
+{5022015}{}{HARD_COMPLETED:I've told Hammilton that I didn't kill the man. He wasn't very happy to hear this and I'll guess I can count on future activity from his side.
+
+:: Quest Completed ::}
+{5022016}{}{HARD_FAILED:I needed too much time. The target could be through the mountains already and is now impossible to find.
+
+:: Quest Failed ::}
+{5022101}{}{Boneyard: A Man's Job}
+{5022102}{}{QUEST:A Man's Job}
+
+#=======================================
+# 5027 / q_la_train_coc
+# Boneyard Train Station, CoC Administrator
+#=======================================
+{5027001}{}{A member from the Children of the Cathedral told me that someone from the Boneyard train station administration might have some work for me.}
+{5027002}{}{One of the Boneyard Train Station administrators wants me to bring him a new Deans Electronics book.}
+{5027003}{}{HARD_COMPLETED:I delivered the book and job is done. That's how it runs.
+
+:: Quest Completed ::}
+{5027101}{}{Boneyard: Train station maintenance}
+{5027102}{}{QUEST:Train Station Maintenance}
+
+#=======================================
+# 5031 / q_la_ware
+# Boneyard, Warehouse Rape Party :>
+#=======================================
+{5031001}{}{I've got the job to deliver a message to some folks in the industrial park, Boneyard westside.}
+{5031002}{}{HARD_COMPLETED:The message was a trap. A few punks showed up and wanted to rape me, but I fled from the scene.
+
+:: Quest Completed ::}
+{5031003}{}{HARD_COMPLETED:The message was a trap. A few punks showed up and wanted to rape me, but I was able to kill them all.
+
+:: Quest Completed ::}
+{5031004}{}{HARD_FAILED:The message was a trap. A few punks showed up and raped me. There was nothing I could do against it...
+
+:: Quest Failed ::}
+{5031005}{}{HARD_FAILED:I didn't delivered the message to the industrial park.
+
+:: Quest Failed ::}
+{5031006}{}{The message was a trap. A few punks showed up, but ran away after a brief conversation. I am not exactly sure why, though...
+
+:: Quest Completed ::}
+{5031101}{}{Boneyard: Industrial Park Message}
+{5031102}{}{QUEST:Deliver the message to the Industrial Park}
+
+#=======================================
+# 5038 / q_la_waterpump
+# Boneyard, repair the waterpump
+#=======================================
+{5038001}{}{I've asked Montag, if I should take a look at his water pump. Maybe I can fix it.}
+{5038002}{}{DONE:It was not easy, but I could fix the machine.}
+{5038003}{}{SOFT_FAILED:Looks like I am not able to repair the water pump.}
+{5038004}{}{HARD_FAILED:I've reported to Montag, that I couldn't fix the water pump.
+
+:: Quest Failed ::}
+{5038005}{}{HARD_COMPLETED:I've reported to Montag, that I've fixed the water pump.
+
+:: Quest Completed ::}
+{5038101}{}{Boneyard: Montag's Water Pump}
+{5038102}{}{QUEST:Montag's Water Pump}
+
+
+
+#############################
+#		BROKEN HILLS		#
+#############################
+
+
+
+#####################################
+#		BROTHERHOOD OF STEEL		#
+#####################################
+
+
+
+#=======================================
+# 5605 / q_bos_initiate_start (also: q_bos_eldridge)
+# NCR, Den or San Francisco, Brotherhood of Steel faction questline 
+#=======================================
+{5605001}{}{My first assignment as a Recruit in the Brotherhood of Steel is to collect ten radscorpion tails and return with them.}
+{5605011}{}{I've turned in all of the scorpion tails.}
+{5605012}{}{Now I have to scout out Navarro and investigate a 'suspicious red device.'}
+{5605013}{}{I've identified the Nuka-Cola machine. The Brotherhood of Steel mystery has been solved.}
+{5605014}{}{DONE:I've completed my second assignment. I now need to speak to the quartermaster.}
+{5605015}{}{I've been promoted to Initiate, and I can now either deal with Eldridge's gun shipment in New Reno or investigate this Ghost Farm place.}
+{5605016}{}{Ghost Farm is as it sounds. Dead. I need to report back with this information.}
+{5605017}{}{An entire civilization exists under Ghost Farm. I need to report back with this information.}
+{5605018}{}{Eldridge has promised to reimburse the Brotherhood for not delivering. I should report this information.}
+{5605019}{}{I've helped Eldridge get his caravan rolling again. The Brotherhood will be pleased to hear this.}
+{5605020}{}{DONE:I've completed my third mission and have been rewarded. I should return for my next mission.}
+{5605021}{}{I now either need to help the hummer between Reno and Gordon's or the injured patrol near Mariposa.}
+{5605022}{}{I spoke to Gordon and brought the parts back to the hummer.}
+{5605023}{}{I was able to get the hummer on its way to Gordon without any additional delay.}
+{5605024}{}{Apprentice Snyder was in pretty bad shape, but managed to get him on his feet with some meds.}
+{5605025}{}{I was able to create a makeshift splint for Snyder, and his leg will heal properly now.}
+{5605026}{}{DONE:I've completed my fourth mission and have again been rewarded. I should return for my next mission.}
+{5605027}{}{I've been ordered to investigate a BoS bunker on lockdown near Necropolis, collect survivors, and most importantly, retrieve data from the base's main terminal.}
+{5605028}{}{I was able to extract the data, but the bunker is compromised and there were no survivors. I should report to Lost Hills with this information.}
+{5605029}{}{I've completed my investigation. All the data I managed to retrieve are in safe hands now.}
+
+{5605101}{}{Brotherhood of Steel: Welcome to the Brotherhood}
+{5605102}{}{QUEST:Among the ranks of the Brotherhood of Steel}
+
+
+
+#########################
+#		CATHEDRAL		#
+#########################
+
+
+
+#=======================================
+# 6001 / q_cath_basement
+# Cathedral, Cellar Dwellar
+#=======================================
+{6001001}{}{Patrick, one of the hobos in the Cathedral, told me about a rat plague in the basement cellar of the Cathedral. It seems like the rats grow stronger and stronger over time. If nothing will be done in time, the rats will fully take over the underground.}
+{6001002}{}{On the second basement floor was a glowing ghoul who most likely is the source for the mutated rats. I've killed him.}
+{6001003}{}{I've killed all the mutated venus mantrap plants that I could find. This should stop them to poison the ground water.}
+{6001004}{}{HARD_COMPLETED:The cathedral cellar is cleaned up and the source of the mutated rats is exterminated.
+
+:: Quest Completed ::}
+{6001005}{}{HARD_FAILED:The basement cellar has been taken over by an army of mutated rats.
+
+:: Quest Failed ::}
+{6001101}{}{Cathedral: Explore the Cathedral Cellar}
+{6001102}{}{QUEST:Explore the Cathedral Cellar}
+
+
+
+#################
+#		DEN		#
+#################
+
+
+
+#=======================================
+# 6201 / q_den_becky_clubs
+# Den, repair Becky's gaming table
+#=======================================
+{6201001}{}{I asked Becky for more work and she seems to need new clubs for her guards. I shoult talk to Tubby about it and try to ask for a discount.}
+{6201002}{}{DONE:I talked to Tubby and manged to get some discount for Becky. New clubs on the way for 30 caps each.}
+{6201003}{}{DONE:I talked to Tubby to supply some new clubs for the regular price of 50 caps each.}
+{6201004}{}{HARD_COMPLETED:I did the errand and got my reward from Becky.
+
+:: Quest Completed ::}
+{6201101}{}{Den: Clubs errand}
+{6201102}{}{QUEST:Clubs errand}
+
+#=======================================
+# 6202 / q_den_becky_table
 # Den, repair Becky's gaming table
 #=======================================
 
-{6200001}{}{Becky asked me to repair one of her gaming tables.}
-{6200002}{}{I've repaired Becky's gaming table.}
-{6200003}{}{I've failed to repair Becky's table.}
-{6200004}{}{Becky's table will stay broken. I couldn't fix it.
+{6202001}{}{Becky asked me to repair one of her gaming tables.}
+{6202002}{}{DONE:I've repaired Becky's gaming table.}
+{6202003}{}{SOFT_FAILED:I've failed to repair Becky's table. All I can do now is report back.}
+{6202004}{}{HARD_FAILED:Becky's table will stay broken. I couldn't fix it.
 
 ::Quest Failed::}
-{6200005}{}{I've managed to repair Becky's table.
+{6202005}{}{HARD_COMPLETED:I've managed to repair Becky's table.
 
 :: Quest Completed ::}
-{6200101}{}{Den: Repair one of Becky's gaming tables}
-{6200102}{}{Repair one of Becky's gaming tables}
+{6202101}{}{Den: Repair one of Becky's gaming tables}
+{6202102}{}{QUEST:Repair one of Becky's gaming tables}
 
 #=======================================
-# 7004
-# Junktown, abandoned bunker
+# 6206 / q_raiders_induction
+# Den, Raiders induction quest
 #=======================================
-{7004001}{}{A scout in Junktown told me stories about an old trapper who might know some nice places to hang around.}
-{7004005}{}{Got a hint that the trapper might have gone to Necropolis. I should check this out.}
-{7004016}{}{The name of that trapper is Wally. Wonder where he is now...}
-{7004021}{}{Finally. The ghouls say that I can find Wally at the Watershed. He has to live there somewhere.}
-# Questlog deactivated for now, because it's all messed up.
-#{7004101}{}{Junktown: The old trapper}
-#{7004102}{}{The old trapper.}
+{6206001}{}{Metzger pointed me to his business contact, Stokes. Stokes is said to spend his time in The Hole.}
+{6206002}{}{Stokes told me to visit the Khans' southern outpost and talk to Raynes, the local leader.}
+{6206003}{}{Deal with the renegade raider.}
+{6206101}{}{Den: Join the raiders}
+{6206102}{}{QUEST:Join the raiders}
 
-#=======================================
-# 7005
-# Redding, Rats in Mines
-#=======================================
-{7005001}{}{In order to help Marge Le Barge in Redding with some rats in mines, I have to prove myself by taking care of a job for Caminetto, a guy hanging around in Redding's Malamute Saloon.}
-{7005002}{}{Accepted to bring five Radscorpion Tales to Caminetto in Redding.}
-{7005003}{}{After taking care of Caminetto's job, I got his recommendation and should talk to Marge about exterminating those rats from Redding mines.}
-{7005004}{}{There was no rats in mines, ever. The whole ruckus was about getting some stuff done for Caminetto.
 
-:: Quest Completed ::}
-{7005005}{}{Never managed to get to those rats down in Redding mines. What the hell, there must be some other job for me to do now.
 
-:: Quest Failed ::}
-{7005101}{}{Redding: Rats in Mines}
-{7005102}{}{Help Marge deal with rats in Redding Mines}
+#####################
+#		GECKO		#
+#####################
+
+
 
 #=======================================
-# 7008
-# Hub, sad wife quest
-#=======================================
-{7008001}{}{There was a sad woman in the Hub, Oldtown. She told me she was worried about her Husband who was traveling to the Boneyard. I will keep my eyes open for him.}
-{7008002}{}{Joseph really was in the Boneyard. But sadly he was hanging from a lamp post. I should go back to the woman and tell her.}
-{7008003}{}{I told that woman about her husband. It's a sad day today.
-
-:: Quest Completed ::}
-{7008004}{}{I made fun of the dead man's wife and told her horrible stories. I am such a bad person.
-
-:: Quest Completed ::}
-{7008101}{}{Hub: Find Joseph, the scavenger}
-{7008102}{}{Find Joseph, the scavenger}
-
-#=======================================
-#7009
-#Hub, Wasteland Band
-#=======================================
-{7009001}{}{A peculiar man named Mick has asked me to find his friend Ronnie in Junktown and ask him to form a band. He is known to hang around the Skum Pitt, so I should start there.}
-{7009002}{}{Ronnie agreed to join Mick's band. I need to report back to the Hub now.}
-{7009003}{}{Mick threw me a few caps and told me I need to locate a man named Charlie, who lives somewhere in San Francisco.}
-{7009004}{}{Charlie made my job easy. Back to the Hub to see if Mick needs anything else}
-{7009005}{}{Mick swears this is the last one. All I have to do is convince Keith in Gecko to join, and my job is done.}
-{7009006}{}{Keith was a pain in the ass, but I've done it. Time to tell Mick the good news.}
-
-:: Quest Completed ::}
-{7009007}{}{I've assembled the band, Mick is happy, and I've been paid.
-
-:: Quest Completed ::}
-{7009101}{}{Hub: Wasteland Band}
-{7009102}{}{Assemble the Band}
-
-#=======================================
-# 7011
-# NCR, Spawn Quest
-#=======================================
-{7011001}{}{Man, what a night. I barely survived the horrific sand storm yesterday by taking cover in an old mining pit. When I was crawling back to the surface I met a lone man called Feelslong who lives in this area. He asked me to deliver a message to someone named Harris. Harris should be in the Rawhide Saloon... like always.}
-{7011002}{}{I've delivered the message, my job is done. Who knows, maybe I will meet Feelslong again some day...
-
-:: Quest Completed ::}
-{7011101}{}{NCR: The Message}
-{7011102}{}{The Message}
-
-#=======================================
-# 7013
-# NCR, Horatius Rail Line Gang
-#=======================================
-{7013001}{}{Feargus in the foreroom told me, Gunther might have a special job for me...}
-{7013002}{}{I've got the job to take care of a rail line gang that is located to the north east of the NCR. Could be a hot job, maybe I should get some backup for myself.}
-{7013003}{}{The gang leader, called Horatius, is dead.}
-{7013004}{}{The rail line gang will leave this place. It was a non-violent resolution.}
-{7013005}{}{I killed all of the gang members. Now they will not be a problem again.}
-{7013010}{}{I've reported back to Gunther.}
-{7013011}{}{Feargus gave me my reward and with this, the job is done.
-
-:: Quest Completed ::}
-{7013012}{}{Someone else took care of the rail line gang. Seems like I was too late.
-
-:: Quest Failed ::}
-{7013101}{}{NCR: The Rail Line Gang}
-{7013102}{}{The Rail Line Gang}
-
-#=======================================
-# 7017
-# Boneyard Train Station, CoC Administrator
-#=======================================
-{7017001}{}{A member from the Children of the Cathedral told me that someone from the Boneyard train station administration might have some work for me.}
-{7017002}{}{One of the Boneyard Train Station administrators wants me to bring him a new Deans Electronics book.}
-{7017003}{}{I delivered the book and job is done. That's how it runs.
-
-:: Quest Completed ::}
-{7017101}{}{Boneyard: Get a Deans Electronics book}
-{7017102}{}{Get a Deans Electronics book}
-
-#=======================================
-# 7018
-# Vault City, Medical Investigation
-#=======================================
-{7018001}{}{Doctor Andrew in Vault City gave me an interesting job. He told me about the New Californian Republic rail line and where I can find the next closest train station. From there I should start asking everyone if they are ill or know someone who is ill. After that, I have to report back to doctor Andrew. I guess talking to four people in each station should be enough...}
-{7018002}{}{It seems like the people at the San Francisco station are seriously ill. Feels like a pandemic is spreading around. I should report back to doctor Andrew.}
-{7018003}{}{The people at the Boneyard train station are not in the best condition, but beside this, all seems normal. I should report back to doctor Andrew.}
-{7018004}{}{At the NCR train station, everyone seems to be in good condition. I should report back to doctor Andrew.}
-{7018005}{}{After talking to the people at the Vault City train station, it seems clear that everything is okay. I should report back to doctor Andrew.}
-{7018006}{}{It took me some time, but I've reported back the status of every available train station. With this, my job is done.
-
-:: Quest Completed ::}
-{7018101}{}{Vault City: Medical Investigation}
-{7018102}{}{Medical Investigation}
-
-#=======================================
-# 7019
-# Boneyard, A Man's Job
-#=======================================
-{7019001}{}{Hammilton, quite a busy man in the Library of the Followers of the Apocalypse, gave me a job, where one "has to be a tough motherfucker", as he said. I have to find a middle-aged man in leather armor with a black bull painted on it. Hammilton said it's one of his... workers. He wants me to find and kill him. I should ask around at the train stations. Maybe someone saw him there.}
-{7019002}{}{Someone told me that I should check out a shady man in leather jacket at the NCR train station. He should know more about my target...}
-{7019003}{}{I've talked to the leather jacket man at the NCR train station. He told me where to find my target. The man is hiding somewhere between the mountains, west of the NCR.}
-{7019004}{}{The man in the leather armor with the black bull on it is dead. My job here is done. Guess I should report back to Hammilton for my reward.}
-{7019007}{}{I decided not to kill Greg. I doubt Hammilton will be very happy about it... Maybe I should try to lie about this.}
-{7019009}{}{I've killed Gregs daughter. I am a goddamn motherfucker.}
-
-{7019010}{}{Frisco done}
-{7019011}{}{LA done}
-{7019012}{}{NCR done}
-{7019013}{}{VC done}
-{7019014}{}{I reported back to Hammilton and got my reward. It's good to be done with a Man's job.
-
-:: Quest Completed ::}
-{7019015}{}{I've told Hammilton that I didn't kill the man. He wasn't very happy to hear this and I'll guess I can count on future activity from his side.
-
-:: Quest Completed ::}
-{7019016}{}{I needed too much time. The target could be through the mountains already and is now impossible to find.
-
-:: Quest Failed ::}
-{7019101}{}{Boneyard: A Man's Job}
-{7019102}{}{A Man's Job}
-
-#=======================================
-# 7021
-# Frisco ant lair quest
-#=======================================
-{7021001}{}{Doctor Wong gave me the task to smoke out the ant lair in the north east of San Francisco.}
-{7021002}{}{I've killed all ants. I should go back to Doctor Wong for my reward.}
-{7021003}{}{The ant lair is dead and I got my reward from Doctor Wong. He also said that I can check back later, if I want to kill some more ants...}
-{7021101}{}{San Francisco: It came from the desert}
-{7021102}{}{It came from the desert}
-
-#=======================================
-# 7031
+# 6601 / q_gecko_spawn
 # Gecko, Spawn Quest
 #=======================================
-{7031001}{}{Man, what a night. I barely survived the horrific sand storm yesterday by taking cover in an old rotten building. When I was crawling back to the surface I met a ghoul caravan which was on its way back to a town called Gecko. One of the ghouls, Leeroy, asked me to deliver a message to a woman in Vault City. He told me to talk to a woman with pretty obvious hair in the local bar.}
-{7031002}{}{I've delivered the message, my job is done. Who knows, maybe I will meet Leeroy again some day...
+{6601001}{}{Man, what a night. I barely survived the horrific sand storm yesterday by taking cover in an old rotten building. When I was crawling back to the surface I met a ghoul caravan which was on its way back to a town called Gecko. One of the ghouls, Leeroy, asked me to deliver a message to a woman in Vault City. He told me to talk to a woman with pretty obvious hair in the local bar.}
+{6601002}{}{I've delivered the message, my job is done. Who knows, maybe I will meet Leeroy again some day...
 
 :: Quest Completed ::}
-{7031005}{}{Man, what a night. I barely survived the horrific sand storm yesterday by taking cover in an old rotten building. When I was crawling back to the surface I met a ghoul caravan which was on its way back to a town called Gecko. I've pissed off one of the ghouls. His name was Leeroy. Maybe I should say sorry...}
-{7031101}{}{Gecko: The Vault City Contact}
-{7031102}{}{The Vault City Contact}
+{6601005}{}{Man, what a night. I barely survived the horrific sand storm yesterday by taking cover in an old rotten building. When I was crawling back to the surface I met a ghoul caravan which was on its way back to a town called Gecko. I've pissed off one of the ghouls. His name was Leeroy. Maybe I should say sorry...}
+{6601101}{}{Gecko: The Vault City Contact}
+{6601102}{}{The Vault City Contact}
+
+
+
+#################
+#		HUB		#
+#################
+
+
 
 #=======================================
-# 7032
-# Hub, Spawn Quest
-#=======================================
-{7032001}{}{Man, what a night. I barely survived the horrific sand storm yesterday by taking cover in a sand hole under an old tent. When I was crawling back to the surface I met a big caravan that was on its way to the Hub, a big trade center in this area. The caravan leader asked me to be a messenger for them. I should go to the Far Go Traders and tell them that the caravan will need some more time.}
-{7032002}{}{I've delivered the message, my job is done. Who knows, maybe I will meet the caravan folks again some day...
-
-:: Quest Completed ::}
-{7032101}{}{Hub: Far Go Scout}
-{7032102}{}{Far Go Scout}
-
-#=======================================
-# 7036
-# Klamath, Stranded Rust quest
-#=======================================
-{7036001}{}{I've met a stinky trapper in Klamath who told me something about a kind of stranded ship. I should bring him a metallic brief case from there. He will show me the position when I look strong enough and have some backup with me.}
-{7036002}{}{The stinky trapper in Klamath want's me to bring him a metal case from an old stranded ship. He gave me the position on my PiPBoy map. I should check it out and see what I can find.}
-{7036003}{}{Meloy got his metal case and with this, my job is done.
-
-:: Quest Completed ::}
-{7036004}{}{Seems like I was too slow and someone else faster than me. The metallic brief case is gone and I can't bring it back to Meloy.
-
-:: Quest Failed ::}
-{7036101}{}{Klamath: Stranded Rust}
-{7036102}{}{Stranded Rust}
-
-#=======================================
-# 7042
-# Boneyard, repair the waterpump
-#=======================================
-{7042001}{}{I've asked Montag, if I should take a look at his water pump. Maybe I can fix it.}
-{7042002}{}{It was not easy, but I could fix the machine.}
-{7042003}{}{Looks like I am not able to repair the water pump.}
-{7042004}{}{I've reported to Montag, that I couldn't fix the water pump.
-
-:: Quest Failed ::}
-{7042005}{}{I've reported to Montag, that I've fixed the water pump.
-
-:: Quest Completed ::}
-{7042101}{}{Boneyard: Montag's Water Pump}
-{7042102}{}{Montag's Water Pump}
-
-#=======================================
-# 7043
-# Boneyard, Dogs of LA
-#=======================================
-{7043001}{}{Hendriks, one of the regulators, gave me the job to kill one of the local dog groups. He gave me the position on my PipBoy.}
-{7043002}{}{I've wiped out the group of dogs. I should go back to Hendriks for my reward.}
-{7043003}{}{The pack of dogs is dead and I reported back to Hendriks. I can check back later, because he is sure that there will be more work.}
-{7043101}{}{Boneyard: Dogs of LA}
-{7043102}{}{Dogs of LA}
-
-#=======================================
-# 7047
-# Boneyard, Howitzer Shells
-#=======================================
-{7047001}{}{Sergeant from the scavenger camp asked me to get him some more shells for his howitzer. Jargo, the gunsmith in Adytum, is in charge of the ammunition production. I should try to convince him.}
-{7047002}{}{Jargo agreed to produce some extra howitzer shells. My job is done.
-
-:: Quest Completed ::}
-{7047003}{}{Jargo doesn't want to produce extra howitzer shells, as they are too expensive. Anyway, my job is done...
-
-:: Quest Failed ::}
-{7047004}{}{I've met Sergeant again. He was pretty happy about the additional howitzer ammunition and gave me an unused train ticket.
-
-:: Quest Completed ::}
-{7047101}{}{Boneyard: Howitzer Shells}
-{7047102}{}{Howitzer Shells}
-
-#=======================================
-# 7070
+# 6808 / q_hub_iguana_pete_message
 # Hub, Iguana Pete missing son
 #=======================================
-{7070001}{}{Iguana Pete is upset because he misses his son. I should visit his son in the New California Republic.}
-{7070002}{}{Iguana 'Miky' told me he got his Iguana stand from a mutant at the Rawhide Saloon}
-{7070003}{}{The drunk mutant was very unhelpful, he informed me that Pete's son can be found south of an area beginning with 'New' that is unsafe for mutants.}
-{7070005}{}{I have visited Golgotha and discovered a fresh corpse that looks a bit like Pete. I should let Pete know.}
-{7070006}{}{I found Pete's son and delivered the message. He gave me the reward himself.
+{6808001}{}{Iguana Pete is upset because he misses his son. I should visit his son in the New California Republic.}
+{6808002}{}{Iguana 'Miky' told me he got his Iguana stand from a mutant at the Rawhide Saloon}
+{6808003}{}{The drunk mutant was very unhelpful, he informed me that Pete's son can be found south of an area beginning with 'New' that is unsafe for mutants.}
+{6808005}{}{DONE:I have visited Golgotha and discovered a fresh corpse that looks a bit like Pete. I should let Pete know.}
+{6808006}{}{HARD_COMPLETED:I found Pete's son and delivered the message. He gave me the reward himself.
 
 :: Quest Completed ::}
-{7070007}{}{I have told Pete about his dead son and received my reward. He was very upset.}
+{6808007}{}{HARD_COMPLETED:I have told Pete about his dead son and received my reward. He was very upset.}
 
-{7070101}{}{The Hub: Iguana Pete's Missing Son}
-{7070102}{}{Find Iguana Pete's Missing Son}
-
-#=======================================
-# 7074
-# NCR,Den, or SF
-#=======================================
-{7074001}{}{My first assignment as a Recruit in the Brotherhood of Steel is to collect ten radscorpion tails and return with them.}
-{7074011}{}{I've turned in all of the scorpion tails.}
-{7074012}{}{Now I have to scout out Navarro and investigate a 'suspicious red device.'}
-{7074013}{}{I've identified the Nuka-Cola machine. The Brotherhood of Steel mystery has been solved.}
-{7074014}{}{I've completed my second assignment. I now need to speak to the quartermaster.}
-{7074015}{}{I've been promoted to Initiate, and I can now either deal with Eldridge's gun shipment in New Reno or investigate this Ghost Farm place.}
-{7074016}{}{Ghost Farm is as it sounds. Dead. I need to report back with this information.}
-{7074017}{}{An entire civilization exists under Ghost Farm. I need to report back with this information.}
-{7074018}{}{Eldridge has promised to reimburse the Brotherhood for not delivering. I should report this information.}
-{7074019}{}{I've helped Eldridge get his caravan rolling again. The Brotherhood will be pleased to hear this.}
-{7074020}{}{I've completed my third mission and have been rewarded. I should return for my next mission.}
-{7074021}{}{I now either need to help the hummer between Reno and Gordon's or the injured patrol near Mariposa.}
-{7074022}{}{I spoke to Gordon and brought the parts back to the hummer.}
-{7074023}{}{I was able to get the hummer on its way to Gordon without any additional delay.}
-{7074024}{}{Apprentice Snyder was in pretty bad shape, but managed to get him on his feet with some meds.}
-{7074025}{}{I was able to create a makeshift splint for Snyder, and his leg will heal properly now.}
-{7074026}{}{I've completed my fourth mission and have again been rewarded. I should return for my next mission.}
-{7074027}{}{I've been ordered to investigate a BoS bunker on lockdown near Necropolis, collect survivors, and most importantly, retrieve data from the base's main terminal.}
-{7074028}{}{I was able to extract the data, but the bunker is compromised and there were no survivors. I should report to Lost Hills with this information.}
-{7074029}{}{I've completed my investigation. All the data I managed to retrieve are in safe hands now.}
-
-{7074101}{}{Brotherhood of Steel: Welcome to the Brotherhood}
-{7074102}{}{Rise among the ranks of the Brotherhood of Steel.}
+{6808010}{}{I got word that Iguana Pete misses his son. I should visit him at his iguanna stand south side of the district.}
+{6808101}{}{The Hub: Iguana Pete's Missing Son}
+{6808102}{}{QUEST:Find Iguana Pete's Missing Son}
 
 #=======================================
-# 7077
-# Modoc, Kill the Rancher
+# 6810 / q_hub_sadwife
+# Hub, sad wife quest
 #=======================================
-{7077001}{}{A strange looking man in Modoc has hired me to kill a rancher at his ranch nearby. The ranch is guarded so I should disguise myself as a delivery boy to gain access. He mentioned there would be a bonus if I destroy the ranch.}
-{7077002}{}{I have killed the Rancher, I could report back to the man in Modoc or find a way to destroy the ranch.}
-{7077003}{}{I have destroyed the ranch and killed the rancher by causing his ranch to collapse into an underground cavern. I should report to the man in Modoc.}
-{7077004}{}{I have disabled the safety measures that kept the mine personnel alive. I can now investigate the mine without being harassed.}
-{7077005}{}{I have reported to the man in Modoc and received my reward.
+{6810001}{}{There was a sad woman in the Hub, Oldtown. She told me she was worried about her Husband who was traveling to the Boneyard. I will keep my eyes open for him.}
+{6810002}{}{DONE:Joseph really was in the Boneyard. But sadly he was hanging from a lamp post. I should go back to the woman and tell her.}
+{6810003}{}{HARD_COMPLETED:I told that woman about her husband. It's a sad day today.
 
 :: Quest Completed ::}
-{7077101}{}{Modoc: Kill the Rancher}
-{7077102}{}{Kill the Rancher}
-
-#=======================================
-# 7082
-# Redding, Wilson the conman
-#=======================================
-{7082001}{}{A card cheat named Wilson offered me a large sum of caps if I exchange some chips for him at the local casino.}
-{7082002}{}{I gave Wilson's chips to the cashier. She was sceptical as to their origins. I think I should get out of here.
+{6810004}{}{HARD_COMPLETED:I made fun of the dead man's wife and told her horrible stories. I am such a bad person.
 
 :: Quest Completed ::}
-
-{7082101}{}{Redding: Cash Wilson's chips}
-{7082102}{}{Cash Wilson's chips}
-
-#=======================================
-#7091
-# Raiders, MAIN QUEST
-#=======================================
-{7091001}{}{My first assignment as a Raider prospect is to get a beer. I should go find a beer.}
-{7091002}{}{I got a beer for the raider. I should ask if he wants anything else.}
-{7091003}{}{I have been given a quest to clean the toilets at the raider camp with a water bag. I should use a water bag on the toilets.}
-{7091004}{}{I cleaned the toilet, I should report my success to the raider.}
-{7091005}{}{My orders are to find some jimmy hats and report back to the raider.}
-{7091006}{}{I delivered the jimmy hats to the raider. It sounds like I may have another important mission waiting for me.}
-{7091007}{}{I have been told to investigate a cave filled with radscorpions and bring back whatever I find in the footlocker near the back.}
-{7091008}{}{There was only junk in the footlocker, I should tell the raider.}
-{7091009}{}{It was all a stupid joke. I have been told to report to the leader of the Raiders.}
-{7091010}{}{Ren, the leader, has asked me to get rid of some farmers for him. I should make this quick.}
-{7091011}{}{I killed the farmers. Ren will want to hear about this.}
-{7091012}{}{Ren was happy, he told me to check in at the supply depot in the raider base.}
-{7091013}{}{I need to find ten combat knives for the supply shed.}
-{7091014}{}{I need to find nine combat knives for the supply shed.}
-{7091015}{}{I need to find eight combat knives for the supply shed.}
-{7091016}{}{I need to find seven combat knives for the supply shed.}
-{7091017}{}{I need to find six combat knives for the supply shed.}
-{7091018}{}{I need to find five combat knives for the supply shed.}
-{7091019}{}{I need to find four combat knives for the supply shed.}
-{7091020}{}{I need to find three combat knives for the supply shed.}
-{7091021}{}{I need to find two combat knives for the supply shed.}
-{7091022}{}{I need to find the last combat knife for the supply shed.}
-{7091023}{}{I found all of the combat knives, I should ask if Lumpy wants anything else.}
-{7091024}{}{Lumpy asked me to assault a rancher for her, she didn't say if I should kill him or not.}
-{7091025}{}{I punched the rancher a few times, I should let Lumpy know he won't be bothering her for awhile.}
-{7091026}{}{Lumpy told me to talk to Jim, the treasurer.}
-{7091027}{}{Jim asked me to deliver a message to his girl in NCR.}
-{7091028}{}{I delivered Jim's message. I should get back to him.}
-{7091029}{}{I delivered Jim's message. I should get back to him.}
-{7091030}{}{I should report to Ren.}
-{7091031}{}{A man in at the Malumute in Redding is waiting for this shipment of Jet, I should hurry there.}
-{7091032}{}{The Jet has been delivered. I should get back for my reward.}
-{7091033}{}{I need to purchase a caravan schedule from a caravan guard in NCR.}
-{7091034}{}{I got the schedule. Now to hand it over to the Raiders.}
-{7091035}{}{I couldn't get the schedule. Dammnit.}
-{7091036}{}{Ren told me to speak to Lumpy again.}
-{7091037}{}{I have to deliver 10 Mausers to a man in the vault city bar.}
-{7091038}{}{I delivered the Mausers alright, time to get my reward.}
-{7091039}{}{Ren wanted to speak to me.}
-
-{7091101}{}{Raiders: MAIN QUEST}
-{7091102}{}{MAIN QUEST}
+{6810101}{}{The Hub: Find Joseph, the scavenger}
+{6810102}{}{QUEST:Find Joseph, the scavenger}
 
 #=======================================
-# 7097
-# Train Ambush, Rail Raiders
+# 6811 / q_hub_spawn
+# Hub, Spawn Quest
 #=======================================
-{7097001}{}{Beginning text}
-{7097002}{}{Our group managed it to kill all the Rail Raiders!
+{6811001}{}{I met a big caravan that was on its way to the Hub, a big trade center in this area. The caravan leader asked me to be a messenger for them. I should go to the Far Go Traders and tell them that the caravan will need some more time.}
+{6811002}{}{HARD_COMPLETED:I've delivered the message, my job is done. Who knows, maybe I will meet the caravan folks again some day...
 
 :: Quest Completed ::}
-{7097003}{}{Thanks to our fearful appearance, our group managed it to scare the Rail Raiders away.
-
-:: Quest Completed ::}
-{7097004}{}{It has cost our group a lot, but money doesn't weight as much as a human life. We paid the Rail Raiders money and they went away, letting us all alive.
-
-:: Quest Completed ::}
-{7097005}{}{The skillful use of our groups diplomatic abilities saved a lot human lifes today. We managed it to talk over the Rail Raiders to leave this place.
-
-:: Quest Completed ::}
-{7097006}{}{You've been running away! text
-
-:: Quest Failed ::}
-{7097101}{}{Traim Ambush: Rail Raiders}
-{7097102}{}{Rail Raiders}
+{6811101}{}{The Hub: Far Go Scout}
+{6811102}{}{QUEST:Far Go Scout}
 
 #=======================================
-# 7102
-# Boneyard, Warehouse Rape Party :>
+# 6813 / q_hub_wasteland_band
+# Hub, Wasteland Band
 #=======================================
-{7102001}{}{I've got the job to deliver a message to some folks in the industrial park, Boneyard westside.}
-{7102002}{}{The message was a trap. A few punks showed up and wanted to rape me, but I fled from the scene.
+{6813001}{}{A peculiar man named Mick has asked me to find his friend Ronnie in Junktown and ask him to form a band. He is known to hang around the Skum Pitt, so I should start there.}
+{6813002}{}{Ronnie agreed to join Mick's band. I need to report back to the Hub now.}
+{6813003}{}{Mick threw me a few caps and told me I need to locate a man named Charlie, who lives somewhere in San Francisco.}
+{6813004}{}{Charlie made my job easy. Back to the Hub to see if Mick needs anything else}
+{6813005}{}{Mick swears this is the last one. All I have to do is convince Keith in Gecko to join, and my job is done.}
+{6813006}{}{DONE:Keith was a pain in the ass, but I've done it. Time to tell Mick the good news.}
+{6813007}{}{HARD_COMPLETED:I've assembled the band, Mick is happy, and I've been paid.
 
 :: Quest Completed ::}
-{7102003}{}{The message was a trap. A few punks showed up and wanted to rape me, but I was able to kill them all.
-
-:: Quest Completed ::}
-{7102004}{}{The message was a trap. A few punks showed up and raped me. There was nothing I could do against it...
-
-:: Quest Completed ::}
-{7102005}{}{I didn't delivered the message to the industrial park.
-
-:: Quest Failed ::}
-{7102006}{}{The message was a trap. A few punks showed up, but ran away after a brief conversation. I am not exactly sure why, though...
-
-:: Quest Completed ::}
-{7102101}{}{Boneyard: Industrial Park Message}
-{7102102}{}{Deliver the message to the Industrial Park}
+{6813010}{}{I got word that Mick is looking for talent. Maybe I should join him, he is to be found in the local pub, the Maltese Falcon.}
+{6813101}{}{The Hub: Wasteland Band}
+{6813102}{}{QUEST:Assemble the Band}
 
 #=======================================
-# 7106
-# Cathedral, Cellar Dwellar
-#=======================================
-{7106001}{}{Patrick, one of the hobos in the Cathedral, told me about a rat plague in the basement cellar of the Cathedral. It seems like the rats grow stronger and stronger over time. If nothing will be done in time, the rats will fully take over the underground.}
-{7106002}{}{On the second basement floor was a glowing ghoul who most likely is the source for the mutated rats. I've killed him.}
-{7106003}{}{I've killed all the mutated venus mantrap plants that I could find. This should stop them to poison the ground water.}
-{7106004}{}{The cathedral cellar is cleaned up and the source of the mutated rats is exterminated.
-
-:: Quest Completed ::}
-{7106005}{}{The basement cellar has been taken over by an army of mutated rats.
-
-:: Quest Failed ::}
-{7106101}{}{Cathedral: Explore the Cathedral Cellar}
-{7106102}{}{Explore the Cathedral Cellar}
-
-#=======================================
-# 7112
-# Boneyard, Gun Runners Caravan
-#=======================================
-{7112001}{}{Marshall from the Gun Runners got a job for me. It's about a package that has been stolen by a group of Super Mutant remnants. He suggested to get a team of at least three people. It's dangerous but should be worth it.}
-{7112002}{}{The deal is clear: Marshall from the Gun Runners told me to bring him back the Gun Runners metal box with weapon manufacturing plans inside. The metal case is rigged with explosives, so we shouldn't touch them or it goes BOOM! He also told me that nobody else should get the package... Not the Brotherhood and not the Khans, not anyone else. 
-
-The mutants are using some heavy weaponry- our group should prepare for that.}
-{7112003}{}{The Gun Runners got their weapon manufacturing plans back. Marshall told me to visit Ralph for our payment.}
-{7112004}{}{The weapon manufacturing plans have been given to the Brotherhood of Steel. They made angry faces and played assholes, but at least they paid for it.
-
-:: Quest Completed ::}
-{7112005}{}{The weapon manufacturing plans have been given to the Khans. They seemed to be very happy about it.
-
-:: Quest Completed ::}
-{7112006}{}{The Super Mutant Remnants have abandoned their hideout. If we couldn't have picked up the Gun Runners package before, it is now gone forever.}
-{7112007}{}{The package is lost, quest failed.
-
-:: Quest Failed ::}
-{7112008}{}{I've got the payment from the Gun Runners, the job is done.
-
-:: Quest Completed ::}
-{7112101}{}{Boneyard: Gun Runners Caravan Package}
-{7112102}{}{Gun Runners Caravan Package}
-
-#=======================================
-# 7116
-# Frisco Replication, Squatter Subway
-#=======================================
-{7116001}{}{The San Francisco Subway Station has been taken over by radscorpions. As long as the place is occupied, the squatters can't get back to their homes. Chen told me about a lot dead people, who got poisoned or killed by the scorpions while trying to exterminate them.}
-{7116002}{}{Taking things into my own hands: I told Chen that I will check out the subway and get rid of the radscorpions.}
-{7116003}{}{The radscorpion family in the subway tunnels is dead. I should head back to Chen for my reward.}
-{7116004}{}{The subway tunnels are clear to go again and Chen gave me my reward.
-
-:: Quest Completed ::}
-{7116005}{}{The radscorpion family was growing bigger over time and occupied all subway tunnels. Without a heavily armed force, it will not be possible anymore to get rid of them.
-
-:: Quest Failed ::}
-
-{7116101}{}{San Francisco: Radscorpion Subway}
-{7116102}{}{Radscorpion Subway}
-
-#=======================================
-# 7120
+# 6814 / q_hub_watertaxes
 # Hub, Water Merchant Contracts
 #=======================================
-{7120001}{}{The independent merchants in the Hub have to pay high taxes on given out water galons to the Water Merchants. I could try and setup new terms for their contracts.}
-{7120002}{}{I haven't been able to negotiate a new discussion about the contracts between the independent merchants and the Water Merchants.
+{6814001}{}{The independent merchants in the Hub have to pay high taxes on given out water galons to the Water Merchants. I could try and setup new terms for their contracts.}
+{6814002}{}{HARD_FAILED:I haven't been able to negotiate a new discussion about the contracts between the independent merchants and the Water Merchants.
 
-:: Quest Completed ::}
-{7120003}{}{I could negotiate a new discussion about the contracts between the independent merchants and the Water Merchants for the next conference of the Hub's Central Council.
-
-:: Quest Completed ::}
-
-{7120101}{}{Hub: Water Merchant Contracts}
-{7120102}{}{Water Merchant Contracts}
-
-#=======================================
-# 7122
-# Junktown, Optimize the power house
-#=======================================
-{7122001}{}{Junktown is struggeling with being close to an energy crisis. Thomas, the person in charge, asked me to help him with repairing and optimizing the power house generators. 
-
-In order to do this, I have to find new electronic parts with that I can repair the generators. After the machines are repaired, I can try to optimize them.}
-{7122002}{}{You have fully repaired all power house generators. They can be further optimized now.}
-{7122003}{}{You have been able to optimize Junktown's power house generators. Turning around the power switches will bring the machines back to full capacity.}
-{7122004}{}{You turn the switches and the machines are starting up again.}
-{7122005}{}{Junktown's power house is now running with optimal capacity again. 
+:: Quest Failed ::}
+{6814003}{}{HARD_COMPLETED:I could negotiate a new discussion about the contracts between the independent merchants and the Water Merchants for the next conference of the Hub's Central Council.
 
 :: Quest Completed ::}
 
-{7122101}{}{Junktown: Optimizing the Power House}
-{7122102}{}{Optimizing the Power House}
+{6814101}{}{The Hub: Water Merchant Contracts}
+{6814102}{}{QUEST:Water Merchant Contracts}
 
 #=======================================
-# 7124
-# Junktown, Repairing the Mr. Handy Robot
-#=======================================
-{7124001}{}{Thomas' Mr. Handy robot isn't working. He told me that there might be a problem with the motivator unit and that Mitch in the Hub most likely has a working replacement part.}
-{7124002}{}{I've been able to get a robot motivator unit from Mitch in the Hub. With this part, I should be able to fix the Mr. Handy robot without big problems.}
-{7124003}{}{I have been able to fix the Mr. Handy unit for Thomas. 
-
-:: Quest Completed ::}
-
-{7124101}{}{Junktown: The inoperative Mr. Handy Robot}
-{7124102}{}{The inoperative Mr. Handy Robot}
-
-#=======================================
-# 7128
+# 7128 / q_hub_gunrunner_supplies
 # Hub, Gun Runner Delivery
 #=======================================
 {7128001}{}{Jacob in the Hub, Oldtown, needs more weapons and ammunition in his next supply delivery from the Gun Runners. He has sent me to talk with Marshal about it, the head honcho of the Gun Runners in the Angel's Boneyard.}
@@ -640,507 +443,946 @@ In order to do this, I have to find new electronic parts with that I can repair 
 {7128003}{}{Jacob agrees on paying more money for the next gun deliveries, but wants to have the next one to be delivered earlier.}
 {7128004}{}{?not used?}
 {7128005}{}{I've been able to negotiate a new deal with the Gun Runners for Jacob.}
-{7128006}{}{A new deal between the Gun Runners and Jacob has been negotiated and both parties agreed on it.
+{7128006}{}{HARD_COMPLETED:A new deal between the Gun Runners and Jacob has been negotiated and both parties agreed on it.
 
 :: Quest Completed ::}
 
-{7128101}{}{Hub: The Gun Runner Delivery}
-{7128102}{}{The Gun Runner Delivery}
+{7128101}{}{The Hub: The Gun Runner Delivery}
+{7128102}{}{QUEST:The Gun Runner Delivery}
+
+
+
+#########################
+#		JUNKTOWN		#
+#########################
+
+
 
 #=======================================
-# 7132
-# NCR, Westin Ranch Quest 1, Brahmin herdsman
+# 7202 / q_jt_power_house
+# Junktown, Optimize the power house
 #=======================================
-{7132001}{}{Got a new job as brahmin herdsman for the Roger Westin. I've been told to talk to Felix, the foreman. He will guide me to the willow, where I am supposed to take care of the brahmin herd.}
-{7132002}{}{Felix guided me to the brahmin willow.}
-{7132003}{}{Nothing of interest happened for quite some time, until a gang of children showed up. They wanted to startle the brahmin herd, but I chased them away.}
-{7132004}{}{A gang of children showed up. They wanted to startle the brahmin herd, but I killed them.}
-{7132005}{}{I've reported back to Roger Westin at the Westin Ranch. He paid me and that's it.
+{7202001}{}{Junktown is struggeling with being close to an energy crisis. Thomas, the person in charge, asked me to help him with repairing and optimizing the power house generators. 
+In order to do this, I have to find new electronic parts with that I can repair the generators. After the machines are repaired, I can try to optimize them.}
+{7202002}{}{You have fully repaired all power house generators. They can be further optimized now.}
+{7202003}{}{You have been able to optimize Junktown's power house generators. Turning around the power switches will bring the machines back to full capacity.}
+{7202004}{}{You turn the switches and the machines are starting up again.}
+{7202005}{}{HARD_COMPLETED:Junktown's power house is now running with optimal capacity again. 
 
 :: Quest Completed ::}
 
-{7132006}{}{I've reported back to Roger Westin at the Westin Ranch. He didn't paid me, because I've killed children.
+{7202101}{}{Junktown: Optimizing the Power House}
+{7202102}{}{QUEST:Optimizing the Power House}
+
+#=======================================
+# 7204 / q_jt_power_house_handy
+# Junktown, Repairing the Mr. Handy Robot
+#=======================================
+{7204001}{}{Thomas' Mr. Handy robot isn't working. He told me that there might be a problem with the motivator unit and that Mitch in the Hub most likely has a working replacement part.}
+{7204002}{}{I've been able to get a robot motivator unit from Mitch in the Hub. With this part, I should be able to fix the Mr. Handy robot without big problems.}
+{7204003}{}{HARD_COMPLETED:I have been able to fix the Mr. Handy unit for Thomas. 
 
 :: Quest Completed ::}
 
-{7132007}{}{I've killed the brahmin of Roger Westin. I doubt he will be happy, if he finds out what I did.}
-{7132008}{}{Westin had found out about the dead brahmin and fired me. I've told the guard at entrance a pack of lies to cover my guilt. It doesn't seem like they ate it, I should probably lay low for a while.
-
-:: Quest Failed ::}
-
-{7132101}{}{NCR: A Brahmin Herdsman' Job}
-{7132102}{}{A Brahmin Herdsman' Job}
+{7204101}{}{Junktown: The inoperative Mr. Handy Robot}
+{7204102}{}{QUEST:The inoperative Mr. Handy Robot}
 
 #=======================================
-# 7135
-# NCR, Westin Ranch Quest 2, Holodisk Delivery
-#=======================================
-{7135001}{}{My second job from Roger Westin is to deliver a special Holodisk to a man named Thomas Moore in Vault City.}
-{7135002}{}{I have given the Holodisk to Thomas Moore. Now I'll have to report back to Roger Westin.}
-{7135003}{}{I've reported back to Roger Westin at the Westin Ranch and he paid me for the delivery.
-
-:: Quest Completed ::}
-
-{7135101}{}{NCR: Holodisk for Thomas Moore}
-{7135102}{}{Holodisk for Thomas Moore}
-
-
-#=======================================
-# 7139
+# 7208 / q_jt_sneakeater
 # Junktown, Bring Scorpion Eggs
 #=======================================
-{7139001}{}{Close to Junktown is a cave with highly venomous Black Claw Radscorpions. Doc Larrikin wants me to go there and collect at least five Radscorpion eggs for him, as he isn't able to do it by himself.}
-{7139002}{}{Eggs given :: Not Used ::.}
-{7139003}{}{Doc Larrikin seemed to be quite happy when I gave him the requested Radscorpion eggs. 
+{7208001}{}{Close to Junktown is a cave with highly venomous Black Claw Radscorpions. Doc Larrikin wants me to go there and collect at least five Radscorpion eggs for him, as he isn't able to do it by himself.}
+{7208002}{}{Eggs given :: Not Used ::.}
+{7208003}{}{HARD_COMPLETED:Doc Larrikin seemed to be quite happy when I gave him the requested Radscorpion eggs. 
 
 :: Quest Completed ::}
-{7139004}{}{I couldn't deliver Radscorpion eggs to Doc Larrikin in time.
+{7208004}{}{HARD_FAILED:I couldn't deliver Radscorpion eggs to Doc Larrikin in time.
 
 :: Quest Failed ::}
 
-{7139101}{}{Junktown: Collect the Radscorpion Eggs}
-{7139102}{}{Collect the Radscorpion Eggs}
+{7208101}{}{Junktown: Collect the Radscorpion Eggs}
+{7208102}{}{QUEST:Collect the Radscorpion Eggs}
 
+
+
+#####################
+#		KLAMATH		#
+#####################
+
+
+	
 #=======================================
-# 7147
-# Boneyard, Gun Runners Courier
+# 7601 / q_klam_aldobooze
+# Klamath, booze for Aldo
 #=======================================
-{7147001}{}{Marshal from the Gun Runners gave me a special shipment for Jargo, the local gunsmith in New Adytum.}
-{7147002}{}{Marshal from the Gun Runners gave me a special shipment for Jacob, the arms dealer in Oldtown.}
-{7147003}{}{Marshal from the Gun Runners gave me a special shipment for Mai Da Chiang in the Red 888 Guns shop.}
-{7147004}{}{Marshal from the Gun Runners gave me a special shipment for Eldridge at the New Reno Arms gun store in New Reno West Side.}
-{7147005}{}{Marshal from the Gun Runners gave me a special shipment for Buster, the local arms dealer at the NCR Bazaar.}
-{7147006}{}{Marshal from the Gun Runners gave me a special shipment for Jeremiah Darkwater in Junktown. I've been told, that his shop is at the center of the town and I can't miss it.}
-{7147007}{}{The package has been delivered and I am now on my way back to Marshal.}
-{7147008}{}{The package has been delivered and I've got my reward from the Gun Runners.
+{7601001}{}{I asked Aldo about work in town. He pointed out he needs some 'medicine'. I should retrun when I have 5 bottles of beer, booze or rotgut.}
+{7601002}{}{SOFT_COMPLETED:I've given the drinks to Aldo. I'm sure he'll need more 'medicine' sooner or later.
 
 :: Quest Completed ::}
-{7147009}{}{The package never arrived at it's target. The Gun Runners had been pretty angry. I should stay away from them for the next time.
+{7601101}{}{Klamath: Booze for Aldo}
+{7601102}{}{JOB:Booze for Aldo}
+
+#=======================================
+# 7607 / q_klam_stranded
+# Klamath, Stranded Rust quest
+#=======================================
+{7607001}{}{I've met a stinky trapper in Klamath who told me something about a kind of stranded ship. I should bring him a metallic brief case from there. He will show me the position when I look strong enough and have some backup with me.}
+{7607002}{}{The stinky trapper in Klamath want's me to bring him a metal case from an old stranded ship. He gave me the position on my PiPBoy map. I should check it out and see what I can find.}
+{7607003}{}{SOFT_COMPLETED:Meloy got his metal case and with this, my job is done.
+
+:: Quest Completed ::}
+{7607004}{}{SOFT_FAILED:Seems like I was too slow and someone else faster than me. The metallic brief case is gone and I can't bring it back to Meloy.
 
 :: Quest Failed ::}
+{7607101}{}{Klamath: Stranded Rust}
+{7607102}{}{JOB:Stranded Rust}
 
-{7147101}{}{Boneyard: Deliver the Gun Runners package}
-{7147102}{}{Deliver the Gun Runners package}
+
+
+#####################
+#		MODOC		#
+#####################
+
+
 
 #=======================================
-# 7300
-# New Reno, Corsican Brothers, Dissapear
+# 7801 / q_mod_balthas_tannery
+# Modoc, Modoc's tannery supply shortage
 #=======================================
-{7300001}{}{Marti, the head of the Corsican Brothers in New Reno wants me to get rid of a dead body. I should talk to Snake about it.}
-{7300002}{}{Snake passed the dead body on to me and mentioned a creepy place known as Golgotha, just a bit south of New Reno. I should drop it off there and get rid of it somehow.}
-{7300003}{}{The dead body has been properly burried. Unfortunately, there was nothing more I could do for that poor, tormented soul. Time to inform Marty about it.}
-{7300004}{}{Good riddance! Burning down the dead body on Golgotha was the best way to make it disappear. I should talk to Marty at once.}
-{7300005}{}{The dead body has been taken care of.
+
+{7801001}{}{Balthas asked me to look into the Brahmin Hide shortage he is having. I am supposed to talk to his supplier Grishem.}
+{7801002}{}{I talked with Grishem about the tannery shortage but the root of the problem is with Vault City prices. Maybe I can check with the local herd trader there.}
+{7801003}{}{SOFT_FAILED:I have failed to influence Ed the local herd trader in Vault City to give a discount. Maybe I should try again later.}
+{7801004}{}{DONE:Ed the local herd trader in Vault City gave a discount to Modoc in hopes of future profit. I should report back to Balthas with the good news.}
+{7801005}{}{HARD_COMPLETED:The Modoc Tannery supply shortage has been solved. Ed the local herd trader in Vault City gave a discount to Modoc in hopes of future profit. Balthas was very happy about this.
+
+::Quest Completed::}
+{7801101}{}{Modoc: Tannery supply shortage}
+{7801102}{}{QUEST:Modoc's Tannery supply shortage}
+
+#=======================================
+# 7802 / q_mod_meat_jerky
+# Modoc, Meat Jerky deliver to Den, Vault City or Hub
+#=======================================
+{7802001}{}{Grishem in Modoc gave me a meat jerky delivery job. I need to bring the bag of meat to either Mom's bar in Den, McRae's bar in Vault city or Iguanna Pete in Hub.}
+{7802002}{}{SOFT_COMPLETED:I finished the meat jerky delivery and received some reward. Maybe I can repeat this route later on.
 
 :: Quest Completed ::}
-{7300006}{}{The dead body has been taken care of. Somewhat sloppy work, but it's finally gone.
+{7802101}{}{Modoc: Meat Jerky delivery}
+{7802102}{}{JOB:Meat Jerky delivery}
+
+#=======================================
+# 7999 / TODO missing
+# Modoc, Kill the Rancher
+#=======================================
+{7999001}{}{A strange looking man in Modoc has hired me to kill a rancher at his ranch nearby. The ranch is guarded so I should disguise myself as a delivery boy to gain access. He mentioned there would be a bonus if I destroy the ranch.}
+{7999002}{}{DONE:I have killed the Rancher, I could report back to the man in Modoc or find a way to destroy the ranch.}
+{7999003}{}{DONE:I have destroyed the ranch and killed the rancher by causing his ranch to collapse into an underground cavern. I should report to the man in Modoc.}
+{7999004}{}{DONE:I have disabled the safety measures that kept the mine personnel alive. I can now investigate the mine without being harassed.}
+{7999005}{}{HARD_COMPLETED:I have reported to the man in Modoc and received my reward.
 
 :: Quest Completed ::}
-{7300007}{}{Following Snake's instructions for dealing with the dead body was simply too much for you.
+{7999101}{}{Modoc: Kill the Rancher}
+{7999102}{}{QUEST:Kill the Rancher}
 
-:: Quest Failed ::}
-{7300101}{}{New Reno, Corsican Brothers: Make it disappear}
-{7300102}{}{Make it disappear}
 
+
+#################
+#		NCR		#
+#################
+
+
+	
 #=======================================
-# 7301
-# New Reno, Corsican Brothers, Tattoo
-#=======================================
-{7301001}{}{Marti thinks I could lend a hand to them Corsican Brothers and invites me to join the bunch. I should immidiately visit a tattoo shop and ask for the official Corsican Brothers tattoo there.}
-{7301002}{}{The Corsican Brothers tattoo looks rather fancy. I should show it to Marty as soon as possible.}
-{7301003}{}{You have joined the Corsican Brothers
-
-:: Quest Completed ::}
-{7301101}{}{New Reno, Corsican Brothers: Join the Corsican Brothers}
-{7301102}{}{Join the Corsican Brothers}
-
-#=======================================
-# 7311
+# 8401 / q_ncr_brahm_run
 # Brahmin Run quest
 #=======================================
-{7311001}{}{I was asked to lead brahmin herd to a ranch. I shouldn't stop in any towns on my way or the herdsman will go without me.}
-{7311002}{}{I wasn't able to protect the brahmin.
+{8401001}{}{I was asked to lead brahmin herd to a ranch by Martin. I shouldn't stop in any towns on my way or the herdsman will go without me.}
+{8401002}{}{I wasn't able to protect the brahmin.
 
 :: Quest Failed ::}
-{7311003}{}{Herdsman was killed, the barhmin won't follow me anymore.
+{8401003}{}{Herdsman was killed, the barhmin won't follow me anymore.
 
 :: Quest Failed ::}
-{7311004}{}{Herdsman took brahmin and continued journey without me.
+{8401004}{}{Herdsman took brahmin and continued journey without me.
 
 :: Quest Failed ::}
-{7311005}{}{I left the brahmin to their doom.
+{8401005}{}{I left the brahmin to their doom.
 
 :: Quest Failed ::}
-{7311006}{}{I was badly injoured when I tried to defend the brahmin. I don't know what happened to them.
+{8401006}{}{I was badly injoured when I tried to defend the brahmin. I don't know what happened to them.
 
 :: Quest Failed ::}
-{7311007}{}{I managed to lead the brahmin herd to the ranch. I should return for my reward.}
-{7311008}{}{I got some caps as a reward. Maybe I should drop by later for some more work.
+{8401007}{}{I managed to lead the brahmin herd to the ranch. I should return for my reward.}
+{8401008}{}{I got some caps as a reward. Maybe I should drop by later for some more work.
 
 :: Quest Completed ::}
-{7311009}{}{It took me too long to take brahmin where I was supposed to. Herdsman took brahmin and continued journey without me.}
-{7311101}{}{Brahmin Run}
-{7311102}{}{Lead herd of brahmin to a ranch.}
+{8401009}{}{It took me too long to take brahmin where I was supposed to. Herdsman took brahmin and continued journey without me.}
+{8401101}{}{NCR: Brahmin Run}
+{8401102}{}{JOB:Lead herd of brahmin to a ranch.}
 
 #=======================================
-# 7322
-# First Tent quest
+# 8408 / q_ncr_buster_smokes
+# NCR, pick up a few smokes for Buster
 #=======================================
-{7322001}{}{During my journeys through the wasteland I noticed a small tent in this area. Maybe I should check it out.
+{8408001}{}{Buster wants me to buy him some cigarettes from the Rawhide.}
+{8408002}{}{DONE:I have to return the cigarettes to Buster.}
+{8408003}{}{HARD_COMPLETED:I've given the cigarettes to Buster.
+
+:: Quest Completed ::}
+{8408101}{}{NCR: Buy cigarettes for Buster}
+{8408102}{}{QUEST:Buy cigarettes for Buster}
+
+#=======================================
+# 8413 / ncr_mira_money
+# NCR, return Mira's debt
+#=======================================
+
+{8413001}{}{Mira asked me to return the debt she owes to Dusty.}
+{8413002}{}{DONE:I've returned the debt. I should go back and speak to Mira.}
+{8413003}{}{HARD_COMPLETED:I've helped Mira return the debt.
+
+:: Quest Completed ::}
+{8413101}{}{NCR: Return Mira's debt}
+{8413102}{}{QUEST:Return Mira's debt}
+
+#=======================================
+# 8414 / q_ncr_rail_gang
+# NCR, Horatius Rail Line Gang
+#=======================================
+{8414001}{}{Feargus in the foreroom told me, Gunther might have a special job for me...}
+{8414002}{}{I've got the job to take care of a rail line gang that is located to the north east of the NCR. Could be a hot job, maybe I should get some backup for myself.}
+{8414003}{}{DONE:The gang leader, called Horatius, is dead.}
+{8414004}{}{DONE:The rail line gang will leave this place. It was a non-violent resolution.}
+{8414005}{}{DONE:I killed all of the gang members. Now they will not be a problem again.}
+{8414010}{}{DONE:I've reported back to Gunther.}
+{8414011}{}{HARD_COMPLETED:Feargus gave me my reward and with this, the job is done.
+
+:: Quest Completed ::}
+{8414012}{}{HARD_FAILED:Someone else took care of the rail line gang. Seems like I was too late.
+
+:: Quest Failed ::}
+{8414101}{}{NCR: The Rail Line Gang}
+{8414102}{}{QUEST:The Rail Line Gang}
+
+#=======================================
+# 8417 / q_ncr_spawn
+# NCR, Spawn Quest
+#=======================================
+{8417001}{}{Man, what a night. I barely survived the horrific sand storm yesterday by taking cover in an old mining pit. When I was crawling back to the surface I met a lone man called Feelslong who lives in this area. He asked me to deliver a message to someone named Harris. Harris should be in the Rawhide Saloon... like always.}
+{8417002}{}{I've delivered the message, my job is done. Who knows, maybe I will meet Feelslong again some day...
+
+:: Quest Completed ::}
+{8417101}{}{NCR: The Message}
+{8417102}{}{The Message}
+
+#=======================================
+# 8420 / q_ncr_westin_quest1
+# NCR, Westin Ranch Quest 1, Brahmin herdsman
+#=======================================
+{8420001}{}{Got a new job as brahmin herdsman for the Roger Westin. I've been told to talk to Felix, the foreman. He will guide me to the willow, where I am supposed to take care of the brahmin herd.}
+{8420002}{}{Felix guided me to the brahmin willow.}
+{8420003}{}{Nothing of interest happened for quite some time, until a gang of children showed up. They wanted to startle the brahmin herd, but I chased them away.}
+{8420004}{}{A gang of children showed up. They wanted to startle the brahmin herd, but I killed them.}
+{8420005}{}{HARD_COMPLETED:I've reported back to Roger Westin at the Westin Ranch. He paid me and that's it.
+
+:: Quest Completed ::}
+
+{8420006}{}{HARD_COMPLETED:I've reported back to Roger Westin at the Westin Ranch. He didn't paid me, because I've killed children.
+
+:: Quest Completed ::}
+
+{8420007}{}{I've killed the brahmin of Roger Westin. I doubt he will be happy, if he finds out what I did.}
+{8420008}{}{HARD_FAILED:Westin had found out about the dead brahmin and fired me. I've told the guard at entrance a pack of lies to cover my guilt. It doesn't seem like they ate it, I should probably lay low for a while.
+
+:: Quest Failed ::}
+
+{8420101}{}{NCR: A Brahmin Herdsman' Job}
+{8420102}{}{QUEST:A Brahmin Herdsman' Job}
+
+#=======================================
+# 8423 / q_ncr_westin_quest2
+# NCR, Westin Ranch Quest 2, Holodisk Delivery
+#=======================================
+{8423001}{}{My second job from Roger Westin is to deliver a special Holodisk to a man named Thomas Moore in Vault City.}
+{8423002}{}{I have given the Holodisk to Thomas Moore. Now I'll have to report back to Roger Westin.}
+{8423003}{}{HARD_COMPLETED:I've reported back to Roger Westin at the Westin Ranch and he paid me for the delivery.
+
+:: Quest Completed ::}
+
+{8423101}{}{NCR: Holodisk for Thomas Moore}
+{8423102}{}{QUEST:Holodisk for Thomas Moore}
+
+
+
+#########################
+#		NECROPOLIS		#
+#########################
+
+
+
+#=======================================
+# 8801 / q_necro_elmer_holo
+# Necropolis, Elmer and Skeeter holo tape deliveries
+#=======================================
+{8801001}{}{Elmer in Necropolis asked me to deliver a holo tape to Skeeter in Gecko.}
+{8801002}{}{Skeeter in Gecko told me that help is the way to Elmer. This holo tape will explain it to Elmer, I should bring it to him.}
+{8801003}{}{HARD_COMPLETED:I have done what Elmer and Skeeter asked. Necropolis should recieve some help from Gecko soon.}
+
+:: Quest Completed ::}
+{8801101}{}{Necropolis: Ghoul solidarity}
+{8801102}{}{QUEST:Ghoul solidarity}
+
+
+
+#########################
+#		NEW RENO		#
+#########################
+
+
+
+#=======================================
+# 9006 / q_nr_corsican_initiate
+# New Reno, Corsican Brothers, Disappear
+#=======================================
+{9006001}{}{Marti, the head of the Corsican Brothers in New Reno wants me to get rid of a dead body. I should talk to Snake about it.}
+{9006002}{}{Snake passed the dead body on to me and mentioned a creepy place known as Golgotha, just a bit south of New Reno. I should drop it off there and get rid of it somehow.}
+{9006003}{}{The dead body has been properly burried. Unfortunately, there was nothing more I could do for that poor, tormented soul. Time to inform Marty about it.}
+{9006004}{}{Good riddance! Burning down the dead body on Golgotha was the best way to make it disappear. I should talk to Marty at once.}
+{9006005}{}{HARD_COMPLETED:The dead body has been taken care of.
+
+:: Quest Completed ::}
+{9006006}{}{HARD_COMPLETED:The dead body has been taken care of. Somewhat sloppy work, but it's finally gone.
+
+:: Quest Completed ::}
+{9006007}{}{HARD_FAILED:Following Snake's instructions for dealing with the dead body was simply too much for you.
+
+:: Quest Failed ::}
+{9006101}{}{New Reno: Corsican Brothers - Make it disappear}
+{9006102}{}{QUEST:Corsican Brothers - Make it disappear}
+
+#=======================================
+# 9013 / q_nr_corsican_tattoo
+# New Reno, Corsican Brothers, Tattoo
+#=======================================
+{9013001}{}{Marti thinks I could lend a hand to them Corsican Brothers and invites me to join the bunch. I should immidiately visit a tattoo shop and ask for the official Corsican Brothers tattoo there.}
+{9013002}{}{The Corsican Brothers tattoo looks rather fancy. I should show it to Marty as soon as possible.}
+{9013003}{}{HARD_COMPLETED:You have joined the Corsican Brothers.
+
+:: Quest Completed ::}
+{9013101}{}{New Reno: Corsican Brothers - Join the Corsican Brothers}
+{9013102}{}{QUEST:Join the Corsican Brothers}
+
+
+
+#####################
+#		REDDING		#
+#####################
+
+
+
+#=======================================
+# 9401 / q_redd_christopher_henry
+# Redding: More Wisdom of the wastes
+#=======================================
+{9401001}{}{TEST
 
 :: New Quest Avaialble ::}
-{7322002}{}{I met a family of farmers living in the tent. They escaped from a farmhouse infested with giant mutated rats. I promised to help them out.}
-{7322003}{}{I killed all the mutated rats in the farm. I should return to the family and tell them that they can come back home safely.}
-{7322004}{}{The family living in the tent was very happy to hear that they can finally come back home. Before leaving they gave me their tent.
+{9401002}{}{TEST1}
+{9401003}{}{DONE:TEST2}
+{9401099}{}{HARD_COMPLETED:TEST3
 
 :: Quest Completed ::}
-{7322005}{}{I didn't help the farmers and now their tent is gone. Maybe they moved somewhere else or the wasteland claimed their lifes...
-
-:: Quest Failed ::}
-{7322101}{}{A Tent in the Wasteland}
-{7322102}{}{Investigate a certain tent in the wasteland.}
-
-
-##########################################
-##	Landers Point - tutorial quests		##
-##########################################
+{9401101}{}{Redding: More Wisdom of the wastes}
+{9401102}{}{QUEST:More Wisdom of the wastes}
 
 #=======================================
-# 11801
+# 9402 / q_redd_christopher_low_level
+# Redding: Wisdom of the wastes
+#=======================================
+{9402001}{}{11111 started}
+{9402002}{}{222222 failed to start}
+{9402003}{}{3333333 progress lesson.}
+{9402004}{}{HARD_FAILED:failed to learn lesson
+
+:: Quest Failed ::}
+{9402005}{}{HARD_COMPLETED:finished - lesson learned
+
+:: Quest Completed ::}
+{9402101}{}{Redding: Wisdom of the wastes}
+{9402102}{}{QUEST:Wisdom of the wastes}
+
+#=======================================
+# 9404 / q_redd_mcgrew_runner
+# Redding, Resupply Redding with Jet
+#=======================================
+
+{9404001}{}{There's hardly enough Jet for everyone in Redding. Dan McGrew wants me to talk to some doctor or pharmacist or something in New Reno about it.}
+{9404002}{}{Renesco wants a proof there will be enough costumers in Redding for his Jet shipments, before sending another one that way.}
+{9404003}{}{Doc. Johnson's list of Jet costumers in Redding could persuade Renesco there's a stable demand for Jet in Redding. I should bring it to him right away.}
+{9404004}{}{Renesco is going to send more Jet to Redding. I have to let Dan McGrew know about this as soon as possible.}
+{9404005}{}{HARD_COMPLETED:The problem with Redding's Jet shipments has been solved.
+
+::Quest Completed::}
+{9404101}{}{Redding: Redding's Jet supply}
+{9404102}{}{QUEST:Redding's Jet supply}
+
+#=======================================
+# 9405 / q_redd_rats
+# Redding, Rats in Mines
+#=======================================
+{9405001}{}{In order to help Marge Le Barge in Redding with some rats in mines, I have to prove myself by taking care of a job for Caminetto, a guy hanging around in Redding's Malamute Saloon.}
+{9405002}{}{Accepted to bring five Radscorpion Tales to Caminetto in Redding.}
+{9405003}{}{After taking care of Caminetto's job, I got his recommendation and should talk to Marge about exterminating those rats from Redding mines.}
+{9405004}{}{HARD_COMPLETED:There was no rats in mines, ever. The whole ruckus was about getting some stuff done for Caminetto.
+
+:: Quest Completed ::}
+{9405005}{}{HARD_FAILED:Never managed to get to those rats down in Redding mines. What the hell, there must be some other job for me to do now.
+
+:: Quest Failed ::}
+{9405101}{}{Redding: Rats in Mines}
+{9405102}{}{QUEST:Rats in Mines}
+
+##=======================================
+## 7082 / TODO missing
+## Redding, Wilson the conman
+##=======================================
+#{7082001}{}{A card cheat named Wilson offered me a large sum of caps if I exchange some chips for him at the local casino.}
+#{7082002}{}{HARD_COMPLETED:I gave Wilson's chips to the cashier. She was sceptical as to their origins. I think I should get out of here.
+#
+#:: Quest Completed ::}
+#
+#{7082101}{}{Redding: Cash Wilson's chips}
+#{7082102}{}{QUEST:Cash Wilson's chips}
+
+
+
+#############################
+#		SAN FRANCISCO		#
+#############################
+
+
+
+#=======================================
+# 9601 / q_san_antlair
+# Frisco ant lair quest
+#=======================================
+{9601001}{}{Doctor Wong gave me the task to smoke out the ant lair in the north east of San Francisco.}
+{9601002}{}{DONE:I've killed all ants. I should go back to Doctor Wong for my reward.}
+{9601003}{}{SOFT_COMPLETED:The ant lair is dead and I got my reward from Doctor Wong. He also said that I can check back later, if I want to kill some more ants...}
+{9601101}{}{San Francisco: It came from the desert}
+{9601102}{}{JOB:It came from the desert}
+
+#=======================================
+# 9603 / q_san_subway
+# Frisco Replication, Squatter Subway
+#=======================================
+{9603001}{}{The San Francisco Subway Station has been taken over by radscorpions. As long as the place is occupied, the squatters can't get back to their homes. Chen told me about a lot dead people, who got poisoned or killed by the scorpions while trying to exterminate them.}
+{9603002}{}{Taking things into my own hands: I told Chen that I will check out the subway and get rid of the radscorpions.}
+{9603003}{}{DONE:The radscorpion family in the subway tunnels is dead. I should head back to Chen for my reward.}
+{9603004}{}{SOFT_COMPLETED:The subway tunnels are clear to go again and Chen gave me my reward.
+
+:: Quest Completed ::}
+{9603005}{}{SOFT_FAILED:The radscorpion family was growing bigger over time and occupied all subway tunnels. Without a heavily armed force, it will not be possible anymore to get rid of them.
+
+:: Quest Failed ::}
+
+{9603101}{}{San Francisco: Radscorpion Subway}
+{9603102}{}{JOB:Radscorpion Subway}
+
+
+
+#########################
+#		VAULT CITY		#
+#########################
+
+
+
+#=======================================
+# 10013 / q_vc_train_doc
+# Vault City, Medical Investigation
+#=======================================
+{10013001}{}{Doctor Andrew in Vault City gave me an interesting job. He told me about the New Californian Republic rail line and where I can find the next closest train station. From there I should start asking everyone if they are ill or know someone who is ill. After that, I have to report back to doctor Andrew. I guess talking to four people in each station should be enough...}
+{10013002}{}{It seems like the people at the San Francisco station are seriously ill. Feels like a pandemic is spreading around. I should report back to doctor Andrew.}
+{10013003}{}{The people at the Boneyard train station are not in the best condition, but beside this, all seems normal. I should report back to doctor Andrew.}
+{10013004}{}{At the NCR train station, everyone seems to be in good condition. I should report back to doctor Andrew.}
+{10013005}{}{DONE:After talking to the people at the Vault City train station, it seems clear that everything is okay. I should report back to doctor Andrew.}
+{10013006}{}{HARD_COMPLETED:It took me some time, but I've reported back the status of every available train station. With this, my job is done.
+
+:: Quest Completed ::}
+{10013101}{}{Vault City: Medical Investigation}
+{10013102}{}{QUEST:Medical Investigation}
+
+
+
+##############################################
+##		LANDERS POINT (tutorial zone)		##
+##############################################
+
+
+
+#=======================================
+# 10404 / q_lp_alecquest
 # Landers Point: Alec quest
 #=======================================
-{11801001}{}{I got word that a young man named Alec formed a gang. Cpt. Stone specifically told me to stay away from that kid and his gang, but can I resist? Maybe I should get some new friends, if only I knew where to look for him.
+{10404001}{}{I got word that a young man named Alec formed a gang. Cpt. Stone specifically told me to stay away from that kid and his gang, but can I resist? Maybe I should get some new friends, if only I knew where to look for him.
 
 :: New Quest Avaialble ::}
-{11801002}{}{As part of my initiation, I have to make a brand new Leather Jacket from Gecko Pelts. It should be pretty straightforward assuming I can get some weapons to kill Geckos with. The fiber can be harvested with a Knife off fiber plants in the gecko fields nearby.}
-{11801003}{}{DONE:I managed to make a brand new Leather Jacket for Alec. New gang member incoming!}
-{11801099}{}{HARD_COMPLETED:Alec took my brand new Leather Jacket, but didn't let me in his gang for some bullshit reason. Can't believe that kid scammed me out of my jacket!
+{10404002}{}{As part of my initiation, I have to make a brand new Leather Jacket from Gecko Pelts. It should be pretty straightforward assuming I can get some weapons to kill Geckos with. The fiber can be harvested with a Knife off fiber plants in the gecko fields nearby.}
+{10404003}{}{DONE:I managed to make a brand new Leather Jacket for Alec. New gang member incoming!}
+{10404099}{}{HARD_COMPLETED:Alec took my brand new Leather Jacket, but didn't let me in his gang for some bullshit reason. Can't believe that kid scammed me out of my jacket!
 
 :: Quest Completed ::}
-{11801101}{}{Landers Point: To join a gang}
-{11801102}{}{QUEST:Join Alec's gang The Trashers}
+{10404101}{}{Landers Point: To join a gang}
+{10404102}{}{QUEST:Join Alec's gang The Trashers}
 
 #=======================================
-# 11802
+# 10405 / q_lp_armorer
+# Landers Point: Golden Gecko Pelts for Samantha 
+#=======================================
+{10405001}{}{I got word that Samantha at the tannery is looking for help. She resides in the north-east building, maybe I should go and talk to her.
+
+:: New Quest Avaialble ::}
+{10405002}{}{Samantha the tanner at Landers Point asked me to get 5 Golden Gecko Pelts for her. If I do this, not only will she teach me to saw but she might put in a good word with Cpt. Stone for me and I hope they give me a proper armor before I leave this safe place. 
+
+She also mentioned that if I need help skinning Geckos, I should talk to an old trapper near the west gate.}
+{10405003}{}{DONE:I managed to get the ammo for Thunder Jo. I should should give it to him before I leave camp.}
+{10405099}{}{HARD_COMPLETED:I finished the task and I hope that Thunder Jo will talk to Cpt. Stone about me helping him out. Maybe they give me a gun before I leave this safe place.
+
+:: Quest Completed ::}
+{10405101}{}{Landers Point: Golden Gecko Pelts for Samantha}
+{10405102}{}{QUEST:Golden Gecko Pelts for Samantha}
+
+#=======================================
+# 10406 / q_lp_breederquest
 # Landers Point: Brahmin breeder quest
 #=======================================
-{11802001}{}{I got word that the local herdsman needs some help. Sounds like a good opportunity to familiarize with docile animals first.
+{10406001}{}{I got word that the local herdsman needs some help. Sounds like a good opportunity to familiarize with docile animals first.
 
 :: New Quest Avaialble ::}
-{11802002}{}{I was asked to craft 2 Ropes for the Brahmin. All I need to do is gather some fiber and check my fix-boy for instructions at a workbench.}
-{11802003}{}{DONE:I managed to get 2 Ropes for the local Brahmin breeder. I should go back to him.}
-{11802099}{}{HARD_COMPLETED:I completed the task and learned many useful things about Brahmin. Maybe I'll own a ranch someday and all this will be useful.
+{10406002}{}{I was asked to craft 2 Ropes for the Brahmin. All I need to do is gather some fiber and check my fix-boy for instructions at a workbench.}
+{10406003}{}{DONE:I managed to get 2 Ropes for the local Brahmin breeder. I should go back to him.}
+{10406099}{}{HARD_COMPLETED:I completed the task and learned many useful things about Brahmin. Maybe I'll own a ranch someday and all this will be useful.
 
 :: Quest Completed ::}
-{11802101}{}{Landers Point: To tame a beast}
-{11802102}{}{QUEST:One rope, two heads}
+{10406101}{}{Landers Point: To tame a beast}
+{10406102}{}{QUEST:One rope, two heads}
 
 #=======================================
-# 11803
-# Landers Point: Man's best friend
+# 10407 / q_lp_caravan_box
+# Landers Point: Caravan Packing Job (repeatable)
 #=======================================
-{11803001}{}{I got word that there is a non functional cyber-dog in the camp. Sounds interesting...
+{10407001}{}{I got word of job that requires heavy lifting and pays well for the invested time. I should check the Caravan Foreman at north-west part of Landers Point if I am interested. 
 
-:: New Quest Avaialble ::}
-{11803002}{}{I could try to fix this cyber-dog if I had some spare electronic parts. }
-{11803003}{}{DONE:I managed to get some electronic parts to fix the cyber-dog, I should be heading that way.}
-{11803099}{}{HARD_COMPLETED:I did my best to fix the cyber-dog, but my success only lasted a few seconds. Never mind, it was a good science practice.
+:: New Job Avaialble ::}
+{10407011}{}{The caravan foreman at Landers Point asked me to unload some boxes from the cart to the north-west storage area. After unloading a few boxes, my pay would be 250 caps.}
+{10407012}{}{HIDDEN:First box unloaded.}
+{10407013}{}{NO_POPUP:Second box unloaded.}
+{10407014}{}{DONE:That's all. I should talk to the caravan foreman about my reward!}
+{10407097}{}{SOFT_FAILED:I tried to help the caravan packer but I dropped one of the boxes on the wrong location. Maybe I should work out a bit before trying again.
 
-:: Quest Completed ::
-:: Bonus reward +6% science}
-{11803101}{}{Landers Point: Man's best friend}
-{11803102}{}{QUEST:Man's best friend}
+:: Job Failed ::}
+{10407099}{}{SOFT_COMPLETED:I finished the task and got my reward. I could return for more work a bit later.
+
+:: Job Completed ::}
+{10407101}{}{Landers Point: Caravan Packing Job (repeatable)}
+{10407102}{}{JOB:Unload boxes from the Caravan Cart for caps}
 
 #=======================================
-# 11804
+# 10408 / q_lp_edquest
 # Landers Point: Sledgehammer for Ed
 #=======================================
-{11804001}{}{I got word that Ed the miner is looking for a new Sledgehammer. Maybe I should talk to him. He usually is in the west wing of the mining cave to the north.
+{10408001}{}{I got word that Ed the miner is looking for a new Sledgehammer. Maybe I should talk to him. He usually is in the west wing of the mining cave to the north.
 
 :: New Quest Avaialble ::}
-{11804002}{}{Ed the miner at Landers Point asked me to get him a brand new Sledgehammer. If I do this, maybe he will put in a good word with Cpt. Stone for me. I could either buy a new Sledgehammer for him from Felix or craft one.
+{10408002}{}{Ed the miner at Landers Point asked me to get him a brand new Sledgehammer. If I do this, maybe he will put in a good word with Cpt. Stone for me. I could either buy a new Sledgehammer for him from Felix or craft one.
 
 1. To craft Sledgehammers, open your fix-boy by pressing U.
 2. Use the filter to show only weapons.
 3. Select Sledgehammer to show what materials are needed to craft it.
 4. Gather the required materials and click on the Workbench near Albert.
 5. Select the quantity and craft the Sledgehammers.}
-{11804003}{}{DONE:I managed to get a brand new Sledgehammer for Ed. I should go back to Ed the miner before I loose it.}
-{11804099}{}{HARD_COMPLETED:I finished the task and Ed will talk to Cpt. Stone about me helping him out. He also gave me some electronic parts, I wonder if I can make any use of those.
+{10408003}{}{DONE:I managed to get a brand new Sledgehammer for Ed. I should go back to Ed the miner before I loose it.}
+{10408099}{}{HARD_COMPLETED:I finished the task and Ed will talk to Cpt. Stone about me helping him out. He also gave me some electronic parts, I wonder if I can make any use of those.
 
 :: Quest Completed ::}
-{11804101}{}{Landers Point: Sledgehammer for Ed}
-{11804102}{}{QUEST:Sledgehammer for Ed}
+{10408101}{}{Landers Point: Sledgehammer for Ed}
+{10408102}{}{QUEST:If Ed had a hammer...}
 
 #=======================================
-# 11805
+# 10410 / q_lp_hunter
+# Landers Point: Tribal Hunter quest / Ancestral knowledge
+#=======================================
+{10410001}{}{I got word that there is a friendly Tribal Hunter across the Gecko Fields. To learn more about the natives tribes after the fallout, I feel like I should investigate.
+
+:: New Quest Avaialble ::}
+{10410002}{}{The hunter was weakened while hunting and asked to bring him a few batch of Xander Root and Broc Flower. If I help him, he will show me how to mix them into medicine.}
+{10410003}{}{Now I have to mix the Broc Flower with the Xander Root, keep the powder and remove the fiber parts. I should do this 3 times, that should be enough. [Open fix-boy to craft Healing Powder.]}
+{10410004}{}{I healed the hunter with the strange powder. Now he asked me to get some sharpened poles for him so he can fight if needed.}
+{10410005}{}{The hunter taught me how to make a tent, I should get sticks, ropes and brahmin hides use my fix-boy to craft it. Once I managed to make a tent, I should return with it to him.}
+{10410098}{}{HARD_COMPLETED:After healing the hunter, he asked me for more help. I refused to help, his tribal knowledge of the world does not interest me.
+
+:: Quest Completed ::}
+{10410099}{}{HARD_COMPLETED:I finished the task and I hope that Thunder Jo will talk to Cpt. Stone about me helping him out. Maybe they give me a gun before I leave this safe place.
+
+:: Quest Completed ::
+:: Bonus reward +6% Outdoorsman ::}
+{10410101}{}{Landers Point: Ancestral knowledge}
+{10410102}{}{QUEST:Ancestral knowledge}
+
+#=======================================
+# 10411 / q_lp_jessica
 # Landers Point: Jessica, poisoned by Radscorpions
 #=======================================
-{11805002}{}{The guard told you that Jessica was attacked by a giant Radscorpion. Without some kind of antidote, you will not be able to help her. Maybe I should check in with the local doctor about this.}
-{11805003}{}{DONE:I got some antidote from Dr. Sun Yat-sen, I should hurry back to Jessica to cure her.}
-{11805099}{}{HARD_COMPLETED:I cured Jessica with the anti venom extract made by Dr. Sun Yat-sen. She should be back on her feet in a few days.
+{10411002}{}{The guard told you that Jessica was attacked by a giant Radscorpion. Without some kind of antidote, you will not be able to help her. Maybe I should check in with the local doctor about this.}
+{10411003}{}{DONE:I got some antidote from Dr. Sun Yat-sen, I should hurry back to Jessica to cure her.}
+{10411099}{}{HARD_COMPLETED:I cured Jessica with the anti venom extract made by Dr. Sun Yat-sen. She should be back on her feet in a few days.
 
 :: Quest Completed ::
 :: Bonus reward +6% First Aid ::
 :: Bonus reward +5% Poision Resist ::}
-{11805101}{}{Landers Point: Saving Jessica}
-{11805102}{}{QUEST:Saving Jessica}
+{10411101}{}{Landers Point: Saving Jessica}
+{10411102}{}{QUEST:Saving Jessica}
 
 #=======================================
-# 11806
+# 10412 / q_lp_jimmy
 # Landers Point: Jimmy, the cripple (Looney Tunes)
 #=======================================
-{11806001}{}{Investigate the lonely crippled young man singing at the edge of the camp.}
-{11806098}{}{HARD_FAILED:I tried to cure Jimmy's legs and I was that close for him to let me, but my expertise in medicinal procedures wasn't convincing enough. Maybe I should raise my doctor skill a bit more before attempting complex procedures on others. There is no way he will let me take a look at his legs again now.
+{10412001}{}{Investigate the lonely crippled young man singing at the edge of the camp.}
+{10412098}{}{HARD_FAILED:I tried to cure Jimmy's legs and I was that close for him to let me, but my expertise in medicinal procedures wasn't convincing enough. Maybe I should raise my doctor skill a bit more before attempting complex procedures on others. There is no way he will let me take a look at his legs again now.
 
 :: Quest Failed ::
 :: Bonus reward +3% Doctor ::}
-{11806099}{}{HARD_COMPLETED:I placed Jimmy's leg bones to the correct spot. It must have hurt a lot, but now he has a chance for a normal life.
+{10412099}{}{HARD_COMPLETED:I placed Jimmy's leg bones to the correct spot. It must have hurt a lot, but now he has a chance for a normal life.
 
 :: Quest Completed ::
 :: Bonus reward +6% Doctor ::}
-{11806101}{}{Landers Point: Looney Tunes}
-{11806102}{}{QUEST:Looney Tunes}
+{10412101}{}{Landers Point: Looney Tunes}
+{10412102}{}{QUEST:Looney Tunes}
 
 #=======================================
-# 11807
+# 10413 / q_lp_kid
 # Landers Point: The kid / One apple a day
 #=======================================
-{11807002}{}{I found a kid playing some kind of nuclear war game. Is this what the next generation will grow up on? I must do something about it, he wanted some apples. Maybe that will take his mind off from that stupid game. Five apples should do, now, where do I find an apple tree?}
-{11807099}{}{HARD_COMPLETED:I got some apples for the kid. His sate for nuclear destruction games has been neutralized. Well done!
+{10413002}{}{I found a kid playing some kind of nuclear war game. Is this what the next generation will grow up on? I must do something about it, he wanted some apples. Maybe that will take his mind off from that stupid game. Five apples should do, now, where do I find an apple tree?}
+{10413099}{}{HARD_COMPLETED:I got some apples for the kid. His sate for nuclear destruction games has been neutralized. Well done!
 
 :: Quest Completed ::}
-{11807101}{}{Landers Point: One apple a day...}
-{11807102}{}{QUEST:One apple a day, keeps nuclear war games away}
+{10413101}{}{Landers Point: One apple a day...}
+{10413102}{}{QUEST:One apple a day, keeps nuclear war games away}
 
 #=======================================
-# 11808
+# 10414 / q_lp_knife
 # Landers Point: Knife for Albert
 #=======================================
-{11808001}{}{I got word that Albert the tool maker could need some help. He is in the building behind Cpt. Stone near the workbench.
+{10414001}{}{I got word that Albert the tool maker could need some help. He is in the building behind Cpt. Stone near the workbench.
 
 Hint: To track quests, open your Pip-boy by pressing P and click on 'status'.
 
 :: New Quest Avaialble ::}
-{11808002}{}{Albert the tool maker at Landers Point asked me to craft him some knives. If I do this, he will put in a good word with Cpt. Stone for me. 
+{10414002}{}{Albert the tool maker at Landers Point asked me to craft him some knives. If I do this, he will put in a good word with Cpt. Stone for me. 
 
 1. To craft knives, open your fix-boy by pressing U.
 2. Use the filter to show only weapons.
 3. Select Knife to show what materials are needed to craft it.
 4. Gather the required materials and click on the Workbench near Albert.
 5. Select the quantity and craft the knives.}
-{11808003}{}{DONE:I managed to get a knife for Albert. I should should give it to Albert before I loose it.}
-{11808099}{}{HARD_COMPLETED:I finished the task and learned how to craft from Albert. This might be useful later.
+{10414003}{}{DONE:I managed to get a knife for Albert. I should should give it to Albert before I loose it.}
+{10414099}{}{HARD_COMPLETED:I finished the task and learned how to craft from Albert. This might be useful later.
 
 :: Quest Completed ::}
-{11808101}{}{Landers Point: Basics of Crafting}
-{11808102}{}{QUEST:Basics of Crafting: Knife for Albert}
+{10414101}{}{Landers Point: Basics of Crafting}
+{10414102}{}{QUEST:Basics of Crafting: Knife for Albert}
 
 #=======================================
-# 11809
+# 10415 / q_lp_lawrence
 # Landers Point: Lawrence cards
 #=======================================
-{11809002}{}{I bumped into Lawrence in his tent. He seemed to be in shock and upset about his relationship. I promised to get his cards back from his ex.}
-{11809011}{}{DONE:I sweet talked the cards out of Tina, I can get back to Lawrence now.
+{10415002}{}{I bumped into Lawrence in his tent. He seemed to be in shock and upset about his relationship. I promised to get his cards back from his ex.}
+{10415011}{}{DONE:I sweet talked the cards out of Tina, I can get back to Lawrence now.
 
 :: Bonus reward +6 speech ::}
-{11809012}{}{DONE:I stole the cards from Tina. I feel a bit bad about it, but it was the only way! I can get back to Lawrence now.
+{10415012}{}{DONE:I stole the cards from Tina. I feel a bit bad about it, but it was the only way! I can get back to Lawrence now.
 
 :: Bonus reward +6 steal ::}
-{11809013}{}{DONE:I simply asked Tina for the cards and she throw them at me. I can get back to Lawrence now.}
-{11809091}{}{SOFT_FAILED:I tried to steal the cards from Tina but I failed. I think it's because of the plague, people are too scared to help each other. Maybe I could try again later when it passes.}
-{11809092}{}{HARD_FAILED:I tried to charm Tina but I failed. Guess Lawrence has to deal with it on his own, I better not disturb him again.}
-{11809099}{}{HARD_COMPLETED: I recovered the cards for Lawrence. He looked like he was stoned when talking to him. I should keep my love happy if I ever get lucky, or I end up like him. Hope they used protection, but that child outside suggests otherwise... maybe I should check up on that poor kid.
+{10415013}{}{DONE:I simply asked Tina for the cards and she throw them at me. I can get back to Lawrence now.}
+{10415091}{}{SOFT_FAILED:I tried to steal the cards from Tina but I failed. I think it's because of the plague, people are too scared to help each other. Maybe I could try again later when it passes.}
+{10415092}{}{HARD_FAILED:I tried to charm Tina but I failed. Guess Lawrence has to deal with it on his own, I better not disturb him again.}
+{10415099}{}{HARD_COMPLETED: I recovered the cards for Lawrence. He looked like he was stoned when talking to him. I should keep my love happy if I ever get lucky, or I end up like him. Hope they used protection, but that child outside suggests otherwise... maybe I should check up on that poor kid.
 
 :: Quest Completed ::}
-{11809101}{}{Landers Point: Love... or something like it}
-{11809102}{}{QUEST:Love... or something like it}
-
+{10415101}{}{Landers Point: Love... or something like it}
+{10415102}{}{QUEST:Love... or something like it}
 
 #=======================================
-# 11810
-# Landers Point: Gecko Skinning
+# 10416 / q_lp_mrhandy
+# Landers Point: Tutorial robot / Mr. Handy / Rage against the Machine
 #=======================================
-{11810001}{}{I got word that the Old Trapper at the west gate would teach newcomers how to skin a gecko. Maybe I should check it out.
+{10416001}{}{There is a tutorial in the camp. If I ever get stuck with my tasks I should look for it.}
+{10416002}{}{When I tried to rip some parts off the robot, it started to give me useful advices. These machines aren't that different from humans after all...}
+{10416099}{}{HARD_COMPLETED:I ripped the tutorial robot for parts, which made it unoperable, but it still mutters random phrases. I will not be able to get any helpful hints from it, but who cares, most of his guides were outdated and would have done more harm than good. Good luck fellow new bluesuits, I did you a service!
+
+:: Quest Completed ::}
+{10416101}{}{Landers Point: Man against Machine}
+{10416102}{}{QUEST:Man against Machine.}
+
+#=======================================
+# 10417 / q_lp_plague
+# Landers Point: Encampment plague 
+#=======================================
+{10417001}{}{I got word that there is a sickness in the encampment. Maybe I should seek out the local medic, she is said to reside in the building behind Cpt. Jason Stone.
 
 :: New Quest Avaialble ::}
-{11810002}{}{The Old Trapper at the west gate of Landers Point asked me to kill 5 geckos for him and after that we can go through them and he will show me how to skin geckos.}
-{11810003}{}{DONE:I managed to down 5 geckos, time to go back to the Old Trapper and learn to skin geckos.}
-{11810099}{}{HARD_COMPLETED:I finished the task and the Old Trapper taught me how to skin geckos.
+{10417002}{}{I talked to Dr. Sun Yat-sen about the plague at the encampment and promised to bring her 5 healing powder. I could mix Xander Root with Broc Flower to make this medicine, assuming I find any.}
+{10417003}{}{DONE:We managed to identify the source of the plague. I should talk to the bartender about boiling the water.}
+{10417099}{}{HARD_COMPLETED:I have taken care of the plague situation. It's good to know the encampment is a safer place for new bluesuits.
 
-:: Quest Completed ::
-:: New Perk acquired - Gecko Skinning ::}
-{11810101}{}{Landers Point: Gecko Skinning}
-{11810102}{}{QUEST:Learn how to skin geckos from the Old Trapper}
+:: Quest Completed ::}
+{10417101}{}{Landers Point: Encampment plague}
+{10417102}{}{QUEST:Encampment plague}
 
 #=======================================
-# 11811
+# 10418 / q_lp_rebec
 # Landers Point: Spiritual aggriculture
 #=======================================
-{11811002}{}{Rebecca the gardener asked me to get her 2 filled water bags to water her plants. All I need to do is find or craft some empty water bags and fill them up at the nearest waterpipe. I should check my fix-boy on crafting empty water bags.}
-{11811003}{}{DONE:I managed get 2 filled waterbags for Rebecca. I should go there and water her plant.}
-{11811099}{}{HARD_COMPLETED:I finished Rebecca's task and I learned something about aggriculture as well. Maybe some day I shall retire and run a farm.
+{10418002}{}{Rebecca the gardener asked me to get her 2 filled water bags to water her plants. All I need to do is find or craft some empty water bags and fill them up at the nearest waterpipe. I should check my fix-boy on crafting empty water bags.}
+{10418003}{}{DONE:I managed get 2 filled waterbags for Rebecca. I should go there and water her plant.}
+{10418099}{}{HARD_COMPLETED:I finished Rebecca's task and I learned something about aggriculture as well. Maybe some day I shall retire and run a farm.
 
 :: Quest Completed ::}
-{11811101}{}{Landers Point: Spiritual aggriculture}
-{11811102}{}{QUEST:Spiritual aggriculture}
+{10418101}{}{Landers Point: Spiritual aggriculture}
+{10418102}{}{QUEST:Spiritual aggriculture}
 
 #=======================================
-# 11812
+# 10419 / q_lp_resource_trader
+# Landers Point: Camp resource trader bonus reward quest
+#=======================================
+{10419001}{}{There is a resource trader named Henry somewhere in the camp. I could do some trading with him if I have or need anything.}
+{10419002}{}{I made a deal with the camp resource trader, Henry. If I bring him 12 Golden Gecko Pelts he would pay me one extra or I could buy 25 piles of Junk from him at a discounted price of 1100 caps!}
+{10419003}{}{DONE:I got the 12 Golden Gecko Pelts for Henry's batch order.}
+{10419004}{}{DONE:I got enough caps to fulfill my deal with Henry, the camp resource trader.}
+{10419098}{}{HARD_COMPLETED:I fulfilled my deal with Henry by selling him 12 Golden Gecko Pelts. It was a great idea for me to ask for a discounted deal, I should do this more offten.
+
+:: Quest Completed ::
+:: Bonus reward +6% Barter ::}
+{10419099}{}{HARD_COMPLETED:I fulfilled my deal with Henry by buying 25 piles of Junk. It was a great idea for me to ask for a discounted deal, I should do this more offten.
+
+:: Quest Completed ::
+:: Bonus reward +6% Barter ::}
+{10419101}{}{Landers Point: A bottle cap saved...}
+{10419102}{}{QUEST:A bottle cap saved is a bottle cap earned}
+
+#=======================================
+# 10420 / q_lp_robodog
+# Landers Point: Man's best friend
+#=======================================
+{10420001}{}{I got word that there is a non functional cyber-dog in the camp. Sounds interesting...
+
+:: New Quest Avaialble ::}
+{10420002}{}{I could try to fix this cyber-dog if I had some spare electronic parts. }
+{10420003}{}{DONE:I managed to get some electronic parts to fix the cyber-dog, I should be heading that way.}
+{10420099}{}{HARD_COMPLETED:I did my best to fix the cyber-dog, but my success only lasted a few seconds. Never mind, it was a good science practice.
+
+:: Quest Completed ::
+:: Bonus reward +6% science}
+{10420101}{}{Landers Point: Man's best friend}
+{10420102}{}{QUEST:Man's best friend}
+
+#=======================================
+# 10421 / q_lp_simon
 # Landers Point: Craft Hatchet for Simon
 #=======================================
-{11812001}{}{I got word that Simon the Woodsman needs to restock his hatchet supply. Maybe I should check it out, he resides near the west gate of the encampment.
+{10421001}{}{I got word that Simon the Woodsman needs to restock his hatchet supply. Maybe I should check it out, he resides near the west gate of the encampment.
 
 :: New Quest Avaialble ::}
-{11812002}{}{Simon the Woodsman asked me to bring him 3 Hatchets. He will make sure I get one before leaving this camp for good.}
-{11812003}{}{DONE:I got 3 hatchet on me, I should get back to Simon.}
-{11812099}{}{HARD_COMPLETED:I helped Simon restock his Hatchet supply.
+{10421002}{}{Simon the Woodsman asked me to bring him 3 Hatchets. He will make sure I get one before leaving this camp for good.}
+{10421003}{}{DONE:I got 3 hatchet on me, I should get back to Simon.}
+{10421099}{}{HARD_COMPLETED:I helped Simon restock his Hatchet supply.
 
 :: Quest Completed ::}
-{11812101}{}{Landers Point: Craft Hatchet for Simon}
-{11812102}{}{QUEST:Basics of Crafting: Hatchets for Simon}
+{10421101}{}{Landers Point: Craft Hatchet for Simon}
+{10421102}{}{QUEST:Basics of Crafting: Hatchets for Simon}
 
 #=======================================
-# 11813
+# 10422 / q_lp_stanley
 # Landers Point: Responsible drinking
 #=======================================
-{11813002}{}{I tried to talk to Stanley the local drunk but he wasn't focused enough to make sense. Maybe if I show him a bottle of Rot Gut, I'll be able to talk to him.
+{10422002}{}{I tried to talk to Stanley the local drunk but he wasn't focused enough to make sense. Maybe if I show him a bottle of Rot Gut, I'll be able to talk to him.
 
 Hint: You can use the distilery to brew spirits in nearby room. Ask someone around how to do it.}
-{11813003}{}{DONE:I got the spirits for Stanley, I should go back to him and flash this full bottle in front of him.}
-{11813099}{}{HARD_COMPLETED:Ugh. I think I helped the local drunk to overdose. Wait, no, he is just sleeping, I can hear him snorr.
+{10422003}{}{DONE:I got the spirits for Stanley, I should go back to him and flash this full bottle in front of him.}
+{10422099}{}{HARD_COMPLETED:Ugh. I think I helped the local drunk to overdose. Wait, no, he is just sleeping, I can hear him snorr.
 
 :: Quest Completed ::}
-{11813101}{}{Landers Point: Responsible drinking}
-{11813102}{}{QUEST:Responsible drinking}
+{10422101}{}{Landers Point: Responsible drinking}
+{10422102}{}{QUEST:Responsible drinking}
 
 #=======================================
-# 11814
+# 10423 / q_lp_thunderjo
 # Landers Point: Ammo for Thunder Jo
 #=======================================
-{11814001}{}{I got word that Thunder Jo is looking for recruits to craft some ammo for the armory. He resides in the north-east building, maybe I should go and talk to him.
+{10423001}{}{I got word that Thunder Jo is looking for recruits to craft some ammo for the armory. He resides in the north-east building, maybe I should go and talk to him.
 
 :: New Quest Avaialble ::}
-{11814002}{}{Thunder Jo the head of security at Landers Point asked me to craft more ammo. I need to craft 50 rounds of 44. Magnum JHP, 12. Shotgun Shells and 10mm JHP each. If I do this, he might put in a good word with Cpt. Stone for me and I hope they give me a proper gun before I leave this safe place. 
+{10423002}{}{Thunder Jo the head of security at Landers Point asked me to craft more ammo. I need to craft 50 rounds of 44. Magnum JHP, 12. Shotgun Shells and 10mm JHP each. If I do this, he might put in a good word with Cpt. Stone for me and I hope they give me a proper gun before I leave this safe place. 
 
 1. Open your fix-boy by pressing U.
 2. Use the filter to show only ammo.
 3. Select the ammo type you want to craft to show what materials are needed.
 4. Gather the required materials then use the Workbench near Albert.
 5. Select the quantity and craft the ammo. Ammo can only be bulk crafted so don't worry if you get more, you can use or sell the rest.}
-{11814003}{}{DONE:I managed to get the ammo for Thunder Jo. I should should give it to him before I leave camp.}
-{11814099}{}{HARD_COMPLETED:I finished the task and I hope that Thunder Jo will talk to Cpt. Stone about me helping him out. Maybe they give me a gun before I leave this safe place.
+{10423003}{}{DONE:I managed to get the ammo for Thunder Jo. I should should give it to him before I leave camp.}
+{10423099}{}{HARD_COMPLETED:I finished the task and I hope that Thunder Jo will talk to Cpt. Stone about me helping him out. Maybe they give me a gun before I leave this safe place.
 
 :: Quest Completed ::}
-{11814101}{}{Landers Point: Ammo for Thunder Jo}
-{11814102}{}{QUEST:Resupply the armory with ammo for Thunder Jo}
+{10423101}{}{Landers Point: Ammo for Thunder Jo}
+{10423102}{}{QUEST:Resupply the armory with ammo for Thunder Jo}
 
 #=======================================
-# 11815
-# Landers Point: Tribal Hunter quest / Ancestral knowledge
+# 10424 / q_lp_trapper
+# Landers Point: Gecko Skinning
 #=======================================
-{11815001}{}{I got word that there is a friendly Tribal Hunter across the Gecko Fields. To learn more about the natives tribes after the fallout, I feel like I should investigate.
+{10424001}{}{I got word that the Old Trapper at the west gate would teach newcomers how to skin a gecko. Maybe I should check it out.
 
 :: New Quest Avaialble ::}
-{11815002}{}{The hunter was weakened while hunting and asked to bring him a few batch of Xander Root and Broc Flower. If I help him, he will show me how to mix them into medicine.}
-{11815003}{}{Now I have to mix the Broc Flower with the Xander Root, keep the powder and remove the fiber parts. I should do this 3 times, that should be enough. [Open fix-boy to craft Healing Powder.]}
-{11815004}{}{I healed the hunter with the strange powder. Now he asked me to get some sharpened poles for him so he can fight if needed.}
-{11815005}{}{The hunter taught me how to make a tent, I should get sticks, ropes and brahmin hides use my fix-boy to craft it. Once I managed to make a tent, I should return with it to him.}
-{11815098}{}{HARD_COMPLETED:After healing the hunter, he asked me for more help. I refused to help, his tribal knowledge of the world does not interest me.
-
-:: Quest Completed ::}
-{11815099}{}{HARD_COMPLETED:I finished the task and I hope that Thunder Jo will talk to Cpt. Stone about me helping him out. Maybe they give me a gun before I leave this safe place.
+{10424002}{}{The Old Trapper at the west gate of Landers Point asked me to kill 5 geckos for him and after that we can go through them and he will show me how to skin geckos.}
+{10424003}{}{DONE:I managed to down 5 geckos, time to go back to the Old Trapper and learn to skin geckos.}
+{10424099}{}{HARD_COMPLETED:I finished the task and the Old Trapper taught me how to skin geckos.
 
 :: Quest Completed ::
-:: Bonus reward +6% Outdoorsman ::}
-{11815101}{}{Landers Point: Ancestral knowledge}
-{11815102}{}{QUEST:Ancestral knowledge}
-
-#=======================================
-# 11816
-# Landers Point: Encampment plague 
-#=======================================
-{11816001}{}{I got word that there is a sickness in the encampment. Maybe I should seek out the local medic, she is said to reside in the building behind Cpt. Jason Stone.
-
-:: New Quest Avaialble ::}
-{11816002}{}{I talked to Dr. Sun Yat-sen about the plague at the encampment and promised to bring her 5 healing powder. I could mix Xander Root with Broc Flower to make this medicine, assuming I find any.}
-{11816003}{}{DONE:We managed to identify the source of the plague. I should talk to the bartender about boiling the water.}
-{11816099}{}{HARD_COMPLETED:I have taken care of the plague situation. It's good to know the encampment is a safer place for new bluesuits.
-
-:: Quest Completed ::}
-{11816101}{}{Landers Point: Encampment plague}
-{11816102}{}{QUEST:Encampment plague}
-
-
-#=======================================
-# 11818
-# Landers Point: Golden Gecko Pelts for Samantha 
-#=======================================
-{11818001}{}{I got word that Samantha at the tannery is looking for help. She resides in the north-east building, maybe I should go and talk to her.
-
-:: New Quest Avaialble ::}
-{11818002}{}{Samantha the tanner at Landers Point asked me to get 5 Golden Gecko Pelts for her. If I do this, not only will she teach me to saw but she might put in a good word with Cpt. Stone for me and I hope they give me a proper armor before I leave this safe place. 
-
-She also mentioned that if I need help skinning Geckos, I should talk to an old trapper near the west gate.}
-{11818003}{}{DONE:I managed to get the ammo for Thunder Jo. I should should give it to him before I leave camp.}
-{11818099}{}{HARD_COMPLETED:I finished the task and I hope that Thunder Jo will talk to Cpt. Stone about me helping him out. Maybe they give me a gun before I leave this safe place.
-
-:: Quest Completed ::}
-{11818101}{}{Landers Point: Golden Gecko Pelts for Samantha}
-{11818102}{}{QUEST:Golden Gecko Pelts for Samantha}
-
-#=======================================
-# 11819
-# Landers Point: Camp resource trader bonus reward quest
-#=======================================
-{11819001}{}{There is a resource trader named Henry somewhere in the camp. I could do some trading with him if I have or need anything.}
-{11819002}{}{I made a deal with the camp resource trader, Henry. If I bring him 12 Golden Gecko Pelts he would pay me one extra or I could buy 25 piles of Junk from him at a discounted price of 1100 caps!}
-{11819003}{}{DONE:I got the 12 Golden Gecko Pelts for Henry's batch order.}
-{11819004}{}{DONE:I got enough caps to fulfill my deal with Henry, the camp resource trader.}
-{11819098}{}{HARD_COMPLETED:I fulfilled my deal with Henry by selling him 12 Golden Gecko Pelts. It was a great idea for me to ask for a discounted deal, I should do this more offten.
-
-:: Quest Completed ::
-:: Bonus reward +6% Barter ::}
-{11819099}{}{HARD_COMPLETED:I fulfilled my deal with Henry by buying 25 piles of Junk. It was a great idea for me to ask for a discounted deal, I should do this more offten.
-
-:: Quest Completed ::
-:: Bonus reward +6% Barter ::}
-{11819101}{}{Landers Point: A bottle cap saved...}
-{11819102}{}{QUEST:A bottle cap saved is a bottle cap earned}
-
-#=======================================
-# 11820
-# Landers Point: Tutorial robot / Mr. Handy / Rage against the Machine
-#=======================================
-{11820001}{}{There is a tutorial in the camp. If I ever get stuck with my tasks I should look for it.}
-{11820002}{}{When I tried to rip some parts off the robot, it started to give me useful advices. These machines aren't that different from humans after all...}
-{11820099}{}{HARD_COMPLETED:I ripped the tutorial robot for parts, which made it unoperable, but it still mutters random phrases. I will not be able to get any helpful hints from it, but who cares, most of his guides were outdated and would have done more harm than good. Good luck fellow new bluesuits, I did you a service!
-
-:: Quest Completed ::}
-{11820101}{}{Landers Point: Man against Machine}
-{11820102}{}{QUEST:Man against Machine.}
-
-#=======================================
-# 11821
-# Landers Point: Caravan Packing Job (repeatable)
-#=======================================
-{11821001}{}{I got word of job that requires heavy lifting and pays well for the invested time. I should check the Caravan Foreman at north-west part of Landers Point if I am interested. 
-
-:: New Job Avaialble ::}
-{11821011}{}{The caravan foreman at Landers Point asked me to unload some boxes from the cart to the north-west storage area. After unloading a few boxes, my pay would be 250 caps.}
-{11821012}{}{HIDDEN:First box unloaded.}
-{11821013}{}{NO_POPUP:Second box unloaded.}
-{11821014}{}{DONE:That's all. I should talk to the caravan foreman about my reward!}
-{11821097}{}{SOFT_FAILED:I tried to help the caravan packer but I dropped one of the boxes on the wrong location. Maybe I should work out a bit before trying again.
-
-:: Job Failed ::}
-{11821099}{}{SOFT_COMPLETED:I finished the task and got my reward. I could return for more work a bit later.
-
-:: Job Completed ::}
-{11821101}{}{Landers Point: Caravan Packing Job (repeatable)}
-{11821102}{}{JOB:Unload boxes from the Caravan Cart for caps}
+:: New Perk acquired - Gecko Skinning ::}
+{10424101}{}{Landers Point: Gecko Skinning}
+{10424102}{}{QUEST:Learn how to skin geckos from the Old Trapper}
 
 ########################################
 
 
+
+######################################
+##		VAULT 24 (main story)		##
+######################################
+
+
+
+#=======================================
+# 10801 / q_first_tent
+# First Tent quest
+#=======================================
+{10801001}{}{During my journeys through the wasteland I noticed a small tent in this area. Maybe I should check it out.
+
+:: New Quest Avaialble ::}
+{10801002}{}{I met a family of farmers living in the tent. They escaped from a farmhouse infested with giant mutated rats. I promised to help them out.}
+{10801003}{}{I killed all the mutated rats in the farm. I should return to the family and tell them that they can come back home safely.}
+{10801004}{}{HARD_COMPLETED:The family living in the tent was very happy to hear that they can finally come back home. Before leaving they gave me their tent.
+
+:: Quest Completed ::}
+{10801005}{}{HARD_FAILED:I didn't help the farmers and now their tent is gone. Maybe they moved somewhere else or the wasteland claimed their lives...
+
+:: Quest Failed ::}
+{10801101}{}{A Tent in the Wasteland}
+{10801102}{}{STORY:A Tent in the Wasteland}
+
+
+
+#####################
+#		GENERAL		#
+#####################
+
+
+
+#=======================================
+# 19013 / q_rail_raider_status TODO: finish it?
+# Train Ambush, Rail Raiders
+#=======================================
+{19013001}{}{Beginning text}
+{19013002}{}{HARD_COMPLETED:Our group managed it to kill all the Rail Raiders!
+
+:: Quest Completed ::}
+{19013003}{}{HARD_COMPLETED:Thanks to our fearful appearance, our group managed it to scare the Rail Raiders away.
+
+:: Quest Completed ::}
+{19013004}{}{HARD_COMPLETED:It has cost our group a lot, but money doesn't weight as much as a human life. We paid the Rail Raiders money and they went away, letting us all alive.
+
+:: Quest Completed ::}
+{19013005}{}{HARD_COMPLETED:The skillful use of our groups diplomatic abilities saved a lot human lifes today. We managed it to talk over the Rail Raiders to leave this place.
+
+:: Quest Completed ::}
+{19013006}{}{HARD_FAILED:You've been running away!
+
+:: Quest Failed ::}
+{19013101}{}{NCR: Train Ambush - Rail Raiders}
+{19013102}{}{QUEST:Train Ambush - Rail Raiders}
+
+
+
 #################################################################################
+
+
+
+##########################################
+##		MISSING/UNFINISHED QUESTS		##
+##########################################
+
+
+
+#=======================================
+# 7004 / q_bunker_base
+# Junktown, abandoned bunker
+#=======================================
+#{7004001}{}{A scout in Junktown told me stories about an old trapper who might know some nice places to hang around.}
+#{7004005}{}{Got a hint that the trapper might have gone to Necropolis. I should check this out.}
+#{7004016}{}{The name of that trapper is Wally. Wonder where he is now...}
+#{7004021}{}{Finally. The ghouls say that I can find Wally at the Watershed. He has to live there somewhere.}
+## Questlog deactivated for now, because it's all messed up.
+#{7004101}{}{Junktown: The old trapper}
+#{7004102}{}{QUEST:The old trapper.}
+
+
+
+##=======================================
+## 7091 / TODO missing
+## Raiders, MAIN QUEST
+##=======================================
+#{7091001}{}{My first assignment as a Raider prospect is to get a beer. I should go find a beer.}
+#{7091002}{}{I got a beer for the raider. I should ask if he wants anything else.}
+#{7091003}{}{I have been given a quest to clean the toilets at the raider camp with a water bag. I should use a water bag on the toilets.}
+#{7091004}{}{I cleaned the toilet, I should report my success to the raider.}
+#{7091005}{}{My orders are to find some jimmy hats and report back to the raider.}
+#{7091006}{}{I delivered the jimmy hats to the raider. It sounds like I may have another important mission waiting for me.}
+#{7091007}{}{I have been told to investigate a cave filled with radscorpions and bring back whatever I find in the footlocker near the back.}
+#{7091008}{}{There was only junk in the footlocker, I should tell the raider.}
+#{7091009}{}{It was all a stupid joke. I have been told to report to the leader of the Raiders.}
+#{7091010}{}{Ren, the leader, has asked me to get rid of some farmers for him. I should make this quick.}
+#{7091011}{}{I killed the farmers. Ren will want to hear about this.}
+#{7091012}{}{Ren was happy, he told me to check in at the supply depot in the raider base.}
+#{7091013}{}{I need to find ten combat knives for the supply shed.}
+#{7091014}{}{I need to find nine combat knives for the supply shed.}
+#{7091015}{}{I need to find eight combat knives for the supply shed.}
+#{7091016}{}{I need to find seven combat knives for the supply shed.}
+#{7091017}{}{I need to find six combat knives for the supply shed.}
+#{7091018}{}{I need to find five combat knives for the supply shed.}
+#{7091019}{}{I need to find four combat knives for the supply shed.}
+#{7091020}{}{I need to find three combat knives for the supply shed.}
+#{7091021}{}{I need to find two combat knives for the supply shed.}
+#{7091022}{}{I need to find the last combat knife for the supply shed.}
+#{7091023}{}{I found all of the combat knives, I should ask if Lumpy wants anything else.}
+#{7091024}{}{Lumpy asked me to assault a rancher for her, she didn't say if I should kill him or not.}
+#{7091025}{}{I punched the rancher a few times, I should let Lumpy know he won't be bothering her for awhile.}
+#{7091026}{}{Lumpy told me to talk to Jim, the treasurer.}
+#{7091027}{}{Jim asked me to deliver a message to his girl in NCR.}
+#{7091028}{}{I delivered Jim's message. I should get back to him.}
+#{7091029}{}{I delivered Jim's message. I should get back to him.}
+#{7091030}{}{I should report to Ren.}
+#{7091031}{}{A man in at the Malumute in Redding is waiting for this shipment of Jet, I should hurry there.}
+#{7091032}{}{The Jet has been delivered. I should get back for my reward.}
+#{7091033}{}{I need to purchase a caravan schedule from a caravan guard in NCR.}
+#{7091034}{}{I got the schedule. Now to hand it over to the Raiders.}
+#{7091035}{}{I couldn't get the schedule. Dammnit.}
+#{7091036}{}{Ren told me to speak to Lumpy again.}
+#{7091037}{}{I have to deliver 10 Mausers to a man in the vault city bar.}
+#{7091038}{}{DONE:I delivered the Mausers alright, time to get my reward.}
+#{7091039}{}{HARD_COMPLETED:Ren wanted to speak to me.}
+#
+#{7091101}{}{Raiders: Main quest}
+#{7091102}{}{QUEST:Raiders main quest}
+

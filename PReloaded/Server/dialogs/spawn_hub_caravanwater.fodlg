@@ -16,9 +16,9 @@ lang=engl
 3 3020 #
 0 3030 @
 3 4000 None 0 #
-4 4010 D _var p q_spawn_hub_water = 0 #
+4 4010 D _var p q_hub_spawn_water = 0 #
 16 4020 D _param p ST_KARMA { 0 #
-4 4030 D _var p q_spawn_hub_water = 0 D _param p ST_CHARISMA } 6 D or D _var p q_spawn_hub_water = 0 D _param p SK_SPEECH } 50 #
+4 4030 D _var p q_hub_spawn_water = 0 D _param p ST_CHARISMA } 6 D or D _var p q_hub_spawn_water = 0 D _param p SK_SPEECH } 50 #
 0 4040 @
 4 5000 None 0 #
 7 5010 #
@@ -32,8 +32,8 @@ lang=engl
 8 8010 #
 0 8020 @
 8 9000 None 0 #
-9 9010 R _script dialog@r_AddExperience 1 50 R _var p q_spawn_hub_water = 1 #
-9 9020 R _script dialog@r_AddExperience 1 50 R _var p q_spawn_hub_water = 1 @
+9 9010 R _script dialog@r_AddExperience 1 50 R _var p q_hub_spawn_water = 1 #
+9 9020 R _script dialog@r_AddExperience 1 50 R _var p q_hub_spawn_water = 1 @
 9 10000 None 0 #
 10 10010 #
 0 10020 @
@@ -41,7 +41,7 @@ lang=engl
 11 11010 #
 0 11020 @
 11 12000 None 0 #
-4 12010 D _var p q_spawn_hub_water = 0 #
+4 12010 D _var p q_hub_spawn_water = 0 #
 3 12020 #
 12 12030 #
 0 12040 @

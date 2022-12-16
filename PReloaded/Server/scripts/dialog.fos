@@ -817,6 +817,28 @@ void r_TransferItemsFromContainer(Critter& player, Critter@npc, int mappid, int 
     TransferItemsFromContOnMap(player, map, entid, contpid);
 }
 
+
+/////////////////
+//  Scenarios  //
+/////////////////
+
+// A general purpose function, gives all num party members val/num exp (rounded down)
+// Used by:
+// Scenario: MFC Crafting - Gives XP according to MFC you hand over to your superiors (Enclave/BoS)
+void r_AddExpTeam(Critter& player, Critter@ npc, int val)
+{
+    AddExpTeam(player, val);
+
+    Location@ loc = GetLocation(LOCATION_Navarro);
+    Map@      map = loc.GetMapByIndex(1);   // Navarro sublevel
+    Item@     locker;                       // = map.GetItem(63, 90, PID_LOCKER_CLEAN_RIGHT);	// Commander's locker
+    int       mfc = val / 25;               // 20% for Enclave, do not edit! val/25 is correct!
+    locker.AddItem(PID_MICRO_FUSION_CELL, mfc, 0);
+
+    // the rest 80% go to Renesco's inventory (not to new reno limbo, but his inventory)
+
+}
+
 /////////////////
 //   SOUNDS    //
 /////////////////
@@ -875,6 +897,41 @@ void r_GunRunnerInsult(Critter& player, Critter@ npc)
             crits[i].Say(SAY_NORM_ON_HEAD, "Oh really?");
             AttackCritter(crits[i], player);
         }
+}
+/*
+ * Used by some dialogs as quest reward, example Dog quest for Hendriks in Adytum
+*/
+void r_DogsQuestReward(Critter& player, Critter@ npc)
+{
+    switch(Random(0, 6))
+    {
+    case 0:
+        player.AddItem(PID_5MM_JHP, 50);
+        break;                                    // 12
+    case 1:
+        player.AddItem(PID_5MM_AP, 45);
+        break;                                    // 14
+    case 2:
+        player.AddItem(PID_10MM_JHP, 60);
+        break;                                    // 10
+    case 3:
+        player.AddItem(PID_10MM_AP, 50);
+        break;                                    // 12
+    case 4:
+        player.AddItem(PID_9MM_BALL, 100);
+        break;                                    // 6
+    case 5:
+        player.AddItem(PID_EXPLOSIVE_ROCKET, 1);
+        player.AddItem(PID_ROCKET_AP, 1);
+        break;
+    case 6:
+        player.AddItem(PID_SHOTGUN_SHELLS, 45);
+        break;                                            // 14
+    default:
+        break;
+    }
+    if(Random(1, 1000000) == 1)
+        player.AddItem(PID_HOWITZER_SHELL, 1);
 }
 
 void ProcessRewardTable( Critter& player, const uint[][][]& table )

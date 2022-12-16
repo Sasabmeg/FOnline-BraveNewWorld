@@ -1,0 +1,46 @@
+[comment]
+
+
+[data]
+lang=engl
+
+[dialog]
+&
+1 1000 None 0 #
+2 1010 @
+2 2000 None 0 #
+11 2010 #
+0 2020 @
+5 3000 None 0 #
+0 3010 @
+6 4000 None 0 #
+0 4010 @
+8 5000 None 0 #
+0 5010 @
+9 6000 None 0 #
+0 6010 @
+11 7000 merc_dialog@dlg_ShowMoleratCost 0 #
+6 7010 R _script merc_dialog@r_HireMerc 1 41 #
+6 7020 R _script merc_dialog@r_HireMerc 1 42 &
+
+[engl]
+{100}{}{Jackpot Jane}
+{200}{}{You see a gruff-looking woman with a big smile.}
+{210}{}{You see Jackpot Jane, the manager of the creature fights.}
+{1000}{}{Predialogue options}
+{1010}{}{-}
+{2000}{}{Hi, I'm Jane Jackpot. I manage fighting. But unfortunately, the fights are on hiatus. Sorry.}
+{2010}{}{I want a molerat.}
+{2020}{}{What a shame, jesus. Goodbye.}
+{3000}{}{There you go. Remember to feed him at least twice a day and do not keep it in your cave.}
+{3010}{}{Thanks, I'll ride it with style!}
+{4000}{}{Error. Report this to admins.}
+{4010}{}{Hey, I love the smell of napalm in the morning.}
+{5000}{}{This isn't a charity, these rats aren't free. No money, no rats.}
+{5010}{}{Okay, I'll better find a free rat in the desert.}
+{6000}{}{I don't think these rats would listen to someone like you.}
+{6010}{}{Your loss.}
+{7000}{}{How much are you willing to pay?}
+{7010}{}{@lex molerat1@ caps for a small rat.}
+{7020}{}{@lex molerat2@ caps for a lovely molerat.}
+
