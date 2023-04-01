@@ -402,9 +402,12 @@ bool SpriteManager::LoadFontFO( int index, const char* font_name )
                 uint letter = Str::DecodeUTF8( utf8_letter_begin, &letter_len );
                 if( !Str::IsValidUTF8( letter ) )
                 {
-                    WriteLogF( _FUNC_, " - Font<%s> invalid UTF8 letter at <%s>.\n", fname, letter_buf );
+                    WriteLogF( _FUNC_, " - Font<%s> invalid UTF8 letter at <%s>. (letter value <%d>)\n", fname, letter_buf, letter );
                     return false;
-                }
+				}
+				else {
+					WriteLogF(_FUNC_, " DEBUG - Font<%s> valid UTF8 letter at <%s>. (letter value <%d>)\n", fname, letter_buf, letter);
+				}
 
                 cur_letter = &font.Letters[letter];
             }

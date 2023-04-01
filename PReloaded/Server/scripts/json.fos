@@ -1,0 +1,1200 @@
+/******************************************************************************
+ *                                                                            *
+ *  FOnline-JSON v0.1                                             10-08-2014  *
+ *                                                                            *
+ *  Module allowing you to load, save and work with JSON data.                *
+ *  Repository: <https://github.com/rotators/fonline-json>                    *
+ *                                                                            *
+ *  The module is released under the terms of CC0.                            *
+ *  For more details see the LICENSE file in the repository.                  *
+ *                                                                            *
+ ******************************************************************************/
+
+#ifndef __JSON__
+#define __JSON__
+
+#include "json_h.fos"
+
+/******************************************************************************
+ *                                                                            *
+ *  Miscellaneous macros and functions used in the module.                    *
+ *                                                                            *
+ ******************************************************************************/
+
+/**
+ *  Compatibility macros.
+ *
+ *  Macros for manipulating raw characters in a string.
+ */
+#ifdef _JSON_REV_PRE400
+    #define _CharGet    #(s, i)    s[i]
+    #define _CharSet    #(s, i, v) s[i] = v
+    #define _CharAdd    #(s, v)    s.resize(s.length() + 1); \
+                                   s[s.length() - 1] = v
+    #define _CharLength #(s)       s.length()
+    #define _CharResize #(s, v)    s.resize(v)
+#endif
+
+#ifndef _JSON_REV_PRE400
+    #define _CharGet    #(s, i)    s.rawGet(i)
+    #define _CharSet    #(s, i, v) s.rawSet(i, v)
+    #define _CharAdd    #(s, v)    s.rawResize(s.rawLength() + 1); \
+                                   s.rawSet(s.rawLength() - 1, v)
+    #define _CharLength #(s)       s.rawLength()
+    #define _CharResize #(s, v)    s.rawResize(v)
+#endif
+
+/**
+ *  Other macros.
+ */
+#define _IsWhitespace   #(c)       (c == 9 || c == 10 || c == 13 || c == 32)
+
+/**
+ *  controlChars table.
+ *
+ *  Array with JSON-compatible escape codes of control characters (0x00 - 0x1F).
+ *  Used by Escape() function.
+ */
+array<string> controlChars = {
+    "\\u0000",  "\\u0001",  "\\u0002",  "\\u0003",
+    "\\u0004",  "\\u0005",  "\\u0006",  "\\u0007",
+    "\\b",      "\\t",      "\\n",      "\\u000B",
+    "\\f",      "\\r",      "\\u000E",  "\\u000F",
+    "\\u0010",  "\\u0011",  "\\u0012",  "\\u0013",
+    "\\u0014",  "\\u0015",  "\\u0016",  "\\u0017",
+    "\\u0018",  "\\u0019",  "\\u001A",  "\\u001B",
+    "\\u001C",  "\\u001D",  "\\u001E",  "\\u001F"
+};
+
+/**
+ *  JSON String escaping.
+ */
+string@ EscapeString(string& str)
+{
+    string@ escapedString = "";
+    uint length = _CharLength(str);
+    uint8 ch = 0;
+    for (uint i = 0; i < length; i++)
+    {
+        ch = _CharGet(str, i);
+        if (ch == 34 || ch == 92)
+        {
+            _CharAdd(escapedString, 92);
+            _CharAdd(escapedString, ch);
+        }
+        else if (ch < 32)
+        {
+            escapedString += controlChars[ch];
+        }
+        else
+        {
+            _CharAdd(escapedString, ch);
+        }
+    }
+    return escapedString;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+//
+//  StrToDouble
+//  Converts a string to a double. Used when evaluating a NUMBER token.
+//  TODO: Check the precision of numbers larger than float, change return value
+//  to bool, return the number by reference and false if conversion failed.
+//
+double StrToDouble(string@ str)
+{
+    int length = _CharLength(str);
+    int position = _CharLength(str) - 1;
+    int count = 0;
+    int symbol = 0;
+    int value = 0;
+    int exponent = 0;
+
+    while (position >= 0)
+    {
+        symbol = _CharGet(str, position);
+
+        switch (symbol)
+        {
+            case 43:  // + sign
+            {
+                break;
+            }
+            case 45:  // - sign
+            {
+                value = -value;
+                break;
+            }
+            case 46:  // . decimal point
+            {
+                exponent += -count;
+                break;
+            }
+            case 48:  // 0
+            case 49:  // 1
+            case 50:  // 2
+            case 51:  // 3
+            case 52:  // 4
+            case 53:  // 5
+            case 54:  // 6
+            case 55:  // 7
+            case 56:  // 8
+            case 57:  // 9
+            {
+                value += (symbol - 48) * int(pow(10, count));
+                count += 1;
+                break;
+            }
+            case 69:  // E
+            case 101: // e
+            {
+                exponent = value;
+                value = 0;
+                count = 0;
+                break;
+            }
+            default:
+            {
+                return 0;
+            }
+        }
+        position -= 1;
+    }
+    return double(value) * double(pow(10, exponent));
+}
+
+
+////////////////////////////////////////////////////////////////////////////////
+//
+//  Stringification
+//  Converts a JSON value(s) into a JSON text.
+//
+string@ Stringify(JSON@ value, const string& space, string& indent)
+{
+    if (@value == null || value.isUndefined())
+    {
+        return "";
+    }
+    else if (value.isNull())
+    {
+
+        return "null";
+    }
+    else if (value.isBoolean())
+    {
+        bool v = false;
+        value >> v;
+        if (v)
+        {
+            return "true";
+        }
+        return "false";
+    }
+    else if (value.isNumber())
+    {
+        double v = 0;
+        value >> v;
+        string s = "" + v;
+        for (uint i = 0, j = _CharLength(s); i < j; i++)
+        {
+            if (_CharGet(s, i) == ',')
+            {
+                _CharSet(s, i, '.');
+                break;
+            }
+        }
+        return s;
+    }
+    else if (value.isString())
+    {
+        string s;
+        value >> s;
+        s = "\"" + EscapeString(s) + "\"";
+        return s;
+    }
+
+    string s = "";
+    bool compact = (space.length() == 0);
+    string newIndent = indent + space;
+
+    if (value.isObject())
+    {
+        s = (compact ? "{" : "{\n");
+        array<string> keys = value.getKeys();
+        for (uint i = 0, j = keys.length(); i < j; i++)
+        {
+            s += newIndent + "\"" + keys[i] + (compact ? "\":" : "\": ");
+            s += Stringify(value[keys[i]], space, newIndent);
+            if (i < j - 1)
+            {
+                s += (compact ? "," : ",\n");
+            }
+        }
+        s += (compact ? "}" : "\n" + indent + "}");
+    }
+    else if (value.isArray())
+    {
+        s = (compact ? "[" : "[\n");
+        for (uint i = 0, j = value.length(); i < j; i += 1)
+        {
+            s += newIndent + Stringify(value[i], space, newIndent);
+            if (i < j - 1)
+            {
+                s += (compact ? "," : ",\n");
+            }
+        }
+        s += (compact ? "]" : "\n" + indent + "]");
+    }
+    return s;
+}
+
+
+/******************************************************************************
+ *                                                                            *
+ *  JSON VALUE CLASSES                                                        *
+ *                                                                            *
+ ******************************************************************************/
+
+JSON@ undefined;
+
+class Value : JSON
+{
+    bool isUndefined()                 { return false; }
+    bool isNull()                      { return false; }
+    bool isBoolean()                   { return false; }
+    bool isString()                    { return false; }
+    bool isNumber()                    { return false; }
+    bool isObject()                    { return false; }
+    bool isArray()                     { return false; }
+
+    JSON@ opShr(bool& value)           { return this; }
+    JSON@ opShr(string& value)         { return this; }
+    JSON@ opShr(int8& value)           { return this; }
+    JSON@ opShr(int16& value)          { return this; }
+    JSON@ opShr(int32& value)          { return this; }
+    JSON@ opShr(int64& value)          { return this; }
+    JSON@ opShr(uint8& value)          { return this; }
+    JSON@ opShr(uint16& value)         { return this; }
+    JSON@ opShr(uint32& value)         { return this; }
+    JSON@ opShr(uint64& value)         { return this; }
+    JSON@ opShr(float& value)          { return this; }
+    JSON@ opShr(double& value)         { return this; }
+    JSON@ opShr(array<bool>& value)    { return this; }
+    JSON@ opShr(array<string>& value)  { return this; }
+    JSON@ opShr(array<string@>& value) { return this; }
+    JSON@ opShr(array<int8>& value)    { return this; }
+    JSON@ opShr(array<int16>& value)   { return this; }
+    JSON@ opShr(array<int32>& value)   { return this; }
+    JSON@ opShr(array<int64>& value)   { return this; }
+    JSON@ opShr(array<uint8>& value)   { return this; }
+    JSON@ opShr(array<uint16>& value)  { return this; }
+    JSON@ opShr(array<uint32>& value)  { return this; }
+    JSON@ opShr(array<uint64>& value)  { return this; }
+    JSON@ opShr(array<float>& value)   { return this; }
+    JSON@ opShr(array<double>& value)  { return this; }
+
+    JSON@ opShl(const bool value)      { return this; }
+    JSON@ opShl(const string& value)   { return this; }
+    JSON@ opShl(const int8 value)      { return this; }
+    JSON@ opShl(const int16 value)     { return this; }
+    JSON@ opShl(const int32 value)     { return this; }
+    JSON@ opShl(const int64 value)     { return this; }
+    JSON@ opShl(const uint8 value)     { return this; }
+    JSON@ opShl(const uint16 value)    { return this; }
+    JSON@ opShl(const uint32 value)    { return this; }
+    JSON@ opShl(const uint64 value)    { return this; }
+    JSON@ opShl(const float value)     { return this; }
+    JSON@ opShl(const double value)    { return this; }
+
+    bool hasProperty(const string& key)              { return false; }
+    void setProperty(const string& key, JSON@ value) { return; }
+    array<string> getKeys()                     { array<string> k; return k; }
+    JSON@ opIndex(const string& key)            { return @undefined; }
+    void forEach(JSONForEachKey@ callback)      { return; }
+    void forEach(JSONForEachKeyAll@ callback)   { return; }
+
+    uint length()                               { return 0; }
+    void push(JSON@ value)                      { return; }
+    JSON@ opIndex(const uint index)             { return @undefined; }
+    void forEach(JSONForEachIndex@ callback)    { return; }
+    void forEach(JSONForEachIndexAll@ callback) { return; }
+
+    string@ stringify() { return Stringify(this, "", ""); }
+    string@ stringify(const string& space)
+    {
+        uint length = _CharLength(space);
+        if (length > 8)
+        {
+            Log("Maximum space length exceeded.");
+            return "";
+        }
+        for (uint i = 0; i < length; i++)
+        {
+            if (!_IsWhitespace(_CharGet(space, i)))
+            {
+                Log("space can contain only whitespace characters.");
+                return "";
+            }
+        }
+        return Stringify(this, space, "");
+    }
+
+    bool save(const string& path)
+    {
+        if (this.isUndefined())
+        {
+            return false;
+        }
+        file f;
+        if (f.open(path, "w") == 0)
+        {
+            string@ text = this.stringify("  ");
+            return (uint(f.writeString(text)) == _CharLength(text));
+        }
+        return false;
+    }
+}
+
+final class Undefined : Value
+{
+    bool isUndefined()
+    {
+        return true;
+    }
+}
+
+final class Null : Value
+{
+    bool isNull()
+    {
+        return true;
+    }
+}
+
+final class Boolean : Value
+{
+    private bool value;
+
+    Boolean(bool value)
+    {
+        this.value = value;
+    }
+
+    bool isBoolean()
+    {
+        return true;
+    }
+
+    JSON@ opShr(bool& value)
+    {
+        value = this.value;
+        return this;
+    }
+
+    JSON@ opShl(const bool value)
+    {
+        this.value = value;
+        return this;
+    }
+}
+
+final class Number : Value
+{
+    private double value;
+
+    Number(int8 value)   { this.value = value; }
+    Number(int16 value)  { this.value = value; }
+    Number(int32 value)  { this.value = value; }
+    Number(int64 value)  { this.value = value; }
+    Number(uint8 value)  { this.value = value; }
+    Number(uint16 value) { this.value = value; }
+    Number(uint32 value) { this.value = value; }
+    Number(uint64 value) { this.value = value; }
+    Number(float value)  { this.value = value; }
+    Number(double value) { this.value = value; }
+
+    bool isNumber()
+    {
+        return true;
+    }
+
+    JSON@ opShr(int8& value)   { value = int8(this.value); return this; }
+    JSON@ opShr(int16& value)  { value = int16(this.value); return this; }
+    JSON@ opShr(int32& value)  { value = int32(this.value); return this; }
+    JSON@ opShr(int64& value)  { value = int64(this.value); return this; }
+    JSON@ opShr(uint8& value)  { value = uint8(this.value); return this; }
+    JSON@ opShr(uint16& value) { value = uint16(this.value); return this; }
+    JSON@ opShr(uint32& value) { value = uint32(this.value); return this; }
+    JSON@ opShr(uint64& value) { value = uint64(this.value); return this; }
+    JSON@ opShr(float& value)  { value = float(this.value); return this; }
+    JSON@ opShr(double& value) { value = this.value; return this; }
+
+    JSON@ opShl(const int8 value)   { this.value = value; return this; }
+    JSON@ opShl(const int16 value)  { this.value = value; return this; }
+    JSON@ opShl(const int32 value)  { this.value = value; return this; }
+    JSON@ opShl(const int64 value)  { this.value = value; return this; }
+    JSON@ opShl(const uint8 value)  { this.value = value; return this; }
+    JSON@ opShl(const uint16 value) { this.value = value; return this; }
+    JSON@ opShl(const uint32 value) { this.value = value; return this; }
+    JSON@ opShl(const uint64 value) { this.value = value; return this; }
+    JSON@ opShl(const float value)  { this.value = value; return this; }
+    JSON@ opShl(const double value) { this.value = value; return this; }
+}
+
+final class String : Value
+{
+    private string value;
+
+    String(string@ value)
+    {
+        this.value = value;
+    }
+
+    bool isString()
+    {
+        return true;
+    }
+
+    JSON@ opShr(string& value)
+    {
+        value = this.value;
+        return this;
+    }
+
+    JSON@ opShl(const string& value)
+    {
+        this.value = value;
+        return this;
+    }
+}
+
+final class Object : Value
+{
+    private dictionary properties;
+    private array<string>keys;
+
+    bool isObject()
+    {
+        return true;
+    }
+
+    bool hasProperty(const string& key)
+    {
+        return this.properties.exists(key);
+    }
+
+    void setProperty(const string& key, JSON@ value)
+    {
+        if (@value == null || value.isUndefined())
+        {
+            return;
+        }
+        if (!this.properties.exists(key))
+        {
+            keys.insertLast(key);
+        }
+        properties.set(key, @value);
+    }
+
+    array<string> getKeys()
+    {
+        return this.keys;
+    }
+
+    void forEach(JSONForEachKey@ callback)
+    {
+        JSON@ value;
+        for (uint i = 0, j = this.keys.length(); i < j; i += 1)
+        {
+            properties.get(this.keys[i], @value);
+            callback(value, this.keys[i]);
+        }
+    }
+    void forEach(JSONForEachKeyAll@ callback)
+    {
+        JSON@ value;
+        for (uint i = 0, j = this.keys.length(); i < j; i += 1)
+        {
+            properties.get(this.keys[i], @value);
+            callback(value, this.keys[i], this);
+        }
+    }
+
+    JSON@ opIndex(const string& key)
+    {
+        if (this.hasProperty(key))
+        {
+            JSON@ value;
+            properties.get(key, @value);
+            return @value;
+        }
+        else
+        {
+            return @undefined;
+        }
+    }
+}
+
+final class Array : Value
+{
+    private array<JSON@> elements;
+
+    bool isArray()
+    {
+        return true;
+    }
+
+    #define _RetrieveArray #(_type, _isType, _init)                            \
+    JSON@ opShr(array<_type>& retrieve)                                        \
+    {                                                                          \
+        for (uint i = 0, j = this.elements.length(); i < j; i++)               \
+        {                                                                      \
+            if (this.elements[i]._isType())                                    \
+            {                                                                  \
+                _type value = _init;                                           \
+                this.elements[i] >> value;                                     \
+                retrieve.insertLast(value);                                    \
+            }                                                                  \
+                                                                               \
+        }                                                                      \
+        return this;                                                           \
+    }
+
+    _RetrieveArray(bool, isBoolean, false);
+    _RetrieveArray(string, isString, "");
+    _RetrieveArray(string@, isString, "");
+    _RetrieveArray(int8, isNumber, 0);
+    _RetrieveArray(int16, isNumber, 0);
+    _RetrieveArray(int32, isNumber, 0);
+    _RetrieveArray(int64, isNumber, 0);
+    _RetrieveArray(uint8, isNumber, 0);
+    _RetrieveArray(uint16, isNumber, 0);
+    _RetrieveArray(uint32, isNumber, 0);
+    _RetrieveArray(uint64, isNumber, 0);
+    _RetrieveArray(float, isNumber, 0);
+    _RetrieveArray(double, isNumber, 0);
+
+    uint length()
+    {
+        return this.elements.length();
+    }
+
+    void push(JSON@ value)
+    {
+        if (@value == null || value.isUndefined())
+        {
+            return;
+        }
+        this.elements.insertLast(@value);
+    }
+
+    void forEach(JSONForEachIndex@ callback)
+    {
+        for (uint i = 0, j = elements.length(); i < j; i += 1)
+        {
+            callback(elements[i], i);
+        }
+    }
+    void forEach(JSONForEachIndexAll@ callback)
+    {
+        for (uint i = 0, j = elements.length(); i < j; i += 1)
+        {
+            callback(elements[i], i, this);
+        }
+    }
+
+    JSON@ opIndex(const uint index)
+    {
+        if (index < this.elements.length())
+        {
+            return this.elements[index];
+        }
+        else
+        {
+            return @undefined;
+        }
+    }
+}
+
+/******************************************************************************
+ *                                                                            *
+ *  TOKENIZER                                                                 *
+ *  Takes a JSON text and produces an array of JSON tokens.                   *
+ *                                                                            *
+ ******************************************************************************/
+
+enum TokenType
+{
+    LEFT_SQUARE_BRACKET  = '[',
+    RIGHT_SQUARE_BRACKET = ']',
+    LEFT_CURLY_BRACKET   = '{',
+    RIGHT_CURLY_BRACKET  = '}',
+    COMMA                = ',',
+    COLON                = ':',
+    TRUE                 = 't',
+    FALSE                = 'f',
+    NULL                 = 'n',
+    STRING               = '"',
+    NUMBER               = '#'
+}
+
+class Token
+{
+    TokenType type;
+    string value;
+
+    uint row;
+    uint col;
+
+    Token(TokenType type, string value)
+    {
+        this.type = type;
+        this.value = value;
+    }
+    string@ name()
+    {
+        switch (this.type)
+        {
+            case LEFT_SQUARE_BRACKET:
+                return "[";
+            case RIGHT_SQUARE_BRACKET:
+                return "]";
+            case LEFT_CURLY_BRACKET:
+                return "{";
+            case RIGHT_CURLY_BRACKET:
+                return "}";
+            case COMMA:
+                return ",";
+            case COLON:
+                return ":";
+            case TRUE:
+                return "true";
+            case FALSE:
+                return "false";
+            case NULL:
+                return "null";
+            case STRING:
+                return "string";
+            case NUMBER:
+                return "number";
+        }
+        return "unknown";
+    }
+}
+
+
+//  Returns true if reached end of text
+bool growToken(string@ tokenValue, uint& tokenLength, uint& offset, uint length, uint8 character)
+{
+    tokenLength += 1;
+    _CharAdd(tokenValue, character);
+    offset += 1;
+    return offset >= length;
+}
+
+
+bool eatNumberToken(const string& text, uint& offset, uint length, array<Token@>@ tokens)
+{
+    string tokenValue = "";
+    uint tokenLength = 0;
+
+    if (_CharGet(text, offset) == '-')
+    {
+        if (growToken(tokenValue, tokenLength, offset, length, '-'))
+        {
+            return false;
+        }
+    }
+    if (_CharGet(text, offset) == '0')
+    {
+        if (growToken(tokenValue, tokenLength, offset, length, '0'))
+        {
+            tokens.insertLast(@Token(NUMBER, tokenValue));
+            offset += 1;
+            return true;
+        }
+    }
+    else if (_CharGet(text, offset) >= '1' && _CharGet(text, offset) <= '9')
+    {
+        if (growToken(tokenValue, tokenLength, offset, length, _CharGet(text, offset)))
+        {
+            tokens.insertLast(@Token(NUMBER, tokenValue));
+            offset += 1;
+            return true;
+        }
+        while (offset < length)
+        {
+            if (_CharGet(text, offset) >= '0' && _CharGet(text, offset) <= '9')
+            {
+                if (growToken(tokenValue, tokenLength, offset, length, _CharGet(text, offset)))
+                {
+                    tokens.insertLast(@Token(NUMBER, tokenValue));
+                    offset += 1;
+                    return true;
+                }
+            }
+            else
+            {
+                break;
+            }
+        }
+    }
+    if (_CharGet(text, offset) == '.')
+    {
+        if (growToken(tokenValue, tokenLength, offset, length, _CharGet(text, offset)))
+        {
+            return false;
+        }
+        while (offset < length)
+        {
+            if (_CharGet(text, offset) >= '0' && _CharGet(text, offset) <= '9')
+            {
+                if (growToken(tokenValue, tokenLength, offset, length, _CharGet(text, offset)))
+                {
+                    tokens.insertLast(@Token(NUMBER, tokenValue));
+                    offset += 1;
+                    return true;
+                }
+            }
+            else
+            {
+                break;
+            }
+        }
+    }
+    if (_CharGet(text, offset) == 'e' || _CharGet(text, offset) == 'E') {
+        if (growToken(tokenValue, tokenLength, offset, length, _CharGet(text, offset)))
+        {
+            return false;
+        }
+    }
+    if (_CharGet(text, offset) == '+' || _CharGet(text, offset) == '-') {
+        if (growToken(tokenValue, tokenLength, offset, length, _CharGet(text, offset)))
+        {
+            return false;
+        }
+    }
+    if (_CharGet(text, offset) >= '0' && _CharGet(text, offset) <= '9')
+    {
+        if (growToken(tokenValue, tokenLength, offset, length, _CharGet(text, offset)))
+        {
+            tokens.insertLast(@Token(NUMBER, tokenValue));
+            offset += 1;
+            return true;
+        }
+    }
+    while (offset < length)
+    {
+        if (_CharGet(text, offset) >= '0' && _CharGet(text, offset) <= '9')
+        {
+            if (growToken(tokenValue, tokenLength, offset, length, _CharGet(text, offset)))
+            {
+                tokens.insertLast(@Token(NUMBER, tokenValue));
+                offset += 1;
+                return true;
+            }
+        }
+        else
+        {
+            break;
+        }
+    }
+    tokens.insertLast(@Token(NUMBER, tokenValue));
+    return true;
+}
+
+
+bool eatStringToken(const string& text, uint& offset, uint length, array<Token@>@ tokens)
+{
+    string tokenValue = "";
+    uint tokenLength = 0;
+    offset += 1;
+
+    while (offset < length)
+    {
+        if (_CharGet(text, offset) == '"') // end of string
+        {
+            tokens.insertLast(@Token(STRING, tokenValue));
+            offset += 1;
+            return true;
+        }
+        else if (_CharGet(text, offset) == 92) // escape sequence
+        {
+            offset += 1;
+            if (offset >= length)
+            {
+                return false;
+            }
+            switch (_CharGet(text, offset))
+            {
+            case '"':
+            case '/':
+            case 92:
+                growToken(tokenValue, tokenLength, offset, length, _CharGet(text, offset));
+                break;
+            case 'b':
+                growToken(tokenValue, tokenLength, offset, length, 8);
+                break;
+            case 'f':
+                growToken(tokenValue, tokenLength, offset, length, 12);
+                break;
+            case 'n':
+                growToken(tokenValue, tokenLength, offset, length, 10);
+                break;
+            case 'r':
+                growToken(tokenValue, tokenLength, offset, length, 13);
+                break;
+            case 't':
+                growToken(tokenValue, tokenLength, offset, length, 9);
+                break;
+            case 'u': // TODO: implement unicode sequence
+                offset += 5;
+                if (offset >= length)
+                {
+                    return false;
+                }
+            }
+        }
+        else
+        {
+            growToken(tokenValue, tokenLength, offset, length, _CharGet(text, offset));
+        }
+    }
+    return false;
+}
+
+
+bool eatLiteralToken(const string& text, uint& offset, string@ match, array<Token@>@ tokens)
+{
+    uint tokenLength = _CharLength(match);
+
+    if (offset + tokenLength > _CharLength(text))
+    {
+        return false;
+    }
+    for (uint i = 1; i < tokenLength; i += 1)
+    {
+        if (_CharGet(text, offset + i) != _CharGet(match, i))
+        {
+            return false;
+        }
+    }
+    tokens.insertLast(@Token(TokenType(_CharGet(text, offset)), ""));
+    offset += tokenLength;
+    return true;
+}
+
+
+void eatStructuralToken(const string& text, uint& offset, array<Token@>@ tokens)
+{
+    tokens.insertLast(@Token(TokenType(_CharGet(text, offset)), ""));
+    offset += 1;
+}
+
+
+void eatWhitespace(const string& text, uint& offset, uint length)
+{
+    offset += 1;
+    while (offset < length)
+    {
+        switch (_CharGet(text, offset))
+        {
+            case 9:
+            case 10:
+            case 13:
+            case 32:
+                offset += 1;
+                break;
+            default:
+                return;
+        }
+    }
+}
+
+
+bool tokenize(const string& text, array<Token@>@ tokens)
+{
+    uint length = _CharLength(text);
+    uint offset = 0;
+    uint8 symbol;
+
+    while (offset < length)
+    {
+        symbol = _CharGet(text, offset);
+        switch (symbol)
+        {
+            case 9:
+            case 10:
+            case 13:
+            case 32:
+            {
+                eatWhitespace(text, offset, length);
+                break;
+            }
+            case COMMA:
+            case COLON:
+            case LEFT_SQUARE_BRACKET:
+            case RIGHT_SQUARE_BRACKET:
+            case LEFT_CURLY_BRACKET:
+            case RIGHT_CURLY_BRACKET:
+            {
+                eatStructuralToken(text, offset, tokens);
+                break;
+            }
+            case TRUE:
+                if (!eatLiteralToken(text, offset, "true", tokens))
+                {
+                    return false;
+                }
+                break;
+            case FALSE:
+                if (!eatLiteralToken(text, offset, "false", tokens))
+                {
+                    Log("Failed to eat literal false token " + symbol);
+                    return false;
+                }
+                break;
+            case NULL:
+                if (!eatLiteralToken(text, offset, "null", tokens))
+                {
+                    return false;
+                }
+                break;
+            case STRING:
+            {
+                if (!eatStringToken(text, offset, length, tokens))
+                {
+                    return false;
+                }
+                break;
+            }
+            case '-':
+            case '0':
+            case '1':
+            case '2':
+            case '3':
+            case '4':
+            case '5':
+            case '6':
+            case '7':
+            case '8':
+            case '9':
+            {
+                if (!eatNumberToken(text, offset, length, tokens))
+                {
+                    return false;
+                }
+                break;
+            }
+            default:
+            {
+                return false;
+            }
+        }
+    }
+    return true;
+}
+
+/******************************************************************************
+ *                                                                            *
+ *  PARSER                                                                    *
+ *  Takes an array of JSON tokens and produces a structure of JSON values.    *
+ *                                                                            *
+ ******************************************************************************/
+
+/**
+ * Initializes the parser.
+ *
+ * Resets the token index and calls parseValue() for the first token.
+ */
+JSON@ parse(array<Token@>@ tokens)
+{
+    if (tokens.length() == 0)
+    {
+        return @undefined;
+    }
+    uint tokenIndex = 0;
+    return @parseValue(tokens, tokenIndex);
+}
+
+/**
+ * Parses one or more tokens and returns a JSON value.
+ *
+ * To parse arrays and objects the function uses recursion.
+ */
+JSON@ parseValue(array<Token@>@ tokens, uint& tokenIndex)
+{
+    switch (tokens[tokenIndex].type)
+    {
+        case NULL:
+            tokenIndex += 1;
+            return @Null();
+        case TRUE:
+            tokenIndex += 1;
+            return @Boolean(true);
+        case FALSE:
+            tokenIndex += 1;
+            return @Boolean(false);
+        case NUMBER:
+        {
+            JSON@ value = Number(StrToDouble(tokens[tokenIndex].value));
+            tokenIndex += 1;
+            return @value;
+        }
+        case STRING:
+        {
+            JSON@ value = String(tokens[tokenIndex].value);
+            tokenIndex += 1;
+            return @value;
+        }
+        case LEFT_CURLY_BRACKET:
+        {
+            JSON@ obj = Object();
+            while (tokenIndex < tokens.length())
+            {
+                tokenIndex += 1;
+                if (tokenIndex >= tokens.length())
+                {
+                    Log("JSON parser: expected object key or end of object.");
+                    return @undefined;
+                }
+                if (tokens[tokenIndex].type == RIGHT_CURLY_BRACKET)
+                {
+                    return @obj;
+                }
+                string key = tokens[tokenIndex].value;
+
+                tokenIndex += 1;
+                if (tokenIndex >= tokens.length())
+                {
+                    Log("JSON parser: expected ':', found end of tokens.");
+                    return @undefined;
+                }
+                if (tokens[tokenIndex].type != COLON)
+                {
+                    Log("JSON parser: expected ':', found other token.");
+                    return @undefined;
+                }
+
+                tokenIndex += 1;
+                if (tokenIndex >= tokens.length())
+                {
+                    Log("JSON parser: expected a value, found end of tokens.");
+                    return @undefined;
+                }
+                JSON@ val = parseValue(tokens, tokenIndex);
+
+                obj.setProperty(key, @val);
+                if (tokenIndex >= tokens.length())
+                {
+                    Log("JSON parser: expected ',' or '}', found tokens end.");
+                    return @undefined;
+                }
+
+                if (tokens[tokenIndex].type == RIGHT_CURLY_BRACKET)
+                {
+                    tokenIndex += 1;
+                    return @obj;
+                }
+                if (tokens[tokenIndex].type != COMMA)
+                {
+                    Log("JSON parser: expected ',' found other token.");
+                    return @undefined;
+                }
+            }
+        }
+        case LEFT_SQUARE_BRACKET:
+        {
+            JSON@ arr = Array();
+            while (tokenIndex < tokens.length())
+            {
+                tokenIndex += 1;
+                if (tokenIndex >= tokens.length()) return @undefined;
+                if (tokens[tokenIndex].type == RIGHT_SQUARE_BRACKET)
+                {
+                    tokenIndex += 1;
+                    return @arr;
+                }
+                JSON@ val = parseValue(tokens, tokenIndex);
+                arr.push(@val);
+                if (tokenIndex >= tokens.length())
+                {
+                    Log("JSON parser: trailing comma in array.");
+                    return @undefined;
+                }
+                if (tokens[tokenIndex].type == RIGHT_SQUARE_BRACKET)
+                {
+                    tokenIndex += 1;
+                    return @arr;
+                }
+                if (tokens[tokenIndex].type != COMMA)
+                {
+                    Log("JSON parser: expected ',' or ']', found other token.");
+                    return @undefined;
+                }
+            }
+        }
+    }
+
+    Log("JSON parser: unexpected token.");
+    return @undefined;
+
+}
+
+/******************************************************************************
+ *                                                                            *
+ *  Functions imported via json_h.fos.                                        *
+ *                                                                            *
+ ******************************************************************************/
+
+/**
+ *  Parses a JSON text.
+ *
+ *  Takes a JSON text and produces a structure of JSON values.
+ *  @param text JSON text.
+ *  @return If parsing was successful returns a structure of JSON values,
+ *  if there was an error returns Undefined value.
+ */
+JSON@ JSONParse(const string& text)
+{
+    if (@undefined == null)
+    {
+        @undefined = @Undefined();
+    }
+    array<Token@> tokens;
+    if (tokenize(text, tokens))
+    {
+        return parse(@tokens);
+    }
+    return @undefined;
+}
+
+/**
+ *  Loads a JSON file.
+ *
+ *  Loads a JSON text from a file and produces a structure of JSON values.
+ *  @param  path Path to the JSON file.
+ *  @return If parsing was successful returns a structure of JSON values,
+ *  if there was an error returns Undefined value.
+ */
+JSON@ JSONLoad(const string& path)
+{
+    if (@undefined == null)
+    {
+        @undefined = @Undefined();
+    }
+    file f;
+    if (f.open(path, "r") == 0)
+    {
+        int size = f.getSize();
+        string text = "";
+        if (f.readString(size, text) == size)
+        {
+            return JSONParse(text);
+        }
+    }
+    return @undefined;
+}
+
+
+#endif // __JSON__
