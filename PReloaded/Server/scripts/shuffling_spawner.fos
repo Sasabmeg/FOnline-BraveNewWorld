@@ -232,5 +232,71 @@ void _InitSpot(Item& item, bool firstTime)
 }
 uint e_InitSpot(array<uint>@ values)
 {
+    Item@ item = GetItem(values[0]);
+    if(valid(item) && item.MapId > 0)
+    {
+        Map@ map = GetMap(item.MapId);
+        if(valid(map))
+        {
+            switch(map.GetProtoId())
+            {
+            case MAP_KlamathMiningSiteInside:
+            case MAP_NCRMiningSite:
+            case MAP_JunktownMiningSite:
+            case MAP_SanFranciscoMiningSiteInside:
+                item.Val0 = 1;
+                break;
+            case MAP_Modoc_Ghostcave:
+                item.Val0 = 2;
+                break;
+            case MAP_HQ_BunkerIndoor:
+                item.Val0 = 3;
+                break;
+            case MAP_VaultCityMineInside:
+                item.Val0 = 4;
+                break;
+            case MAP_ReddingMine:
+                item.Val0 = 5;
+                break;
+            case MAP_BrokenHillsMine:
+                item.Val0 = 6;
+                break;
+            case MAP_MiningSiteInside:
+                item.Val0 = 7;
+                break;
+            case MAP_KlamathToxicCaves2:
+            case MAP_Waterworks:
+                item.Val0 = 8;
+                break;
+            case MAP_KlamathDowntown:
+                item.Val0 = 9;
+                break;
+            case MAP_LandersPoint_Geckofields:
+                item.Val0 = 10;
+                break;
+            case MAP_LandersPoint_Scorpioncave:
+                item.Val0 = 11;
+                break;
+	    case MAP_GeckoSettlement:
+		item.Val0 = 12;
+		break;
+            case MAP_NCR:
+		item.Val0 = 13;
+		break;
+	    case MAP_HubOldtown:
+		item.Val0 = 14;
+		break;
+	    case MAP_DenBusiness:
+	    item.Val0 = 15;
+		break;
+	    case MAP_ModocLarge:
+	    item.Val0 = 16;
+		break;
+	    case MAP_Redding:
+	    item.Val0 = 17;
+		break;
+            }
+        }
+    }
     return 0;
 }
