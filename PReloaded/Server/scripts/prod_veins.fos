@@ -50,7 +50,25 @@ bool Dig(Critter@ miner, Item@ tool, Item@ vein, uint16 productPid, uint amount,
         {
             miner.SayMsg(SAY_NETMSG, TEXTMSG_TEXT, msgIndex + 1);
 
-            ShuffleItem(vein);
+            Map@ map = miner.GetMap();
+            if(valid(map) && map.GetProtoId() == MAP_MiningSiteInside)
+            {
+                uint ownerId = GetRootMapData(map, MAP_DATA_OWNER);
+                if(ownerId > 0)
+                {
+                    uint lastTime = uint(GetLvar(ownerId, LVAR_mine_bought_time));
+                    if(ELAPSED_TIME > (lastTime + MINE_TIME))
+                    {
+                        DeleteItem(vein);
+                    }
+                    else
+                        ShuffleItem(vein);
+                }
+                else
+                    ShuffleItem(vein);
+            }
+            else
+                ShuffleItem(vein);
         }
 
         CheckPrimitiveTool(miner, tool);

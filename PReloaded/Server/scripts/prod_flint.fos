@@ -26,10 +26,25 @@ bool _SkillPlantFlint(Item& item, Critter& cr, int skill)
     Map@ map = cr.GetMap();
     if(!valid(map))
         return false;
+    if(map.GetProtoId() == MAP_LandersPoint_Geckofields || map.GetProtoId() == MAP_KlamathDowntown || map.GetProtoId() == MAP_GeckoSettlement || map.GetProtoId() == MAP_NCR || map.GetProtoId() == MAP_HubOldtown || map.GetProtoId() == MAP_ModocLarge || map.GetProtoId() == MAP_Redding)
+    {
+        _Desneak(cr);
 
-    DeleteItem(item);
-    cr.Say(SAY_NETMSG, "You've found piece of flint.");
-    cr.AddItem(PID_FLINT, 1);
+        item.Val0 -= 1;
+        if(item.Val0 <= 0)
+        {
+            ShuffleItem(item);
+        }
+
+        cr.Say(SAY_NETMSG, "You've found piece of flint.");
+        cr.AddItem(PID_FLINT, PLANT_FLINT_BATCH);
+    }
+    else
+    {
+        DeleteItem(item);
+        cr.Say(SAY_NETMSG, "You've found piece of flint.");
+        cr.AddItem(PID_FLINT, 1);
+    }
 
     return true;
 }
