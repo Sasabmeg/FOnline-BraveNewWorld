@@ -40,11 +40,19 @@ void map_init(Map& map, bool firstTime)
         }
         else if(proto == MAP_NCRMiningSite)
         {
+            Log("Setting NO PVP and NO LOOTING for location NCR Mining Site, map ID: " + proto);
+            _MapSetMode(map, MAP_MODE_NO_PVP);
+            _MapSetMode(map, MAP_MODE_NO_LOOT_DROP);
+
             uint[] maxes = { 12, 20 };
             SetAlertMap(map, maxes);
         }
         else if(proto == MAP_JunktownMiningSite)
         {
+            Log("Setting NO PVP and NO LOOTING for location Junktown Mining Site, map ID: " + proto);
+            _MapSetMode(map, MAP_MODE_NO_PVP);
+            _MapSetMode(map, MAP_MODE_NO_LOOT_DROP);
+
             uint[] maxes = { 12, 20 };
             SetAlertMap(map, maxes);
         }

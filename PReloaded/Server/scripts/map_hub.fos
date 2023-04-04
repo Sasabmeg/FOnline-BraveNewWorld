@@ -22,8 +22,13 @@ void map_init(Map& map, bool firstTime)
     map.SetData(MAP_DATA_BANK, BANK_HUB);
 
     uint proto = map.GetProtoId();
-	
-	if(proto == MAP_HubDowntown) _MapSetMode(map, MAP_MODE_NO_PVP);
+
+	if (proto == MAP_HubDowntown || proto == MAP_HubTrainyard || proto == MAP_HubOldtown || proto == MAP_HubHeights
+            || proto == MAP_HubWatermerchants || proto == MAP_HubUnderground || proto == MAP_HubUndergroundthief) {
+        Log("Setting NO PVP and NO LOOTING for location Hub, map ID: " + proto);
+        _MapSetMode(map, MAP_MODE_NO_PVP);
+        _MapSetMode(map, MAP_MODE_NO_LOOT_DROP);
+	}
     // barrels rules
     if(proto == MAP_HubArena)
     {
@@ -48,6 +53,7 @@ void map_init(Map& map, bool firstTime)
             SetAlertMap(map, maxes);
         }
     }
+
 }
 
 void _CritterArenaIn(Map& map, Critter& cr)

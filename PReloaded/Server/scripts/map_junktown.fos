@@ -29,6 +29,11 @@ void map_init(Map& map, bool firstTime)
         SetAlertMap(map, maxes);
     }
 
+    uint proto = map.GetProtoId();
+    Log("Setting NO PVP and NO LOOTING for location Junktown, map ID: " + proto);
+    _MapSetMode(map, MAP_MODE_NO_LOOT_DROP);
+    _MapSetMode(map, MAP_MODE_NO_PVP);
+
 }
 
 // Entrance at day

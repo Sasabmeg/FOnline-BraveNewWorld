@@ -19,6 +19,7 @@ import void SpawnInitMilitia(Map@ map) from "town";
 void map_init(Map& map, bool firstTime)
 {
     map.SetData(MAP_DATA_TOWN, TOWN_KLAMATH);
+
     if(firstTime)
         SpawnInitMilitia(map);
 }
