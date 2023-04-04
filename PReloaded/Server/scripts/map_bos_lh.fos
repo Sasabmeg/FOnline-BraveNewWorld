@@ -35,6 +35,11 @@ bool ElevatorsAdded = false;
 
 void map_init(Map& map, bool firstTime)
 {
+    uint proto = map.GetProtoId();
+    Log("Setting NO PVP and NO LOOTING for location Lost Hills (BoS), map ID: " + proto);
+    _MapSetMode(map, MAP_MODE_NO_PVP);
+    _MapSetMode(map, MAP_MODE_NO_LOOT_DROP);
+
     if(firstTime)
     {
         // this map belongs to that faction

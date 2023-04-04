@@ -5094,6 +5094,9 @@ void ExecMapGrids(Critter& player, bool enable)
     }
 }
 
+
+//  Note: unfinished refactor of MAP_MODE_LOOT_DROP -> MAP_MODE_NO_LOOT_DROP, modes work reversed here, but list should be ok
+//  TODO: change name of command to reflect the approach, that has changed from "loot drop nowhere except spec maps" -> "loot drop everywhere except spec maps"
 void ExecMapLootDrop(Critter& player, string mode)
 {
     Map@ map = player.GetMap();
@@ -5101,46 +5104,46 @@ void ExecMapLootDrop(Critter& player, string mode)
     {
         if (mode == "status")
         {
-            player.Say(SAY_NETMSG, "Map PvP loot drop mode is " + (_MapHasMode(map, MAP_MODE_LOOT_DROP) ? "en" : "dis") + "abled.");
+            player.Say(SAY_NETMSG, "Map PvP loot drop mode is " + (_MapHasMode(map, MAP_MODE_NO_LOOT_DROP) ? "dis" : "en") + "abled.");
         }
         else if (mode == "list")
         {
-            player.Say(SAY_NETMSG, "Listing all maps with PvP loot drop mode enabled:");
+            player.Say(SAY_NETMSG, "Listing all maps with PvP loot drop mode disabled:");
 
             array<Map@> allMaps;
             uint        allMapsCount = GetAllMaps(0, allMaps);
-            uint        dropMaps = 0;
+            uint        noDropMaps = 0;
             for(uint m = 0; m < allMapsCount; m++)
             {
                 if(!valid(allMaps[m]) || allMaps[m].IsNotValid)           // JIC
                     continue;
 
-                if(_MapHasMode(allMaps[m], MAP_MODE_LOOT_DROP))
+                if(_MapHasMode(allMaps[m], MAP_MODE_NO_LOOT_DROP))
                 {
                     player.Say(SAY_NETMSG, " - " + allMaps[m].Id);
-                    dropMaps++;
+                    noDropMaps++;
                 }
             }
 
-            player.Say(SAY_NETMSG, "Maps found: " + dropMaps);
+            player.Say(SAY_NETMSG, "Maps found: " + noDropMaps);
         }
         else if (mode == "off")
         {
-            if(!_MapHasMode(map, MAP_MODE_LOOT_DROP))
+            if(!_MapHasMode(map, MAP_MODE_NO_LOOT_DROP))
                 player.Say(SAY_NETMSG, "Map PvP loot drop mode already disabled.");
             else
             {
-                _MapUnsetMode(map, MAP_MODE_LOOT_DROP);
+                _MapUnsetMode(map, MAP_MODE_NO_LOOT_DROP);
                 player.Say(SAY_NETMSG, "Map PvP loot drop mode disabled.");
             }
         }
         else if (mode == "on")
         {
-            if(_MapHasMode(map, MAP_MODE_LOOT_DROP))
+            if(_MapHasMode(map, MAP_MODE_NO_LOOT_DROP))
                 player.Say(SAY_NETMSG, "Map PvP loot drop mode already enabled.");
             else
             {
-                _MapSetMode(map, MAP_MODE_LOOT_DROP);
+                _MapSetMode(map, MAP_MODE_NO_LOOT_DROP);
                 player.Say(SAY_NETMSG, "Map PvP loot drop mode enabled.");
             }
         }

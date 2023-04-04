@@ -35,6 +35,12 @@ void map_init(Map& map, bool firstTime)
         uint[] maxes = { 20, 15 };
         SetAlertMap(map, maxes);
     }
+
+    uint proto = map.GetProtoId();
+    Log("Setting NO PVP and NO LOOTING for location San Francisco China Town, map ID: " + proto);
+    _MapSetMode(map, MAP_MODE_NO_PVP);
+    _MapSetMode(map, MAP_MODE_NO_LOOT_DROP);
+
 }
 
 void OnInCritter(Map& map, Critter& player)

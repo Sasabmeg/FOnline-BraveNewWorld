@@ -28,6 +28,12 @@ void map_init(Map& map, bool firstTime)
     {
         map.SetData(MAP_DATA_BANK, BANK_NCR);         // This map contains the NCR bank
     }
+
+    uint proto = map.GetProtoId();
+    Log("Setting NO PVP and NO LOOTING for location NCR, map ID: " + proto);
+    _MapSetMode(map, MAP_MODE_NO_LOOT_DROP);
+    _MapSetMode(map, MAP_MODE_NO_PVP);
+
     // init produuuction
     if(firstTime)
     {

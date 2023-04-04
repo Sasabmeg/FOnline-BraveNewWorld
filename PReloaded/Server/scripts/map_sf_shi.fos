@@ -6,7 +6,7 @@
 //
 
 #include "_macros.fos"
-
+#include "mapdata_h.fos"
 #include "factions_vc_q_scoutsf.fos"
 
 
@@ -15,6 +15,10 @@ void map_init(Map& map, bool firstTime)
 {
     map.SetEvent(MAP_EVENT_IN_CRITTER, "_OnInCritter");
     // sovhoz
+    uint proto = map.GetProtoId();
+    Log("Setting NO PVP and NO LOOTING for location San Francisco SHI, map ID: " + proto);
+    _MapSetMode(map, MAP_MODE_NO_PVP);
+    _MapSetMode(map, MAP_MODE_NO_LOOT_DROP);
 
 }
 

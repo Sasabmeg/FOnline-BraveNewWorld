@@ -6,6 +6,7 @@
 //
 
 #include "_macros.fos"
+#include "mapdata_h.fos"
 #include "elevators_h.fos"
 #include "reinforcements_h.fos"
 
@@ -15,6 +16,10 @@ bool ElevatorsAdded = false;
 void map_init(Map& map, bool firstTime)
 {
     uint proto = map.GetProtoId();
+    Log("Setting NO PVP and NO LOOTING for location San Francisco Mine, map ID: " + proto);
+    _MapSetMode(map, MAP_MODE_NO_PVP);
+    _MapSetMode(map, MAP_MODE_NO_LOOT_DROP);
+
     if(firstTime)
     {
         if(proto == MAP_SanFranciscoMiningSite)

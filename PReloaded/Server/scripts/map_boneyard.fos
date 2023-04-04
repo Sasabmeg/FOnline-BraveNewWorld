@@ -7,6 +7,7 @@
 
 #include "_macros.fos"
 #include "_maps.fos"
+#include "mapdata_h.fos"
 #include "economy_h.fos"
 #include "reinforcements_h.fos"
 
@@ -20,6 +21,12 @@ void map_init(Map& map, bool firstTime)
         uint[] maxes = { 15, 10 };
         SetAlertMap(map, maxes);
     }
+
+    uint proto = map.GetProtoId();
+    Log("Setting NO PVP and NO LOOTING for location Los Angeles Boneyard, map ID: " + proto);
+    _MapSetMode(map, MAP_MODE_NO_PVP);
+    _MapSetMode(map, MAP_MODE_NO_LOOT_DROP);
+
 }
 
 bool s_WaterPump(Critter& player, Scenery& table, int skill, Item@ item)

@@ -150,7 +150,7 @@
                              DeleteItem(item); } while(false)
 #define _CritCanLoseItemsOnDead      # (cr) (not (_CritHasMode(cr, MODE_NO_STEAL)&& !cr.IsPlayer()) && not _CritHasMode(cr, MODE_NO_DROP) && not _CritHasMode(cr, MODE_NO_LOOT))
 #define _CritCanDropItemsOnDead      # (cr) (_CritCanLoseItemsOnDead(cr) && not (cr.IsPlayer() && not _PlayerDropEnabled(cr, cr.GetMap())))
-#define _PlayerDropEnabled           # (cr, map) (PLAYER_NO_DROP == 0 || (valid(map) && _MapHasMode(map, MAP_MODE_LOOT_DROP)))
+#define _PlayerDropEnabled           # (cr, map) (valid(map) && not _MapHasMode(map, MAP_MODE_NO_LOOT_DROP))
 
 #define _ItemIsBroken                # (item) (item.IsDeteriorable() && FLAG(item.BrokenFlags, BI_BROKEN))
 
