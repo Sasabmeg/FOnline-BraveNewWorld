@@ -21,6 +21,21 @@ void ScoutSFMap(Map@ map, Critter@ player)
     if(var == 1 || var > 9)
     {
         // If the area was not visited, mark it as visited
+        if(map.GetProtoId() == MAP_SanFranChina)
+        {
+            if(var == 101 || var == 1)
+            {
+                var += 10;
+            }
+        }
+
+        if(map.GetProtoId() == MAP_ShiTemple)
+        {
+            if(var < 100)
+            {
+                var += 100;
+            }
+        }
     }
     else
     {
