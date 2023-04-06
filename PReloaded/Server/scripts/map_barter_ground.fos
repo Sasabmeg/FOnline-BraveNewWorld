@@ -2,7 +2,7 @@
 
 //  map_barter_grounds.fos
 
-void _MapInit( Map& map, bool firstTime )
+void map_init( Map& map, bool firstTime )
 {
     uint proto = map.GetProtoId();
     Log("Setting NO PVP and NO LOOTING for location Barter Grounds, map ID: " + proto);
