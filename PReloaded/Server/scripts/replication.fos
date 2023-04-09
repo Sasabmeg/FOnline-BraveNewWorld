@@ -372,6 +372,12 @@ void ReplicateCritter(Critter& cr)   // Export
             _SetTimeout(cr, TO_REPLICATION, REAL_MINUTE(1));
             return;
         }
+        if(_CritCanDropItemsOnDead(cr))
+        {
+			//	In case Hinkley gets to be added later.
+            //	if(!(map.GetLocation().GetProtoId() == LOCATION_Hinkley && IsInsideArena(cr)))
+            DropItems(cr);
+        }
     }
     else
     {
