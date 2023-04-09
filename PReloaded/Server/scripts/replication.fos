@@ -29,7 +29,15 @@ import void CapRadiation(Critter& cr) from "radiation";
 //import Map@ GetRoomPosition(uint PlayerId, uint16& out hx, uint16& out hy) from "rooms";
 
 // const uint16 HellMapPid=MAP_replication_hell;
-const uint16[] Hospitals = { LOCATION_StartLocation };
+const uint16[] Hospitals = {
+    LOCATION_Replication1,
+    LOCATION_Replication2,
+    LOCATION_Replication3,
+    LOCATION_Replication4,
+    LOCATION_Replication5,
+    LOCATION_Replication6,
+    LOCATION_Replication7
+};
 
 //
 // Gets nearest replication map

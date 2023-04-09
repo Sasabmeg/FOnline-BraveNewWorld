@@ -1,0 +1,18 @@
+//
+// FOClassic: Brave New World
+// Sasabmeg
+//
+// map_replications.fos
+//
+
+#include "_maps.fos"
+#include "mapdata_h.fos"
+
+void map_init(Map& map, bool firstTime)
+{
+    uint proto = map.GetProtoId();
+
+    Log("Setting NO PVP and NO LOOTING for Replication Location, map ID: " + proto);
+    _MapSetMode(map, MAP_MODE_NO_PVP);
+    _MapSetMode(map, MAP_MODE_NO_LOOT_DROP);
+}
