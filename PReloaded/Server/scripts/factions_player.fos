@@ -57,7 +57,7 @@ uint r_ChooseCave(Critter& player, Critter@ npc)
 uint r_ChooseCave2(Critter& player, Critter@ npc)
 {
     COST(player) = CAVE2_COST;
-    return ChooseLocation(player, npc, LOCATION_CAVE2);
+    return ChooseLocation(player, npc, LOCATION_Cave2HQ);
 }
 
 uint r_ChooseCamp(Critter& player, Critter@ npc)
@@ -68,12 +68,12 @@ uint r_ChooseCamp(Critter& player, Critter@ npc)
 uint r_ChooseTents(Critter& player, Critter@ npc)
 {
     COST(player) = TENTS_COST;
-    return ChooseLocation(player, npc, LOCATION_TENTS);
+    return ChooseLocation(player, npc, LOCATION_TentsHQTrapperBase);
 }
 uint r_ChooseDepot(Critter& player, Critter@ npc)
 {
     COST(player) = DEPOT_COST;
-    return ChooseLocation(player, npc, LOCATION_DEPOT);
+    return ChooseLocation(player, npc, LOCATION_DepotHQ);
 }
 uint r_ChooseScrapheap(Critter& player, Critter@ npc)
 {
@@ -83,7 +83,7 @@ uint r_ChooseScrapheap(Critter& player, Critter@ npc)
 uint r_ChooseGasStation(Critter& player, Critter@ npc)
 {
     COST(player) = GASSTATION_COST;
-    return ChooseLocation(player, npc, LOCATION_GASSTATION);
+    return ChooseLocation(player, npc, LOCATION_GasstationHQ);
 }
 uint r_ChooseBunker(Critter& player, Critter@ npc)
 {
@@ -434,7 +434,6 @@ const array<int> Requirements =
     LOCATION_TENTS, PID_BRAHMIN_HIDE, 30, PID_FIREWOOD, 30, PID_METAL_PARTS, 15, PID_ELECTRONIC_PARTS, 10, -1,
     LOCATION_SCRAPHEAP, PID_PUMP_PARTS, 350, PID_METAL_PARTS, 50, PID_ELECTRONIC_PARTS, 10, -1,
     LOCATION_CAMP, PID_FIREWOOD, 250, PID_PUMP_PARTS, 300, PID_METAL_PARTS, 15, PID_ELECTRONIC_PARTS, 10, -1,
-    LOCATION_TRADERMANSION, PID_FIREWOOD, 350, PID_PUMP_PARTS, 450, PID_METAL_PARTS, 150, PID_ELECTRONIC_PARTS, 20, -1,
 };
 
 /**
@@ -554,20 +553,6 @@ uint r_SiteOutpost(Critter& player, Critter@, int cost)
     CreateBuilder(player, LOCATION_CAMP);
     return 0;
 }
-uint r_SiteTraderMansion(Critter& player, Critter@, int cost)
-{
-    if(player.CountItem(PID_BOTTLE_CAPS) < uint(cost))
-        return FORCE_DIALOG_NOMONEY;
-    if(player.Stat[ST_TEAM_ID] == FACTION_NONE)
-    {
-        uint res = CreateFaction(player);
-        if(res != 0)
-            return res;
-    }
-    player.DeleteItem(PID_BOTTLE_CAPS, cost);
-    CreateBuilder(player, LOCATION_TRADERMANSION);
-    return 0;
-}
 uint r_CreateSite(Critter& player, Critter@ builder)
 {
     if(!IsEncounterMap(player.GetMap()))
@@ -657,7 +642,7 @@ uint dlg_FinishConstruction(Critter& player, Critter@ builder, string@ say)
     Location@ loc = GetLocation(locId);
     loc.Color = COLOR_WM_BASE;
     loc.Update();
-    
+
     Map@      entrance = loc.GetMapByIndex(0);
     MoveCars(site, entrance);
     for(uint i = 0, j = group.length(); i < j; i++)

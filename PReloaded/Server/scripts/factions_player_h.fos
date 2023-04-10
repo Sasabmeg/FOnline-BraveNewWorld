@@ -9,6 +9,8 @@
 
 // generic script for playerfaction maps
 
+//  Sasa: why is this needed to be duplicated location ID's, shouldn't using include _maps.fos simply work?
+
 #define LOCATION_CAMP           (202)
 #define LOCATION_RAIDER_CAMP    (203)
 #define LOCATION_BLADES         (204)
@@ -19,7 +21,6 @@
 #define LOCATION_DEPOT          (210)
 #define LOCATION_GASSTATION     (245)
 #define LOCATION_TENTS          (246)
-#define LOCATION_TRADERMANSION  (215)
 
 // Small
 #define CAVE_COST               (30000)
