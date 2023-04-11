@@ -216,6 +216,11 @@
 #define LVAR_q_hub_spawn_water                  (6812)
 #define LVAR_q_hub_wasteland_band               (6813)
 #define LVAR_q_hub_watertaxes                   (6814)
+#define LVAR_q_hub_risto_cave_status            (6820)
+#define LVAR_q_hub_risto_cave_item              (6821)
+#define LVAR_q_hub_risto_cave_node              (6822)
+#define LVAR_q_hub_risto_cave_loc               (6823)
+
 
 
 //	JUNKTOWN									#7200
@@ -442,10 +447,6 @@
 #define UVAR_q_rq_fetcher_pid                   (23003)
 #define UVAR_q_rq_fetcher_count                 (23004)
 #define UVAR_q_rq_fetcher_node                  (23005)
-#define UVAR_q_rq_cave_status                   (23006)
-#define UVAR_q_rq_cave_pid                      (23007)
-#define UVAR_q_rq_cave_node                     (23008)
-#define UVAR_q_rq_cave_loc                      (23009)
 #define LVAR_domination_role                    (23010)
 #define LIVAR_bos_hummer                        (23011)
 #define LIVAR_car_owner_id                      (23012)
@@ -1343,7 +1344,7 @@
 **********
 
 **********
-		 
+
    $	6214	1	slaverun_hostiles	0	0	0	4
 **********
 
@@ -1482,6 +1483,27 @@
 **********
    q var for mini-quest for water merchants. waterboy in central hub pays too high taxes, try to change his contract.
 **********
+
+   $	6820	1	q_hub_risto_cave_status	0	0	99	1
+**********
+   q var for mini-quest to fetch items from cave for Risto in the Hub.
+**********
+
+   $	6821	1	q_hub_risto_cave_item	0	0	0	4
+**********
+
+**********
+
+   $	6822	1	q_hub_risto_cave_node	0	0	0	4
+**********
+
+**********
+
+   $	6823	1	q_hub_risto_cave_loc	0	0	0	4
+**********
+
+**********
+
 
 
 //
@@ -1828,7 +1850,7 @@
 //	NEW RENO									#9000
 //
 
- 
+
    $	9001	1	q_nr_catspaw_paid	0	0	0	4
 **********
 
@@ -2556,26 +2578,6 @@ $	21006	1	LVAR_FO2077_Book_SmallGuns  0	0	10	0
 **********
 
    $	23005	2	q_rq_fetcher_node	0	0	0	4
-**********
-
-**********
-
-   $	23006	2	q_rq_cave_status	0	0	0	4
-**********
-
-**********
-
-   $	23007	2	q_rq_cave_pid	0	0	0	4
-**********
-
-**********
-
-   $	23008	2	q_rq_cave_node	0	0	0	4
-**********
-
-**********
-
-   $	23009	2	q_rq_cave_loc	0	0	0	4
 **********
 
 **********

@@ -144,6 +144,8 @@ import bool     HasSomeWeapon(Critter@ cr) from "utils";
 import uint     GetBestWeaponSkill(Critter@ cr) from "utils";
 import void     GiveBag(uint bag, Critter@ cr) from "utils";
 import void     SetQuestGarbager(uint time, uint playerid, uint locid, uint var, uint val) from "utils";
+import void     SetQuestVariableGarbager(uint time, uint playerid, uint var, uint val) from "utils";
+
 import Critter@ AddNpc(Map@ map, uint16 pid, uint16 x, uint16 y, uint8 dir, uint dialogId, string& script, uint aiPack, uint bagId, uint teamId, bool isMob, uint level) from "utils";
 import Critter@ AddNpc(Map@ map, uint16 pid, uint16 x, uint16 y, uint8 dir, uint dialogId, string& script, uint aiPack, uint bagId, uint teamId, uint factionRank, uint factionMode, bool isMob, uint level) from "utils";
 import Critter@ AddNpc(Map@ map, uint16 pid, uint16 x, uint16 y, uint8 dir, array<int> params, uint dialogId, string& script, uint aiPack, uint bagId, uint teamId, bool isMob, uint level) from "utils";

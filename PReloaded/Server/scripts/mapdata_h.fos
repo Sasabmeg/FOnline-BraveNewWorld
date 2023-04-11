@@ -45,8 +45,8 @@
 
 // caves
 #define MAP_DATA_CAVE_INIT                      (20)
-#define MAP_DATA_CAVE_RQ_PID                    (21)
-#define MAP_DATA_CAVE_RQ_PLAYER                 (22)
+#define MAP_DATA_CAVE_RQ_PID                    (21)    //  Sasa: this may have been only added so that the random fetch quest from caves work, the entires used to spawn the item
+#define MAP_DATA_CAVE_RQ_PLAYER                 (22)    //  Sasa: random fetch from caves, this would store the player ID and give it to the item, but made obsolete as I changed quest mechanic, so unique identification of quest is not required
 
 // slaveruns
 #define MAP_DATA_SLAVERUN_INIT                  (20)
