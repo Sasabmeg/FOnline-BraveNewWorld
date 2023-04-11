@@ -1470,6 +1470,21 @@ void SetQuestGarbager(uint time, uint playerid, uint locid, uint var, uint val) 
 }
 
 /**
+ * Sets the time and event to garbage the repeatable/retryable quest, setting a given variable to given value when the location was present on event execution
+ *
+ * @param time Time to garbage, in real minutes, if 0 then default is taken
+ * @param playerid Id of the player, the location owner
+ * @param var Variable number to be set
+ * @param val Value for the variable
+ *
+ */
+void SetQuestVariableGarbager(uint time, uint playerId, uint var, uint val) {    //  time in real minutes
+    FLog(LOG_DYNAMIC_LOC, "SetQuestVariableGarbager: player: [" + playerId + "] var: " + var + " val " + val + " time " + time);
+    uint[] values = { playerId, var, val };
+    CreateTimeEvent(AFTER(REAL_MINUTE(time == 0 ? __QuestGarbagerTime : time)), "utils@e_SetQuestVariable", values, true);
+}
+
+/**
  * Lock a door.
  * @param x X-position on map.
  * @param y Y-position on map.
@@ -2198,6 +2213,19 @@ uint e_DeleteQuestLoc(array<uint>@ values)     // playerid, locid, var, val
     var = values[3];
     return REAL_HOUR(1);
 }
+
+//  Copied from e_DeleteQuestLoc, to be able to reset soft failed quests that did not spawn encounter map.
+uint e_SetQuestVariable(array<uint>@ values)     // playerid, var, val
+{
+    FLog(LOG_DYNAMIC_LOC, "e_SetQuestVariable: player: [" + values[0] + "] var: " + values[1] + " val " + values[2]);
+
+    if(values[0] == 0 || values[1] == 0)
+        return REAL_HOUR(1);
+    GameVar@ var = GetLocalVar(values[1], values[0]);
+    var = values[2];
+    return REAL_HOUR(1);
+}
+
 
 // Player can once again request gm help.
 uint e_UnsetRequestedHelp(array<uint>@ values)

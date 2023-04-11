@@ -38,7 +38,7 @@ Current progress:
 #		https://fodev.net/forum/index.php/topic,30344.msg263172.html#msg263172
 #
 #	Quest Tabs (101):
-#		- Should containt location if that is known before every quest. Pip-boy will sort alphabetically, thus quest group will form naturally.
+#		- Should prefix location if that is known before every quest. Pip-boy will sort alphabetically, thus quest group will form naturally.
 #
 #	Quest Info (102):
 #		- Following keywords can be added to be processed by Quest Tracker (note that ':' is part of the keyword)
@@ -73,7 +73,9 @@ Current progress:
 #=======================================
 {5001001}{}{Hendriks, one of the regulators, gave me the job to kill one of the local dog groups. He gave me the position on my PipBoy.}
 {5001002}{}{DONE:I've wiped out the group of dogs. I should go back to Hendriks for my reward.}
-{5001003}{}{SOFT_COMPLETED:The pack of dogs is dead and I reported back to Hendriks. I can check back later, because he is sure that there will be more work.}
+{5001003}{}{SOFT_COMPLETED:The pack of dogs is dead and I reported back to Hendriks. I can check back later, because he is sure that there will be more work.
+
+:: Quest Completed ::}
 {5001101}{}{Boneyard: Dogs of LA}
 {5001102}{}{JOB:Dogs of LA}
 
@@ -360,6 +362,17 @@ The mutants are using some heavy weaponry- our group should prepare for that.}
 
 
 #=======================================
+# 6801 / q_hub_spawn
+# Hub, Spawn Quest
+#=======================================
+{6801001}{}{I met a big caravan that was on its way to the Hub, a big trade center in this area. The caravan leader asked me to be a messenger for them. I should go to the Far Go Traders and tell them that the caravan will need some more time.}
+{6801002}{}{HARD_COMPLETED:I've delivered the message, my job is done. Who knows, maybe I will meet the caravan folks again some day...
+
+:: Quest Completed ::}
+{6801101}{}{The Hub: Far Go Scout}
+{6801102}{}{QUEST:Far Go Scout}
+
+#=======================================
 # 6808 / q_hub_iguana_pete_message
 # Hub, Iguana Pete missing son
 #=======================================
@@ -371,7 +384,6 @@ The mutants are using some heavy weaponry- our group should prepare for that.}
 
 :: Quest Completed ::}
 {6808007}{}{HARD_COMPLETED:I have told Pete about his dead son and received my reward. He was very upset.}
-
 {6808010}{}{I got word that Iguana Pete misses his son. I should visit him at his iguanna stand south side of the district.}
 {6808101}{}{The Hub: Iguana Pete's Missing Son}
 {6808102}{}{QUEST:Find Iguana Pete's Missing Son}
@@ -390,17 +402,6 @@ The mutants are using some heavy weaponry- our group should prepare for that.}
 :: Quest Completed ::}
 {6810101}{}{The Hub: Find Joseph, the scavenger}
 {6810102}{}{QUEST:Find Joseph, the scavenger}
-
-#=======================================
-# 6811 / q_hub_spawn
-# Hub, Spawn Quest
-#=======================================
-{6811001}{}{I met a big caravan that was on its way to the Hub, a big trade center in this area. The caravan leader asked me to be a messenger for them. I should go to the Far Go Traders and tell them that the caravan will need some more time.}
-{6811002}{}{HARD_COMPLETED:I've delivered the message, my job is done. Who knows, maybe I will meet the caravan folks again some day...
-
-:: Quest Completed ::}
-{6811101}{}{The Hub: Far Go Scout}
-{6811102}{}{QUEST:Far Go Scout}
 
 #=======================================
 # 6813 / q_hub_wasteland_band
@@ -430,9 +431,24 @@ The mutants are using some heavy weaponry- our group should prepare for that.}
 {6814003}{}{HARD_COMPLETED:I could negotiate a new discussion about the contracts between the independent merchants and the Water Merchants for the next conference of the Hub's Central Council.
 
 :: Quest Completed ::}
-
 {6814101}{}{The Hub: Water Merchant Contracts}
 {6814102}{}{QUEST:Water Merchant Contracts}
+
+#=======================================
+# 6820 / q_hub_risto_cave_status (DIALOG_hub_risto)
+# Hub, Fetch random Painting, Motor or Urn from nearby cave for Risto
+#=======================================
+{6820001}{}{I talked with Risto in the Hub, he was very nervous about some missing debt. This guy's paranoia is certainly above the healthy level.}
+{6820010}{}{I told Risto in the Hub that I will fetch his Painting from the cave he pointed me towards.}
+{6820011}{}{I told Risto in the Hub that I will fetch his Motor from the cave he pointed me towards.}
+{6820012}{}{I told Risto in the Hub that I will fetch his Tape Recorder from the cave he pointed me towards.}
+{6820013}{}{I told Risto in the Hub that I will fetch his Urn from the cave he pointed me towards.}
+{6820090}{}{SOFT_FAILED:Risto can fetch his own stuff, I don't have time for this nutcase.}
+{6820099}{}{SOFT_COMPLETED:I have retrieved Risto's missing belongings. Another soul with extreme paranoia and hoarding disorder saved.. YAY! I also have a feeling he will be needing more stuff later on. Well, as long as he pays...
+
+:: Quest Completed ::}
+{6820101}{}{The Hub: Cavehunting for Risto}
+{6820102}{}{JOB:Cavehunting for Risto}
 
 #=======================================
 # 7128 / q_hub_gunrunner_supplies
@@ -446,9 +462,9 @@ The mutants are using some heavy weaponry- our group should prepare for that.}
 {7128006}{}{HARD_COMPLETED:A new deal between the Gun Runners and Jacob has been negotiated and both parties agreed on it.
 
 :: Quest Completed ::}
-
 {7128101}{}{The Hub: The Gun Runner Delivery}
 {7128102}{}{QUEST:The Gun Runner Delivery}
+
 
 
 

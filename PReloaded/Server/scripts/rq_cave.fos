@@ -5,17 +5,31 @@
 // rq_cave.fos
 //
 
+/*
+ *  Sasa: BNW Update for 'random fetcher' quest.
+ *  This quest will generate a random cave near the Hub for the player to fetch either a painting, motor, tape recorder or an urn.
+ *  Changed unique vars into local vars so it appears in the pip-boy. The original design was to assign the item the player as owner,
+ *  so quest would only complete if the object from cave is retrieved, not any object. It was malfunctioning because missing code,
+ *  so I re-factored to a repeatable quest in the Hub. Without unique vars code is not reusable, but pip-boy functionality is worth it.
+*/
+
+#include "_colors.fos"
 #include "_macros.fos"
 #include "mapdata_h.fos"
 #include "utils_h.fos"
 #include "_math.fos"
 #include "reputations_h.fos"
+#include "cave_h.fos"
 #include "logging_h.fos"
 
-#define CAVE_STATUS_NONE         (0)
-#define CAVE_STATUS_BRIEFED      (1)
-#define CAVE_STATUS_ONGOING      (2)
-#define CAVE_STATUS_COMPLETED    (3)
+#define CAVE_STATUS_NONE            (0)
+#define CAVE_STATUS_BRIEFED         (1)
+#define CAVE_STATUS_PAINTING        (10)
+#define CAVE_STATUS_MOTOR           (11)
+#define CAVE_STATUS_TAPE_RECORDER   (12)
+#define CAVE_STATUS_URN             (13)
+#define CAVE_STATUS_FAILED          (90)
+#define CAVE_STATUS_COMPLETED       (99)
 
 uint[] CaveLocations =
 {
@@ -28,51 +42,63 @@ uint[] CaveLocations =
     LOCATION_CavernEncounter6
 };
 
-uint[] find_pids = { PID_FUZZY_PAINTING, PID_MOTOR, PID_TAPE_RECORDER, PID_URN };
-uint[] find_nodes = { 100, 200, 300, 400 };
+uint[] itemPids = { PID_FUZZY_PAINTING, PID_MOTOR, PID_TAPE_RECORDER, PID_URN };
+uint[] dialogNodes = { 100, 200, 300, 400 };
 
 int[] reward_bags = { 80, 90, 100, 110, 430, 431, 432 };
 
 bool d_None(Critter& player, Critter@ npc)
 {
-    return(GetUvar(UVAR_q_rq_cave_status, npc.Id, player.Id) == CAVE_STATUS_NONE);
+    return(GetLocalVar(LVAR_q_hub_risto_cave_status, player.Id) == CAVE_STATUS_NONE);
 }
 
 bool d_CanAsk(Critter& player, Critter@ npc)
 {
-    return(GetUvar(UVAR_q_rq_cave_status, npc.Id, player.Id) > 0);
+    return(GetLocalVar(LVAR_q_hub_risto_cave_status, player.Id) > 0);
 }
 
 bool d_Briefed(Critter& player, Critter@ npc)
 {
-    return(GetUvar(UVAR_q_rq_cave_status, npc.Id, player.Id) == CAVE_STATUS_BRIEFED);
+    return(GetLocalVar(LVAR_q_hub_risto_cave_status, player.Id) == CAVE_STATUS_BRIEFED);
 }
 
 bool d_OnGoing(Critter& player, Critter@ npc)
 {
-    return(GetUvar(UVAR_q_rq_cave_status, npc.Id, player.Id) == CAVE_STATUS_ONGOING);
+    return isOngoing(player);
+}
+
+bool d_Failed(Critter& player, Critter@ npc)
+{
+    return(GetLocalVar(LVAR_q_hub_risto_cave_status, player.Id) == CAVE_STATUS_FAILED);
 }
 
 bool d_Completed(Critter& player, Critter@ npc)
 {
-    return(GetUvar(UVAR_q_rq_cave_status, npc.Id, player.Id) == CAVE_STATUS_COMPLETED);
+    return(GetLocalVar(LVAR_q_hub_risto_cave_status, player.Id) == CAVE_STATUS_COMPLETED);
 }
 
 bool d_NotCompleted(Critter& player, Critter@ npc)
 {
-    return(GetUvar(UVAR_q_rq_cave_status, npc.Id, player.Id) != CAVE_STATUS_COMPLETED);
+    return(GetLocalVar(LVAR_q_hub_risto_cave_status, player.Id) != CAVE_STATUS_COMPLETED);
+}
+
+bool isOngoing(Critter& player) {
+    return (GetLocalVar(LVAR_q_hub_risto_cave_status, player.Id) >= CAVE_STATUS_PAINTING &&
+           GetLocalVar(LVAR_q_hub_risto_cave_status, player.Id) <= CAVE_STATUS_URN);
 }
 
 bool d_HasStuff(Critter& player, Critter@ npc)
 {
-    if(GetUvar(UVAR_q_rq_cave_status, npc.Id, player.Id) != CAVE_STATUS_ONGOING)
+    if (!isOngoing(player))
         return false;
 
-    uint  pid = GetUvar(UVAR_q_rq_cave_pid, npc.Id, player.Id);
+    uint  pid = GetLvar(player.Id, LVAR_q_hub_risto_cave_item);
     Item@ item = player.GetItem(pid, -1);
-    if(!valid(item))
+    if (!valid(item))
         return false;
-    return(uint(item.Val1) == player.Id);
+    //  shortcutting this shit, I suppose quest designed wanted to make sure that the unique item is acceptable only, not any painting/motor/tape_recorder/urn
+    //  real problem is that cave does not spawn, that also needs to be looked at.
+    return true;
 }
 
 void r_ReceiveReward(Critter& player, Critter@ npc)
@@ -83,14 +109,14 @@ void r_ReceiveReward(Critter& player, Critter@ npc)
 
 void r_CompleteQuest(Critter& player, Critter@ npc)
 {
-    SetUvar(UVAR_q_rq_cave_status, npc.Id, player.Id, CAVE_STATUS_COMPLETED);
-    uint pid = GetUvar(UVAR_q_rq_cave_pid, npc.Id, player.Id);
-    player.DeleteItem(pid, 1);
+    SetLvar(player.Id, LVAR_q_hub_risto_cave_status, CAVE_STATUS_COMPLETED);
+    uint itemPid = GetLvar(player.Id, LVAR_q_hub_risto_cave_item);
+    player.DeleteItem(itemPid, 1);
     player.StatBase[ST_EXPERIENCE] += 500;
 
     AddReputation(player, ReputationIndex(player.GetMap().GetLocation().GetProtoId()), 75, REP_CAVE_QUEST_CAP);
 
-    Location@ loc = GetLocation(GetUvar(UVAR_q_rq_cave_loc, npc.Id, player.Id));
+    Location@ loc = GetLocation(GetLvar(player.Id, LVAR_q_hub_risto_cave_loc));
     if(valid(loc))
     {
         DLog("Location deleted");
@@ -103,55 +129,82 @@ void r_CompleteQuest(Critter& player, Critter@ npc)
 
 void r_AcceptQuest(Critter& player, Critter@ npc)
 {
-    SetUvar(UVAR_q_rq_cave_status, npc.Id, player.Id, CAVE_STATUS_ONGOING);
+    uint itemPid = GetLvar(player.Id, LVAR_q_hub_risto_cave_item);
+    switch (itemPid) {
+        case PID_FUZZY_PAINTING:
+            SetLvar(player.Id, LVAR_q_hub_risto_cave_status, CAVE_STATUS_PAINTING);
+        break;
+        case PID_MOTOR:
+            SetLvar(player.Id, LVAR_q_hub_risto_cave_status, CAVE_STATUS_MOTOR);
+        break;
+        case PID_TAPE_RECORDER:
+            SetLvar(player.Id, LVAR_q_hub_risto_cave_status, CAVE_STATUS_TAPE_RECORDER);
+        break;
+        case PID_URN:
+            SetLvar(player.Id, LVAR_q_hub_risto_cave_status, CAVE_STATUS_URN);
+        break;
+    }
 
     uint locid = SpawnLoc(player, npc);
-    SetUvar(UVAR_q_rq_cave_loc, npc.Id, player.Id, locid);
+    SetLvar(player.Id, LVAR_q_hub_risto_cave_loc, locid);
 
-    Location@ loc = GetLocation(locid);
+    player.SetKnownLoc(true, locid);
 
-    Map@      map = loc.GetMapByIndex(1);
+    Location@ location = GetLocation(locid);
+
+    location.Color = COLOR_WM_QUEST;
+    location.Update();
+
+    if(player.Mode[MODE_DEFAULT_COMBAT] == COMBAT_MODE_TURN_BASED)
+        SetTurnBasedAvailability(location);
+
+    location.AutoGarbage = false;
+
+    Map@ map = location.GetMapByIndex(1);
     if(!valid(map))
     {
-        Log("ERR: Can't find cave map of quest location");
+        Log("ERR: Hub: Risto's fetch from cave quest - Can't find cave map of quest location");
         return;
     }
-    map.SetData(MAP_DATA_CAVE_RQ_PID, GetUvar(UVAR_q_rq_cave_pid, npc.Id, player.Id));
-    map.SetData(MAP_DATA_CAVE_RQ_PLAYER, player.Id);
-}
 
-uint r_ShowQuest(Critter& player, Critter@ npc)
-{
-    return GetUvar(UVAR_q_rq_cave_node, npc.Id, player.Id);
+    //  this will set the map to contain such item
+    map.SetData(MAP_DATA_CAVE_RQ_PID, itemPid);
+
+    //  obsolete in this case, but still a good mechanic for future, this will set the map to mark the item with player, for unique identification,
+    //  if this was used (is not) any similar item would not complete quest, not just the one retrieved from the cave
+    map.SetData(MAP_DATA_CAVE_RQ_PLAYER, player.Id);
+
+    //  set quest location garbager timer on 5 real time hours
+    SetQuestGarbager(5 * 60, player.Id, locid, LVAR_q_hub_risto_cave_status, CAVE_STATUS_NONE);
 }
 
 // Generate and show quest
 uint r_GenerateQuest(Critter& player, Critter@ npc)
 {
-    uint pid = 0;
-    uint node = 0;
+    uint itemPid = 0;
+    uint itemIndex = 0;
 
-    node = Random(0, find_nodes.length() - 1);
-    pid = find_pids[node];
-    int force = find_nodes[node];
+    itemIndex = Random(0, dialogNodes.length() - 1);
+    itemPid = itemPids[itemIndex];
+    int dialogNode = dialogNodes[itemIndex];
 
-    SetUvar(UVAR_q_rq_cave_status, npc.Id, player.Id, CAVE_STATUS_BRIEFED);
-    SetUvar(UVAR_q_rq_cave_pid, npc.Id, player.Id, pid);
-    SetUvar(UVAR_q_rq_cave_node, npc.Id, player.Id, node);
-    return force;
+    SetLvar(player.Id, LVAR_q_hub_risto_cave_status, CAVE_STATUS_BRIEFED);
+    SetLvar(player.Id, LVAR_q_hub_risto_cave_item, itemPid);
+    return dialogNode;
+}
+
+void r_Fail(Critter& player, Critter@ npc) {
+    SetLvar(player.Id, LVAR_q_hub_risto_cave_status, CAVE_STATUS_FAILED);
+    SetQuestVariableGarbager(1 * 1, player.Id, LVAR_q_hub_risto_cave_status, CAVE_STATUS_NONE);
 }
 
 uint SpawnLoc(Critter@ player, Critter& npc)
 {
-    double dist = double(Random(50, 120));
+    double dist = double(Random(50, 220));
     uint   x = npc.WorldX + int(dist * sin(double(Random(0, 359)) * DEG2RAD));
     uint   y = npc.WorldY + int(dist * cos(double(Random(0, 359)) * DEG2RAD));
 
     Critter@[] crits = { player };
     int loc = CreateLocation(random_from_array(CaveLocations), x, y, crits);
-    if(player.Mode[MODE_DEFAULT_COMBAT] == COMBAT_MODE_TURN_BASED)
-        SetTurnBasedAvailability(GetLocation(loc));
-
-    // update the quest data
     return loc;
 }
