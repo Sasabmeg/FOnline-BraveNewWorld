@@ -126,29 +126,30 @@
 #define LVAR_q_la_gunr_facility_access    		(5013)
 #define LVAR_q_la_gunr_facility_inside    		(5014)
 #define LVAR_q_la_gunr_team               		(5015)
-#define LVAR_q_la_lib_book                  	(5016)
-#define LVAR_q_la_scav_junk_merchant            (5017)
-#define LVAR_q_la_train1                        (5018)
-#define LVAR_q_la_train2                        (5019)
-#define LVAR_q_la_train3                        (5020)
-#define LVAR_q_la_train4                        (5021)
-#define LVAR_q_la_train_caesar                  (5022)
-#define LVAR_q_la_train_caesar2                 (5023)
-#define LVAR_q_la_train_caesar_ambush           (5024)
-#define LVAR_q_la_train_caesar_leg              (5025)
-#define LVAR_q_la_train_camp_locid              (5026)
-#define LVAR_q_la_train_coc                     (5027)
-#define LVAR_q_la_train_coc_mad                 (5028)
-#define LVAR_q_la_train_count                   (5029)
-#define LVAR_q_la_train_trader_story      		(5030)
-#define LVAR_q_la_ware                     		(5031)
-#define LVAR_q_la_ware_dialog_status       		(5032)
-#define LVAR_q_la_ware_fuck_loop           		(5033)
-#define LVAR_q_la_ware_locid               		(5034)
-#define LVAR_q_la_ware_player_raped             (5035)
-#define LVAR_q_la_ware_rape_points         		(5036)
-#define LVAR_q_la_ware_trigger             		(5037)
-#define LVAR_q_la_waterpump                     (5038)
+#define LVAR_q_la_howitzer                      (5016)
+#define LVAR_q_la_lib_book                  	(5017)
+#define LVAR_q_la_scav_junk_merchant            (5018)
+#define LVAR_q_la_train1                        (5019)
+#define LVAR_q_la_train2                        (5020)
+#define LVAR_q_la_train3                        (5021)
+#define LVAR_q_la_train4                        (5022)
+#define LVAR_q_la_train_caesar                  (5023)
+#define LVAR_q_la_train_caesar2                 (5024)
+#define LVAR_q_la_train_caesar_ambush           (5025)
+#define LVAR_q_la_train_caesar_leg              (5026)
+#define LVAR_q_la_train_camp_locid              (5027)
+#define LVAR_q_la_train_coc                     (5028)
+#define LVAR_q_la_train_coc_mad                 (5029)
+#define LVAR_q_la_train_count                   (5030)
+#define LVAR_q_la_train_trader_story      		(5031)
+#define LVAR_q_la_ware                     		(5032)
+#define LVAR_q_la_ware_dialog_status       		(5033)
+#define LVAR_q_la_ware_fuck_loop           		(5034)
+#define LVAR_q_la_ware_locid               		(5035)
+#define LVAR_q_la_ware_player_raped             (5036)
+#define LVAR_q_la_ware_rape_points         		(5037)
+#define LVAR_q_la_ware_trigger             		(5038)
+#define LVAR_q_la_waterpump                     (5039)
 
 
 //	BROKEN HILLS 								#5400
@@ -1078,117 +1079,122 @@
    used for team dialog check. nothing fancy.
 **********
 
-   $	5016	1	q_la_lib_book	0	0	3	0
+   $	5016	1	q_la_howitzer	0	0	3	0
 **********
    quest var for mini quest.
 **********
 
-   $	5017	1	q_la_scav_junk_merchant	0	0	10	0
+   $	5017	1	q_la_lib_book	0	0	3	0
+**********
+   quest var for mini quest.
+**********
+
+   $	5018	1	q_la_scav_junk_merchant	0	0	10	0
 **********
 
 **********
 
-   $	5018	1	q_la_train1	0	1	5	1
+   $	5019	1	q_la_train1	0	1	5	1
 **********
    This variable is for checking the NPC conversation at the Frisco train station.
 **********
 
-   $	5019	1	q_la_train2	0	1	5	1
+   $	5020	1	q_la_train2	0	1	5	1
 **********
    This variable is for checking the NPC conversation at the LA train station.
 **********
 
-   $	5020	1	q_la_train3	0	1	5	1
+   $	5021	1	q_la_train3	0	1	5	1
 **********
    This variable is for checking the NPC conversation at the NCR train station.
 **********
 
-   $	5021	1	q_la_train4	0	2	5	1
+   $	5022	1	q_la_train4	0	2	5	1
 **********
    This variable is for checking the NPC conversation at the Vault City train station.
 **********
 
-   $	5022	1	q_la_train_caesar	0	0	0	5
+   $	5023	1	q_la_train_caesar	0	0	0	5
 **********
    The quest variable for Caesar's Legion "find and kill"-quest. Train introducing quest 1.
 **********
 
-   $	5023	1	q_la_train_caesar2	0	0	2	0
+   $	5024	1	q_la_train_caesar2	0	0	2	0
 **********
    Will be set to "1" after train introducing quest #1 is done. This var is just for additional asking stuff.
 **********
 
-   $	5024	1	q_la_train_caesar_ambush	0	0	3	0
+   $	5025	1	q_la_train_caesar_ambush	0	0	3	0
 **********
    If "1", ambush will be triggered.
 **********
 
-   $	5025	1	q_la_train_caesar_leg	0	0	1	0
+   $	5026	1	q_la_train_caesar_leg	0	0	1	0
 **********
    Broken leg, yes / now...
 **********
 
-   $	5026	1	q_la_train_camp_locid	0	0	0	4
+   $	5027	1	q_la_train_camp_locid	0	0	0	4
 **********
 
 **********
 
-   $	5027	1	q_la_train_coc	0	0	5	1
+   $	5028	1	q_la_train_coc	0	0	5	1
 **********
 
 **********
 
-   $	5028	1	q_la_train_coc_mad	0	0	5	0
+   $	5029	1	q_la_train_coc_mad	0	0	5	0
 **********
 
 **********
 
-   $	5029	1	q_la_train_count	0	0	0	4
+   $	5030	1	q_la_train_count	0	0	0	4
 **********
 
 **********
 
-   $	5030	1	q_la_train_trader_story	0	0	0	0
+   $	5031	1	q_la_train_trader_story	0	0	0	0
 **********
 
 **********
 
-   $	5031	1	q_la_ware	0	0	5	1
+   $	5032	1	q_la_ware	0	0	5	1
 **********
 
 **********
 
-   $	5032	1	q_la_ware_dialog_status	0	0	0	4
+   $	5033	1	q_la_ware_dialog_status	0	0	0	4
 **********
 
 **********
 
-   $	5033	1	q_la_ware_fuck_loop	0	0	5	1
+   $	5034	1	q_la_ware_fuck_loop	0	0	5	1
 **********
 
 **********
 
-   $	5034	1	q_la_ware_locid	0	0	0	4
+   $	5035	1	q_la_ware_locid	0	0	0	4
 **********
 
 **********
 
-   $	5035	1	q_la_ware_player_raped	0	0	1	0
+   $	5036	1	q_la_ware_player_raped	0	0	1	0
 **********
 
 **********
 
-   $	5036	1	q_la_ware_rape_points	0	0	50	0
+   $	5037	1	q_la_ware_rape_points	0	0	50	0
 **********
 
 **********
 
-   $	5037	1	q_la_ware_trigger	0	0	1	0
+   $	5038	1	q_la_ware_trigger	0	0	1	0
 **********
 
 **********
 
-   $	5038	1	q_la_waterpump	0	0	5	1
+   $	5039	1	q_la_waterpump	0	0	5	1
 **********
    This variable is for "fix water pump!" in boneyard.
 **********
