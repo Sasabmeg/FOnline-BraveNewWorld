@@ -12,15 +12,15 @@ lang=engl
 2 2000 None 0 #
 7 2010 #
 5 2020 #
-14 2030 D _var p q_ncr_buster_smokes = 1 #
-15 2040 D _var p q_ncr_mira_money = 0 #
+14 2030 D _var p q_ncr_buster_smokes = 11 #
+15 2040 D _var p q_ncr_mira_money { 1 #
 0 2050 @
 3 3000 None 0 #
 7 3010 #
 5 3020 #
 14 3030 D _var p q_ncr_buster_smokes = 1 #
-15 3040 D _var p q_ncr_mira_money = 0 #
-16 3050 D _var p q_ncr_mira_money = 2 #
+15 3040 D _var p q_ncr_mira_money { 1 #
+16 3050 D _var p q_ncr_mira_money = 12 #
 0 3060 @
 4 4000 None 0 #
 7 4010 @
@@ -51,12 +51,12 @@ lang=engl
 0 12020 @
 13 13000 None 0 @
 14 14000 None 0 #
-0 14010 R _var p q_ncr_buster_smokes = 2 R _item p PID_CIGARETTES + 3 @
+0 14010 R _item p PID_CIGARETTES + 3 R _var p q_ncr_buster_smokes = 12 @
 15 15000 None 0 #
 0 15010 #
-0 15020 R _var p q_ncr_mira_money = 1 R _script dialog@r_AddMoney 1 100 @
+0 15020 R _script dialog@r_AddMoney 1 100 R _var p q_ncr_mira_money = 11 @
 16 16000 None 0 #
-0 16010 R _var p q_ncr_mira_money = 3 R _item p PID_MOLOTOV_COCKTAIL + 3 R _item p PID_KNIFE + 1 R _param p ST_EXPERIENCE + 750 &
+0 16010 R _item p PID_MOLOTOV_COCKTAIL + 3 R _item p PID_KNIFE + 1 R _param p ST_EXPERIENCE + 750 R _var p q_ncr_mira_money = 99 &
 
 [engl]
 {100}{}{Mira}

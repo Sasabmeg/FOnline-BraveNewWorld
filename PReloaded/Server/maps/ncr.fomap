@@ -2,8 +2,8 @@
 Version              4
 MaxHexX              298
 MaxHexY              362
-WorkHexX             102
-WorkHexY             125
+WorkHexX             125
+WorkHexY             187
 ScriptModule         map_ncr_downtown
 ScriptFunc           map_init
 NoLogOut             0
@@ -30490,12 +30490,10 @@ MapY                 123
 MapObjType           2
 ProtoId              2596
 MapX                 130
-MapY                 123
-ScriptName           scenery
-FuncName             s_Dialog
+MapY                 122
+ScriptName           billboards
+FuncName             s_ncr1
 Scenery_CanUse       1
-Scenery_ParamsCount  1
-Scenery_Param0       10903
 
 MapObjType           2
 ProtoId              5169
@@ -85904,6 +85902,9 @@ MapObjType           2
 ProtoId              2596
 MapX                 45
 MapY                 225
+ScriptName           billboards
+FuncName             s_ncr1
+Scenery_CanUse       1
 
 MapObjType           2
 ProtoId              2292
@@ -96164,9 +96165,9 @@ Critter_ParamValue8  0
 MapObjType           2
 ProtoId              2596
 MapX                 129
-MapY                 184
+MapY                 181
 ScriptName           billboards
-FuncName             s_Billboard
+FuncName             s_ncr1
 Scenery_CanUse       1
 
 MapObjType           2
@@ -97001,5 +97002,13 @@ MapObjType           1
 ProtoId              1822
 MapX                 78
 MapY                 49
+
+MapObjType           2
+ProtoId              2596
+MapX                 53
+MapY                 82
+ScriptName           billboards
+FuncName             s_ncr1
+Scenery_CanUse       1
 
 

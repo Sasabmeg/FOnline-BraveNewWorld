@@ -13,15 +13,15 @@ lang=engl
 65506 2010 #
 4 2020 #
 20 2030 D _var p q_la_gunr_courier = 5 D _item p PID_Q_GUNRUNNER_COURIER_BOX > 0 R _param p REPUTATION_NCR + 2 R _var p q_la_gunr_courier = 7 R _item p PID_Q_GUNRUNNER_COURIER_BOX - 1 #
-8 2040 D _var p q_ncr_buster_smokes = 0 #
+8 2040 D _var p q_ncr_buster_smokes { 1 #
 0 2050 @
 3 3000 None 0 #
 65506 3010 #
 4 3020 #
 20 3030 D _var p q_la_gunr_courier = 5 D _item p PID_Q_GUNRUNNER_COURIER_BOX > 0 R _param p REPUTATION_NCR + 2 R _var p q_la_gunr_courier = 7 R _item p PID_Q_GUNRUNNER_COURIER_BOX - 1 #
-8 3040 D _var p q_ncr_buster_smokes = 0 #
-9 3050 D _var p q_ncr_buster_smokes = 2 D _item p PID_CIGARETTES > 2 #
-12 3060 D _var p q_ncr_buster_smokes > 2 #
+8 3040 D _var p q_ncr_buster_smokes { 1 #
+9 3050 D _item p PID_CIGARETTES > 2 D _var p q_ncr_buster_smokes = 12 #
+12 3060 D _var p q_ncr_buster_smokes } 98 #
 0 3070 @
 4 4000 None 0 #
 5 4010 #
@@ -40,13 +40,13 @@ lang=engl
 52 8000 None 0 @
 50 9000 None 0 @
 8 10000 None 0 #
-0 10010 R _var p q_ncr_buster_smokes = 1 #
+0 10010 R _var p q_ncr_buster_smokes = 11 #
 0 10020 @
 9 11000 None 0 #
-10 11010 D _item p PID_CIGARETTES } 3 R _item p PID_CIGARETTES - 3 R _param p ST_EXPERIENCE + 800 R _script dialog@r_AddMoney 1 300 R _var p q_ncr_buster_smokes = 3 R _item p PID_LEATHER_JACKET + 1 @
+10 11010 D _item p PID_CIGARETTES } 3 R _item p PID_CIGARETTES - 3 R _param p ST_EXPERIENCE + 800 R _script dialog@r_AddMoney 1 300 R _item p PID_LEATHER_JACKET + 1 R _var p q_ncr_buster_smokes = 98 @
 10 12000 None 0 #
-11 12010 D _param p ST_CHARISMA > 3 R _var p q_ncr_buster_smokes = 4 R _item p PID_LIGHTER + 1 #
-12 12020 D _param p ST_CHARISMA < 4 R _var p q_ncr_buster_smokes = 4 #
+11 12010 D _param p ST_CHARISMA > 3 R _item p PID_LIGHTER + 1 R _var p q_ncr_buster_smokes = 99 #
+12 12020 D _param p ST_CHARISMA < 4 R _var p q_ncr_buster_smokes = 99 #
 0 12030 @
 11 13000 None 0 #
 0 13010 @

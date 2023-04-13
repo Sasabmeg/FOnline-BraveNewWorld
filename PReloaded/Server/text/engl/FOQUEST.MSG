@@ -638,25 +638,30 @@ In order to do this, I have to find new electronic parts with that I can repair 
 {8401102}{}{JOB:Lead herd of brahmin to a ranch.}
 
 #=======================================
-# 8408 / q_ncr_buster_smokes
+# 8408 / q_ncr_buster_smokes 	(dialogs: ncr_barmen_mira, ncr_trader_buster)
 # NCR, pick up a few smokes for Buster
 #=======================================
-{8408001}{}{Buster wants me to buy him some cigarettes from the Rawhide.}
-{8408002}{}{DONE:I have to return the cigarettes to Buster.}
-{8408003}{}{HARD_COMPLETED:I've given the cigarettes to Buster.
+{8408001}{}{I should check out the quality guns at Buster. Sounds expensive, but looking around never hurts.}
+{8408011}{}{Buster wants me to buy him some cigarettes from the Rawhide.}
+{8408012}{}{DONE:I have to return the cigarettes to Buster.}
+{8408098}{}{HARD_COMPLETED:I've given the cigarettes to Buster.
+
+:: Quest Completed ::}
+{8408099}{}{HARD_COMPLETED:After giving the cigarettes to Buster, on the way out he handed me his old Jacket.
 
 :: Quest Completed ::}
 {8408101}{}{NCR: Buy cigarettes for Buster}
 {8408102}{}{QUEST:Buy cigarettes for Buster}
 
 #=======================================
-# 8413 / ncr_mira_money
+# 8413 / ncr_mira_money		(dialogs: ncr_barmen_mira, ncr_barmen_dasty)
 # NCR, return Mira's debt
 #=======================================
 
-{8413001}{}{Mira asked me to return the debt she owes to Dusty.}
-{8413002}{}{DONE:I've returned the debt. I should go back and speak to Mira.}
-{8413003}{}{HARD_COMPLETED:I've helped Mira return the debt.
+{8413001}{}{Feeling thirsty, maybe I should grab a beer at the Rawhide down the road.}
+{8413011}{}{Mira asked me to return the debt she owes to Dusty.}
+{8413012}{}{DONE:I've returned the debt. I should go back and speak to Mira.}
+{8413099}{}{HARD_COMPLETED:I've helped Mira return the debt.
 
 :: Quest Completed ::}
 {8413101}{}{NCR: Return Mira's debt}
@@ -896,10 +901,10 @@ In order to do this, I have to find new electronic parts with that I can repair 
 {9603001}{}{The San Francisco Subway Station has been taken over by radscorpions. As long as the place is occupied, the squatters can't get back to their homes. Chen told me about a lot dead people, who got poisoned or killed by the scorpions while trying to exterminate them.}
 {9603002}{}{Taking things into my own hands: I told Chen that I will check out the subway and get rid of the radscorpions.}
 {9603003}{}{DONE:The radscorpion family in the subway tunnels is dead. I should head back to Chen for my reward.}
-{9603004}{}{COMPLETED:The subway tunnels are clear to go again and Chen gave me my reward.
+{9603004}{}{HARD_COMPLETED:The subway tunnels are clear to go again and Chen gave me my reward.
 
 :: Quest Completed ::}
-{9603005}{}{FAILED:The radscorpion family was growing bigger over time and occupied all subway tunnels. Without a heavily armed force, it will not be possible anymore to get rid of them.
+{9603005}{}{HARD_FAILED:The radscorpion family was growing bigger over time and occupied all subway tunnels. Without a heavily armed force, it will not be possible anymore to get rid of them.
 
 :: Quest Failed ::}
 
