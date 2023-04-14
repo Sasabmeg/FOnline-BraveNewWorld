@@ -985,7 +985,7 @@ void dlg_TrainInfo(Critter& player, Critter@ npc, string@ text)   // show a sche
     CStation@ station = Mgr.GetStationByMapId(player.GetMapId());
     if(!valid(station))
     {
-        WLog("trains", "invalid station!", DEBUG_ERROR);
+        WLog("trains", "invalid station! - MAP ID = " + player.GetMapId(), DEBUG_ERROR);
         return;
     }
     array<string@>@ strings = station.GetSchedulesStrings();
