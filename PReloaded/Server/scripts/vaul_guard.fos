@@ -45,11 +45,15 @@ void critter_init(Critter& guard, bool firstTime)
 
     GuardInit(guard);
 
+    /*
+    // Sasa: Quest Pool - only instance where it is being tried to used, but fails due to missing anydata?
+
     // this one particular guard will give "become citizen" quests
     if(guard.Stat[ST_NPC_ROLE] == ROLE_VC_GUARD_GATE)
     {
-        QuestPool@ pool = GetQuestPool(guard);
+
         DLog("Init Gate Guard Pigizen");
+        QuestPool@ pool = GetQuestPool(guard);
         if(!valid(pool))
             Log("Invalid Pool");
         pool.AddQuest(LVAR_q_vc_parts, 100, 100, 110, 110).Finished(11);
@@ -67,6 +71,8 @@ void critter_init(Critter& guard, bool firstTime)
         pool.AddQuest(LVAR_q_vc_questionnaire, 200, 50, 220, 50).Finished(3);
         pool.AddQuest(LVAR_q_vc_kohl_books, 300, 50, 320, 50).Finished(3);
     }
+
+    */
 
     if(firstTime)
     {
