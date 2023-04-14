@@ -99,7 +99,7 @@ class CInventoryTracker {
     uint activationTime;                    //  last activation time stamp
     uint activeDuration;                    //  time in milis to remain visible after quest update shown
     uint fadeInDuration, fadeOutDuration;   //  fade durations
-    int maxInventorySize = 5;
+    uint maxInventorySize = 5;
     uint colorBackground, colorItem, colorCounterGained, colorCounterLost;     //  colors
     uint backgroundColor, itemColor, counterColor;
     int posX, posY, width, height;
@@ -146,7 +146,7 @@ class CInventoryTracker {
     }
 
     void SelfDisableAfterDurationExpired() {
-        for (int i = 0; i < itemsInProcess.length(); i++) {
+        for (uint i = 0; i < itemsInProcess.length(); i++) {
             if (active && (GetTick() + 100 > itemsInProcess[i].activationTime + activeDuration)) {
                 //active = false;
                 itemsInProcess.removeAt(i);
@@ -155,7 +155,7 @@ class CInventoryTracker {
     }
 
     void SetColors() {
-        for (int i = 0; i < itemsInProcess.length(); i++) {
+        for (uint i = 0; i < itemsInProcess.length(); i++) {
             itemsInProcess[i].itemColor = colorItem;
             itemsInProcess[i].counterColor = itemsInProcess[i].count > 0 ? colorCounterGained : colorCounterLost;
             itemsInProcess[i].backgroundColor = colorBackground;
@@ -181,7 +181,7 @@ class CInventoryTracker {
 
         SetColors();
 
-        for (int i = 0; i < itemsInProcess.length(); i++) {
+        for (uint i = 0; i < itemsInProcess.length(); i++) {
             if (currentTime < itemsInProcess[i].activationTime + fadeInDuration) {
                 FadeIn(itemsInProcess[i], currentTime);
             }
@@ -190,7 +190,7 @@ class CInventoryTracker {
             }
         }
 
-        for (int i = 0; i < maxInventorySize; i++) {
+        for (uint i = 0; i < maxInventorySize; i++) {
             if (i < itemsInProcess.length()) {
                 DrawItem(itemsInProcess[i], i * (spacing + 30));
             }
