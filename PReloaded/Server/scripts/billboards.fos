@@ -42,3 +42,9 @@ bool s_ncr1(Critter& player, Scenery& console, int skill, Item@ item)
     return true;
 }
 
+bool s_Adytum1(Critter& player, Scenery& console, int skill, Item@ item)
+{
+	RunDialog(player, DIALOG_la_billboard1, player.HexX, player.HexY, true);
+    return true;
+}
+

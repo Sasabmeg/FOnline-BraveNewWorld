@@ -12,13 +12,13 @@ lang=engl
 2 2000 None 0 #
 65506 2010 #
 4 2020 #
-20 2030 D _var p q_la_gunr_courier = 5 D _item p PID_Q_GUNRUNNER_COURIER_BOX > 0 R _param p REPUTATION_NCR + 2 R _var p q_la_gunr_courier = 7 R _item p PID_Q_GUNRUNNER_COURIER_BOX - 1 #
+20 2030 D _item p PID_Q_GUNRUNNER_COURIER_BOX > 0 D _var p q_la_gunr_courier = 15 R _param p REPUTATION_NCR + 2 R _item p PID_Q_GUNRUNNER_COURIER_BOX - 1 R _var p q_la_gunr_courier = 70 #
 8 2040 D _var p q_ncr_buster_smokes { 1 #
 0 2050 @
 3 3000 None 0 #
 65506 3010 #
 4 3020 #
-20 3030 D _var p q_la_gunr_courier = 5 D _item p PID_Q_GUNRUNNER_COURIER_BOX > 0 R _param p REPUTATION_NCR + 2 R _var p q_la_gunr_courier = 7 R _item p PID_Q_GUNRUNNER_COURIER_BOX - 1 #
+20 3030 D _item p PID_Q_GUNRUNNER_COURIER_BOX > 0 D _var p q_la_gunr_courier = 15 R _param p REPUTATION_NCR + 2 R _item p PID_Q_GUNRUNNER_COURIER_BOX - 1 R _var p q_la_gunr_courier = 70 #
 8 3040 D _var p q_ncr_buster_smokes { 1 #
 9 3050 D _item p PID_CIGARETTES > 2 D _var p q_ncr_buster_smokes = 12 #
 12 3060 D _var p q_ncr_buster_smokes } 98 #

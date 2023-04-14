@@ -14,7 +14,7 @@
 
 import uint GetZonesWithFlag(uint flag, array<IZone@>@ zones) from "worldmap";
 
-#define ALL_KILLED            (2)
+#define ALL_KILLED            (12)
 
 #define IDLE_NORMAL           (3000)
 #define DIALOG                (9471)
@@ -103,7 +103,7 @@ void r_SpawnLoc(Critter& player, Critter@ npc)
             }
         }
     }
-    SetQuestGarbager(12 * 60, player.Id, loc, LVAR_q_la_ady_dogs, 3);
+    SetQuestGarbager(15 * 60, player.Id, loc, LVAR_q_la_ady_dogs, 10);
     // player.SetKnownLoc(true, loc);
 }
 void test(Critter& cr, int, int, int)
@@ -149,17 +149,18 @@ void _DogDead(Critter& cr, Critter@ killer)
         GameVar@ var = GetLocalVar(LVAR_q_la_ady_dogs, GetOwnerId(map));
         var = ALL_KILLED;
         // remove one dog group from given zone
-        IZone@ zone = GetZone(cr.WorldX, cr.WorldY);
+        //IZone@ zone = GetZone(cr.WorldX, cr.WorldY);
         // zone.ChangeQuantity(GROUP_Dog, -1);
         // spawn event to restore the doggie
-        uint[] values = { cr.WorldX, cr.WorldY };
-        CreateTimeEvent(AFTER(GROUP_RESPAWN_TIME), "e_SpawnDogGroup", values, true);
+        //uint[] values = { cr.WorldX, cr.WorldY };
+        //CreateTimeEvent(AFTER(GROUP_RESPAWN_TIME), "e_SpawnDogGroup", values, true);
     }
 }
+//  not used, but it's an interesting concept
 uint e_SpawnDogGroup(array<uint>@ values)
 {
     IZone@ zone = GetZone(values[0], values[1]);
-    // zone.ChangeQuantity(GROUP_Dog, 1);
+    zone.ChangeQuantity(GROUP_Dog, 1);
     return 0;
 }
 

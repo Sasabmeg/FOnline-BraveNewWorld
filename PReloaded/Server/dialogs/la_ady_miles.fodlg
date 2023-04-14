@@ -9,22 +9,22 @@ lang=engl
 1 1000 None 0 #
 2 1010 @
 2 2000 None 0 #
-3 2010 D _var p q_la_waterpump = 0 #
-6 2020 D _var p q_la_waterpump > 0 D _var p q_la_waterpump < 4 #
+3 2010 D _var p q_la_waterpump { 10 #
+6 2020 D _var p q_la_waterpump > 10 D _var p q_la_waterpump { 88 #
 0 2030 @
 3 3000 None 0 #
 4 3010 D _param p SK_REPAIR < 50 #
-5 3020 D _param p SK_REPAIR > 49 R _var p q_la_waterpump = 1 #
+5 3020 D _param p SK_REPAIR > 49 R _var p q_la_waterpump = 11 #
 0 3030 @
 4 4000 None 0 #
 0 4010 #
-5 4020 R _var p q_la_waterpump = 1 @
+5 4020 R _var p q_la_waterpump = 11 @
 5 5000 None 0 #
 0 5010 @
 6 6000 None 0 #
-7 6010 D _var p q_la_waterpump = 2 R _var p q_la_waterpump = 5 R _item p PID_RAD_X + 1 R _item p PID_RADAWAY + 2 R _param p REPUTATION_LA + 100 R _param p ST_EXPERIENCE + 900 #
-11 6020 D _var p q_la_waterpump = 3 R _var p q_la_waterpump = 4 #
-0 6030 D _var p q_la_waterpump < 3 @
+7 6010 D _var p q_la_waterpump = 12 R _item p PID_RAD_X + 1 R _item p PID_RADAWAY + 2 R _param p REPUTATION_LA + 100 R _param p ST_EXPERIENCE + 900 R _var p q_la_waterpump = 99 #
+11 6020 D _var p q_la_waterpump = 88 R _var p q_la_waterpump = 89 #
+0 6030 D _var p q_la_waterpump { 11 D or D _var p q_la_waterpump = 88 @
 7 7000 None 0 #
 8 7010 D _param p SK_BARTER > 99 #
 9 7020 D _param p SK_BARTER < 100 #
@@ -73,7 +73,7 @@ lang=engl
 {9010}{}{Okay...}
 {10000}{}{Thank you. And... thank you again for fixing the machine.}
 {10010}{}{No problem.}
-{11000}{}{Oh well, that's what I thought. Thank you anyway.}
+{11000}{}{Oh well, that's what I thought. Thank you anyway. If you are interested in repairing stuff,visit the Library nearby for some Dean and Electronics books. Good luck!}
 {11010}{}{See you.}
 {100000001}{}{What the hell are you doing?}
 {100000001}{}{The well isn't broken. Please repair the water pump.}

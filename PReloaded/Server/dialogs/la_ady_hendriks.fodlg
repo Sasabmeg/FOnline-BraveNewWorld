@@ -11,16 +11,16 @@ lang=engl
 20 1020 @
 20 2000 None 0 #
 0 2010 #
-3 2020 D _var p q_la_ady_dogs = 0 D _script quest_la_dogs@d_CheckDogs 0  #
-25 2030 D _var p q_la_ady_dogs = 2 R _var p q_la_ady_dogs = 3 R _param p REPUTATION_REGULATORS + 25 R _param p ST_EXPERIENCE + 500 R _script dialog@r_DogsQuestReward 0  R _script quest_la_dogs@r_DeleteLoc 0  R _script dialog@r_QuestTimeout 1 15 #
-24 2040 D _var p q_la_ady_dogs = 3 D _script quest_la_dogs@d_CheckDogs 0  D _script dialog@d_QuestTimeoutReady 0  #
-32 2050 D _var p q_la_ady_dogs = 3 D _script quest_la_dogs@d_NoDogs 0  #
-34 2060 D _script dialog@d_QuestTimeoutNotReady 0  D _script quest_la_dogs@d_CheckDogs 0  D _var p q_la_ady_dogs = 3 #
-23 2070 D _var p q_la_ady_dogs > 0 #
+3 2020 D _var p q_la_ady_dogs { 10 #
+25 2030 D _var p q_la_ady_dogs = 12 R _param p REPUTATION_REGULATORS + 25 R _param p ST_EXPERIENCE + 500 R _script dialog@r_DogsQuestReward 0  R _script quest_la_dogs@r_DeleteLoc 0  R _script dialog@r_QuestTimeout 1 15 R _var p q_la_ady_dogs = 99 #
+24 2040 D _script dialog@d_QuestTimeoutReady 0  D _var p q_la_ady_dogs = 99 #
+32 2050 D _var p q_la_ady_dogs = 99 #
+34 2060 D _script dialog@d_QuestTimeoutNotReady 0  D _var p q_la_ady_dogs = 99 #
+23 2070 D _var p q_la_ady_dogs > 10 #
 30 2080 @
 2 3000 None 0 #
 0 3010 #
-3 3020 D _var p q_la_ady_dogs = 0 @
+3 3020 D _var p q_la_ady_dogs { 10 @
 3 4000 None 0 #
 4 4010 #
 17 4020 #
@@ -74,13 +74,13 @@ lang=engl
 21 21000 None 0 #
 22 21010 @
 22 22000 None 0 #
-0 22010 R _var p q_la_ady_dogs = 1 R _script quest_la_dogs@r_SpawnLoc 0  @
+0 22010 R _script quest_la_dogs@r_SpawnLoc 0  R _var p q_la_ady_dogs = 11 @
 23 23000 None 0 #
 26 23010 #
 20 23020 #
 0 23030 @
 24 24000 None 0 #
-0 24010 R _var p q_la_ady_dogs = 1 R _script quest_la_dogs@r_SpawnLoc 0  @
+0 24010 R _script quest_la_dogs@r_SpawnLoc 0  R _var p q_la_ady_dogs = 11 @
 25 25000 None 0 #
 0 25010 @
 26 26000 None 0 #

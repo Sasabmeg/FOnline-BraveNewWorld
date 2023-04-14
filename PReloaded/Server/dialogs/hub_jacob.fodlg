@@ -20,7 +20,7 @@ lang=engl
 13 3040 D _var p q_hub_gunrunner_supplies > 0 D _var p q_hub_gunrunner_supplies < 6 #
 5 3050 D _var n name_mem_npc_player = 0 R _var n name_mem_npc_player = 1 #
 80 3060 D _var n name_mem_npc_player = 1 D _param p PE_PROFESSION_GUNSMITH_B < 2 #
-30 3070 D _item p PID_Q_GUNRUNNER_COURIER_BOX > 0 D _var p q_la_gunr_courier = 2 R _param p REPUTATION_HUB + 2 R _var p q_la_gunr_courier = 7 R _item p PID_Q_GUNRUNNER_COURIER_BOX - 1 #
+30 3070 D _item p PID_Q_GUNRUNNER_COURIER_BOX > 0 D _var p q_la_gunr_courier = 12 R _param p REPUTATION_HUB + 2 R _item p PID_Q_GUNRUNNER_COURIER_BOX - 1 R _var p q_la_gunr_courier = 70 #
 70 3080 #
 0 3090 @
 4 4000 None 0 #
