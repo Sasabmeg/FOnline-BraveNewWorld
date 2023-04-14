@@ -35,40 +35,44 @@ bool s_WaterPump(Critter& player, Scenery& table, int skill, Item@ item)
     {
         if(skill == SK_REPAIR)
         {
-            player.Say(SAY_NETMSG, "You don't think it can be done without some tools");
+            player.Say(SAY_NETMSG, "You don't think it can be done without some tools.");
             return true;
         }
         return false;
     }
 
     int bonus = 0;
-    if(item.GetProtoId() == PID_MULTI_TOOL)
+    if(item.GetProtoId() == PID_MULTI_TOOL) {
         bonus = 25;
-    else if(item.GetProtoId() == PID_SUPER_TOOL_KIT)
+    } else if(item.GetProtoId() == PID_SUPER_TOOL_KIT) {
         bonus = 50;
-    else
+    } else
         return false;
 
     GameVar@ var = GetLocalVar(LVAR_q_la_waterpump, player.Id);
     if(!valid(var))
         return false;
 
-    if(var.GetValue() != 1)
+    if(var.GetValue() != 11 && var.GetValue() != 88) {
+        player.Say(SAY_NETMSG, "I shouldn't touch this.");
         return false;
+    }
 
     int chance = CLAMP(player.Skill[SK_REPAIR] + bonus, 5, 95);
-    if(chance > Random(0, 99))
+    if (chance > Random(0, 99))
     {
-        var = 2;
+        var = 12;
         // player.SendQuestVar(var);
         player.Say(SAY_NETMSG, "A faint noise can be heard out of the machine. You've managed it to fix the water pump.");
         // player.SayMsg(SAY_NETMSG, TEXTMSG_QUEST, var.GetQuestStr());
     }
     else
     {
-        var = 3;
+        var = 88;
         // player.SendQuestVar(var);
-        player.Say(SAY_NETMSG, "A loud noise can be heard from the inside. It seems like you've failed to repair the water pump.");
+        player.DeleteItem(item.Proto.ProtoId, 1);
+        player.Say(SAY_NETMSG, "A loud noise can be heard from the inside. It seems like you've failed to repair the water pump and broken your tools");
+
         // player.SayMsg(SAY_NETMSG, TEXTMSG_QUEST, var.GetQuestStr());
     }
     return true;

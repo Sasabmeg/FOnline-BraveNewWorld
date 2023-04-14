@@ -18,7 +18,7 @@ lang=engl
 14 2040 D _param p ST_LEVEL < 15 D _var p q_la_gunr_caravan = 0 #
 15 2050 D _param p ST_LEVEL } 15 D _var p q_la_gunr_caravan = 0 #
 23 2060 D _var p q_la_gunr_caravan > 0 D _var p q_la_gunr_box = 0 D _var p q_la_gunr_caravan ! 7 #
-75 2070 D _var p q_la_gunr_courier > 0 #
+75 2070 D _var p q_la_gunr_courier > 10 #
 30 2080 D _var p q_hub_gunrunner_supplies > 0 D _var p q_hub_gunrunner_supplies < 5 #
 50 2090 D _param p REPUTATION_GUNRUNNERS } 900 D _var p q_la_gunr_facility_access = 0 R _var p q_la_gunr_facility_access = 1 #
 51 2100 D _param p REPUTATION_GUNRUNNERS < 900 D _var p q_la_gunr_facility_access = 0 #
@@ -28,10 +28,10 @@ lang=engl
 4 4000 None 0 #
 2 4010 @
 5 5000 None 0 #
-60 5010 D _param p REPUTATION_GUNRUNNERS { -100 D _var p q_la_gunr_courier = 0 #
-61 5020 D _param p REPUTATION_GUNRUNNERS < 0 D _param p REPUTATION_GUNRUNNERS > -100 D _var p q_la_gunr_courier = 0 #
-62 5030 D _param p ST_LEVEL < 5 D _param p REPUTATION_GUNRUNNERS } 0 D _var p q_la_gunr_courier = 0 #
-63 5040 D _param p ST_LEVEL } 5 D _param p REPUTATION_GUNRUNNERS } 0 D _var p q_la_gunr_courier = 0 #
+60 5010 D _param p REPUTATION_GUNRUNNERS { -100 D _var p q_la_gunr_courier { 10 #
+61 5020 D _param p REPUTATION_GUNRUNNERS < 0 D _param p REPUTATION_GUNRUNNERS > -100 D _var p q_la_gunr_courier { 10 #
+62 5030 D _param p ST_LEVEL < 5 D _param p REPUTATION_GUNRUNNERS } 0 D _var p q_la_gunr_courier { 10 #
+63 5040 D _param p ST_LEVEL } 5 D _param p REPUTATION_GUNRUNNERS } 0 D _var p q_la_gunr_courier { 10 #
 2 5050 @
 6 6000 None 0 @
 9 7000 None 0 @
@@ -144,27 +144,27 @@ lang=engl
 71 46050 #
 72 46060 @
 67 47000 None 0 #
-73 47010 R _var p q_la_gunr_courier = 1 R _var p q_la_gunr_courier_reward = 1 R _script quest_courier_boxes@r_GiveGunRunnerCourierBox 0  R _script dialog@r_ShowLocation 1 26 #
+73 47010 R _var p q_la_gunr_courier_reward = 1 R _script quest_courier_boxes@r_GiveGunRunnerCourierBox 0  R _script dialog@r_ShowLocation 1 26 R _var p q_la_gunr_courier = 11 #
 66 47020 #
 65 47030 @
 68 48000 None 0 #
-73 48010 R _var p q_la_gunr_courier = 2 R _var p q_la_gunr_courier_reward = 2 R _script quest_courier_boxes@r_GiveGunRunnerCourierBox 0  R _script dialog@r_ShowLocation 1 25 #
+73 48010 R _var p q_la_gunr_courier_reward = 2 R _script quest_courier_boxes@r_GiveGunRunnerCourierBox 0  R _script dialog@r_ShowLocation 1 25 R _var p q_la_gunr_courier = 12 #
 66 48020 #
 65 48030 @
 69 49000 None 0 #
-73 49010 R _var p q_la_gunr_courier = 3 R _var p q_la_gunr_courier_reward = 3 R _script quest_courier_boxes@r_GiveGunRunnerCourierBox 0  R _script dialog@r_ShowLocation 1 14 #
+73 49010 R _var p q_la_gunr_courier_reward = 3 R _script quest_courier_boxes@r_GiveGunRunnerCourierBox 0  R _script dialog@r_ShowLocation 1 14 R _var p q_la_gunr_courier = 13 #
 66 49020 #
 65 49030 @
 70 50000 None 0 #
-73 50010 R _var p q_la_gunr_courier = 4 R _var p q_la_gunr_courier_reward = 4 R _script quest_courier_boxes@r_GiveGunRunnerCourierBox 0  R _script dialog@r_ShowLocation 1 7 #
+73 50010 R _var p q_la_gunr_courier_reward = 4 R _script quest_courier_boxes@r_GiveGunRunnerCourierBox 0  R _script dialog@r_ShowLocation 1 7 R _var p q_la_gunr_courier = 14 #
 66 50020 #
 65 50030 @
 71 51000 None 0 #
-73 51010 R _var p q_la_gunr_courier = 5 R _var p q_la_gunr_courier_reward = 5 R _script quest_courier_boxes@r_GiveGunRunnerCourierBox 0  R _script dialog@r_ShowLocation 1 10 #
+73 51010 R _var p q_la_gunr_courier_reward = 5 R _script quest_courier_boxes@r_GiveGunRunnerCourierBox 0  R _script dialog@r_ShowLocation 1 10 R _var p q_la_gunr_courier = 15 #
 66 51020 #
 65 51030 @
 72 52000 None 0 #
-73 52010 R _var p q_la_gunr_courier = 6 R _var p q_la_gunr_courier_reward = 6 R _script dialog@r_ShowLocation 1 17 R _script quest_courier_boxes@r_GiveGunRunnerCourierBox 0  #
+73 52010 R _var p q_la_gunr_courier_reward = 6 R _script dialog@r_ShowLocation 1 17 R _script quest_courier_boxes@r_GiveGunRunnerCourierBox 0  R _var p q_la_gunr_courier = 16 #
 66 52020 #
 65 52030 @
 73 53000 None 0 #
@@ -173,17 +173,17 @@ lang=engl
 74 54000 None 0 #
 0 54010 @
 75 55000 None 0 #
-76 55010 D _var p q_la_gunr_courier = 7 D _var p q_la_gunr_courier_reward = 1 R _var p q_la_gunr_courier = 8 R _script dialog@r_QuestTimeout 1 20 R _script dialog@r_AddReputation 2 50 1000 R _script dialog@r_AddMoney 1 50 #
-76 55020 D _var p q_la_gunr_courier = 7 D _var p q_la_gunr_courier_reward = 2 R _var p q_la_gunr_courier = 8 R _script dialog@r_QuestTimeout 1 20 R _script dialog@r_AddReputation 2 75 1000 R _script dialog@r_AddMoney 1 75 #
-76 55030 D _var p q_la_gunr_courier = 7 D _var p q_la_gunr_courier_reward = 3 R _var p q_la_gunr_courier = 8 R _script dialog@r_QuestTimeout 1 20 R _script dialog@r_AddReputation 2 150 1000 R _script dialog@r_AddMoney 1 250 #
-76 55040 D _var p q_la_gunr_courier = 7 D _var p q_la_gunr_courier_reward = 4 R _var p q_la_gunr_courier = 8 R _script dialog@r_QuestTimeout 1 20 R _script dialog@r_AddReputation 2 120 1000 R _script dialog@r_AddMoney 1 200 #
-76 55050 D _var p q_la_gunr_courier = 7 D _var p q_la_gunr_courier_reward = 5 R _var p q_la_gunr_courier = 8 R _script dialog@r_QuestTimeout 1 20 R _script dialog@r_AddReputation 2 120 1000 R _script dialog@r_AddMoney 1 250 #
-76 55060 D _var p q_la_gunr_courier = 7 D _var p q_la_gunr_courier_reward = 6 R _var p q_la_gunr_courier = 8 R _script dialog@r_QuestTimeout 1 20 R _script dialog@r_AddReputation 2 100 1000 R _script dialog@r_AddMoney 1 75 #
-78 55070 D _var p q_la_gunr_courier } 1 D _var p q_la_gunr_courier { 6 R _var p q_la_gunr_courier = 9 R _script dialog@r_QuestTimeout 1 100 R _script dialog@r_AddReputation 2 -50 1000 #
-66 55080 D _script dialog@d_QuestTimeoutReady 0  D _param p REPUTATION_GUNRUNNERS } 0 D _var p q_la_gunr_courier = 8 #
-77 55090 D _script dialog@d_QuestTimeoutNotReady 0  D _param p REPUTATION_GUNRUNNERS } 0 D _var p q_la_gunr_courier = 8 D or D _script dialog@d_QuestTimeoutNotReady 0  D _param p REPUTATION_GUNRUNNERS } 0 D _var p q_la_gunr_courier = 9 #
-79 55100 D _script dialog@d_QuestTimeoutReady 0  D _param p REPUTATION_GUNRUNNERS } 0 D _var p q_la_gunr_courier = 9 #
-61 55110 D _param p REPUTATION_GUNRUNNERS < 0 D _var p q_la_gunr_courier = 8 D or D _param p REPUTATION_GUNRUNNERS < 0 D _var p q_la_gunr_courier = 9 #
+76 55010 D _var p q_la_gunr_courier_reward = 1 D _var p q_la_gunr_courier = 70 R _script dialog@r_QuestTimeout 1 20 R _script dialog@r_AddReputation 2 50 1000 R _script dialog@r_AddMoney 1 50 R _var p q_la_gunr_courier = 99 #
+76 55020 D _var p q_la_gunr_courier_reward = 2 D _var p q_la_gunr_courier = 70 R _script dialog@r_QuestTimeout 1 20 R _script dialog@r_AddReputation 2 75 1000 R _script dialog@r_AddMoney 1 75 R _var p q_la_gunr_courier = 99 #
+76 55030 D _var p q_la_gunr_courier_reward = 3 D _var p q_la_gunr_courier = 70 R _script dialog@r_QuestTimeout 1 20 R _script dialog@r_AddReputation 2 150 1000 R _script dialog@r_AddMoney 1 250 R _var p q_la_gunr_courier = 99 #
+76 55040 D _var p q_la_gunr_courier_reward = 4 D _var p q_la_gunr_courier = 70 R _script dialog@r_QuestTimeout 1 20 R _script dialog@r_AddReputation 2 120 1000 R _script dialog@r_AddMoney 1 200 R _var p q_la_gunr_courier = 99 #
+76 55050 D _var p q_la_gunr_courier_reward = 5 D _var p q_la_gunr_courier = 70 R _script dialog@r_QuestTimeout 1 20 R _script dialog@r_AddReputation 2 120 1000 R _script dialog@r_AddMoney 1 250 R _var p q_la_gunr_courier = 99 #
+76 55060 D _var p q_la_gunr_courier_reward = 6 D _var p q_la_gunr_courier = 70 R _script dialog@r_QuestTimeout 1 20 R _script dialog@r_AddReputation 2 100 1000 R _script dialog@r_AddMoney 1 75 R _var p q_la_gunr_courier = 99 #
+78 55070 D _var p q_la_gunr_courier } 11 D _var p q_la_gunr_courier { 16 R _script dialog@r_QuestTimeout 1 100 R _script dialog@r_AddReputation 2 -50 1000 R _var p q_la_gunr_courier = 89 #
+66 55080 D _script dialog@d_QuestTimeoutReady 0  D _param p REPUTATION_GUNRUNNERS } 0 D _var p q_la_gunr_courier } 80 #
+77 55090 D _script dialog@d_QuestTimeoutNotReady 0  D _param p REPUTATION_GUNRUNNERS } 0 D _var p q_la_gunr_courier } 80 #
+79 55100 D _script dialog@d_QuestTimeoutReady 0  D _param p REPUTATION_GUNRUNNERS } 0 D _var p q_la_gunr_courier } 80 #
+61 55110 D _param p REPUTATION_GUNRUNNERS < 0 D _var p q_la_gunr_courier } 80 #
 0 55120 @
 76 56000 None 0 #
 77 56010 #

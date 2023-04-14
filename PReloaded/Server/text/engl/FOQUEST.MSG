@@ -57,6 +57,18 @@ Current progress:
 #			- 'HARD_COMPLETED:' quest completed for good.
 #			- 'ONGOING:' default behaviour, no extra coloring in Quest Tracker.
 #
+#	Numbering convention to follow when making new quests:
+#		- 000:		DO NOT USE						- This is reserved for when quest is not in pip-boy		
+#		- 001-009: 	Billboards/Gossip 				- Character received info about possible quest from billboards or gossip, when refactoring check var agains '< 10', rather than '== 0'
+#		- 010:		Unused							- When refactoring, just add 10 to the progress numbers, 0 -> 10, hence this should not be used as 0 means not in pip-boy.
+#		- 011-069:	Actual Progress 				- Quest progress describing what actions were taken or what is next step/objective of quest.
+#		- 070-079:  Done, report back 				- Quest objective has been finished, player only need to go back to notify NPC.
+#		- 080:		Repeatable Job available again 	- Job reclaimed by garbager should set this value, use 'NO_POPUP:'. When checking against repeatable status only need to do a [q_var] >= 80 in dialog demands.
+#		- 081-089:	Failed/Soft Failed 				- Describe cause of failure and if retakeable later.
+#		- 090-099:	Completed/Soft Completed 		- Describe finished state and if retakeable later.
+#		- 100:		Unused							- Not sure how engine handles this, just avoid
+#		Note: I didn't refactor everything to use this yet, but seems to be the best convention.
+#
 ##############################################
 
 
@@ -67,22 +79,24 @@ Current progress:
 
 
 
-#=======================================
-# 5001 / q_la_ady_dogs
-# Boneyard, Dogs of LA
-#=======================================
-{5001001}{}{Hendriks, one of the regulators, gave me the job to kill one of the local dog groups. He gave me the position on my PipBoy.}
-{5001002}{}{DONE:I've wiped out the group of dogs. I should go back to Hendriks for my reward.}
-{5001003}{}{SOFT_COMPLETED:The pack of dogs is dead and I reported back to Hendriks. I can check back later, because he is sure that there will be more work.
+#=========================================================================================================================
+# 5001 / q_la_ady_dogs 				Dialogs: la_billboard1, la_ady_hendriks
+# Boneyard, Dogs of LA				Last update: 2023/4/13 Sasa
+#=========================================================================================================================
+{5001001}{}{I should talk to Hendriks about a dog problem.}
+{5001010}{}{NO_POPUP:I helped Hendriks in Adytum hunting down stray dogs in the area. I should check back again because he is sure that there will be more work.}
+{5001011}{}{Hendriks, one of the regulators, gave me the job to kill one of the local dog groups. He gave me the position on my PipBoy.}
+{5001012}{}{DONE:I've wiped out the group of dogs. I should go back to Hendriks for my reward.}
+{5001099}{}{SOFT_COMPLETED:The pack of dogs is dead and I reported back to Hendriks. I can check back later, because he is sure that there will be more work.
 
 :: Quest Completed ::}
 {5001101}{}{Boneyard: Dogs of LA}
 {5001102}{}{JOB:Dogs of LA}
 
-#=======================================
-# 5003 / q_la_ady_howitzer
-# Boneyard, Howitzer Shells
-#=======================================
+#=========================================================================================================================
+# 5003 / q_la_ady_howitzer			Dialogs: 
+# Boneyard, Howitzer Shells			Last update: 
+#=========================================================================================================================
 {5003001}{}{Sergeant from the scavenger camp asked me to get him some more shells for his howitzer. Jargo, the gunsmith in Adytum, is in charge of the ammunition production. I should try to convince him.}
 {5003002}{}{DONE:Jargo agreed to produce some extra howitzer shells. My job is done.
 
@@ -96,10 +110,10 @@ Current progress:
 {5003101}{}{Boneyard: Howitzer Shells}
 {5003102}{}{QUEST:Howitzer Shells}
 
-#=======================================
-# 5009 / q_la_gunr_caravan
-# Boneyard, Gun Runners Caravan
-#=======================================
+#=========================================================================================================================
+# 5009 / q_la_gunr_caravan			Dialogs: 
+# Boneyard, Gun Runners Caravan		Last update: 
+#=========================================================================================================================
 {5009001}{}{Marshall from the Gun Runners got a job for me. It's about a package that has been stolen by a group of Super Mutant remnants. He suggested to get a team of at least three people. It's dangerous but should be worth it.}
 {5009002}{}{The deal is clear: Marshall from the Gun Runners told me to bring him back the Gun Runners metal box with weapon manufacturing plans inside. The metal case is rigged with explosives, so we shouldn't touch them or it goes BOOM! He also told me that nobody else should get the package... Not the Brotherhood and not the Khans, not anyone else. 
 
@@ -121,31 +135,33 @@ The mutants are using some heavy weaponry- our group should prepare for that.}
 {5009101}{}{Boneyard: Gun Runners Caravan Package}
 {5009102}{}{JOB:Gun Runners Caravan Package}
 
-#=======================================
-# 5011 / q_la_gunr_courier
-# Boneyard, Gun Runners Courier
-#=======================================
-{5011001}{}{Marshal from the Gun Runners gave me a special shipment for Jargo, the local gunsmith in New Adytum.}
-{5011002}{}{Marshal from the Gun Runners gave me a special shipment for Jacob, the arms dealer in Oldtown.}
-{5011003}{}{Marshal from the Gun Runners gave me a special shipment for Mai Da Chiang in the Red 888 Guns shop.}
-{5011004}{}{Marshal from the Gun Runners gave me a special shipment for Eldridge at the New Reno Arms gun store in New Reno West Side.}
-{5011005}{}{Marshal from the Gun Runners gave me a special shipment for Buster, the local arms dealer at the NCR Bazaar.}
-{5011006}{}{Marshal from the Gun Runners gave me a special shipment for Jeremiah Darkwater in Junktown. I've been told, that his shop is at the center of the town and I can't miss it.}
-{5011007}{}{The package has been delivered and I am now on my way back to Marshal.}
-{5011008}{}{SOFT_COMPLETED:The package has been delivered and I've got my reward from the Gun Runners.
-
-:: Quest Completed ::}
-{5011009}{}{SOFT_FAILED:The package never arrived at it's target. The Gun Runners had been pretty angry. I should stay away from them for the next time.
+#=========================================================================================================================
+# 5011 / q_la_gunr_courier 			Dialogs: la_billboard1, gun_gabriel, hub_jacob, junktown_killian, nr_eldrid, san_trader_chieng, ncr_trader_buster, la_ady_gunsmith
+# Boneyard, Gun Runners Courier		Last update: 2023/4/14 Sasa
+#=========================================================================================================================
+{5011001}{}{I should check with Marshal at Gun Runners north of Adytum for a currier job if I am interested.}
+{5011011}{}{Marshal from the Gun Runners gave me a special shipment for Jargo, the local gunsmith in New Adytum.}
+{5011012}{}{Marshal from the Gun Runners gave me a special shipment for Jacob, the arms dealer in Oldtown in the Hub.}
+{5011013}{}{Marshal from the Gun Runners gave me a special shipment for Mai Da Chiang in the Red 888 Guns shop.}
+{5011014}{}{Marshal from the Gun Runners gave me a special shipment for Eldridge at the New Reno Arms gun store in New Reno West Side.}
+{5011015}{}{Marshal from the Gun Runners gave me a special shipment for Buster, the local arms dealer at the NCR Bazaar.}
+{5011016}{}{Marshal from the Gun Runners gave me a special shipment for Jeremiah Darkwater in Junktown. I've been told, that his shop is at the center of the town and I can't miss it.}
+{5011070}{}{DONE:The package has been delivered and I am now on my way back to Marshal.}
+{5011080}{}{NO_POPUP:If I want to do a another package run, I should talk to Marshall at Gun Runners again.}
+{5011089}{}{SOFT_FAILED:The package never arrived at it's target. The Gun Runners had been pretty angry. I should stay away from them for a while.
 
 :: Quest Failed ::}
 
+{5011099}{}{SOFT_COMPLETED:The package has been delivered and I've got my reward from the Gun Runners.
+
+:: Quest Completed ::}
 {5011101}{}{Boneyard: Deliver the Gun Runners package}
 {5011102}{}{JOB:Deliver the Gun Runners package}
 
-#=======================================
-# 5023 / q_la_train_caesar
-# Boneyard, A Man's Job
-#=======================================
+#=========================================================================================================================
+# 5023 / q_la_train_caesar			Dialogs: 
+# Boneyard, A Man's Job				Last update: 
+#=========================================================================================================================
 {5023001}{}{Hammilton, quite a busy man in the Library of the Followers of the Apocalypse, gave me a job, where one "has to be a tough motherfucker", as he said. I have to find a middle-aged man in leather armor with a black bull painted on it. Hammilton said it's one of his... workers. He wants me to find and kill him. I should ask around at the train stations. Maybe someone saw him there.}
 {5023002}{}{Someone told me that I should check out a shady man in leather jacket at the NCR train station. He should know more about my target...}
 {5023003}{}{I've talked to the leather jacket man at the NCR train station. He told me where to find my target. The man is hiding somewhere between the mountains, west of the NCR.}
@@ -168,10 +184,10 @@ The mutants are using some heavy weaponry- our group should prepare for that.}
 {5023101}{}{Boneyard: A Man's Job}
 {5023102}{}{QUEST:A Man's Job}
 
-#=======================================
-# 5028 / q_la_train_coc
-# Boneyard Train Station, CoC Administrator
-#=======================================
+#=========================================================================================================================
+# 5028 / q_la_train_coc				Dialogs: 
+# Boneyard Train St, CoC Admin		Last update: 
+#=========================================================================================================================
 {5028001}{}{A member from the Children of the Cathedral told me that someone from the Boneyard train station administration might have some work for me.}
 {5028002}{}{One of the Boneyard Train Station administrators wants me to bring him a new Deans Electronics book.}
 {5028003}{}{HARD_COMPLETED:I delivered the book and job is done. That's how it runs.
@@ -180,10 +196,10 @@ The mutants are using some heavy weaponry- our group should prepare for that.}
 {5028101}{}{Boneyard: Train station maintenance}
 {5028102}{}{QUEST:Train Station Maintenance}
 
-#=======================================
-# 5032 / q_la_ware
-# Boneyard, Warehouse Rape Party :>
-#=======================================
+#=========================================================================================================================
+# 5032 / q_la_ware					Dialogs: 
+# Boneyard, Warehouse Rape Party	Last update: 
+#=========================================================================================================================
 {5032001}{}{I've got the job to deliver a message to some folks in the industrial park, Boneyard westside.}
 {5032002}{}{HARD_COMPLETED:The message was a trap. A few punks showed up and wanted to rape me, but I fled from the scene.
 
@@ -203,17 +219,18 @@ The mutants are using some heavy weaponry- our group should prepare for that.}
 {5032101}{}{Boneyard: Industrial Park Message}
 {5032102}{}{QUEST:Deliver the message to the Industrial Park}
 
-#=======================================
-# 5039 / q_la_waterpump
-# Boneyard, repair the waterpump
-#=======================================
-{5039001}{}{I've asked Montag, if I should take a look at his water pump. Maybe I can fix it.}
-{5039002}{}{DONE:It was not easy, but I could fix the machine.}
-{5039003}{}{SOFT_FAILED:Looks like I am not able to repair the water pump.}
-{5039004}{}{HARD_FAILED:I've reported to Montag, that I couldn't fix the water pump.
+#=========================================================================================================================
+# 5039 / q_la_waterpump				Dialogs: la_billboard1, la_ady_miles
+# Boneyard, repair the waterpump	Last update: 2023/4/13 Sasa
+#=========================================================================================================================
+{5039001}{}{Someone is looking for an engineer. I should look near the waterpump.}
+{5039011}{}{I've asked Montag, if I should take a look at his water pump. Maybe I can fix it.}
+{5039012}{}{DONE:It was not easy, but I could fix the machine.}
+{5039088}{}{SOFT_FAILED:I wasn't able to repair the waterpump and even lost my tools. Maybe with a better set of tools and a bit more luck...}
+{5039089}{}{HARD_FAILED:I've reported to Montag, that I couldn't fix the water pump. He politely pointed me toward the library, close nearby, north of Adytum.
 
 :: Quest Failed ::}
-{5039005}{}{HARD_COMPLETED:I've reported to Montag, that I've fixed the water pump.
+{5039099}{}{HARD_COMPLETED:I've reported to Montag, that I've fixed the water pump.
 
 :: Quest Completed ::}
 {5039101}{}{Boneyard: Montag's Water Pump}

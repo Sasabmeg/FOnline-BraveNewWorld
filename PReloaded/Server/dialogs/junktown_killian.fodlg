@@ -1,5 +1,6 @@
 [comment]
 
+
 [data]
 lang=engl
 
@@ -14,7 +15,7 @@ lang=engl
 5 2020 D _param p ST_INTELLECT > 3 #
 6 2030 D _param p ST_INTELLECT > 3 #
 3 2040 D _param p ST_INTELLECT < 4 #
-20 2050 D _var p q_la_gunr_courier = 6 D _item p PID_Q_GUNRUNNER_COURIER_BOX > 0 R _param p REPUTATION_JUNKTOWN + 2 R _var p q_la_gunr_courier = 7 R _item p PID_Q_GUNRUNNER_COURIER_BOX - 1 #
+20 2050 D _item p PID_Q_GUNRUNNER_COURIER_BOX > 0 D _var p q_la_gunr_courier = 16 R _param p REPUTATION_JUNKTOWN + 2 R _item p PID_Q_GUNRUNNER_COURIER_BOX - 1 R _var p q_la_gunr_courier = 70 #
 0 2060 D _param p ST_INTELLECT < 4 @
 3 3000 None 0 #
 0 3010 @
@@ -36,7 +37,7 @@ lang=engl
 5 8020 D _param p ST_INTELLECT > 3 #
 6 8030 D _param p ST_INTELLECT > 3 #
 3 8040 D _param p ST_INTELLECT < 4 #
-20 8050 D _item p PID_Q_GUNRUNNER_COURIER_BOX > 0 D _var p q_la_gunr_courier = 6 R _item p PID_Q_GUNRUNNER_COURIER_BOX - 1 R _var p q_la_gunr_courier = 7 R _param p REPUTATION_JUNKTOWN + 2 #
+20 8050 D _item p PID_Q_GUNRUNNER_COURIER_BOX > 0 D _var p q_la_gunr_courier = 16 R _item p PID_Q_GUNRUNNER_COURIER_BOX - 1 R _param p REPUTATION_JUNKTOWN + 2 R _var p q_la_gunr_courier = 70 #
 0 8060 D _param p ST_INTELLECT < 4 @
 9 9000 None 0 @
 20 10000 None 0 #

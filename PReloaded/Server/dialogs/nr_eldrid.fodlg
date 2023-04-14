@@ -18,7 +18,7 @@ lang=engl
 101 2050 D _var p q_bos_eldridge = 0 D _var p q_bos_initiate_start = 15 #
 107 2060 D _var p q_bos_eldridge = 1 #
 109 2070 D _var p q_bos_eldridge = 1 D _item p PID_FIREWOOD } 5 D _item p PID_METAL_PARTS } 1 R _item p PID_FIREWOOD - 5 R _item p PID_METAL_PARTS - 1 #
-30 2080 D _var p q_la_gunr_courier = 4 D _item p PID_Q_GUNRUNNER_COURIER_BOX > 0 R _param p REPUTATION_NEW_RENO + 2 R _var p q_la_gunr_courier = 7 R _item p PID_Q_GUNRUNNER_COURIER_BOX - 1 #
+30 2080 D _item p PID_Q_GUNRUNNER_COURIER_BOX > 0 D _var p q_la_gunr_courier = 14 R _param p REPUTATION_NEW_RENO + 2 R _item p PID_Q_GUNRUNNER_COURIER_BOX - 1 R _var p q_la_gunr_courier = 70 #
 0 2090 @
 3 3000 None 0 #
 65506 3010 #
@@ -28,7 +28,7 @@ lang=engl
 101 3050 D _var p q_bos_eldridge = 0 D _var p q_bos_initiate_start = 15 #
 107 3060 D _var p q_bos_eldridge = 1 #
 109 3070 D _var p q_bos_eldridge = 1 D _item p PID_FIREWOOD } 5 D _item p PID_METAL_PARTS } 1 R _item p PID_FIREWOOD - 5 R _item p PID_METAL_PARTS - 1 #
-30 3080 D _var p q_la_gunr_courier = 4 D _item p PID_Q_GUNRUNNER_COURIER_BOX > 0 R _param p REPUTATION_NEW_RENO + 2 R _var p q_la_gunr_courier = 7 R _item p PID_Q_GUNRUNNER_COURIER_BOX - 1 #
+30 3080 D _item p PID_Q_GUNRUNNER_COURIER_BOX > 0 D _var p q_la_gunr_courier = 14 R _param p REPUTATION_NEW_RENO + 2 R _item p PID_Q_GUNRUNNER_COURIER_BOX - 1 R _var p q_la_gunr_courier = 70 #
 0 3090 @
 4 4000 None 0 #
 2 4010 @
