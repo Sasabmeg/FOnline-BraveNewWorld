@@ -483,12 +483,73 @@ uint GetPid(uint locpid, uint mappid, uint type)
 {
     if(type == 0)     // light
     {
-        return 71;
+        switch(locpid)
+        {
+        case LOCATION_Trainyard4:
+        case LOCATION_VaultCity:
+            return Random(0, 1) == 0 ? 134 : 135;
+        case LOCATION_BrokenHills:
+            return 119;
+        case LOCATION_MiningSiteSF:
+        case LOCATION_SanFrancisco:
+            return 386;
+        case LOCATION_NCR:
+        case LOCATION_MiningSiteNCR:
+        case LOCATION_Prison:
+            return Random(0, 1) == 0 ? 518 : 519;
+        case LOCATION_Trainyard1:
+        case LOCATION_Trainyard3:
+        case LOCATION_Hub:
+        case LOCATION_Junktown:
+        case LOCATION_MiningSiteJunktown:
+        case LOCATION_MiningSiteKlamath:
+            return Random(0, 1) == 0 ? 71 : 72;
+        case LOCATION_Trainyard2:
+        case LOCATION_Library:
+        case LOCATION_Scavenger:
+        case LOCATION_Boneyard:
+            return Random(0, 1) == 0 ? 46 : 47;
+        case LOCATION_Fortress:
+            return Random(0, 1) == 0 ? 261 : 262;
+        default:
+            return 71;
+        }
     }
     else // heavy
     {
-        return 71;
+        switch(locpid)
+        {
+        case LOCATION_Trainyard4:
+        case LOCATION_VaultCity:
+            return Random(0, 1) == 0 ? 222 : 223;
+        case LOCATION_BrokenHills:
+            return 119;
+        case LOCATION_Trainyard3:
+        case LOCATION_MiningSiteNCR:
+        case LOCATION_NCR:
+        case LOCATION_Prison:
+            return Random(0, 1) == 0 ? 475 : 476;
+        case LOCATION_Trainyard1:
+        case LOCATION_MiningSiteSF:
+        case LOCATION_SanFrancisco:
+            return 386;
+        case LOCATION_Hub:
+        case LOCATION_Junktown:
+        case LOCATION_MiningSiteJunktown:
+        case LOCATION_MiningSiteKlamath:
+            return Random(0, 1) == 0 ? 71 : 72;
+        case LOCATION_Trainyard2:
+        case LOCATION_Library:
+        case LOCATION_Scavenger:
+        case LOCATION_Boneyard:
+            return Random(0, 1) == 0 ? 46 : 47;
+        case LOCATION_Fortress:
+            return Random(0, 1) == 0 ? 261 : 262;
+        default:
+            return 71;
+        }
     }
+    return 0;
 }
 
 /**
@@ -503,12 +564,106 @@ uint GetBag(uint locpid, uint mappid, uint type)
 {
     if(type == 0)     // light
     {
-        return 211;                                                         // Combat Shotgun
+        switch(locpid)
+        {
+        case LOCATION_Trainyard1:
+            return Random(0, 1) == 0 ? 212 : 15;                        // FRISCO               14mm pistol, 10mm SMG
+        case LOCATION_Trainyard2:
+            return Random(0, 1) == 0 ? 394 : 167;                       // BONEYARD		10mm SMG, Hunting Rifle
+        case LOCATION_Trainyard3:
+            return Random(0, 1) == 0 ? 332 : 327;                       // NCR			10mm SMG, Combat Shotgun
+        case LOCATION_Trainyard4:
+            return Random(0, 1) == 0 ? 12 : 11;                         // VAULT CITY	Sniper Rifle, Hunting Rifle
+
+        case LOCATION_MiningSiteNCR:
+            return Random(0, 1) == 0 ? 212 : 327;                       // 14mm Pistol, Combat Shotgun
+        case LOCATION_MiningSiteJunktown:
+            return Random(0, 1) == 0 ? 15 : 11;                         // 10mm SMG, Hunting Rifle
+        case LOCATION_MiningSiteKlamath:
+            return Random(0, 1) == 0 ? 234 : 11;                        // 10mm Pistol, Hunting Rifle
+        case LOCATION_MiningSiteSF:
+            return Random(0, 1) == 0 ? 15 : 212;                        // 10mm SMG, 14mm pistol
+
+        case LOCATION_NCR:
+            return Random(0, 1) == 0 ? 332 : 327;                       // 10mm SMG, Combat Shotgun
+        case LOCATION_Prison:
+            return Random(0, 1) == 0 ? 332 : 327;                       // 10mm SMG, Combat Shotgun
+        case LOCATION_VaultCity:
+            return Random(0, 1) == 0 ? 211 : 13;                        // Combat Shotgun, Assault Rifle
+        case LOCATION_BrokenHills:
+            return Random(0, 1) == 0 ? 307 : 312;                       // Laser Rifle, Flamer
+        case LOCATION_SanFrancisco:
+            return Random(0, 1) == 0 ? 15 : 212;                        // 10mm SMG, 14mm pistol
+        case LOCATION_Fortress:
+            return Random(0, 1) == 0 ? 221 : 13;                        // P90, Assault Rifle
+        case LOCATION_Junktown:
+        case LOCATION_Hub:
+        case LOCATION_Library:
+        case LOCATION_Scavenger:
+        case LOCATION_Boneyard:
+            return Random(0, 1) == 0 ? 394 : 167;                               // 10mm SMG, Hunting Rifle
+        default:
+            return 211;                                                         // Combat Shotgun
+        }
     }
     else // heavy
     {
-        return 211;                                                                                                 // Combat Shotgun
+        switch(locpid)
+        {
+        case LOCATION_Trainyard1:
+            return Random(0, 1) == 0 ? 212 : 16;                                // FRISCO		14mm Pistol, G11
+        case LOCATION_Trainyard2:
+            return Random(0, 1) == 0 ? 13 : 14;                                 // BONEYARD		Assault Rifle, FNFAL
+        case LOCATION_Trainyard3:
+            return Random(0, 1) == 0 ? 14 : 396;                                // NCR			FNFAL, M60
+        case LOCATION_Trainyard4:
+            return Random(0, 1) == 0 ? 211 : 13;                                // VAULT CITY	Combat Shotgun, Assault Rifle
+
+        case LOCATION_MiningSiteNCR:
+            return Random(0, 1) == 0 ? 14 : 396;                                // FNFAL, M60
+        case LOCATION_MiningSiteJunktown:
+            return Random(0, 1) == 0 ? 211 : 13;                                // Combat Shotgun, Assault Rifle
+        case LOCATION_MiningSiteKlamath:
+            return Random(0, 1) == 0 ? 15 : 13;                                 // 10mm SMG, Assault Rifle
+        case LOCATION_MiningSiteSF:
+            return Random(0, 1) == 0 ? 221 : 16;                                // P90, G11
+
+        case LOCATION_NCR:
+            return Random(0, 1) == 0 ? 14 : 396;                                // FNFAL, M60
+        case LOCATION_Prison:
+            return Random(0, 1) == 0 ? 14 : 396;                                // FNFAL, M60
+        case LOCATION_VaultCity:
+            return Random(0, 9) == 0 ? 16 : 203;                                // G11, PancorJackhammer
+        case LOCATION_BrokenHills:
+            return Random(0, 1) == 0 ? 306 : 308;                               // Avenger Minigun, Plasma Rifle
+        case LOCATION_SanFrancisco:
+            return Random(0, 1) == 0 ? 221 : 16;                                // P90, G11
+        case LOCATION_Fortress:
+            return Random(0, 1) == 0 ? 271 : 194;                               // Turbo Plasma, Light Support Weapon
+        case LOCATION_Junktown:
+        case LOCATION_Hub:
+        case LOCATION_Library:
+        case LOCATION_Scavenger:
+        case LOCATION_Boneyard:
+        {
+            switch(Random(0, 3))
+            {
+            case 0:
+                return 191;                                                                                     // Sniper Rifle
+            case 1:
+                return 394;                                                                                     // 10mm SMG
+            case 2:
+                return 194;                                                                                     // Light Support Weapon
+            case 3:
+                return 396;                                                                                     // M60
+            default:
+            }
+        }
+        default:
+            return 211;                                                                                                 // Combat Shotgun
+        }
     }
+    return 0;
 }
 
 /**
@@ -534,6 +689,42 @@ uint GetLevel(uint locpid, uint mappid, uint type)
  */
 uint GetTeamId(uint locpid, uint mappid, uint type)
 {
+    switch(mappid)
+    {
+    case MAP_SanFranTanker:
+        return FACTION_VAGRANTS;
+    case MAP_NCRCF:
+        return FACTION_NCR;
+    case MAP_Gunrunner:
+        return FACTION_GUNRUNNERS;
+    case MAP_Blade:
+        return FACTION_REGULATORS;
+    case MAP_Library:
+        return FACTION_REGULATORS;
+    case MAP_SanFransiscoTrainStation:
+        return FACTION_COMMUNISTS;
+    case MAP_BoneyardTrainStation:
+        return FACTION_REGULATORS;
+    case MAP_NCRTrainStation:
+        return FACTION_NCR;
+    case MAP_VaultCityTrainStation:
+        return FACTION_VAULT_CITY;
+    case MAP_MilitaryCamp:
+        return FACTION_NCR;
+    case MAP_SanFranciscoMiningSite:
+        return FACTION_COMMUNISTS;
+    case MAP_SanFranciscoMiningSiteInside:
+        return FACTION_COMMUNISTS;
+    case MAP_KlamathMiningSite:
+        return FACTION_KLAMATH;
+    case MAP_KlamathMiningSiteInside:
+        return FACTION_KLAMATH;
+    case MAP_NCRMiningSite:
+        return FACTION_NCR;
+    case MAP_JunktownMiningSite:
+        return FACTION_JUNKTOWN;
+        // default: return ReputationIndex(locpid);
+    }
     return ReputationIndex(locpid);
 }
 
@@ -547,6 +738,94 @@ uint GetTeamId(uint locpid, uint mappid, uint type)
  */
 uint GetDialog(uint locpid, uint mappid, uint type)
 {
+    if(type == 0)     // light
+    {
+        switch(locpid)
+        {
+        case LOCATION_Trainyard1:
+            return 1444;
+        case LOCATION_Trainyard2:
+            return 9460;
+        case LOCATION_Trainyard3:
+            return 1051;
+        case LOCATION_Trainyard4:
+            return 449;
+
+        case LOCATION_MiningSiteNCR:
+            return 11000;                                       // ncr soldier
+        case LOCATION_MiningSiteJunktown:
+            return 1700;
+        case LOCATION_MiningSiteKlamath:
+            return 226;
+        case LOCATION_MiningSiteSF:
+            return 1401;
+
+        case LOCATION_NCR:
+            return 11000;                                       // ncr soldier
+        case LOCATION_Prison:
+            return 11000;                                       // ncr soldier
+        case LOCATION_VaultCity:
+            return 402;
+        case LOCATION_SanFrancisco:
+            return 1401;
+        case LOCATION_Fortress:
+            return 9459;
+        case LOCATION_Junktown:
+            return 1700;
+        case LOCATION_Hub:
+            return 2500;
+        case LOCATION_Library:
+            return 9459;
+        case LOCATION_Scavenger:
+            return 9459;
+        case LOCATION_Boneyard:
+            return 9459;
+        }
+    }
+    else // heavy
+    {
+        switch(locpid)
+        {
+        case LOCATION_Trainyard1:
+            return 1444;
+        case LOCATION_Trainyard2:
+            return 9460;
+        case LOCATION_Trainyard3:
+            return 1051;
+        case LOCATION_Trainyard4:
+            return 449;
+
+        case LOCATION_MiningSiteNCR:
+            return 83;                                                  // ncr ranger
+        case LOCATION_MiningSiteJunktown:
+            return 1700;
+        case LOCATION_MiningSiteKlamath:
+            return 226;
+        case LOCATION_MiningSiteSF:
+            return 1401;
+
+        case LOCATION_NCR:
+            return 83;                                                  // ncr ranger
+        case LOCATION_Prison:
+            return 83;                                                  // ncr ranger
+        case LOCATION_VaultCity:
+            return 402;
+        case LOCATION_SanFrancisco:
+            return 1401;
+        case LOCATION_Fortress:
+            return 9439;
+        case LOCATION_Junktown:
+            return 1700;
+        case LOCATION_Hub:
+            return 2500;
+        case LOCATION_Library:
+            return 9459;
+        case LOCATION_Scavenger:
+            return 9459;
+        case LOCATION_Boneyard:
+            return 9459;
+        }
+    } 
     return 0;
 }
 /**

@@ -50,6 +50,11 @@ bool UseSkillOnLocker(Critter& cr, Item& locker, int skill)   // Export
                 return true;
            }*/
 		Map@ map = cr.GetMap();
+		if(map.GetLocation().GetProtoId()==LOCATION_BarterGround)
+		{
+			cr.Say(SAY_NETMSG, "You cannot do that here.");
+			return true;
+		}
 
         if(cr.Timeout[TO_SK_LOCKPICK] > 0)
         {

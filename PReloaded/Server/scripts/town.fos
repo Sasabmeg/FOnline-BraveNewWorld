@@ -36,6 +36,7 @@
    where is the container (120)
  */
 
+#include "_maps.fos"
 #include "_colors.fos"
 #include "_entires.fos"
 #include "_macros.fos"
@@ -117,12 +118,12 @@ bool _UseRewardContainer(Item& item, Critter& crit, int skill)
             crit.Say(SAY_NETMSG, "You don't have enough influence.");
             return true;
         }
-		
+
 		if(crit.Stat[ST_FACTION_RANK]<3)
         {
             crit.Say(SAY_NETMSG, "Only trusted members are allowed to open this container.");
             return true;
-        } 
+        }
 
         // open it if closed
         if(_LockerIsClose(item))
@@ -266,6 +267,7 @@ bool IsControllingTown(Critter& player)
 
 bool d_IsNotControllingTown(Critter& player, Critter@ npc, int val)
 {
+    //Log("d_IsNotControllingTown = " + !IsControllingTown(player));
     return(!IsControllingTown(player));
 }
 
@@ -304,21 +306,32 @@ bool d_CanChangeLaws(Critter& player, Critter@ npc)
 // General check, here any conditions be added, it's possible to disable TC feature here.
 bool d_CanTakeOver(Critter& player, Critter@ npc)
 {
+    //Log("d_CanTakeOver");
 	ITown@ town = RetrieveTown(player);
 
-    if(town.GetCountdown() > 0)
+    if(town.GetCountdown() > 0) {
+        //Log("d_CanTakeOver - town.GetCountdown() > 0");
         return false;
+    }
 
-    if(town.GetAreaCount() == 0)
+    if(town.GetAreaCount() == 0) {
+        //Log("d_CanTakeOver - town.GetCountdown() > 0");
         return false;
+    }
 
-    if(town.GetVersion() == TOWN_VERSION_INFLUENCE)
+    if(town.GetVersion() == TOWN_VERSION_INFLUENCE) {
+        //Log("d_CanTakeOver - town.GetCountdown() > 0");
         return false;
+    }
 
-    if(town.GetVersion() == TOWN_VERSION_CAPTURE_COUNTDOWN_WINDOW)
+    if(town.GetVersion() == TOWN_VERSION_CAPTURE_COUNTDOWN_WINDOW) {
+        //Log("d_CanTakeOver - TOWN_VERSION_CAPTURE_COUNTDOWN_WINDOW //// return: (town.GetStatus() == TOWN_STATUS_CAN_TAKE) || (town.GetCountdown() > 0)");
         return((town.GetStatus() == TOWN_STATUS_CAN_TAKE) || (town.GetCountdown() > 0));
-    else if(town.GetVersion() == TOWN_VERSION_CAPTURE_COUNTDOWN)
+    }
+    else if(town.GetVersion() == TOWN_VERSION_CAPTURE_COUNTDOWN) {
+        //Log("d_CanTakeOver - TOWN_VERSION_CAPTURE_COUNTDOWN");
         return true;
+    }
     return true;
 }
 
@@ -564,17 +577,17 @@ int GetMilitiaPid(uint MapProtoId)
 {
     switch(MapProtoId)
     {
-    case 6:
+    case MAP_DenBusiness:
         return random_from_array(mil_den_pids);
-    case 9:
+    case MAP_KlamathDowntown:
         return random_from_array(mil_klamath_pids);
-    case 18:
+    case MAP_ModocLarge:
         return random_from_array(mil_modoc_pids);
-    case 31:
+    case MAP_GeckoSettlement:
         return random_from_array(mil_gecko_pids);
-    case 62:
+    case MAP_Redding:
         return random_from_array(mil_redding_pids);
-    case 115:
+    case MAP_BrokenHills:
         return random_from_array(mil_bh_pids);
     default:
         return -1;
@@ -665,7 +678,9 @@ bool AddMilitia(Map@ map)
     int pid = GetMilitiaPid(map.GetProtoId());
     if(pid == -1)
     {
-        Log("Unknown town, can't create militia");
+        string name = "";
+        map.ProtoName(name);
+        Log("Unknown town, can't create militia at map proto = (" + map.GetProtoId() + ") " + name);
         return false;
     }
 
@@ -1085,7 +1100,7 @@ class CTown : ITown
             @location = map.GetLocation();
         }
     }
-	
+
     void SetLaw(uint law, bool enabled)
     {
         if(law == TOWN_LAW_CARRYING_WEAPONS)
@@ -1454,6 +1469,11 @@ class CTown : ITown
         else
         {
             uint locpid = cr.GetMap().GetLocation().GetProtoId();
+            if(locpid == LOCATION_BrokenHills)
+                SetGroupInfo(cr, FACTION_BH_MUTANTS, 3, FACTION_MODE_ALWAYS);
+            else if(locpid == LOCATION_TheDen)
+                SetGroupInfo(cr, FACTION_SLAVERS_GUILD, 3, FACTION_MODE_ALWAYS);
+            else
             SetGroupInfo(cr, ReputationIndex(locpid), 3, FACTION_MODE_ALWAYS);
         }
     }
@@ -1686,7 +1706,7 @@ class CTown : ITown
 	{
 		if (faction == 0)
 			return;
-		
+
 		Map@ map = GetMap(mapid);
 		if (!valid(map))
 			return;
@@ -1786,14 +1806,14 @@ class CTown : ITown
 				GiveControlReward();
 			else
 				GiveReward(count);
-			
+
 			/// SETTING BEST SCORES
 			this.ModifyInfluence(faction,1);
 			string factionname;
 			GetFactionNameStr(faction, factionname);
 			GameVar@ bestScore = GetGlobalVar(61000+id);
 			float bestScoreVar=bestScore.GetValue();
-			if(this.GetInfluence(faction)>bestScoreVar) 
+			if(this.GetInfluence(faction)>bestScoreVar)
 			{
 				bestScore+=1;
 				if(factionname == "")
@@ -1815,7 +1835,7 @@ class CTown : ITown
 	void AddReward(uint itemPid, int count)
 	{
 		Item@ cont = GetRewardContainer();
-		
+
 		if (itemPid == PID_BOTTLE_CAPS)
 			BanksRemoveMoney(count);
 
@@ -1923,17 +1943,17 @@ class CTown : ITown
             //_AddContItem(PID_LEATHER_ARMOR_MK_II, Random(0, 1));
             _AddContItem(PID_BRAHMIN_HIDE,        Random(1, 3));
             _AddContItem(PID_MEAT_JERKY,          Random(5, 10));
-			
+
 			//_AddContItem(PID_SMALL_ENERGY_CELL,	  Random(25,50));
 			//_AddContItem(PID_MICRO_FUSION_CELL,	  Random(10, 25));
-			//_AddContItem(PID_223_FMJ,	  Random(25, 50));	
-			//_AddContItem(PID_5MM_JHP,	  Random(50, 100));	
+			//_AddContItem(PID_223_FMJ,	  Random(25, 50));
+			//_AddContItem(PID_5MM_JHP,	  Random(50, 100));
 			//_AddContItem(PID_5MM_AP,	  Random(50, 100));
-			//_AddContItem(PID_EXPLOSIVE_ROCKET,	  Random(1, 3));				
+			//_AddContItem(PID_EXPLOSIVE_ROCKET,	  Random(1, 3));
 			//_AddContItem(PID_ROCKET_AP,	  Random(1, 3));
 			//_AddContItem(PID_7_62MM_AMMO,	  Random(25, 50));
-			//_AddContItem(PID_40MM_GRENADE,	  Random(3, 8));			
-		
+			//_AddContItem(PID_40MM_GRENADE,	  Random(3, 8));
+
             //_AddBetterContItem(PID_JET,           Random(0, 1));
 			//_AddBetterContItem(PID_BUFFOUT,       Random(0, 1));
 			//_AddBetterContItem(PID_PSYCHO,        Random(0, 1));
@@ -1949,17 +1969,17 @@ class CTown : ITown
             //_AddContItem(PID_LEATHER_ARMOR_MK_II, Random(0, 1));
             _AddContItem(PID_GOLDEN_GECKO_PELT,   Random(1, 3));
             _AddContItem(PID_GECKO_PELT,          Random(1, 3));
-			
+
 			//_AddContItem(PID_SMALL_ENERGY_CELL,	  Random(25,50));
 			//_AddContItem(PID_MICRO_FUSION_CELL,	  Random(10, 25));
-			//_AddContItem(PID_223_FMJ,	  Random(25, 50));	
-			//_AddContItem(PID_5MM_JHP,	  Random(50, 100));	
+			//_AddContItem(PID_223_FMJ,	  Random(25, 50));
+			//_AddContItem(PID_5MM_JHP,	  Random(50, 100));
 			//_AddContItem(PID_5MM_AP,	  Random(50, 100));
-			//_AddContItem(PID_EXPLOSIVE_ROCKET,	  Random(1, 3));				
+			//_AddContItem(PID_EXPLOSIVE_ROCKET,	  Random(1, 3));
 			//_AddContItem(PID_ROCKET_AP,	  Random(1, 3));
 			//_AddContItem(PID_7_62MM_AMMO,	  Random(25, 50));
-			//_AddContItem(PID_40MM_GRENADE,	  Random(3, 8));			
-			
+			//_AddContItem(PID_40MM_GRENADE,	  Random(3, 8));
+
             //_AddBetterContItem(PID_JET,           Random(0, 1));
 			//_AddBetterContItem(PID_BUFFOUT,       Random(0, 1));
 			//_AddBetterContItem(PID_PSYCHO,        Random(0, 1));
@@ -1976,17 +1996,17 @@ class CTown : ITown
             _AddContItem(PID_URANIUM_ORE,         Random(2, 4));
 	        _AddBetterContItem(PID_RAD_X,           Random(0, 1));
 			_AddBetterContItem(PID_RADAWAY,       Random(0, 1));
-			
+
 			//_AddContItem(PID_SMALL_ENERGY_CELL,	  Random(25,50));
 			//_AddContItem(PID_MICRO_FUSION_CELL,	  Random(10, 25));
-			//_AddContItem(PID_223_FMJ,	  Random(25, 50));	
-			//_AddContItem(PID_5MM_JHP,	  Random(50, 100));	
+			//_AddContItem(PID_223_FMJ,	  Random(25, 50));
+			//_AddContItem(PID_5MM_JHP,	  Random(50, 100));
 			//_AddContItem(PID_5MM_AP,	  Random(50, 100));
-			//_AddContItem(PID_EXPLOSIVE_ROCKET,	  Random(1, 3));				
+			//_AddContItem(PID_EXPLOSIVE_ROCKET,	  Random(1, 3));
 			//_AddContItem(PID_ROCKET_AP,	  Random(1, 3));
 			//_AddContItem(PID_7_62MM_AMMO,	  Random(25, 50));
-			//_AddContItem(PID_40MM_GRENADE,	  Random(3, 8));			
-			
+			//_AddContItem(PID_40MM_GRENADE,	  Random(3, 8));
+
             //_AddBetterContItem(PID_JET,           Random(0, 1));
 			//_AddBetterContItem(PID_BUFFOUT,       Random(0, 1));
 			//_AddBetterContItem(PID_PSYCHO,        Random(0, 1));
@@ -2004,17 +2024,17 @@ class CTown : ITown
             _AddContItem(PID_URANIUM_ORE,         Random(3, 6));
 			_AddContItem(PID_MINERALS2,	Random(3, 6));
 			_AddContItem(PID_ORE2,	Random(3, 6));
-				
+
 			//_AddContItem(PID_SMALL_ENERGY_CELL,	  Random(25,50));
 			//_AddContItem(PID_MICRO_FUSION_CELL,	  Random(10, 25));
-			//_AddContItem(PID_223_FMJ,	  Random(25, 50));	
-			//_AddContItem(PID_5MM_JHP,	  Random(50, 100));	
+			//_AddContItem(PID_223_FMJ,	  Random(25, 50));
+			//_AddContItem(PID_5MM_JHP,	  Random(50, 100));
 			//_AddContItem(PID_5MM_AP,	  Random(50, 100));
-			//_AddContItem(PID_EXPLOSIVE_ROCKET,	  Random(1, 3));				
+			//_AddContItem(PID_EXPLOSIVE_ROCKET,	  Random(1, 3));
 			//_AddContItem(PID_ROCKET_AP,	  Random(1, 3));
 			//_AddContItem(PID_7_62MM_AMMO,	  Random(25, 50));
-			//_AddContItem(PID_40MM_GRENADE,	  Random(3, 8));			
-			
+			//_AddContItem(PID_40MM_GRENADE,	  Random(3, 8));
+
             //_AddBetterContItem(PID_JET,           Random(0, 1));
 			//_AddBetterContItem(PID_BUFFOUT,       Random(0, 1));
 			//_AddBetterContItem(PID_PSYCHO,        Random(0, 1));
@@ -2027,17 +2047,17 @@ class CTown : ITown
         {
             //LOOP(10) _AddContItem(random_from_array(ammo), Random(100, 100 + 10 * bonus));
             //_AddContItem(random_from_array(rareAmmo), Random(50, 50 + 10 * bonus));
-			
+
 			//_AddContItem(PID_SMALL_ENERGY_CELL,	  Random(25,50));
 			//_AddContItem(PID_MICRO_FUSION_CELL,	  Random(10, 25));
-			//_AddContItem(PID_223_FMJ,	  Random(25, 50));	
-			//_AddContItem(PID_5MM_JHP,	  Random(50, 100));	
+			//_AddContItem(PID_223_FMJ,	  Random(25, 50));
+			//_AddContItem(PID_5MM_JHP,	  Random(50, 100));
 			//_AddContItem(PID_5MM_AP,	  Random(50, 100));
-			//_AddContItem(PID_EXPLOSIVE_ROCKET,	  Random(1, 3));				
+			//_AddContItem(PID_EXPLOSIVE_ROCKET,	  Random(1, 3));
 			//_AddContItem(PID_ROCKET_AP,	  Random(1, 3));
 			//_AddContItem(PID_7_62MM_AMMO,	  Random(25, 50));
-			//_AddContItem(PID_40MM_GRENADE,	  Random(3, 8));			
-			
+			//_AddContItem(PID_40MM_GRENADE,	  Random(3, 8));
+
             _AddBetterContItem(PID_JET,           Random(0, 1));
 			//_AddBetterContItem(PID_BUFFOUT,       Random(0, 1));
 			//_AddBetterContItem(PID_PSYCHO,        Random(0, 1));
@@ -2053,17 +2073,17 @@ class CTown : ITown
             _AddContItem(PID_GOLD_NUGGET,         Random(3, 6));
 			_AddContItem(PID_MINERALS2,	Random(3, 6));
 			_AddContItem(PID_ORE2,	Random(3, 6));
-			
+
 			//_AddContItem(PID_SMALL_ENERGY_CELL,	  Random(25,50));
 			//_AddContItem(PID_MICRO_FUSION_CELL,	  Random(10, 25));
-			//_AddContItem(PID_223_FMJ,	  Random(25, 50));	
-			//_AddContItem(PID_5MM_JHP,	  Random(50, 100));	
+			//_AddContItem(PID_223_FMJ,	  Random(25, 50));
+			//_AddContItem(PID_5MM_JHP,	  Random(50, 100));
 			//_AddContItem(PID_5MM_AP,	  Random(50, 100));
-			//_AddContItem(PID_EXPLOSIVE_ROCKET,	  Random(1, 3));				
+			//_AddContItem(PID_EXPLOSIVE_ROCKET,	  Random(1, 3));
 			//_AddContItem(PID_ROCKET_AP,	  Random(1, 3));
 			//_AddContItem(PID_7_62MM_AMMO,	  Random(25, 50));
-			//_AddContItem(PID_40MM_GRENADE,	  Random(3, 8));			
-			
+			//_AddContItem(PID_40MM_GRENADE,	  Random(3, 8));
+
             //_AddBetterContItem(PID_JET,           Random(0, 1));
 			//_AddBetterContItem(PID_BUFFOUT,       Random(0, 1));
 			//_AddBetterContItem(PID_PSYCHO,        Random(0, 1));
@@ -2080,7 +2100,7 @@ class CTown : ITown
         //cont.AddItem(PID_NUKA_COLA, Random(1, 3), 0);
         //cont.AddItem(PID_CIGARETTES, Random(1, 3), 0);
         //cont.AddItem(PID_LIGHTER, Random(0, 1), 0);
-		
+
 		/*
 		if(Random(0,1999)<10)
 		{
@@ -2097,7 +2117,7 @@ class CTown : ITown
 				case 9: 	{ cont.AddItem(PID_BROTHERHOOD_COMBAT_ARMOR, 1, 0); cont.AddItem(PID_BROTHERHOOD_HELMET, 1, 0); break;}
 				case 10: 	{ cont.AddItem(PID_BRIDGEKEEPER_ROBE, 1, 0); break;}
                 case 11:    { cont.AddItem(PID_ADVANCED_POWER_ARMOR, 1, 0); cont.AddItem(PID_APA_HELMET, 1, 0); break;}
-				case 12: 	{ cont.AddItem(PID_ENCLAVE_COMBAT_ARMOR, 1, 0); cont.AddItem(PID_ENCLAVE_COMBAT_HELMET, 1, 0); break;} 
+				case 12: 	{ cont.AddItem(PID_ENCLAVE_COMBAT_ARMOR, 1, 0); cont.AddItem(PID_ENCLAVE_COMBAT_HELMET, 1, 0); break;}
 				default: break;
 			}
 		}
@@ -2106,21 +2126,21 @@ class CTown : ITown
 		switch (Random(1,2))
 			{
 				case 1: 	{ cont.AddItem(PID_4_7MM_CASELESS, 50, 0); break;}
-				case 2: 	{ cont.AddItem(PID_2MM_EC_AMMO, 10, 0); break;} 
+				case 2: 	{ cont.AddItem(PID_2MM_EC_AMMO, 10, 0); break;}
 				default: break;
 			}
 		}
-		
+
 		if(Random(0,100)<10)
 		{
-		uint losuj_ilosc=Random(1, 3); 
+		uint losuj_ilosc=Random(1, 3);
 		switch (Random(1,1))
 			{
 				case 1: 	{ cont.AddItem(PID_COMBAT_ARMOR_MK_II, losuj_ilosc, 0); cont.AddItem(PID_COMBAT_HELMET_MK_II, losuj_ilosc, 0); break;}
 				default: break;
 			}
 		}
-		
+
 		if(Random(0,99)==0)
 		{
 		switch (Random(1,10))
@@ -2134,7 +2154,7 @@ class CTown : ITown
 			case 7: 	{ cont.AddItem(PID_IMPLANT_CHARISMA, 1, 0); break;}
 			case 8: 	{ cont.AddItem(PID_IMPLANT_INTELLIGENCE, 1, 0); break;}
 			case 9: 	{ cont.AddItem(PID_IMPLANT_AGILITY, 1, 0); break;}
-			case 10: 	{ cont.AddItem(PID_IMPLANT_LUCK, 1, 0); break;}			
+			case 10: 	{ cont.AddItem(PID_IMPLANT_LUCK, 1, 0); break;}
 			}
 		}
 		*/
@@ -2200,7 +2220,7 @@ class CTown : ITown
                     }
                 }
                 // Log("disabling countdown...");
-				
+
 				if (tcVersion == TOWN_VERSION_CONTROL)
 				{
 					this.location.Color = COLOR_WM_TC_CONTROL;
@@ -2378,7 +2398,7 @@ class CTown : ITown
         DLog("Town " + id + " is now controlled by faction " + faction);
 
         ClearEnemyStacksOnMap(GetMap(GetMapID()));
-		
+
 		if (GetVersion() == TOWN_VERSION_CONTROL)
 			Broadcast_TownControl_Set("%FACTION% have taken control over %TOWN%", this.location.GetProtoId(), (ELAPSED_TIME + REAL_SECOND(20)), this.faction);
 		else

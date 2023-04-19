@@ -19,6 +19,7 @@
 #include "utils_h.fos"
 #include "town_h.fos"
 #include "worldmap_h.fos"
+#include "caravans_h.fos"
 #include "map_tent_h.fos"
 
 #define GETACCESS_FILE    "config\\GetAccess.cfg"
@@ -304,6 +305,20 @@ void unsafe_RadioDistressCall(Critter& player, int p0, int p1, int p2, string@ m
     //      return;
     //  }
     // }
+
+
+    // Caravan distress blocking
+    array<Critter@> critters;
+    uint            critCount = map.GetCritters(0, FIND_ALL | FIND_ONLY_NPC, critters);
+    for(uint i = 0; i < critCount; i++)
+    {
+        ICaravan@ caravan = GetCaravan(critters[i]);
+        if(valid(caravan))
+        {
+            player.Say(SAY_NETMSG, "Something seems to be blocking the distress signal.");
+            return;
+        }
+    }
 
     uint16 channel = radio.RadioChannel;
     DPlayerLog(player, "Distress channel: " + channel);

@@ -1370,6 +1370,28 @@ void dlg_ShrenRumour(Critter& player, Critter@ npc, string@ text)
  */
 bool d_ExploredWasteland(Critter& player, Critter@ npc)
 {
+    if
+    (
+        player.IsKnownLoc(false, LOCATION_TheDen)       &&
+        player.IsKnownLoc(false, LOCATION_Klamath)      &&
+        player.IsKnownLoc(false, LOCATION_Modoc)        &&
+        player.IsKnownLoc(false, LOCATION_VaultCity)    &&
+        player.IsKnownLoc(false, LOCATION_Gecko)        &&
+        player.IsKnownLoc(false, LOCATION_BrokenHills)  &&
+        player.IsKnownLoc(false, LOCATION_NewReno)      &&
+        player.IsKnownLoc(false, LOCATION_NCR)          &&
+        player.IsKnownLoc(false, LOCATION_Redding)      &&
+        player.IsKnownLoc(false, LOCATION_SanFrancisco) &&
+        player.IsKnownLoc(false, LOCATION_Junktown)     &&
+        player.IsKnownLoc(false, LOCATION_Necropolis)   &&
+        player.IsKnownLoc(false, LOCATION_Hub)          &&
+        player.IsKnownLoc(false, LOCATION_Boneyard)     &&
+        player.IsKnownLoc(false, LOCATION_Trainyard1)   &&
+        player.IsKnownLoc(false, LOCATION_Trainyard2)   &&
+        player.IsKnownLoc(false, LOCATION_Trainyard3)   &&
+        player.IsKnownLoc(false, LOCATION_Trainyard4)
+    )
+        return true;			
     return false;
 }
 
@@ -1532,6 +1554,12 @@ uint dlg_SayBuyJet(Critter& player, Critter@ npc, string@ text)
     if(!StrToInt(text, cnt))
         return DIALOG_END;
 
+	if(cnt > 1000)
+	{
+		npc.Say(SAY_NORM_ON_HEAD, "Whoaa, slow down there!");
+		return DIALOG_END;
+	}
+
     if(cnt > 0)
     {
         if(_CritCountItem(player, PID_BOTTLE_CAPS) >= price*cnt)
@@ -1558,6 +1586,12 @@ uint dlg_SayBuyNuka(Critter& player, Critter@ npc, string@ text)
     uint cnt = 0;
     if(!StrToInt(text, cnt))
         return DIALOG_END;
+
+	if(cnt > 1000)
+	{
+		npc.Say(SAY_NORM_ON_HEAD, "Whoaa, slow down there!");
+		return DIALOG_END;
+	}
 
     if(cnt > 0)
     {
@@ -1586,6 +1620,11 @@ uint dlg_SayBuyBeer(Critter& player, Critter@ npc, string@ text)
     if(!StrToInt(text, cnt))
         return DIALOG_END;
 
+	if(cnt > 1000)
+	{
+		npc.Say(SAY_NORM_ON_HEAD, "Whoaa, slow down there!");
+		return DIALOG_END;
+	}
     if(cnt > 0)
     {
         if(_CritCountItem(player, PID_BOTTLE_CAPS) >= price*cnt)
@@ -1613,6 +1652,11 @@ uint dlg_SayBuyBooze(Critter& player, Critter@ npc, string@ text)
     if(!StrToInt(text, cnt))
         return DIALOG_END;
 
+	if(cnt > 1000)
+	{
+		npc.Say(SAY_NORM_ON_HEAD, "Whoaa, slow down there!");
+		return DIALOG_END;
+	}
     if(cnt > 0)
     {
         if(_CritCountItem(player, PID_BOTTLE_CAPS) >= price*cnt)
@@ -1640,6 +1684,11 @@ uint dlg_SayBuyCigarettes(Critter& player, Critter@ npc, string@ text)
     if(!StrToInt(text, cnt))
         return DIALOG_END;
 
+	if(cnt > 1000)
+	{
+		npc.Say(SAY_NORM_ON_HEAD, "Whoaa, slow down there!");
+		return DIALOG_END;
+	}
     if(cnt > 0)
     {
         if(_CritCountItem(player, PID_BOTTLE_CAPS) >= price*cnt)
@@ -1667,6 +1716,11 @@ uint dlg_SayBuyLighter(Critter& player, Critter@ npc, string@ text)
     if(!StrToInt(text, cnt))
         return DIALOG_END;
 
+	if(cnt > 1000)
+	{
+		npc.Say(SAY_NORM_ON_HEAD, "Whoaa, slow down there!");
+		return DIALOG_END;
+	}
     if(cnt > 0)
     {
         if(_CritCountItem(player, PID_BOTTLE_CAPS) >= price*cnt)
@@ -1694,6 +1748,11 @@ uint dlg_SayBuyMedGel(Critter& player, Critter@ npc, string@ text)
     if(!StrToInt(text, cnt))
         return DIALOG_END;
 
+	if(cnt > 1000)
+	{
+		npc.Say(SAY_NORM_ON_HEAD, "Whoaa, slow down there!");
+		return DIALOG_END;
+	}
     if(cnt > 0)
     {
         if(_CritCountItem(player, PID_BOTTLE_CAPS) >= price*cnt)
@@ -1721,6 +1780,11 @@ uint dlg_SayBuyNeedles(Critter& player, Critter@ npc, string@ text)
     if(!StrToInt(text, cnt))
         return DIALOG_END;
 
+	if(cnt > 1000)
+	{
+		npc.Say(SAY_NORM_ON_HEAD, "Whoaa, slow down there!");
+		return DIALOG_END;
+	}
     if(cnt > 0)
     {
         if(_CritCountItem(player, PID_BOTTLE_CAPS) >= price*cnt)

@@ -945,6 +945,52 @@ bool critter_stealing(Critter& cr, Critter& thief, Item& item, uint count)
 
     bool success = !(Random(1, 100) > k);
 
+    Map@ map = cr.GetMap();
+    if(valid(map))
+    {
+        switch(map.GetLocation().GetProtoId())
+        {
+            case LOCATION_BarterGround:
+            case LOCATION_Necropolis:
+            case LOCATION_NewRenoStables:
+            case LOCATION_Hub:
+			case LOCATION_LandersPoint:
+            case LOCATION_NCR:
+			case LOCATION_Redding:
+			case LOCATION_Junktown:
+			case LOCATION_MiningSiteJunktown:
+			case LOCATION_MiningSiteNCR:
+			case LOCATION_MiningSiteVC:
+			case LOCATION_MiningSiteKlamath:
+			case LOCATION_MiningSiteSF:
+			case LOCATION_Boneyard:
+			case LOCATION_Library:
+			case LOCATION_Scavenger:
+			case LOCATION_Fortress:
+			case LOCATION_Replication1:
+			case LOCATION_Replication2:
+			case LOCATION_Replication3:
+			case LOCATION_Replication4:
+			case LOCATION_Replication5:
+			case LOCATION_Replication6:
+			case LOCATION_Replication7:
+			case LOCATION_Trainyard1:
+			case LOCATION_Trainyard2:
+			case LOCATION_Trainyard3:
+			case LOCATION_Trainyard4:
+			case LOCATION_VaultCity:
+			case LOCATION_Modoc:
+			case LOCATION_TheDen:
+			case LOCATION_Klamath:
+			case LOCATION_Navarro:
+			case LOCATION_Cathedral:
+			case LOCATION_BrokenHills:
+			case LOCATION_Gecko:
+                thief.Say(SAY_NETMSG, "|4291317840 " + "You cannot steal here.");
+                success = false;
+                break;
+        }
+    }
     // flag critter if guards spot it
     /*if (IsTown(thief.GetMap()) && !IsFlaggedAsIllegal(thief))
             thief.SendMessage(MSG_IM_STEALING, cr.Id, SENDMESSAGE_TO_VISIBLE_ME);*/
@@ -2737,6 +2783,31 @@ void critter_dead(Critter& cr, Critter@ killer)
 
             if(IsCave(map))
                 AddPlayerDeaths();
+
+            // detect spawnkill
+            if(valid(killer))
+            {
+                int locPid = map.GetLocation().GetProtoId();
+
+                if((locPid == LOCATION_Replication1  ||
+                    locPid == LOCATION_Replication2  ||
+                    locPid == LOCATION_Replication3  ||
+                    locPid == LOCATION_Replication4  ||
+                    locPid == LOCATION_Replication5  ||
+                    locPid == LOCATION_Replication6  ||
+                    locPid == LOCATION_Replication7)
+                   &&
+                   (cr.IsPlayer() && cr.GetAccess() == ACCESS_CLIENT  &&
+                    killer.IsPlayer() && killer.GetAccess() == ACCESS_CLIENT)
+                   )
+                {
+                    Broadcast_Message(
+                        "Player " + killer.Name + "(" + killer.Id + ") killed " +
+                        cr.Name + "(" + cr.Id + ") at respawn point (map " + map.Id + ")",
+                        0, BROADCAST_FILTER_AUTHENTICATED, true
+                        );
+                }
+            }
         }
 
         #ifdef __DEBUG__

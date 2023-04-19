@@ -416,7 +416,16 @@ void UpdateBroadcast()
 
 // locations that shouldn't be faked via ~runscript/GMT, mostly TC cities
 bool LockState = true;
-uint[] LockedLocations;
+uint[] LockedLocations =
+{
+    // TC
+    LOCATION_Klamath,
+    LOCATION_Modoc,
+    LOCATION_Gecko,
+    LOCATION_BrokenHills,
+    LOCATION_TheDen,
+    LOCATION_Redding
+};
 
 bool IsLocked(uint location_pid)
 {
