@@ -1,0 +1,131 @@
+/*
+	--- SPAWNER FOR FARM LOCATIONS ---
+
+    TO CREATE CONTAINER SPAWNER ADD INIT FUNCTION TO CONTAINER IN MAPPER
+    
+    ScriptName           spawner_gstation
+    FuncName             MakeSpawnerGStation
+
+
+    !!! IMPORTANT !!!
+    change SPAWN_TIME value after tests
+*/
+
+#ifndef __SPAWNER_GSTATION__
+#define __SPAWNER_GSTATION__
+
+#include "_macros.fos"
+#include "utils_h.fos"
+#include "lockers.fos"
+
+#define MIN_ITEMS_SPAWNED 2
+#define MAX_ITEMS_SPAWNED 5
+
+array<SpawnItem@> spawnItems;
+bool Init = false;
+
+void MakeSpawnerGStation(Item& item, bool firstTime)
+{
+    if(!Init)
+        InitItemsList();
+
+    Map@ map = GetMap(item.MapId);
+	if(!valid(map))
+		return;
+	
+	Item@ locker = map.GetItem(item.Id);
+	if(!valid(locker))
+		return;
+
+	ClearContainer(locker);
+	
+	uint itemIndex = 0;
+	uint spawnTimes = Random(MIN_ITEMS_SPAWNED, MAX_ITEMS_SPAWNED);
+
+	for(uint i=0; i < spawnTimes; ++i)
+	{
+		itemIndex = Random(0, spawnItems.length()-1);
+    	locker.AddItem( spawnItems[itemIndex].pid, Random(spawnItems[itemIndex].minCount, spawnItems[itemIndex].maxCount), 0 );
+	}
+}
+
+class SpawnItem
+{
+	uint pid;
+	uint minCount;
+	uint maxCount;
+
+	SpawnItem(uint p, uint min, uint max)
+	{
+		pid = p;
+		minCount = min;
+		maxCount = max;
+	}
+};
+
+void InitItemsList()
+{
+	if(Init)
+		return;
+
+	Init = true;
+
+	spawnItems.resize(0);
+	spawnItems.insertLast(SpawnItem(PID_LEATHER_JACKET, 1, 1));
+	spawnItems.insertLast(SpawnItem(PID_LEATHER_ARMOR, 1, 1));
+	spawnItems.insertLast(SpawnItem(PID_CURED_LEATHER_ARMOR, 1, 1));
+	spawnItems.insertLast(SpawnItem(PID_LEATHER_JACKET_HELMET, 1, 1));
+	spawnItems.insertLast(SpawnItem(PID_COMBAT_LEATHER_JACKET_HELMET, 1, 1));
+	spawnItems.insertLast(SpawnItem(PID_LEATHER_ARMOR_HELMET, 1, 1));
+	spawnItems.insertLast(SpawnItem(PID_9MM_MAUSER, 1, 1));
+	spawnItems.insertLast(SpawnItem(PID_10MM_PISTOL, 1, 1));
+	spawnItems.insertLast(SpawnItem(PID_RED_RYDER_BB_GUN, 1, 1));
+	spawnItems.insertLast(SpawnItem(PID_SHOTGUN, 1, 1));
+	spawnItems.insertLast(SpawnItem(PID_LASER_PISTOL, 1, 1));
+	spawnItems.insertLast(SpawnItem(PID_MOLOTOV_COCKTAIL, 1, 3));
+	spawnItems.insertLast(SpawnItem(PID_KNIFE, 1, 1));
+	spawnItems.insertLast(SpawnItem(PID_COMBAT_KNIFE, 1, 1));
+	spawnItems.insertLast(SpawnItem(PID_SPEAR, 1, 1));
+	spawnItems.insertLast(SpawnItem(PID_CROWBAR, 1, 1));
+	spawnItems.insertLast(SpawnItem(PID_SPIKED_KNUCKLES, 1, 1));
+	spawnItems.insertLast(SpawnItem(PID_9MM_AMMO, 20, 100));
+	spawnItems.insertLast(SpawnItem(PID_10MM_JHP, 20, 100));
+	spawnItems.insertLast(SpawnItem(PID_SHOTGUN_SHELLS, 10, 20));
+	spawnItems.insertLast(SpawnItem(PID_BBS, 25, 50));
+	spawnItems.insertLast(SpawnItem(PID_HEALING_POWDER, 1, 2));
+	spawnItems.insertLast(SpawnItem(PID_BOTTLE_CAPS, 4, 424));
+	spawnItems.insertLast(SpawnItem(PID_JUNK, 1, 15));
+	spawnItems.insertLast(SpawnItem(PID_GECKO_PELT, 1, 2));
+	spawnItems.insertLast(SpawnItem(PID_BRAHMIN_HIDE, 2, 5));
+	spawnItems.insertLast(SpawnItem(PID_RADIO, 1, 1));
+	spawnItems.insertLast(SpawnItem(PID_BOTTLE_EMPTY, 1, 1));
+	spawnItems.insertLast(SpawnItem(PID_GOLDEN_GECKO_PELT, 1, 2));
+	spawnItems.insertLast(SpawnItem(PID_GUNPOWDER, 1, 8));
+	spawnItems.insertLast(SpawnItem(PID_ELECTRONIC_PARTS, 1, 2));
+	spawnItems.insertLast(SpawnItem(PID_BOTTLE_EMPTY, 1, 1));
+	spawnItems.insertLast(SpawnItem(PID_GUNPOWDER2, 1, 5));
+	spawnItems.insertLast(SpawnItem(PID_ALLOYS, 1, 3));
+	spawnItems.insertLast(SpawnItem(PID_METAL_PARTS2, 1, 1));
+	spawnItems.insertLast(SpawnItem(PID_ALLOYS2, 1, 1));
+	spawnItems.insertLast(SpawnItem(PID_METAL_PARTS, 1, 5));
+	spawnItems.insertLast(SpawnItem(PID_10MM_AP, 10, 100));
+	spawnItems.insertLast(SpawnItem(PID_44_MAGNUM_JHP, 10, 40));
+	spawnItems.insertLast(SpawnItem(PID_10MM_SMG, 1, 1));
+	spawnItems.insertLast(SpawnItem(PID_MICRO_FUSION_CELL, 10, 50));
+	spawnItems.insertLast(SpawnItem(PID_223_FMJ, 10, 55));
+	spawnItems.insertLast(SpawnItem(PID_HN_NEEDLER_CARTRIDGE, 10, 35));
+	spawnItems.insertLast(SpawnItem(PID_LOCK, 1, 1));
+	spawnItems.insertLast(SpawnItem(PID_POLYMER, 1, 2));
+	spawnItems.insertLast(SpawnItem(PID_FIBRE2, 1, 2));
+	spawnItems.insertLast(SpawnItem(PID_ELECTRONIC_PARTS2, 1, 2));
+	spawnItems.insertLast(SpawnItem(PID_MENTATS, 1, 1));
+	spawnItems.insertLast(SpawnItem(PID_BUFFOUT, 1, 1));
+	spawnItems.insertLast(SpawnItem(PID_PSYCHO, 1, 1));
+	spawnItems.insertLast(SpawnItem(PID_JET, 1, 2));
+	spawnItems.insertLast(SpawnItem(PID_SUPER_STIMPAK, 1, 3));
+	spawnItems.insertLast(SpawnItem(PID_40MM_GRENADE, 1, 8));
+	spawnItems.insertLast(SpawnItem(PID_NUKA_COLA, 1, 3));
+
+}
+
+#endif

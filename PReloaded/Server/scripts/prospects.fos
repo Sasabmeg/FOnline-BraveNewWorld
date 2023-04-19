@@ -43,7 +43,7 @@ bool IsProspectLocation(Location@ location)
 {
     uint pid = location.GetProtoId();
 
-    return false;
+    return pid == LOCATION_Woods;
 }
 
 // helper

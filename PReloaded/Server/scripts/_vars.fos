@@ -407,6 +407,16 @@
 #define UVAR_q_box_unload_status                (19017)
 
 
+//  SPECIAL ENCOUNTERS (timers)                 #19900
+#define LVAR_q_secret_treasure1                 (19901)
+#define LVAR_q_secret_vault                     (19902)
+#define LVAR_q_secret_howitzer                  (19903)
+#define LVAR_q_secret_warehouse                 (19904)
+#define LVAR_q_secret_factory                   (19905)
+#define LVAR_q_secret_hospital                  (19906)
+#define LVAR_q_secret_bus_stop                  (19907)
+
+
 //	PLAYER SPECIFIC								#20000
 #define GVAR_last_registered                    (20001)
 #define LIVAR_npc_wpn_owner                     (20002)
@@ -453,6 +463,10 @@
 #define LIVAR_car_owner_id                      (23012)
 #define LIVAR_mhex_id                           (23013)
 #define GVAR_madness                            (23014)
+#define LVAR_q_mb_loc_id                        (23015)
+#define LVAR_q_mb                               (23016)
+#define LVAR_q_mb_location_known                (23017)
+#define LLVAR_q_mb_location_state               (23018)
 
 #define LVAR_online_stats                       (60000)
 #define LVAR_drug_fix                           (60001)
@@ -2399,6 +2413,48 @@ Landers Point caravan packer quest variable.
 **********
 
 
+
+//
+//	SPECIAL ENCOUNTER							#19900
+//
+
+
+   $	19901	1	q_secret_treasure1	0	0	0	4
+**********
+   Secret Treasure special encounter timer (can only trigger again after timer expired)
+**********
+
+   $	19902	1	q_secret_vault	0	0	0	4
+**********
+   Secret Vault special encounter timer (can only trigger again after timer expired)
+**********
+
+   $	19903	1	q_secret_howitzer	0	0	0	4
+**********
+   Secret Howitzer special encounter timer (can only trigger again after timer expired)
+**********
+
+   $	19904	1	q_secret_warehouse	0	0	0	4
+**********
+   Secret Warehouse special encounter timer (can only trigger again after timer expired)
+**********
+
+   $	19905	1	q_secret_factory	0	0	0	4
+**********
+   Secret factory special encounter timer (can only trigger again after timer expired)
+**********
+
+   $	19906	1	q_secret_hospital	0	0	0	4
+**********
+   Secret Hospital special encounter timer (can only trigger again after timer expired)
+**********
+
+   $	19907	1	q_secret_bus_stop	0	0	0	4
+**********
+   Secret Bus Stop, a bus stop on the highway with crashed Nuka Cola truck, special encounter timer (can only trigger again after timer expired)
+**********
+
+
 //
 //	PLAYER SPECIFIC								#20000
 //
@@ -2612,6 +2668,28 @@ $	21006	1	LVAR_FO2077_Book_SmallGuns  0	0	10	0
 **********
 
 **********
+
+   $	23015	1	q_mb_loc_id	0	0	0	4
+**********
+   Variable for johnnys military base quest
+**********
+
+   $	23016	1	q_mb	0	0	0	4
+**********
+   Variable for johnnys military base quest
+**********
+
+   $	23017	1	q_mb_location_known	0	0	1	4
+**********
+   Variable for johnnys military base quest
+**********
+
+   $	23018	3	q_mb_location_state	0	0	1	4
+**********
+   Variable for johnnys military base quest
+**********
+
+
 
    $	60000	1	online_stats	0	0	0	4
 **********

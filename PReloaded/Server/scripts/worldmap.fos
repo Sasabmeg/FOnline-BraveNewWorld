@@ -1,6 +1,6 @@
 //
 // FOnline: Reloaded
-// 
+//
 //
 // worldmap.fos
 //
@@ -16,6 +16,7 @@
 #include "_macros.fos"
 #include "_maps.fos"
 #include "_scripts.fos"
+#include "caravans_h.fos"
 #include "groups_h.fos"
 //#include "lexems_h.fos"
 #include "mapdata_h.fos"
@@ -358,7 +359,7 @@ class CEncounter
     // uint[] RatioMin;
     // uint[] RatioMax;
     array<CCheck> Checks;
-    uint          Ratio;     
+    uint          Ratio;
     // cost of this encounter, increased when a group is added
     // int Cost;
 
@@ -473,10 +474,10 @@ class CEncounter
         int    s = GenerateEncounterString(leader, str, false, true);
         DPlayerLog(leader, str);
 		if(isTB)
-		{					
-			str += "\n\n" + "$str" + (++s) + "$str" + (++s) + "|0xffff5500 " + "Encounter is in TURN-BASED mode.";			
+		{
+			str += "\n\n" + "$str" + (++s) + "$str" + (++s) + "|0xffff5500 " + "Encounter is in TURN-BASED mode.";
 		}
-		
+
 		leader.SayMsg(say, TEXTMSG_GM, 10000010 + s, str);
     }
     void Say(Critter@ leader, Critter@ player)
@@ -698,7 +699,7 @@ class CZone : IZone
         array<uint> available;
         int         available_sum = 0;
         int         sum = 0;
-		
+
         for(uint i = 0, j = Groups.length(); i < j; i++)  //Groups.length() - ilosc grup w kratce
         {
             //Log("Groups[" + i + "] = " + Groups[i]);
@@ -717,7 +718,7 @@ class CZone : IZone
             }
             sum += EncounterGroups[Groups[i]].GetModifiedQuantity(Quantities[i]);
         }
-		
+
         int roll = Random(1, available_sum);
         int v = 0;
         int already = 0;
@@ -736,8 +737,8 @@ class CZone : IZone
                 break;
             }
         }
-		
-		
+
+
         // iterate through groups and try to combine them into some nicer encounter
         for(int i = 0, j = available.length(); i < j; i++)
         {
@@ -760,9 +761,9 @@ class CZone : IZone
 
             enc.AddGroup(Groups[available[i]]);
         }
-		
+
     }
-	
+
 
     /** 06-02-2014 Cubik: nowa funckja ChooseGroups2 uwzgledniajaca czy to jest karawana, liczbe graczy i level gracza
      * Chooses groups for an encounter.
@@ -772,14 +773,14 @@ class CZone : IZone
         bool NewEncoAvailable=false;
 		if((isCaravan && min_level_gracza>=9) || (players_count>=3 && min_level_gracza>=9) || isPlayerCaravan) NewEncoAvailable=true;
 
-		
+
 		//Log("NewEncoAvailable= " + NewEncoAvailable);
-		
+
 		// filter out timeouted groups
         array<uint> available;
         int         available_sum = 0;
         int         sum = 0;
-		
+
 		//Log("ChooseGroups:Groups.length() = " + Groups.length());
         for(uint i = 0, j = Groups.length(); i < j; i++)  //Groups.length() - ilosc grup w kratce
         {
@@ -806,9 +807,9 @@ class CZone : IZone
 						available.insertLast(i);  // wrzuca indexy grup enco z kratki do koszyka do wykorzystania
 						available_sum += EncounterGroups[Groups[i]].GetModifiedQuantity(Quantities[i]);                 // instead of GetQuantity(i) to avoid loop-lookups
 					}
-				}				
+				}
             }
-			
+
 			if(NewEncoAvailable==true)
             {
 				sum += EncounterGroups[Groups[i]].GetModifiedQuantity(Quantities[i]);
@@ -819,7 +820,7 @@ class CZone : IZone
 					sum += EncounterGroups[Groups[i]].GetModifiedQuantity(Quantities[i]);
 			}
         }
-		
+
 		//Log("available_sum: " + available_sum);
 		//Log("sum: " + sum);
 		// available_sum - suma wartosci quantity wszystkich grup w kratce
@@ -833,7 +834,7 @@ class CZone : IZone
         {
             int  quantity = Quantities[available[i]]; // liczebnosc(quantity) danej grupy o indeksie groupidx
             uint groupidx = Groups[available[i]]; // available[] - tablica numerow indeksow grup z kratki bedacych mozliwych do wykorzystania
-			
+
 			if(NewEncoAvailable==true)
 			{
 				v += quantity;
@@ -847,7 +848,7 @@ class CZone : IZone
 					break;
 				}
 			}
-			
+
 			if(NewEncoAvailable==false)
 			{
 				if(Groups[i]<=134 || (Groups[i]>=145 && Groups[i]<GROUP_MAX)) // jesli enco zwykle o indexie <=134 lub >=145 to dodawaj
@@ -864,8 +865,8 @@ class CZone : IZone
 				}
 			}
         }
-		
-		
+
+
         // iterate through groups and try to combine them into some nicer encounter
         for(int i = 0, j = available.length(); i < j; i++)
         {
@@ -890,9 +891,9 @@ class CZone : IZone
 				enc.AddGroup(Groups[available[i]]);
 			}
         }
-		
-    }	
-	
+
+    }
+
 };
 
 array<CEncounterGroup> EncounterGroups(GROUP_MAX);
@@ -1201,7 +1202,7 @@ CFoundedEncounter@ CreateFoundedEncounter(uint x, uint y, CEncounter@ encounter,
 	//Log("x,y= " + x + "," + y);
 	//Log("ownerId= " + ownerId);
 	//Log("ownerGroup= " + ownerGroup);
-	
+
     for(int i = 0, j = FoundedEncounters.length(); i < j; i++)
     {
         CFoundedEncounter@ ge = FoundedEncounters[i];
@@ -1253,7 +1254,7 @@ CFoundedEncounter@ GetNearFoundedEncounter(array<Critter@>@ group, uint x, uint 
     int combatMode = group[0].Mode[MODE_DEFAULT_COMBAT];
 	//Log("combatMode = " + combatMode);
 	//Log("x, y = " + x + ", " + y);
-	//Log("radius = " + radius);	
+	//Log("radius = " + radius);
     for(int i = 0, j = FoundedEncounters.length(); i < j; i++)
     {
         CFoundedEncounter@ ge = FoundedEncounters[i];
@@ -1284,7 +1285,7 @@ CFoundedEncounter@ GetNearFoundedEncounter(array<Critter@>@ group, uint x, uint 
 	//Log("combatMode = " + combatMode);
 	//Log("x, y = " + x + ", " + y);
 	//Log("radius = " + radius);
-	
+
 	for(uint i=0; i<FoundedEncounters.length(); i++)
 	{
 		CFoundedEncounter@ ge=FoundedEncounters[i];
@@ -1297,24 +1298,24 @@ CFoundedEncounter@ GetNearFoundedEncounter(array<Critter@>@ group, uint x, uint 
 		//Log("(sqrt(float(POW2(ge.PositionX-x)+POW2(ge.PositionY-y))))= " + (sqrt(float(POW2(ge.PositionX-x)+POW2(ge.PositionY-y)))));
 		//Log("group[0].Id==ge.OwnerId: " + group[0].Id + "??" + ge.OwnerId);
 		//Log("ge.LocationId= " + ge.LocationId);
-		
-		
+
+
 		if(ge.Index==0) continue; //{Log("1.."); continue;}
 		if(ge.TurnBased && combatMode==COMBAT_MODE_REAL_TIME) continue; // {Log("2.."); continue;}
 		if(not ge.TurnBased && combatMode==COMBAT_MODE_TURN_BASED) continue; // {Log("3.."); continue;}
-		
+
 		if(__FullSecond-ge.FullSecond>=FOUNDED_ENCOUNTER_LIVE_TIME) continue; // {Log("4.."); continue;}
 		if(not ge.IsGenerated) continue; // {Log("5.."); continue;}
 		if(valid(ge.Encounter) && ge.Encounter.Special && not CheckChecks(ge.Encounter.Checks,group)) continue; // {Log("6.."); continue;}
-		if(uint(sqrt(float(POW2(ge.PositionX-x)+POW2(ge.PositionY-y))))>3*radius) continue;//  {Log("7.."); continue;}		
+		if(uint(sqrt(float(POW2(ge.PositionX-x)+POW2(ge.PositionY-y))))>3*radius) continue;//  {Log("7.."); continue;}
 		if(group[0].Id==ge.OwnerId) continue; // { Log("8.."); continue;}
 		if(not valid(GetLocation(ge.LocationId))) continue; // {Log("9.."); continue;}
-		
+
 		Log("return ge");
 			return ge;
 	}
 	Log("return null");
-	return null;	
+	return null;
 }
 */
 
@@ -1676,24 +1677,24 @@ Map@ GenerateEncounter(CFoundedEncounter@ fe, array<Critter@>@ critters)
     fe.StartHexX = startX;
     fe.StartHexY = startY;
 
-	
+
     Critter@ leader = critters[0];
     uint     playerscount = 0;
 	int max_level_gracza=0;
-	int min_level_gracza=9999;	
+	int min_level_gracza=9999;
     for(uint i = 0, j = critters.length(); i < j; i++)
 	{
         if(critters[i].IsPlayer())
 		{
             playerscount++;
-			if(max_level_gracza < critters[i].Stat[ST_LEVEL]) 
+			if(max_level_gracza < critters[i].Stat[ST_LEVEL])
 				max_level_gracza=critters[i].Stat[ST_LEVEL];
-					
-			if(min_level_gracza > critters[i].Stat[ST_LEVEL]) 
-				min_level_gracza=critters[i].Stat[ST_LEVEL];			
+
+			if(min_level_gracza > critters[i].Stat[ST_LEVEL])
+				min_level_gracza=critters[i].Stat[ST_LEVEL];
 		}
 	}
-	
+
     Critter@ guide = GetMostSkilled(critters, SK_OUTDOORSMAN);
 
     if(!valid(encounter) || fe.Encounter.Special)       // Empty map or special
@@ -1708,21 +1709,21 @@ Map@ GenerateEncounter(CFoundedEncounter@ fe, array<Critter@>@ critters)
     fe.Encounter.AddPlayer(leader);
     DPlayerLog(leader, "Ratio: " + encounter.Ratio + ", diff: " + encounter.Difficulty);
     array<array<Critter@> > crittersGroups(encounter.Groups.length());
-	
+
     ///////////////////////////////////////////////////////////
 	// 07-02-2014 Cubik: wyszukiwanie nowych grup enco o indeksie >=135
 	bool isNewEnco = false;
 	for(uint i = 0, j = encounter.Groups.length(); i < j; i++)
     {
         uint groupNum = encounter.Groups[i];
- 
-		if(groupNum >= 135 && groupNum<145) isNewEnco = true; 
+
+		if(groupNum >= 135 && groupNum<145) isNewEnco = true;
 		//Log("groupNum = " + groupNum);
 		//Log("isNewEnco [" + i + "] = " + isNewEnco);
 	}
 	//Log("isNewEnco = " + isNewEnco);
 	///////////////////////////////////////////////////
-    
+
 	for(uint i = 0, j = encounter.Groups.length(); i < j; i++)
     {
         uint groupNum = encounter.Groups[i];
@@ -1735,10 +1736,10 @@ Map@ GenerateEncounter(CFoundedEncounter@ fe, array<Critter@>@ critters)
                 @crGroup[k] = critters[k];
             continue;
         }
-	
+
         CEncounterGroup@ group = EncounterGroups[groupNum];
         uint             distance = Random(group.DistMin, group.DistMax);
-		
+
         // if(distance==0) distance=7+leader.Stat[ST_PERCEPTION]+leader.Perk[PE_CAUTIOUS_NATURE]*3;
 
         uint teamId = group.TeamNum;
@@ -1784,7 +1785,7 @@ Map@ GenerateEncounter(CFoundedEncounter@ fe, array<Critter@>@ critters)
 		{
 			//if((min_level_gracza>=12 && max_level_gracza<18) && (groupNum>=135 && groupNum<GROUP_MAX) && (group.Objects[k].Ratio>0 && group.Objects[k].Ratio<100))
 			if((min_level_gracza>=9 && max_level_gracza<18) && (groupNum>=135 && groupNum<145))
-			{		
+			{
 				totalratio += limited_ratio*group.Objects[k].Ratio/100;  // suma Ratio wszystkich critterow w obrebie grupy enco
 				//if(group.Objects[k].Ratio == 0)
 				//	totalratio += 100*100/100;  // suma Ratio wszystkich critterow w obrebie grupy enco
@@ -1822,9 +1823,9 @@ Map@ GenerateEncounter(CFoundedEncounter@ fe, array<Critter@>@ critters)
 			*/
 			int roll=0;
 			if((min_level_gracza>=9 && max_level_gracza<18) && (groupNum>=135 && groupNum<145)) // zmniejszenie liczebnosci grupy enco >=135 ze wzgledu na lvl 12-18
-			{			
+			{
 				//Log("Oraniczona liczba NPC w Nowym Enco, GROUP ID: "  + groupNum);
-				
+
 				if(obj.Ratio > 0)
 				{
 					force = false;
@@ -1832,7 +1833,7 @@ Map@ GenerateEncounter(CFoundedEncounter@ fe, array<Critter@>@ critters)
 						count += Random(group.RatioMin, group.RatioMax);
 
 					for(uint n = 0; n < count; n++)
-					{		
+					{
 						// ratio roll instead of obj.Ratio*ratio/100
 						roll=Random(1, totalratio);
 						//if(Random(1, totalratio) <= int(limited_ratio*obj.Ratio/100))
@@ -1844,13 +1845,13 @@ Map@ GenerateEncounter(CFoundedEncounter@ fe, array<Critter@>@ critters)
 				else
 				{
 					//ncount = 1;
-					
+
 					force = false;
 					for(uint rc = 0; rc < encounter.Ratio; rc++)
 						count += Random(group.RatioMin, group.RatioMax);
 
 					for(uint n = 0; n < count; n++)
-					{		
+					{
 						// ratio roll instead of obj.Ratio*ratio/100
 						roll=Random(1, totalratio);
 						//if(Random(1, totalratio) <= int(limited_ratio*obj.Ratio/100))
@@ -1859,23 +1860,23 @@ Map@ GenerateEncounter(CFoundedEncounter@ fe, array<Critter@>@ critters)
 						//Log("roll/limited_Ratio= " + roll + "/" + int(limited_ratio*100/100));
 					}
 				}
-				
+
 				total_count = total_count + ncount;
-				//Log("A) total_count = " + total_count);	
-				if(k==l-1 && total_count<=1) 
+				//Log("A) total_count = " + total_count);
+				if(k==l-1 && total_count<=1)
 				{
 					total_count = Random(2,3);
 					ncount = total_count;
 				}
-				
-				if(total_count>5) 
+
+				if(total_count>5)
 				{
 					//total_count = 5;
 					//ncount = total_count;
 					//Log("BBBBB) total_count = " + total_count);
 					continue;
-				}				
-				
+				}
+
 				//Log("B) total_count = " + total_count);
 			}
 			else  //  bez limitu lvl gracza i dla kazdej grupy enco rowniez >=135
@@ -1891,25 +1892,25 @@ Map@ GenerateEncounter(CFoundedEncounter@ fe, array<Critter@>@ critters)
 					//	if(Random(1, totalratio) <= int(obj.Ratio))
 					//		ncount++;
 					for(uint n = 0; n < count; n++)
-					{		
+					{
 						// ratio roll instead of obj.Ratio*ratio/100
 						roll=Random(1, totalratio);
 						//if(Random(1, totalratio) <= int(50*obj.Ratio/100))
 						if(roll <= int(100*obj.Ratio/100))
 							ncount++;
 						//Log("roll/limited_Ratio= " + roll + "/" + int(100*obj.Ratio/100));
-					}					
+					}
 				}
 				else
 					ncount = 1;
-			}	
-			
+			}
+
             if(force && ncount == 0)
             {
                 force = false;
                 ncount = 1;
             }
-			
+
 
 
 			//Log("Group: " + groupNum + " - Critter nr (" + k + ") * " + ncount);
@@ -2012,6 +2013,17 @@ void OnSpecialEncounterCreated(Location@ loc, array<Critter@>& group, Item@ car,
     array<Map@> maps;
     for(uint i = 0, j = loc.GetMaps(maps); i < j; i++)
         maps[i].SetData(MAP_DATA_OWNER, leader.Id);
+
+    if(loc.GetProtoId() == LOCATION_Battleground)
+    {
+        SetLvar(leader, LVAR_se_bosbattleground, loc.Id);
+        SetQuestGarbager(0, leader.Id, loc.Id, LVAR_se_bosbattleground, 0);
+    }
+    else if(loc.GetProtoId() == LOCATION_CrashedHummer)
+    {
+        SetLvar(leader, LVAR_se_boscrashedhummer, loc.Id);
+        SetQuestGarbager(0, leader.Id, loc.Id, LVAR_se_boscrashedhummer, 0);
+    }
 }
 
 #define _CheckSpecialEncounter    # (__loc, __condition, __result) if(__condition) { __result; return __loc; }
@@ -2032,18 +2044,41 @@ int CheckSpecialEncounter(Critter@ leader, CZone@ zone)
 
     #ifndef __DEBUG__
     // Not quest related
-    
+
+    _CheckSpecialEncounter(LOCATION_SecretBunker, (zone.Terrain == TERRAIN_Desert && (uint(GetLvar(leader, LVAR_q_secret_vault)) <= ELAPSED_TIME) && (Random(1, 500) == 1 && leader.Stat[ST_LEVEL] > Random(0, 23))), SetLvar(leader, LVAR_q_secret_vault, ELAPSED_TIME + REAL_HOUR(1)));                                                                                                                    // 1 roll in 10h
+	//_CheckSpecialEncounter(LOCATION_SecretBunker, (zone.Terrain == TERRAIN_Desert), SetLvar(leader, LVAR_q_secret_vault, ELAPSED_TIME + REAL_HOUR(10)));  // TEST
+
+    _CheckSpecialEncounter(LOCATION_SecretTreasure, (zone.Terrain == TERRAIN_Mountain && (uint(GetLvar(leader, LVAR_q_secret_treasure1)) <= ELAPSED_TIME) && (Random(1, 200) == 1 && leader.Stat[ST_LEVEL] > Random(0, 5))), SetLvar(leader, LVAR_q_secret_treasure1, ELAPSED_TIME + REAL_HOUR(1)));                                                                                                        // 1 roll in 10h
+
+    _CheckSpecialEncounter(LOCATION_Howitzer, (zone.Terrain == TERRAIN_Desert && (uint(GetLvar(leader, LVAR_q_secret_howitzer)) <= ELAPSED_TIME) && (Random(1, 1000) == 1 && leader.Stat[ST_LEVEL] > Random(4, 23))), SetLvar(leader, LVAR_q_secret_howitzer, ELAPSED_TIME + REAL_HOUR(1)));                                                                                                                  // 1 roll in 10h
+
+    _CheckSpecialEncounter(LOCATION_SpecialEncounter_OldWarehouse, ((zone.Terrain == TERRAIN_City || zone.Terrain == TERRAIN_Citycoast || zone.Terrain == TERRAIN_Citybig) && (uint(GetLvar(leader, LVAR_q_secret_warehouse)) <= ELAPSED_TIME) && (Random(1, 1800) == 1 && leader.Stat[ST_LEVEL] > Random(14, 49))), SetLvar(leader, LVAR_q_secret_warehouse, ELAPSED_TIME + REAL_HOUR(1)));                   // 1 roll in 10h for characters with level > 9
+
+    _CheckSpecialEncounter(LOCATION_OldFactory, ((zone.Terrain == TERRAIN_City || zone.Terrain == TERRAIN_Citycoast || zone.Terrain == TERRAIN_Citybig) && (uint(GetLvar(leader, LVAR_q_secret_factory)) <= ELAPSED_TIME) && (Random(1, 900) == 1 && leader.Stat[ST_LEVEL] > Random(5, 14))), SetLvar(leader, LVAR_q_secret_factory, ELAPSED_TIME + REAL_HOUR(1)));                                           // 1 roll in 10h for characters with level > 9
+
+    _CheckSpecialEncounter(LOCATION_Hospital, ((zone.Terrain == TERRAIN_City || zone.Terrain == TERRAIN_Citycoast || zone.Terrain == TERRAIN_Citybig) && (uint(GetLvar(leader, LVAR_q_secret_hospital)) <= ELAPSED_TIME) && (Random(1, 300) == 1 && leader.Stat[ST_LEVEL] > Random(5, 14))), SetLvar(leader, LVAR_q_secret_hospital, ELAPSED_TIME + REAL_HOUR(1)));                                           // 1 roll in 10h for characters with level > 9
+
+    _CheckSpecialEncounter(LOCATION_SpecialEncounter_BusStop, (zone.Terrain == TERRAIN_Desert && (uint(GetLvar(leader, LVAR_q_secret_bus_stop)) <= ELAPSED_TIME) && (Random(1, 100) == 1 && leader.Stat[ST_LEVEL] > Random(2, 5))), SetLvar(leader, LVAR_q_secret_bus_stop, ELAPSED_TIME + REAL_HOUR(1)));                                                                                                  // 1 roll in 10h
+
     // Sha-Enin //
     // Attacked by bandits
     // _CheckSpecialEncounter(LOCATION_ShaEnin,		(ZoneContainsFlag(zone, FLAG_ShaEnin) && (GetLvar(leader, LVAR_q_enc_rovering_trader)==1)) );
     // Trading
     // _CheckSpecialEncounter(LOCATION_ShaEnin2,		(ZoneContainsFlag(zone, FLAG_ShaEnin) && (GetLvar(leader, LVAR_q_enc_rovering_trader)==2)) );
 
-	
+
     // Quests
     /*&& ZoneContainsFlag(zone, FLAG_Q_Ruined_Militarybase)*/
-/*TEST*/	//_CheckSpecialEncounter(LOCATION_DeadBody, ((zone.Terrain == TERRAIN_Desert || zone.Terrain == TERRAIN_Mountain) && ((GetLvar(leader, LVAR_q_mb_location_known)==0) && (uint(GetLvar(leader, LVAR_q_mb)) <= ELAPSED_TIME) && Random(1, 1) == 1 && (leader.Stat[ST_LEVEL] > Random(1, 1)) && (leader.Skill[SK_OUTDOORSMAN]< Random(25,299)))), SetLvar(leader, LVAR_q_mb, ELAPSED_TIME + REAL_HOUR(0)));     
-	
+/*TEST*/	//_CheckSpecialEncounter(LOCATION_DeadBody, ((zone.Terrain == TERRAIN_Desert || zone.Terrain == TERRAIN_Mountain) && ((GetLvar(leader, LVAR_q_mb_location_known)==0) && (uint(GetLvar(leader, LVAR_q_mb)) <= ELAPSED_TIME) && Random(1, 1) == 1 && (leader.Stat[ST_LEVEL] > Random(1, 1)) && (leader.Skill[SK_OUTDOORSMAN]< Random(25,299)))), SetLvar(leader, LVAR_q_mb, ELAPSED_TIME + REAL_HOUR(0)));
+
+	_CheckSpecialEncounter(LOCATION_DeadBody, ((zone.Terrain == TERRAIN_Desert || zone.Terrain == TERRAIN_Mountain) && ((GetLvar(leader, LVAR_q_mb_location_known)==0) && (uint(GetLvar(leader, LVAR_q_mb)) <= ELAPSED_TIME) && Random(1, 18000) == 1 && (leader.Stat[ST_LEVEL] > Random(23, 23)) && (leader.Skill[SK_OUTDOORSMAN]> Random(24,299)))), SetLvar(leader, LVAR_q_mb, ELAPSED_TIME + REAL_HOUR(25)));
+
+	_CheckSpecialEncounter(LOCATION_Ambush, (ZoneContainsFlag(zone, FLAG_CaesarAmbush) && (GetLvar(leader, LVAR_q_la_train_caesar_ambush) == 1) && (leader.Skill[SK_OUTDOORSMAN] < Random(75, 299))), SetLvar(leader, LVAR_q_la_train_caesar_ambush, 2));
+
+    _CheckSpecialEncounter(LOCATION_Battleground, (ZoneContainsFlag(zone, FLAG_BattleGround) && (GetLvar(leader, LVAR_se_bosbattleground) == 0) && (GetLvar(leader, LVAR_q_bos_initiate_start) == 21) && Random(0, 1) == 0), false);
+
+    _CheckSpecialEncounter(LOCATION_CrashedHummer, (ZoneContainsFlag(zone, FLAG_CrashedHummer) && (GetLvar(leader, LVAR_se_boscrashedhummer) == 0) && (GetLvar(leader, LVAR_q_bos_initiate_start) == 21) && Random(0, 8) == 0), false);
+
     #endif
 
     return 0;
@@ -2123,28 +2158,28 @@ void FindEncounter(array<Critter@>& group, Item@ car, uint x, uint y, uint& enco
     bool giveReward = false; // reward for averting encounter
     bool caravan = false;
 	bool playerCaravan = valid(car) && _IsCaravanCar(car.GetProtoId());
-	
+
     // Check chance
     DPlayerLog(leader, "Zone' chance: " + zone.GetChance());
-	
+
     int roll = Random(1, 100);
 	for(uint i = 0, j = group.length(); i < j; i++)
 	{
 		_AdminLog(group[i], "Zone [" + zx + "," + zy + "] chance/roll: " + zone.GetChance() + " / " + roll);
 	}
-	
+
     if((playerCaravan && int(zone.GetChance())>0) || ((roll <= 5 || roll <= int(zone.GetChance()) / (empty ? 2 : 1)) && roll < 95))        // smaller chance with force-entering
 	//if((roll <= 5 || roll <= int(4*zone.GetChance()) / (empty ? 2 : 1)) && roll < 95)        // smaller chance with force-entering // TYLKO DO TESTOW!!!!!!!!!!!!!!!!!!!!!!
     {
-        // Try find already founded encounter   
+        // Try find already founded encounter
         //Log("Try find already founded encounter... " + zone.GetChance());
         CFoundedEncounter@ feAlready = GetNearFoundedEncounter(group, x, y, ZONE_LENGTH / 2);
-        
+
         //Log("valid(feAlready): " + valid(feAlready));
-        if(valid(feAlready) && !playerCaravan && !(caravan && feAlready.TurnBased))     
+        if(valid(feAlready) && !playerCaravan && !(caravan && feAlready.TurnBased))
         {
             //Log("valid(feAlready): in");
-            
+
             /* REMOVED NOOB PROTECTION
             Critter@ owner_player = GetCritter(feAlready.OwnerId);
             int owner_level =  1;
@@ -2157,20 +2192,20 @@ void FindEncounter(array<Critter@>& group, Item@ car, uint x, uint y, uint& enco
             */
             //if(
             //  (owner_player.IsPlayer() && owner_player.Stat[ST_LEVEL]>NOOB_FRIENDLY_LEVEL && leader.Stat[ST_LEVEL] > NOOB_FRIENDLY_LEVEL) ||
-            //  (owner_player.IsPlayer() && owner_player.Stat[ST_LEVEL]>NOOB_FRIENDLY_LEVEL && (leader.Stat[ST_LEVEL] <= NOOB_FRIENDLY_LEVEL && group.length()>4 && sredni_lvl_grupy > NOOB_FRIENDLY_LEVEL)))               
+            //  (owner_player.IsPlayer() && owner_player.Stat[ST_LEVEL]>NOOB_FRIENDLY_LEVEL && (leader.Stat[ST_LEVEL] <= NOOB_FRIENDLY_LEVEL && group.length()>4 && sredni_lvl_grupy > NOOB_FRIENDLY_LEVEL)))
             //{
                 //Log("FindEncounter: Istniejace enco, z zaawansowanym graczem lvl > 15.");
                 int outdoorsman = guide.Skill[SK_OUTDOORSMAN] - zone.Difficulty;
                 outdoorsman = CLAMP(outdoorsman, 5, 95);
-                
+
                 if(!caravan && outdoorsman >= Random(1, 100))
                 {
-                    uint8 say = feAlready.TurnBased ? SAY_ENCOUNTER_TB : SAY_ENCOUNTER_RT;  
+                    uint8 say = feAlready.TurnBased ? SAY_ENCOUNTER_TB : SAY_ENCOUNTER_RT;
 
                     if(valid(feAlready.Encounter))
                     {
                         //Log("valid(feAlready.Encounter)");
-                        
+
                         feAlready.Encounter.Ask(say, leader, feAlready.TurnBased);
                         /*
                         if(!feAlready.TurnBased)
@@ -2185,16 +2220,16 @@ void FindEncounter(array<Critter@>& group, Item@ car, uint x, uint y, uint& enco
                         {
                             //Log("istniejace enco i wywolanie okna dialogowego Ask() w trybie TB");
                             feAlready.Encounter.Ask(say, leader, true);
-                        } 
-                        */                      
+                        }
+                        */
                     }
                     else
-                    {   
+                    {
 
                         if(feAlready.TurnBased)
                         {
                             //Log("istniejace enco i wywolanie okna dialogowego SayMsg() w trybie TB");
-                            leader.SayMsg(say, TEXTMSG_GM, feAlready.OwnerGroup ? STR_QUESTION_ONLY_PLAYERS_IN_TB : STR_QUESTION_ONLY_PLAYER_IN_TB, "$player" + "|0xffff0000 " + GetSafePlayerName(feAlready.OwnerId) + "$str1" + "\n\n" + "$str2"  + "|0xffff5500 " + "Encounter is in TURN-BASED mode.");                         
+                            leader.SayMsg(say, TEXTMSG_GM, feAlready.OwnerGroup ? STR_QUESTION_ONLY_PLAYERS_IN_TB : STR_QUESTION_ONLY_PLAYER_IN_TB, "$player" + "|0xffff0000 " + GetSafePlayerName(feAlready.OwnerId) + "$str1" + "\n\n" + "$str2"  + "|0xffff5500 " + "Encounter is in TURN-BASED mode.");
                         }
                         else
                         {
@@ -2202,15 +2237,15 @@ void FindEncounter(array<Critter@>& group, Item@ car, uint x, uint y, uint& enco
                             leader.SayMsg(say, TEXTMSG_GM, feAlready.OwnerGroup ? STR_QUESTION_ONLY_PLAYERS : STR_QUESTION_ONLY_PLAYER, "$player" + "|0xffff0000 " + GetSafePlayerName(feAlready.OwnerId));
                         }
                     }
-                    
+
                     waitForAnswer = true;
                     if(guide.Skill[SK_OUTDOORSMAN] <= 95)
                         GuideReward(leader, guide, 100 - guide.Skill[SK_OUTDOORSMAN] + zone.Difficulty);
                     else
                         GuideReward(leader, guide, 5 + zone.Difficulty);
                 }
-                
-                
+
+
                 for(uint i = 0, j = group.length(); i < j; i++)
                     if(group[i].IsPlayer())
                     {
@@ -2258,30 +2293,30 @@ void FindEncounter(array<Critter@>& group, Item@ car, uint x, uint y, uint& enco
         enc.Ratio = MAX(1, len / 2);
         enc.Difficulty = zone.Difficulty;
 
-		
+
 		//05-02-2014 Cubik: obliczenie liczby graczy w grupie enco
 		uint players_count=0;
 		int max_level_gracza=0;
 		int min_level_gracza=9999;
         for(uint i = 0, j = group.length(); i < j; i++)
         {
-            if(group[i].IsPlayer()) 
+            if(group[i].IsPlayer())
 			{
 				players_count++;
-				
-				if(max_level_gracza < group[i].Stat[ST_LEVEL]) 
+
+				if(max_level_gracza < group[i].Stat[ST_LEVEL])
 					max_level_gracza=group[i].Stat[ST_LEVEL];
-					
-				if(min_level_gracza > group[i].Stat[ST_LEVEL]) 
-					min_level_gracza=group[i].Stat[ST_LEVEL];					
+
+				if(min_level_gracza > group[i].Stat[ST_LEVEL])
+					min_level_gracza=group[i].Stat[ST_LEVEL];
 			}
-		}		
-		
-		
+		}
+
+
         //zone.ChooseGroups(leader, enc);
 
 		//05-02-2014 Cubik: jesli karawana jest bez gracza to nie bedzie wpadac w enco
-		if(players_count>0) 
+		if(players_count>0)
 		{
 			//Log("=====START ChooseGroups======");
 			//Log("players_count: " + players_count);
@@ -2307,9 +2342,9 @@ void FindEncounter(array<Critter@>& group, Item@ car, uint x, uint y, uint& enco
 			//Log("Wielkosc grupy (enc.Groups.length()): " + enc.Groups.length() );
 			//Log("=====END bez wyboru grupy======");
 		}
-		
 
-		
+
+
         // found something
         if(enc.Groups.length() > 0)
         {
@@ -2319,7 +2354,7 @@ void FindEncounter(array<Critter@>& group, Item@ car, uint x, uint y, uint& enco
 
             if(!valid(fe))
                 return;
-							
+
             DPlayerLog(leader, "Created FoundedEncounter...");
 
             if(valid(car))
@@ -2339,7 +2374,7 @@ void FindEncounter(array<Critter@>& group, Item@ car, uint x, uint y, uint& enco
 					//	enc.Ask(SAY_ENCOUNTER_ANY, leader, true);
 					//	waitForAnswer = true;
 					//}
-                    
+
                 //}
             }
             else
@@ -2351,12 +2386,12 @@ void FindEncounter(array<Critter@>& group, Item@ car, uint x, uint y, uint& enco
 					//if(!fe.TurnBased)
 					//{
 						////Log("!fe.TurnBased= " + fe.TurnBased);
-						//if(!IsCaravanLeader(leader) && outdoorsman >= Random(1, 100))
-						//{
-						//	enc.Ask(SAY_ENCOUNTER_ANY, leader, false);
-						//	waitForAnswer = true;
-						//	giveReward = true;
-						//}
+						if(!IsCaravanLeader(leader) && outdoorsman >= Random(1, 100))
+						{
+							enc.Ask(SAY_ENCOUNTER_ANY, leader, false);
+							waitForAnswer = true;
+							giveReward = true;
+						}
 					//}
 					//else
 					//{
@@ -2367,9 +2402,9 @@ void FindEncounter(array<Critter@>& group, Item@ car, uint x, uint y, uint& enco
 						//	waitForAnswer = true;
 						//}
 					//}
-						
+
                     //waitForAnswer = true;
-                    
+
                 //}
             }
 
@@ -2378,7 +2413,7 @@ void FindEncounter(array<Critter@>& group, Item@ car, uint x, uint y, uint& enco
 				group[i].Say(SAY_FLASH_WINDOW, "");
 				group[i].PlaySound("encoalert.ogg", true);
 			}
-			
+
             encounterDescriptor = fe.Index;
 			//Log("FoundedEncounter DONE...");
         }
@@ -2387,12 +2422,12 @@ void FindEncounter(array<Critter@>& group, Item@ car, uint x, uint y, uint& enco
 			for(uint i = 0, j = group.length(); i < j; i++)
 			{
 				_AdminLog(group[i], "NOT Creating FoundedEncounter...!   players_count= " + players_count);
-			}		
+			}
 		}
-		
-		
+
+
     }
-	
+
     if(empty && encounterDescriptor == 0)
     {
         CFoundedEncounter@ fe = CreateFoundedEncounter(x, y, null, zone, leader.Id, group.length() > 1);
@@ -2402,7 +2437,7 @@ void FindEncounter(array<Critter@>& group, Item@ car, uint x, uint y, uint& enco
         encounterDescriptor = fe.Index;
         return;
     }
-	
+
     if(giveReward)       // here, because creation of encounter might fail
     {
         if(guide.Skill[SK_OUTDOORSMAN] <= 95)
@@ -2514,7 +2549,7 @@ uint e_UnlockEncounterCaravan(array<uint>@ values)
     Item@ car = GetItem(values[0]);
     if (!valid(car))
         return 0;
-    
+
     car.Val4 = 0;
 
     return 0;
@@ -2522,7 +2557,7 @@ uint e_UnlockEncounterCaravan(array<uint>@ values)
 
 void OnPlayerCaravanEnterLocation(array<Critter@>& group, Item& car, uint locId, bool special)
 {
-	car.Val4 = 1;	
+	car.Val4 = 1;
 
 	// sneaker fuckers
 	for (uint i = 0, j = group.length(); i < j; ++i)
@@ -2929,7 +2964,7 @@ void MakeEncounterBoss(uint npcId, uint groupNum)
         SetMinWear(weapon, wear);
         SetWear(weapon, wear+Random(5, 20));
     }
-    
+
     npc.StatBase[ST_KILL_EXPERIENCE] = int(npc.StatBase[ST_KILL_EXPERIENCE] * 1.5);
 
     npc.StatBase[ST_MELEE_DAMAGE] *= Random(1, 2);
@@ -2937,7 +2972,7 @@ void MakeEncounterBoss(uint npcId, uint groupNum)
     npc.StatBase[ST_CURRENT_AP] = npc.Stat[ST_ACTION_POINTS];
     npc.StatBase[ST_SEQUENCE] *= Random(1, 2);
     npc.StatBase[ST_CRITICAL_CHANCE] *= Random(1, 2);
-    
+
     npc.StatBase[ST_NORMAL_ABSORB] *= Random(1, 2);
     npc.StatBase[ST_LASER_ABSORB] *= Random(1, 2);
     npc.StatBase[ST_FIRE_ABSORB] *= Random(1, 2);
@@ -2945,7 +2980,7 @@ void MakeEncounterBoss(uint npcId, uint groupNum)
     npc.StatBase[ST_ELECTRO_ABSORB] *= Random(1, 2);
     npc.StatBase[ST_EMP_ABSORB] *= Random(1, 2);
     npc.StatBase[ST_EXPLODE_ABSORB] *= Random(1, 2);
-    
+
     npc.StatBase[ST_NORMAL_RESIST] *= Random(1, 2);
     npc.StatBase[ST_LASER_RESIST] *= Random(1, 2);
     npc.StatBase[ST_FIRE_RESIST] *= Random(1, 2);
@@ -2953,13 +2988,13 @@ void MakeEncounterBoss(uint npcId, uint groupNum)
     npc.StatBase[ST_ELECTRO_RESIST] *= Random(1, 2);
     npc.StatBase[ST_EMP_RESIST] *= Random(1, 2);
     npc.StatBase[ST_EXPLODE_RESIST] *= Random(1, 2);
-    
+
     npc.SkillBase[SK_SMALL_GUNS] *= Random(1, 2);
     npc.SkillBase[SK_BIG_GUNS] *= Random(1, 2);
     npc.SkillBase[SK_ENERGY_WEAPONS] *= Random(1, 2);
     npc.SkillBase[SK_UNARMED] *= Random(1, 2);
     npc.SkillBase[SK_THROWING] *= Random(1, 2);
-    
+
     npc.PerkBase[PE_TOUGHNESS] = 1;
     npc.PerkBase[PE_BONUS_RATE_OF_ATTACK] = 1;
     npc.PerkBase[PE_CLOSE_COMBAT_MASTER] = 1;
@@ -2975,17 +3010,17 @@ void MakeEncounterBoss(uint npcId, uint groupNum)
     switch(groupNum)
     {
         case GROUP_BOS_PATROL_LOW   :
-        case GROUP_BOS_Patrol       : 
+        case GROUP_BOS_Patrol       :
              pid = PID_BOS_DOG_TAGS;
              break;
-        case GROUP_NAV_Enclave_Patrol : 
+        case GROUP_NAV_Enclave_Patrol :
              pid = PID_ENCLAVE_DOG_TAGS;
              break;
-            
+
         case GROUP_NCR_Army:
              pid = PID_NCR_ARMY_DOG_TAGS;
              break;
-            
+
         case GROUP_Raiders          :
         case GROUP_KLA_Bandits      :
         case GROUP_Modoc_Raiders    :
@@ -3002,20 +3037,20 @@ void MakeEncounterBoss(uint npcId, uint groupNum)
         case GROUP_RDRC_Raiders     :
              pid = PID_RAIDERS_DOG_TAGS;
              break;
-             
-        case GROUP_VPAT_Patrol : 
+
+        case GROUP_VPAT_Patrol :
              pid = PID_VAULT_CITY_PATROL_DOG_TAGS;
              break;
-             
-        case GROUP_BROK_Unity_Patrol : 
+
+        case GROUP_BROK_Unity_Patrol :
              pid = PID_UNITY_PATROL_DOG_TAGS;
              break;
-             
-        default: 
+
+        default:
              pid = 0;
              break;
     }
 
-    if(pid!=0) 
+    if(pid!=0)
         npc.AddItem(pid, 1);
 }

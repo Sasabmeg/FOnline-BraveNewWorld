@@ -97,6 +97,49 @@ void SubReputation(Critter@ cr, uint index, int val, int cap)
  */
 uint ReputationIndex(uint locid)
 {
+    switch(locid)
+    {
+    case LOCATION_TheDen:
+        return FACTION_DEN;
+    case LOCATION_Klamath:
+        return FACTION_KLAMATH;
+    case LOCATION_Modoc:
+        return FACTION_MODOC;
+    case LOCATION_VaultCity:
+        return FACTION_VAULT_CITY;
+    case LOCATION_Gecko:
+        return FACTION_GECKO;
+    case LOCATION_BrokenHills:
+        return FACTION_BH_HUMANS;                        // oh well. Indeed
+    case LOCATION_NewReno:
+        return FACTION_NEW_RENO;
+    case LOCATION_NCR:
+        return FACTION_NCR;
+    case LOCATION_Cathedral:
+        return FACTION_UNITY;
+    case LOCATION_Redding:
+        return FACTION_REDDING;
+    case LOCATION_SanFrancisco:
+        return FACTION_COMMUNISTS;
+    case LOCATION_Navarro:
+        return FACTION_ENCLAVE;
+    case LOCATION_Junktown:
+        return FACTION_JUNKTOWN;
+    case LOCATION_BrotherhoodofSteel:
+        return FACTION_BOS;
+    case LOCATION_GhostFarm:
+        return FACTION_SLAGS;
+    case LOCATION_Necropolis:
+        return FACTION_NECROPOLIS;
+    case LOCATION_Hub:
+        return FACTION_HUB;
+    case LOCATION_Boneyard:
+        return FACTION_REGULATORS;
+    case LOCATION_Raiders:
+    case LOCATION_RaidersSouth:
+        return FACTION_RAIDERS;
+    default:
+    }
     return FACTION_NONE;
 }
 /*@}*/

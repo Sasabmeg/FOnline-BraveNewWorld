@@ -345,6 +345,34 @@ void ReplicateCritter(Critter& cr)   // Export
                 hy = entires[i].HexY;
             }
         }
+        else if(valid(deathMap))
+        {
+            @map = deathMap;
+            array<Entire> entires;
+            ParseEntires(map, entires, 242);
+            if(entires.length() > 0)
+            {
+                int i = Random(0, entires.length() - 1);
+                hx = entires[i].HexX;
+                hy = entires[i].HexY;
+            }
+        }
+        else if(valid(deathMap) && deathMap.GetLocation().GetProtoId() == LOCATION_LandersPoint)
+        {
+            GameVar@ nclairvar = GetLocalVar(LVAR_nc_inlair, cr.Id);     // for guard dialog, in case player died inside lair
+            if(valid(nclairvar))
+                nclairvar = 0;
+            Location@ loc = deathMap.GetLocation();
+            @map = loc.GetMapByIndex(0);
+            array<Entire> entires;
+            ParseEntires(map, entires, 0);
+            if(entires.length() > 0)
+            {
+                int i = Random(0, entires.length() - 1);
+                hx = entires[i].HexX;
+                hy = entires[i].HexY;
+            }
+        }
         else
         {
             // Try dynamic respawn points.
@@ -397,7 +425,7 @@ void ReplicateCritter(Critter& cr)   // Export
 
             array<Item@> items;
             cr.GetItems(-1, items);
-            
+
             for(uint i = 0, j = items.length(); i < j; i++)
             {
                 if(items[i].GetProtoId() == PID_ACTIVE_PLASTIC_EXPLOSIVE || items[i].GetProtoId() == PID_ACTIVE_DYNAMITE)

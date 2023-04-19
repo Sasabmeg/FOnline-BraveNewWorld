@@ -179,7 +179,7 @@ bool OnUseExplode(Critter& cr, Item& explode, Critter@ targetCr, Item@ targetIte
         {
             if(pid == PID_ACTIVE_DYNAMITE)
                 cr.AddItem(PID_DYNAMITE, 1);
-            else if(pid==PID_ACTIVE_MINE) 
+            else if(pid==PID_ACTIVE_MINE)
                 cr.AddItem(PID_MINE,1);
             else if(pid == PID_ACTIVE_PLASTIC_EXPLOSIVE)
                 cr.AddItem(PID_PLASTIC_EXPLOSIVES, 1);
@@ -201,7 +201,7 @@ bool OnUseExplode(Critter& cr, Item& explode, Critter@ targetCr, Item@ targetIte
                     _SubItem(explode, 1);
                     return true;
                 }
-                
+
                 if(explode.Accessory == ACCESSORY_CRITTER)           // suicider
                 {
                     Critter@ cr = GetCritter(explode.CritId);
@@ -394,7 +394,7 @@ void RemoveActiveExplosives(Map@ map, uint16 hexX, uint16 hexY, uint radius)
             || critterItems[i].GetProtoId() == PID_ACTIVE_MINE
             || critterItems[i].GetProtoId() == PID_ACTIVE_PERSONNEL_MINE)
                 DeleteItem(critterItems[i]);
-    }    
+    }
 }
 
 
@@ -494,14 +494,14 @@ void ExplodeEx(Map& map, uint16 hexX, uint16 hexY, uint16 effectPid, uint effect
 
     if(damageType == DAMAGE_TYPE_EXPLODE)
     {
-        Critter@ attacker = GetCritter(ownerId);    
-			
+        Critter@ attacker = GetCritter(ownerId);
+
 		uint16 hx = hexX;
         uint16 hy = hexY;
         Item@  door = map.GetDoor(hx, hy);
         if(valid(door) && door.GetScriptId() == 0 && valid(attacker))
             ExplodeDoor(door, damage, attacker, explodePid);
-			
+
         for(uint i = 0; i < 6; i++)
         {
             hx = hexX;
@@ -536,43 +536,43 @@ void ExplodeDoor(Item& door, int damage, Critter& attacker, uint16 explodePid)
 	uint16 hexX = 0;
     uint16 hexY = 0;
     Map@   map = door.GetMapPosition(hexX, hexY);
-	
-	// drzwi ktore maja door.Val6 == 0 nie powinny byc rozwalane, podobnie jak te ktore maja skrypt, 
-	// w skrypcie bunkra wszystkim drzwiom, ktore nie maja Val6=0, ustawiane sa door.Val7 i door.Val6 = 9999999, 
+
+	// drzwi ktore maja door.Val6 == 0 nie powinny byc rozwalane, podobnie jak te ktore maja skrypt,
+	// w skrypcie bunkra wszystkim drzwiom, ktore nie maja Val6=0, ustawiane sa door.Val7 i door.Val6 = 9999999,
 	// zeby nie mozna bylo rozwalac drzwi do korytarza zbrojowni bez otwierania kluczem !!!
-	if(door.Val6 == 9999999) 
+	if(door.Val6 == 9999999)
 	{
 		map.SetText(hexX, hexY, COLOR_RED, "The doors are invulnerable to explosions.");
 		return;
 	}
-		
+
     switch(explodePid)
     {
     case PID_ACTIVE_DYNAMITE:
 		damage = int(damage * 1.5);
 		if(door.Proto.Material == MATERIAL_METAL && damage >= 0) damage = int(damage * 1.0);
 		if((door.Proto.Material == MATERIAL_STONE || door.Proto.Material == MATERIAL_CEMENT)  && damage >= 0) damage = int(damage * 1.75);
-		if((door.Proto.Material == MATERIAL_WOOD  || door.Proto.Material == MATERIAL_LEATHER) && damage >= 0) damage = int(damage * 1.25);	
+		if((door.Proto.Material == MATERIAL_WOOD  || door.Proto.Material == MATERIAL_LEATHER) && damage >= 0) damage = int(damage * 1.25);
         break;
     case PID_ACTIVE_PLASTIC_EXPLOSIVE:
         damage = int(damage * 1.5);
 		if(door.Proto.Material == MATERIAL_METAL && damage >= 0) damage = int(damage * 1.75);
 		if((door.Proto.Material == MATERIAL_STONE || door.Proto.Material == MATERIAL_CEMENT)  && damage >= 0) damage = int(damage * 1.0);
-		if((door.Proto.Material == MATERIAL_WOOD  || door.Proto.Material == MATERIAL_LEATHER) && damage >= 0) damage = int(damage * 1.25);	
+		if((door.Proto.Material == MATERIAL_WOOD  || door.Proto.Material == MATERIAL_LEATHER) && damage >= 0) damage = int(damage * 1.25);
         break;
     default:
         Log("Invalid explode pid.");
         return;
     }
-	
-	
+
+
 	if(damage>int(door.Val7))
 		damage=int(door.Val7);
-		
-	int _door_HP_left = int(door.Val7) - damage;		
-	
+
+	int _door_HP_left = int(door.Val7) - damage;
+
 	if(_door_HP_left <=0)
-    {					        
+    {
 		map.SetText(hexX, hexY, COLOR_RED, "" + damage);
         uint xx = door.HexX;
         uint yy = door.HexY;
@@ -590,11 +590,11 @@ void ExplodeDoor(Item& door, int damage, Critter& attacker, uint16 explodePid)
     }
 	else
 	{
-		
+
 		door.Val7 = _door_HP_left;
-		map.SetText(hexX, hexY, COLOR_RED, "" + damage);	
-		//map.SetText(hexX, hexY, COLOR_DRED, "HP: " + door.Val7 + "/" + door.Val6);		
-		attacker.Say(SAY_NETMSG, "The doors treshold left: " + door.Val7); 
+		map.SetText(hexX, hexY, COLOR_RED, "" + damage);
+		//map.SetText(hexX, hexY, COLOR_DRED, "HP: " + door.Val7 + "/" + door.Val6);
+		attacker.Say(SAY_NETMSG, "The doors treshold left: " + door.Val7);
 	}
 }
 
@@ -625,7 +625,7 @@ uint e_RespawnDoor(array<uint>@ values)
     }                  // retry
     door.LockerOpen(); // the door are spawned closed, but with "opened" picture, so these two force them to look closed
     door.LockerClose();
-	
+
 	door.Val6 = values[4];
 	door.Val7 = values[5];
 
@@ -675,6 +675,26 @@ void _OnExplDrop(Item& item, Critter& crit)
                 crits[i].SetHomePos(hx, hy, Random(0, 5));
             AddAttackPlane(crits[i], AI_PLANE_ATTACK_PRIORITY, crit);
             AddWalkPlane(crits[i], AI_PLANE_ATTACK_PRIORITY + 20, hx, hy, Random(0, 5), true, 0);
+
+            switch(map.GetLocation().GetProtoId())
+            {
+                case LOCATION_VaultCity:
+                case LOCATION_NCR:
+                case LOCATION_SanFrancisco:
+                case LOCATION_Junktown:
+                case LOCATION_BrotherhoodofSteel:
+                case LOCATION_Hub:
+                case LOCATION_Boneyard:
+                case LOCATION_MiningSiteNCR:
+                case LOCATION_MiningSiteKlamath:
+                case LOCATION_MiningSiteSF:
+                case LOCATION_MiningSiteJunktown:
+                case LOCATION_Fortress:
+                case LOCATION_BarterGround:
+                case LOCATION_LandersPoint:
+                    DeleteItem(item);
+                    break;
+            }
         }
     }
     if(reported && !IsTCTown(map))
