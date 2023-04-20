@@ -8,3 +8,14 @@
 
 ## FOnline-BraveNewWorld
 FOClassic and PReloaded project, mostly for fodev.net tutorials or module code shares.
+
+Idea and goal of this project:
+- A layer between development and server running, helping server owners to be able to set up and host their servers with minimal coding knowledge, as most important or mainstream changes or features would be available
+- Allow easier development and get to know FOnline SDK, for this purpose some tutorials have also been posted on fodev.net (Slowhand)
+- Allow sharing of code pieces, that any server can integrating with minimal effort and knowledge. Ofc code changes to AngelScript are prefered over code changes to Engine, because they are easier to integrate and less risky compatibility wise or even causing crashes. 
+   - There were many servers with closed modifications, some did the very same thing, sometimes for competition, which is a waste of dev time. 
+   - Allow for rogue developers, to share their work, without affiliating to any servers. 
+
+So for these reasons, changes must be cleanly written and well documented, possibly both in code, discussions, wiki or issues. Every change should be commited to an issue and big updates if any, should be linked to more issues if it was not possible to segregate.
+
+Since I only work from time to time on this project, not sure if anyone would suggest pull request, I could respond in an acceptable timeframe, so for now be free to fork it or contact me on discord for more info.
