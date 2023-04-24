@@ -2399,10 +2399,11 @@ class CTown : ITown
 
         ClearEnemyStacksOnMap(GetMap(GetMapID()));
 
-		if (GetVersion() == TOWN_VERSION_CONTROL)
+		if (GetVersion() == TOWN_VERSION_CONTROL) {
 			Broadcast_TownControl_Set("%FACTION% have taken control over %TOWN%", this.location.GetProtoId(), (ELAPSED_TIME + REAL_SECOND(20)), this.faction);
-		else
+		} else {
 			Broadcast_TownControl_Set(this.location.GetProtoId(), countdown, this.faction);
+		}
 
         SetCountdownStatus(true);
 
