@@ -1,0 +1,254 @@
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      
+
+uint[][]PositionDirs=
+{
+	{0},
+	
+	{1,4,3,2,1,0,5,2,3,4,5,0,1},
+	{1,5,0,1,2,3,4,1,0,5,4,3,2},
+	{1,4,2},
+	{1,5,1},
+	{2,1,2,0,0,1,2,3,3,0,0,4,5,3,3,4,5},
+	{2,1,2,4,5},
+	{2,4,4,0,0,4,4,3,3,0,0,2,2,3,3,2,2},
+	{2,5,5,0,0,5,5,3,3,0,0,1,1,3,3,1,1},
+	{2,1,2,0,0,0,0,1,2,3,3,3,3,0,0,0,0,4,5,3,3,3,3,4,5}
+};                                                                                                                                                                            
+
+shared interface IZone
+{
+	uint GetX();
+	uint GetY();
+	uint GetTerrain();
+	uint8 GetFactor();
+	void SetFactor(uint8 factor);
+	int GetValue();
+	void SetValue(int val);
+	void AddValue(int val);
+	void SubValue(uint val);
+	bool ContainsFlag(uint flag);
+	void SetQuantity(uint group,uint quantity);
+	void ChangeQuantity(uint group,int mod);
+	uint GetBaseQuantity(uint group);
+	uint GetQuantity(uint group);
+	uint GetLocationPids(array<uint16>&pids);
+};
+
+uint16[]npcExtraItems=
+{
+	(124),
+	(125),
+	(469),
+	(71),
+	(81),
+	((98)),
+	(127),
+	(1803),
+	(278),
+	(605),
+	(101),
+	(40),
+	(310),
+	(311),
+	(225),
+	(1801),
+	(276),
+	(273),
+	(605),
+	(1824),
+	(19),
+	(106),
+	(286),
+	(541),
+	(316),
+	(314)
+};  
+
+import IZone@GetZone(uint wx,uint wy)from"worldmap";   
+
+class CZone
+{
+	
+	array<uint>players;
+	
+	CZone()
+	{}          
+	
+	void AddPlayer(Critter@player)
+	{
+		players.insertLast(player.Id);
+	}  
+	
+	void RemovePlayer(Critter@player)
+	{
+		if(players.length()==0)
+		return;
+		for(uint i=0,j=players.length();i<j;i++)
+		{
+			if(players[i]==player.Id)
+			{
+				players.removeAt(i);
+				j--;
+			}
+		}
+	}
+}; 
+
+array<CZone>Zones((42)*(60));       
+
+void WorldmapUpdatePlayer(Critter@player)
+{
+	if(!(@player!=null)||!player.IsPlayer())
+	return;
+	
+	GameVar@vx=GetLocalVar((3010),player.Id);
+	uint ox=vx.GetValue();
+	uint nx=player.WorldX/(50);
+	GameVar@vy=GetLocalVar((3011),player.Id);
+	uint oy=vy.GetValue();
+	uint ny=player.WorldY/(50);
+	GameVar@vw=GetLocalVar((3012),player.Id);
+	bool ow=vw.GetValue()>0;
+	bool nw=player.GetMapId()==0;
+	
+	uint idx=ny*(42)+nx; 
+	
+	if((nx!=ox||ny!=oy)&&nw&&ow)
+	{
+		if(player.GetAccess()==(3))
+		player.Say((11),"Moving on worldmap: "+ox+","+oy+"->"+nx+","+ny);
+		
+		idx=oy*(42)+ox;
+		Zones[idx].RemovePlayer(player);
+		idx=ny*(42)+nx;
+		Zones[idx].AddPlayer(player);
+		
+		vx=nx;
+		vy=ny;
+		
+	}
+	
+	else if(!nw&&ow)
+	{
+		
+		uint idx=oy*(42)+ox;
+		Zones[idx].RemovePlayer(player);
+		if(player.GetAccess()==(3))
+		player.Say((11),"Removed from: "+ox+", "+oy);
+		
+		vw=-(__FullSecond);
+		if(player.GetAccess()==(3))
+		player.Say((11),"Left worldmap.");
+		
+		vx=nx;
+		vy=ny;
+	}
+	
+	else if(nw&&!ow)
+	{
+		
+		uint idx=ny*(42)+nx;
+		Zones[idx].AddPlayer(player); 
+		
+		vw=(__FullSecond);
+		if(player.GetAccess()==(3))
+		player.Say((11),"Entered worldmap.");
+		
+		vx=nx;
+		vy=ny;
+	}
+}   
+
+void WorldmapRemovePlayer(Critter@player)
+{
+	if(!(@player!=null)||!player.IsPlayer())
+	return;
+	
+	GameVar@vw=GetLocalVar((3012),player.Id);
+	
+	if(vw.GetValue()>0)
+	{
+		GameVar@vx=GetLocalVar((3010),player.Id);
+		uint ox=vx.GetValue();
+		GameVar@vy=GetLocalVar((3011),player.Id);
+		uint oy=vy.GetValue();
+		uint idx=oy*(42)+ox;
+		Zones[idx].RemovePlayer(player);
+		vx=0;
+		vy=0;
+	}
+} 
+
+void WorldmapUpdateGroup(array<Critter@>&group)
+{
+	for(uint i=0,j=group.length();i<j;i++)
+	WorldmapUpdatePlayer(group[i]);
+}   
+
+array<Critter@>WorldmapGetPlayers(uint zx,uint zy)
+{
+	uint idx=zy*(42)+zx;
+	array<Critter@>Crs;
+	for(uint i=0,j=Zones[idx].players.length();i<j;i++)
+	{
+		Critter@cr=GetCritter(Zones[idx].players[i]);
+		Crs.insertLast(cr);
+	}
+	
+	return Crs;
+}    
+
+uint WorldmapGetPlayers(uint zx,uint zy,array<Critter@>&players)
+{
+	uint idx=((zy)*(42)+(zx));
+	for(uint i=0,j=Zones[idx].players.length();i<j;i++)
+	{
+		Critter@cr=GetCritter(Zones[idx].players[i]);
+		players.insertLast(cr);
+	}
+	
+	return Zones[idx].players.length();
+}    
+
+int WorldmapGetPlayerTime(Critter&player)
+{
+	GameVar@var=GetLocalVar((3012),player.Id);
+	
+	if(var.GetValue()>0)
+	return(__FullSecond)-var.GetValue();
+	else
+	return(__FullSecond)+var.GetValue();
+}
+
+void check_time(Critter&cr,int p0,int p1,int p2)
+{
+	int time=WorldmapGetPlayerTime(cr);
+	
+	cr.Say((11),"Left/entered worldmap "+time+" minutes ago.");
+}   
+
+void check_integrity(Critter&cr,int p0,int p1,int p2)
+{
+	cr.Say((11),"Checking worldmap player zones integrity.");
+	for(uint zx=0;zx<(42);zx++)
+	{
+		for(uint zy=0;zy<(60);zy++)
+		{
+			if(Zones[((zy)*(42)+(zx))].players.length()==0)
+			continue;
+			for(uint i=0,j=Zones[((zy)*(42)+(zx))].players.length();i<j;i++)
+			{
+				Critter@player=GetCritter(Zones[((zy)*(42)+(zx))].players[i]);
+				if(!(@player!=null))
+				continue;
+				
+				uint x=((player.WorldX)/(50));
+				uint y=((player.WorldY)/(50));
+				
+				if(x!=zx||y!=zy)
+				cr.Say((11),player.Name+" is in invalid zone.");
+			}
+		}
+	}
+	cr.Say((11),"Done.");
+}
