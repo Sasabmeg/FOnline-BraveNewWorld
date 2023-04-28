@@ -18,4 +18,5 @@ Idea and goal of this project:
 
 So for these reasons, changes must be cleanly written and well documented, possibly both in code, discussions, wiki or issues. Every change should be commited to an issue and big updates if any, should be linked to more issues if it was not possible to segregate.
 
-Since I only work from time to time on this project, not sure if anyone would suggest pull request, I could respond in an acceptable timeframe, so for now be free to fork it or contact me on discord for more info.
+Since I only work from time to time on this project, not sure if anyone would suggest pull request, I could respond in an acceptable timeframe, so for now be free to fork it or contact me on discord (https://discord.gg/fwwjvKbNEu) for more info.
+
