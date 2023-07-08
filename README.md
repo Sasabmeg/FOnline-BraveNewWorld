@@ -23,5 +23,6 @@ Since I only work from time to time on this project, not sure if anyone would su
 
 ## Download
 
-Well, in case you are new to git and have trouble getting all parts together, here is the version of june 2023 version in a zip file: https://drive.google.com/drive/folders/1vwbpr6ibALMCTicI_XowWplHcCb66LTO?usp=sharing
-Working versions or ones thtat need testing may be added later, periodaically, but should not count on them.
+Well, in case you are new to git and have trouble getting all parts together, here is the version of june 2023 in a zip file: https://drive.google.com/drive/folders/1vwbpr6ibALMCTicI_XowWplHcCb66LTO?usp=sharing 
+
+Working versions or ones that need testing may be added later, periodaically, but should not count on them.
