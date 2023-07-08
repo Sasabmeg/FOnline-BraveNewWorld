@@ -20,3 +20,8 @@ So for these reasons, changes must be cleanly written and well documented, possi
 
 Since I only work from time to time on this project, not sure if anyone would suggest pull request, I could respond in an acceptable timeframe, so for now be free to fork it or contact me on discord ( https://discord.gg/fwwjvKbNEu ) for more info.
 
+
+## Download
+
+Well, in case you are new to git and have trouble getting all parts together, here is the version of june 2023 version in a zip file: https://drive.google.com/drive/folders/1vwbpr6ibALMCTicI_XowWplHcCb66LTO?usp=sharing
+Working versions or ones thtat need testing may be added later, periodaically, but should not count on them.
