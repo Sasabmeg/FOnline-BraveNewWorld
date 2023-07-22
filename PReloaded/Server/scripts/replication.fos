@@ -36,7 +36,8 @@ const uint16[] Hospitals = {
     LOCATION_Replication4,
     LOCATION_Replication5,
     LOCATION_Replication6,
-    LOCATION_Replication7
+    LOCATION_Replication7,
+    LOCATION_Replication8
 };
 
 //
@@ -59,9 +60,10 @@ Map@ GetNearestReplicatorMap(Critter& player)
         }
         tmp = uint(DIST(loc.WorldX, loc.WorldY, player.WorldX, player.WorldY));
         #ifdef __DEBUG__
-        player.Say(SAY_NETMSG, "Loc (" + loc.WorldX + ", " + loc.WorldY + "), Me (" + player.WorldX + ", " + player.WorldY + "), dist: " + tmp);
+        player.Say(SAY_NETMSG, "GetNearestReplicatorMap() - Loc (" + loc.WorldX + ", " + loc.WorldY + "), Me (" + player.WorldX + ", " + player.WorldY + "), dist: " + tmp);
+        Log("GetNearestReplicatorMap() - Loc (" + loc.WorldX + ", " + loc.WorldY + "), Me (" + player.WorldX + ", " + player.WorldY + "), dist: " + tmp);
         #endif
-        DLog("" + tmp + " ?< " + dist);
+        DLog("GetNearestReplicatorMap()" + tmp + " ?< " + dist);
         if(tmp < dist)
         {
             dist = tmp;
@@ -345,7 +347,8 @@ void ReplicateCritter(Critter& cr)   // Export
                 hy = entires[i].HexY;
             }
         }
-        else if(valid(deathMap))
+        /*
+        else if(valid(deathMap) && deathMap.GetLocation().GetProtoId() == LOCATION_Hell)
         {
             @map = deathMap;
             array<Entire> entires;
@@ -356,7 +359,7 @@ void ReplicateCritter(Critter& cr)   // Export
                 hx = entires[i].HexX;
                 hy = entires[i].HexY;
             }
-        }
+        }*/
         else if(valid(deathMap) && deathMap.GetLocation().GetProtoId() == LOCATION_LandersPoint)
         {
             GameVar@ nclairvar = GetLocalVar(LVAR_nc_inlair, cr.Id);     // for guard dialog, in case player died inside lair
