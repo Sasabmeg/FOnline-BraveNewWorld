@@ -88,6 +88,7 @@ import void   InitCaveLog() from "cavelog";
 import void   InitCaveRandomization() from "cave";
 import void   InitMercs() from "mercs";
 import void   InitReverseItem() from "fix_boy";
+import void   InitRoutes() from "patrolroutes";
 import void   InitTowns() from "towns";
 import void   InitTrains() from "trains";
 import void   InitBlueprints() from "blueprints";
@@ -373,6 +374,8 @@ bool start()
     // Mercenaries
     InitMercs();
 
+    // Patrol routes
+    InitRoutes();
     // Brahmin pens
     InitBrahminPens();
     // Bramin traders

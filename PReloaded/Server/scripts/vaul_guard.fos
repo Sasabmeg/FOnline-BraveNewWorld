@@ -112,7 +112,7 @@ void _Idle(Critter& guard)
             AddWaitPlan(guard, node.GetWait());
         }
     } else {
-        DLog("NCR guard patrol fail - node is null!");
+        DLog("VC guard patrol fail - node is null!");
     }
 }
 
