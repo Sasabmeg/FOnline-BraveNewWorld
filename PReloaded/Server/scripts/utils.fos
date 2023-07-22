@@ -1352,6 +1352,19 @@ bool IsEncounterMap(Map@ map)
 }
 
 /**
+ * Checks if map is a special encounter map.
+ * @param map Map handle.
+ * @return True if map is a special encounter map, otherwise false.
+ */
+bool IsSpecialEncounterMap(Map@ map)
+{
+    if (!valid(map)) {
+        return false;
+    }
+    return GetMapType(map) == MAP_TYPE_SPECIAL_ENCOUNTER;
+}
+
+/**
  * Checks if map is a town map.
  * @param map Map handle.
  * @return True if map is a town map, otherwise false.
@@ -1390,6 +1403,48 @@ uint GetMapType(Map@ map)
     // This is actually wrong, special encounters have different pids
     // if (_IsWithinRange(pid,150,157))
     //    return MAP_TYPE_SPECIAL_ENCOUNTER;
+
+    //  not the best solution because it's based on map, and not location, so special encounter maps cannot be reused for non special encounter if anyone would want to,
+    //  without having the special encounter flag on the map.
+    /*
+    switch (pid) {
+        case MAP_QRuinedMilitaryBunker:     //  SE: Dead Body
+        case MAP_OldWarehouse:              //  SE: Old Warehouse
+        case MAP_OldWarehouseBasemenet:
+        case MAP_OldWarehouseCave:
+        case MAP_Hospital:                  //  SE: Hospital
+        case MAP_OldFactory:                //  SE: Old Factory
+        case MAP_BusStop:                   //  SE: Bus Stop
+        case MAP_SecretShelterOut:          //  SE: Secret Bunker
+        case MAP_SecretShelterIn:
+        case MAP_Treasure:                  //  SE: Secret Treasure
+        case MAP_AbandonedHowitzer:         //  SE: Howitzer
+            return MAP_TYPE_SPECIAL_ENCOUNTER;
+    }*/
+
+    /*
+    //  Leave it here commented out, as maybe better solution than above.
+
+    //  just in case a map does not have a location, so we do not call function on a null pointer
+    Location@ loc = map.getLocation();
+    if (loc == null) {
+        return false;
+    }
+    //  must get if it's a special encounter from the maps associated location
+    uint16 locPid = map.getLocation().GetProtoId();
+    switch (locPid) {
+        case LOCATION_SpecialEncounter_DeadBody:
+        case LOCATION_SpecialEncounter_OldWarehouse:
+        case LOCATION_SpecialEncounter_OldFactory:
+        case LOCATION_SpecialEncounter_Hospital:
+        case LOCATION_SpecialEncounter_BusStop:
+        case LOCATION_SpecialEncounter_SecretBunker:
+        case LOCATION_SpecialEncounter_SecretTreasure:
+        case LOCATION_SpecialEncounter_Howitzer:
+            return MAP_TYPE_SPECIAL_ENCOUNTER;
+    }
+    */
+
 
     if(_IsWithinRange(pid, 160, 169) || _IsWithinRange(pid, 345, 348)  || _IsWithinRange(pid, 500, 504) || _IsWithinRange(pid, 511, 513))
         return MAP_TYPE_DESERT_ENCOUNTER;

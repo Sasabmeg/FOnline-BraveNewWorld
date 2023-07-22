@@ -68,6 +68,7 @@ import uint       GetAuthenticatedPlayers(array<Critter@>& out players, bool ign
 import uint       GetNumberOfPlayersOnline() from "utils";
 import void       SetTurnBasedAvailability(Location@ loc) from "utils";
 import bool       IsEncounterMap(Map@ map) from "utils";
+import bool       IsSpecialEncounterMap(Map@ map) from "utils";
 import bool       IsTown(Map@ map) from "utils";
 import uint       GetMapType(Map@ map) from "utils";
 import void       LockDoor(uint x, uint y, Map@ map, uint complexity, uint lockid) from "utils";

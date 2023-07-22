@@ -128,7 +128,7 @@ bool _GuardAttacked(Critter& cr, Critter& attacker)
     if(valid(leader) && valid(caravan) && (attacker.IsPlayer() || !caravan.IsCaravanMember(attacker)))
     {
 		if(caravan.IsCaravanMember(attacker)) return true;
-	
+
 		/*if(caravan.IsCaravanMember(attacker))
         {
             //SubReputation(attacker, leader.Param[ST_TEAM_ID], REP_KILL_PENALTY * MAX(1, _GroupRank(cr)));
@@ -486,7 +486,7 @@ uint e_Leave(array<uint>@ values)
 						{
 							int expAmount = 100;
 							critters[i].StatBase[ST_EXPERIENCE] += expAmount;
-							critters[i].Say(SAY_NETMSG, "|0xFFFFFF You have gained " + expAmount + " experience points for securing caravan leader in the encounter.");						
+							critters[i].Say(SAY_NETMSG, "|0xFFFFFF You have gained " + expAmount + " experience points for securing caravan leader in the encounter.");
 						}
                 }
             }
@@ -505,7 +505,7 @@ uint e_Leave(array<uint>@ values)
 
 bool _DriverMapEnter(Critter& driver, Map& map)
 {
-    if(!IsEncounterMap(map))
+    if(!IsEncounterMap(map) || IsSpecialEncounterMap(map))
         return false;
 
     array<uint> values = { driver.Id, map.Id };
@@ -690,7 +690,7 @@ bool d_IsFull(Critter& player, Critter@ npc)
 {
     ICaravan@ caravan = GetCaravan(npc);
 	Critter@ wmNpc = GetCritter(caravan.GetWMLeaderId());
-    if(valid(wmNpc)) 
+    if(valid(wmNpc))
 					{
 					array<Critter@> crits = wmNpc.GetGlobalGroup();
 					return (crits.length>9);
@@ -717,7 +717,7 @@ void r_KillCaravanDriver(Critter& player, Critter@ npc, int carNr)
         encNpc.ToDead(ANIM2_DEAD_FRONT, null);
         player.Say(SAY_NETMSG, "Driver (id "+encNpc.Id+") killed on map "+encNpc.GetMapId());
     }
-    else if(valid(wmNpc)) 
+    else if(valid(wmNpc))
     {
         wmNpc.ToDead(ANIM2_DEAD_FRONT, null);
         player.Say(SAY_NETMSG, "Driver killed on wm.");
@@ -840,7 +840,7 @@ string checkCaravanPosition(uint carNr)
 				GetGameTime(departTime, year, month, dayOfWeek, day, hour, minute, second);
 				text += "$coordinates" + "currently restocking in " + locName + "." + "\nDestination: " + caravan.GetNextDestinationName() + ". They depart at " + ("" + (hour < 10 ? "0" : "") + hour + ":" + (minute < 10 ? "0" : "") + minute) + ".";
 	}
-    else if(valid(wmNpc) && !wmNpc.IsDead()) 
+    else if(valid(wmNpc) && !wmNpc.IsDead())
 					{
 					uint16 x = wmNpc.WorldX;
 					uint16 y = wmNpc.WorldY;
@@ -901,7 +901,7 @@ bool        _GlobalProcessDriver(Critter& cr, int type, Item@ car, float& x, flo
             else
             {
                 Critter@ wmNpc = GetCritter(caravan.GetWMLeaderId());
-                if(valid(wmNpc)) 
+                if(valid(wmNpc))
                 {
                     array<Critter@> crits = wmNpc.GetGlobalGroup();
                     if(crits.length > 10)
