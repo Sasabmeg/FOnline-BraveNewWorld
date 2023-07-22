@@ -2030,9 +2030,9 @@ void OnSpecialEncounterCreated(Location@ loc, array<Critter@>& group, Item@ car,
 int CheckSpecialEncounter(Critter@ leader, CZone@ zone)
 {
     #ifdef __DEBUG__
-    // _CheckSpecialEncounter(LOCATION_SecretBunker, (ZoneContainsFlag(zone, FLAG_SecretShelter)), SetLvar(leader, LVAR_q_secret_vault, 1));
-    // _CheckSpecialEncounter(LOCATION_SecretTreasure, (ZoneContainsFlag(zone, FLAG_SecretTreasure1)), SetLvar(leader, LVAR_q_secret_treasure1, 1));
-    // _CheckSpecialEncounter(LOCATION_Howitzer, (ZoneContainsFlag(zone, FLAG_SecretHowitzer)), SetLvar(leader, LVAR_q_secret_howitzer, 1));
+    // _CheckSpecialEncounter(LOCATION_SpecialEncounter_SecretBunker, (ZoneContainsFlag(zone, FLAG_SecretShelter)), SetLvar(leader, LVAR_q_secret_vault, 1));
+    // _CheckSpecialEncounter(LOCATION_SpecialEncounter_SecretTreasure, (ZoneContainsFlag(zone, FLAG_SecretTreasure1)), SetLvar(leader, LVAR_q_secret_treasure1, 1));
+    // _CheckSpecialEncounter(LOCATION_SpecialEncounter_Howitzer, (ZoneContainsFlag(zone, FLAG_SecretHowitzer)), SetLvar(leader, LVAR_q_secret_howitzer, 1));
     // _CheckSpecialEncounter(LOCATION_SpecialEncounter_OldWarehouse, (zone.Terrain==TERRAIN_City || zone.Terrain==TERRAIN_Citycoast || zone.Terrain==TERRAIN_Citybig), SetLvar(leader, LVAR_q_secret_warehouse, 1));
     // _CheckSpecialEncounter(LOCATION_SpecialEncounter_BusStop, (zone.Terrain==TERRAIN_Desert), SetLvar(leader, LVAR_q_secret_bus_stop, ELAPSED_TIME+REAL_HOUR(10))); // 1 roll in 10h
 
@@ -2045,20 +2045,27 @@ int CheckSpecialEncounter(Critter@ leader, CZone@ zone)
     #ifndef __DEBUG__
     // Not quest related
 
-    _CheckSpecialEncounter(LOCATION_SecretBunker, (zone.Terrain == TERRAIN_Desert && (uint(GetLvar(leader, LVAR_q_secret_vault)) <= ELAPSED_TIME) && (Random(1, 1) == 1 && leader.Stat[ST_LEVEL] > Random(0, 23))), SetLvar(leader, LVAR_q_secret_vault, ELAPSED_TIME + REAL_HOUR(1)));                                                                                                                    // 1 roll in 10h
-	//_CheckSpecialEncounter(LOCATION_SecretBunker, (zone.Terrain == TERRAIN_Desert), SetLvar(leader, LVAR_q_secret_vault, ELAPSED_TIME + REAL_HOUR(10)));  // TEST
+    // 1 roll in 10h
+    _CheckSpecialEncounter(LOCATION_SpecialEncounter_SecretBunker, (zone.Terrain == TERRAIN_Desert && (uint(GetLvar(leader, LVAR_q_secret_vault)) <= ELAPSED_TIME) && (Random(1, 1) == 1 && leader.Stat[ST_LEVEL] > Random(0, 23))), SetLvar(leader, LVAR_q_secret_vault, ELAPSED_TIME + REAL_HOUR(1)));
+	//_CheckSpecialEncounter(LOCATION_SpecialEncounter_SecretBunker, (zone.Terrain == TERRAIN_Desert), SetLvar(leader, LVAR_q_secret_vault, ELAPSED_TIME + REAL_HOUR(10)));  // TEST
 
-    _CheckSpecialEncounter(LOCATION_SecretTreasure, (zone.Terrain == TERRAIN_Mountain && (uint(GetLvar(leader, LVAR_q_secret_treasure1)) <= ELAPSED_TIME) && (Random(1, 1) == 1 && leader.Stat[ST_LEVEL] > Random(0, 5))), SetLvar(leader, LVAR_q_secret_treasure1, ELAPSED_TIME + REAL_HOUR(1)));                                                                                                        // 1 roll in 10h
+    // 1 roll in 10h
+    _CheckSpecialEncounter(LOCATION_SpecialEncounter_SecretTreasure, (zone.Terrain == TERRAIN_Mountain && (uint(GetLvar(leader, LVAR_q_secret_treasure1)) <= ELAPSED_TIME) && (Random(1, 1) == 1 && leader.Stat[ST_LEVEL] > Random(0, 5))), SetLvar(leader, LVAR_q_secret_treasure1, ELAPSED_TIME + REAL_HOUR(1)));
 
-    _CheckSpecialEncounter(LOCATION_Howitzer, (zone.Terrain == TERRAIN_Desert && (uint(GetLvar(leader, LVAR_q_secret_howitzer)) <= ELAPSED_TIME) && (Random(1, 1) == 1 && leader.Stat[ST_LEVEL] > Random(4, 23))), SetLvar(leader, LVAR_q_secret_howitzer, ELAPSED_TIME + REAL_HOUR(1)));                                                                                                                  // 1 roll in 10h
+    // 1 roll in 10h
+    _CheckSpecialEncounter(LOCATION_SpecialEncounter_Howitzer, (zone.Terrain == TERRAIN_Desert && (uint(GetLvar(leader, LVAR_q_secret_howitzer)) <= ELAPSED_TIME) && (Random(1, 1) == 1 && leader.Stat[ST_LEVEL] > Random(4, 23))), SetLvar(leader, LVAR_q_secret_howitzer, ELAPSED_TIME + REAL_HOUR(1)));
 
-    _CheckSpecialEncounter(LOCATION_SpecialEncounter_OldWarehouse, ((zone.Terrain == TERRAIN_City || zone.Terrain == TERRAIN_Citycoast || zone.Terrain == TERRAIN_Citybig) && (uint(GetLvar(leader, LVAR_q_secret_warehouse)) <= ELAPSED_TIME) && (Random(1, 1800) == 1 && leader.Stat[ST_LEVEL] > Random(14, 49))), SetLvar(leader, LVAR_q_secret_warehouse, ELAPSED_TIME + REAL_HOUR(1)));                   // 1 roll in 10h for characters with level > 9
+    // 1 roll in 10h for characters with level > 9
+    _CheckSpecialEncounter(LOCATION_SpecialEncounter_OldWarehouse, ((zone.Terrain == TERRAIN_City || zone.Terrain == TERRAIN_Citycoast || zone.Terrain == TERRAIN_Citybig) && (uint(GetLvar(leader, LVAR_q_secret_warehouse)) <= ELAPSED_TIME) && (Random(1, 1800) == 1 && leader.Stat[ST_LEVEL] > Random(14, 49))), SetLvar(leader, LVAR_q_secret_warehouse, ELAPSED_TIME + REAL_HOUR(1)));
 
-    _CheckSpecialEncounter(LOCATION_OldFactory, ((zone.Terrain == TERRAIN_City || zone.Terrain == TERRAIN_Citycoast || zone.Terrain == TERRAIN_Citybig) && (uint(GetLvar(leader, LVAR_q_secret_factory)) <= ELAPSED_TIME) && (Random(1, 1) == 1 && leader.Stat[ST_LEVEL] > Random(5, 14))), SetLvar(leader, LVAR_q_secret_factory, ELAPSED_TIME + REAL_HOUR(1)));                                           // 1 roll in 10h for characters with level > 9
+    // 1 roll in 10h for characters with level > 9
+    _CheckSpecialEncounter(LOCATION_SpecialEncounter_OldFactory, ((zone.Terrain == TERRAIN_City || zone.Terrain == TERRAIN_Citycoast || zone.Terrain == TERRAIN_Citybig) && (uint(GetLvar(leader, LVAR_q_secret_factory)) <= ELAPSED_TIME) && (Random(1, 1) == 1 && leader.Stat[ST_LEVEL] > Random(5, 14))), SetLvar(leader, LVAR_q_secret_factory, ELAPSED_TIME + REAL_HOUR(1)));
 
-    _CheckSpecialEncounter(LOCATION_Hospital, ((zone.Terrain == TERRAIN_City || zone.Terrain == TERRAIN_Citycoast || zone.Terrain == TERRAIN_Citybig) && (uint(GetLvar(leader, LVAR_q_secret_hospital)) <= ELAPSED_TIME) && (Random(1, 1) == 1 && leader.Stat[ST_LEVEL] > Random(5, 14))), SetLvar(leader, LVAR_q_secret_hospital, ELAPSED_TIME + REAL_HOUR(1)));                                           // 1 roll in 10h for characters with level > 9
+    // 1 roll in 10h for characters with level > 9
+    _CheckSpecialEncounter(LOCATION_SpecialEncounter_Hospital, ((zone.Terrain == TERRAIN_City || zone.Terrain == TERRAIN_Citycoast || zone.Terrain == TERRAIN_Citybig) && (uint(GetLvar(leader, LVAR_q_secret_hospital)) <= ELAPSED_TIME) && (Random(1, 1) == 1 && leader.Stat[ST_LEVEL] > Random(5, 14))), SetLvar(leader, LVAR_q_secret_hospital, ELAPSED_TIME + REAL_HOUR(1)));
 
-    _CheckSpecialEncounter(LOCATION_SpecialEncounter_BusStop, (zone.Terrain == TERRAIN_Desert && (uint(GetLvar(leader, LVAR_q_secret_bus_stop)) <= ELAPSED_TIME) && (Random(1, 1) == 1 && leader.Stat[ST_LEVEL] > Random(2, 5))), SetLvar(leader, LVAR_q_secret_bus_stop, ELAPSED_TIME + REAL_HOUR(1)));                                                                                                  // 1 roll in 10h
+    // 1 roll in 10h
+    _CheckSpecialEncounter(LOCATION_SpecialEncounter_BusStop, (zone.Terrain == TERRAIN_Desert && (uint(GetLvar(leader, LVAR_q_secret_bus_stop)) <= ELAPSED_TIME) && (Random(1, 1) == 1 && leader.Stat[ST_LEVEL] > Random(2, 5))), SetLvar(leader, LVAR_q_secret_bus_stop, ELAPSED_TIME + REAL_HOUR(1)));
 
     // Sha-Enin //
     // Attacked by bandits
@@ -2069,9 +2076,9 @@ int CheckSpecialEncounter(Critter@ leader, CZone@ zone)
 
     // Quests
     /*&& ZoneContainsFlag(zone, FLAG_Q_Ruined_Militarybase)*/
-/*TEST*/	//_CheckSpecialEncounter(LOCATION_DeadBody, ((zone.Terrain == TERRAIN_Desert || zone.Terrain == TERRAIN_Mountain) && ((GetLvar(leader, LVAR_q_mb_location_known)==0) && (uint(GetLvar(leader, LVAR_q_mb)) <= ELAPSED_TIME) && Random(1, 1) == 1 && (leader.Stat[ST_LEVEL] > Random(1, 1)) && (leader.Skill[SK_OUTDOORSMAN]< Random(25,299)))), SetLvar(leader, LVAR_q_mb, ELAPSED_TIME + REAL_HOUR(0)));
+/*TEST*/	//_CheckSpecialEncounter(LOCATION_SpecialEncounter_DeadBody, ((zone.Terrain == TERRAIN_Desert || zone.Terrain == TERRAIN_Mountain) && ((GetLvar(leader, LVAR_q_mb_location_known)==0) && (uint(GetLvar(leader, LVAR_q_mb)) <= ELAPSED_TIME) && Random(1, 1) == 1 && (leader.Stat[ST_LEVEL] > Random(1, 1)) && (leader.Skill[SK_OUTDOORSMAN]< Random(25,299)))), SetLvar(leader, LVAR_q_mb, ELAPSED_TIME + REAL_HOUR(0)));
 
-	_CheckSpecialEncounter(LOCATION_DeadBody, ((zone.Terrain == TERRAIN_Desert || zone.Terrain == TERRAIN_Mountain) && ((GetLvar(leader, LVAR_q_mb_location_known)==0) && (uint(GetLvar(leader, LVAR_q_mb)) <= ELAPSED_TIME) && Random(1, 1) == 1 && (leader.Stat[ST_LEVEL] > Random(23, 23)) && (leader.Skill[SK_OUTDOORSMAN]> Random(24,299)))), SetLvar(leader, LVAR_q_mb, ELAPSED_TIME + REAL_HOUR(1)));
+	_CheckSpecialEncounter(LOCATION_SpecialEncounter_DeadBody, ((zone.Terrain == TERRAIN_Desert || zone.Terrain == TERRAIN_Mountain) && ((GetLvar(leader, LVAR_q_mb_location_known)==0) && (uint(GetLvar(leader, LVAR_q_mb)) <= ELAPSED_TIME) && Random(1, 1) == 1 && (leader.Stat[ST_LEVEL] > Random(23, 23)) && (leader.Skill[SK_OUTDOORSMAN]> Random(24,299)))), SetLvar(leader, LVAR_q_mb, ELAPSED_TIME + REAL_HOUR(1)));
 
 	_CheckSpecialEncounter(LOCATION_Ambush, (ZoneContainsFlag(zone, FLAG_CaesarAmbush) && (GetLvar(leader, LVAR_q_la_train_caesar_ambush) == 1) && (leader.Skill[SK_OUTDOORSMAN] < Random(75, 299))), SetLvar(leader, LVAR_q_la_train_caesar_ambush, 2));
 
