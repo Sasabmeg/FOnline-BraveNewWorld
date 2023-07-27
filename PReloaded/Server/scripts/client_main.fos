@@ -63,7 +63,6 @@ import void InitFixboyAddons() from "client_fixboy";
 
 import bool IsReplaying() from "client_recording";
 import void Replay() from "client_recording";
-;
 
 import void TimeoutsConfig(string& customConfig) from "client_timeouts";
 import void CombatLogConfig() from "client_combat";
@@ -79,6 +78,8 @@ import bool CritterGenerateCheck(array<int>& data) from "parameters";
 import IClientAccessLevelOpt@ InitAccessControl() from "client_access";
 
 import void InitSmartCursor() from "client/smart_cursor";
+
+import uint BonusNumber(Item@ item) from "item_bonus";
 
 #pragma bindfunc "void OpenURL(string@+) -> client_utils.dll OnlineStats_URL"
 
@@ -488,19 +489,46 @@ import void ZeroVolumeFillIndicator() from "client_container_addons";
 // If you want disable showing than just null pointer in collection
 void items_collection(int collection, array<ItemCl@>& items)
 {
+    CritterCl@ chosen = GetChosen();
+    if (!valid(chosen)) {
+        Log("items_collection - GetChosen() fail. Collection: " + collection);
+        Message("items_collection - GetChosen() fail. Collection: " + collection);
+        return;
+    }
+
+
 	//
 	// initial filters, applied to all collections
 	//
 
 	array<uint16> stickyPids = { PID_REAL_BOTTLE_CAPS, PID_BOTTLE_CAPS, PID_DOLLAR }; // reversed order
 	array<Item@>  stickyItems;
+	array<uint16> separatorPids1 = { PID_RED_CONDOM, PID_BLUE_CONDOM, PID_GREEN_CONDOM };   //  separate rare from common, USE STACKABLE ITEMS ONLY
+	array<Item@>  separatorItems1;
+	array<uint16> separatorPids2 = { PID_GOLD_LOCKET, PID_NECKLACE, PID_BLACK_COC_BADGE, PID_RED_COC_BADGE, PID_FUZZY_PAINTING };   //  separate broken from non-broken, USE STACKABLE ITEMS ONLY
+	array<Item@>  separatorItems2;
+
+	array<Item@>  brokenItems;
+	array<Item@>  qualityItems;
+	array<Item@>  improvedItems;
+	array<Item@>  superiorItems;
+	array<Item@>  advancedItems;
+	array<Item@>  uniqueItems;
 
 	// not sure if array:resize() adds nulls properly, so noob/paranoic version for now
 	for( uint s=0, sLen=stickyPids.length(); s<sLen; s++ )
 	{
 		stickyItems.insertLast( null );
 	}
-
+    //  because all good code has a healthy dose of paranoia ;)
+	for (uint s = 0, sLen = separatorPids1.length(); s < sLen; s++)
+	{
+		separatorItems1.insertLast( null );
+	}
+	for (uint s = 0, sLen = separatorPids2.length(); s < sLen; s++)
+	{
+		separatorItems2.insertLast( null );
+	}
 	// must be in sync with workbench.fos
 	// maybe ITEM_FLAG_HIDDEN should be used instead?
 	const uint16[] WorkbenchesPids =
@@ -542,6 +570,148 @@ void items_collection(int collection, array<ItemCl@>& items)
 			@stickyItems[stickyIdx] = items[i];
 			@items[i] = null;
             continue;
+        }
+
+        int separatorId1 = separatorPids1.find(pid);
+        if (separatorId1 >= 0) {
+            @separatorItems1[separatorId1] = items[i];
+            @items[i] = null;
+            continue;
+        }
+        int separatorId2 = separatorPids2.find(pid);
+        if (separatorId2 >= 0) {
+            @separatorItems2[separatorId2] = items[i];
+            @items[i] = null;
+            continue;
+        }
+
+        //  if picking stuff up or from containers or trading, sort bonus armor and weapon in front
+        if (collection == ITEM_COLLECTION_PICKUP || collection == ITEM_COLLECTION_PICKUP_FROM
+                || collection == ITEM_COLLECTION_BARTER || collection == ITEM_COLLECTION_BARTER_OPPONENT) {
+            uint type = items[i].GetType();
+            if (type == ITEM_TYPE_ARMOR || type == ITEM_TYPE_WEAPON) {
+                //  if armor or weapon is broken, put them last
+                if (_ItemIsBroken(items[i])) {
+                    brokenItems.insertLast(items[i]);
+                    @items[i] = null;
+                } else if (BonusNumber(items[i]) > 0) {
+                    if (chosen.Perk[PE_TREASURE_HUNTER] == 0 && (collection == ITEM_COLLECTION_PICKUP || collection == ITEM_COLLECTION_PICKUP_FROM)) {
+                        qualityItems.insertLast(items[i]);
+                        @items[i] = null;
+                    } else if (chosen.Perk[PE_NEGOTIATOR] == 0 && (collection == ITEM_COLLECTION_BARTER || collection == ITEM_COLLECTION_BARTER_OPPONENT)) {
+                        qualityItems.insertLast(items[i]);
+                        @items[i] = null;
+                    } else {
+                        switch (BonusNumber(items[i])) {
+                            case 1:
+                                qualityItems.insertLast(items[i]);
+                                @items[i] = null;
+                                break;
+                            case 2:
+                                improvedItems.insertLast(items[i]);
+                                @items[i] = null;
+                                break;
+                            case 3:
+                                superiorItems.insertLast(items[i]);
+                                @items[i] = null;
+                                break;
+                            case 4:
+                                advancedItems.insertLast(items[i]);
+                                @items[i] = null;
+                                break;
+                            case 5:
+                                uniqueItems.insertLast(items[i]);
+                                @items[i] = null;
+                                break;
+                        }
+                    }
+                }
+            }
+        }
+	}
+	if (collection == ITEM_COLLECTION_BARTER) {
+        //  when trading own stuff, low quality, then broken should be top, as those are the ones to be sold to vendor
+	    for (uint i = 0; i < separatorItems2.length(); i++) {
+            if (valid(separatorItems2[i])) {
+                items.insertLast(separatorItems2[i]);
+            }
+	    }
+	    for (uint i = 0; i < brokenItems.length(); i++) {
+            if (valid(brokenItems[i])) {
+                items.insertLast(brokenItems[i]);
+            }
+	    }
+	    for (uint i = 0; i < separatorItems1.length(); i++) {
+            if (valid(separatorItems1[i])) {
+                items.insertLast(separatorItems1[i]);
+            }
+	    }
+        for (uint i = 0; i < qualityItems.length(); i++) {
+            if (valid(qualityItems[i])) {
+                items.insertLast(qualityItems[i]);
+            }
+        }
+        for (uint i = 0; i < improvedItems.length(); i++) {
+            if (valid(improvedItems[i])) {
+                items.insertLast(improvedItems[i]);
+            }
+        }
+        for (uint i = 0; i < superiorItems.length(); i++) {
+            if (valid(superiorItems[i])) {
+                items.insertLast(superiorItems[i]);
+            }
+        }
+        for (uint i = 0; i < advancedItems.length(); i++) {
+            if (valid(advancedItems[i])) {
+                items.insertLast(advancedItems[i]);
+            }
+        }
+        for (uint i = 0; i < uniqueItems.length(); i++) {
+            if (valid(uniqueItems[i])) {
+                items.insertLast(uniqueItems[i]);
+            }
+        }
+	} else {
+	    //  when looting or trading from merchant, more valuable first
+	    for (uint i = 0; i < separatorItems2.length(); i++) {
+            if (valid(separatorItems2[i])) {
+                items.insertLast(separatorItems2[i]);
+            }
+	    }
+	    for (uint i = 0; i < brokenItems.length(); i++) {
+            if (valid(brokenItems[i])) {
+                items.insertLast(brokenItems[i]);
+            }
+	    }
+	    for (uint i = 0; i < separatorItems1.length(); i++) {
+            if (valid(separatorItems1[i])) {
+                items.insertFirst(separatorItems1[i]);
+            }
+	    }
+        for (uint i = 0; i < qualityItems.length(); i++) {
+            if (valid(qualityItems[i])) {
+                items.insertFirst(qualityItems[i]);
+            }
+        }
+        for (uint i = 0; i < improvedItems.length(); i++) {
+            if (valid(improvedItems[i])) {
+                items.insertFirst(improvedItems[i]);
+            }
+        }
+        for (uint i = 0; i < superiorItems.length(); i++) {
+            if (valid(superiorItems[i])) {
+                items.insertFirst(superiorItems[i]);
+            }
+        }
+        for (uint i = 0; i < advancedItems.length(); i++) {
+            if (valid(advancedItems[i])) {
+                items.insertFirst(advancedItems[i]);
+            }
+        }
+        for (uint i = 0; i < uniqueItems.length(); i++) {
+            if (valid(uniqueItems[i])) {
+                items.insertFirst(uniqueItems[i]);
+            }
         }
 	}
 
