@@ -1,10 +1,15 @@
 // Item bonuses
-// 
+//
 
 #include "_defines.fos"
 #include "_macros.fos"
 
-import void   SetLexem(Item& item, string& lex, string& value) from "lexems";
+#ifdef __CLIENT // Macro defined in client_main.fos
+#define Item    ItemCl
+#endif
+
+//  shared between client and server scripts
+
 // Returns the number of item bonuses
 uint BonusNumber(Item@ it)
 {
@@ -16,6 +21,12 @@ uint BonusNumber(Item@ it)
 	else if(it.Val0!=0) return 1;
 	else return 0;
 }
+
+//  this part is not shared with client, server only
+
+#ifndef __CLIENT
+
+import void   SetLexem(Item& item, string& lex, string& value) from "lexems";
 
 int CheckBonus( Item@ item, int bonusType )
 {
@@ -43,7 +54,7 @@ void AddSpecialBonusRaidersFarm(Item@ it)
 	if(roll>74)	AddWeaponBonus(it, 4, true); // 25%
 	if(roll>84) AddWeaponBonus(it, 5, true); // 15%
 	}
-	
+
 	else if(it.GetType() == ITEM_TYPE_ARMOR)
 	{
 	int roll = Random(0,99);
@@ -68,7 +79,7 @@ void AddSpecialBonusEncounterBoss(Item@ it)
 	if(roll>89)	AddWeaponBonus(it, 4, true); // 10%
 	if(roll>94) AddWeaponBonus(it, 5, true); // 5%
 	}
-	
+
 	else if(it.GetType() == ITEM_TYPE_ARMOR)
 	{
 	int roll = Random(0,99);
@@ -92,7 +103,7 @@ void AddSpecialBonusLow(Item@ it) // 03-03-2014 Cubik: funkcja dla skrzynek spaw
 		if(roll>74)	AddWeaponBonus(it, 4); // 25%
 		if(roll>84) AddWeaponBonus(it, 5); // 15%
 	}
-	
+
 	else if(it.GetType() == ITEM_TYPE_ARMOR)
 	{
 		int roll = Random(0,99);
@@ -115,7 +126,7 @@ void AddSpecialBonus(Item@ it)
 		AddWeaponBonus(it, 4);
 		if(Random(0,1)==0) 	AddWeaponBonus(it, 5);
 	}
-	
+
 	else if(it.GetType() == ITEM_TYPE_ARMOR)
 	{
 		AddArmorBonus(it, 1);
@@ -139,7 +150,7 @@ void AddBonuses(Item@ it, string@ crafter)
 		if(roll==99) AddWeaponBonus(it, 5, true);
 		SetLexem(it, "$crafter", crafter);
 	}
-	
+
 	else if(it.GetType() == ITEM_TYPE_ARMOR)
 	{
 		int roll = Random(0,99);
@@ -178,21 +189,21 @@ void AddArmorBonus(Item@ it, int number)
 {
 	int minRoll=1;
 	int maxRoll=1;
-	
+
 	uint bonusType=0;
 	uint maxBonusType=BONUS_ARMOR_HEALING_RATE; // for armors
 
 	bool isHelmet = (it.GetProtoId()>=725 && it.GetProtoId()<=741);
 	// If helmet, adjust bonus type range
 	if(isHelmet) maxBonusType=BONUS_ARMOR_PLASMA_DR;
-	
-	// Choose which bonus and specify bonus value range	
+
+	// Choose which bonus and specify bonus value range
 	do
 	{
 		bonusType=Random(100,maxBonusType);
 	}
 	while (HasBonusAlready(it,bonusType));
-	
+
 	switch(bonusType)
 	{
 		// Armors and helmets
@@ -223,10 +234,10 @@ void AddArmorBonus(Item@ it, int number)
 		case BONUS_ARMOR_HEALING_RATE: {minRoll=1;maxRoll=5;break;}
 		default: break;
 	}
-	
+
 	// Choose bonus roll
 	int roll = Random(minRoll, maxRoll);
-	
+
 	// Choose which value
 	switch(number)
 	{
@@ -248,7 +259,7 @@ void AddWeaponBonus(Item@ it, int number, bool isCrafting = false)
 
 	uint minRoll=1;
 	uint maxRoll=1;
-	
+
 	uint bonusType=0;
 
 	int skillNum = it.Proto.Weapon_Skill_0;
@@ -258,11 +269,11 @@ void AddWeaponBonus(Item@ it, int number, bool isCrafting = false)
 	{
 		if(isRangeWeapon)
 			bonusType=Random(100, BONUS_WEAPON_MAX_RANGE);
-		else 
+		else
 			bonusType=Random(100, BONUS_WEAPON_MAX_AP);
 	}
 	while (HasBonusAlready(it,bonusType) || IsBonusExcluded(isCrafting, bonusType));
-	
+
 	switch(bonusType)
 	{
 		case BONUS_WEAPON_CRITICAL_ROLL: {maxRoll=5;break;}
@@ -274,10 +285,10 @@ void AddWeaponBonus(Item@ it, int number, bool isCrafting = false)
 		case BONUS_WEAPON_MAX_AP: break;
 		default: break;
 	}
-	
+
 	// Choose bonus roll
 	uint roll = Random(minRoll, maxRoll);
-	
+
 	// Choose which value
 	switch(number)
 	{
@@ -327,3 +338,5 @@ int checkBonus(Item@ it, int bonusType)
 	if(it.Val4==bonusType) return it.Val9;
 	return 0;
 }
+
+#endif //__CLIENT
