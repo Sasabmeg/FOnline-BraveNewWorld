@@ -40,15 +40,14 @@ so you want the fishing logic to occur only after sanity validations ( enough ap
 #define TEXT_NONE_LEFT          (3051)
 
 #define MAP_FISH_SPAWN_TIMER    (5000)
-#define MAP_FISH_MAX            (3)
-#define MAP_FISH_REGEN_TIME     (60)
 #define MAP_FISH_SPOT_ENTIRE    (77)
 
-#define FISH_CAPACITY           (100)
-#define FISH_SPAWN_TIME_MIN     (10)
-#define FISH_SPAWN_TIME_MAX     (20)
-#define FISH_DESPAWN_TICK_MIN   (24)
-#define FISH_DESPAWN_TICK_MAX   (24)
+#define FISH_CAPACITY                   (3)
+#define FISH_CAPACITY_TICKS_TO_REGEN    (6)
+#define FISH_SPAWN_TIME_MIN             (10)
+#define FISH_SPAWN_TIME_MAX             (20)
+#define FISH_DESPAWN_TICK_MIN           (6)
+#define FISH_DESPAWN_TICK_MAX           (9)
 
 #define PID_ITEM_FISHING_POOL               (26770)
 #define PID_ITEM_FISH_CIRCLING              (26777)
@@ -70,6 +69,16 @@ so you want the fishing logic to occur only after sanity validations ( enough ap
 #define FISH_SPAWN_DISTANCE_MAX     (29)
 
 //  Fishing_test optimization
+#define FISH_DEBUG_LOGGING_ALLOWED     (true)
+
+//  BEHOLD THE MOST ADVANCED DEBUG LOGGING TECHNIQUE OF FONLINE 2023
+//  - IT WILL ONLY LOG THE FISHING MODULLE IF 'FISH_DEBUG_LOGGING_ALLOWED' IS SET TO TRUE
+//  - DISABLE OTHER DEBUG LOGGING TO RREDUCE NOISE
+void FishLog(string@ s) {
+    if (FISH_DEBUG_LOGGING_ALLOWED) {
+        Log("FISHING: " + s);
+    }
+}
 
 class EntiresCollection {
     uint fishSpotCount;
@@ -91,88 +100,100 @@ class EntiresCollection {
         fishSpotCount = map.GetEntires(value, fishSpotEntires, fishSpotHexX, fishSpotHexY);
     }
 
-    void fromMap(Map& map, uint value) {
-        entireValue = value;
-        fishSpotCount = map.GetEntires(value, fishSpotEntires, fishSpotHexX, fishSpotHexY);
+    void log() {
+        FishLog("EntiresCollection count = " + fishSpotCount + ", entireValue = " + entireValue);
     }
 }
 
-EntiresCollection fishingPool;
+dictionary fishingPools;
 
 void map_init(Map& map, bool firstTime)
 {
     uint mapPid = map.GetProtoId();
+    string@ s = "_" + map.GetProtoId();
+    fishingPools.delete(s);
     if (mapPid == MAP_FishingZone) {
-        Log("prod_fishing@map_init - mapProto is fishing zone ( " + mapPid + " )");
+        FishLog("mapProto is fishing zone ( " + mapPid + " )");
         map.SetEvent(MAP_EVENT_LOOP_4, "_SpawnFishOnMap");
         map.SetLoopTime(4, MAP_FISH_SPAWN_TIMER);
-        map.SetData(MAP_DATA_FISH_AVAILABLE, 0);
+        map.SetData(MAP_DATA_FISH_SPAWNED, 0);
+        map.SetData(MAP_DATA_FISH_AVAILABLE, FISH_CAPACITY);
         map.SetData(MAP_DATA_FISH_REGEN_TICK, 0);
     } else {
-        Log("prod_fishing@map_init - mapProto is NOT fishing zone ( " + mapPid + " )");
+        FishLog("mapProto is NOT fishing zone ( " + mapPid + " )");
     }
 }
 
-void _SpawnFishOnMap(Map& map)
-{
-    if (fishingPool == null) {
-        Log("fishingPool = null, initalizing entires on this map proto: " + map.GetProtoId());
-        fishingPool.fromMap(map, MAP_FISH_SPOT_ENTIRE);
+void _SpawnFishOnMap(Map& map) {
+    string@ s = "_" + map.GetProtoId();
+    EntiresCollection fishingPool;
+    if (!fishingPools.exists(s)) {
+        FishLog("fishingPool = null, initalizing entires on this map proto: " + map.GetProtoId());
+        fishingPool = EntiresCollection(map, MAP_FISH_SPOT_ENTIRE);
+        fishingPools.set(s, fishingPool);
+        fishingPool.log();
     } else {
-        Log("fishingPool already initialized on this map proto: " + map.GetProtoId());
-    }
-    uint index = Random(0, fishingPool.fishSpotCount);
-    Item@ fish = map.AddItem(hexX[index], hexY[index], PID_ITEM_FISH_CIRCLING, 1);
-    DespawnFish(fish);
-    /*
-    uint fishSpotCount = 0;
-    array<uint> fishSpotEntires;
-    array<uint16> fishSpotHexX;
-    array<uint16> fishSpotHexY;
-    //  fish spawn spots
-    int entireNumber = 77;
-    if (fishSpotCount = 0) {
-        fishSpotCount = map.GetEntires(MAP_FISH_SPOT_ENTIRE, fishSpotEntires, fishSpotHexX, fishSpotHexY);
-        Log("_SpawnFishOnMap - spawnPointCount = " + fishSpotCount);
+        //FishLog("fishingPool already initialized on this map proto: " + map.GetProtoId());
+        fishingPools.get(s, fishingPool);
+        fishingPool.log();
     }
 
-    uint index = Random(0, spawnPointCount);
-    Item@ fish = map.AddItem(hexX[index], hexY[index], PID_ITEM_FISH_CIRCLING, 1);
-    DespawnFish(fish);
-    */
+    int fishCount = map.GetData(MAP_DATA_FISH_SPAWNED);
+    if (fishCount < FISH_CAPACITY) {
+        if (map.GetData(MAP_DATA_FISH_AVAILABLE) > 0) {
+            FishLog("Can spawn more fishes. fishCount = " + fishCount + ", available = " + map.GetData(MAP_DATA_FISH_AVAILABLE));
+            uint index = Random(0, fishingPool.fishSpotCount - 1);
+            Item@ fish = map.AddItem(fishingPool.fishSpotHexX[index], fishingPool.fishSpotHexY[index], PID_ITEM_FISH_CIRCLING, 1);
+            map.SetData(MAP_DATA_FISH_SPAWNED, map.GetData(MAP_DATA_FISH_SPAWNED) + 1);
+            DespawnFish(fish);
+        } else {
+            FishLog("Cannot spawn more fishes, as none available. fishCount = " + fishCount + ", available" + map.GetData(MAP_DATA_FISH_AVAILABLE));
+        }
+    } else {
+        FishLog("Cannot spawn any more fish, water is full of fishes. fishCount = " + fishCount + ", available" + map.GetData(MAP_DATA_FISH_AVAILABLE));
+    }
+
+    //  allow regeneration of fish only for public locations
+	if (isPublicFishingZone(map)) {
+        if (map.GetData(MAP_DATA_FISH_REGEN_TICK) >= FISH_CAPACITY_TICKS_TO_REGEN) {
+            if (map.GetData(MAP_DATA_FISH_AVAILABLE) < FISH_CAPACITY) {
+                map.SetData(MAP_DATA_FISH_AVAILABLE, map.GetData(MAP_DATA_FISH_AVAILABLE) + 1);
+                map.SetData(MAP_DATA_FISH_REGEN_TICK, 0);
+                FishLog("Regenerated one available fish.");
+            } else {
+                FishLog("Fish already at max capacity.");
+            }
+        } else {
+            map.SetData(MAP_DATA_FISH_REGEN_TICK, map.GetData(MAP_DATA_FISH_REGEN_TICK) + 1);
+            FishLog("Fish capacity regen tick = " + map.GetData(MAP_DATA_FISH_REGEN_TICK));
+        }
+	}
 }
 
-void fish_init(Item& item, bool firstTime) {
-    /*
-    Log("prod_fishing.fos::fish_init(), firstTime = " + firstTime);
-    item.SetEvent(ITEM_EVENT_USE_ON_ME, "_UseItemOnFish");
-    item.SetEvent(ITEM_EVENT_SKILL, "_UseSkillOnFish");
-    item.SetEvent(ITEM_EVENT_FINISH, "_FinishRegenerable");
-    if(firstTime) {
-        AMOUNT(item) = FISH_CAPACITY;
-    } else {
-        AMOUNT(item) = FISH_CAPACITY / 2;
+//  add public fishing locations here
+bool isPublicFishingZone(Map& map) {
+    if(valid(map))
+    {
+        switch(map.GetLocation().GetProtoId())
+        {
+            case LOCATION_FishingShore:
+                return true;
+        }
     }
-    SpawnFish(item);
-    */
+    return false;
 }
 
 void _FinishRegenerable(Item& item, bool) {
-    Log("prod_fishing.fos::_FinishRegenerable()");
+    FishLog("prod_fishing.fos::_FinishRegenerable()");
 }
 
 // non regenerable, for encounters
 void _EncFish(Item& item, bool firstTime) {
-    Log("prod_fishing.fos::_EncFish(), firstTime = " + firstTime);
+    FishLog("prod_fishing.fos::_EncFish(), firstTime = " + firstTime);
     item.SetEvent(ITEM_EVENT_USE_ON_ME, "_UseItemOnFish");
     item.SetEvent(ITEM_EVENT_SKILL, "_UseSkillOnFish");
     if(firstTime)
         AMOUNT(item) = Random(0, FISH_CAPACITY);
-}
-
-void SpawnFish(Item& item){
-    uint time = Random(FISH_SPAWN_TIME_MIN, FISH_SPAWN_TIME_MAX);
-    CreateTimeEvent(AFTER(REAL_SECOND(time)), "e_SpawnFish", item.Id, false);
 }
 
 void DespawnFish(Item& item) {
@@ -185,61 +206,27 @@ void AnimateItemOnceAndDelete(uint mapPid, uint hexX, uint hexY, uint itemPid, u
     CreateTimeEvent(AFTER(REAL_MS(time)), "e_animateOnceAndDelete", values, false);
 }
 
-uint e_SpawnFish(array<uint>@ values) {
-    Item@ item = GetItem(values[0]);
-    if (!valid(item))
-        return 0;
-    Map@ map = GetMap(item.MapId);
-    if (!valid(map)) {
-        Log("e_SpawnFish() - Invalid Map");
-        return 0;
-    }
-
-    if (AMOUNT(item) > 0) {
-        AMOUNT(item) = AMOUNT(item) - 1;
-        uint nextTime = Random(FISH_SPAWN_TIME_MIN, FISH_SPAWN_TIME_MAX);
-        Log("e_SpawnFish() , map(id: " + item.MapId + "), item( proto: " + "?" + ", id: " + item.Id + ", [" + item.HexX + ", " + item.HexY + "]"+ "), nextTime = " + nextTime);
-        uint16 fx = item.HexX;
-        uint16 fy = item.HexY;
-        map.MoveHexByDir(fx, fy, DIR_SW, Random(FISH_SPAWN_DISTANCE_MIN, FISH_SPAWN_DISTANCE_MAX));
-
-        Item@ fish = map.AddItem(fx, fy, PID_ITEM_FISH_CIRCLING, 1);
-        /*
-        Log("Fish flags = " + fish.get_Flags() + ", anim flag = " + FLAG( fish.get_Flags(), ITEM_FLAG_SHOW_ANIM));
-        uint flags = fish.get_Flags();
-        SETFLAG(flags, ITEM_FLAG_SHOW_ANIM);
-        //SETFLAG(flags, ITEM_FLAG_SHOW_ANIM_EXT);
-        fish.set_Flags(flags);
-        Log("Fish flags = " + fish.get_Flags() + ", anim flag = " + FLAG( fish.get_Flags(), ITEM_FLAG_SHOW_ANIM));
-        Log("Spawned fish at (" + fx + ", " + fy + "). Remaining: " + AMOUNT(item));
-        Log("Fish - " + fish.AnimWaitBase + ", " + fish.AnimStayBegin + ", " + fish.AnimStayEnd + ", " + fish.AnimHideBegin + ", " + fish.AnimHideEnd + ", " + fish.AnimShowBegin + ", " + fish.AnimShowEnd);
-        Log("Fish - " + fish.Proto.AnimWaitRndMin + ", " + fish.Proto.AnimWaitRndMax + ", " + fish.Proto.AnimStay_0 + ", " + fish.Proto.AnimStay_1 + ", " + fish.Proto.AnimHide_0 + ", " + fish.Proto.AnimHide_1);
-        */
-        DespawnFish(fish);
-        return REAL_SECOND(nextTime);
-    } else {
-        Log("Ran out of fish.");
-        return 0;
-    }
-    //return 0;
-}
-
 uint e_DespawnFish(array<uint>@ values) {
     Item@ item = GetItem(values[0]);
     if (!valid(item)) {
-        Log("e_DespawnFish() - Invalid Fish");
+        FishLog("e_DespawnFish() - Invalid Fish");
         return 0;
     }
     Map@ map = GetMap(item.MapId);
     if (!valid(map)) {
-        Log("e_DespawnFish() - Invalid Map");
+        FishLog("e_DespawnFish() - Invalid Map");
         return 0;
+    }
+    if (map.GetData(MAP_DATA_FISH_SPAWNED) > 0) {
+        map.SetData(MAP_DATA_FISH_SPAWNED, map.GetData(MAP_DATA_FISH_SPAWNED) - 1);
+    } else {
+        FishLog("CONCURRENCY ERROR? - when despawning fish, going below 0!");
     }
     uint flags = item.get_Flags();
     SETFLAG(flags, ITEM_FLAG_HIDDEN);
     item.set_Flags(flags);
     DeleteItem(item);
-    Log("e_DespawnFish() - Fish (Pid: " + item.Proto.ProtoId + ", " + item.Id + ")");
+    FishLog("Despawned Fish (Pid: " + item.Proto.ProtoId + ", " + item.Id + ")");
     return 0;
 }
 
@@ -485,12 +472,6 @@ uint e_animateOnceAndDelete(array<uint>@ values) {
         Log("e_animateOnceAndDelete - Invalid Item");
         return 0;
     }
-    /*
-    uint flags = item.get_Flags();
-    SETFLAG(flags, ITEM_FLAG_COLORIZE);
-    item.set_Flags(flags);
-    item.Update();
-    */
     Log("e_animateOnceAndDelete - spawning pid:" + values[3] + " at hex(" + values[1] + ", " + values[2] + ")");
     CreateTimeEvent(AFTER(REAL_MS(values[4])), "e_DeleteAnimationItem", item.Id, true);
     return 0;
@@ -514,12 +495,6 @@ uint e_DeleteAnimationItem(array<uint>@ values) {
         return 0;
     }
     Log("e_DeleteAnimationItem - deleting pid:" + item.Proto.ProtoId);
-    /*
-    uint flags = item.get_Flags();
-    SETFLAG(flags, ITEM_FLAG_HIDDEN);
-    item.set_Flags(flags);
-    item.Update();
-    */
     item.PicMap = GetStrHash("art\\items\\fishing\\fish_pool.fofrm");
     item.Update();
     DeleteItem(item);
