@@ -1,0 +1,528 @@
+//
+// FOnline: Classic - Brave New World
+// Sasabmeg
+//
+// prod_fishing.fos
+//
+
+/*
+
+Notes from Cirn0:
+the handler on serverside function looks as such void unsafe_serversidefunction(Critter& cr, int val0, int val1, int val2, string@, array<int>@)
+unsafe_ is a required keyword
+
+so all your functions have this stupid prefixes
+you will need ot handle all animations serverside
+simply cr.Animate and also cr.Wait them
+
+you generally want to add the wait
+also a if(cr.IsBusy()) return
+normally this stuff is handled in engine when doing SetChosenAction
+but when you hijack it, none of those checks are done and you need to do it yourself
+just sane things liek check if the IsChosen().IsLife , ect
+check clientside
+and check server side as well
+otherwise dead or kncockedout people can fish
+yeah
+you can get all those behavoirs
+but inside hte critter_action function this is only called after the validations
+so you want the fishing logic to occur only after sanity validations ( enough ap / alive/ not busy / in range )
+
+*/
+
+#include "_macros.fos"
+#include "production_h.fos"
+#include "utils_h.fos"
+#include "mapdata_h.fos"
+
+
+#define TEXT_CHOPPED            (3016)
+#define TEXT_NONE_LEFT          (3051)
+
+#define MAP_FISH_SPAWN_TIMER    (5000)
+#define MAP_FISH_MAX            (3)
+#define MAP_FISH_REGEN_TIME     (60)
+#define MAP_FISH_SPOT_ENTIRE    (77)
+
+#define FISH_CAPACITY           (100)
+#define FISH_SPAWN_TIME_MIN     (10)
+#define FISH_SPAWN_TIME_MAX     (20)
+#define FISH_DESPAWN_TICK_MIN   (24)
+#define FISH_DESPAWN_TICK_MAX   (24)
+
+#define PID_ITEM_FISHING_POOL               (26770)
+#define PID_ITEM_FISH_CIRCLING              (26777)
+#define PID_ITEM_FISH_JUMPING               (26780)
+#define PID_ITEM_FISH_WATERSPLASH           (26785)
+#define PID_ITEM_FISH_WATERSPLASH_SMALL     (26786)
+#define PID_ITEM_FISH_WATERSPLASH_SMALL2    (26787)
+#define PID_ITEM_FISH_KILLSPLASH            (26788)
+#define PID_ITEM_FISH_KILLSPLASH2           (26789)
+#define PID_ITEM_FISH_CIRCLING_SPEARED      (26790)
+
+#define FISH_WATERSPLASH_ANIM_TIME      (1300)
+#define FISH_KILLSPLASH_ANIM_TIME       (700)
+#define FISH_KILLSPLASH_ANIM_TIME2      (1100)
+#define FISH_CIRCLING_ANIM_TIME         (1600)
+#define FISH_SPEARED_ANIM_TIME          (2200)
+
+#define FISH_SPAWN_DISTANCE_MIN     (6)
+#define FISH_SPAWN_DISTANCE_MAX     (29)
+
+//  Fishing_test optimization
+
+class EntiresCollection {
+    uint fishSpotCount;
+    uint entireValue;
+    array<uint> fishSpotEntires;
+    array<uint16> fishSpotHexX;
+    array<uint16> fishSpotHexY;
+
+    EntiresCollection(uint value, uint count_, array<uint>& entires, array<uint16>& hexX, array<uint16>& hexY) {
+        entireValue = value;
+        fishSpotCount = count_;
+        fishSpotEntires = entires;
+        fishSpotHexX = hexX;
+        fishSpotHexY = hexY;
+    }
+
+    EntiresCollection(Map& map, uint value) {
+        entireValue = value;
+        fishSpotCount = map.GetEntires(value, fishSpotEntires, fishSpotHexX, fishSpotHexY);
+    }
+
+    void fromMap(Map& map, uint value) {
+        entireValue = value;
+        fishSpotCount = map.GetEntires(value, fishSpotEntires, fishSpotHexX, fishSpotHexY);
+    }
+}
+
+EntiresCollection fishingPool;
+
+void map_init(Map& map, bool firstTime)
+{
+    uint mapPid = map.GetProtoId();
+    if (mapPid == MAP_FishingZone) {
+        Log("prod_fishing@map_init - mapProto is fishing zone ( " + mapPid + " )");
+        map.SetEvent(MAP_EVENT_LOOP_4, "_SpawnFishOnMap");
+        map.SetLoopTime(4, MAP_FISH_SPAWN_TIMER);
+        map.SetData(MAP_DATA_FISH_AVAILABLE, 0);
+        map.SetData(MAP_DATA_FISH_REGEN_TICK, 0);
+    } else {
+        Log("prod_fishing@map_init - mapProto is NOT fishing zone ( " + mapPid + " )");
+    }
+}
+
+void _SpawnFishOnMap(Map& map)
+{
+    if (fishingPool == null) {
+        Log("fishingPool = null, initalizing entires on this map proto: " + map.GetProtoId());
+        fishingPool.fromMap(map, MAP_FISH_SPOT_ENTIRE);
+    } else {
+        Log("fishingPool already initialized on this map proto: " + map.GetProtoId());
+    }
+    uint index = Random(0, fishingPool.fishSpotCount);
+    Item@ fish = map.AddItem(hexX[index], hexY[index], PID_ITEM_FISH_CIRCLING, 1);
+    DespawnFish(fish);
+    /*
+    uint fishSpotCount = 0;
+    array<uint> fishSpotEntires;
+    array<uint16> fishSpotHexX;
+    array<uint16> fishSpotHexY;
+    //  fish spawn spots
+    int entireNumber = 77;
+    if (fishSpotCount = 0) {
+        fishSpotCount = map.GetEntires(MAP_FISH_SPOT_ENTIRE, fishSpotEntires, fishSpotHexX, fishSpotHexY);
+        Log("_SpawnFishOnMap - spawnPointCount = " + fishSpotCount);
+    }
+
+    uint index = Random(0, spawnPointCount);
+    Item@ fish = map.AddItem(hexX[index], hexY[index], PID_ITEM_FISH_CIRCLING, 1);
+    DespawnFish(fish);
+    */
+}
+
+void fish_init(Item& item, bool firstTime) {
+    /*
+    Log("prod_fishing.fos::fish_init(), firstTime = " + firstTime);
+    item.SetEvent(ITEM_EVENT_USE_ON_ME, "_UseItemOnFish");
+    item.SetEvent(ITEM_EVENT_SKILL, "_UseSkillOnFish");
+    item.SetEvent(ITEM_EVENT_FINISH, "_FinishRegenerable");
+    if(firstTime) {
+        AMOUNT(item) = FISH_CAPACITY;
+    } else {
+        AMOUNT(item) = FISH_CAPACITY / 2;
+    }
+    SpawnFish(item);
+    */
+}
+
+void _FinishRegenerable(Item& item, bool) {
+    Log("prod_fishing.fos::_FinishRegenerable()");
+}
+
+// non regenerable, for encounters
+void _EncFish(Item& item, bool firstTime) {
+    Log("prod_fishing.fos::_EncFish(), firstTime = " + firstTime);
+    item.SetEvent(ITEM_EVENT_USE_ON_ME, "_UseItemOnFish");
+    item.SetEvent(ITEM_EVENT_SKILL, "_UseSkillOnFish");
+    if(firstTime)
+        AMOUNT(item) = Random(0, FISH_CAPACITY);
+}
+
+void SpawnFish(Item& item){
+    uint time = Random(FISH_SPAWN_TIME_MIN, FISH_SPAWN_TIME_MAX);
+    CreateTimeEvent(AFTER(REAL_SECOND(time)), "e_SpawnFish", item.Id, false);
+}
+
+void DespawnFish(Item& item) {
+    uint time = Random(FISH_DESPAWN_TICK_MIN, FISH_DESPAWN_TICK_MAX) * FISH_CIRCLING_ANIM_TIME;
+    CreateTimeEvent(AFTER(REAL_MS(time)), "e_DespawnFish", item.Id, false);
+}
+
+void AnimateItemOnceAndDelete(uint mapPid, uint hexX, uint hexY, uint itemPid, uint time, uint duration) {
+    uint[] values = {mapPid, hexX, hexY, itemPid, duration};
+    CreateTimeEvent(AFTER(REAL_MS(time)), "e_animateOnceAndDelete", values, false);
+}
+
+uint e_SpawnFish(array<uint>@ values) {
+    Item@ item = GetItem(values[0]);
+    if (!valid(item))
+        return 0;
+    Map@ map = GetMap(item.MapId);
+    if (!valid(map)) {
+        Log("e_SpawnFish() - Invalid Map");
+        return 0;
+    }
+
+    if (AMOUNT(item) > 0) {
+        AMOUNT(item) = AMOUNT(item) - 1;
+        uint nextTime = Random(FISH_SPAWN_TIME_MIN, FISH_SPAWN_TIME_MAX);
+        Log("e_SpawnFish() , map(id: " + item.MapId + "), item( proto: " + "?" + ", id: " + item.Id + ", [" + item.HexX + ", " + item.HexY + "]"+ "), nextTime = " + nextTime);
+        uint16 fx = item.HexX;
+        uint16 fy = item.HexY;
+        map.MoveHexByDir(fx, fy, DIR_SW, Random(FISH_SPAWN_DISTANCE_MIN, FISH_SPAWN_DISTANCE_MAX));
+
+        Item@ fish = map.AddItem(fx, fy, PID_ITEM_FISH_CIRCLING, 1);
+        /*
+        Log("Fish flags = " + fish.get_Flags() + ", anim flag = " + FLAG( fish.get_Flags(), ITEM_FLAG_SHOW_ANIM));
+        uint flags = fish.get_Flags();
+        SETFLAG(flags, ITEM_FLAG_SHOW_ANIM);
+        //SETFLAG(flags, ITEM_FLAG_SHOW_ANIM_EXT);
+        fish.set_Flags(flags);
+        Log("Fish flags = " + fish.get_Flags() + ", anim flag = " + FLAG( fish.get_Flags(), ITEM_FLAG_SHOW_ANIM));
+        Log("Spawned fish at (" + fx + ", " + fy + "). Remaining: " + AMOUNT(item));
+        Log("Fish - " + fish.AnimWaitBase + ", " + fish.AnimStayBegin + ", " + fish.AnimStayEnd + ", " + fish.AnimHideBegin + ", " + fish.AnimHideEnd + ", " + fish.AnimShowBegin + ", " + fish.AnimShowEnd);
+        Log("Fish - " + fish.Proto.AnimWaitRndMin + ", " + fish.Proto.AnimWaitRndMax + ", " + fish.Proto.AnimStay_0 + ", " + fish.Proto.AnimStay_1 + ", " + fish.Proto.AnimHide_0 + ", " + fish.Proto.AnimHide_1);
+        */
+        DespawnFish(fish);
+        return REAL_SECOND(nextTime);
+    } else {
+        Log("Ran out of fish.");
+        return 0;
+    }
+    //return 0;
+}
+
+uint e_DespawnFish(array<uint>@ values) {
+    Item@ item = GetItem(values[0]);
+    if (!valid(item)) {
+        Log("e_DespawnFish() - Invalid Fish");
+        return 0;
+    }
+    Map@ map = GetMap(item.MapId);
+    if (!valid(map)) {
+        Log("e_DespawnFish() - Invalid Map");
+        return 0;
+    }
+    uint flags = item.get_Flags();
+    SETFLAG(flags, ITEM_FLAG_HIDDEN);
+    item.set_Flags(flags);
+    DeleteItem(item);
+    Log("e_DespawnFish() - Fish (Pid: " + item.Proto.ProtoId + ", " + item.Id + ")");
+    return 0;
+}
+
+class GatherCallback : IGatherCallback
+{
+    void Callback(Item& item, Critter& cr, Item@ usedItem)
+    {
+        cr.Animate(ANIM1_SPEAR, ANIM2_THROW, usedItem, true, true);
+        if(cr.Mode[MODE_HIDE] != 0 && cr.GetAccess() < ACCESS_TESTER)
+            cr.ModeBase[MODE_HIDE] = 0;
+        Map@   map = cr.GetMap();
+        uint16 fx = cr.HexX;
+        uint16 fy = cr.HexY;
+        uint16 fixedStartX = cr.HexX;
+        uint16 fixedStartY = cr.HexY;
+        map.MoveHexByDir(fixedStartX, fixedStartY, DIR_NE, 2);
+        map.MoveHexByDir(fixedStartX, fixedStartY, DIR_NW, 2);
+
+        uint16 dir = cr.Dir;
+        uint16 dist = 25 + Random(0, 10);
+        map.MoveHexByDir(fx, fy, dir, dist);
+        //cr.Wait(1600);
+
+        cr.Say(SAY_NETMSG, "Throwing direction = " + dir + ", range = " + dist);
+
+        uint[] values = { map.Id, fixedStartX, fixedStartY, fx, fy };
+        CreateTimeEvent(AFTER(REAL_MS(800)), "e_FishingSpearFlyAnimation", values, false);
+        cr.PlaySound('W', SOUND_WEAPON_USE, 'O', '1', true);         // '1'?
+    }
+};
+GatherCallback Callback;
+
+void unsafe_SpearFish(Critter& player, int toolId, int itemId, int range, string@ param3, array<int>@ param4) {
+    Log("unsafe_SpearFish - range = " + range);
+    Item@ fishingPool = GetItem(itemId);
+    if (!valid(fishingPool)) {
+        Log("ChangeFishAnimationToCaught - Invalid Item Old Fish");
+        return;
+    }
+    if (player.IsBusy() || player.IsKnockout() || player.IsDead()) {
+        return;
+    }
+    int playerPoolDist = GetDistantion(player.HexX, player.HexY, fishingPool.HexX, fishingPool.HexY);
+    if (playerPoolDist > 1) {
+        player.Say(SAY_NETMSG, "Maybe I should move closer first.");
+        return;
+    }
+    int playerPoolDir = GetDirection(player.HexX, player.HexY, fishingPool.HexX, fishingPool.HexY);
+    player.SetDir(playerPoolDir);
+    if (player.Dir != DIR_SW && player.Dir != DIR_W) {
+        player.Say(SAY_NETMSG, "Maybe I should look where I want to throw the spear at.");
+        return;
+    }
+    uint16 dist = 5;
+    switch (range) {
+        case 1:
+            dist += Random(0, 1);
+            break;
+        case 2:
+            dist += Random(2, 3);
+            break;
+        case 3:
+            dist += Random(4, 6);
+            break;
+        case 4:
+            dist += Random(7, 9);
+            break;
+        case 5:
+            dist += Random(10, 12);
+            break;
+        case 6:
+            dist += Random(13, 17);
+            break;
+        case 7:
+            dist += Random(18, 23);
+            break;
+    }
+    player.EraseTimeEvents(CTE_AGE);
+    player.AddTimeEvent("cte_ThrowFishingSpear", REAL_MS(0), CTE_FISHING_ANIM);
+
+    Map@   map = player.GetMap();
+    if (!valid(map)) {
+        Log("unsafe_SpearFish - Invalid Map");
+        return;
+    }
+    uint16 destX = player.HexX;
+    uint16 destY = player.HexY;
+    uint16 fixedStartX = player.HexX;
+    uint16 fixedStartY = player.HexY;
+    map.MoveHexByDir(fixedStartX, fixedStartY, 0, 2);
+    map.MoveHexByDir(fixedStartX, fixedStartY, 5, 2);
+
+    uint16 dir = player.Dir;
+
+    map.MoveHexByDir(destX, destY, dir, dist);
+
+    player.Say(SAY_NETMSG, "Skill used: Throwing direction = " + dir + ", dist = " + dist);
+
+    uint[] values = { map.Id, fixedStartX, fixedStartY, destX, destY };
+    CreateTimeEvent(AFTER(REAL_MS(800)), "e_FishingSpearFlyAnimation", values, false);
+    //  does the location contain fish?
+    //  20 hex travel time = 08.533 -> 09.233 = 0.7sec, 1 hex travel time = 0.035sec
+    uint animationTimeToWait = 800 + 35 * dist;
+    Item@ fishOnSpot = map.GetItem(destX, destY, PID_ITEM_FISH_CIRCLING);
+    if (valid(fishOnSpot)) {
+        //  spear hit circling fish spot, animate accordingly and give fish to player
+        //AnimateItemOnceAndDelete(map.Id, destX, destY, PID_ITEM_FISH_WATERSPLASH, animationTimeToWait, FISH_WATERSPLASH_ANIM_TIME);
+        ChangeFishAnimationToCaught(map.Id, destX, destY, fishOnSpot.Id, PID_ITEM_FISH_WATERSPLASH, animationTimeToWait, FISH_WATERSPLASH_ANIM_TIME);
+    } else {
+        //  spear missed, big splash in the water
+        AnimateItemOnceAndDelete(map.Id, destX, destY, PID_ITEM_FISH_WATERSPLASH_SMALL2, animationTimeToWait, FISH_WATERSPLASH_ANIM_TIME);
+    }
+    return;
+}
+
+bool _UseItemOnFish(Item& item, Critter& cr, Item@ usedItem) {
+    if(!valid(usedItem))
+        return false;
+    uint16 tool_pid = usedItem.GetProtoId();
+    if(tool_pid == PID_SPEAR || tool_pid == PID_SHARP_SPEAR || tool_pid == PID_SHARPENED_POLE)
+    {
+        return Gather(item, cr, usedItem, PID_RED_CONDOM, __WoodBatch, TEXT_CHOPPED, TEXT_NONE_LEFT, Callback);
+    }
+    return false;
+}
+
+bool _UseSkillOnFish(Item& item, Critter& cr, int skill) {
+
+    cr.Say(SAY_NETMSG, "Using skill on Fish Node, skill = " + skill);
+    //  GM can check or replenish resource, players use skills to transfer magnitude parameter, due to lack of better solution
+    if (skill == SK_LOCKPICK || skill == SK_STEAL || skill == SK_TRAPS || skill == SK_FIRST_AID || skill == SK_DOCTOR || skill == SK_SCIENCE || skill == SK_REPAIR) {
+        uint16 dist = 5;
+        switch (skill) {
+            case SK_LOCKPICK:
+                dist += Random(0, 1);
+                break;
+            case SK_STEAL:
+                dist += Random(2, 3);
+                break;
+            case SK_TRAPS:
+                dist += Random(4, 6);
+                break;
+            case SK_FIRST_AID:
+                dist += Random(7, 9);
+                break;
+            case SK_DOCTOR:
+                dist += Random(10, 12);
+                break;
+            case SK_SCIENCE:
+                dist += Random(13, 17);
+                break;
+            case SK_REPAIR:
+                dist += Random(18, 23);
+                break;
+        }
+        cr.EraseTimeEvents(CTE_AGE);
+        cr.AddTimeEvent("cte_ThrowFishingSpear", REAL_MS(800), CTE_FISHING_ANIM);
+
+        Map@   map = cr.GetMap();
+        if (!valid(map)) {
+            Log("unsafe_SpearFish - Invalid Map");
+            return false;
+        }
+        uint16 destX = cr.HexX;
+        uint16 destY = cr.HexY;
+        uint16 fixedStartX = cr.HexX;
+        uint16 fixedStartY = cr.HexY;
+        map.MoveHexByDir(fixedStartX, fixedStartY, 0, 2);
+        map.MoveHexByDir(fixedStartX, fixedStartY, 5, 2);
+
+        uint16 dir = cr.Dir;
+
+        map.MoveHexByDir(destX, destY, dir, dist);
+
+        cr.Say(SAY_NETMSG, "Skill used: Throwing direction = " + dir + ", dist = " + dist);
+
+        uint[] values = { map.Id, fixedStartX, fixedStartY, destX, destY };
+        CreateTimeEvent(AFTER(REAL_MS(1600)), "e_FishingSpearFlyAnimation", values, false);
+        //  does the location contain fish?
+        //  20 hex travel time = 08.533 -> 09.233 = 0.7sec, 1 hex travel time = 0.035sec
+        uint animationTime = 1600 + 35 * dist;
+        Item@ fishOnSpot = map.GetItem(destX, destY, PID_ITEM_FISH_CIRCLING);
+        if (valid(fishOnSpot)) {
+            //  spear hit circling fish spot, animate accordingly and give fish to player
+            //AnimateItemOnceAndDelete(map.Id, destX, destY, PID_ITEM_FISH_WATERSPLASH, animationTime, FISH_WATERSPLASH_ANIM_TIME);
+            ChangeFishAnimationToCaught(map.Id, destX, destY, fishOnSpot.Id, PID_ITEM_FISH_WATERSPLASH, animationTime, FISH_WATERSPLASH_ANIM_TIME);
+        } else {
+            //  spear missed, big splash in the water
+            AnimateItemOnceAndDelete(map.Id, destX, destY, PID_ITEM_FISH_WATERSPLASH_SMALL2, animationTime, FISH_WATERSPLASH_ANIM_TIME);
+        }
+
+        //return Gather(item, cr, usedItem, PID_RED_CONDOM, __WoodBatch, TEXT_CHOPPED, TEXT_NONE_LEFT, Callback);
+        return true;
+    }
+    return false;
+}
+
+void ChangeFishAnimationToCaught(uint mapId, uint hexX, uint hexY, uint oldFishId, uint newFishPid, uint time, uint animationDuration) {
+    Map@ map = GetMap(mapId);
+    if(!valid(map)) {
+        Log("ChangeFishAnimationToCaught - Invalid Map");
+        return;
+    }
+    Item@ oldFish = GetItem(oldFishId);
+    if (!valid(oldFish)) {
+        Log("ChangeFishAnimationToCaught - Invalid Item Old Fish");
+    } else {
+        CreateTimeEvent(AFTER(REAL_MS(time)), "e_FadeDeleteAnimationItem", oldFishId, false);
+    }
+    AnimateItemOnceAndDelete(mapId, hexX, hexY, newFishPid, time, animationDuration);
+    return;
+}
+
+uint cte_ThrowFishingSpear(Critter& cr, int identifier, uint& rate) {
+    cr.Wait(1600);
+    rate = 0;
+    cr.Animate(ANIM1_SPEAR, ANIM2_THROW, null, true, true);
+    if(cr.Mode[MODE_HIDE] != 0 && cr.GetAccess() < ACCESS_TESTER)
+         cr.ModeBase[MODE_HIDE] = 0;
+    cr.PlaySound('W', SOUND_WEAPON_USE, 'O', '1', true);         // '1'?
+    return 0;
+}
+
+uint e_FishingSpearFlyAnimation(array<uint>@ values) {
+    Map@ map = GetMap(values[0]);
+    if(!valid(map)) {
+        Log("e_FishingSpearFlyAnimation - Invalid Map");
+        return 0;
+    }
+    //cr.Wait(800);
+    map.RunFlyEffect(PID_SPEAR, null, null, values[1], values[2], values[3], values[4]);
+    return 0;
+}
+
+uint e_animateOnceAndDelete(array<uint>@ values) {
+    Map@ map = GetMap(values[0]);
+    if(!valid(map)) {
+        Log("e_animateOnceAndDelete - Invalid Map");
+        return 0;
+    }
+    Item@ item = map.AddItem(values[1], values[2], values[3], 1);
+    if (!valid(item)) {
+        Log("e_animateOnceAndDelete - Invalid Item");
+        return 0;
+    }
+    /*
+    uint flags = item.get_Flags();
+    SETFLAG(flags, ITEM_FLAG_COLORIZE);
+    item.set_Flags(flags);
+    item.Update();
+    */
+    Log("e_animateOnceAndDelete - spawning pid:" + values[3] + " at hex(" + values[1] + ", " + values[2] + ")");
+    CreateTimeEvent(AFTER(REAL_MS(values[4])), "e_DeleteAnimationItem", item.Id, true);
+    return 0;
+}
+
+uint e_FadeDeleteAnimationItem(array<uint>@ values) {
+    Item@ item = GetItem(values[0]);
+    if (!valid(item)) {
+        Log("e_FadeDeleteAnimationItem - Invalid Item");
+        return 0;
+    }
+    Log("e_FadeDeleteAnimationItem - deleting pid:" + item.Proto.ProtoId);
+    DeleteItem(item);
+    return 0;
+}
+
+uint e_DeleteAnimationItem(array<uint>@ values) {
+    Item@ item = GetItem(values[0]);
+    if (!valid(item)) {
+        Log("e_DeleteAnimationItem - Invalid Item");
+        return 0;
+    }
+    Log("e_DeleteAnimationItem - deleting pid:" + item.Proto.ProtoId);
+    /*
+    uint flags = item.get_Flags();
+    SETFLAG(flags, ITEM_FLAG_HIDDEN);
+    item.set_Flags(flags);
+    item.Update();
+    */
+    item.PicMap = GetStrHash("art\\items\\fishing\\fish_pool.fofrm");
+    item.Update();
+    DeleteItem(item);
+    return 0;
+}
+
