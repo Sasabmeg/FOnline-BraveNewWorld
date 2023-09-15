@@ -25,6 +25,9 @@
 #if ANGELSCRIPT_VERSION >= 22900
 funcdef bool SmartValidate( ItemCl& item, ItemCl@ tool );
 #endif
+
+import uint8 GetCurrentAim() from "client_keybinds";
+
 class SmartCollection
 {
     array<uint16>  Items;
@@ -295,8 +298,41 @@ class SmartCursor
             {
                 if( this.clickToolId > 0 && this.clickToolPid > 0 )
                 {
-                    array<uint> click = { CHOSEN_USE_ITEM, this.clickToolId, this.clickToolPid, TARGET_ITEM, this.clickTargetId, USE_USE, 0 };
-                    SetChosenActions( click );
+                    if (this.clickToolPid == PID_SPEAR || this.clickToolPid == PID_SHARP_SPEAR || this.clickToolPid == PID_SHARPENED_POLE) {
+                        CritterCl@ chosen = GetChosen();
+                        if (valid(chosen)) {
+                            int aim = GetCurrentAim();
+                            int range = 0;
+                            switch (aim) {
+                                case HIT_LOCATION_LEFT_LEG:
+                                    range = 1;
+                                    break;
+                                case HIT_LOCATION_RIGHT_LEG:
+                                    range = 2;
+                                    break;
+                                case HIT_LOCATION_GROIN:
+                                case HIT_LOCATION_TORSO:
+                                    range = 3;
+                                    break;
+                                case HIT_LOCATION_LEFT_ARM:
+                                    range = 4;
+                                    break;
+                                case HIT_LOCATION_RIGHT_ARM:
+                                    range = 5;
+                                    break;
+                                case HIT_LOCATION_HEAD:
+                                    range = 6;
+                                    break;
+                                case HIT_LOCATION_EYES:
+                                    range = 7;
+                                    break;
+                            }
+                            RunServerScriptUnsafe("prod_fishing@unsafe_SpearFish", this.clickToolPid, this.clickTargetId, range, null, null);
+                        }
+                    } else {
+                        array<uint> click = { CHOSEN_USE_ITEM, this.clickToolId, this.clickToolPid, TARGET_ITEM, this.clickTargetId, USE_USE, 0 };
+                        SetChosenActions( click );
+                    }
                 }
             }
             else
@@ -342,8 +378,10 @@ void InitSmartCursor() // EXPORT
 {
     smart_cursor.drawLayer = 2; // ugh
 
+
+
     ///// slots /////
-    
+
     array<uint8> slot_all    = { SLOT_HAND1, SLOT_HAND2, SLOT_INV };
     array<uint8> slot_hands  = { SLOT_HAND1, SLOT_HAND2 };
     array<uint8> slot_active = { SLOT_HAND1 };
@@ -357,6 +395,7 @@ void InitSmartCursor() // EXPORT
     array<uint16> tool_mine_3 = { PID_SUPER_SLEDGE };
     array<uint16> tool_junk   = { PID_MULTI_TOOL };
     array<uint16> tool_shovel = { PID_OLD_SHOVEL, PID_SHOVEL };
+    array<uint16> tool_fishingpole  = { PID_SHARP_SPEAR, PID_SPEAR, PID_SHARPENED_POLE };
 
     ///// targets /////
 
@@ -385,6 +424,8 @@ void InitSmartCursor() // EXPORT
     // Should be merged into one pid...
     array<uint16> wood = { PID_TREE1_FIREWOOD, PID_TREE2_FIREWOOD, PID_TREE3_FIREWOOD };
 
+    array<uint16> fishing_pool = { 26770 };
+
     ///// configuration /////
 
     SmartCollection scGraves(          graves,          tool_shovel, slot_all, null, SMART_TEXT, SMART_DIG_GRAVE );
@@ -408,6 +449,7 @@ void InitSmartCursor() // EXPORT
     smart_cursor.Add( SmartCollection( vein_minerals_2, tool_mine_2, slot_all, null, SMART_TEXT, SMART_EXTRACT_MINERALS2 ));
     smart_cursor.Add( SmartCollection( vein_uranium,    tool_mine_3, slot_all, null, SMART_TEXT, SMART_EXTRACT_URANIUM ));
     smart_cursor.Add( SmartCollection( vein_gold,       tool_mine_3, slot_all, null, SMART_TEXT, SMART_EXTRACT_GOLD ));
+    smart_cursor.Add( SmartCollection( fishing_pool,    tool_fishingpole, slot_all, null, SMART_TEXT, SMART_EXTRACT_GOLD ));
 }
 
 void SmartCursorDraw( uint layer ) // EXPORT
