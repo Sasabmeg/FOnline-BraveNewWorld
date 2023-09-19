@@ -32,6 +32,8 @@ so you want the fishing logic to occur only after sanity validations ( enough ap
 #include "production_h.fos"
 #include "utils_h.fos"
 #include "mapdata_h.fos"
+#include "npc_planes_h.fos"
+#include "_npc_pids.fos"
 
 
 #define TEXT_CHOPPED            (3016)
@@ -46,6 +48,10 @@ so you want the fishing logic to occur only after sanity validations ( enough ap
 
 #define FISH_DESPAWN_TICK_MIN           (12)            //  minimum how many animations to finish before despawning the fish
 #define FISH_DESPAWN_TICK_MAX           (18)            //  maximum, the actual value will be random between these two
+
+#define PID_FISH1                       (26760)
+#define PID_FISH2                       (26761)
+#define PID_FISH3                       (26762)
 
 #define PID_ITEM_FISHING_POOL               (26770)
 #define PID_ITEM_FISH_CIRCLING              (26776)
@@ -67,7 +73,7 @@ so you want the fishing logic to occur only after sanity validations ( enough ap
 #define FISH_DEBUG_LOGGING_ALLOWED     (true)
 
 //  BEHOLD THE MOST ADVANCED DEBUG LOGGING TECHNIQUE OF FONLINE 2023
-//  - IT WILL ONLY LOG THE FISHING MODULLE IF 'FISH_DEBUG_LOGGING_ALLOWED' IS SET TO TRUE
+//  - IT WILL ONLY LOG THE FISHING MODULE IF 'FISH_DEBUG_LOGGING_ALLOWED' IS SET TO TRUE
 //  NOTES:
 //  - DISABLE OTHER DEBUG LOGGING TO RREDUCE NOISE
 //  - COMMENT OUT SOME PARTS TO REDUCE SPAM
@@ -346,22 +352,17 @@ bool _UseSkillOnFish(Item& item, Critter& cr, int skill) {
         uint animationTime = 1600 + 35 * dist;
         Item@ fishOnSpot = map.GetItem(destX, destY, PID_ITEM_FISH_CIRCLING);
         if (valid(fishOnSpot)) {
-            //  spear hit circling fish spot, animate accordingly and give fish to player
-            //AnimateItemOnceAndDelete(map.Id, destX, destY, PID_ITEM_FISH_WATERSPLASH, animationTime, FISH_WATERSPLASH_ANIM_TIME);
             ChangeFishAnimationToCaughtAndGiveFish(cr, map.Id, destX, destY, fishOnSpot.Id, PID_ITEM_FISH_WATERSPLASH, animationTime, FISH_WATERSPLASH_ANIM_TIME);
         } else {
-            //  spear missed, big splash in the water
             AnimateItemOnceAndDelete(map.Id, destX, destY, PID_ITEM_FISH_WATERSPLASH_SMALL2, animationTime, FISH_WATERSPLASH_ANIM_TIME);
         }
-
-        //return Gather(item, cr, usedItem, PID_RED_CONDOM, __WoodBatch, TEXT_CHOPPED, TEXT_NONE_LEFT, Callback);
         return true;
     }
     return false;
 }
 
 //  we do not change fish animation, just add a big splash animation
-void ChangeFishAnimationToCaughtAndGiveFish(Critter& cr, uint mapId, uint hexX, uint hexY, uint oldFishId, uint newFishPid, uint time, uint animationDuration) {
+void ChangeFishAnimationToCaughtAndGiveFish(Critter& player, uint mapId, uint hexX, uint hexY, uint oldFishId, uint newFishPid, uint time, uint animationDuration) {
     Map@ map = GetMap(mapId);
     if(!valid(map)) {
         FishLog("ChangeFishAnimationToCaught - Invalid Map");
@@ -377,11 +378,11 @@ void ChangeFishAnimationToCaughtAndGiveFish(Critter& cr, uint mapId, uint hexX, 
 
     map.SetData(MAP_DATA_FISH_SPAWNED, map.GetData(MAP_DATA_FISH_SPAWNED) - 1);
     map.SetData(MAP_DATA_FISH_AVAILABLE, map.GetData(MAP_DATA_FISH_AVAILABLE) - 1);
-    FishLog("Fish Caught! spawned = " + map.GetData(MAP_DATA_FISH_SPAWNED) + ", available = " + map.GetData(MAP_DATA_FISH_AVAILABLE));
+    FishLog("Fish Caught! (spawned = " + map.GetData(MAP_DATA_FISH_SPAWNED) + ", available = " + map.GetData(MAP_DATA_FISH_AVAILABLE) + ")");
 
     //  here one can set up the rewards for hitting a fish spot with spear,
     //  by default this should return a fish, but who knows what you can find in the sea...
-    uint[] rewardValues = {cr.Id, PID_MEAT};
+    uint[] rewardValues = {player.Id, PID_FISH3};
     CreateTimeEvent(AFTER(REAL_MS(time + animationDuration)), "e_giveCaughtItem", rewardValues, false);
 
     AnimateItemOnceAndDelete(mapId, hexX, hexY, newFishPid, time, animationDuration);
@@ -414,7 +415,6 @@ uint e_FishingSpearFlyAnimation(array<uint>@ values) {
         FishLog("e_FishingSpearFlyAnimation - Invalid Map");
         return 0;
     }
-    //cr.Wait(800);
     map.RunFlyEffect(PID_SPEAR, null, null, values[1], values[2], values[3], values[4]);
     return 0;
 }
@@ -430,7 +430,7 @@ uint e_animateOnceAndDelete(array<uint>@ values) {
         FishLog("e_animateOnceAndDelete - Invalid Item");
         return 0;
     }
-    FishLog("e_animateOnceAndDelete - spawning pid:" + values[3] + " at hex(" + values[1] + ", " + values[2] + ")");
+    //FishLog("e_animateOnceAndDelete - spawning pid:" + values[3] + " at hex(" + values[1] + ", " + values[2] + ")");
     CreateTimeEvent(AFTER(REAL_MS(values[4])), "e_DeleteAnimationItem", item.Id, true);
     return 0;
 }
@@ -441,7 +441,7 @@ uint e_FadeDeleteAnimationItem(array<uint>@ values) {
         FishLog("e_FadeDeleteAnimationItem - Invalid Item");
         return 0;
     }
-    FishLog("e_FadeDeleteAnimationItem - deleting pid:" + item.Proto.ProtoId);
+    //FishLog("e_FadeDeleteAnimationItem - deleting pid:" + item.Proto.ProtoId);
     DeleteItem(item);
     return 0;
 }
@@ -452,7 +452,7 @@ uint e_DeleteAnimationItem(array<uint>@ values) {
         FishLog("e_DeleteAnimationItem - Invalid Item");
         return 0;
     }
-    FishLog("e_DeleteAnimationItem - deleting pid:" + item.Proto.ProtoId);
+    //FishLog("e_DeleteAnimationItem - deleting pid:" + item.Proto.ProtoId);
     item.PicMap = GetStrHash("art\\items\\fishing\\fish_pool.fofrm");
     item.Update();
     DeleteItem(item);
@@ -479,7 +479,7 @@ uint e_DespawnFish(array<uint>@ values) {
     SETFLAG(flags, ITEM_FLAG_HIDDEN);
     item.set_Flags(flags);
     DeleteItem(item);
-    FishLog("Despawned Fish (Pid: " + item.Proto.ProtoId + ", " + item.Id + ")");
+    //FishLog("Despawned Fish (Pid: " + item.Proto.ProtoId + ", " + item.Id + ")");
     return 0;
 }
 
@@ -490,9 +490,55 @@ uint e_giveCaughtItem(array<uint>@ values) {
         return 0;
     }
     player.AddItem(values[1], 1);
-    player.Say(SAY_NETMSG, "I caught some " + values[1] + "!");
-    FishLog("e_giveCaughtItem - Player (" + player.Id + ", " +  player.Name + "), Reward pid = " + values[1]);
+    player.Say(SAY_NETMSG, "I caught something !");
+    FishLog("CATCH!!! - Player (" + player.Id + ", " +  player.Name + "), Reward (pid = " + values[1] + ")");
+    uint level = player.Stat[ST_LEVEL];
+
+    //  lower level players have less change to trigger gecko
+    uint rollSpawn = Random(1, 100);
+    FishLog("Gecko Spawn roll = " + rollSpawn);
+    if (rollSpawn < CLAMP(10 + level / 3, 1, 20)) {
+        uint[] geckoPids = {NPC_PID_LittleGecko, NPC_PID_ToughLilGecko, NPC_PID_GoldenGecko, NPC_PID_ToughGoldenGecko, NPC_PID_FireGecko, NPC_PID_ToughFireGecko};
+        uint[] geckoChances = {25, 40, 55, 70, 85, 95};
+        uint level = player.Stat[ST_LEVEL];
+        //  lower level players spawn lower strength gecko
+        uint roll = Random(CLAMP(level, 1, 25), CLAMP(level, 1, 75) + 50);
+        uint geckoIndex = 0;
+        uint i = 0;
+        while (i < 6 && roll > geckoChances[i]) {
+            i++;
+            if (i < 6 && roll > geckoChances[i]) {
+                geckoIndex = i;
+            }
+        }
+        FishLog("Gecko Spawn Strength: roll = " + roll + ", geckoIndex = " + geckoIndex);
+        spawnGecko(player, player.GetMap(), geckoPids[geckoIndex]);
+    }
     return 0;
+}
+
+void spawnGecko(Critter& player, Map& map, uint mobPid) {
+    if (!valid(map)) {
+        FishLog("spawnGecko() - Invalid Map");
+        return;
+    }
+    if (!valid(player)) {
+        FishLog("spawnGecko - Invalid player");
+        return;
+    }
+    int[] params = {
+        ST_TEAM_ID, 0,
+        ST_NPC_ROLE, 0,
+        ST_REPLICATION_TIME, REPLICATION_NEVER
+    };
+    Critter@ gecko = map.AddNpc(mobPid, player.HexX - Random(5, 10), player.HexY - Random(5, 10), 5, params, null, "mob@critter_init");
+    if(valid(gecko))
+    {
+        gecko.SpawnedBy = player.Id;
+        gecko.AddEnemyInStack(player.Id);
+        AddAttackPlane(gecko, 0, player);
+        //gecko.Say(SAY_NORM, "Gonna eat all your fish " + GetCritter(gecko.SpawnedBy).Name + "!");
+    }
 }
 
 
