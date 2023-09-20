@@ -1,506 +1,374 @@
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         
 
-import Location@GetLocationOf(Critter&critter)from"utils";
-import string GetLocationName(uint locId)from"utils";
-import string GetLocationName(Location@loc)from"utils";
-import bool ReadPids(array<int>&out pids,bool removeinvalid)from"utils";
-import void ReadDefines(string@fileName,dictionary&items,array<string>@defines)from"utils";
-import void ReadMsgStrings(string&fileName,dictionary&output)from"utils";
-import bool ParseDefine(const string&in line,string&out spid,int&out id)from"utils";
-import int SkipWhitespaces(const string&in str,int start)from"utils";
-import int SkipNonWhitespaces(const string&in str,int start)from"utils";
-import bool IsParameterTag(string&str)from"utils";
-import string GetParameterString(array<string@>@arr,string&parameter)from"utils";
-import int GetIndexOfString(array<string@>@arr,string&str)from"utils";
-import string GetConcatenatedString(array<string@>@arr,uint startindex,int stopindex)from"utils";
-import string GetMsgStr(int textMsg,uint strNum)from"utils";
-import string GetConditionOfCritter(Critter@cr)from"utils";
-import string GetExtConditionOfCritter(Critter@cr)from"utils";
-import uint GetAllOnlinePlayers(array<Critter@>&out players)from"utils";
-import uint GetAuthenticatedPlayers(array<Critter@>&out players)from"utils";
-import uint GetAuthenticatedPlayers(array<Critter@>&out players,bool ignorePriviledges)from"utils";
-import uint GetNumberOfPlayersOnline()from"utils";
-import void SetTurnBasedAvailability(Location@loc)from"utils";
-import bool IsEncounterMap(Map@map)from"utils";
-import bool IsTown(Map@map)from"utils";
-import uint GetMapType(Map@map)from"utils";
-import void LockDoor(uint x,uint y,Map@map,uint complexity,uint lockid)from"utils";
-import void UnlockDoor(uint x,uint y,Map@map)from"utils";
-import void ClearContainer(Item@container)from"utils";
-import void MoveItemsCritterToCont(Critter&crFrom,Item&contTo,uint specid)from"utils";
-import string GetCritterInfo(Critter&cr)from"utils";
-import bool AddExpTeam(Critter&critter,int xp)from"utils";
-import void ClearEnemyStack(Critter&critter)from"utils";
-import void ClearEnemyStacksOnMap(Map@map)from"utils";
-import bool IsCurrentEnemy(Critter&cr,uint targetId)from"utils";
-import string@GetSafePlayerName(uint id)from"utils";
-import string GetSafePlayerName(uint id,string&onSuccess,string&onError)from"utils";
-import IDateTime@GetCurrentDateTime()from"utils";
-import string GetCurrentDateTimeString()from"utils";
-import string GetCurrentDateTimeString(bool date,bool time)from"utils";
-import Critter@GetMostSkilled(array<Critter@>@group,int skill)from"utils";
-import string GetAuthString(Critter&player)from"utils";
-import string GetAuthString(int accesslevel)from"utils";
-import bool CanRequestHelp(Critter&player)from"utils";
-import void SetRequestedHelp(Critter&player)from"utils";
-import void SetRequestedHelp(Critter&player,int minutes)from"utils";
-import Critter@GetOnlineGM()from"utils";
-import void Preprocess(Critter&player,string&commandString)from"utils";
-import bool IsHumanoid(Critter@cr)from"utils";
-import uint GetGroupIndex(Critter&cr)from"utils";
-import uint GetGroupIndex(int st)from"utils";
-import void SetGroupIndex(Critter&cr,uint val)from"utils";
-import uint GetGroupRank(Critter&cr)from"utils";
-import void SetGroupRank(Critter&cr,uint val)from"utils";
-import uint GetGroupMode(Critter&cr)from"utils";
-import void SetGroupMode(Critter&cr,uint val)from"utils";
-import void SetGroupInfo(Critter&cr,uint faction,uint rank,uint mode)from"utils";
-import void SetGroupInfoPack(Critter&cr,uint packInfo)from"utils";
-import void ClearEvents(Critter&cr)from"utils";
-import void MapRefreshVisible(Map@map,uint hexX,uint hexY,uint radius)from"utils";
+import uint8 GetCurrentAim()from"client_keybinds";
 
-import int GetGvar(uint gvar)from"utils";
-import void SetGvar(uint gvar,uint value)from"utils";
-import int GetLLvar(Location&location,uint llvar)from"utils";
-import int GetLLvar(uint locationId,uint llvar)from"utils";
-import void SetLLvar(Location&location,uint llvar,uint value)from"utils";
-import int GetLMvar(Map&map,uint llvar)from"utils";
-import int GetLMvar(uint mapId,uint llvar)from"utils";
-import void SetLMvar(Map&map,uint llvar,uint value)from"utils";
-import int GetLIvar(Item&item,uint llvar)from"utils";
-import int GetLIvar(uint itemId,uint llvar)from"utils";
-import void SetLIvar(Item&item,uint llvar,uint value)from"utils";
-import int GetLvar(Critter&critter,uint lvar)from"utils";
-import int GetLvar(uint id,uint lvar)from"utils";
-import void SetLvar(Critter&critter,uint lvar,uint value)from"utils";
-import void SetLvar(uint id,uint lvar,uint value)from"utils";
-import int GetUvar(uint uvar,uint key,uint index)from"utils";
-import void SetUvar(uint uvar,uint key,uint index,uint value)from"utils";
-import void SetLLvar(uint locationId,uint llvar,uint value)from"utils";
-
-import uint GetContainerValue(Item@container)from"utils";
-import uint BaseItemValue(uint pid,bool ammo)from"utils";
-import uint BaseItemValue(uint pid,uint broken,uint det,bool ammo)from"utils";
-import uint BaseItemValue(Item@item)from"utils";
-import uint BaseItemValue(Item@item,uint proc)from"utils";
-import uint BaseSingleItemValue(Item@item)from"utils";
-import uint BaseSingleItemValue(Item@item,uint proc)from"utils";
-
-import void SetBloodType(Critter@cr)from"utils";
-import string GetBloodType(Critter@cr)from"utils";
-import string GetBloodRandom()from"utils";
-
-import void LogCommandUsage(Critter&player,string&commandString)from"utils";
-import void DropTimeouts(Critter&cr)from"utils";
-
-import bool HasItem(Critter@cr,uint pid)from"utils";
-import bool HasSomeWeapon(Critter@cr)from"utils";
-import uint GetBestWeaponSkill(Critter@cr)from"utils";
-import void GiveBag(uint bag,Critter@cr)from"utils";
-import void SetQuestGarbager(uint time,uint playerid,uint locid,uint var,uint val)from"utils";
-import Critter@AddNpc(Map@map,uint16 pid,uint16 x,uint16 y,uint8 dir,uint dialogId,string&script,uint aiPack,uint bagId,uint teamId,bool isMob,uint level)from"utils";
-import Critter@AddNpc(Map@map,uint16 pid,uint16 x,uint16 y,uint8 dir,uint dialogId,string&script,uint aiPack,uint bagId,uint teamId,uint factionRank,uint factionMode,bool isMob,uint level)from"utils";
-import Critter@AddNpc(Map@map,uint16 pid,uint16 x,uint16 y,uint8 dir,array<int>params,uint dialogId,string&script,uint aiPack,uint bagId,uint teamId,bool isMob,uint level)from"utils";
-import Critter@AddNpc(Map@map,uint16 pid,uint16 x,uint16 y,uint8 dir,array<int>params,uint dialogId,string&script,uint aiPack,uint bagId,uint teamId,uint factionRank,uint factionMode,bool isMob,uint level)from"utils";
-import void AddScore(Critter@cr,uint score,uint points)from"utils";
-
-import bool ReloadWeapon(Critter&cr)from"utils";
-import Item@GetRadio(Critter&cr)from"utils";
-import Item@GetRepairTool(Critter&cr)from"utils";
-import Item@GetEquippedItem(Critter&cr,uint Pid)from"utils";
-import Item@GetEquippedItem(Critter&cr,array<uint>&Pids)from"utils";
-import Item@GetEquippedItemByType(Critter&cr,uint ItemType)from"utils"; 
-
-import bool SkillRoll(Critter@cr,int skill,int bonus)from"utils";
-import int SkillCheck(Critter&cr,int skill,int skillused,Item@item,int bonus)from"utils";
-import string SkillName(uint8 skill)from"utils";
-import void ChangeCrTypeSafe(Critter&cr,uint16 crType)from"utils";
-
-import bool Pickable(Item@item)from"utils";
-
-import void TransferItemsToContOnMap(Critter&cr,Map@map,int entid,int contpid,int itemtypes)from"utils";
-import void TransferItemsFromContOnMap(Critter&cr,Map@map,int entid,int contpid)from"utils";
-
-import string IpToString(uint ip)from"utils";
-
-import void VerboseAction(Critter&cr,string&text)from"utils";
-import void VerboseAction(Critter&cr,Critter&target,string&text)from"utils";
-import void VerboseExperience(Critter&cr,int xpDiff,int levelDiff)from"utils";
-
-import void SetChosenActions(Critter&cr,array<int>&actions)from"utils";
-
-import void HexLine(uint16 x0,uint16 y0,uint16 x1,uint16 y1,array<uint16>@xList,array<uint16>@yList)from"utils";
-import void HexCircle(uint16 x0,uint16 y0,uint16 radius,array<uint16>@xList,array<uint16>@yList)from"utils";
-
-import bool FindPreferredGridApprox(Map&map,uint16&hx,uint16&hy)from"utils";           
-
-import bool StrToInt(string@s,uint64&inout val)from"strtoint";
-import bool StrToInt(string@s,uint&inout val)from"strtoint";
-import bool StrToInt(string@s,uint16&inout val)from"strtoint";
-import bool StrToInt(string@s,uint8&inout val)from"strtoint";
-import bool StrToInt(string@s,int64&inout val)from"strtoint";
-import bool StrToInt(string@s,int16&inout val)from"strtoint";
-import bool StrToInt(string@s,int8&inout val)from"strtoint";    
-
-import int FindInArray(array<int>&arr,int value)from"utils";
-import int FindInArray(array<uint>&arr,uint value)from"utils";
-import int FindInArray(array<uint16>&arr,uint16 value)from"utils";
-import int FindInArray(array<uint8>&arr,uint8 value)from"utils";
-import bool FindInArray(array<int>&arr,int id,int&index)from"utils";
-import bool FindInArray(array<uint>&arr,uint id,int&index)from"utils";
-import bool FindInArray(array<uint8>&arr,uint8 id,int&index)from"utils";
-import int FindInArray(array<string>&arr,string&value)from"utils";
-import int FindInArray(array<string@>@arr,string&value)from"utils";
-import bool Present(int what,array<int>&where)from"utils";
-import bool Present(uint what,array<uint>&where)from"utils";
-import bool Present(uint16 what,array<uint16>&where)from"utils";
-import bool Present(string&what,array<string>&where)from"utils";
-import bool Present(string&what,array<string@>@where)from"utils";
-
-import uint CreateLocationForGroup(Critter&player,uint16 pid,uint16 worldX,uint16 worldY,array<Critter@>&)from"utils";
-import bool FindFirstFreeHex(Map@map,uint16&x,uint16&y,uint8 dir,uint16 maxSteps)from"utils";
-import bool FindNearestFreeHex(Map&map,uint16&x,uint16&y,uint radius)from"utils";
-
-import bool GetItemCoordinates(Item&item,uint&mapID,uint16&x,uint16&y)from"utils";
-import bool ItemOnHex(uint16 pid,Map@map,uint16 x,uint16 y)from"utils";
-
-import void PrintCallstack()from"utils";
-import void PrintCallstack(int level)from"utils";
-
-import bool LocationHasCritters(Location&loc,uint findType)from"utils";
-import uint LocationGetCritters(Location&loc,uint findType,array<Critter@>@critters)from"utils";
-import bool LocationHasItems(Location&loc,uint16 protoId)from"utils";
-import uint LocationGetItems(Location&loc,uint16 protoId,array<Item@>@items)from"utils";
-import void LocationDeleteItems(Location&loc,uint16 protoId)from"utils";
-
-import bool IsDisposableEncounter(Location@loc)from"utils"; 
-
-shared class CPosition
+class SmartCollection
 {
-	uint x;
-	uint y;
-	uint dir;
-};
-
-shared interface IRect
-{
-	bool IsWithin(Critter&cr);
-};
-
-shared class Rect:IRect
-{
-	uint x1;
-	uint y1;
-	uint x2;
-	uint y2;
+	array<uint16>Items;
+	array<uint16>Tools;
+	array<uint8>Slots;
+	string Text;    
 	
-	Rect(uint x1,uint y1,uint x2,uint y2)
+	SmartCollection(array<uint16>&items,array<uint8>&slots,string@text,uint msg,uint idx)
 	{
-		this.x1=x1;
-		this.y1=y1;
-		this.x2=x2;
-		this.y2=y2;
-	}
+		Items=items;
+		Tools.resize(0);
+		Slots=slots;
+		
+		if((@text!=null))
+		Text=text;
+		else
+		Text=GetMsgStr(msg,idx);
+	} 
 	
-	bool IsWithin(Critter&cr)
+	SmartCollection(array<uint16>&items,array<uint16>&tools,array<uint8>&slots,string@text,uint msg,uint idx)
 	{
-		return((cr.HexX>=this.x1&&cr.HexX<=this.x2)&&(cr.HexY>=this.y1&&cr.HexY<=this.y2));
+		Items=items;
+		Tools=tools;
+		Slots=slots;
+		
+		if((@text!=null))
+		Text=text;
+		else
+		Text=GetMsgStr(msg,idx);
 	}
-};
-
-shared interface IDateTime
-{
-	uint16 get_Year();
-	uint16 get_Month();
-	uint16 get_DayOfWeek();
-	uint16 get_Day();
-	uint16 get_Hour();
-	uint16 get_Minute();
-	uint16 get_Second();
-	uint16 get_Milliseconds();
-	string@ToString();
-};                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             
-
-shared class Entire
-{
-	int Number;
-	uint16 HexX;
-	uint16 HexY;
-	uint8 Direction;
-};
-
-uint ParseEntires(Map&map,array<Entire>&entires,int number)
-{
-	uint oldCount=entires.length();
-	uint count=map.CountEntire(number);
-	entires.resize(oldCount+count);
-	
-	for(uint i=0;i<count;i++)
-	{
-		Entire@ent=entires[oldCount+i];
-		if(map.GetEntireCoords(number,i,ent.HexX,ent.HexY,ent.Direction)==false)
-		return 0;
-		ent.Number=number;
-	}
-	
-	return count;
 }
 
-bool IsEntireFree(uint mappid,int number)
+class SmartCursor
 {
-	Map@map=GetMapByPid(mappid,0);
-	return IsEntireFree(map,number);
-}
-
-bool IsEntireFree(Map&map,int number)
-{
-	uint16 x,y;
-	x=0;
-	y=0;
-	return GetEntireFreeHex(map,number,x,y);
-}
-
-bool GetEntireFreeHex(Map&map,int number,uint16&hx,uint16&hy,uint skip=0)
-{
-	uint count=map.CountEntire(number); 
+	uint drawLayer; 
 	
-	for(uint i=skip;i<count;i++)
+	bool drawInfo;
+	bool drawInfoTool;
+	int drawInfoOffsetX;
+	int drawInfoOffsetY;
+	uint drawInfoColor;
+	int drawInfoFont;
+	int drawInfoFlags; 
+	
+	bool drawTool;
+	int drawToolOffsetX;
+	int drawToolOffsetY;
+	uint drawToolSize; 
+	
+	array<SmartCollection>collections; 
+	
+	private uint clickTargetId;
+	private uint clickTargetPid;
+	private uint16 clickTargetHexX;
+	private uint16 clickTargetHexY;
+	private bool clickTool;
+	private uint clickToolId;
+	private uint16 clickToolPid;
+	
+	SmartCursor()
 	{
-		if(map.GetEntireCoords(number,i,hx,hy)&&map.IsHexPassed(hx,hy))
-		return true;
+		this.drawLayer=3;
+		this.DrawInfo(true);
+		this.DrawTool(true);
+		
+		this.ClickReset();
+	}    
+	
+	void DrawInfo(bool enable,bool toolName=true,int offsetX=2,int offsetY=-12,uint color=0,int font=5,int flags=0x0200)
+	{
+		this.drawInfo=enable;
+		this.drawInfoTool=toolName;
+		this.drawInfoOffsetX=offsetX;
+		this.drawInfoOffsetY=offsetY;
+		this.drawInfoColor=color;
+		this.drawInfoFont=font;
+		this.drawInfoFlags=flags;
 	}
 	
-	if(hx==0||hy==0||hx>=map.GetWidth()-1||hy>=map.GetHeight()-1)
-	return false; 
-	
-	for(uint i=0;i<count;i++)
+	void DrawTool(bool enable,int offsetX=3,int offsetY=5,uint size=45)
 	{
-		if(map.GetEntireCoords(number,i,hx,hy))
+		this.drawTool=enable;
+		this.drawToolOffsetX=offsetX;
+		this.drawToolOffsetY=offsetY;
+		this.drawToolSize=size;
+	}    
+	
+	void Add(SmartCollection&collection)final
+	{
+		this.collections.insertLast(collection);
+		
+		if(this.collections.last().Text=="error")
+		this.collections.last().Text="";
+	}   
+	
+	private ItemCl@FindTool(CritterCl&chosen,SmartCollection&collection)
+	{
+		uint slotsLength=collection.Slots.length();
+		
+		if(slotsLength==0)
+		return null;
+		
+		for(uint s=0;s<slotsLength;s++)
 		{
-			for(int x=-1;x<=1;x++)
+			array<ItemCl@>items;
+			uint count=chosen.GetItems(collection.Slots[s],items); 
+			
+			for(uint i=0;i<count;i++)
 			{
-				for(int y=-1;y<=1;y++)
+				if(collection.Tools.find(items[i].Proto.ProtoId)>=0)
+				return items[i];
+			}
+		}
+		
+		return null;
+	}         
+	
+	void Draw(uint layer)
+	{
+		CritterCl@chosen=GetChosen();
+		if((@chosen!=null))
+		this.Draw(layer,chosen);
+	}
+	
+	void Draw(uint layer,CritterCl&chosen)
+	{
+		
+		if(layer!=this.drawLayer)
+		return; 
+		
+		this.ClickReset();
+		
+		if(this.drawTool)
+		__HideCursor=false;
+		
+		if(GetCurrentMapPid()>0&&GetCurrentCursor()==(0))
+		{
+			
+			ItemCl@item=GetMonitorItem(__MouseX,__MouseY,false);
+			if((@item!=null)&&(((item.Flags)&((0x10000000)))!=0))
+			{
+				
+				uint itemPid=item.Proto.ProtoId;
+				for(uint c=0,cLen=this.collections.length();c<cLen;c++)
 				{
-					if(x==0&&y==0)
-					continue;
-					if(__MapHexagonal)
-					{
-						if((hx%2)==1&&((x==-1&&y==1)||(x==1&&y==1)))
-						continue;
-						if((hx%2)==0&&((x==-1&&y==-1)||(x==1&&y==-1)))
-						continue;
-					}
-					
-					if(map.IsHexPassed(hx+x,hy+y))
-					{
-						hx+=x;
-						hy+=y;
-						return true;
+					SmartCollection collection=this.collections[c];
+					if(collection.Items.find(itemPid)>=0)
+					{ 
+						
+						bool needTool=(collection.Tools.length()>0);
+						ItemCl@tool;
+						if(needTool)
+						@tool=this.FindTool(chosen,collection);
+						
+						if(!needTool||(needTool&&(@tool!=null)))
+						{        
+							
+							if(this.drawInfo)
+							{
+								string txt=collection.Text; 
+								
+								if(tool.Proto.ProtoId==(7)||tool.Proto.ProtoId==(280)||tool.Proto.ProtoId==(320)){
+									txt="Throw wherever";
+									if((@chosen!=null)){
+										int aim=GetCurrentAim();
+										switch(aim){
+											case(6):
+											txt="Throw even closer";
+											break;
+											case(5):
+											txt="Throw close";
+											break;
+											case(8):
+											case(4):
+											txt="Throw not too far";
+											break;
+											case(2):
+											txt="Throw far";
+											break;
+											case(3):
+											txt="Throw further";
+											break;
+											case(1):
+											txt="Throw even further";
+											break;
+											case(7):
+											txt="Throw as far you can";
+											break;
+										}
+									}
+								}
+								
+								if(txt.length()>0)
+								{
+									if(needTool&&this.drawInfoTool)
+									{
+										string txtTool=GetMsgStr((2),tool.Proto.ProtoId*100+tool.Info);
+										if(txtTool!="error")
+										txt+=" ("+txtTool+")";
+									}
+									
+									DrawText(txt,__MouseX+this.drawInfoOffsetX,__MouseY+this.drawInfoOffsetY,0,0,this.drawInfoColor,this.drawInfoFont,this.drawInfoFlags);
+								}
+							} 
+							
+							if(needTool&&this.drawTool)
+							{
+								uint spriteId=LoadSprite(tool.PicInv>0?tool.PicInv:tool.Proto.PicInv,tool.Dir);
+								if(spriteId>0)
+								{
+									__HideCursor=true;
+									DrawSprite(spriteId,-1,__MouseX+this.drawToolOffsetX,__MouseY+this.drawToolOffsetY,this.drawToolSize,this.drawToolSize,true,false,0);
+								}
+							}  
+							
+							if(needTool)
+							{
+								this.clickTool=true;
+								this.clickToolId=tool.Id;
+								this.clickToolPid=tool.Proto.ProtoId;
+							}
+							this.clickTargetId=item.Id;
+							this.clickTargetPid=item.Proto.ProtoId;
+							this.clickTargetHexX=item.HexX;
+							this.clickTargetHexY=item.HexY;
+							
+							return;
+						}
 					}
 				}
 			}
 		}
-	}
-	return false;
-}
-
-bool GetNearEntire(Map&map,int number,uint16&hx,uint16&hy)
-{
-	uint16 hxBase=hx;
-	uint16 hyBase=hy;
+	}    
 	
-	array<Entire>entires;
-	uint count=ParseEntires(map,entires,number);
-	if(count==0)
-	return false;
-	
-	hx=entires[0].HexX;
-	hy=entires[0].HexY;
-	for(uint i=1;i<count;i++)
+	void ClickReset()
 	{
-		Entire@ent=entires[i];
-		if(GetDistantion(hxBase,hyBase,ent.HexX,ent.HexY)<GetDistantion(hxBase,hyBase,hx,hy))
+		this.clickTool=false;
+		this.clickTargetId=this.clickTargetPid=this.clickTargetHexX=this.clickTargetHexY=0;
+		this.clickToolId=this.clickToolPid=0;
+	}    
+	
+	bool Click(int click)
+	{
+		if(GetCurrentCursor()==(0)&&click==(0)&&this.clickTargetId>0)
 		{
-			hx=ent.HexX;
-			hy=ent.HexY;
-		}
-	}
-	
-	return true;
-}
-
-bool GetNearEntire(Map&map,int number,uint16&hx,uint16&hy,uint8&dir)
-{
-	uint16 hxBase=hx;
-	uint16 hyBase=hy;
-	
-	array<Entire>entires;
-	uint count=ParseEntires(map,entires,number);
-	if(count==0)
-	return false;
-	
-	hx=entires[0].HexX;
-	hy=entires[0].HexY;
-	dir=entires[0].Direction;
-	for(uint i=1;i<count;i++)
-	{
-		Entire@ent=entires[i];
-		if(GetDistantion(hxBase,hyBase,ent.HexX,ent.HexY)<GetDistantion(hxBase,hyBase,hx,hy))
-		{
-			hx=ent.HexX;
-			hy=ent.HexY;
-			dir=ent.Direction;
-		}
-	}
-	
-	return true;
-}                                                                                                                                                                
-
-import void AddReputation(Critter@cr,uint index,int val)from"reputations";
-import void SubReputation(Critter@cr,uint index,int val)from"reputations";
-import void AddReputation(Critter@cr,uint index,int val,int cap)from"reputations";
-import void SubReputation(Critter@cr,uint index,int val,int cap)from"reputations";
-import uint ReputationIndex(uint locid)from"reputations";
-import void ProcessProfitReputation(Critter@cr,uint index,int profit)from"reputations";
-
-import void InitGroups()from"reputations_modifiers";
-import void ApplyReputationModifiers(Critter&cr,uint index)from"reputations_modifiers";
-import void ApplyReputationModifiers(Critter&cr,uint index,float fraction)from"reputations_modifiers";
-import void ApplyReputationModifiers(Critter&cr,uint index,int num,int den)from"reputations_modifiers";
-import int GetReputationModifier(uint fac1,uint fac2)from"reputations_modifiers";
-import int GetGroupsStatus(uint fac1,uint fac2)from"reputations_modifiers";
-import int GetGroupsStatus(Critter&c1,Critter&c2)from"reputations_modifiers";
-import void ReputationsInit(Critter&cr)from"reputations_modifiers";
-import void FeedReputations(Critter@cr,uint index,int cap)from"reputations_modifiers";       
-
-bool d_IsOngoing(Critter&player,Critter@npc)
-{
-	player.Say((11),"d_IsOngoing - LVAR_q_lp_caravan_box = "+GetLvar(player,(6502)));
-	return(GetLvar(player,(6502))>=(1));
-}
-
-bool d_NotStarted(Critter&player,Critter@npc)
-{
-	player.Say((11),"d_NotStarted - LVAR_q_lp_caravan_box = "+GetLvar(player,(6502)));
-	return(GetLvar(player,(6502))==(0));
-}
-
-bool d_IsDone(Critter&player,Critter@npc)
-{
-	player.Say((11),"d_IsDone - LVAR_q_lp_caravan_box = "+GetLvar(player,(6502)));
-	return GetLvar(player,(6502))>(3);
-}
-
-void r_StartQuest(Critter&player,Critter@npc)
-{
-	SetLvar(player,(6502),(1));
-	player.Say((11),"r_StartQuest - LVAR_q_lp_caravan_box = "+GetLvar(player,(6502)));
-}
-
-void r_CompleteQuest(Critter&player,Critter@npc)
-{
-	player.Say((11),"r_CompleteQuest - LVAR_q_lp_caravan_box = "+GetLvar(player,(6502)));
-	player.AddItem((41),250);
-	player.StatBase[(76)]+=300;
-	
-	SetLvar(player,(6502),(0));
-}    
-
-Critter@GetCaravanOfficer(Map@map)
-{
-	Critter@npc=map.GetNpc((50),((0x01)|(0x02)|(0x04))|(0x20),0);
-	if(!(@npc!=null))
-	{
-		{;};
-		return null;
-	}
-	return npc;
-}      
-
-void _OnDropBox(Item&item,Critter&player)
-{
-	Map@map=player.GetMap();
-	
-	Critter@caravanOfficer=GetCaravanOfficer(map);
-	if(!(@caravanOfficer!=null))
-	{
-		DeleteItem(item);
-		return;
-	}
-	
-	array<Entire>entires;
-	ParseEntires(map,entires,(110));
-	for(uint i=0;i<entires.length();i++)
-	{
-		if((entires[i].HexX==item.HexX)&&(entires[i].HexY==item.HexY))
-		{
-			GameVar@var=GetLocalVar((6502),player.Id);
-			if((@var!=null)){
-				var+=1;
-			}
-			if(var>(3)){
-				int boxesLeft=(3)+1-var.GetValue();
-				player.Say((11),"You've unloaded a caravan box. There is only "+boxesLeft+" more to go.");
-				player.Say((6),"*phew*");
-			}else{
-				player.Say((11),"You've unloaded all the caravan boxes, speak to the caravan packer.");
-				player.Say((6),"*stretches back*");
-			}
-			{;};
-			DeleteItem(item);
-			return;
-		}
-	}
-	if(player.GetMapId()==caravanOfficer.GetMapId())
-	{
-		caravanOfficer.Say((4),"You idiot, you can't drop it there!");
-	}
-	DeleteItem(item);
-}   
-
-void _BoxInit(Item&box,bool firstTime)
-{
-	box.SetEvent((5),"lp_caravanPacker@_OnDropBox");
-}   
-
-bool _OnUseCaravan(Critter&player,Scenery&scen,int skill,Item@item)
-{
-	
-	if(skill!=-1)
-	return false;
-	
-	if((@player!=null))
-	{
-		
-		Critter@caravanOfficer=GetCaravanOfficer(player.GetMap());
-		
-		if((@caravanOfficer!=null)&&(GetLvar(player,(6502))>=(1)))
-		{
-			if(GetLvar(player,(6502))>(3))
+			if(this.clickTool)
 			{
-				player.Say((11),"You've completed the task assigned, speak to the caravan packer.");
-				return false;
+				if(this.clickToolId>0&&this.clickToolPid>0)
+				{
+					
+					if(this.clickToolPid==(7)||this.clickToolPid==(280)||this.clickToolPid==(320)){
+						int aim=GetCurrentAim();
+						int range=0;
+						switch(aim){
+							case(6):
+							range=1;
+							break;
+							case(5):
+							range=2;
+							break;
+							case(8):
+							case(4):
+							range=3;
+							break;
+							case(2):
+							range=4;
+							break;
+							case(3):
+							range=5;
+							break;
+							case(1):
+							range=6;
+							break;
+							case(7):
+							range=7;
+							break;
+						}
+						RunServerScriptUnsafe("prod_fishing@unsafe_SpearFish",this.clickToolPid,this.clickTargetId,range,null,null);
+					}else{
+						array<uint>click={(6),this.clickToolId,this.clickToolPid,(3),this.clickTargetId,(4),0};
+						SetChosenActions(click);
+					}
+				}
 			}
-			
-			if(player.CountItem((9626))>0)
-			{
-				player.Say((11),"You've already picked up a box, you can't carry two.");
-				return false;
-			}
-			
-			player.Say((11),"You've picked up a box from the caravan cart");
-			Item@item=player.AddItem((9626),1);
-			if((@item!=null))
-			item.SetEvent((5),"lp_caravanPacker@_OnDropBox");
-		}
-		else
-		{
-			if((@caravanOfficer!=null))
-			caravanOfficer.Say((4),"Don't touch that!");
 			else
-			player.Say((11),"Don't touch that!");
-			return false;
+			{
+				array<uint>click={(14),this.clickTargetPid,this.clickTargetHexX,this.clickTargetHexY};
+				SetChosenActions(click);
+			}
+			return(true);
 		}
+		
+		return(false);
 	}
-	return true;
+};                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            
+
+SmartCursor smart_cursor();       
+
+void InitSmartCursor()
+{
+	smart_cursor.drawLayer=2;    
+	
+	array<uint8>slot_all={(1),(2),(0)};
+	array<uint8>slot_hands={(1),(2)};
+	array<uint8>slot_active={(1)};  
+	
+	array<uint16>tool_knife={(319),(4),(45),(236),(517),(522)};
+	array<uint16>tool_axe={(1863),(543)};
+	array<uint16>tool_mine_1={(1863),(6),(115)};
+	array<uint16>tool_mine_2={(6),(115)};
+	array<uint16>tool_mine_3={(115)};
+	array<uint16>tool_junk={(75)};
+	array<uint16>tool_shovel={(600),(289)};
+	array<uint16>tool_fishingpole={(280),(7),(320)};  
+	
+	array<uint16>fibers={(1817)}; 
+	
+	array<uint16>graves={(344),(345)};
+	
+	array<uint16>junk_metal={22100,22101,22102,22103,22104,22105,22106,22107,22108,22109,22110,22111};
+	array<uint16>junk_wooden={22200,22201,22202,22203,22204,22205};
+	array<uint16>junk_paper={22300,22301,22302,22303};
+	array<uint16>junk_barrel={22304,22305,22306,22307,22308};
+	
+	array<uint16>meat_table={(1823)}; 
+	
+	array<uint16>poo={(1854),(1855),(1856),(1857)};
+	
+	array<uint16>vein_iron_1={(22000)};
+	array<uint16>vein_iron_2={(22001)};
+	array<uint16>vein_minerals_1={(22002)};
+	array<uint16>vein_minerals_2={(22003)};
+	array<uint16>vein_uranium={(22004)};
+	array<uint16>vein_gold={(22005)}; 
+	
+	array<uint16>wood={(1820),(1821),(1822)};
+	
+	array<uint16>fishing_pool={26770};  
+	
+	SmartCollection scGraves(graves,tool_shovel,slot_all,null,((0)),(1810));   
+	
+	smart_cursor.Add(SmartCollection(fibers,tool_knife,slot_all,null,((0)),(1807)));
+	smart_cursor.Add(scGraves);
+	smart_cursor.Add(SmartCollection(junk_metal,tool_junk,slot_all,null,((0)),(1812)));
+	smart_cursor.Add(SmartCollection(junk_wooden,tool_junk,slot_all,null,((0)),(1812)));
+	smart_cursor.Add(SmartCollection(junk_paper,tool_junk,slot_all,null,((0)),(1812)));
+	smart_cursor.Add(SmartCollection(junk_barrel,tool_junk,slot_all,null,((0)),(1812)));
+	smart_cursor.Add(SmartCollection(meat_table,tool_knife,slot_all,null,((0)),(1811)));
+	smart_cursor.Add(SmartCollection(poo,tool_shovel,slot_all,null,((0)),(1808)));
+	smart_cursor.Add(SmartCollection(wood,tool_axe,slot_all,null,((0)),(1809)));
+	
+	smart_cursor.Add(SmartCollection(vein_iron_1,tool_mine_1,slot_all,null,((0)),(1801)));
+	smart_cursor.Add(SmartCollection(vein_minerals_1,tool_mine_1,slot_all,null,((0)),(1803)));
+	smart_cursor.Add(SmartCollection(vein_iron_2,tool_mine_2,slot_all,null,((0)),(1802)));
+	smart_cursor.Add(SmartCollection(vein_minerals_2,tool_mine_2,slot_all,null,((0)),(1804)));
+	smart_cursor.Add(SmartCollection(vein_uranium,tool_mine_3,slot_all,null,((0)),(1805)));
+	smart_cursor.Add(SmartCollection(vein_gold,tool_mine_3,slot_all,null,((0)),(1806)));
+	smart_cursor.Add(SmartCollection(fishing_pool,tool_fishingpole,slot_all,"Throw spear",((0)),(1806)));
 }
+
+void SmartCursorDraw(uint layer)
+{
+	smart_cursor.Draw(layer);
+}
+
+bool SmartCursorClick(int click)
+{
+	return smart_cursor.Click(click);
+} 
+
