@@ -110,8 +110,7 @@ class EntiresCollection {
 
 dictionary fishingPools;
 
-void map_init(Map& map, bool firstTime)
-{
+void map_init(Map& map, bool firstTime) {
     uint mapPid = map.GetProtoId();
     string@ s = "_" + map.GetProtoId();
     fishingPools.delete(s);
@@ -210,10 +209,17 @@ void _EncFish(Item& item, bool firstTime) {
     item.SetEvent(ITEM_EVENT_SKILL, "_UseSkillOnFish");
 }
 
-void unsafe_SpearFish(Critter& player, int toolId, int itemId, int range, string@ param3, array<int>@ param4) {
-    if(player.IsBusy())
+int ActionPointsCost(ProtoItem@ toolProto, uint8 brofBonus) {
+    FishLog("######## item Pid = " + toolProto.ProtoId);
+    return _WeaponApCost(toolProto, 1) - brofBonus;
+}
+
+void unsafe_SpearFish(Critter& player, int toolPid, int itemId, int range, string@ param3, array<int>@ param4) {
+    ProtoItem@ itemProto = GetProtoItem(toolPid);
+    uint8 brofBonus = (player.Perk[PE_BONUS_RATE_OF_ATTACK] > 0) ? 1 : 0;
+    if (player.IsBusy() || player.IsDead() || player.IsKnockout() || player.StatBase[ST_CURRENT_AP] < 50 * ActionPointsCost(itemProto, brofBonus))
         return;
-    FishLog("unsafe_SpearFish - range = " + range);
+    FishLog("unsafe_SpearFish - range = " + range + ", currentAP = " + player.StatBase[ST_CURRENT_AP] + ", AP cost = " + (50 * ActionPointsCost(itemProto, brofBonus)));
     Item@ fishingPool = GetItem(itemId);
     if (!valid(fishingPool)) {
         FishLog("ChangeFishAnimationToCaught - Invalid Item Old Fish");
@@ -235,6 +241,9 @@ void unsafe_SpearFish(Critter& player, int toolId, int itemId, int range, string
     }
     uint16 dist = 5;
     switch (range) {
+        case 0:
+            dist += Random(0, 23);
+            break;
         case 1:
             dist += Random(0, 1);
             break;
@@ -259,16 +268,18 @@ void unsafe_SpearFish(Critter& player, int toolId, int itemId, int range, string
     }
     player.EraseTimeEvents(CTE_AGE);
     player.AddTimeEvent("cte_ThrowFishingSpear", REAL_MS(0), CTE_FISHING_ANIM);
+    player.StatBase[ST_CURRENT_AP] -= 50 * ActionPointsCost(itemProto, brofBonus);
+
+    uint16 destX = player.HexX;
+    uint16 destY = player.HexY;
+    uint16 fixedStartX = player.HexX;
+    uint16 fixedStartY = player.HexY;
 
     Map@   map = player.GetMap();
     if (!valid(map)) {
         FishLog("unsafe_SpearFish - Invalid Map");
         return;
     }
-    uint16 destX = player.HexX;
-    uint16 destY = player.HexY;
-    uint16 fixedStartX = player.HexX;
-    uint16 fixedStartY = player.HexY;
     map.MoveHexByDir(fixedStartX, fixedStartY, 0, 2);
     map.MoveHexByDir(fixedStartX, fixedStartY, 5, 2);
 
@@ -284,20 +295,21 @@ void unsafe_SpearFish(Critter& player, int toolId, int itemId, int range, string
     //  20 hex travel time = 08.533 -> 09.233 = 0.7sec, 1 hex travel time = 0.035sec
     uint animationTimeToWait = 800 + 35 * dist;
     Item@ fishOnSpot = map.GetItem(destX, destY, PID_ITEM_FISH_CIRCLING);
-    if (valid(fishOnSpot)) {
+    bool playerHasRope = _CritCountItem(player, PID_ROPE) > 0;
+    FishLog("Player has rope = " + playerHasRope);
+    player.Wait(animationTimeToWait + 250);
+    if (valid(fishOnSpot) && playerHasRope) {
         //  spear hit circling fish spot, animate accordingly and give fish to player
-        //AnimateItemOnceAndDelete(map.Id, destX, destY, PID_ITEM_FISH_WATERSPLASH, animationTimeToWait, FISH_WATERSPLASH_ANIM_TIME);
         ChangeFishAnimationToCaughtAndGiveFish(player, map.Id, destX, destY, fishOnSpot.Id, PID_ITEM_FISH_WATERSPLASH, animationTimeToWait, FISH_WATERSPLASH_ANIM_TIME);
     } else {
-        //  spear missed, big splash in the water
-        AnimateItemOnceAndDelete(map.Id, destX, destY, PID_ITEM_FISH_WATERSPLASH_SMALL2, animationTimeToWait, FISH_WATERSPLASH_ANIM_TIME);
+        ChangeToMissAnimation(player, map.Id, destX, destY, PID_ITEM_FISH_WATERSPLASH_SMALL2, animationTimeToWait, FISH_WATERSPLASH_ANIM_TIME);
     }
     return;
 }
 
-bool _UseSkillOnFish(Item& item, Critter& cr, int skill) {
+bool _UseSkillOnFish(Item& item, Critter& player, int skill) {
 
-    cr.Say(SAY_NETMSG, "Using skill on Fish Node, skill = " + skill);
+    player.Say(SAY_NETMSG, "Using skill on Fish Node, skill = " + skill);
     //  GM can check or replenish resource, players use skills to transfer magnitude parameter, due to lack of better solution
     if (skill == SK_LOCKPICK || skill == SK_STEAL || skill == SK_TRAPS || skill == SK_FIRST_AID || skill == SK_DOCTOR || skill == SK_SCIENCE || skill == SK_REPAIR) {
         uint16 dist = 5;
@@ -324,57 +336,82 @@ bool _UseSkillOnFish(Item& item, Critter& cr, int skill) {
                 dist += Random(18, 23);
                 break;
         }
-        cr.EraseTimeEvents(CTE_AGE);
-        cr.AddTimeEvent("cte_ThrowFishingSpear", REAL_MS(800), CTE_FISHING_ANIM);
+        player.EraseTimeEvents(CTE_AGE);
+        player.AddTimeEvent("cte_ThrowFishingSpear", REAL_MS(800), CTE_FISHING_ANIM);
 
-        Map@   map = cr.GetMap();
+        Map@   map = player.GetMap();
         if (!valid(map)) {
             FishLog("unsafe_SpearFish - Invalid Map");
             return false;
         }
-        uint16 destX = cr.HexX;
-        uint16 destY = cr.HexY;
-        uint16 fixedStartX = cr.HexX;
-        uint16 fixedStartY = cr.HexY;
+        uint16 destX = player.HexX;
+        uint16 destY = player.HexY;
+        uint16 fixedStartX = player.HexX;
+        uint16 fixedStartY = player.HexY;
         map.MoveHexByDir(fixedStartX, fixedStartY, 0, 2);
         map.MoveHexByDir(fixedStartX, fixedStartY, 5, 2);
 
-        uint16 dir = cr.Dir;
+        uint16 dir = player.Dir;
 
         map.MoveHexByDir(destX, destY, dir, dist);
 
-        cr.Say(SAY_NETMSG, "Skill used: Throwing direction = " + dir + ", dist = " + dist);
+        player.Say(SAY_NETMSG, "Skill used: Throwing direction = " + dir + ", dist = " + dist);
 
         uint[] values = { map.Id, fixedStartX, fixedStartY, destX, destY };
         CreateTimeEvent(AFTER(REAL_MS(1600)), "e_FishingSpearFlyAnimation", values, false);
         //  does the location contain fish?
         //  20 hex travel time = 08.533 -> 09.233 = 0.7sec, 1 hex travel time = 0.035sec
-        uint animationTime = 1600 + 35 * dist;
+        uint animationTimeToWait = 1600 + 35 * dist;
         Item@ fishOnSpot = map.GetItem(destX, destY, PID_ITEM_FISH_CIRCLING);
-        if (valid(fishOnSpot)) {
-            ChangeFishAnimationToCaughtAndGiveFish(cr, map.Id, destX, destY, fishOnSpot.Id, PID_ITEM_FISH_WATERSPLASH, animationTime, FISH_WATERSPLASH_ANIM_TIME);
+        bool playerHasRope = (_CritCountItem(player, PID_ROPE) > 0);
+        FishLog("Player has rope = " + playerHasRope);
+        player.Wait(animationTimeToWait + 250);
+        if (valid(fishOnSpot) && playerHasRope) {
+            ChangeFishAnimationToCaughtAndGiveFish(player, map.Id, destX, destY, fishOnSpot.Id, PID_ITEM_FISH_WATERSPLASH, animationTimeToWait, FISH_WATERSPLASH_ANIM_TIME);
         } else {
-            AnimateItemOnceAndDelete(map.Id, destX, destY, PID_ITEM_FISH_WATERSPLASH_SMALL2, animationTime, FISH_WATERSPLASH_ANIM_TIME);
+            ChangeToMissAnimation(player, map.Id, destX, destY, PID_ITEM_FISH_WATERSPLASH_SMALL2, animationTimeToWait, FISH_WATERSPLASH_ANIM_TIME);
         }
         return true;
     }
     return false;
+}
+void ChangeToMissAnimation(Critter& player, uint mapId, uint hexX, uint hexY, uint newFishPid, uint time, uint animationDuration) {
+    Map@ map = GetMap(mapId);
+    if(!valid(map)) {
+        FishLog("ChangeToMissAnimation - Invalid Map");
+        return;
+    }
+    uint[] values = {player.Id};
+    bool playerHasRope = (_CritCountItem(player, PID_ROPE) > 0);
+    if (!playerHasRope) {
+        CreateTimeEvent(AFTER(REAL_MS(time + animationDuration)), "e_removeLostSpear", values, false);
+        AnimateItemOnceAndDelete(mapId, hexX, hexY, newFishPid, time, animationDuration);
+    } else {
+        int roll = Random(1, 1000);
+        int difficulty = 51 + getArmorPenaltyValue(player) * 5 - (CLAMP(player.Skill[SK_OUTDOORSMAN], 1, 100) / 2);
+        FishLog("Miss! Loose fishing spear roll = " + roll + ", against = " + difficulty);
+        if (roll <= difficulty) {
+            CreateTimeEvent(AFTER(REAL_MS(time + animationDuration)), "e_removeLostSpear", values, false);
+            AnimateItemOnceAndDelete(mapId, hexX, hexY, newFishPid, time, animationDuration);
+        } else {
+            AnimateItemOnceAndDelete(mapId, hexX, hexY, newFishPid, time, animationDuration);
+        }
+    }
 }
 
 //  we do not change fish animation, just add a big splash animation
 void ChangeFishAnimationToCaughtAndGiveFish(Critter& player, uint mapId, uint hexX, uint hexY, uint oldFishId, uint newFishPid, uint time, uint animationDuration) {
     Map@ map = GetMap(mapId);
     if(!valid(map)) {
-        FishLog("ChangeFishAnimationToCaught - Invalid Map");
+        FishLog("ChangeFishAnimationToCaughtAndGiveFish - Invalid Map");
         return;
     }
     Item@ oldFish = GetItem(oldFishId);
     if (!valid(oldFish)) {
-        FishLog("ChangeFishAnimationToCaught - Invalid Item Old Fish");
+        FishLog("ChangeFishAnimationToCaughtAndGiveFish - Invalid Item Old Fish");
     } else {
         CreateTimeEvent(AFTER(REAL_MS(time)), "e_FadeDeleteAnimationItem", oldFishId, false);
     }
-
 
     map.SetData(MAP_DATA_FISH_SPAWNED, map.GetData(MAP_DATA_FISH_SPAWNED) - 1);
     map.SetData(MAP_DATA_FISH_AVAILABLE, map.GetData(MAP_DATA_FISH_AVAILABLE) - 1);
@@ -400,7 +437,7 @@ void AnimateItemOnceAndDelete(uint mapPid, uint hexX, uint hexY, uint itemPid, u
 }
 
 uint cte_ThrowFishingSpear(Critter& cr, int identifier, uint& rate) {
-    cr.Wait(1600);
+    //cr.Wait(1600);
     rate = 0;
     cr.Animate(ANIM1_SPEAR, ANIM2_THROW, null, true, true);
     if(cr.Mode[MODE_HIDE] != 0 && cr.GetAccess() < ACCESS_TESTER)
@@ -495,9 +532,9 @@ uint e_giveCaughtItem(array<uint>@ values) {
     uint level = player.Stat[ST_LEVEL];
 
     //  lower level players have less change to trigger gecko
-    uint rollSpawn = Random(1, 100);
+    int rollSpawn = Random(1, 100);
     FishLog("Gecko Spawn roll = " + rollSpawn);
-    if (rollSpawn < CLAMP(10 + level / 3, 1, 20)) {
+    if (rollSpawn < CLAMP(10 + level / 3, 1, 20) ) {
         uint[] geckoPids = {NPC_PID_LittleGecko, NPC_PID_ToughLilGecko, NPC_PID_GoldenGecko, NPC_PID_ToughGoldenGecko, NPC_PID_FireGecko, NPC_PID_ToughFireGecko};
         uint[] geckoChances = {25, 40, 55, 70, 85, 95};
         uint level = player.Stat[ST_LEVEL];
@@ -515,6 +552,64 @@ uint e_giveCaughtItem(array<uint>@ values) {
         spawnGecko(player, player.GetMap(), geckoPids[geckoIndex]);
     }
     return 0;
+}
+
+uint e_removeLostSpear(array<uint>@ values) {
+    Critter@ player = GetCritter(values[0]);
+    if (!valid(player)) {
+        FishLog("e_removeLostSpear - Invalid player");
+        return 0;
+    }
+    bool playerHasRope = _CritCountItem(player, PID_ROPE) > 0;
+    if (_CritCountItem(player, PID_SPEAR) > 0) {
+        player.DeleteItem(PID_SPEAR, 1);
+    } else if (_CritCountItem(player, PID_SHARP_SPEAR) > 0) {
+        player.DeleteItem(PID_SHARP_SPEAR, 1);
+    } else if (_CritCountItem(player, PID_SHARPENED_POLE) > 0) {
+        player.DeleteItem(PID_SHARPENED_POLE, 1);
+    } else {
+        FishLog("e_removeLostSpear - cannot remove spear, because player has neither spear, sharp spear or sharp pole.");
+    }
+    if (!playerHasRope) {
+        player.Say(SAY_NETMSG, "Damn, I lost my fishing spear! What was I thinking throwing away that spear without a rope?");
+    } else {
+        uint armorType = getArmorPenaltyValue(player); //  1 none, 0 light, 2 heavy
+        if (armorType == 3) {
+            player.Say(SAY_NETMSG, "Damn, I lost my fishing spear! Maybe some fine Leather Armor would make handling the rope easier.");
+        } else if (armorType == 0) {
+            player.Say(SAY_NETMSG, "Damn, I lost my fishing spear! What are the odds my finger would slip on this rope, one out of a thousand?!");
+        } else {
+            player.Say(SAY_NETMSG, "Damn, I lost my fishing spear! The rope entangled in this bulky armor.");
+        }
+    }
+    return 0;
+}
+
+uint getArmorPenaltyValue(Critter& player) {
+    if (!valid(player)) {
+        FishLog("getArmorValue - Invalid player");
+        return 0;
+    }
+    uint armorType = 5; //  0 light, 3 none, 5+ heavy
+    Item@ item = _CritGetItemArmor(player);
+    if (valid(item)) {
+        switch (item.Proto.ProtoId) {
+            case PID_LEATHER_ARMOR:
+            case PID_LEATHER_ARMOR_MK_II:
+            case PID_LEATHER_JACKET:
+            case PID_THERMAL_LEATHER_ARMOR:
+                armorType = 0;
+                break;
+            case PID_METAL_ARMOR:
+            case PID_METAL_ARMOR_MK_II:
+            case PID_TESLA_ARMOR:
+                armorType = 20;
+                break;
+            default:
+                armorType = 10;
+        }
+    }
+    return armorType;
 }
 
 void spawnGecko(Critter& player, Map& map, uint mobPid) {
@@ -537,7 +632,6 @@ void spawnGecko(Critter& player, Map& map, uint mobPid) {
         gecko.SpawnedBy = player.Id;
         gecko.AddEnemyInStack(player.Id);
         AddAttackPlane(gecko, 0, player);
-        //gecko.Say(SAY_NORM, "Gonna eat all your fish " + GetCritter(gecko.SpawnedBy).Name + "!");
     }
 }
 

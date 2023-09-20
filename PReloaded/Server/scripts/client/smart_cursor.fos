@@ -229,6 +229,38 @@ class SmartCursor
                             {
                                 string txt = collection.Text;
 
+                                //  fishing hack to show throw distance
+                                if (tool.Proto.ProtoId == PID_SPEAR || tool.Proto.ProtoId == PID_SHARP_SPEAR || tool.Proto.ProtoId == PID_SHARPENED_POLE) {
+                                    txt = "Throw wherever";
+                                    if (valid(chosen)) {
+                                        int aim = GetCurrentAim();
+                                        switch (aim) {
+                                            case HIT_LOCATION_LEFT_LEG:
+                                                txt = "Throw even closer";
+                                                break;
+                                            case HIT_LOCATION_RIGHT_LEG:
+                                                txt = "Throw close";
+                                                break;
+                                            case HIT_LOCATION_GROIN:
+                                            case HIT_LOCATION_TORSO:
+                                                txt = "Throw not too far";
+                                                break;
+                                            case HIT_LOCATION_LEFT_ARM:
+                                                txt = "Throw far";
+                                                break;
+                                            case HIT_LOCATION_RIGHT_ARM:
+                                                txt = "Throw further";
+                                                break;
+                                            case HIT_LOCATION_HEAD:
+                                                txt = "Throw even further";
+                                                break;
+                                            case HIT_LOCATION_EYES:
+                                                txt = "Throw as far you can";
+                                                break;
+                                        }
+                                    }
+                                }
+
                                 if( txt.length() > 0 )
                                 {
                                     if( needTool && this.drawInfoTool )
@@ -289,7 +321,6 @@ class SmartCursor
 // Click()
 // called from mouse_down(int)
 //
-
     bool Click( int click )
     {
         if( GetCurrentCursor() == CURSOR_DEFAULT && click == MOUSE_CLICK_LEFT && this.clickTargetId > 0 )
@@ -298,37 +329,35 @@ class SmartCursor
             {
                 if( this.clickToolId > 0 && this.clickToolPid > 0 )
                 {
+                    //  fishing hack, no other way
                     if (this.clickToolPid == PID_SPEAR || this.clickToolPid == PID_SHARP_SPEAR || this.clickToolPid == PID_SHARPENED_POLE) {
-                        CritterCl@ chosen = GetChosen();
-                        if (valid(chosen)) {
-                            int aim = GetCurrentAim();
-                            int range = 0;
-                            switch (aim) {
-                                case HIT_LOCATION_LEFT_LEG:
-                                    range = 1;
-                                    break;
-                                case HIT_LOCATION_RIGHT_LEG:
-                                    range = 2;
-                                    break;
-                                case HIT_LOCATION_GROIN:
-                                case HIT_LOCATION_TORSO:
-                                    range = 3;
-                                    break;
-                                case HIT_LOCATION_LEFT_ARM:
-                                    range = 4;
-                                    break;
-                                case HIT_LOCATION_RIGHT_ARM:
-                                    range = 5;
-                                    break;
-                                case HIT_LOCATION_HEAD:
-                                    range = 6;
-                                    break;
-                                case HIT_LOCATION_EYES:
-                                    range = 7;
-                                    break;
-                            }
-                            RunServerScriptUnsafe("prod_fishing@unsafe_SpearFish", this.clickToolPid, this.clickTargetId, range, null, null);
+                        int aim = GetCurrentAim();
+                        int range = 0;
+                        switch (aim) {
+                            case HIT_LOCATION_LEFT_LEG:
+                                range = 1;
+                                break;
+                            case HIT_LOCATION_RIGHT_LEG:
+                                range = 2;
+                                break;
+                            case HIT_LOCATION_GROIN:
+                            case HIT_LOCATION_TORSO:
+                                range = 3;
+                                break;
+                            case HIT_LOCATION_LEFT_ARM:
+                                range = 4;
+                                break;
+                            case HIT_LOCATION_RIGHT_ARM:
+                                range = 5;
+                                break;
+                            case HIT_LOCATION_HEAD:
+                                range = 6;
+                                break;
+                            case HIT_LOCATION_EYES:
+                                range = 7;
+                                break;
                         }
+                        RunServerScriptUnsafe("prod_fishing@unsafe_SpearFish", this.clickToolPid, this.clickTargetId, range, null, null);
                     } else {
                         array<uint> click = { CHOSEN_USE_ITEM, this.clickToolId, this.clickToolPid, TARGET_ITEM, this.clickTargetId, USE_USE, 0 };
                         SetChosenActions( click );
@@ -449,7 +478,7 @@ void InitSmartCursor() // EXPORT
     smart_cursor.Add( SmartCollection( vein_minerals_2, tool_mine_2, slot_all, null, SMART_TEXT, SMART_EXTRACT_MINERALS2 ));
     smart_cursor.Add( SmartCollection( vein_uranium,    tool_mine_3, slot_all, null, SMART_TEXT, SMART_EXTRACT_URANIUM ));
     smart_cursor.Add( SmartCollection( vein_gold,       tool_mine_3, slot_all, null, SMART_TEXT, SMART_EXTRACT_GOLD ));
-    smart_cursor.Add( SmartCollection( fishing_pool,    tool_fishingpole, slot_all, null, SMART_TEXT, SMART_EXTRACT_GOLD ));
+    smart_cursor.Add( SmartCollection( fishing_pool,    tool_fishingpole, slot_all, "Throw spear", SMART_TEXT, SMART_EXTRACT_GOLD ));
 }
 
 void SmartCursorDraw( uint layer ) // EXPORT
