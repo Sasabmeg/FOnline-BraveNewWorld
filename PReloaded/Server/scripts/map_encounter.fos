@@ -11,6 +11,9 @@
 #include "mapdata_h.fos"
 #include "town_h.fos"
 #include "utils_h.fos"
+#include "prod_fishing.fos"
+
+//import void map_fishing_init(Map& map, bool firstTime) from "prod_fishing";
 
 #define TRANSFER_RADIUS    (500)
 #define GARBAGE_TIMEOUT    (REAL_DAY(7))      // 7 days for left out cars and stuff
@@ -29,6 +32,9 @@ void map_init(Map& map, bool firstTime)
         // scatter some stuff around
         uint pid = map.GetProtoId();
         uint locpid = map.GetLocation().GetProtoId();
+        if (GetMapType(map) == MAP_TYPE_COAST_ENCOUNTER) {
+            map_fishing_init(map, firstTime);
+        }
         if(GetMapType(map) == MAP_TYPE_DESERT_ENCOUNTER)
         {
             uint i = Random(0, 7);
@@ -195,8 +201,8 @@ void _CritterIn(Map& map, Critter& cr)
 {
     // if(cr.IsPlayer() && map.GetLocation().GeckCount > 0)
     //	SetGarbageTimer(map.GetLocation(), GARBAGE_TIMEOUT);
-	  
-	
+
+
 }
 
 /**
