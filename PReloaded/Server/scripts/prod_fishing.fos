@@ -4,29 +4,8 @@
 //
 // prod_fishing.fos
 //
-
-/*
-Notes from Cirn0:
-the handler on serverside function looks as such void unsafe_serversidefunction(Critter& cr, int val0, int val1, int val2, string@, array<int>@)
-unsafe_ is a required keyword
-
-so all your functions have this stupid prefixes
-you will need ot handle all animations serverside
-simply cr.Animate and also cr.Wait them
-
-you generally want to add the wait
-also a if(cr.IsBusy()) return
-normally this stuff is handled in engine when doing SetChosenAction
-but when you hijack it, none of those checks are done and you need to do it yourself
-just sane things liek check if the IsChosen().IsLife , ect
-check clientside
-and check server side as well
-otherwise dead or kncockedout people can fish
-yeah
-you can get all those behavoirs
-but inside hte critter_action function this is only called after the validations
-so you want the fishing logic to occur only after sanity validations ( enough ap / alive/ not busy / in range )
-*/
+#ifndef __PROD_FISHING__
+#define __PROD_FISHING__
 
 #include "_macros.fos"
 #include "production_h.fos"
@@ -110,13 +89,15 @@ class EntiresCollection {
 
 dictionary fishingPools;
 
-void map_init(Map& map, bool firstTime) {
+//  exported
+void map_fishing_init(Map& map, bool firstTime) {
     uint mapPid = map.GetProtoId();
     string@ s = "_" + map.GetProtoId();
     fishingPools.delete(s);
     int leftoverFishCount = 0;
     array<Item@> leftoverFish;
-    if (mapPid == MAP_FishingZone) {
+    if (mapPid == MAP_FishingZone || mapPid == MAP_ShorelineEncounter1 || mapPid == MAP_ShorelineEncounter2
+            || mapPid == MAP_ShorelineEncounter3 || mapPid == MAP_ShorelineEncounter4 || mapPid == MAP_ShorelineEncounter5) {
         FishLog("mapProto is fishing zone ( " + mapPid + " )");
         map.SetEvent(MAP_EVENT_LOOP_4, "_SpawnFishOnMap");
         map.SetLoopTime(4, MAP_FISH_SPAWN_TIMER);
@@ -635,4 +616,5 @@ void spawnGecko(Critter& player, Map& map, uint mobPid) {
     }
 }
 
+#endif 	//	__PROD_FISHING__
 
