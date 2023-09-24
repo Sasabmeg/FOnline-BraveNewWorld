@@ -22,8 +22,9 @@
 #define MAP_FISH_SPOT_ENTIRE    (77)
 
 #define FISH_MAX_AT_SAME_TIME           (3)             //  how many fish can be visible/active on the map at the same time
-#define FISH_CAPACITY                   (4)             //  how many fish can the map hold, this can regenerate on public locations
-#define FISH_CAPACITY_TICKS_TO_REGEN    (6)             //  how many times does the map loop activate before regenerating one fish
+#define FISH_PUBLIC_CAPACITY            (15)            //  how many fish can the map hold, this can regenerate on public locations
+#define FISH_ENCOUNTER_CAPACITY         (5)             //  how many fish can the map hold, this can regenerate on public locations
+#define FISH_CAPACITY_TICKS_TO_REGEN    (12)            //  how many times does the map loop activate before regenerating one fish
 
 #define FISH_DESPAWN_TICK_MIN           (12)            //  minimum how many animations to finish before despawning the fish
 #define FISH_DESPAWN_TICK_MAX           (18)            //  maximum, the actual value will be random between these two
@@ -89,6 +90,14 @@ class EntiresCollection {
 
 dictionary fishingPools;
 
+bool isShorelineEncounterMap(uint mapPid) {
+    return mapPid == MAP_ShorelineEncounter1
+        || mapPid == MAP_ShorelineEncounter2
+        || mapPid == MAP_ShorelineEncounter3
+        || mapPid == MAP_ShorelineEncounter4
+        || mapPid == MAP_ShorelineEncounter5;
+}
+
 //  exported
 void map_fishing_init(Map& map, bool firstTime) {
     uint mapPid = map.GetProtoId();
@@ -96,13 +105,13 @@ void map_fishing_init(Map& map, bool firstTime) {
     fishingPools.delete(s);
     int leftoverFishCount = 0;
     array<Item@> leftoverFish;
-    if (mapPid == MAP_FishingZone || mapPid == MAP_ShorelineEncounter1 || mapPid == MAP_ShorelineEncounter2
-            || mapPid == MAP_ShorelineEncounter3 || mapPid == MAP_ShorelineEncounter4 || mapPid == MAP_ShorelineEncounter5) {
-        FishLog("mapProto is fishing zone ( " + mapPid + " )");
+    if (mapPid == MAP_FishingZone || isShorelineEncounterMap(mapPid)) {
+        FishLog("#######   mapProto is fishing zone ( " + mapPid + " )");
         map.SetEvent(MAP_EVENT_LOOP_4, "_SpawnFishOnMap");
         map.SetLoopTime(4, MAP_FISH_SPAWN_TIMER);
         map.SetData(MAP_DATA_FISH_SPAWNED, 0);
-        map.SetData(MAP_DATA_FISH_AVAILABLE, FISH_CAPACITY);
+        map.SetData(MAP_DATA_FISH_AVAILABLE, Random(FISH_ENCOUNTER_CAPACITY / 2, FISH_ENCOUNTER_CAPACITY));
+        map.SetData(MAP_DATA_FISH_CAPACITY, isShorelineEncounterMap(mapPid) ? FISH_ENCOUNTER_CAPACITY : FISH_PUBLIC_CAPACITY);
         map.SetData(MAP_DATA_FISH_REGEN_TICK, 0);
         leftoverFishCount = map.GetItems(PID_ITEM_FISH_CIRCLING, leftoverFish);
         if (leftoverFishCount > 0) {
@@ -132,7 +141,7 @@ void _SpawnFishOnMap(Map& map) {
     //  allow regeneration of fish only for public locations
 	if (isPublicFishingZone(map)) {
         if (map.GetData(MAP_DATA_FISH_REGEN_TICK) >= FISH_CAPACITY_TICKS_TO_REGEN) {
-            if (map.GetData(MAP_DATA_FISH_AVAILABLE) < FISH_CAPACITY) {
+            if (map.GetData(MAP_DATA_FISH_AVAILABLE) < map.GetData(MAP_DATA_FISH_CAPACITY)) {
                 map.SetData(MAP_DATA_FISH_AVAILABLE, map.GetData(MAP_DATA_FISH_AVAILABLE) + 1);
                 map.SetData(MAP_DATA_FISH_REGEN_TICK, 0);
                 FishLog("Regeneration - Regenerated one fish. Available = " + map.GetData(MAP_DATA_FISH_AVAILABLE));
@@ -191,7 +200,6 @@ void _EncFish(Item& item, bool firstTime) {
 }
 
 int ActionPointsCost(ProtoItem@ toolProto, uint8 brofBonus) {
-    FishLog("######## item Pid = " + toolProto.ProtoId);
     return _WeaponApCost(toolProto, 1) - brofBonus;
 }
 
