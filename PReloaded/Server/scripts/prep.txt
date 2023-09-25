@@ -1,379 +1,45 @@
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             
 
-import void InitLogs()from"logging";
-import void FLog(uint logindex,string&text)from"logging";
-import void ILog(string&section,string&text)from"logging";
-import void GMLog(Critter&cr,string&text)from"logging";
-import void CloseLogs()from"logging";
-import uint AddLog(string&filename)from"logging";
-import uint AddLog(string&filename,uint index)from"logging";
-import void DynamicLocationAddLog(Critter&cr,Critter&npc,GameVar&var,string file)from"logging";
-import void DynamicLocationDelLog(Critter&cr,Critter&npc,GameVar&var,string file)from"logging";                                                                   
-
-import void WLog(string&type,string&message)from"debug";
-import void WLog(string&type,string&message,int level)from"debug";
-import void InitDebug()from"debug";          
-
-import void InitEconomy()from"economy";
-import void SendLevelThresholds(Critter&)from"economy"; 
-
-import bool BankAccountExists(uint bankid,uint account)from"economy";
-import bool BankAccountRemoveMoney(uint bankid,uint account,uint amount)from"economy";
-import bool BankHasAccess(uint bankid,uint account,uint playerid)from"economy";
-import int BankGetAccountBalance(uint bankid,uint account)from"economy";
-import int BankGetAccountID(uint bankid,uint playerid)from"economy";
-import uint BankAddAccess(uint bankid,uint account,uint playerid)from"economy";
-import uint BankCreateAccount(uint bankid,uint playerid)from"economy";
-import uint BankDepositMoney(uint bankid,uint playerid,uint account,int amount)from"economy";
-import uint BankGetAccessCount(uint bankid,uint account)from"economy";
-import uint BankGetAccountOwner(uint bankid,uint account)from"economy";
-import uint BankGetAccountType(uint bankid,uint account)from"economy";
-import uint BankGetCreditRating(uint bankid,uint account)from"economy";
-import uint BankGetLoan(uint bankid,uint account)from"economy";
-import uint BankRemoveAccess(uint bankid,uint account,uint playerid)from"economy";
-import uint BankSetAccountType(uint bankid,uint account,uint accounttype)from"economy";
-import uint BankSetCreditRating(uint bankid,uint account,uint rating)from"economy";
-import uint BankSetLoan(uint bankid,uint account,uint loan)from"economy";
-import uint BankTakeLoan(uint bankid,uint account,uint amount)from"economy";
-import uint BankTransferMoney(uint bankid,uint fromaccount,uint toaccount,uint amount)from"economy";
-import uint BankWithdrawMoney(uint bankid,uint playerid,uint account,int amount)from"economy"; 
-
-import bool BanksTransferFromCritter(Critter&critter,uint amount,uint type,bool virtual)from"economy";
-import bool BanksTransferToCritter(Critter&critter,uint amount,uint type,bool virtual)from"economy";
-import uint BanksGetTotalMoney()from"economy";
-import void BanksAddMoney(uint amount)from"economy";
-import void BanksRemoveMoney(uint amount)from"economy"; 
-
-import bool BankAddMoney(uint bankid,uint amount)from"economy";
-import bool BankRemoveMoney(uint bankid,uint amount)from"economy";
-import bool BankSetMoney(uint bankid,uint amount)from"economy";
-import uint BankGetLoanInterest(uint bankid)from"economy";
-import uint BankGetNumberOfAccounts(uint bankid)from"economy";
-import float BankGetSaveInterest(uint bankid)from"economy";
-import uint BankGetTotalMoney(uint bankid)from"economy";
-import uint BankGetTotalBalance(uint bankid)from"economy";
-import float BankGetReserveRatio(uint bankid)from"economy";
-import uint BankSetLoanInterest(uint bankid,uint interest)from"economy";
-import uint BankSetSaveInterest(uint bankid,float interest)from"economy";
-import bool BankTransferFromCritter(uint bankId,Critter&critter,uint amount,uint type,bool virtual)from"economy";
-
-import void SaveBankData()from"economy";   
-
-import int GetItemSellModifier(Critter&player,Critter&trader)from"economy";
-import int GetItemBuyModifier(Critter&player,Critter&trader)from"economy";
-import uint GetItemCost(Item&item,Critter&cr,Critter&trader,bool sell)from"economy";
-import uint GetItemCostPlain(Item&item,Critter&cr,Critter&trader)from"economy";
-
-import array<int>GetTraderLevels(Critter@npc)from"economy";
-import uint GetTraderLevel(Critter@npc,uint type)from"economy";
-
-import uint ItemLevel(Item&item)from"economy";
-import uint ItemLevel(uint pid)from"economy";
-import uint TraderCapacity(Critter@npc)from"economy";
-import uint TraderCapacity(Critter@npc,uint type,uint level)from"economy";
-import uint TraderMoneyCapacity(Critter@npc)from"economy";
-import uint TradingItemType(Item&item)from"economy";
-import uint TradingItemType(uint pid)from"economy";                                                                                                         
-
-const string@FD_Bank_Result2String(uint res)
+shared interface IGatherCallback
 {
-	if(res==(1))
-	return"FD_BANK_RESULT_SUCCESS";
-	else if(res==(2))
-	return"FD_BANK_RESULT_UNKNOWN";
-	else if(res==(3))
-	return"FD_BANK_RESULT_TOO_MANY_ACCOUNTS";
-	else if(res==(4))
-	return"FD_BANK_RESULT_ALREADY_HAS_ACCOUNT";
-	else if(res==(5))
-	return"FD_BANK_RESULT_NOT_ENOUGH_MONEY";
-	else if(res==(6))
-	return"FD_BANK_RESULT_BANK_FULL";
-	else if(res==(7))
-	return"FD_BANK_RESULT_BANK_EMPTY";
-	else if(res==(8))
-	return"FD_BANK_RESULT_DATA_ERROR";
-	else if(res==(9))
-	return"FD_BANK_RESULT_INVALID_PLAYER";
-	else if(res==(10))
-	return"FD_BANK_RESULT_NO_ACCOUNT";
-	else
-	return"FD_Result: Unknown error code";
-}                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    
+	void Callback(Item&item,Critter&cr,Item@usedItem);
+}; 
 
-shared class Entire
-{
-	int Number;
-	uint16 HexX;
-	uint16 HexY;
-	uint8 Direction;
-};
+import bool IsOverweighted(Critter&cr)from"production";
+import void CheckPrimitiveTool(Critter&crit,Item&item)from"production";
+import bool Gather(Item&item,Critter&cr,Item@used_item,uint16 pid,uint batch,uint text,uint text_empty,IGatherCallback@callback)from"production";
+import uint get_RegenerationInterval()from"production";
+import void Regenerate(Item&item,uint16 pid,int capacity,uint pool,int total_count)from"production";
+import void ReduceCounter(uint16 pid,int value)from"production";
+import uint GetFacilities(const Map&map,string@script_name,array<Item@>&spots)from"production";  
 
-uint ParseEntires(Map&map,array<Entire>&entires,int number)
+class PicHashes
 {
-	uint oldCount=entires.length();
-	uint count=map.CountEntire(number);
-	entires.resize(oldCount+count);
+	array<uint>hashes;
 	
-	for(uint i=0;i<count;i++)
+	PicHashes(const array<string@>&picnames)
 	{
-		Entire@ent=entires[oldCount+i];
-		if(map.GetEntireCoords(number,i,ent.HexX,ent.HexY,ent.Direction)==false)
-		return 0;
-		ent.Number=number;
+		hashes.resize(picnames.length());
+		for(uint i=0,iend=picnames.length();i<iend;i++)
+		hashes[i]=GetStrHash(picnames[i]);
 	}
-	
-	return count;
-}
-
-bool IsEntireFree(uint mappid,int number)
-{
-	Map@map=GetMapByPid(mappid,0);
-	return IsEntireFree(map,number);
-}
-
-bool IsEntireFree(Map&map,int number)
-{
-	uint16 x,y;
-	x=0;
-	y=0;
-	return GetEntireFreeHex(map,number,x,y);
-}
-
-bool GetEntireFreeHex(Map&map,int number,uint16&hx,uint16&hy,uint skip=0)
-{
-	uint count=map.CountEntire(number); 
-	
-	for(uint i=skip;i<count;i++)
+	PicHashes&AddHash(string@picname)
 	{
-		if(map.GetEntireCoords(number,i,hx,hy)&&map.IsHexPassed(hx,hy))
-		return true;
+		hashes.insertLast(GetStrHash(picname));
+		return this;
 	}
-	
-	if(hx==0||hy==0||hx>=map.GetWidth()-1||hy>=map.GetHeight()-1)
-	return false; 
-	
-	for(uint i=0;i<count;i++)
+	uint GetRandom()const
 	{
-		if(map.GetEntireCoords(number,i,hx,hy))
-		{
-			for(int x=-1;x<=1;x++)
-			{
-				for(int y=-1;y<=1;y++)
-				{
-					if(x==0&&y==0)
-					continue;
-					if(__MapHexagonal)
-					{
-						if((hx%2)==1&&((x==-1&&y==1)||(x==1&&y==1)))
-						continue;
-						if((hx%2)==0&&((x==-1&&y==-1)||(x==1&&y==-1)))
-						continue;
-					}
-					
-					if(map.IsHexPassed(hx+x,hy+y))
-					{
-						hx+=x;
-						hy+=y;
-						return true;
-					}
-				}
-			}
-		}
+		return hashes[Random(0,hashes.length()-1)];
 	}
-	return false;
-}
+};     
 
-bool GetNearEntire(Map&map,int number,uint16&hx,uint16&hy)
+void StartRegeneration(Item&item,string&func_name)
 {
-	uint16 hxBase=hx;
-	uint16 hyBase=hy;
-	
-	array<Entire>entires;
-	uint count=ParseEntires(map,entires,number);
-	if(count==0)
-	return false;
-	
-	hx=entires[0].HexX;
-	hy=entires[0].HexY;
-	for(uint i=1;i<count;i++)
-	{
-		Entire@ent=entires[i];
-		if(GetDistantion(hxBase,hyBase,ent.HexX,ent.HexY)<GetDistantion(hxBase,hyBase,hx,hy))
-		{
-			hx=ent.HexX;
-			hy=ent.HexY;
-		}
-	}
-	
-	return true;
-}
-
-bool GetNearEntire(Map&map,int number,uint16&hx,uint16&hy,uint8&dir)
-{
-	uint16 hxBase=hx;
-	uint16 hyBase=hy;
-	
-	array<Entire>entires;
-	uint count=ParseEntires(map,entires,number);
-	if(count==0)
-	return false;
-	
-	hx=entires[0].HexX;
-	hy=entires[0].HexY;
-	dir=entires[0].Direction;
-	for(uint i=1;i<count;i++)
-	{
-		Entire@ent=entires[i];
-		if(GetDistantion(hxBase,hyBase,ent.HexX,ent.HexY)<GetDistantion(hxBase,hyBase,hx,hy))
-		{
-			hx=ent.HexX;
-			hy=ent.HexY;
-			dir=ent.Direction;
-		}
-	}
-	
-	return true;
-}                                                                                                                                                          
-
-import int GetRootMapData(Map&map,uint index)from"mapdata";
-import void SetRootMapData(Map&map,uint index,int val)from"mapdata";
-import int GetRootMapData(Location&loc,uint index)from"mapdata";
-import void SetRootMapData(Location&loc,uint index,int val)from"mapdata";                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         
-
-shared interface IPolygon
-{
-	IPolygon@AddVertex(uint16 x,uint16 y);
-	IPolygon@AddVertices(array<uint16>&hexes);   
-	
-	bool IsWithin(Critter&cr);
-	bool IsWithin(Item&item);
-	
-	bool IsWithin(uint16 x,uint16 y);
-};  
-
-import IPolygon@NewPolygon()from"polygon"; 
-
-import IPolygon@LoadShapeFromEntires(Map&map,uint first,uint last)from"polygon";          
-
-import ITown@GetTownByIndex(uint index)from"towns";
-import ITown@GetTown(uint id)from"towns";
-import uint GetTownCount()from"towns";
-import uint GetTowns(array<ITown@>@towns)from"towns";  
-
-import bool AddMilitia(Map@map)from"town";
-import void InitMilitia()from"town";
-import bool IsTCTown(Map@map)from"town";
-import uint RetrieveTownId(Map@map)from"town";
-import uint RetrieveTownId(Critter&critter)from"town";
-import ITown@RetrieveTown(Critter&critter)from"town";
-import bool ValidTown(ITown@town)from"town";
-import void GainControl(Critter&player)from"town";
-import uint GetNearMembers(Critter&player)from"town";
-import bool IsPolicy(Critter&player,uint policy)from"town";
-import bool IsControllingTown(Critter&player)from"town";
-import bool AlertMilitia(Critter&cr)from"town";
-import int SelectBag(uint crpid)from"town";
-import void SpawnInitMilitia(Map@map)from"town";
-import int CountMilitia(Map@map)from"town";
-import void ClearInfluenceBuffer(Critter&cr)from"town";  
-
-class PresenceStruct
-{
-	uint factionId;
-	uint count;
-	PresenceStruct(uint factionId)
-	{
-		this.factionId=factionId;
-		this.count=1;
-	}
-};
-
-shared interface ITown
-{
-	ITown@SetMapID(uint id);
-	ITown@SetTownID(uint id);
-	ITown@SetBaseRewardValue(uint value);
-	ITown@SetInfluenceMemberRequirement(uint number);
-	ITown@SetNearbyMemberRequirement(uint number);
-	ITown@SetTotalMemberRequirement(uint number);
-	ITown@SetControlMemberRequirement(uint number);
-	ITown@SetLimboContainer(Item@container);
-	ITown@SetRewardContainer(Item@container);
-	ITown@SetTownLeader(Critter@leader);
-	ITown@SetSpeechModifier(int modifier);
-	ITown@SetHour(uint hour);
-	ITown@SetCaptureArea(IPolygon@capturearea);
-	ITown@SetMilitiaEnabled();
-	ITown@SetRewardStartCaps(uint caps);
-	ITown@SetVersion(uint version);
-	
-	uint GetVersion();
-	
-	uint GetTownID();
-	string GetTownName();
-	bool LoadData();
-	bool SaveData();
-	bool IsMilitiaEnabled();
-	bool IsFriendlyFaction(uint factionid);
-	bool IsFriend(Critter&cr);
-	bool IsValidCaptor(Critter&cr);
-	bool IsWithinCaptureArea(Critter&cr);
-	void AreaCheck();
-	bool AddFriendlyFaction(uint factionid);
-	bool RemoveFriendlyFaction(uint factionid);
-	array<uint>GetFriendlyFactions();
-	float GetControllingInfluence();
-	uint GetMilitiaMax();
-	uint GetControllingFaction();
-	uint GetNumberOfKilledNPCs();
-	uint GetControlCycles();
-	uint GetStatus();
-	void SetStatus(uint status);
-	void SetScore();
-	void SetPreviousFaction(uint previous);
-	uint GetlastSecond();
-	void SetlastSecond(uint sec);
-	uint GetAreaCount();
-	uint GetCountdown();
-	void SetCountdownStatus(bool enabled);
-	bool GetCountdownStatus();
-	void SendCountdownTime(Critter&player);
-	uint GetMemberNearbyRequirement();
-	uint GetMemberTotalRequirement();
-	uint GetMemberControlRequirement();
-	Item@GetLimboContainer();
-	Item@GetRewardContainer();
-	uint GetTownLeaderId();
-	uint GetMapID();
-	int GetSpeechModifier();
-	bool GainControl(Critter&player);
-	void IncreaseNPCDeath(uint num);
-	void ModifyInfluence(uint factionId,float value);
-	void SetInfluence(uint factionId,float value);
-	void ResetStats();
-	void ResetControl();
-	void RevertControl();
-	void ClearRewardContainer();
-	void ClearLimboContainer();
-	void ClearContainers();
-	void Update(uint hour,uint minute);
-	void UpdateCountdown();
-	void UpdateTick();
-	void TownCheck();
-	void ControlCheck();
-	void AddReward(uint itemPid,int count);
-	
-	bool IsLaw(uint law);
-	void SetLaw(uint law,bool enabled);
-	
-	void AddMoney(int money);
-	int GetMoney(); 
-	
-	float GetInfluence(uint faction);
-	
-	Location@GetLocation();
-};                                                                                                                                                                                                                                                                                                                                                                            
+	(item.Val2)=0;
+	uint time=Random(__FacilitiesRegenTimeMin,__FacilitiesRegenTimeMax);
+	CreateTimeEvent(((__FullSecond)+(((time)*__TimeMultiplier*60))),func_name,item.Id,false);
+}                                                                                                                                                                                                                                                                                                                                                                            
 
 import Location@GetLocationOf(Critter&critter)from"utils";
 import string GetLocationName(uint locId)from"utils";
@@ -597,48 +263,12 @@ shared interface IDateTime
 	uint16 get_Second();
 	uint16 get_Milliseconds();
 	string@ToString();
-};                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              
+};                                                                                                                                                                                             
 
-shared interface IGatherCallback
-{
-	void Callback(Item&item,Critter&cr,Item@usedItem);
-}; 
-
-import bool IsOverweighted(Critter&cr)from"production";
-import void CheckPrimitiveTool(Critter&crit,Item&item)from"production";
-import bool Gather(Item&item,Critter&cr,Item@used_item,uint16 pid,uint batch,uint text,uint text_empty,IGatherCallback@callback)from"production";
-import uint get_RegenerationInterval()from"production";
-import void Regenerate(Item&item,uint16 pid,int capacity,uint pool,int total_count)from"production";
-import void ReduceCounter(uint16 pid,int value)from"production";
-import uint GetFacilities(const Map&map,string@script_name,array<Item@>&spots)from"production";  
-
-class PicHashes
-{
-	array<uint>hashes;
-	
-	PicHashes(const array<string@>&picnames)
-	{
-		hashes.resize(picnames.length());
-		for(uint i=0,iend=picnames.length();i<iend;i++)
-		hashes[i]=GetStrHash(picnames[i]);
-	}
-	PicHashes&AddHash(string@picname)
-	{
-		hashes.insertLast(GetStrHash(picname));
-		return this;
-	}
-	uint GetRandom()const
-	{
-		return hashes[Random(0,hashes.length()-1)];
-	}
-};     
-
-void StartRegeneration(Item&item,string&func_name)
-{
-	(item.Val2)=0;
-	uint time=Random(__FacilitiesRegenTimeMin,__FacilitiesRegenTimeMax);
-	CreateTimeEvent(((__FullSecond)+(((time)*__TimeMultiplier*60))),func_name,item.Id,false);
-}                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  
+import int GetRootMapData(Map&map,uint index)from"mapdata";
+import void SetRootMapData(Map&map,uint index,int val)from"mapdata";
+import int GetRootMapData(Location&loc,uint index)from"mapdata";
+import void SetRootMapData(Location&loc,uint index,int val)from"mapdata";                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  
 
 import bool AddMiscPlane(Critter&npc,uint priority,uint waitMinute,string@funcName)from"npc_planes";
 import bool AddMiscPlane(Critter&npc,uint priority,int identifier,uint identifierExt,uint waitSecond,string@funcName)from"npc_planes";
@@ -656,7 +286,319 @@ import bool AddHealCritterPlane(Critter&npc,uint priority,Critter@target,bool ru
 import bool AddDoctorCritterPlane(Critter&npc,uint priority,Critter@target,bool run)from"npc_planes";
 
 import uint EraseAttackPlane(Critter&npc,uint priority,Critter&target)from"npc_planes";
-import uint EraseAttackPlane(Critter&npc,uint priority,uint critId)from"npc_planes";                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
+import uint EraseAttackPlane(Critter&npc,uint priority,uint critId)from"npc_planes";                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             
+
+uint BonusNumber(Item@it)
+{
+	uint number=0;
+	if(it.Val4!=0)return 5;
+	else if(it.Val3!=0)return 4;
+	else if(it.Val2!=0)return 3;
+	else if(it.Val1!=0)return 2;
+	else if(it.Val0!=0)return 1;
+	else return 0;
+}    
+
+import void SetLexem(Item&item,string&lex,string&value)from"lexems";
+
+int CheckBonus(Item@item,int bonusType)
+{
+	if((@item!=null))
+	{
+		if(item.Val0==bonusType)return item.Val5;
+		if(item.Val1==bonusType)return item.Val6;
+		if(item.Val2==bonusType)return item.Val7;
+		if(item.Val3==bonusType)return item.Val8;
+		if(item.Val4==bonusType)return item.Val9;
+	}
+	
+	return(0);
+} 
+
+void AddSpecialBonusRaidersFarm(Item@it)
+{
+	if(it.GetType()==(3)&&!it.IsStackable())
+	{
+		int roll=Random(0,99);
+		if(roll>=0)AddWeaponBonus(it,1,true);
+		if(roll>34)AddWeaponBonus(it,2,true);
+		if(roll>59)AddWeaponBonus(it,3,true);
+		if(roll>74)AddWeaponBonus(it,4,true);
+		if(roll>84)AddWeaponBonus(it,5,true);
+	}
+	
+	else if(it.GetType()==(1))
+	{
+		int roll=Random(0,99);
+		if(roll>=0)AddArmorBonus(it,1);
+		if(roll>34)AddArmorBonus(it,2);
+		if(roll>59)AddArmorBonus(it,3);
+		if(roll>74)AddArmorBonus(it,4);
+		if(roll>84)AddArmorBonus(it,5);
+	}
+	return;
+} 
+
+void AddSpecialBonusEncounterBoss(Item@it)
+{
+	if(it.GetType()==(3)&&!it.IsStackable())
+	{
+		int roll=Random(0,99);
+		if(roll>=0)AddWeaponBonus(it,1,true);
+		if(roll>29)AddWeaponBonus(it,2,true);
+		if(roll>59)AddWeaponBonus(it,3,true);
+		if(roll>89)AddWeaponBonus(it,4,true);
+		if(roll>94)AddWeaponBonus(it,5,true);
+	}
+	
+	else if(it.GetType()==(1))
+	{
+		int roll=Random(0,99);
+		if(roll>=0)AddArmorBonus(it,1);
+		if(roll>29)AddArmorBonus(it,2);
+		if(roll>59)AddArmorBonus(it,3);
+		if(roll>89)AddArmorBonus(it,4);
+		if(roll>94)AddArmorBonus(it,5);
+	}
+	return;
+}
+
+void AddSpecialBonusLow(Item@it)
+{
+	if(it.GetType()==(3)&&!it.IsStackable())
+	{
+		int roll=Random(0,99);
+		if(roll>=0)AddWeaponBonus(it,1);
+		if(roll>34)AddWeaponBonus(it,2);
+		if(roll>59)AddWeaponBonus(it,3);
+		if(roll>74)AddWeaponBonus(it,4);
+		if(roll>84)AddWeaponBonus(it,5);
+	}
+	
+	else if(it.GetType()==(1))
+	{
+		int roll=Random(0,99);
+		if(roll>=0)AddArmorBonus(it,1);
+		if(roll>34)AddArmorBonus(it,2);
+		if(roll>59)AddArmorBonus(it,3);
+		if(roll>74)AddArmorBonus(it,4);
+		if(roll>84)AddArmorBonus(it,5);
+	}
+	return;
+}
+
+void AddSpecialBonus(Item@it)
+{
+	if(it.GetType()==(3)&&!it.IsStackable())
+	{
+		AddWeaponBonus(it,1);
+		AddWeaponBonus(it,2);
+		AddWeaponBonus(it,3);
+		AddWeaponBonus(it,4);
+		if(Random(0,1)==0)AddWeaponBonus(it,5);
+	}
+	
+	else if(it.GetType()==(1))
+	{
+		AddArmorBonus(it,1);
+		AddArmorBonus(it,2);
+		AddArmorBonus(it,3);
+		AddArmorBonus(it,4);
+		if(Random(0,1)==0)AddArmorBonus(it,5);
+	}
+	return;
+}
+
+void AddBonuses(Item@it,string@crafter)
+{
+	if(it.GetType()==(3)&&!it.IsStackable())
+	{
+		int roll=Random(0,99);
+		if(roll>55)AddWeaponBonus(it,1,true);
+		if(roll>76)AddWeaponBonus(it,2,true);
+		if(roll>88)AddWeaponBonus(it,3,true);
+		if(roll>95)AddWeaponBonus(it,4,true);
+		if(roll==99)AddWeaponBonus(it,5,true);
+		SetLexem(it,"$crafter",crafter);
+	}
+	
+	else if(it.GetType()==(1))
+	{
+		int roll=Random(0,99);
+		if(roll>55)AddArmorBonus(it,1);
+		if(roll>76)AddArmorBonus(it,2);
+		if(roll>88)AddArmorBonus(it,3);
+		if(roll>95)AddArmorBonus(it,4);
+		if(roll==99)AddArmorBonus(it,5);
+		SetLexem(it,"$crafter",crafter);
+	}
+	return;
+}
+
+bool AddAnotherBonus(Item@it)
+{
+	if(!(@it!=null))
+	return false;
+	
+	uint bonusCnt=BonusNumber(it);
+	if(bonusCnt>4)
+	return false;
+	
+	++bonusCnt;
+	
+	if(it.GetType()==(3)&&!it.IsStackable())
+	AddWeaponBonus(it,bonusCnt,true);
+	else if(it.GetType()==(1))
+	AddArmorBonus(it,bonusCnt);
+	else
+	return false;
+	
+	return true;
+}
+
+void AddArmorBonus(Item@it,int number)
+{
+	int minRoll=1;
+	int maxRoll=1;
+	
+	uint bonusType=0;
+	uint maxBonusType=(123);
+	
+	bool isHelmet=(it.GetProtoId()>=725&&it.GetProtoId()<=741);
+	
+	if(isHelmet)maxBonusType=(109); 
+	
+	do
+	{
+		bonusType=Random(100,maxBonusType);
+	}
+	while(HasBonusAlready(it,bonusType));
+	
+	switch(bonusType)
+	{
+		
+		case(100):{minRoll=1;maxRoll=5;break;}
+		case(101):{minRoll=1;maxRoll=5;break;}
+		case(102):{maxRoll=5;break;}
+		case(103):{maxRoll=5;break;}
+		case(104):{maxRoll=5;break;}
+		case(105):{maxRoll=5;break;}
+		case(106):{maxRoll=10;break;}
+		case(107):{maxRoll=10;break;}
+		case(108):{maxRoll=10;break;}
+		case(109):{maxRoll=10;break;}
+		
+		case(110):{maxRoll=5;break;}
+		case(111):{maxRoll=10;break;}
+		case(112):break;
+		case(113):{minRoll=10;maxRoll=30;break;}
+		case(114):{minRoll=10;maxRoll=30;break;}
+		case(115):break;
+		case(116):break;
+		case(117):break;
+		case(118):break;
+		case(119):break;
+		case(120):break;
+		case(121):break;
+		case(122):{minRoll=5;maxRoll=20;break;}
+		case(123):{minRoll=1;maxRoll=5;break;}
+		default:break;
+	} 
+	
+	int roll=Random(minRoll,maxRoll); 
+	
+	switch(number)
+	{
+		case 1:{it.Val0=bonusType;it.Val5=roll;break;}
+		case 2:{it.Val1=bonusType;it.Val6=roll;break;}
+		case 3:{it.Val2=bonusType;it.Val7=roll;break;}
+		case 4:{it.Val3=bonusType;it.Val8=roll;break;}
+		case 5:{it.Val4=bonusType;it.Val9=roll;break;}
+		default:break;
+	}
+	
+	it.Update();
+	return;
+} 
+
+void AddWeaponBonus(Item@it,int number,bool isCrafting=false)
+{
+	
+	uint minRoll=1;
+	uint maxRoll=1;
+	
+	uint bonusType=0;
+	
+	int skillNum=it.Proto.Weapon_Skill_0;
+	bool isRangeWeapon=(skillNum==(200)||skillNum==(201)||skillNum==(202));
+	
+	do
+	{
+		if(isRangeWeapon)
+		bonusType=Random(100,(106));
+		else
+		bonusType=Random(100,(105));
+	}
+	while(HasBonusAlready(it,bonusType)||IsBonusExcluded(isCrafting,bonusType));
+	
+	switch(bonusType)
+	{
+		case(100):{maxRoll=5;break;}
+		case(101):{maxRoll=5;break;}
+		case(102):{minRoll=10;maxRoll=25;break;}
+		case(103):{minRoll=10;maxRoll=25;break;}
+		case(104):{minRoll=5;maxRoll=25;break;}
+		case(106):{minRoll=1;maxRoll=2;break;}
+		case(105):break;
+		default:break;
+	} 
+	
+	uint roll=Random(minRoll,maxRoll); 
+	
+	switch(number)
+	{
+		case 1:{it.Val0=bonusType;it.Val5=roll;break;}
+		case 2:{it.Val1=bonusType;it.Val6=roll;break;}
+		case 3:{it.Val2=bonusType;it.Val7=roll;break;}
+		case 4:{it.Val3=bonusType;it.Val8=roll;break;}
+		case 5:{it.Val4=bonusType;it.Val9=roll;break;}
+		default:break;
+	}
+	
+	it.Update();
+	return;
+} 
+
+bool IsBonusExcluded(bool isCrafting,int bonusType)
+{
+	if(!isCrafting)
+	return false;
+	
+	if(bonusType==(105))
+	return true;
+	
+	return false;
+} 
+
+bool HasBonusAlready(Item@it,int bonusType)
+{
+	if(it.Val0==bonusType)return true;
+	if(it.Val1==bonusType)return true;
+	if(it.Val2==bonusType)return true;
+	if(it.Val3==bonusType)return true;
+	if(it.Val4==bonusType)return true;
+	return false;
+}  
+
+int checkBonus(Item@it,int bonusType)
+{
+	if(it.Val0==bonusType)return it.Val5;
+	if(it.Val1==bonusType)return it.Val6;
+	if(it.Val2==bonusType)return it.Val7;
+	if(it.Val3==bonusType)return it.Val8;
+	if(it.Val4==bonusType)return it.Val9;
+	return 0;
+}                                                     
 
 void FishLog(string@s){
 	if((true)){
@@ -689,7 +631,15 @@ class EntiresCollection{
 	}
 }
 
-dictionary fishingPools; 
+dictionary fishingPools;
+
+bool isShorelineEncounterMap(uint mapPid){
+	return mapPid==(200)
+	||mapPid==(201)
+	||mapPid==(202)
+	||mapPid==(203)
+	||mapPid==(204);
+} 
 
 void map_fishing_init(Map&map,bool firstTime){
 	uint mapPid=map.GetProtoId();
@@ -697,13 +647,14 @@ void map_fishing_init(Map&map,bool firstTime){
 	fishingPools.delete(s);
 	int leftoverFishCount=0;
 	array<Item@>leftoverFish;
-	if(mapPid==(600)){
-		FishLog("mapProto is fishing zone ( "+mapPid+" )");
+	if(mapPid==(600)||isShorelineEncounterMap(mapPid)){
+		FishLog("#######   mapProto is fishing zone ( "+mapPid+" )");
 		map.SetEvent((5),"_SpawnFishOnMap");
 		map.SetLoopTime(4,(5000));
 		map.SetData((21),0);
-		map.SetData((22),(4));
-		map.SetData((23),0);
+		map.SetData((22),Random((5)/2,(5)));
+		map.SetData((23),isShorelineEncounterMap(mapPid)?(5):(15));
+		map.SetData((24),0);
 		leftoverFishCount=map.GetItems((26776),leftoverFish);
 		if(leftoverFishCount>0){
 			FishLog("Deleting leftover fish. Count = "+leftoverFishCount);
@@ -720,7 +671,7 @@ void _SpawnFishOnMap(Map&map){
 	string@s="_"+map.GetProtoId();
 	EntiresCollection fishingPool;
 	if(!fishingPools.exists(s)){
-		FishLog("fishingPool = null, initalizing entires on this map proto: "+map.GetProtoId());
+		FishLog("fishingPool = null, initializing entires on this map proto: "+map.GetProtoId());
 		fishingPool=EntiresCollection(map,(77));
 		fishingPools.set(s,fishingPool);
 		fishingPool.log();
@@ -730,16 +681,16 @@ void _SpawnFishOnMap(Map&map){
 	} 
 	
 	if(isPublicFishingZone(map)){
-		if(map.GetData((23))>=(6)){
-			if(map.GetData((22))<(4)){
+		if(map.GetData((24))>=(12)){
+			if(map.GetData((22))<map.GetData((23))){
 				map.SetData((22),map.GetData((22))+1);
-				map.SetData((23),0);
+				map.SetData((24),0);
 				FishLog("Regeneration - Regenerated one fish. Available = "+map.GetData((22)));
 			}else{
 				
 			}
 		}else{
-			map.SetData((23),map.GetData((23))+1);
+			map.SetData((24),map.GetData((24))+1);
 			
 		}
 	} 
@@ -774,10 +725,6 @@ bool isPublicFishingZone(Map&map){
 		}
 	}
 	return false;
-}
-
-void _FinishRegenerable(Item&item,bool){
-	FishLog("prod_fishing.fos::_FinishRegenerable()");
 } 
 
 void _EncFish(Item&item,bool firstTime){
@@ -787,7 +734,6 @@ void _EncFish(Item&item,bool firstTime){
 }
 
 int ActionPointsCost(ProtoItem@toolProto,uint8 brofBonus){
-	FishLog("######## item Pid = "+toolProto.ProtoId);
 	return((1)==0?toolProto.Weapon_ApCost_0:((1)==1?toolProto.Weapon_ApCost_1:((1)==2?toolProto.Weapon_ApCost_2:0)))-brofBonus;
 }
 
@@ -963,7 +909,7 @@ void ChangeToMissAnimation(Critter&player,uint mapId,uint hexX,uint hexY,uint ne
 		AnimateItemOnceAndDelete(mapId,hexX,hexY,newFishPid,time,animationDuration);
 	}else{
 		int roll=Random(1,1000);
-		int difficulty=51+getArmorPenaltyValue(player)*5-((((player.Skill[(217)])>(100))?(100):(((player.Skill[(217)])<(1))?(1):(player.Skill[(217)])))/2);
+		int difficulty=51+getArmorPenaltyValue(player)-((((player.Skill[(217)])>(100))?(100):(((player.Skill[(217)])<(1))?(1):(player.Skill[(217)])))/2);
 		FishLog("Miss! Loose fishing spear roll = "+roll+", against = "+difficulty);
 		if(roll<=difficulty){
 			CreateTimeEvent(((__FullSecond)+(((time+animationDuration)*__TimeMultiplier/1000))),"e_removeLostSpear",values,false);
@@ -988,11 +934,10 @@ void ChangeFishAnimationToCaughtAndGiveFish(Critter&player,uint mapId,uint hexX,
 	}
 	
 	map.SetData((21),map.GetData((21))-1);
-	map.SetData((22),map.GetData((22))-1);
-	FishLog("Fish Caught! (spawned = "+map.GetData((21))+", available = "+map.GetData((22))+")");  
+	FishLog("Fish Caught! (spawned = "+map.GetData((21))+", available = "+map.GetData((22))+")");
 	
-	uint[]rewardValues={player.Id,(26762)};
-	CreateTimeEvent(((__FullSecond)+(((time+animationDuration)*__TimeMultiplier/1000))),"e_giveCaughtItem",rewardValues,false);
+	uint[]values={player.Id};
+	CreateTimeEvent(((__FullSecond)+(((time+animationDuration)*__TimeMultiplier/1000))),"e_giveCaughtItem",values,false);
 	
 	AnimateItemOnceAndDelete(mapId,hexX,hexY,newFishPid,time,animationDuration);
 	return;
@@ -1097,11 +1042,95 @@ uint e_giveCaughtItem(array<uint>@values){
 	if(!(@player!=null)){
 		FishLog("e_giveCaughtItem - Invalid player");
 		return 0;
+	}    
+	
+	uint[]rewardLegendary={1,(328)};
+	uint[]rewardEpic={1,(412)};
+	uint[]rewardRare={7,(99),(726),(740),(725),(733),(732),(734)};
+	uint[]rewardsQuality={7,(119),(726),(740),(725),(733),(732),(734)};
+	uint[]rewardsCommon={10,(730),(731),(728),(1),(74),(379),
+		(780),(113),(750),(755)};
+	uint[]rewardsJunk={6,(141),(142),(532),(416),((98)),(609)};
+	uint[]rewardsFish={3,(26760),(26761),(26762)};
+	
+	uint rewardPid=rewardsFish[Random(1,rewardsFish[0])];
+	
+	int rewardRoll=Random(0,10000);
+	if(player.GetAccess()>=(2)){
+		rewardRoll=Random(0,5000);
 	}
-	player.AddItem(values[1],1);
-	player.Say((11),"I caught something !");
-	FishLog("CATCH!!! - Player ("+player.Id+", "+player.Name+"), Reward (pid = "+values[1]+")");
-	uint level=player.Stat[(77)]; 
+	int luckFactor=getLuckFactor(player);
+	if(rewardRoll==666&&player.CountItem((328))==0){
+		rewardPid=rewardLegendary[Random(1,rewardLegendary[0])];
+		player.Say((11),"Whoa! An Eight Ball!? How did that get stuck on the fishing spear?");
+		player.AddItem(rewardPid,1);
+	}else if(rewardRoll<luckFactor+(((player.Skill[(217)])>(200))?(200):(((player.Skill[(217)])<(1))?(1):(player.Skill[(217)])))/10){
+		rewardPid=rewardEpic[Random(1,rewardEpic[0])];
+		player.Say((11),"Hm, I caught something special!");
+		player.AddItem(rewardPid,1);
+	}else if(rewardRoll<10*(luckFactor+(((player.Skill[(217)])>(100))?(100):(((player.Skill[(217)])<(1))?(1):(player.Skill[(217)])))/10)){
+		rewardPid=rewardRare[Random(1,rewardRare[0])];
+		player.Say((11),"Hm, I caught something rare! The fish got disturbed and swam away, but definitely worth it!");
+		Item@reward=player.AddItem(rewardPid,1);
+		if(rewardPid!=(99)&&(@reward!=null)){
+			AddArmorBonus(reward,1);
+			AddArmorBonus(reward,2);
+			AddArmorBonus(reward,3);
+			if(Random(0,100)<luckFactor){
+				AddArmorBonus(reward,4);
+				AddArmorBonus(reward,5);
+			}else if(Random(0,100)<luckFactor*4){
+				AddArmorBonus(reward,4);
+			}
+			reward.BrokenCount=Random(60-luckFactor*2,95-luckFactor*2);
+			reward.Deterioration=Random(reward.BrokenCount*100,((10000)+reward.BrokenCount*100)/2);
+			reward.Update();
+		}
+	}else if(rewardRoll<20*(5+luckFactor+(((player.Skill[(217)])>(100))?(100):(((player.Skill[(217)])<(1))?(1):(player.Skill[(217)])))/10)){
+		rewardPid=rewardsQuality[Random(1,rewardsQuality[0])];
+		player.Say((11),"Hm, I caught some quality stuff! The fish got disturbed and swam away, but who cares!");
+		Item@reward=player.AddItem(rewardPid,1);
+		if(rewardPid!=(119)&&(@reward!=null)){
+			AddArmorBonus(reward,1);
+			AddArmorBonus(reward,2);
+			if(Random(0,100)<luckFactor*4){
+				AddArmorBonus(reward,3);
+			}
+			reward.BrokenCount=Random(60-luckFactor*2,95-luckFactor*2);
+			reward.Deterioration=Random(reward.BrokenCount*100,((10000)+reward.BrokenCount*100)/2);
+			reward.Update();
+		}
+	}else if(rewardRoll<100*(5+luckFactor+(((player.Skill[(217)])>(200))?(200):(((player.Skill[(217)])<(1))?(1):(player.Skill[(217)])))/20)){
+		rewardPid=rewardsCommon[Random(1,rewardsCommon[0])];
+		player.Say((11),"Hm, I caught something!  The fish got disturbed and swam away.");
+		Item@reward=player.AddItem(rewardPid,1);
+		if((@reward!=null)){
+			if(Random(0,100)<luckFactor+10){
+				reward.BrokenCount=Random(60-luckFactor*2,95-luckFactor*2);
+				reward.Deterioration=Random(reward.BrokenCount*100,((10000)+reward.BrokenCount*100)/2);
+			}else{
+				reward.BrokenCount=(100);
+				reward.Deterioration=(10000);
+				((reward.BrokenFlags)=(reward.BrokenFlags)|((0x0F)));
+			}
+			reward.Update();
+		}
+	}else if(rewardRoll<7500-25*(((player.Skill[(217)])>(200))?(200):(((player.Skill[(217)])<(1))?(1):(player.Skill[(217)])))){
+		rewardPid=rewardsJunk[Random(1,rewardsJunk[0])];
+		player.Say((11),"Hm, I caught some junk! The fish got disturbed and swam away.");
+		player.AddItem(rewardPid,1);
+	}else{
+		Map@map=player.GetMap();
+		if((@map!=null)){
+			map.SetData((22),map.GetData((22))-1);
+		}
+		rewardPid=rewardsFish[Random(1,rewardsFish[0])];
+		player.Say((11),"I caught some fish!");
+		player.AddItem(rewardPid,1);
+	}
+	FishLog("CATCH!!! - Player ("+player.Id+", "+player.Name+"), Reward (pid = "+rewardPid+") + Reward roll = "+rewardRoll);
+	
+	uint level=player.Stat[(77)];
 	
 	int rollSpawn=Random(1,100);
 	FishLog("Gecko Spawn roll = "+rollSpawn);
@@ -1123,6 +1152,12 @@ uint e_giveCaughtItem(array<uint>@values){
 		spawnGecko(player,player.GetMap(),geckoPids[geckoIndex]);
 	}
 	return 0;
+} 
+
+int getLuckFactor(Critter&player){
+	return player.CountItem((328))>0?
+	10:player.CountItem((99))>0?
+	5:player.Stat[(6)]/2;
 }
 
 uint e_removeLostSpear(array<uint>@values){
@@ -1144,10 +1179,10 @@ uint e_removeLostSpear(array<uint>@values){
 	if(!playerHasRope){
 		player.Say((11),"Damn, I lost my fishing spear! What was I thinking throwing away that spear without a rope?");
 	}else{
-		uint armorType=getArmorPenaltyValue(player);
-		if(armorType==3){
+		uint armorPenalty=getArmorPenaltyValue(player);
+		if(armorPenalty==(25)){
 			player.Say((11),"Damn, I lost my fishing spear! Maybe some fine Leather Armor would make handling the rope easier.");
-		}else if(armorType==0){
+		}else if(armorPenalty==(0)){
 			player.Say((11),"Damn, I lost my fishing spear! What are the odds my finger would slip on this rope, one out of a thousand?!");
 		}else{
 			player.Say((11),"Damn, I lost my fishing spear! The rope entangled in this bulky armor.");
@@ -1161,7 +1196,7 @@ uint getArmorPenaltyValue(Critter&player){
 		FishLog("getArmorValue - Invalid player");
 		return 0;
 	}
-	uint armorType=5;
+	uint armorPenalty=(25);
 	Item@item=player.GetItem(0,(3));
 	if((@item!=null)){
 		switch(item.Proto.ProtoId){
@@ -1169,18 +1204,18 @@ uint getArmorPenaltyValue(Critter&player){
 			case(379):
 			case(74):
 			case(779):
-			armorType=0;
+			armorPenalty=(0);
 			break;
 			case(2):
 			case(380):
 			case(240):
-			armorType=20;
+			armorPenalty=(100);
 			break;
 			default:
-			armorType=10;
+			armorPenalty=(50);
 		}
 	}
-	return armorType;
+	return armorPenalty;
 }
 
 void spawnGecko(Critter&player,Map&map,uint mobPid){
@@ -1204,231 +1239,5 @@ void spawnGecko(Critter&player,Map&map,uint mobPid){
 		gecko.AddEnemyInStack(player.Id);
 		AddAttackPlane(gecko,0,player);
 	}
-}         
-
-void map_init(Map&map,bool firstTime)
-{
-	if(firstTime)
-	{
-		if(map.GetData((20))==0)
-		{
-			uint[]values={map.GetLocation().Id};
-			uint eventId=CreateTimeEvent(((__FullSecond)+((((7)*__TimeMultiplier*86400)))),"e_DeleteEncounter",values,true);
-			map.SetData((20),eventId);
-		} 
-		
-		uint pid=map.GetProtoId();
-		uint locpid=map.GetLocation().GetProtoId();
-		if(GetMapType(map)==(7)){
-			map_fishing_init(map,firstTime);
-		}
-		if(GetMapType(map)==(2))
-		{
-			uint i=Random(0,7);
-			if((i!=1)&&(i!=0))
-			{
-				uint[]pids={(9910),(1817)};
-				HideProductionFacility(map,pids,true);
-			}
-			else
-			{
-				uint[]pids={(9910),(1817)};
-				ShowProductionFacility(map,pids,true);
-			}
-			if(i!=2&&!((locpid>=((311)))&&(locpid<=((313)))))
-			{
-				uint[]pids={(1820),(1821),(1822)};
-				HideProductionFacility(map,pids,true);
-			}
-			else
-			{
-				uint[]pids={(1820),(1821),(1822)};
-				ShowProductionFacility(map,pids,true);
-			}
-			if(i!=3)
-			{
-				uint[]pids={(1825)};
-				HideProductionFacility(map,pids,false);
-			}
-			if(i!=4)
-			{
-				uint[]pids={(1826)};
-				HideProductionFacility(map,pids,true);
-			}
-			if(i!=5)
-			{
-				uint[]pids={(1827)};
-				HideProductionFacility(map,pids,false);
-			}  
-			
-		}
-		uint t=GetMapType(map);
-		if((t==(5))||(t==(7))||(t==(8)))
-		{
-			uint chance=19;
-			if(t==(8))
-			chance-=5;   
-			
-			if((Random(0,chance)==0))
-			
-			{
-				array<Entire>entires;
-				ParseEntires(map,entires,(243));
-				if(entires.length()>0)
-				{
-					uint r=Random(0,entires.length()-1);
-					Item@car=map.AddItem(entires[r].HexX,entires[r].HexY,(563),1);
-				}
-			}
-		}
-		
-		if((t==(5)||t==(8)))
-		{
-			Scatter(map,(98),"prod_barrel_junk@_Junk");
-		}
-		
-		if((t==(2)||t==(3)))
-		{
-			uint roll=Random(0,1);
-			switch(roll)
-			{
-				case 0:
-				Scatter(map,(272),"prod_xander_root@item_init");
-				break;
-				case 1:
-				Scatter(map,(271),"prod_broc_flower@item_init");
-				break;
-			}
-		}
-		if((t==(3)))
-		Scatter(map,(1827),"prod_flint@item_init");
-	}
-	
-	map.SetEvent((0),"_Finish");
-	map.SetEvent((6),"_CritterIn");
-	map.SetEvent((8),"_CritterDead");
-}   
-
-void Scatter(Map&map,uint16 pid,string@script)
-{
-	array<Entire>entires;
-	ParseEntires(map,entires,0);
-	uint re=Random(0,entires.length()-1);
-	
-	uint16 hx=0;
-	uint16 hy=0;
-	uint dist=0;
-	while(true)
-	{
-		hx=entires[re].HexX;
-		hy=entires[re].HexY;
-		dist=Random(20,100);
-		map.GetHexCoord(entires[re].HexX,entires[re].HexY,hx,hy,Random(0,359),dist);
-		
-		if(map.IsHexPassed(hx,hy)&&map.GetSceneries(hx,hy,null)==0)
-		break;
-	}
-	
-	uint count=dist/10;
-	while(count>0)
-	{
-		uint16 x=hx;
-		uint16 y=hy;
-		map.GetHexCoord(hx,hy,x,y,Random(0,359),Random(0,5));
-		if(map.GetSceneries(x,y,null)>0)
-		continue;
-		uint n=1;
-		count-=n;
-		Item@it=map.AddItem(x,y,pid,n);
-		map.AddItem(x,y,pid,n); 
-		
-	}
-}
-
-bool HasCars(Critter&cr,uint locid)
-{
-	Location@loc=GetLocation(locid);
-	if(!(@loc!=null))
-	return false;
-	array<Map@>maps;
-	array<Item@>items;
-	for(uint i=0,j=loc.GetMaps(maps);i<j;i++)
-	maps[i].GetItems(0,items);
-	
-	for(uint i=0,j=items.length();i<j;i++)
-	if(items[i].GetType()==(13))
-	{
-		GameVar@var=GetLocalVar((23012),items[i].Id);
-		if(var.GetValue()==int(cr.Id))
-		return true;
-	}
-	return false;
-} 
-
-void _CritterDead(Map&map,Critter&cr,Critter@)
-{
-	uint locid=map.GetLocation().Id;
-	if(cr.IsPlayer()&&cr.IsKnownLoc(true,locid)&&!HasCars(cr,locid))
-	cr.UnsetKnownLoc(true,locid);
 }  
 
-void _CritterIn(Map&map,Critter&cr)
-{   
-	
-}    
-
-void _Finish(Map&map,bool deleted)
-{
-	if(!deleted)
-	return;
-	
-	uint eventId=map.GetData((20));
-	EraseTimeEvent(eventId);                      
-	
-}     
-
-void HideProductionFacility(Map&map,array<uint>&pids,bool block)
-{
-	array<Item@>items;
-	uint num=0;
-	
-	for(uint i=0;i<pids.length();i++)
-	num+=map.GetItems(pids[i],items);
-	
-	for(uint i=0;i<num;i++)
-	{
-		((items[i].Flags)=(items[i].Flags)|((0x00000001)));
-		((items[i].Flags)=(items[i].Flags)|((0x00000004)));
-		items[i].Update();
-	}
-}
-
-void ShowProductionFacility(Map&map,array<uint>&pids,bool block)
-{
-	array<Item@>items;
-	uint num=0;
-	
-	for(uint i=0;i<pids.length();i++)
-	num+=map.GetItems(pids[i],items);
-	
-	for(uint i=0;i<num;i++)
-	{
-		((items[i].Flags)=((items[i].Flags)|((0x00000004)))^((0x00000004)));
-		items[i].Update();
-	}
-	
-}
-
-uint e_DeleteEncounter(array<uint>@values)
-{
-	Location@loc=GetLocation(values[0]);
-	if(!(@loc!=null))
-	return 0;
-	
-	if(LocationHasCritters(loc,(0x10)|((0x01)|(0x02)|(0x04))))
-	return((1)*__TimeMultiplier*3600);
-	
-	DeleteLocation(values[0]);
-	FLog((23),"map_encounter@e_DeleteEncounter: locId "+values[0]);
-	return 0;
-}
