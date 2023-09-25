@@ -598,7 +598,7 @@ int checkBonus(Item@it,int bonusType)
 	if(it.Val3==bonusType)return it.Val8;
 	if(it.Val4==bonusType)return it.Val9;
 	return 0;
-}                                                     
+}                                                   
 
 void FishLog(string@s){
 	if((true)){
@@ -632,6 +632,7 @@ class EntiresCollection{
 }
 
 dictionary fishingPools;
+uint[]fishPids={3,(26776),(26777),(26778)};
 
 bool isShorelineEncounterMap(uint mapPid){
 	return mapPid==(200)
@@ -655,12 +656,12 @@ void map_fishing_init(Map&map,bool firstTime){
 		map.SetData((22),Random((5)/2,(5)));
 		map.SetData((23),isShorelineEncounterMap(mapPid)?(5):(15));
 		map.SetData((24),0);
-		leftoverFishCount=map.GetItems((26776),leftoverFish);
-		if(leftoverFishCount>0){
-			FishLog("Deleting leftover fish. Count = "+leftoverFishCount);
-			DeleteItems(leftoverFish);
-		}else{
-			FishLog("No leftover fishes.");
+		for(uint i=1;i<=fishPids[0];i++){
+			leftoverFishCount=map.GetItems(fishPids[i],leftoverFish);
+			if(leftoverFishCount>0){
+				FishLog("Deleting leftover fish. Count = "+leftoverFishCount);
+				DeleteItems(leftoverFish);
+			}
 		}
 	}else{
 		FishLog("mapProto is NOT fishing zone ( "+mapPid+" )");
@@ -702,7 +703,7 @@ void _SpawnFishOnMap(Map&map){
 			&&map.GetData((21))<(3)){
 				FishLog("Spawn - Can spawn more fishes. fishCount = "+map.GetData((21))+", available = "+map.GetData((22)));
 				uint index=Random(0,fishingPool.fishSpotCount-1);
-				Item@fish=map.AddItem(fishingPool.fishSpotHexX[index],fishingPool.fishSpotHexY[index],(26776),1);
+				Item@fish=map.AddItem(fishingPool.fishSpotHexX[index],fishingPool.fishSpotHexY[index],fishPids[Random(1,fishPids[0])],1);
 				map.SetData((21),map.GetData((21))+1);
 				DespawnFish(fish);
 			}
@@ -816,11 +817,18 @@ void unsafe_SpearFish(Critter&player,int toolPid,int itemId,int range,string@par
 	CreateTimeEvent(((__FullSecond)+(((800)*__TimeMultiplier/1000))),"e_FishingSpearFlyAnimation",values,false); 
 	
 	uint animationTimeToWait=800+35*dist;
-	Item@fishOnSpot=map.GetItem(destX,destY,(26776));
+	bool isSpearOnFishHex=false;
+	Item@fishOnSpot;
+	for(uint i=1;i<fishPids[0];i++){
+		if(!isSpearOnFishHex){
+			@fishOnSpot=map.GetItem(destX,destY,fishPids[i]);
+			isSpearOnFishHex=(@fishOnSpot!=null);
+		}
+	}
 	bool playerHasRope=player.CountItem((127))>0;
 	FishLog("Player has rope = "+playerHasRope);
 	player.Wait(animationTimeToWait+250);
-	if((@fishOnSpot!=null)&&playerHasRope){
+	if(isSpearOnFishHex&&playerHasRope){
 		
 		ChangeFishAnimationToCaughtAndGiveFish(player,map.Id,destX,destY,fishOnSpot.Id,(26785),animationTimeToWait,(1300));
 	}else{
@@ -883,11 +891,18 @@ bool _UseSkillOnFish(Item&item,Critter&player,int skill){
 		CreateTimeEvent(((__FullSecond)+(((1600)*__TimeMultiplier/1000))),"e_FishingSpearFlyAnimation",values,false); 
 		
 		uint animationTimeToWait=1600+35*dist;
-		Item@fishOnSpot=map.GetItem(destX,destY,(26776));
+		bool isSpearOnFishHex=false;
+		Item@fishOnSpot;
+		for(uint i=1;i<fishPids[0];i++){
+			if(!isSpearOnFishHex){
+				@fishOnSpot=map.GetItem(destX,destY,fishPids[i]);
+				isSpearOnFishHex=(@fishOnSpot!=null);
+			}
+		}
 		bool playerHasRope=(player.CountItem((127))>0);
 		FishLog("Player has rope = "+playerHasRope);
 		player.Wait(animationTimeToWait+250);
-		if((@fishOnSpot!=null)&&playerHasRope){
+		if(isSpearOnFishHex&&playerHasRope){
 			ChangeFishAnimationToCaughtAndGiveFish(player,map.Id,destX,destY,fishOnSpot.Id,(26785),animationTimeToWait,(1300));
 		}else{
 			ChangeToMissAnimation(player,map.Id,destX,destY,(26787),animationTimeToWait,(1300));
