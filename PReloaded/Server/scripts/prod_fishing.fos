@@ -13,6 +13,7 @@
 #include "mapdata_h.fos"
 #include "npc_planes_h.fos"
 #include "_npc_pids.fos"
+#include "item_bonus.fos"
 
 
 #define TEXT_CHOPPED            (3016)
@@ -26,12 +27,18 @@
 #define FISH_ENCOUNTER_CAPACITY         (5)             //  how many fish can the map hold, this can regenerate on public locations
 #define FISH_CAPACITY_TICKS_TO_REGEN    (12)            //  how many times does the map loop activate before regenerating one fish
 
+#define ARMOR_PENALTY_BLUESUIT          (25)
+#define ARMOR_PENALTY_LEATHER           (0)
+#define ARMOR_PENALTY_HEAVY             (100)
+#define ARMOR_PENALTY_OTHER             (50)
+
+
 #define FISH_DESPAWN_TICK_MIN           (12)            //  minimum how many animations to finish before despawning the fish
 #define FISH_DESPAWN_TICK_MAX           (18)            //  maximum, the actual value will be random between these two
 
-#define PID_FISH1                       (26760)
-#define PID_FISH2                       (26761)
-#define PID_FISH3                       (26762)
+#define PID_FISH_SALMON                 (26760)
+#define PID_FISH_TUNA                   (26761)
+#define PID_FISH_CATFISH                (26762)
 
 #define PID_ITEM_FISHING_POOL               (26770)
 #define PID_ITEM_FISH_CIRCLING              (26776)
@@ -48,6 +55,7 @@
 #define FISH_KILLSPLASH_ANIM_TIME2      (1100)
 #define FISH_CIRCLING_ANIM_TIME         (1600)
 #define FISH_SPEARED_ANIM_TIME          (2200)
+
 
 //  Fishing_test optimization
 #define FISH_DEBUG_LOGGING_ALLOWED     (true)
@@ -129,7 +137,7 @@ void _SpawnFishOnMap(Map& map) {
     string@ s = "_" + map.GetProtoId();
     EntiresCollection fishingPool;
     if (!fishingPools.exists(s)) {
-        FishLog("fishingPool = null, initalizing entires on this map proto: " + map.GetProtoId());
+        FishLog("fishingPool = null, initializing entires on this map proto: " + map.GetProtoId());
         fishingPool = EntiresCollection(map, MAP_FISH_SPOT_ENTIRE);
         fishingPools.set(s, fishingPool);
         fishingPool.log();
@@ -186,10 +194,6 @@ bool isPublicFishingZone(Map& map) {
         }
     }
     return false;
-}
-
-void _FinishRegenerable(Item& item, bool) {
-    FishLog("prod_fishing.fos::_FinishRegenerable()");
 }
 
 // non regenerable, for encounters
@@ -377,7 +381,7 @@ void ChangeToMissAnimation(Critter& player, uint mapId, uint hexX, uint hexY, ui
         AnimateItemOnceAndDelete(mapId, hexX, hexY, newFishPid, time, animationDuration);
     } else {
         int roll = Random(1, 1000);
-        int difficulty = 51 + getArmorPenaltyValue(player) * 5 - (CLAMP(player.Skill[SK_OUTDOORSMAN], 1, 100) / 2);
+        int difficulty = 51 + getArmorPenaltyValue(player) - (CLAMP(player.Skill[SK_OUTDOORSMAN], 1, 100) / 2);
         FishLog("Miss! Loose fishing spear roll = " + roll + ", against = " + difficulty);
         if (roll <= difficulty) {
             CreateTimeEvent(AFTER(REAL_MS(time + animationDuration)), "e_removeLostSpear", values, false);
@@ -403,13 +407,10 @@ void ChangeFishAnimationToCaughtAndGiveFish(Critter& player, uint mapId, uint he
     }
 
     map.SetData(MAP_DATA_FISH_SPAWNED, map.GetData(MAP_DATA_FISH_SPAWNED) - 1);
-    map.SetData(MAP_DATA_FISH_AVAILABLE, map.GetData(MAP_DATA_FISH_AVAILABLE) - 1);
     FishLog("Fish Caught! (spawned = " + map.GetData(MAP_DATA_FISH_SPAWNED) + ", available = " + map.GetData(MAP_DATA_FISH_AVAILABLE) + ")");
 
-    //  here one can set up the rewards for hitting a fish spot with spear,
-    //  by default this should return a fish, but who knows what you can find in the sea...
-    uint[] rewardValues = {player.Id, PID_FISH3};
-    CreateTimeEvent(AFTER(REAL_MS(time + animationDuration)), "e_giveCaughtItem", rewardValues, false);
+    uint[] values = { player.Id };
+    CreateTimeEvent(AFTER(REAL_MS(time + animationDuration)), "e_giveCaughtItem", values, false);
 
     AnimateItemOnceAndDelete(mapId, hexX, hexY, newFishPid, time, animationDuration);
     return;
@@ -515,11 +516,98 @@ uint e_giveCaughtItem(array<uint>@ values) {
         FishLog("e_giveCaughtItem - Invalid player");
         return 0;
     }
-    player.AddItem(values[1], 1);
-    player.Say(SAY_NETMSG, "I caught something !");
-    FishLog("CATCH!!! - Player (" + player.Id + ", " +  player.Name + "), Reward (pid = " + values[1] + ")");
-    uint level = player.Stat[ST_LEVEL];
 
+    //  here one can set up the rewards for hitting a fish spot with spear,
+    //  by default this should return a fish, but who knows what you can find in the sea...
+    //  change to catch some epic loot
+    //  [0] -> number of items to random from, make sure it not higher than actual array size, or exception happens!
+    uint[] rewardLegendary = { 1, PID_MAGIC_8_BALL };
+    uint[] rewardEpic = { 1, PID_OIL_CAN };
+    uint[] rewardRare = { 7, PID_GOLD_LOCKET, PID_COMBAT_HELMET_MK_II, PID_DESERT_COMBAT_HELMET, PID_COMBAT_HELMET, PID_METAL_HELMET_MK2, PID_METAL_HELMET, PID_TESLA_HELMET };
+    uint[] rewardsQuality = { 7, PID_NECKLACE, PID_COMBAT_HELMET_MK_II, PID_DESERT_COMBAT_HELMET, PID_COMBAT_HELMET, PID_METAL_HELMET_MK2, PID_METAL_HELMET, PID_TESLA_HELMET};
+    uint[] rewardsCommon = { 10, PID_LEATHER_ARMOR_HELMET, PID_LEATHER_ARMOR_HELMET_MK2, PID_LEATHER_JACKET_HELMET, PID_LEATHER_ARMOR, PID_LEATHER_JACKET, PID_LEATHER_ARMOR_MK_II,
+                                PID_BLACK_ROBE, PID_PURPLE_ROBE, PID_SAND_ROBE, PID_WORN_ROBE };
+    uint[] rewardsJunk = { 6, PID_BLACK_COC_BADGE, PID_RED_COC_BADGE, PID_BOTTLE_EMPTY, PID_EMPTY_JET, PID_JUNK, PID_WATERBAG_EMPTY };
+    uint[] rewardsFish = { 3, PID_FISH_SALMON, PID_FISH_TUNA, PID_FISH_CATFISH };
+    //  default rewards = random fish
+    uint rewardPid = rewardsFish[Random(1, rewardsFish[0])];
+
+    int rewardRoll = Random(0, 10000);
+    if (player.GetAccess() >= ACCESS_MODER) {
+        rewardRoll = Random(0, 5000);
+    }
+    int luckFactor = getLuckFactor(player);
+    if (rewardRoll == 666 && _CritCountItem(player, PID_MAGIC_8_BALL) == 0) {
+        rewardPid = rewardLegendary[Random(1, rewardLegendary[0])];
+        player.Say(SAY_NETMSG, "Whoa! An Eight Ball!? How did that get stuck on the fishing spear?");
+        player.AddItem(rewardPid, 1);
+    } else if (rewardRoll < luckFactor + CLAMP(player.Skill[SK_OUTDOORSMAN], 1, 200) / 10) {
+        rewardPid = rewardEpic[Random(1, rewardEpic[0])];
+        player.Say(SAY_NETMSG, "Hm, I caught something special!");
+        player.AddItem(rewardPid, 1);
+    } else if (rewardRoll < 10 * (luckFactor + CLAMP(player.Skill[SK_OUTDOORSMAN], 1, 100) / 10)) {
+        rewardPid = rewardRare[Random(1, rewardRare[0])];
+        player.Say(SAY_NETMSG, "Hm, I caught something rare! The fish got disturbed and swam away, but definitely worth it!");
+        Item@ reward = player.AddItem(rewardPid, 1);
+        if (rewardPid != PID_GOLD_LOCKET && valid(reward)) {
+            AddArmorBonus(reward, 1);
+            AddArmorBonus(reward, 2);
+            AddArmorBonus(reward, 3);
+            if (Random(0, 100) < luckFactor) {
+                AddArmorBonus(reward, 4);
+                AddArmorBonus(reward, 5);
+            } else if (Random(0, 100) < luckFactor * 4) {
+                AddArmorBonus(reward, 4);
+            }
+            reward.BrokenCount = Random(60 - luckFactor * 2, 95 - luckFactor * 2);
+            reward.Deterioration = Random(reward.BrokenCount * 100, (MAX_DETERIORATION + reward.BrokenCount * 100) / 2);
+            reward.Update();
+        }
+    } else if (rewardRoll < 20 * (5 + luckFactor + CLAMP(player.Skill[SK_OUTDOORSMAN], 1, 100) / 10)) {
+        rewardPid = rewardsQuality[Random(1, rewardsQuality[0])];
+        player.Say(SAY_NETMSG, "Hm, I caught some quality stuff! The fish got disturbed and swam away, but who cares!");
+        Item@ reward = player.AddItem(rewardPid, 1);
+        if (rewardPid != PID_NECKLACE && valid(reward)) {
+            AddArmorBonus(reward, 1);
+            AddArmorBonus(reward, 2);
+            if (Random(0, 100) < luckFactor * 4) {
+                AddArmorBonus(reward, 3);
+            }
+            reward.BrokenCount = Random(60 - luckFactor * 2, 95 - luckFactor * 2);
+            reward.Deterioration = Random(reward.BrokenCount * 100, (MAX_DETERIORATION + reward.BrokenCount * 100) / 2);
+            reward.Update();
+        }
+    } else if (rewardRoll < 100 * (5 + luckFactor + CLAMP(player.Skill[SK_OUTDOORSMAN], 1, 200) / 20)) {
+        rewardPid = rewardsCommon[Random(1, rewardsCommon[0])];
+        player.Say(SAY_NETMSG, "Hm, I caught something!  The fish got disturbed and swam away.");
+        Item@ reward = player.AddItem(rewardPid, 1);
+        if (valid(reward)) {
+            if (Random(0, 100) < luckFactor + 10) {
+                reward.BrokenCount = Random(60 - luckFactor * 2, 95 - luckFactor * 2);
+                reward.Deterioration = Random(reward.BrokenCount * 100, (MAX_DETERIORATION + reward.BrokenCount * 100) / 2);
+            } else {
+                reward.BrokenCount = MAX_BROKENS;
+                reward.Deterioration = MAX_DETERIORATION;
+                SETFLAG(reward.BrokenFlags, BI_BROKEN);
+            }
+            reward.Update();
+        }
+    } else if (rewardRoll < 7500 - 25 * CLAMP(player.Skill[SK_OUTDOORSMAN], 1, 200)) {
+        rewardPid = rewardsJunk[Random(1, rewardsJunk[0])];
+        player.Say(SAY_NETMSG, "Hm, I caught some junk! The fish got disturbed and swam away.");
+        player.AddItem(rewardPid, 1);
+    } else {
+        Map@ map = player.GetMap();
+        if (valid(map)) {
+            map.SetData(MAP_DATA_FISH_AVAILABLE, map.GetData(MAP_DATA_FISH_AVAILABLE) - 1);
+        }
+        rewardPid = rewardsFish[Random(1, rewardsFish[0])];
+        player.Say(SAY_NETMSG, "I caught some fish!");
+        player.AddItem(rewardPid, 1);
+    }
+    FishLog("CATCH!!! - Player (" + player.Id + ", " +  player.Name + "), Reward (pid = " + rewardPid + ") + Reward roll = " + rewardRoll);
+
+    uint level = player.Stat[ST_LEVEL];
     //  lower level players have less change to trigger gecko
     int rollSpawn = Random(1, 100);
     FishLog("Gecko Spawn roll = " + rollSpawn);
@@ -543,6 +631,13 @@ uint e_giveCaughtItem(array<uint>@ values) {
     return 0;
 }
 
+//  if player has lucky items, they count first, else it's luck stat is used
+int getLuckFactor(Critter& player) {
+     return _CritCountItem(player, PID_MAGIC_8_BALL) > 0 ?
+            10 : _CritCountItem(player, PID_GOLD_LOCKET) > 0 ?
+                5 : player.Stat[ST_LUCK] / 2;
+}
+
 uint e_removeLostSpear(array<uint>@ values) {
     Critter@ player = GetCritter(values[0]);
     if (!valid(player)) {
@@ -562,10 +657,10 @@ uint e_removeLostSpear(array<uint>@ values) {
     if (!playerHasRope) {
         player.Say(SAY_NETMSG, "Damn, I lost my fishing spear! What was I thinking throwing away that spear without a rope?");
     } else {
-        uint armorType = getArmorPenaltyValue(player); //  1 none, 0 light, 2 heavy
-        if (armorType == 3) {
+        uint armorPenalty = getArmorPenaltyValue(player); //  1 none, 0 light, 2 heavy
+        if (armorPenalty == ARMOR_PENALTY_BLUESUIT) {
             player.Say(SAY_NETMSG, "Damn, I lost my fishing spear! Maybe some fine Leather Armor would make handling the rope easier.");
-        } else if (armorType == 0) {
+        } else if (armorPenalty == ARMOR_PENALTY_LEATHER) {
             player.Say(SAY_NETMSG, "Damn, I lost my fishing spear! What are the odds my finger would slip on this rope, one out of a thousand?!");
         } else {
             player.Say(SAY_NETMSG, "Damn, I lost my fishing spear! The rope entangled in this bulky armor.");
@@ -579,7 +674,7 @@ uint getArmorPenaltyValue(Critter& player) {
         FishLog("getArmorValue - Invalid player");
         return 0;
     }
-    uint armorType = 5; //  0 light, 3 none, 5+ heavy
+    uint armorPenalty = ARMOR_PENALTY_BLUESUIT;
     Item@ item = _CritGetItemArmor(player);
     if (valid(item)) {
         switch (item.Proto.ProtoId) {
@@ -587,18 +682,18 @@ uint getArmorPenaltyValue(Critter& player) {
             case PID_LEATHER_ARMOR_MK_II:
             case PID_LEATHER_JACKET:
             case PID_THERMAL_LEATHER_ARMOR:
-                armorType = 0;
+                armorPenalty = ARMOR_PENALTY_LEATHER;
                 break;
             case PID_METAL_ARMOR:
             case PID_METAL_ARMOR_MK_II:
             case PID_TESLA_ARMOR:
-                armorType = 20;
+                armorPenalty = ARMOR_PENALTY_HEAVY;
                 break;
             default:
-                armorType = 10;
+                armorPenalty = ARMOR_PENALTY_OTHER;
         }
     }
-    return armorType;
+    return armorPenalty;
 }
 
 void spawnGecko(Critter& player, Map& map, uint mobPid) {
