@@ -298,7 +298,7 @@
 #define PID_44_MAGNUM_FMJ           (111) // to be name-consistent
 #define PID_45_CALIBER_AMMO                 (357)
 #define PID_223_FMJ                         (34)
-#define PID_SHOTGUN_DRAGON_BREATH_SHELLS    (850) // 30.03.2014 Cubik: bylo tu kiedys .22 ammo 
+#define PID_SHOTGUN_DRAGON_BREATH_SHELLS    (850) // 30.03.2014 Cubik: bylo tu kiedys .22 ammo
 #define PID_SHOTGUN_SHELLS                  (95)
 #define PID_2MM_EC_AMMO                     (358)
 #define PID_SHOTGUN_SHELLS_FLECHETTE        (574)  // from W2155
@@ -557,7 +557,7 @@
 #define PID_BRAHMIN_SKIN                    (449) //Шкура брамина
 #define PID_MEAT                            (539) //Мясо
 #define PID_CIGARETTES                      (541) //Сигареты
-#define PID_SCORPION_EGG                    (9911)  
+#define PID_SCORPION_EGG                    (9911)
 
 //Self-special parts
 #define PID_MOTOR                           (89)
@@ -1144,10 +1144,10 @@
 
 
 
-// 
+//
 #define PID_TRIGGER                         (825) // Custom trigger item, see triggers.fos
 #define PID_MHEX                            (826) // Spawned by multihex items
-                                                  
+
 
 // Special item pids (for engine)
 #define PID_SPECIAL_SCEN_LIGHT                 (2141) // Light Source
@@ -1227,6 +1227,29 @@
 #define PID_VEIN_GOLD                       (22005)
 #define PID_PILE_CHEMICALS                  (22006)
 #define PID_PILE_CHEMICALS2                 (22007)
+
+/******************************************************************
+***************            Fishing module (22)      ***************
+******************************************************************/
+//  invetory items
+#define PID_FISH_SALMON                     (26760)
+#define PID_FISH_TUNA                       (26761)
+#define PID_FISH_CATFISH                    (26762)
+
+//  only map items, not able to pick up
+#define PID_ITEM_FISHING_POOL               (26770)     //  almost transparent hex, that the player can click to throw spear along a direction
+
+#define PID_ITEM_FISH_CIRCLING              (26776)     //  fish in the water, when spawned, need to hit a bit above the animation to catch fish
+#define PID_ITEM_FISH_CIRCLING2             (26777)
+#define PID_ITEM_FISH_CIRCLING3_SMALL       (26778)
+#define PID_ITEM_FISH_JUMPING               (26780)
+
+#define PID_ITEM_FISH_WATERSPLASH           (26785)     //  miss or hit fish, splash animations
+#define PID_ITEM_FISH_WATERSPLASH_SMALL     (26786)
+#define PID_ITEM_FISH_WATERSPLASH_SMALL2    (26787)
+#define PID_ITEM_FISH_KILLSPLASH            (26788)
+#define PID_ITEM_FISH_KILLSPLASH2           (26789)
+#define PID_ITEM_FISH_CIRCLING_SPEARED      (26790)     //  not used feature, supposed to play when player catches a jumping fish mid air
 
 /******************************************************************
 ***************         Transfer Objects (23)       ***************
