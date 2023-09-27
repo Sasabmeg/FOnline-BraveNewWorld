@@ -81,6 +81,21 @@ class EntiresCollection {
 dictionary fishingPools;
 uint[] fishPids = { 3, PID_ITEM_FISH_CIRCLING, PID_ITEM_FISH_CIRCLING2, PID_ITEM_FISH_CIRCLING3_SMALL };
 
+//  here one can set up the rewards for hitting a fish spot with spear,
+//  by default this should return a fish, but who knows what you can find in the sea...
+//  [0] -> number of items to random from, make sure it not higher than actual array size, or exception happens!
+uint[] rewardLegendary = { 1, PID_MAGIC_8_BALL };
+uint[] rewardEpic = { 1, PID_OIL_CAN };
+uint[] rewardRare = { 7, PID_GOLD_LOCKET, PID_COMBAT_HELMET_MK_II, PID_DESERT_COMBAT_HELMET, PID_COMBAT_HELMET, PID_METAL_HELMET_MK2, PID_METAL_HELMET, PID_TESLA_HELMET };
+uint[] rewardsQuality = { 7, PID_NECKLACE, PID_COMBAT_HELMET_MK_II, PID_DESERT_COMBAT_HELMET, PID_COMBAT_HELMET, PID_METAL_HELMET_MK2, PID_METAL_HELMET, PID_TESLA_HELMET};
+uint[] rewardsCommon = { 10, PID_LEATHER_ARMOR_HELMET, PID_LEATHER_ARMOR_HELMET_MK2, PID_LEATHER_JACKET_HELMET, PID_LEATHER_ARMOR, PID_LEATHER_JACKET, PID_LEATHER_ARMOR_MK_II,
+                            PID_BLACK_ROBE, PID_PURPLE_ROBE, PID_SAND_ROBE, PID_WORN_ROBE };
+uint[] rewardsJunk = { 6, PID_BLACK_COC_BADGE, PID_RED_COC_BADGE, PID_BOTTLE_EMPTY, PID_EMPTY_JET, PID_JUNK, PID_WATERBAG_EMPTY };
+uint[] rewardsFish = { 3, PID_FISH_SALMON, PID_FISH_TUNA, PID_FISH_CATFISH };
+
+string[] fishMoveSounds = { "fish_move_water1.ogg", "fish_move_water2.ogg", "fish_move_water3.ogg", "fish_move_water4.ogg", "fish_move_water5.ogg" };   //  used when fish are spawned
+string[] fishingSpearWaterImpactSounds = { "water_splash1.ogg", "water_splash2.ogg", "water_splash3.ogg" };
+
 bool isShorelineEncounterMap(uint mapPid) {
     return mapPid == MAP_ShorelineEncounter1
         || mapPid == MAP_ShorelineEncounter2
@@ -156,6 +171,7 @@ void _SpawnFishOnMap(Map& map) {
                 Item@ fish = map.AddItem(fishingPool.fishSpotHexX[index], fishingPool.fishSpotHexY[index], fishPids[Random(1, fishPids[0])], 1);
                 map.SetData(MAP_DATA_FISH_SPAWNED, map.GetData(MAP_DATA_FISH_SPAWNED) + 1);
                 DespawnFish(fish);
+                map.PlaySound(fishMoveSounds[Random(0,4)]);
             }
         } else {
             //FishLog("Spawn - Cannot spawn more fishes, as none available. fishCount = " + fishCount + ", available = " + map.GetData(MAP_DATA_FISH_AVAILABLE));
@@ -375,16 +391,16 @@ void ChangeToMissAnimation(Critter& player, uint mapId, uint hexX, uint hexY, ui
     bool playerHasRope = (_CritCountItem(player, PID_ROPE) > 0);
     if (!playerHasRope) {
         CreateTimeEvent(AFTER(REAL_MS(time + animationDuration)), "e_removeLostSpear", values, false);
-        AnimateItemOnceAndDelete(mapId, hexX, hexY, newFishPid, time, animationDuration);
+        AnimateItemOnceAndDelete(mapId, hexX, hexY, newFishPid, time, animationDuration, 1);
     } else {
         int roll = Random(1, 1000);
         int difficulty = 51 + getArmorPenaltyValue(player) - (CLAMP(player.Skill[SK_OUTDOORSMAN], 1, 100) / 2);
         FishLog("Miss! Loose fishing spear roll = " + roll + ", against = " + difficulty);
         if (roll <= difficulty) {
             CreateTimeEvent(AFTER(REAL_MS(time + animationDuration)), "e_removeLostSpear", values, false);
-            AnimateItemOnceAndDelete(mapId, hexX, hexY, newFishPid, time, animationDuration);
+            AnimateItemOnceAndDelete(mapId, hexX, hexY, newFishPid, time, animationDuration, 1);
         } else {
-            AnimateItemOnceAndDelete(mapId, hexX, hexY, newFishPid, time, animationDuration);
+            AnimateItemOnceAndDelete(mapId, hexX, hexY, newFishPid, time, animationDuration, 2);
         }
     }
 }
@@ -409,7 +425,7 @@ void ChangeFishAnimationToCaughtAndGiveFish(Critter& player, uint mapId, uint he
     uint[] values = { player.Id };
     CreateTimeEvent(AFTER(REAL_MS(time + animationDuration)), "e_giveCaughtItem", values, false);
 
-    AnimateItemOnceAndDelete(mapId, hexX, hexY, newFishPid, time, animationDuration);
+    AnimateItemOnceAndDelete(mapId, hexX, hexY, newFishPid, time, animationDuration, 3);
     return;
 }
 
@@ -418,8 +434,8 @@ void DespawnFish(Item& item) {
     CreateTimeEvent(AFTER(REAL_MS(time)), "e_DespawnFish", item.Id, false);
 }
 
-void AnimateItemOnceAndDelete(uint mapPid, uint hexX, uint hexY, uint itemPid, uint time, uint duration) {
-    uint[] values = {mapPid, hexX, hexY, itemPid, duration};
+void AnimateItemOnceAndDelete(uint mapPid, uint hexX, uint hexY, uint itemPid, uint time, uint duration, uint soundId) {
+    uint[] values = {mapPid, hexX, hexY, itemPid, duration, soundId};
     CreateTimeEvent(AFTER(REAL_MS(time)), "e_animateOnceAndDelete", values, false);
 }
 
@@ -453,6 +469,9 @@ uint e_animateOnceAndDelete(array<uint>@ values) {
     if (!valid(item)) {
         FishLog("e_animateOnceAndDelete - Invalid Item");
         return 0;
+    }
+    if (values[5] != 0) {
+        map.PlaySound(fishingSpearWaterImpactSounds[values[5]]);
     }
     //FishLog("e_animateOnceAndDelete - spawning pid:" + values[3] + " at hex(" + values[1] + ", " + values[2] + ")");
     CreateTimeEvent(AFTER(REAL_MS(values[4])), "e_DeleteAnimationItem", item.Id, true);
@@ -514,18 +533,6 @@ uint e_giveCaughtItem(array<uint>@ values) {
         return 0;
     }
 
-    //  here one can set up the rewards for hitting a fish spot with spear,
-    //  by default this should return a fish, but who knows what you can find in the sea...
-    //  change to catch some epic loot
-    //  [0] -> number of items to random from, make sure it not higher than actual array size, or exception happens!
-    uint[] rewardLegendary = { 1, PID_MAGIC_8_BALL };
-    uint[] rewardEpic = { 1, PID_OIL_CAN };
-    uint[] rewardRare = { 7, PID_GOLD_LOCKET, PID_COMBAT_HELMET_MK_II, PID_DESERT_COMBAT_HELMET, PID_COMBAT_HELMET, PID_METAL_HELMET_MK2, PID_METAL_HELMET, PID_TESLA_HELMET };
-    uint[] rewardsQuality = { 7, PID_NECKLACE, PID_COMBAT_HELMET_MK_II, PID_DESERT_COMBAT_HELMET, PID_COMBAT_HELMET, PID_METAL_HELMET_MK2, PID_METAL_HELMET, PID_TESLA_HELMET};
-    uint[] rewardsCommon = { 10, PID_LEATHER_ARMOR_HELMET, PID_LEATHER_ARMOR_HELMET_MK2, PID_LEATHER_JACKET_HELMET, PID_LEATHER_ARMOR, PID_LEATHER_JACKET, PID_LEATHER_ARMOR_MK_II,
-                                PID_BLACK_ROBE, PID_PURPLE_ROBE, PID_SAND_ROBE, PID_WORN_ROBE };
-    uint[] rewardsJunk = { 6, PID_BLACK_COC_BADGE, PID_RED_COC_BADGE, PID_BOTTLE_EMPTY, PID_EMPTY_JET, PID_JUNK, PID_WATERBAG_EMPTY };
-    uint[] rewardsFish = { 3, PID_FISH_SALMON, PID_FISH_TUNA, PID_FISH_CATFISH };
     //  default rewards = random fish
     uint rewardPid = rewardsFish[Random(1, rewardsFish[0])];
 
