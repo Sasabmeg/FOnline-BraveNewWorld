@@ -27,6 +27,7 @@ funcdef bool SmartValidate( ItemCl& item, ItemCl@ tool );
 #endif
 
 import uint8 GetCurrentAim() from "client_keybinds";
+import bool GUI_IsKeyPressed(uint8 key) from "client_gui";
 
 class SmartCollection
 {
@@ -231,32 +232,36 @@ class SmartCursor
 
                                 //  fishing hack to show throw distance
                                 if (tool.Proto.ProtoId == PID_SPEAR || tool.Proto.ProtoId == PID_SHARP_SPEAR || tool.Proto.ProtoId == PID_SHARPENED_POLE) {
-                                    txt = "Throw wherever";
-                                    if (valid(chosen)) {
-                                        int aim = GetCurrentAim();
-                                        switch (aim) {
-                                            case HIT_LOCATION_LEFT_LEG:
-                                                txt = "Throw even closer";
-                                                break;
-                                            case HIT_LOCATION_RIGHT_LEG:
-                                                txt = "Throw close";
-                                                break;
-                                            case HIT_LOCATION_GROIN:
-                                            case HIT_LOCATION_TORSO:
-                                                txt = "Throw not too far";
-                                                break;
-                                            case HIT_LOCATION_LEFT_ARM:
-                                                txt = "Throw far";
-                                                break;
-                                            case HIT_LOCATION_RIGHT_ARM:
-                                                txt = "Throw further";
-                                                break;
-                                            case HIT_LOCATION_HEAD:
-                                                txt = "Throw even further";
-                                                break;
-                                            case HIT_LOCATION_EYES:
-                                                txt = "Throw as far you can";
-                                                break;
+                                    if (GUI_IsKeyPressed(DIK_LSHIFT) || GUI_IsKeyPressed(DIK_RSHIFT)) {
+                                        txt = "Feed fish";
+                                    } else {
+                                        txt = "Throw wherever";
+                                        if (valid(chosen)) {
+                                            int aim = GetCurrentAim();
+                                            switch (aim) {
+                                                case HIT_LOCATION_LEFT_LEG:
+                                                    txt = "Throw even closer";
+                                                    break;
+                                                case HIT_LOCATION_RIGHT_LEG:
+                                                    txt = "Throw close";
+                                                    break;
+                                                case HIT_LOCATION_GROIN:
+                                                case HIT_LOCATION_TORSO:
+                                                    txt = "Throw not too far";
+                                                    break;
+                                                case HIT_LOCATION_LEFT_ARM:
+                                                    txt = "Throw far";
+                                                    break;
+                                                case HIT_LOCATION_RIGHT_ARM:
+                                                    txt = "Throw further";
+                                                    break;
+                                                case HIT_LOCATION_HEAD:
+                                                    txt = "Throw even further";
+                                                    break;
+                                                case HIT_LOCATION_EYES:
+                                                    txt = "Throw as far you can";
+                                                    break;
+                                            }
                                         }
                                     }
                                 }
@@ -266,8 +271,14 @@ class SmartCursor
                                     if( needTool && this.drawInfoTool )
                                     {
                                         string txtTool = GetMsgStr( TEXTMSG_ITEM, tool.Proto.ProtoId*100+tool.Info );
-                                        if( txtTool != "error" )
-                                            txt += " ("+txtTool+")";
+                                        if( txtTool != "error" ) {
+                                            if ((tool.Proto.ProtoId == PID_SPEAR || tool.Proto.ProtoId == PID_SHARP_SPEAR || tool.Proto.ProtoId == PID_SHARPENED_POLE)
+                                                    && (GUI_IsKeyPressed(DIK_LSHIFT) || GUI_IsKeyPressed(DIK_RSHIFT))) {
+                                                txt += " (Barley)";
+                                            } else {
+                                                txt += " ("+txtTool+")";
+                                            }
+                                        }
                                     }
 
                                     DrawText( txt, __MouseX + this.drawInfoOffsetX, __MouseY + this.drawInfoOffsetY, 0, 0, this.drawInfoColor, this.drawInfoFont, this.drawInfoFlags );
@@ -277,12 +288,44 @@ class SmartCursor
                             // graphic
                             if( needTool && this.drawTool )
                             {
-                                uint spriteId = LoadSprite( tool.PicInv > 0 ? tool.PicInv : tool.Proto.PicInv, tool.Dir );
-                                if( spriteId > 0 )
-                                {
-                                    __HideCursor = true;
-                                    DrawSprite( spriteId, -1, __MouseX + this.drawToolOffsetX, __MouseY + this.drawToolOffsetY, this.drawToolSize, this.drawToolSize, true, false, 0 );
+                                if ((tool.Proto.ProtoId == PID_SPEAR || tool.Proto.ProtoId == PID_SHARP_SPEAR || tool.Proto.ProtoId == PID_SHARPENED_POLE)
+                                        && (GUI_IsKeyPressed(DIK_LSHIFT) || GUI_IsKeyPressed(DIK_RSHIFT))) {
+                                    CritterCl@ chosen = GetChosen();
+                                    if (!valid(chosen)) {
+                                        Message("Invalid Chosen");
+                                        return;
+                                    }
+                                    array<ItemCl@> items;
+                                    uint countInvItems = chosen.GetItems(SLOT_INV, items);
+                                    ItemCl@ barley;
+                                    for (uint i = 0; i < countInvItems; i++) {
+                                        if (items[i].Proto.ProtoId == PID_BARLEY) {
+                                            @barley = items[i];
+                                        }
+                                    }
+                                    if (valid(barley)) {
+                                        array<uint> click = { CHOSEN_USE_ITEM, barley.Id, PID_BARLEY, TARGET_ITEM, this.clickTargetId, USE_USE, 0 };
+                                        SetChosenActions( click );
+                                    } else {
+                                        Message("I'm out of fish food.");
+                                        return ;
+                                    }
+
+                                    uint spriteId = LoadSprite(barley.PicInv > 0 ? barley.PicInv : barley.Proto.PicInv, barley.Dir);
+                                    if (spriteId > 0)
+                                    {
+                                        __HideCursor = true;
+                                        DrawSprite( spriteId, -1, __MouseX + this.drawToolOffsetX, __MouseY + this.drawToolOffsetY, this.drawToolSize, this.drawToolSize, true, false, 0 );
+                                    }
+                                } else {
+                                    uint spriteId = LoadSprite( tool.PicInv > 0 ? tool.PicInv : tool.Proto.PicInv, tool.Dir );
+                                    if( spriteId > 0 )
+                                    {
+                                        __HideCursor = true;
+                                        DrawSprite( spriteId, -1, __MouseX + this.drawToolOffsetX, __MouseY + this.drawToolOffsetY, this.drawToolSize, this.drawToolSize, true, false, 0 );
+                                    }
                                 }
+
                             }
 
                             // no need to recheck everything again when player bravely press the mouse button,
@@ -331,33 +374,56 @@ class SmartCursor
                 {
                     //  fishing hack, no other way
                     if (this.clickToolPid == PID_SPEAR || this.clickToolPid == PID_SHARP_SPEAR || this.clickToolPid == PID_SHARPENED_POLE) {
-                        int aim = GetCurrentAim();
-                        int range = 0;
-                        switch (aim) {
-                            case HIT_LOCATION_LEFT_LEG:
-                                range = 1;
-                                break;
-                            case HIT_LOCATION_RIGHT_LEG:
-                                range = 2;
-                                break;
-                            case HIT_LOCATION_GROIN:
-                            case HIT_LOCATION_TORSO:
-                                range = 3;
-                                break;
-                            case HIT_LOCATION_LEFT_ARM:
-                                range = 4;
-                                break;
-                            case HIT_LOCATION_RIGHT_ARM:
-                                range = 5;
-                                break;
-                            case HIT_LOCATION_HEAD:
-                                range = 6;
-                                break;
-                            case HIT_LOCATION_EYES:
-                                range = 7;
-                                break;
+                        if (GUI_IsKeyPressed(DIK_LSHIFT) || GUI_IsKeyPressed(DIK_RSHIFT)) {
+                            CritterCl@ chosen = GetChosen();
+                            if (!valid(chosen)) {
+                                Message("Invalid Chosen");
+                                return false;
+                            }
+                            array<ItemCl@> items;
+                            uint countInvItems = chosen.GetItems(SLOT_INV, items);
+                            ItemCl@ barley;
+                            for (uint i = 0; i < countInvItems; i++) {
+                                if (items[i].Proto.ProtoId == PID_BARLEY) {
+                                    @barley = items[i];
+                                }
+                            }
+                            if (valid(barley)) {
+                                array<uint> click = { CHOSEN_USE_ITEM, barley.Id, PID_BARLEY, TARGET_ITEM, this.clickTargetId, USE_USE, 0 };
+                                SetChosenActions( click );
+                            } else {
+                                Message("I'm out of fish food.");
+                                return false;
+                            }
+                        } else {
+                            int aim = GetCurrentAim();
+                            int range = 0;
+                            switch (aim) {
+                                case HIT_LOCATION_LEFT_LEG:
+                                    range = 1;
+                                    break;
+                                case HIT_LOCATION_RIGHT_LEG:
+                                    range = 2;
+                                    break;
+                                case HIT_LOCATION_GROIN:
+                                case HIT_LOCATION_TORSO:
+                                    range = 3;
+                                    break;
+                                case HIT_LOCATION_LEFT_ARM:
+                                    range = 4;
+                                    break;
+                                case HIT_LOCATION_RIGHT_ARM:
+                                    range = 5;
+                                    break;
+                                case HIT_LOCATION_HEAD:
+                                    range = 6;
+                                    break;
+                                case HIT_LOCATION_EYES:
+                                    range = 7;
+                                    break;
+                            }
+                            RunServerScriptUnsafe("prod_fishing@unsafe_SpearFish", this.clickToolPid, this.clickTargetId, range, null, null);
                         }
-                        RunServerScriptUnsafe("prod_fishing@unsafe_SpearFish", this.clickToolPid, this.clickTargetId, range, null, null);
                     } else {
                         array<uint> click = { CHOSEN_USE_ITEM, this.clickToolId, this.clickToolPid, TARGET_ITEM, this.clickTargetId, USE_USE, 0 };
                         SetChosenActions( click );
