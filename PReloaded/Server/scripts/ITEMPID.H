@@ -1231,7 +1231,8 @@
 /******************************************************************
 ***************            Fishing module (22)      ***************
 ******************************************************************/
-//  invetory items
+//  inventory items
+#define PID_MESSAGE_IN_A_BOTTLE             (26750)
 #define PID_FISH_SALMON                     (26760)
 #define PID_FISH_TUNA                       (26761)
 #define PID_FISH_CATFISH                    (26762)
