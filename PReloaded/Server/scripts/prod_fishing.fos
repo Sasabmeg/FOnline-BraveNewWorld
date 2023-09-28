@@ -101,7 +101,8 @@ uint[] rewardsJunk = { 6, PID_BLACK_COC_BADGE, PID_RED_COC_BADGE, PID_BOTTLE_EMP
 uint[] rewardsFish = { 3, PID_FISH_SALMON, PID_FISH_TUNA, PID_FISH_CATFISH };
 
 string[] fishMoveSounds = { "fish_move_water1.ogg", "fish_move_water2.ogg", "fish_move_water3.ogg", "fish_move_water4.ogg", "fish_move_water5.ogg" };   //  used when fish are spawned
-string[] fishingSpearWaterImpactSounds = { "water_splash1.ogg", "water_splash2.ogg", "water_splash3.ogg", "water_splash_bottle.ogg", "water_splash_metal.ogg", "water_splash_plastic.ogg", "water_splash_fish.ogg" };
+string[] fishingSpearWaterImpactSounds = { "water_splash1.ogg", "water_splash2.ogg", "water_splash3.ogg", "water_splash_bottle.ogg", "water_splash_metal2.ogg", "water_splash_plastic.ogg",
+                                            "water_splash_fish.ogg", "water_splash_fish2.ogg", "water_splash_fish3.ogg", "water_splash_fish4.ogg" };
 
 uint[] spearHitBottlePids = { 3, PID_OIL_CAN, PID_BOTTLE_EMPTY, PID_EMPTY_JET };
 uint[] spearHitMetalPids = { 3, PID_METAL_HELMET_MK2, PID_METAL_HELMET, PID_TESLA_HELMET };
@@ -119,7 +120,7 @@ bool isShorelineEncounterMap(uint mapPid) {
 }
 
 bool doesContain(uint[] container, uint value) {
-    for (uint i = 1; i < container[0]; i++) {
+    for (uint i = 1; i <= container[0]; i++) {
         if (container[i] == value) {
             return true;
         }
@@ -302,7 +303,7 @@ void unsafe_SpearFish(Critter& player, int toolPid, int itemId, int range, strin
 
     map.MoveHexByDir(destX, destY, dir, dist);
 
-    player.Say(SAY_NETMSG, "Spearfishing: Throwing direction = " + dir + ", dist = " + dist);
+    //player.Say(SAY_NETMSG, "Spearfishing: Throwing direction = " + dir + ", dist = " + dist);
 
     uint[] values = { map.Id, fixedStartX, fixedStartY, destX, destY };
     CreateTimeEvent(AFTER(REAL_MS(800)), "e_FishingSpearFlyAnimation", values, false);
@@ -469,8 +470,11 @@ void ChangeFishAnimationToCaughtAndGiveFish(Critter& player, uint mapId, uint he
         soundIndex = 5;
         FishLog("spearHitPlasticPids");
     } else if (doesContain(spearHitFishPids, rewardPid)) {
-        soundIndex = 6;
+        soundIndex = Random(6, 9);
         FishLog("spearHitFishPids");
+    } else {
+        soundIndex = Random(0, 2);
+        FishLog("default hit sound");
     }
 
     AnimateItemOnceAndDelete(mapId, hexX, hexY, animationItem, time, animationDuration, soundIndex);
