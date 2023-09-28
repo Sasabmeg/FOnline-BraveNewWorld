@@ -101,8 +101,8 @@ uint[] rewardsJunk = { 6, PID_BLACK_COC_BADGE, PID_RED_COC_BADGE, PID_BOTTLE_EMP
 uint[] rewardsFish = { 3, PID_FISH_SALMON, PID_FISH_TUNA, PID_FISH_CATFISH };
 
 string[] fishMoveSounds = { "fish_move_water1.ogg", "fish_move_water2.ogg", "fish_move_water3.ogg", "fish_move_water4.ogg", "fish_move_water5.ogg" };   //  used when fish are spawned
-string[] fishingSpearWaterImpactSounds = { "water_splash1.ogg", "water_splash2.ogg", "water_splash3.ogg", "water_splash_bottle.ogg", "water_splash_metal2.ogg", "water_splash_plastic.ogg",
-                                            "water_splash_fish.ogg", "water_splash_fish2.ogg", "water_splash_fish3.ogg", "water_splash_fish4.ogg" };
+string[] fishingSpearWaterImpactSounds = { "water_splash1.ogg", "water_splash2.ogg", "water_splash3.ogg", "water_splash_bottle.ogg", "water_splash_metal2.ogg", "water_splash_plastic3.ogg",
+                                            "water_splash_fish.ogg", "water_splash_fish2.ogg", "water_splash_fish3.ogg", "water_splash_fish4.ogg", "water_splash_spearlost1.ogg" };
 
 uint[] spearHitBottlePids = { 3, PID_OIL_CAN, PID_BOTTLE_EMPTY, PID_EMPTY_JET };
 uint[] spearHitMetalPids = { 3, PID_METAL_HELMET_MK2, PID_METAL_HELMET, PID_TESLA_HELMET };
@@ -415,14 +415,14 @@ void ChangeToMissAnimation(Critter& player, uint mapId, uint hexX, uint hexY, ui
     bool playerHasRope = (_CritCountItem(player, PID_ROPE) > 0);
     if (!playerHasRope) {
         CreateTimeEvent(AFTER(REAL_MS(time + animationDuration)), "e_removeLostSpear", values, false);
-        AnimateItemOnceAndDelete(mapId, hexX, hexY, animationItem, time, animationDuration, 1);
+        AnimateItemOnceAndDelete(mapId, hexX, hexY, animationItem, time, animationDuration, 10);
     } else {
         int roll = Random(1, 1000);
         int difficulty = 51 + getArmorPenaltyValue(player) - (CLAMP(player.Skill[SK_OUTDOORSMAN], 1, 100) / 2);
         FishLog("Miss! Loose fishing spear roll = " + roll + ", against = " + difficulty);
         if (roll <= difficulty) {
             CreateTimeEvent(AFTER(REAL_MS(time + animationDuration)), "e_removeLostSpear", values, false);
-            AnimateItemOnceAndDelete(mapId, hexX, hexY, animationItem, time, animationDuration, 1);
+            AnimateItemOnceAndDelete(mapId, hexX, hexY, animationItem, time, animationDuration, 10);
         } else {
             AnimateItemOnceAndDelete(mapId, hexX, hexY, animationItem, time, animationDuration, 2);
         }
@@ -450,6 +450,11 @@ void ChangeFishAnimationToCaughtAndGiveFish(Critter& player, uint mapId, uint he
     int rewardRoll = Random(1, 10000);
     if (player.GetAccess() >= ACCESS_MODER) {
         //  TODO: add player variable to use roll in case of tester to test rare catches
+        int val = GetLvar(player.Id, LVAR_debug_fishing_catch_roll);
+        if (val > 0 && val < 10000) {
+            rewardRoll = val;
+            SetLvar(player.Id, LVAR_debug_fishing_catch_roll, 0);
+        }
     }
     int rewardType = 0;
     uint rewardPid = getRewardPid(player, rewardRoll, rewardType);
