@@ -624,8 +624,13 @@ uint e_giveCaughtItem(array<uint>@ values) {
         if (valid(map)) {
             map.SetData(MAP_DATA_FISH_AVAILABLE, map.GetData(MAP_DATA_FISH_AVAILABLE) - 1);
         }
-        player.Say(SAY_NETMSG, "I caught some fish!");
         player.AddItem(rewardPid, 1);
+        if (Random(1, 200) >= 200 - player.Perk[PE_TREASURE_HUNTER]) {
+            player.Say(SAY_NETMSG, "Oh look, what did this fish push ashore! A bottle with a paper in it!");
+            player.AddItem(PID_MESSAGE_IN_A_BOTTLE, 1);
+        } else {
+            player.Say(SAY_NETMSG, "I caught some fish!");
+        }
     }
 
     uint level = player.Stat[ST_LEVEL];
