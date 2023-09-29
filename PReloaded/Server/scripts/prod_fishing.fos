@@ -547,8 +547,13 @@ uint getRewardPid(Critter& player, int rewardRoll, int& rewardType) {
         rewardType = REWARD_TYPE_COMMON;
         rewardPid = rewardsCommon[Random(1, rewardsCommon[0])];
     } else if (rewardRoll < 7500 - 25 * CLAMP(player.Skill[SK_OUTDOORSMAN], 1, 200)) {
-        rewardType = REWARD_TYPE_JUNK;
-        rewardPid = rewardsJunk[Random(1, rewardsJunk[0])];
+        if (rewardRoll % 2 == 0) {
+            rewardType = REWARD_TYPE_JUNK;
+            rewardPid = rewardsJunk[Random(1, rewardsJunk[0])];
+        } else {
+            rewardType = REWARD_TYPE_JUNK;
+            rewardPid = PID_JUNK;
+        }
     } else {
         rewardType = REWARD_TYPE_FISH;
         rewardPid = rewardsFish[Random(1, rewardsFish[0])];
