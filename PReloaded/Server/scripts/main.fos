@@ -51,6 +51,7 @@
 #include "worldmap_h.fos"
 
 // Imports
+import bool OpenBottleWithMessage(Critter& player, Item& item) from "prod_fishing";
 import void DropDrugEffects(Critter& cr) from "drugs";
 import bool FindBaseEncounter(array<Critter@>& group, Item@ car, uint x, uint y, uint& encounterDescriptor, bool& waitForAnswer) from "factions_player";
 import bool IsCarTrunk(Item@ item) from "car";
@@ -1093,15 +1094,19 @@ bool critter_use_item(Critter& cr, Item& item, Critter@ targetCr, Item@ targetIt
         }
     }
 
-    // Drugs
+    //  fishing items
+    if (pid == PID_MESSAGE_IN_A_BOTTLE) {
+        return OpenBottleWithMessage(cr, item);
+    }
 
+    // Drugs
 	if (pid==PID_CIGARETTES)
 	{
         if(useOnSelf)
-            {
-			UseDrug(cr, item);
-			if(HasItem(cr, PID_LIGHTER)) cr.Animate(0, ANIM2_SMOKE , null, true, false);
-			}
+        {
+            UseDrug(cr, item);
+            if(HasItem(cr, PID_LIGHTER)) cr.Animate(0, ANIM2_SMOKE , null, true, false);
+        }
         else if(valid(targetCr))
             UseDrugOn(cr, targetCr, item);
         else
