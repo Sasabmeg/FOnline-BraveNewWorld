@@ -843,5 +843,33 @@ void spawnGecko(Critter& player, Map& map, uint mobPid) {
     }
 }
 
+//  exported
+bool OpenBottleWithMessage(Critter& player, Item& item) {
+    uint16[] blueprintLowLevel = { 9, PID_BLUEPRINT_STIMPAK, PID_BLUEPRINT_BUFFOUT, PID_BLUEPRINT_MENTATS,
+                                    PID_BLUEPRINT_RIPPER, PID_BLUEPRINT_SUPER_SLEDGE, PID_BLUEPRINT_NEEDLER_PISTOL,
+                                    PID_BLUEPRINT_ASSAULT_RIFLE, PID_BLUEPRINT_FN_FAL, PID_BLUEPRINT_LASER_RIFLE };
+    uint16[] blueprintMedLevel = { 9, PID_BLUEPRINT_SUPER_STIMPAK, PID_BLUEPRINT_RADAWAY, PID_BLUEPRINT_SUPER_CATTLE_PROD,
+                                    PID_BLUEPRINT_MEGA_POWER_FIST, PID_BLUEPRINT_223_PISTOL, PID_BLUEPRINT_14MM_PISTOL,
+                                    PID_BLUEPRINT_LASER_SMG, PID_BLUEPRINT_PLASMA_RIFLE, PID_BLUEPRINT_ROCKET_LAUNCHER };
+
+    uint16[] blueprintHighLevel = { 7, PID_BLUEPRINT_PULSE_PISTOL, PID_BLUEPRINT_P90, PID_BLUEPRINT_THERMAL_LEATHER_ARMOR,
+                                    PID_BLUEPRINT_COMBAT_HELMET, PID_BLUEPRINT_COMBAT_ARMOR, PID_BLUEPRINT_METAL_ARMOR_MK_II,
+                                    PID_BLUEPRINT_METAL_HELMET_MK2 };
+
+    int roll = Random(1, 100);
+    uint rewardPid = PID_MEMO;
+    if (roll < 15) {
+        rewardPid = blueprintHighLevel[Random(1, blueprintHighLevel[0])];
+    } else if (roll < 45) {
+        rewardPid = blueprintMedLevel[Random(1, blueprintMedLevel[0])];
+    } else {
+        rewardPid = blueprintLowLevel[Random(1, blueprintLowLevel[0])];
+    }
+    player.Say(SAY_NETMSG, "Oh look... someone carefully packaged this blueprint into a bottle for safekeeping, very clever.");
+    player.AddItem(rewardPid, 1);
+    DeleteItem(item);
+    return true;
+}
+
 #endif 	//	__PROD_FISHING__
 
