@@ -35,7 +35,9 @@
 #define FISH_WATERSPLASH_ANIM_TIME      (1300)
 #define FISH_KILLSPLASH_ANIM_TIME       (700)
 #define FISH_KILLSPLASH_ANIM_TIME2      (1100)
-#define FISH_CIRCLING_ANIM_TIME         (1600)
+#define FISH_CIRCLING_ANIM_TIME1        (1600)
+#define FISH_CIRCLING_ANIM_TIME2        (2300)
+#define FISH_CIRCLING_ANIM_TIME3        (2300)
 #define FISH_SPEARED_ANIM_TIME          (2200)
 
 #define REWARD_TYPE_LEGENDARY           (1)
@@ -86,7 +88,7 @@ class EntiresCollection {
 }
 
 dictionary fishingPools;
-uint[] fishPids = { 3, PID_ITEM_FISH_CIRCLING, PID_ITEM_FISH_CIRCLING2, PID_ITEM_FISH_CIRCLING3_SMALL };
+uint[] fishPids = { 3, PID_ITEM_FISH_CIRCLING1, PID_ITEM_FISH_CIRCLING2, PID_ITEM_FISH_CIRCLING3_SMALL };
 
 //  here one can set up the rewards for hitting a fish spot with spear,
 //  by default this should return a fish, but who knows what you can find in the sea...
@@ -135,14 +137,14 @@ void map_fishing_init(Map& map, bool firstTime) {
     fishingPools.delete(s);
     int leftoverFishCount = 0;
     array<Item@> leftoverFish;
-    if (mapPid == MAP_FishingZone || isShorelineEncounterMap(mapPid)) {
+    if (firstTime && mapPid == MAP_FishingZone || isShorelineEncounterMap(mapPid)) {
         FishLog("#######   mapProto is fishing zone ( " + mapPid + " )");
         map.SetEvent(MAP_EVENT_LOOP_4, "_SpawnFishOnMap");
         map.SetLoopTime(4, MAP_FISH_SPAWN_TIMER);
         map.SetData(MAP_DATA_FISH_SPAWNED, 0);
         map.SetData(MAP_DATA_FISH_FEED, 7);
         map.SetData(MAP_DATA_FISH_AVAILABLE, Random(FISH_ENCOUNTER_CAPACITY / 2, FISH_ENCOUNTER_CAPACITY));
-        map.SetData(MAP_DATA_FISH_CAPACITY, isShorelineEncounterMap(mapPid) ? FISH_ENCOUNTER_CAPACITY : FISH_PUBLIC_CAPACITY);
+        map.SetData(MAP_DATA_FISH_CAPACITY, isPublicFishingZone(map) ? FISH_PUBLIC_CAPACITY : FISH_ENCOUNTER_CAPACITY);
         map.SetData(MAP_DATA_FISH_REGEN_TICK, 0);
         for (uint i = 1; i <= fishPids[0]; i++ ) {
             leftoverFishCount = map.GetItems(fishPids[i], leftoverFish);
@@ -196,7 +198,7 @@ void _SpawnFishOnMap(Map& map) {
     //  spawn available fish
     if (fishCount < FISH_MAX_AT_SAME_TIME * (fishFeed > fishCount ? 2 : 1)) {
         if (map.GetData(MAP_DATA_FISH_AVAILABLE) > fishCount) {
-            while (map.GetData(MAP_DATA_FISH_AVAILABLE) > map.GetData(MAP_DATA_FISH_SPAWNED)
+            if (map.GetData(MAP_DATA_FISH_AVAILABLE) > map.GetData(MAP_DATA_FISH_SPAWNED)
                    && map.GetData(MAP_DATA_FISH_SPAWNED) < FISH_MAX_AT_SAME_TIME * (fishFeed > fishCount ? 2 : 1)) {
                 FishLog("Spawn - Can spawn more fishes. fishCount = " + map.GetData(MAP_DATA_FISH_SPAWNED) + ", available = " + map.GetData(MAP_DATA_FISH_AVAILABLE));
                 uint index = Random(0, fishingPool.fishSpotCount - 1);
@@ -503,19 +505,19 @@ void ChangeFishAnimationToCaughtAndGiveFish(Critter& player, uint mapId, uint he
 
     uint soundIndex = 0;
     if (doesContain(spearHitBottlePids, rewardPid)) {
-        soundIndex = 3;
+        soundIndex = 4;
         FishLog("spearHitBottlePids");
     } else if (doesContain(spearHitMetalPids, rewardPid)) {
-        soundIndex = 4;
+        soundIndex = 5;
         FishLog("spearHitMetalPids");
     } else if (doesContain(spearHitLeatherPids, rewardPid)) {
-        soundIndex = 5;
+        soundIndex = 6;
         FishLog("spearHitLeatherPids");
     } else if (doesContain(spearHitPlasticPids, rewardPid)) {
-        soundIndex = 5;
+        soundIndex = 6;
         FishLog("spearHitPlasticPids");
     } else if (doesContain(spearHitFishPids, rewardPid)) {
-        soundIndex = Random(6, 9);
+        soundIndex = Random(7, 10);
         FishLog("spearHitFishPids");
     } else {
         soundIndex = Random(0, 2);
@@ -574,12 +576,15 @@ uint e_giveCaughtItem(array<uint>@ values) {
     if (rewardPid == PID_MAGIC_8_BALL) {
         player.Say(SAY_NETMSG, "Whoa! An Eight Ball!? How did that get stuck on the fishing spear?");
         player.AddItem(rewardPid, 1);
+        player.StatBase[ST_EXPERIENCE] += Random(160, 250) * 10;
     } else if (rewardType == REWARD_TYPE_EPIC) {
         player.Say(SAY_NETMSG, "Hm, I caught something special!");
         player.AddItem(rewardPid, 1);
+        player.StatBase[ST_EXPERIENCE] += Random(26, 150) * 10;
     } else if (rewardType == REWARD_TYPE_RARE) {
         player.Say(SAY_NETMSG, "Hm, I caught something rare! The fish got disturbed and swam away, but definitely worth it!");
         Item@ reward = player.AddItem(rewardPid, 1);
+        player.StatBase[ST_EXPERIENCE] += Random(16, 25) * 10;
         if (rewardPid != PID_GOLD_LOCKET && valid(reward)) {
             AddArmorBonus(reward, 1);
             AddArmorBonus(reward, 2);
@@ -597,6 +602,7 @@ uint e_giveCaughtItem(array<uint>@ values) {
     } else if (rewardType == REWARD_TYPE_QUALITY) {
         player.Say(SAY_NETMSG, "Hm, I caught some quality stuff! The fish got disturbed and swam away, but who cares!");
         Item@ reward = player.AddItem(rewardPid, 1);
+        player.StatBase[ST_EXPERIENCE] += Random(6, 15) * 10;
         if (rewardPid != PID_NECKLACE && valid(reward)) {
             AddArmorBonus(reward, 1);
             AddArmorBonus(reward, 2);
@@ -610,6 +616,7 @@ uint e_giveCaughtItem(array<uint>@ values) {
     } else if (rewardType == REWARD_TYPE_COMMON) {
         player.Say(SAY_NETMSG, "Hm, I caught something!  The fish got disturbed and swam away.");
         Item@ reward = player.AddItem(rewardPid, 1);
+        player.StatBase[ST_EXPERIENCE] += Random(3, 5) * 10;
         if (valid(reward)) {
             if (Random(0, 100) < luckFactor + 10) {
                 reward.BrokenCount = Random(60 - luckFactor * 2, 95 - luckFactor * 2);
@@ -624,6 +631,7 @@ uint e_giveCaughtItem(array<uint>@ values) {
     } else if (rewardType == REWARD_TYPE_JUNK) {
         player.Say(SAY_NETMSG, "Hm, I caught some junk! The fish got disturbed and swam away.");
         player.AddItem(rewardPid, 1);
+        player.StatBase[ST_EXPERIENCE] += Random(1, 2) * 10;
     } else if (rewardType == REWARD_TYPE_FISH) {
         Map@ map = player.GetMap();
         if (valid(map)) {
@@ -633,8 +641,10 @@ uint e_giveCaughtItem(array<uint>@ values) {
         if (Random(1, 200) >= 200 - player.Perk[PE_TREASURE_HUNTER]) {
             player.Say(SAY_NETMSG, "Oh look, what did this fish push ashore! A bottle with a paper in it!");
             player.AddItem(PID_MESSAGE_IN_A_BOTTLE, 1);
+            player.StatBase[ST_EXPERIENCE] += Random(100, 500) * 10;
         } else {
             player.Say(SAY_NETMSG, "I caught some fish!");
+            player.StatBase[ST_EXPERIENCE] += 75;
         }
     }
 
@@ -663,7 +673,18 @@ uint e_giveCaughtItem(array<uint>@ values) {
 }
 
 void DespawnFish(Item& item) {
-    uint time = Random(FISH_DESPAWN_TICK_MIN, FISH_DESPAWN_TICK_MAX) * FISH_CIRCLING_ANIM_TIME;
+    uint time = Random(FISH_DESPAWN_TICK_MIN, FISH_DESPAWN_TICK_MAX) * FISH_CIRCLING_ANIM_TIME1;
+    switch (item.Proto.ProtoId) {
+        case PID_ITEM_FISH_CIRCLING1:
+            time = Random(FISH_DESPAWN_TICK_MIN, FISH_DESPAWN_TICK_MAX) * FISH_CIRCLING_ANIM_TIME1;
+            break;
+        case PID_ITEM_FISH_CIRCLING2:
+            time = Random(FISH_DESPAWN_TICK_MIN, FISH_DESPAWN_TICK_MAX) * FISH_CIRCLING_ANIM_TIME2;
+            break;
+        case PID_ITEM_FISH_CIRCLING3_SMALL:
+            time = Random(FISH_DESPAWN_TICK_MIN, FISH_DESPAWN_TICK_MAX) * FISH_CIRCLING_ANIM_TIME3;
+            break;
+    }
     CreateTimeEvent(AFTER(REAL_MS(time)), "e_DespawnFish", item.Id, false);
 }
 
@@ -704,7 +725,7 @@ uint e_animateOnceAndDelete(array<uint>@ values) {
         return 0;
     }
     if (values[5] != 0) {
-        map.PlaySound(fishingSpearWaterImpactSounds[values[5]]);
+        map.PlaySound(fishingSpearWaterImpactSounds[values[5] - 1]);
     }
     //FishLog("e_animateOnceAndDelete - spawning pid:" + values[3] + " at hex(" + values[1] + ", " + values[2] + ")");
     CreateTimeEvent(AFTER(REAL_MS(values[4])), "e_DeleteAnimationItem", item.Id, true);
@@ -870,6 +891,12 @@ bool OpenBottleWithMessage(Critter& player, Item& item) {
     } else {
         rewardPid = blueprintLowLevel[Random(1, blueprintLowLevel[0])];
     }
+    Map@ map = player.GetMap();
+    if (!valid(map)) {
+        FishLog("_UseItemOnFish - Invalid Map");
+        return false;
+    }
+    map.PlaySound("bottle_cork.ogg");
     player.Say(SAY_NETMSG, "Oh look... someone carefully packaged this blueprint into a bottle for safekeeping, very clever.");
     player.AddItem(rewardPid, 1);
     DeleteItem(item);
