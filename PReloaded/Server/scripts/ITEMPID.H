@@ -1240,7 +1240,7 @@
 //  only map items, not able to pick up
 #define PID_ITEM_FISHING_POOL               (26770)     //  almost transparent hex, that the player can click to throw spear along a direction
 
-#define PID_ITEM_FISH_CIRCLING              (26776)     //  fish in the water, when spawned, need to hit a bit above the animation to catch fish
+#define PID_ITEM_FISH_CIRCLING1             (26776)     //  fish in the water, when spawned, need to hit a bit above the animation to catch fish
 #define PID_ITEM_FISH_CIRCLING2             (26777)
 #define PID_ITEM_FISH_CIRCLING3_SMALL       (26778)
 #define PID_ITEM_FISH_JUMPING               (26780)
