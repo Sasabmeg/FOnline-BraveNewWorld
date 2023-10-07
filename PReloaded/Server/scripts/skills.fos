@@ -86,7 +86,7 @@ bool UseFirstAidOnCritter(Critter& cr, Critter& targetCr, Item@ item)
     @item = SelectSkillItem(cr, item, SK_FIRST_AID);
     if(valid(item))
     {
-        sk += item.Proto.Misc_ToolSkillBonus;   
+        sk += item.Proto.Misc_ToolSkillBonus;
         if(Random(0, 30) == 0)
             cr.DeleteItem(item.GetProtoId(), 1);
     }
@@ -102,10 +102,14 @@ bool UseFirstAidOnCritter(Critter& cr, Critter& targetCr, Item@ item)
         heal = maxHp - curHp;
     targetCr.StatBase[ST_CURRENT_HP] += heal;
 
-    if(is_self)
-        VerboseAction(cr, "patches wounds");
+        //  Floating healing text.
+    if (isCritFailure)
+        FloatingHealText(targetCr, heal, HEAL_TEXT_REASON_FIRSTAID, SKILL_CHECK_FAILURE);
+    else if (isCritSuccess)
+        FloatingHealText(targetCr, heal, HEAL_TEXT_REASON_FIRSTAID, SKILL_CHECK_CRITICAL_SUCCESS);
     else
-        VerboseAction(cr, targetCr, "treats wounds of TARGET");
+        FloatingHealText(targetCr, heal, HEAL_TEXT_REASON_FIRSTAID, SKILL_CHECK_SUCCESS);
+
     cr.Say(SAY_NETMSG, "Hit Points +" + heal);
     if(!is_self)
         targetCr.Say(SAY_NETMSG, "Hit Points +" + heal);

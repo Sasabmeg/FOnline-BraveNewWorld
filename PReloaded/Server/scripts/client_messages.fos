@@ -886,8 +886,7 @@ void sayEx(int type, int crId, int, string@ text, array<int>@)
     Message(who + ": |" + color + " " + text, MSGBOX_TALK);
 }
 
-
-void map(int type, int hx, int hy, string@ text, array<int>@ data)
+void mapMessage(int type, int hx, int hy, string@ text, array<int>@ data)
 {
     if(type < 0 || type >= FLOAT_MAX || hx <= 0 || hy <= 0 ||
        !valid(text) || text.length() == 0 ||
@@ -896,14 +895,15 @@ void map(int type, int hx, int hy, string@ text, array<int>@ data)
 
     text = FormatTags(text, "");
 
-    Buffer@ buff = NewBuffer(data);
+    int delay = data[0];
+    uint32 color = data[1];
+    bool fade = data[2] == 0 ? false : true;
+    int fromX = data[3];
+    int toX = data[4];
+    int fromY = data[5];
+    int toY = data[6];
 
-    uint8   delay = 0;
-    uint32  color = 0;
-    bool    fade = false;
-    int8    fromX = 0, toX = 0, fromY = 0, toY = 0;
-
-    buff >> delay >> color >> fade >> fromX >> toX >> fromY >> toY;
+    //Log("client_messages@map :: delay = " + delay + ", color = " + color + ", fade = " + fade + ", fromX = " + fromX + ", toX = " + toX + ", fromY = " + fromY + ", toY = " + toY);
 
     switch(type)
     {
@@ -928,6 +928,6 @@ void map(int type, int hx, int hy, string@ text, array<int>@ data)
     default:
         return;
     }
-
+    //Log("client_messages@map :: delay = " + delay + ", color = " + color + ", fade = " + fade + ", fromX = " + fromX + ", toX = " + toX + ", fromY = " + fromY + ", toY = " + toY);
     MapMessage(text, hx, hy, __TextDelay + text.length() * delay, color, fade, Random(fromX, toX), Random(fromY, toY));
 }
