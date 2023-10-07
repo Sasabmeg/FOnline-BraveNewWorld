@@ -1,0 +1,907 @@
+//
+// FOnline: Classic - Brave New World
+// Sasabmeg
+//
+// prod_fishing.fos
+//
+#ifndef __PROD_FISHING__
+#define __PROD_FISHING__
+
+#include "_macros.fos"
+#include "production_h.fos"
+#include "utils_h.fos"
+#include "mapdata_h.fos"
+#include "npc_planes_h.fos"
+#include "_npc_pids.fos"
+#include "item_bonus.fos"
+
+#define MAP_FISH_SPAWN_TIMER            (5000)
+#define MAP_FISH_SPOT_ENTIRE            (77)
+
+#define FISH_MAX_AT_SAME_TIME           (3)             //  how many fish can be visible/active on the map at the same time
+#define FISH_PUBLIC_CAPACITY            (15)            //  how many fish can the map hold, this can regenerate on public locations
+#define FISH_ENCOUNTER_CAPACITY         (5)             //  how many fish can the map hold, this can regenerate on public locations
+#define FISH_CAPACITY_TICKS_TO_REGEN    (12)            //  how many times does the map loop activate before regenerating one fish, 12 * 5 seconds = 1 minute for 1 fish to replenish
+
+#define ARMOR_PENALTY_BLUESUIT          (25)
+#define ARMOR_PENALTY_LEATHER           (0)
+#define ARMOR_PENALTY_HEAVY             (100)
+#define ARMOR_PENALTY_OTHER             (50)
+
+
+#define FISH_DESPAWN_TICK_MIN           (15)            //  12 - 15 best, minimum how many animations to finish before despawning the fish
+#define FISH_DESPAWN_TICK_MAX           (24)            //  18 - 24 best, maximum, the actual value will be random between these two
+
+#define FISH_WATERSPLASH_ANIM_TIME      (1300)
+#define FISH_KILLSPLASH_ANIM_TIME       (700)
+#define FISH_KILLSPLASH_ANIM_TIME2      (1100)
+#define FISH_CIRCLING_ANIM_TIME1        (1600)
+#define FISH_CIRCLING_ANIM_TIME2        (2300)
+#define FISH_CIRCLING_ANIM_TIME3        (2300)
+#define FISH_SPEARED_ANIM_TIME          (2200)
+
+#define REWARD_TYPE_LEGENDARY           (1)
+#define REWARD_TYPE_EPIC                (2)
+#define REWARD_TYPE_RARE                (3)
+#define REWARD_TYPE_QUALITY             (4)
+#define REWARD_TYPE_COMMON              (5)
+#define REWARD_TYPE_JUNK                (6)
+#define REWARD_TYPE_FISH                (9)
+
+//  Fishing_test optimization
+#define FISH_DEBUG_LOGGING_ALLOWED     (true)
+
+//  BEHOLD THE MOST ADVANCED DEBUG LOGGING TECHNIQUE OF FONLINE 2023
+//  - IT WILL ONLY LOG THE FISHING MODULE IF 'FISH_DEBUG_LOGGING_ALLOWED' IS SET TO TRUE
+//  NOTES:
+//  - DISABLE OTHER DEBUG LOGGING TO RREDUCE NOISE
+//  - COMMENT OUT SOME PARTS TO REDUCE SPAM
+void FishLog(string@ s) {
+    if (FISH_DEBUG_LOGGING_ALLOWED) {
+        Log("FISHING: " + s);
+    }
+}
+
+class EntiresCollection {
+    uint fishSpotCount;
+    uint entireValue;
+    array<uint> fishSpotEntires;
+    array<uint16> fishSpotHexX;
+    array<uint16> fishSpotHexY;
+
+    EntiresCollection(uint value, uint count_, array<uint>& entires, array<uint16>& hexX, array<uint16>& hexY) {
+        entireValue = value;
+        fishSpotCount = count_;
+        fishSpotEntires = entires;
+        fishSpotHexX = hexX;
+        fishSpotHexY = hexY;
+    }
+
+    EntiresCollection(Map& map, uint value) {
+        entireValue = value;
+        fishSpotCount = map.GetEntires(value, fishSpotEntires, fishSpotHexX, fishSpotHexY);
+    }
+
+    void log() {
+        FishLog("EntiresCollection count = " + fishSpotCount + ", entireValue = " + entireValue);
+    }
+}
+
+dictionary fishingPools;
+uint[] fishPids = { 3, PID_ITEM_FISH_CIRCLING1, PID_ITEM_FISH_CIRCLING2, PID_ITEM_FISH_CIRCLING3_SMALL };
+
+//  here one can set up the rewards for hitting a fish spot with spear,
+//  by default this should return a fish, but who knows what you can find in the sea...
+//  [0] -> number of items to random from, make sure it not higher than actual array size, or exception happens!
+uint[] rewardLegendary = { 1, PID_MAGIC_8_BALL };
+uint[] rewardEpic = { 1, PID_OIL_CAN };
+uint[] rewardRare = { 7, PID_GOLD_LOCKET, PID_COMBAT_HELMET_MK_II, PID_DESERT_COMBAT_HELMET, PID_COMBAT_HELMET, PID_METAL_HELMET_MK2, PID_METAL_HELMET, PID_TESLA_HELMET };
+uint[] rewardsQuality = { 7, PID_NECKLACE, PID_COMBAT_HELMET_MK_II, PID_DESERT_COMBAT_HELMET, PID_COMBAT_HELMET, PID_METAL_HELMET_MK2, PID_METAL_HELMET, PID_TESLA_HELMET};
+uint[] rewardsCommon = { 10, PID_LEATHER_ARMOR_HELMET, PID_LEATHER_ARMOR_HELMET_MK2, PID_LEATHER_JACKET_HELMET, PID_LEATHER_ARMOR, PID_LEATHER_JACKET, PID_LEATHER_ARMOR_MK_II,
+                            PID_BLACK_ROBE, PID_PURPLE_ROBE, PID_SAND_ROBE, PID_WORN_ROBE };
+uint[] rewardsJunk = { 6, PID_BLACK_COC_BADGE, PID_RED_COC_BADGE, PID_BOTTLE_EMPTY, PID_EMPTY_JET, PID_JUNK, PID_WATERBAG_EMPTY };
+uint[] rewardsFish = { 3, PID_FISH_SALMON, PID_FISH_TUNA, PID_FISH_CATFISH };
+
+string[] fishMoveSounds = { "fish_move_water1.ogg", "fish_move_water2.ogg", "fish_move_water3.ogg", "fish_move_water4.ogg", "fish_move_water5.ogg" };   //  used when fish are spawned
+string[] fishingSpearWaterImpactSounds = { "water_splash1.ogg", "water_splash2.ogg", "water_splash3.ogg", "water_splash_bottle.ogg", "water_splash_metal2.ogg", "water_splash_plastic3.ogg",
+                                            "water_splash_fish.ogg", "water_splash_fish2.ogg", "water_splash_fish3.ogg", "water_splash_fish4.ogg", "water_splash_spearlost1.ogg" };
+
+uint[] spearHitBottlePids = { 3, PID_OIL_CAN, PID_BOTTLE_EMPTY, PID_EMPTY_JET };
+uint[] spearHitMetalPids = { 3, PID_METAL_HELMET_MK2, PID_METAL_HELMET, PID_TESLA_HELMET };
+uint[] spearHitLeatherPids = { 11, PID_LEATHER_ARMOR_HELMET, PID_LEATHER_ARMOR_HELMET_MK2, PID_LEATHER_JACKET_HELMET, PID_LEATHER_ARMOR, PID_LEATHER_JACKET, PID_LEATHER_ARMOR_MK_II,
+                                PID_BLACK_ROBE, PID_PURPLE_ROBE, PID_SAND_ROBE, PID_WORN_ROBE, PID_WATERBAG_EMPTY };
+uint[] spearHitPlasticPids = { 6, PID_COMBAT_HELMET, PID_COMBAT_HELMET_MK_II, PID_DESERT_COMBAT_HELMET, PID_BLACK_COC_BADGE, PID_RED_COC_BADGE, PID_JUNK };
+uint[] spearHitFishPids = { 3, PID_FISH_SALMON, PID_FISH_TUNA, PID_FISH_CATFISH };
+
+bool isShorelineEncounterMap(uint mapPid) {
+    return mapPid == MAP_ShorelineEncounter1
+        || mapPid == MAP_ShorelineEncounter2
+        || mapPid == MAP_ShorelineEncounter3
+        || mapPid == MAP_ShorelineEncounter4
+        || mapPid == MAP_ShorelineEncounter5;
+}
+
+bool doesContain(uint[] container, uint value) {
+    for (uint i = 1; i <= container[0]; i++) {
+        if (container[i] == value) {
+            return true;
+        }
+    }
+    return false;
+}
+
+//  exported
+void map_fishing_init(Map& map, bool firstTime) {
+    uint mapPid = map.GetProtoId();
+    string@ s = "_" + map.GetProtoId();
+    fishingPools.delete(s);
+    int leftoverFishCount = 0;
+    array<Item@> leftoverFish;
+    if (firstTime && mapPid == MAP_FishingZone || isShorelineEncounterMap(mapPid)) {
+        FishLog("#######   mapProto is fishing zone ( " + mapPid + " )");
+        map.SetEvent(MAP_EVENT_LOOP_4, "_SpawnFishOnMap");
+        map.SetLoopTime(4, MAP_FISH_SPAWN_TIMER);
+        map.SetData(MAP_DATA_FISH_SPAWNED, 0);
+        map.SetData(MAP_DATA_FISH_FEED, 7);
+        map.SetData(MAP_DATA_FISH_AVAILABLE, Random(FISH_ENCOUNTER_CAPACITY / 2, FISH_ENCOUNTER_CAPACITY));
+        map.SetData(MAP_DATA_FISH_CAPACITY, isPublicFishingZone(map) ? FISH_PUBLIC_CAPACITY : FISH_ENCOUNTER_CAPACITY);
+        map.SetData(MAP_DATA_FISH_REGEN_TICK, 0);
+        for (uint i = 1; i <= fishPids[0]; i++ ) {
+            leftoverFishCount = map.GetItems(fishPids[i], leftoverFish);
+            if (leftoverFishCount > 0) {
+                FishLog("Deleting leftover fish. Count = " + leftoverFishCount);
+                DeleteItems(leftoverFish);
+            }
+        }
+    } else {
+        FishLog("mapProto is NOT fishing zone ( " + mapPid + " )");
+    }
+}
+
+void _SpawnFishOnMap(Map& map) {
+    string@ s = "_" + map.GetProtoId();
+    EntiresCollection fishingPool;
+    if (!fishingPools.exists(s)) {
+        FishLog("fishingPool = null, initializing entires on this map proto: " + map.GetProtoId());
+        fishingPool = EntiresCollection(map, MAP_FISH_SPOT_ENTIRE);
+        fishingPools.set(s, fishingPool);
+        fishingPool.log();
+    } else {
+        //FishLog("fishingPool already initialized on this map proto: " + map.GetProtoId());
+        fishingPools.get(s, fishingPool);
+    }
+
+    //  allow regeneration of fish only for public locations
+    int fishFeed = map.GetData(MAP_DATA_FISH_FEED);
+    int fishCount = map.GetData(MAP_DATA_FISH_SPAWNED);
+	if (isPublicFishingZone(map)) {
+        if (map.GetData(MAP_DATA_FISH_REGEN_TICK) >= FISH_CAPACITY_TICKS_TO_REGEN /(fishFeed > fishCount ? 2 : 1)) {
+            if (map.GetData(MAP_DATA_FISH_AVAILABLE) < map.GetData(MAP_DATA_FISH_CAPACITY) * (fishFeed > fishCount ? 2 : 1)) {
+                map.SetData(MAP_DATA_FISH_AVAILABLE, map.GetData(MAP_DATA_FISH_AVAILABLE) + 1);
+                map.SetData(MAP_DATA_FISH_REGEN_TICK, 0);
+                if (fishFeed > 0) {
+                    map.SetData(MAP_DATA_FISH_FEED, fishFeed - 1);
+                    FishLog("FishFeed set to " + (fishFeed - 1));
+                } else {
+                    map.SetData(MAP_DATA_FISH_FEED, 0);
+                }
+                FishLog("Regeneration - Regenerated one fish. Available = " + map.GetData(MAP_DATA_FISH_AVAILABLE));
+            } else {
+                //FishLog("Regeneration - Fish already at max capacity.");
+            }
+        } else {
+            map.SetData(MAP_DATA_FISH_REGEN_TICK, map.GetData(MAP_DATA_FISH_REGEN_TICK) + 1);
+            //FishLog("Regeneration - Fish capacity regen tick = " + map.GetData(MAP_DATA_FISH_REGEN_TICK));
+        }
+	}
+
+    //  spawn available fish
+    if (fishCount < FISH_MAX_AT_SAME_TIME * (fishFeed > fishCount ? 2 : 1)) {
+        if (map.GetData(MAP_DATA_FISH_AVAILABLE) > fishCount) {
+            if (map.GetData(MAP_DATA_FISH_AVAILABLE) > map.GetData(MAP_DATA_FISH_SPAWNED)
+                   && map.GetData(MAP_DATA_FISH_SPAWNED) < FISH_MAX_AT_SAME_TIME * (fishFeed > fishCount ? 2 : 1)) {
+                FishLog("Spawn - Can spawn more fishes. fishCount = " + map.GetData(MAP_DATA_FISH_SPAWNED) + ", available = " + map.GetData(MAP_DATA_FISH_AVAILABLE));
+                uint index = Random(0, fishingPool.fishSpotCount - 1);
+                Item@ fish = map.AddItem(fishingPool.fishSpotHexX[index], fishingPool.fishSpotHexY[index], fishPids[Random(1, fishPids[0])], 1);
+                map.SetData(MAP_DATA_FISH_SPAWNED, map.GetData(MAP_DATA_FISH_SPAWNED) + 1);
+                DespawnFish(fish);
+                map.PlaySound(fishMoveSounds[Random(0,4)]);
+            }
+        } else {
+            //FishLog("Spawn - Cannot spawn more fishes, as none available. fishCount = " + fishCount + ", available = " + map.GetData(MAP_DATA_FISH_AVAILABLE));
+        }
+    } else {
+        //FishLog("Spawn - Cannot spawn any more fish, water is full of fishes. fishCount = " + fishCount + ", available = " + map.GetData(MAP_DATA_FISH_AVAILABLE));
+    }
+
+}
+
+//  add public fishing locations here
+bool isPublicFishingZone(Map& map) {
+    if(valid(map))
+    {
+        switch(map.GetLocation().GetProtoId())
+        {
+            case LOCATION_FishingShore:
+                return true;
+        }
+    }
+    return false;
+}
+
+// non regenerable, for encounters
+void _EncFish(Item& item, bool firstTime) {
+    FishLog("prod_fishing.fos::_EncFish(), firstTime = " + firstTime);
+    item.SetEvent(ITEM_EVENT_USE_ON_ME, "_UseItemOnFish");
+    item.SetEvent(ITEM_EVENT_SKILL, "_UseSkillOnFish");
+}
+
+bool _UseItemOnFish(Item& item, Critter& player, Item@ usedItem) {
+    if (!valid(usedItem)) {
+        FishLog("_UseItemOnFish - Invalid Used Item");
+        return false;
+    }
+    uint16 tool_pid = usedItem.GetProtoId();
+    FishLog("_UseItemOnFish :: used item pid = " + tool_pid);
+    if (tool_pid == PID_BARLEY) {
+        if (_CritCountItem(player, PID_BARLEY) > 0) {
+            Map@   map = player.GetMap();
+            if (!valid(map)) {
+                FishLog("_UseItemOnFish - Invalid Map");
+                return false;
+            }
+            int fishFeed = map.GetData(MAP_DATA_FISH_FEED);
+            int fishSpawned = map.GetData(MAP_DATA_FISH_SPAWNED);
+            int roll = Random(1, 1 + fishSpawned);
+            map.SetData(MAP_DATA_FISH_FEED, fishFeed + roll);
+            player.DeleteItem(PID_BARLEY, 1);
+            player.Say(SAY_NETMSG, "I threw some Barley at the fish.");
+            FishLog("_UseItemOnFish :: PID_BARLEY - fishFeed = " + fishFeed + ", increased with roll = " + roll);
+            return true;
+        } else {
+            FishLog("_UseItemOnFish - I'm out of Barley.");
+            return false;
+        }
+    } else {
+        FishLog("_UseItemOnFish - Maybe I could feed these fish some Barley.");
+        return false;
+    }
+}
+
+int ActionPointsCost(ProtoItem@ toolProto, uint8 brofBonus) {
+    return _WeaponApCost(toolProto, 1) - brofBonus;
+}
+
+void unsafe_SpearFish(Critter& player, int toolPid, int itemId, int range, string@ param3, array<int>@ param4) {
+    ProtoItem@ itemProto = GetProtoItem(toolPid);
+    uint8 brofBonus = (player.Perk[PE_BONUS_RATE_OF_ATTACK] > 0) ? 1 : 0;
+    if (player.IsBusy() || player.IsDead() || player.IsKnockout() || player.StatBase[ST_CURRENT_AP] < 50 * ActionPointsCost(itemProto, brofBonus))
+        return;
+    FishLog("unsafe_SpearFish - range = " + range + ", currentAP = " + player.StatBase[ST_CURRENT_AP] + ", AP cost = " + (50 * ActionPointsCost(itemProto, brofBonus)));
+    Item@ fishingPool = GetItem(itemId);
+    if (!valid(fishingPool)) {
+        FishLog("ChangeFishAnimationToCaught - Invalid Item Old Fish");
+        return;
+    }
+    if (player.IsBusy() || player.IsKnockout() || player.IsDead()) {
+        return;
+    }
+    int playerPoolDist = GetDistantion(player.HexX, player.HexY, fishingPool.HexX, fishingPool.HexY);
+    if (playerPoolDist > 1) {
+        player.Say(SAY_NETMSG, "Maybe I should move closer first.");
+        return;
+    }
+    int playerPoolDir = GetDirection(player.HexX, player.HexY, fishingPool.HexX, fishingPool.HexY);
+    player.SetDir(playerPoolDir);
+    if (player.Dir != DIR_SW && player.Dir != DIR_W) {
+        player.Say(SAY_NETMSG, "Maybe I should look where I want to throw the spear at.");
+        return;
+    }
+    uint16 dist = 5;
+    switch (range) {
+        case 0:
+            dist += Random(0, 23);
+            break;
+        case 1:
+            dist += Random(0, 1);
+            break;
+        case 2:
+            dist += Random(2, 3);
+            break;
+        case 3:
+            dist += Random(4, 6);
+            break;
+        case 4:
+            dist += Random(7, 9);
+            break;
+        case 5:
+            dist += Random(10, 12);
+            break;
+        case 6:
+            dist += Random(13, 17);
+            break;
+        case 7:
+            dist += Random(18, 23);
+            break;
+    }
+    player.EraseTimeEvents(CTE_AGE);
+    player.AddTimeEvent("cte_ThrowFishingSpear", REAL_MS(0), CTE_FISHING_ANIM);
+    player.StatBase[ST_CURRENT_AP] -= 50 * ActionPointsCost(itemProto, brofBonus);
+
+    uint16 destX = player.HexX;
+    uint16 destY = player.HexY;
+    uint16 fixedStartX = player.HexX;
+    uint16 fixedStartY = player.HexY;
+
+    Map@   map = player.GetMap();
+    if (!valid(map)) {
+        FishLog("unsafe_SpearFish - Invalid Map");
+        return;
+    }
+    map.MoveHexByDir(fixedStartX, fixedStartY, 0, 2);
+    map.MoveHexByDir(fixedStartX, fixedStartY, 5, 2);
+
+    uint16 dir = player.Dir;
+
+    map.MoveHexByDir(destX, destY, dir, dist);
+
+    //player.Say(SAY_NETMSG, "Spearfishing: Throwing direction = " + dir + ", dist = " + dist);
+
+    uint[] values = { map.Id, fixedStartX, fixedStartY, destX, destY };
+    CreateTimeEvent(AFTER(REAL_MS(800)), "e_FishingSpearFlyAnimation", values, false);
+    //  does the location contain fish?
+    //  20 hex travel time = 08.533 -> 09.233 = 0.7sec, 1 hex travel time = 0.035sec
+    uint animationTimeToWait = 800 + 35 * dist;
+    bool isSpearOnFishHex = false;
+    Item@ fishOnSpot;
+    for (uint i = 1; i <= fishPids[0]; i++) {
+        if (!isSpearOnFishHex) {
+            @fishOnSpot = map.GetItem(destX, destY, fishPids[i]);
+            isSpearOnFishHex = valid(fishOnSpot);
+        }
+    }
+    bool playerHasRope = _CritCountItem(player, PID_ROPE) > 0;
+    FishLog("Player has rope = " + playerHasRope);
+    player.Wait(animationTimeToWait + 250);
+    if (isSpearOnFishHex && playerHasRope) {
+        //  spear hit circling fish spot, animate accordingly and give fish to player
+        ChangeFishAnimationToCaughtAndGiveFish(player, map.Id, destX, destY, fishOnSpot.Id, PID_ITEM_FISH_WATERSPLASH, animationTimeToWait, FISH_WATERSPLASH_ANIM_TIME);
+    } else {
+        ChangeToMissAnimation(player, map.Id, destX, destY, PID_ITEM_FISH_WATERSPLASH_SMALL2, animationTimeToWait, FISH_WATERSPLASH_ANIM_TIME);
+    }
+    return;
+}
+
+bool _UseSkillOnFish(Item& item, Critter& player, int skill) {
+
+    player.Say(SAY_NETMSG, "Using skill on Fish Node, skill = " + skill);
+    //  GM can check or replenish resource, players use skills to transfer magnitude parameter, due to lack of better solution
+    if (skill == SK_LOCKPICK || skill == SK_STEAL || skill == SK_TRAPS || skill == SK_FIRST_AID || skill == SK_DOCTOR || skill == SK_SCIENCE || skill == SK_REPAIR) {
+        uint16 dist = 5;
+        switch (skill) {
+            case SK_LOCKPICK:
+                dist += Random(0, 1);
+                break;
+            case SK_STEAL:
+                dist += Random(2, 3);
+                break;
+            case SK_TRAPS:
+                dist += Random(4, 6);
+                break;
+            case SK_FIRST_AID:
+                dist += Random(7, 9);
+                break;
+            case SK_DOCTOR:
+                dist += Random(10, 12);
+                break;
+            case SK_SCIENCE:
+                dist += Random(13, 17);
+                break;
+            case SK_REPAIR:
+                dist += Random(18, 23);
+                break;
+        }
+        player.EraseTimeEvents(CTE_AGE);
+        player.AddTimeEvent("cte_ThrowFishingSpear", REAL_MS(800), CTE_FISHING_ANIM);
+
+        Map@   map = player.GetMap();
+        if (!valid(map)) {
+            FishLog("unsafe_SpearFish - Invalid Map");
+            return false;
+        }
+        uint16 destX = player.HexX;
+        uint16 destY = player.HexY;
+        uint16 fixedStartX = player.HexX;
+        uint16 fixedStartY = player.HexY;
+        map.MoveHexByDir(fixedStartX, fixedStartY, 0, 2);
+        map.MoveHexByDir(fixedStartX, fixedStartY, 5, 2);
+
+        uint16 dir = player.Dir;
+
+        map.MoveHexByDir(destX, destY, dir, dist);
+
+        player.Say(SAY_NETMSG, "Skill used: Throwing direction = " + dir + ", dist = " + dist);
+
+        uint[] values = { map.Id, fixedStartX, fixedStartY, destX, destY };
+        CreateTimeEvent(AFTER(REAL_MS(1600)), "e_FishingSpearFlyAnimation", values, false);
+        //  does the location contain fish?
+        //  20 hex travel time = 08.533 -> 09.233 = 0.7sec, 1 hex travel time = 0.035sec
+        uint animationTimeToWait = 1600 + 35 * dist;
+        bool isSpearOnFishHex = false;
+        Item@ fishOnSpot;
+        for (uint i = 1; i <= fishPids[0]; i++) {
+            if (!isSpearOnFishHex) {
+                @fishOnSpot = map.GetItem(destX, destY, fishPids[i]);
+                isSpearOnFishHex = valid(fishOnSpot);
+            }
+        }
+        bool playerHasRope = (_CritCountItem(player, PID_ROPE) > 0);
+        FishLog("Player has rope = " + playerHasRope);
+        player.Wait(animationTimeToWait + 250);
+        if (isSpearOnFishHex && playerHasRope) {
+            ChangeFishAnimationToCaughtAndGiveFish(player, map.Id, destX, destY, fishOnSpot.Id, PID_ITEM_FISH_WATERSPLASH, animationTimeToWait, FISH_WATERSPLASH_ANIM_TIME);
+        } else {
+            ChangeToMissAnimation(player, map.Id, destX, destY, PID_ITEM_FISH_WATERSPLASH_SMALL2, animationTimeToWait, FISH_WATERSPLASH_ANIM_TIME);
+        }
+        return true;
+    }
+    return false;
+}
+void ChangeToMissAnimation(Critter& player, uint mapId, uint hexX, uint hexY, uint animationItem, uint time, uint animationDuration) {
+    Map@ map = GetMap(mapId);
+    if(!valid(map)) {
+        FishLog("ChangeToMissAnimation - Invalid Map");
+        return;
+    }
+    uint[] values = {player.Id};
+    bool playerHasRope = (_CritCountItem(player, PID_ROPE) > 0);
+    if (!playerHasRope) {
+        CreateTimeEvent(AFTER(REAL_MS(time + animationDuration)), "e_removeLostSpear", values, false);
+        AnimateItemOnceAndDelete(mapId, hexX, hexY, animationItem, time, animationDuration, 10);
+    } else {
+        int roll = Random(1, 1000);
+        int difficulty = 51 + getArmorPenaltyValue(player) - (CLAMP(player.Skill[SK_OUTDOORSMAN], 1, 100) / 2);
+        FishLog("Miss! Loose fishing spear roll = " + roll + ", against = " + difficulty);
+        if (roll <= difficulty) {
+            CreateTimeEvent(AFTER(REAL_MS(time + animationDuration)), "e_removeLostSpear", values, false);
+            AnimateItemOnceAndDelete(mapId, hexX, hexY, animationItem, time, animationDuration, 10);
+        } else {
+            AnimateItemOnceAndDelete(mapId, hexX, hexY, animationItem, time, animationDuration, 2);
+        }
+    }
+}
+
+//  we do not change fish animation, just add a big splash animation
+void ChangeFishAnimationToCaughtAndGiveFish(Critter& player, uint mapId, uint hexX, uint hexY, uint oldFishId, uint animationItem, uint time, uint animationDuration) {
+    Map@ map = GetMap(mapId);
+    if(!valid(map)) {
+        FishLog("ChangeFishAnimationToCaughtAndGiveFish - Invalid Map");
+        return;
+    }
+    Item@ oldFish = GetItem(oldFishId);
+    if (!valid(oldFish)) {
+        FishLog("ChangeFishAnimationToCaughtAndGiveFish - Invalid Item Old Fish");
+    } else {
+        CreateTimeEvent(AFTER(REAL_MS(time)), "e_FadeDeleteAnimationItem", oldFishId, false);
+    }
+
+    map.SetData(MAP_DATA_FISH_SPAWNED, map.GetData(MAP_DATA_FISH_SPAWNED) - 1);
+    FishLog("Fish Caught! (spawned = " + map.GetData(MAP_DATA_FISH_SPAWNED) + ", available = " + map.GetData(MAP_DATA_FISH_AVAILABLE) + ")");
+
+    //  we need to decide on the reward, before animation happens, because sound should be able to differentiate between fish and junk spear splash
+    int rewardRoll = Random(1, 10000);
+    if (player.GetAccess() >= ACCESS_MODER) {
+        //  TODO: add player variable to use roll in case of tester to test rare catches
+        int val = GetLvar(player.Id, LVAR_debug_fishing_catch_roll);
+        if (val > 0 && val < 10000) {
+            rewardRoll = val;
+            SetLvar(player.Id, LVAR_debug_fishing_catch_roll, 0);
+        }
+    }
+    int rewardType = 0;
+    uint rewardPid = getRewardPid(player, rewardRoll, rewardType);
+    uint[] values = { player.Id, rewardPid, rewardType };
+    CreateTimeEvent(AFTER(REAL_MS(time + animationDuration)), "e_giveCaughtItem", values, false);
+
+    uint soundIndex = 0;
+    if (doesContain(spearHitBottlePids, rewardPid)) {
+        soundIndex = 4;
+        FishLog("spearHitBottlePids");
+    } else if (doesContain(spearHitMetalPids, rewardPid)) {
+        soundIndex = 5;
+        FishLog("spearHitMetalPids");
+    } else if (doesContain(spearHitLeatherPids, rewardPid)) {
+        soundIndex = 6;
+        FishLog("spearHitLeatherPids");
+    } else if (doesContain(spearHitPlasticPids, rewardPid)) {
+        soundIndex = 6;
+        FishLog("spearHitPlasticPids");
+    } else if (doesContain(spearHitFishPids, rewardPid)) {
+        soundIndex = Random(7, 10);
+        FishLog("spearHitFishPids");
+    } else {
+        soundIndex = Random(0, 2);
+        FishLog("default hit sound");
+    }
+
+    AnimateItemOnceAndDelete(mapId, hexX, hexY, animationItem, time, animationDuration, soundIndex);
+    FishLog("CATCH!!! - Player (" + player.Id + ", " +  player.Name + "), Reward (pid = " + rewardPid + ") + Reward roll = " + rewardRoll);
+
+    return;
+}
+
+uint getRewardPid(Critter& player, int rewardRoll, int& rewardType) {
+    uint rewardPid = rewardsFish[Random(1, rewardsFish[0])];
+    int luckFactor = getLuckFactor(player);
+    if (rewardRoll == 666 && _CritCountItem(player, PID_MAGIC_8_BALL) == 0) {
+        rewardType = REWARD_TYPE_LEGENDARY;
+        rewardPid = rewardLegendary[Random(1, rewardLegendary[0])];
+    } else if (rewardRoll < luckFactor + CLAMP(player.Skill[SK_OUTDOORSMAN], 1, 200) / 10) {
+        rewardType = REWARD_TYPE_EPIC;
+        rewardPid = rewardEpic[Random(1, rewardEpic[0])];
+    } else if (rewardRoll < 10 * (luckFactor + CLAMP(player.Skill[SK_OUTDOORSMAN], 1, 100) / 10)) {
+        rewardType = REWARD_TYPE_RARE;
+        rewardPid = rewardRare[Random(1, rewardRare[0])];
+    } else if (rewardRoll < 20 * (5 + luckFactor + CLAMP(player.Skill[SK_OUTDOORSMAN], 1, 100) / 10)) {
+        rewardType = REWARD_TYPE_QUALITY;
+        rewardPid = rewardsQuality[Random(1, rewardsQuality[0])];
+    } else if (rewardRoll < 100 * (5 + luckFactor + CLAMP(player.Skill[SK_OUTDOORSMAN], 1, 200) / 20)) {
+        rewardType = REWARD_TYPE_COMMON;
+        rewardPid = rewardsCommon[Random(1, rewardsCommon[0])];
+    } else if (rewardRoll < 7500 - 25 * CLAMP(player.Skill[SK_OUTDOORSMAN], 1, 200)) {
+        if (rewardRoll % 2 == 0) {
+            rewardType = REWARD_TYPE_JUNK;
+            rewardPid = rewardsJunk[Random(1, rewardsJunk[0])];
+        } else {
+            rewardType = REWARD_TYPE_JUNK;
+            rewardPid = PID_JUNK;
+        }
+    } else {
+        rewardType = REWARD_TYPE_FISH;
+        rewardPid = rewardsFish[Random(1, rewardsFish[0])];
+    }
+    return rewardPid;
+}
+
+uint e_giveCaughtItem(array<uint>@ values) {
+    Critter@ player = GetCritter(values[0]);
+    if (!valid(player)) {
+        FishLog("e_giveCaughtItem - Invalid player");
+        return 0;
+    }
+    uint rewardPid = values[1];
+    int rewardType = values[2];
+    int luckFactor = getLuckFactor(player);
+
+    if (rewardPid == PID_MAGIC_8_BALL) {
+        player.Say(SAY_NETMSG, "Whoa! An Eight Ball!? How did that get stuck on the fishing spear?");
+        player.AddItem(rewardPid, 1);
+        player.StatBase[ST_EXPERIENCE] += Random(160, 250) * 10;
+    } else if (rewardType == REWARD_TYPE_EPIC) {
+        player.Say(SAY_NETMSG, "Hm, I caught something special!");
+        player.AddItem(rewardPid, 1);
+        player.StatBase[ST_EXPERIENCE] += Random(26, 150) * 10;
+    } else if (rewardType == REWARD_TYPE_RARE) {
+        player.Say(SAY_NETMSG, "Hm, I caught something rare! The fish got disturbed and swam away, but definitely worth it!");
+        Item@ reward = player.AddItem(rewardPid, 1);
+        player.StatBase[ST_EXPERIENCE] += Random(16, 25) * 10;
+        if (rewardPid != PID_GOLD_LOCKET && valid(reward)) {
+            AddArmorBonus(reward, 1);
+            AddArmorBonus(reward, 2);
+            AddArmorBonus(reward, 3);
+            if (Random(0, 100) < luckFactor) {
+                AddArmorBonus(reward, 4);
+                AddArmorBonus(reward, 5);
+            } else if (Random(0, 100) < luckFactor * 4) {
+                AddArmorBonus(reward, 4);
+            }
+            reward.BrokenCount = Random(60 - luckFactor * 2, 95 - luckFactor * 2);
+            reward.Deterioration = Random(reward.BrokenCount * 100, (MAX_DETERIORATION + reward.BrokenCount * 100) / 2);
+            reward.Update();
+        }
+    } else if (rewardType == REWARD_TYPE_QUALITY) {
+        player.Say(SAY_NETMSG, "Hm, I caught some quality stuff! The fish got disturbed and swam away, but who cares!");
+        Item@ reward = player.AddItem(rewardPid, 1);
+        player.StatBase[ST_EXPERIENCE] += Random(6, 15) * 10;
+        if (rewardPid != PID_NECKLACE && valid(reward)) {
+            AddArmorBonus(reward, 1);
+            AddArmorBonus(reward, 2);
+            if (Random(0, 100) < luckFactor * 4) {
+                AddArmorBonus(reward, 3);
+            }
+            reward.BrokenCount = Random(60 - luckFactor * 2, 95 - luckFactor * 2);
+            reward.Deterioration = Random(reward.BrokenCount * 100, (MAX_DETERIORATION + reward.BrokenCount * 100) / 2);
+            reward.Update();
+        }
+    } else if (rewardType == REWARD_TYPE_COMMON) {
+        player.Say(SAY_NETMSG, "Hm, I caught something!  The fish got disturbed and swam away.");
+        Item@ reward = player.AddItem(rewardPid, 1);
+        player.StatBase[ST_EXPERIENCE] += Random(3, 5) * 10;
+        if (valid(reward)) {
+            if (Random(0, 100) < luckFactor + 10) {
+                reward.BrokenCount = Random(60 - luckFactor * 2, 95 - luckFactor * 2);
+                reward.Deterioration = Random(reward.BrokenCount * 100, (MAX_DETERIORATION + reward.BrokenCount * 100) / 2);
+            } else {
+                reward.BrokenCount = MAX_BROKENS;
+                reward.Deterioration = MAX_DETERIORATION;
+                SETFLAG(reward.BrokenFlags, BI_BROKEN);
+            }
+            reward.Update();
+        }
+    } else if (rewardType == REWARD_TYPE_JUNK) {
+        player.Say(SAY_NETMSG, "Hm, I caught some junk! The fish got disturbed and swam away.");
+        player.AddItem(rewardPid, 1);
+        player.StatBase[ST_EXPERIENCE] += Random(1, 2) * 10;
+    } else if (rewardType == REWARD_TYPE_FISH) {
+        Map@ map = player.GetMap();
+        if (valid(map)) {
+            map.SetData(MAP_DATA_FISH_AVAILABLE, map.GetData(MAP_DATA_FISH_AVAILABLE) - 1);
+        }
+        player.AddItem(rewardPid, 1);
+        if (Random(1, 200) >= 200 - player.Perk[PE_TREASURE_HUNTER]) {
+            player.Say(SAY_NETMSG, "Oh look, what did this fish push ashore! A bottle with a paper in it!");
+            player.AddItem(PID_MESSAGE_IN_A_BOTTLE, 1);
+            player.StatBase[ST_EXPERIENCE] += Random(100, 500) * 10;
+        } else {
+            player.Say(SAY_NETMSG, "I caught some fish!");
+            player.StatBase[ST_EXPERIENCE] += 75;
+        }
+    }
+
+    uint level = player.Stat[ST_LEVEL];
+    //  lower level players have less change to trigger gecko
+    int rollSpawn = Random(1, 100);
+    FishLog("Gecko Spawn roll = " + rollSpawn);
+    if (rollSpawn < CLAMP(10 + level / 3, 1, 20) ) {
+        uint[] geckoPids = {NPC_PID_LittleGecko, NPC_PID_ToughLilGecko, NPC_PID_GoldenGecko, NPC_PID_ToughGoldenGecko, NPC_PID_FireGecko, NPC_PID_ToughFireGecko};
+        uint[] geckoChances = {25, 40, 55, 70, 85, 95};
+        uint level = player.Stat[ST_LEVEL];
+        //  lower level players spawn lower strength gecko
+        uint roll = Random(CLAMP(level, 1, 25), CLAMP(level, 1, 75) + 50);
+        uint geckoIndex = 0;
+        uint i = 0;
+        while (i < 6 && roll > geckoChances[i]) {
+            i++;
+            if (i < 6 && roll > geckoChances[i]) {
+                geckoIndex = i;
+            }
+        }
+        FishLog("Gecko Spawn Strength: roll = " + roll + ", geckoIndex = " + geckoIndex);
+        spawnGecko(player, player.GetMap(), geckoPids[geckoIndex]);
+    }
+    return 0;
+}
+
+void DespawnFish(Item& item) {
+    uint time = Random(FISH_DESPAWN_TICK_MIN, FISH_DESPAWN_TICK_MAX) * FISH_CIRCLING_ANIM_TIME1;
+    switch (item.Proto.ProtoId) {
+        case PID_ITEM_FISH_CIRCLING1:
+            time = Random(FISH_DESPAWN_TICK_MIN, FISH_DESPAWN_TICK_MAX) * FISH_CIRCLING_ANIM_TIME1;
+            break;
+        case PID_ITEM_FISH_CIRCLING2:
+            time = Random(FISH_DESPAWN_TICK_MIN, FISH_DESPAWN_TICK_MAX) * FISH_CIRCLING_ANIM_TIME2;
+            break;
+        case PID_ITEM_FISH_CIRCLING3_SMALL:
+            time = Random(FISH_DESPAWN_TICK_MIN, FISH_DESPAWN_TICK_MAX) * FISH_CIRCLING_ANIM_TIME3;
+            break;
+    }
+    CreateTimeEvent(AFTER(REAL_MS(time)), "e_DespawnFish", item.Id, false);
+}
+
+void AnimateItemOnceAndDelete(uint mapPid, uint hexX, uint hexY, uint itemPid, uint time, uint duration, uint soundId) {
+    uint[] values = {mapPid, hexX, hexY, itemPid, duration, soundId};
+    CreateTimeEvent(AFTER(REAL_MS(time)), "e_animateOnceAndDelete", values, false);
+}
+
+uint cte_ThrowFishingSpear(Critter& cr, int identifier, uint& rate) {
+    //cr.Wait(1600);
+    rate = 0;
+    cr.Animate(ANIM1_SPEAR, ANIM2_THROW, null, true, true);
+    if(cr.Mode[MODE_HIDE] != 0 && cr.GetAccess() < ACCESS_TESTER)
+         cr.ModeBase[MODE_HIDE] = 0;
+    cr.PlaySound('W', SOUND_WEAPON_USE, 'O', '1', true);         // '1'?
+    return 0;
+}
+
+uint e_FishingSpearFlyAnimation(array<uint>@ values) {
+    Map@ map = GetMap(values[0]);
+    if(!valid(map)) {
+        FishLog("e_FishingSpearFlyAnimation - Invalid Map");
+        return 0;
+    }
+    map.RunFlyEffect(PID_SPEAR, null, null, values[1], values[2], values[3], values[4]);
+    return 0;
+}
+
+uint e_animateOnceAndDelete(array<uint>@ values) {
+    Map@ map = GetMap(values[0]);
+    if(!valid(map)) {
+        FishLog("e_animateOnceAndDelete - Invalid Map");
+        return 0;
+    }
+    Item@ item = map.AddItem(values[1], values[2], values[3], 1);
+    if (!valid(item)) {
+        FishLog("e_animateOnceAndDelete - Invalid Item");
+        return 0;
+    }
+    if (values[5] != 0) {
+        map.PlaySound(fishingSpearWaterImpactSounds[values[5] - 1]);
+    }
+    //FishLog("e_animateOnceAndDelete - spawning pid:" + values[3] + " at hex(" + values[1] + ", " + values[2] + ")");
+    CreateTimeEvent(AFTER(REAL_MS(values[4])), "e_DeleteAnimationItem", item.Id, true);
+    return 0;
+}
+
+uint e_FadeDeleteAnimationItem(array<uint>@ values) {
+    Item@ item = GetItem(values[0]);
+    if (!valid(item)) {
+        FishLog("e_FadeDeleteAnimationItem - Invalid Item");
+        return 0;
+    }
+    //FishLog("e_FadeDeleteAnimationItem - deleting pid:" + item.Proto.ProtoId);
+    DeleteItem(item);
+    return 0;
+}
+
+uint e_DeleteAnimationItem(array<uint>@ values) {
+    Item@ item = GetItem(values[0]);
+    if (!valid(item)) {
+        FishLog("e_DeleteAnimationItem - Invalid Item");
+        return 0;
+    }
+    //FishLog("e_DeleteAnimationItem - deleting pid:" + item.Proto.ProtoId);
+    item.PicMap = GetStrHash("art\\items\\fishing\\fish_pool.fofrm");
+    item.Update();
+    DeleteItem(item);
+    return 0;
+}
+
+uint e_DespawnFish(array<uint>@ values) {
+    Item@ item = GetItem(values[0]);
+    if (!valid(item)) {
+        FishLog("e_DespawnFish() - Invalid Fish");
+        return 0;
+    }
+    Map@ map = GetMap(item.MapId);
+    if (!valid(map)) {
+        FishLog("e_DespawnFish() - Invalid Map");
+        return 0;
+    }
+    if (map.GetData(MAP_DATA_FISH_SPAWNED) > 0) {
+        map.SetData(MAP_DATA_FISH_SPAWNED, map.GetData(MAP_DATA_FISH_SPAWNED) - 1);
+    } else {
+        FishLog("CONCURRENCY ERROR? - when despawning fish, going below 0!");
+    }
+    uint flags = item.get_Flags();
+    SETFLAG(flags, ITEM_FLAG_HIDDEN);
+    item.set_Flags(flags);
+    DeleteItem(item);
+    //FishLog("Despawned Fish (Pid: " + item.Proto.ProtoId + ", " + item.Id + ")");
+    return 0;
+}
+
+
+//  if player has lucky items, they count first, else it's luck stat is used
+int getLuckFactor(Critter& player) {
+     return _CritCountItem(player, PID_MAGIC_8_BALL) > 0 ?
+            10 : _CritCountItem(player, PID_GOLD_LOCKET) > 0 ?
+                5 : player.Stat[ST_LUCK] / 2;
+}
+
+uint e_removeLostSpear(array<uint>@ values) {
+    Critter@ player = GetCritter(values[0]);
+    if (!valid(player)) {
+        FishLog("e_removeLostSpear - Invalid player");
+        return 0;
+    }
+    bool playerHasRope = _CritCountItem(player, PID_ROPE) > 0;
+    if (_CritCountItem(player, PID_SPEAR) > 0) {
+        player.DeleteItem(PID_SPEAR, 1);
+    } else if (_CritCountItem(player, PID_SHARP_SPEAR) > 0) {
+        player.DeleteItem(PID_SHARP_SPEAR, 1);
+    } else if (_CritCountItem(player, PID_SHARPENED_POLE) > 0) {
+        player.DeleteItem(PID_SHARPENED_POLE, 1);
+    } else {
+        FishLog("e_removeLostSpear - cannot remove spear, because player has neither spear, sharp spear or sharp pole.");
+    }
+    if (!playerHasRope) {
+        player.Say(SAY_NETMSG, "Damn, I lost my fishing spear! What was I thinking throwing away that spear without a rope?");
+    } else {
+        uint armorPenalty = getArmorPenaltyValue(player); //  1 none, 0 light, 2 heavy
+        if (armorPenalty == ARMOR_PENALTY_BLUESUIT) {
+            player.Say(SAY_NETMSG, "Damn, I lost my fishing spear! Maybe some fine Leather Armor would make handling the rope easier.");
+        } else if (armorPenalty == ARMOR_PENALTY_LEATHER) {
+            player.Say(SAY_NETMSG, "Damn, I lost my fishing spear! What are the odds my finger would slip on this rope, one out of a thousand?!");
+        } else {
+            player.Say(SAY_NETMSG, "Damn, I lost my fishing spear! The rope entangled in this bulky armor.");
+        }
+    }
+    return 0;
+}
+
+uint getArmorPenaltyValue(Critter& player) {
+    if (!valid(player)) {
+        FishLog("getArmorValue - Invalid player");
+        return 0;
+    }
+    uint armorPenalty = ARMOR_PENALTY_BLUESUIT;
+    Item@ item = _CritGetItemArmor(player);
+    if (valid(item)) {
+        switch (item.Proto.ProtoId) {
+            case PID_LEATHER_ARMOR:
+            case PID_LEATHER_ARMOR_MK_II:
+            case PID_LEATHER_JACKET:
+            case PID_THERMAL_LEATHER_ARMOR:
+                armorPenalty = ARMOR_PENALTY_LEATHER;
+                break;
+            case PID_METAL_ARMOR:
+            case PID_METAL_ARMOR_MK_II:
+            case PID_TESLA_ARMOR:
+                armorPenalty = ARMOR_PENALTY_HEAVY;
+                break;
+            default:
+                armorPenalty = ARMOR_PENALTY_OTHER;
+        }
+    }
+    return armorPenalty;
+}
+
+void spawnGecko(Critter& player, Map& map, uint mobPid) {
+    if (!valid(map)) {
+        FishLog("spawnGecko() - Invalid Map");
+        return;
+    }
+    if (!valid(player)) {
+        FishLog("spawnGecko - Invalid player");
+        return;
+    }
+    int[] params = {
+        ST_TEAM_ID, 0,
+        ST_NPC_ROLE, 0,
+        ST_REPLICATION_TIME, REPLICATION_NEVER
+    };
+    Critter@ gecko = map.AddNpc(mobPid, player.HexX - Random(5, 10), player.HexY - Random(5, 10), 5, params, null, "mob@critter_init");
+    if(valid(gecko))
+    {
+        gecko.SpawnedBy = player.Id;
+        gecko.AddEnemyInStack(player.Id);
+        AddAttackPlane(gecko, 0, player);
+    }
+}
+
+//  exported
+bool OpenBottleWithMessage(Critter& player, Item& item) {
+    uint16[] blueprintLowLevel = { 9, PID_BLUEPRINT_STIMPAK, PID_BLUEPRINT_BUFFOUT, PID_BLUEPRINT_MENTATS,
+                                    PID_BLUEPRINT_RIPPER, PID_BLUEPRINT_SUPER_SLEDGE, PID_BLUEPRINT_NEEDLER_PISTOL,
+                                    PID_BLUEPRINT_ASSAULT_RIFLE, PID_BLUEPRINT_FN_FAL, PID_BLUEPRINT_LASER_RIFLE };
+    uint16[] blueprintMedLevel = { 9, PID_BLUEPRINT_SUPER_STIMPAK, PID_BLUEPRINT_RADAWAY, PID_BLUEPRINT_SUPER_CATTLE_PROD,
+                                    PID_BLUEPRINT_MEGA_POWER_FIST, PID_BLUEPRINT_223_PISTOL, PID_BLUEPRINT_14MM_PISTOL,
+                                    PID_BLUEPRINT_LASER_SMG, PID_BLUEPRINT_PLASMA_RIFLE, PID_BLUEPRINT_ROCKET_LAUNCHER };
+
+    uint16[] blueprintHighLevel = { 7, PID_BLUEPRINT_PULSE_PISTOL, PID_BLUEPRINT_P90, PID_BLUEPRINT_THERMAL_LEATHER_ARMOR,
+                                    PID_BLUEPRINT_COMBAT_HELMET, PID_BLUEPRINT_COMBAT_ARMOR, PID_BLUEPRINT_METAL_ARMOR_MK_II,
+                                    PID_BLUEPRINT_METAL_HELMET_MK2 };
+
+    int roll = Random(1, 100);
+    uint rewardPid = PID_MEMO;
+    if (roll < 15) {
+        rewardPid = blueprintHighLevel[Random(1, blueprintHighLevel[0])];
+    } else if (roll < 45) {
+        rewardPid = blueprintMedLevel[Random(1, blueprintMedLevel[0])];
+    } else {
+        rewardPid = blueprintLowLevel[Random(1, blueprintLowLevel[0])];
+    }
+    Map@ map = player.GetMap();
+    if (!valid(map)) {
+        FishLog("_UseItemOnFish - Invalid Map");
+        return false;
+    }
+    map.PlaySound("bottle_cork.ogg");
+    player.Say(SAY_NETMSG, "Oh look... someone carefully packaged this blueprint into a bottle for safekeeping, very clever.");
+    player.AddItem(rewardPid, 1);
+    DeleteItem(item);
+    return true;
+}
+
+#endif 	//	__PROD_FISHING__
+
