@@ -352,12 +352,28 @@ int screen_timeouts_draw(CritterCl& critter, uint skill, string& skillname, int 
             y = TimeoutsCustom[z].PositionY;
         }
 
-        if(x < 0)
+        //  if x or y is above 10,000 it means that we want relative position around center of screen or division of screen to 10 parts
+        int modulator = 10000;
+        int screenDivisions = 10;
+        int ratioX = x / modulator;
+        int ratioY = y / modulator;
+        if ((x >= modulator && x < screenDivisions * modulator) || (x <= -1 * modulator && x > -1 * screenDivisions * modulator)) {
+            x = (__ScreenWidth / 2) + (ratioX * __ScreenWidth / 2 / screenDivisions) + (x % modulator);
+            Log("screen_timeouts_draw(): #1 x = " + x + ", __ScreenWidth = " + __ScreenWidth);
+        } else if (x < 0) {
             x += __ScreenWidth;
-        if(y < 0)
-            y += __ScreenHeight;
-        if(yy < 0)
-            yy += __ScreenHeight;
+        }
+
+        if ((y >= modulator && y < screenDivisions * modulator) || (y <= -1 * modulator && y > -1 * screenDivisions * modulator)){
+            y = (__ScreenHeight / 2) + (ratioY * __ScreenHeight / 2 / screenDivisions) + (y % modulator);
+            Log("screen_timeouts_draw(): #1 y = " + y + ", __ScreenHeight = " + __ScreenHeight);
+        } else {
+            if(y < 0)
+                y += __ScreenHeight;
+        }
+        yy = y;
+        //Log("screen_timeouts_draw(): x = " + x + ", y = " + y + ", yy = " + yy);
+
 
         int color1 = (userCustomMode != 0)?TimeoutsCustom[z].NameColor:Timeouts.NameColor;
         int color2 = (userCustomMode != 0)?TimeoutsCustom[z].ValueColor:Timeouts.ValueColor;
