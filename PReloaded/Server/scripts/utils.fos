@@ -48,6 +48,107 @@ import uint     GetDaysInMonth(uint16 year, uint16 month) from "time";
  */
 // @{
 
+/**<
+ *  Success type can be: failure, success, and critical success. Only use at First Aid.
+ *  The coloring of the heal above head will depends on it,
+ *  where critical success is the greenest and the critical failure is an ugly dark blueish green.
+ *  Reason type can be: First Aid, Weak healing powder, Healing powder, Stimpak, Super Stimpak, Hypo.
+ *  If the reason is no reason, then only the healing value is printed.
+ *  In the header all reasons can be disabled with setting IS_HEAL_TEXT_REASON_ENABLED to false.
+ */
+void FloatingHealText(Critter& cr, int healAmount, int reason, int successType = SKILL_CHECK_SUCCESS) {
+    string text;
+    string reasonText = "";
+    uint color = 0;
+    switch (successType) {
+        case SKILL_CHECK_CRITICAL_FAILURE:
+        case SKILL_CHECK_FAILURE:
+            color = COLOR_HEAL_TEXT_FAILURE;
+            break;
+        case SKILL_CHECK_SUCCESS:
+            color = COLOR_HEAL_TEXT_SUCCESS;
+            break;
+        case SKILL_CHECK_CRITICAL_SUCCESS:
+            color = COLOR_HEAL_TEXT_CRIT_SUCCESS;
+            break;
+    }
+    if (IS_HEAL_TEXT_REASON_ENABLED) {
+        switch (reason) {
+            case HEAL_TEXT_REASON_FIRSTAID:
+                reasonText = "FA";
+                break;
+            case HEAL_TEXT_REASON_WEAKHEALINGPOWDER:
+                reasonText = "WHPow";
+                break;
+            case HEAL_TEXT_REASON_HEALINGPOWDER:
+                reasonText = "HPow";
+                break;
+            case HEAL_TEXT_REASON_STIMPAK:
+                reasonText = "Stim";
+                break;
+            case HEAL_TEXT_REASON_SUPERSTIMPAK:
+                reasonText = "SStim";
+                break;
+            case HEAL_TEXT_REASON_HYPO:
+                reasonText = "Hypo";
+                break;
+            case HEAL_TEXT_REASON_NOREASON:
+                reasonText = "";
+                break;
+        }
+    }
+    else {
+        reasonText = "";
+    }
+    //  Just in case critical failure hurts later.
+    if(healAmount >= 0)
+        text = "+ " + healAmount + "  " + reasonText;
+    else
+        text = "- " + healAmount + "  " + reasonText;
+
+    Map@   map = cr.GetMap();
+    if (!valid(map)) {
+        Log("FloatingHealText() - Invalid Map");
+        return;
+    }
+    uint16 destX = cr.HexX;
+    uint16 destY = cr.HexY;
+    map.MoveHexByDir(destX, destY, 0, 3);
+    map.MoveHexByDir(destX, destY, 5, 3);
+
+    MapMessageEx(FLOAT_ENFORCED, FLOAT_MODE_ALL, cr, text, destX, destY, 150, color, true, -50, 50, -40, -70);
+    //SayEx(SAYEX_VERBOSE_ACTION, cr, text);
+}
+
+void FloatingHealTextByDrugPid(Critter& cr, int healAmount, uint16 drugPid)
+{
+    int reason = -1;
+    switch (drugPid)
+    {
+        case PID_WEAK_HEALING_POWDER:
+            reason = HEAL_TEXT_REASON_WEAKHEALINGPOWDER;
+            break;
+        case PID_HEALING_POWDER:
+            reason = HEAL_TEXT_REASON_HEALINGPOWDER;
+            break;
+        case PID_STIMPAK:
+            reason = HEAL_TEXT_REASON_STIMPAK;
+            break;
+        case PID_SUPER_STIMPAK:
+            reason = HEAL_TEXT_REASON_SUPERSTIMPAK;
+            break;
+        case PID_HYPO:
+            reason = HEAL_TEXT_REASON_HYPO;
+            break;
+        default:
+            reason = HEAL_TEXT_REASON_NOREASON;
+    }
+    if (reason >= 0)
+    {
+        FloatingHealText(cr, healAmount, reason);
+    }
+}
+
 /**
  * AddNpc that is backwards compatible with old AddNpc function.
  *
@@ -2512,15 +2613,35 @@ void MapMessageEx(uint8 type, uint8 mode, Critter& target, string& text, uint16 
     if(count == 0)
         return;
 
-    Buffer@ buff = NewBuffer();
-    buff << delay << color << fade << fromX << toX << fromY << toY;
+    array<int> data = {0, 0, 0, 0, 0, 0, 0, 0};
+    data[0] = delay;
+    data[1] = color;
+    data[2] = fade ? 1 : 0;
+    data[3] = fromX;
+    data[4] = toX;
+    data[5] = fromY;
+    data[6] = toY;
 
-    array<int32> data = buff.AsInt32();
 
     for(uint p = 0; p < count; p++)
     {
         if(players[p].IsPlayer())
-            players[p].RunClientScript("client_messages@map", type, hexX, hexY, text, data);
+            players[p].RunClientScript("client_messages@mapMessage", type, hexX, hexY, text, data);
+    }
+}
+
+void VerboseAction(Critter& cr, string& text, int hexX, int hexY) {
+    if(text.length() > 0)
+    {
+        stringReplaceText(text, "CRITTER", GetCritterName(cr));
+
+        // uint color = COLOR_RGB( 58, 137, 133 );
+        // cr.Say( SAY_VERBOSE_ACTION, "|"+color+" **"+text+"**" );
+
+        text = "**" + text + "**";
+
+        MapMessageEx(FLOAT_VERBOSE_ACTION, FLOAT_MODE_ALL, cr, text, cr.HexX, cr.HexY, 150, COLOR_RGB(58, 137, 133), true, -20, 20, -20, -20);
+        SayEx(SAYEX_VERBOSE_ACTION, cr, text);
     }
 }
 
