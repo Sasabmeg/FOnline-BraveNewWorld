@@ -468,6 +468,9 @@
 #define LVAR_q_mb_location_known                (23017)
 #define LLVAR_q_mb_location_state               (23018)
 
+//  Debugging variables - cheat rolls as GM
+#define LVAR_debug_fishing_catch_roll           (26700)
+
 #define LVAR_online_stats                       (60000)
 #define LVAR_drug_fix                           (60001)
 #define LVAR_kamikaze_fix                       (60002)
@@ -2689,7 +2692,10 @@ $	21006	1	LVAR_FO2077_Book_SmallGuns  0	0	10	0
    Variable for johnnys military base quest
 **********
 
-
+   $	26700	1	debug_fishing_catch_roll	0	0	0	4
+**********
+    Used by Fishing Module to fix the roll for catch type, for Tester Access or higher only. If set to 0, it is not used.
+**********
 
    $	60000	1	online_stats	0	0	0	4
 **********

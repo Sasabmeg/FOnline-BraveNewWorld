@@ -25,6 +25,10 @@
 #if ANGELSCRIPT_VERSION >= 22900
 funcdef bool SmartValidate( ItemCl& item, ItemCl@ tool );
 #endif
+
+import uint8 GetCurrentAim() from "client_keybinds";
+import bool GUI_IsKeyPressed(uint8 key) from "client_gui";
+
 class SmartCollection
 {
     array<uint16>  Items;
@@ -226,13 +230,55 @@ class SmartCursor
                             {
                                 string txt = collection.Text;
 
+                                //  fishing hack to show throw distance
+                                if (tool.Proto.ProtoId == PID_SPEAR || tool.Proto.ProtoId == PID_SHARP_SPEAR || tool.Proto.ProtoId == PID_SHARPENED_POLE) {
+                                    if (GUI_IsKeyPressed(DIK_LSHIFT) || GUI_IsKeyPressed(DIK_RSHIFT)) {
+                                        txt = "Feed fish";
+                                    } else {
+                                        txt = "Throw wherever";
+                                        if (valid(chosen)) {
+                                            int aim = GetCurrentAim();
+                                            switch (aim) {
+                                                case HIT_LOCATION_LEFT_LEG:
+                                                    txt = "Throw even closer";
+                                                    break;
+                                                case HIT_LOCATION_RIGHT_LEG:
+                                                    txt = "Throw close";
+                                                    break;
+                                                case HIT_LOCATION_GROIN:
+                                                case HIT_LOCATION_TORSO:
+                                                    txt = "Throw not too far";
+                                                    break;
+                                                case HIT_LOCATION_LEFT_ARM:
+                                                    txt = "Throw far";
+                                                    break;
+                                                case HIT_LOCATION_RIGHT_ARM:
+                                                    txt = "Throw further";
+                                                    break;
+                                                case HIT_LOCATION_HEAD:
+                                                    txt = "Throw even further";
+                                                    break;
+                                                case HIT_LOCATION_EYES:
+                                                    txt = "Throw as far you can";
+                                                    break;
+                                            }
+                                        }
+                                    }
+                                }
+
                                 if( txt.length() > 0 )
                                 {
                                     if( needTool && this.drawInfoTool )
                                     {
                                         string txtTool = GetMsgStr( TEXTMSG_ITEM, tool.Proto.ProtoId*100+tool.Info );
-                                        if( txtTool != "error" )
-                                            txt += " ("+txtTool+")";
+                                        if( txtTool != "error" ) {
+                                            if ((tool.Proto.ProtoId == PID_SPEAR || tool.Proto.ProtoId == PID_SHARP_SPEAR || tool.Proto.ProtoId == PID_SHARPENED_POLE)
+                                                    && (GUI_IsKeyPressed(DIK_LSHIFT) || GUI_IsKeyPressed(DIK_RSHIFT))) {
+                                                txt += " (Barley)";
+                                            } else {
+                                                txt += " ("+txtTool+")";
+                                            }
+                                        }
                                     }
 
                                     DrawText( txt, __MouseX + this.drawInfoOffsetX, __MouseY + this.drawInfoOffsetY, 0, 0, this.drawInfoColor, this.drawInfoFont, this.drawInfoFlags );
@@ -242,12 +288,44 @@ class SmartCursor
                             // graphic
                             if( needTool && this.drawTool )
                             {
-                                uint spriteId = LoadSprite( tool.PicInv > 0 ? tool.PicInv : tool.Proto.PicInv, tool.Dir );
-                                if( spriteId > 0 )
-                                {
-                                    __HideCursor = true;
-                                    DrawSprite( spriteId, -1, __MouseX + this.drawToolOffsetX, __MouseY + this.drawToolOffsetY, this.drawToolSize, this.drawToolSize, true, false, 0 );
+                                if ((tool.Proto.ProtoId == PID_SPEAR || tool.Proto.ProtoId == PID_SHARP_SPEAR || tool.Proto.ProtoId == PID_SHARPENED_POLE)
+                                        && (GUI_IsKeyPressed(DIK_LSHIFT) || GUI_IsKeyPressed(DIK_RSHIFT))) {
+                                    CritterCl@ chosen = GetChosen();
+                                    if (!valid(chosen)) {
+                                        Message("Invalid Chosen");
+                                        return;
+                                    }
+                                    array<ItemCl@> items;
+                                    uint countInvItems = chosen.GetItems(SLOT_INV, items);
+                                    ItemCl@ barley;
+                                    for (uint i = 0; i < countInvItems; i++) {
+                                        if (items[i].Proto.ProtoId == PID_BARLEY) {
+                                            @barley = items[i];
+                                        }
+                                    }
+                                    if (valid(barley)) {
+                                        array<uint> click = { CHOSEN_USE_ITEM, barley.Id, PID_BARLEY, TARGET_ITEM, this.clickTargetId, USE_USE, 0 };
+                                        SetChosenActions( click );
+                                    } else {
+                                        Message("I'm out of fish food.");
+                                        return ;
+                                    }
+
+                                    uint spriteId = LoadSprite(barley.PicInv > 0 ? barley.PicInv : barley.Proto.PicInv, barley.Dir);
+                                    if (spriteId > 0)
+                                    {
+                                        __HideCursor = true;
+                                        DrawSprite( spriteId, -1, __MouseX + this.drawToolOffsetX, __MouseY + this.drawToolOffsetY, this.drawToolSize, this.drawToolSize, true, false, 0 );
+                                    }
+                                } else {
+                                    uint spriteId = LoadSprite( tool.PicInv > 0 ? tool.PicInv : tool.Proto.PicInv, tool.Dir );
+                                    if( spriteId > 0 )
+                                    {
+                                        __HideCursor = true;
+                                        DrawSprite( spriteId, -1, __MouseX + this.drawToolOffsetX, __MouseY + this.drawToolOffsetY, this.drawToolSize, this.drawToolSize, true, false, 0 );
+                                    }
                                 }
+
                             }
 
                             // no need to recheck everything again when player bravely press the mouse button,
@@ -286,7 +364,6 @@ class SmartCursor
 // Click()
 // called from mouse_down(int)
 //
-
     bool Click( int click )
     {
         if( GetCurrentCursor() == CURSOR_DEFAULT && click == MOUSE_CLICK_LEFT && this.clickTargetId > 0 )
@@ -295,8 +372,62 @@ class SmartCursor
             {
                 if( this.clickToolId > 0 && this.clickToolPid > 0 )
                 {
-                    array<uint> click = { CHOSEN_USE_ITEM, this.clickToolId, this.clickToolPid, TARGET_ITEM, this.clickTargetId, USE_USE, 0 };
-                    SetChosenActions( click );
+                    //  fishing hack, no other way
+                    if (this.clickToolPid == PID_SPEAR || this.clickToolPid == PID_SHARP_SPEAR || this.clickToolPid == PID_SHARPENED_POLE) {
+                        if (GUI_IsKeyPressed(DIK_LSHIFT) || GUI_IsKeyPressed(DIK_RSHIFT)) {
+                            CritterCl@ chosen = GetChosen();
+                            if (!valid(chosen)) {
+                                Message("Invalid Chosen");
+                                return false;
+                            }
+                            array<ItemCl@> items;
+                            uint countInvItems = chosen.GetItems(SLOT_INV, items);
+                            ItemCl@ barley;
+                            for (uint i = 0; i < countInvItems; i++) {
+                                if (items[i].Proto.ProtoId == PID_BARLEY) {
+                                    @barley = items[i];
+                                }
+                            }
+                            if (valid(barley)) {
+                                array<uint> click = { CHOSEN_USE_ITEM, barley.Id, PID_BARLEY, TARGET_ITEM, this.clickTargetId, USE_USE, 0 };
+                                SetChosenActions( click );
+                            } else {
+                                Message("I'm out of fish food.");
+                                return false;
+                            }
+                        } else {
+                            int aim = GetCurrentAim();
+                            int range = 0;
+                            switch (aim) {
+                                case HIT_LOCATION_LEFT_LEG:
+                                    range = 1;
+                                    break;
+                                case HIT_LOCATION_RIGHT_LEG:
+                                    range = 2;
+                                    break;
+                                case HIT_LOCATION_GROIN:
+                                case HIT_LOCATION_TORSO:
+                                    range = 3;
+                                    break;
+                                case HIT_LOCATION_LEFT_ARM:
+                                    range = 4;
+                                    break;
+                                case HIT_LOCATION_RIGHT_ARM:
+                                    range = 5;
+                                    break;
+                                case HIT_LOCATION_HEAD:
+                                    range = 6;
+                                    break;
+                                case HIT_LOCATION_EYES:
+                                    range = 7;
+                                    break;
+                            }
+                            RunServerScriptUnsafe("prod_fishing@unsafe_SpearFish", this.clickToolPid, this.clickTargetId, range, null, null);
+                        }
+                    } else {
+                        array<uint> click = { CHOSEN_USE_ITEM, this.clickToolId, this.clickToolPid, TARGET_ITEM, this.clickTargetId, USE_USE, 0 };
+                        SetChosenActions( click );
+                    }
                 }
             }
             else
@@ -342,8 +473,10 @@ void InitSmartCursor() // EXPORT
 {
     smart_cursor.drawLayer = 2; // ugh
 
+
+
     ///// slots /////
-    
+
     array<uint8> slot_all    = { SLOT_HAND1, SLOT_HAND2, SLOT_INV };
     array<uint8> slot_hands  = { SLOT_HAND1, SLOT_HAND2 };
     array<uint8> slot_active = { SLOT_HAND1 };
@@ -357,6 +490,7 @@ void InitSmartCursor() // EXPORT
     array<uint16> tool_mine_3 = { PID_SUPER_SLEDGE };
     array<uint16> tool_junk   = { PID_MULTI_TOOL };
     array<uint16> tool_shovel = { PID_OLD_SHOVEL, PID_SHOVEL };
+    array<uint16> tool_fishingpole  = { PID_SHARP_SPEAR, PID_SPEAR, PID_SHARPENED_POLE };
 
     ///// targets /////
 
@@ -385,6 +519,8 @@ void InitSmartCursor() // EXPORT
     // Should be merged into one pid...
     array<uint16> wood = { PID_TREE1_FIREWOOD, PID_TREE2_FIREWOOD, PID_TREE3_FIREWOOD };
 
+    array<uint16> fishing_pool = { 26770 };
+
     ///// configuration /////
 
     SmartCollection scGraves(          graves,          tool_shovel, slot_all, null, SMART_TEXT, SMART_DIG_GRAVE );
@@ -408,6 +544,7 @@ void InitSmartCursor() // EXPORT
     smart_cursor.Add( SmartCollection( vein_minerals_2, tool_mine_2, slot_all, null, SMART_TEXT, SMART_EXTRACT_MINERALS2 ));
     smart_cursor.Add( SmartCollection( vein_uranium,    tool_mine_3, slot_all, null, SMART_TEXT, SMART_EXTRACT_URANIUM ));
     smart_cursor.Add( SmartCollection( vein_gold,       tool_mine_3, slot_all, null, SMART_TEXT, SMART_EXTRACT_GOLD ));
+    smart_cursor.Add( SmartCollection( fishing_pool,    tool_fishingpole, slot_all, "Throw spear", SMART_TEXT, SMART_EXTRACT_GOLD ));
 }
 
 void SmartCursorDraw( uint layer ) // EXPORT
