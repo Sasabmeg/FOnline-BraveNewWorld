@@ -1098,6 +1098,18 @@ bool critter_use_item(Critter& cr, Item& item, Critter@ targetCr, Item@ targetIt
     if (pid == PID_MESSAGE_IN_A_BOTTLE) {
         return OpenBottleWithMessage(cr, item);
     }
+    if (pid == PID_FISH_SALMON) {
+        UseDrug(cr, item);
+        return true;
+    }
+    if (pid == PID_FISH_TUNA) {
+        UseDrug(cr, item);
+        return true;
+    }
+    if (pid == PID_FISH_CATFISH) {
+        UseDrug(cr, item);
+        return true;
+    }
 
     // Drugs
 	if (pid==PID_CIGARETTES)

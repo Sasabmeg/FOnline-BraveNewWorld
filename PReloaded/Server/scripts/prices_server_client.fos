@@ -308,6 +308,9 @@ uint TradingItemType(uint pid)
         case PID_IGUANA_ON_A_STICK:
         case PID_MEAT_ON_A_STICK:
         case PID_CIGARETTES:
+        case PID_FISH_SALMON:
+        case PID_FISH_TUNA:
+        case PID_FISH_CATFISH:
             return ITEMTYPE_MISC;
 
         /*case PID_JET:

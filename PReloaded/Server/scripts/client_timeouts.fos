@@ -56,7 +56,7 @@ class CTimeout
                                      1 - 7:00:00, 7:00, 7s
                                      2 - 7:00:00, 7:00, 7 sec
                                      3 - 7:00:00, 7:00, 7 seconds
-                                     4 - 7:00:00, 7:00, 0:07 
+                                     4 - 7:00:00, 7:00, 0:07
                                      5 - 7:00:00, 07:00, 00:07
                                      6 - 7h 0m 0s, 7m 0s, 7s
                                      7 - 7h 0 min 0 sec, 7 min 0 sec, 7 sec
@@ -150,7 +150,8 @@ array<MyTimeout> MyTimeouts;
 
 void TimeoutsConfig(string& customConfig)
 {
-    for(uint8 i=0; i < 20; ++i)
+    //Log("###TimeoutsConfig = " + customConfig + "###");
+    for(uint8 i=0; i < 20 + 100; ++i)
     {
         TimeoutsCustom.insertLast(CTimeoutCustom());
     }
@@ -212,6 +213,7 @@ void TimeoutsConfig(string& customConfig)
             {
                 for(uint i=1; i < 20; ++i)
                 {
+                    //Log("i = " + i + " var.GetName() = " + var.GetName());
                     if(var.GetName() == ("CustomTimeout"+i))
                     {
                         array<string@>@ vals = split(var.GetValue(), " ");
@@ -223,7 +225,7 @@ void TimeoutsConfig(string& customConfig)
                         else if(vals.length() == 6)
                             TimeoutsCustom[i].SetValues(string2uint(vals[0]), string2uint(vals[1]), string2uint(vals[2]),       //R G B of name color
                                                         string2uint(vals[3]), string2uint(vals[4]), string2uint(vals[5]));      //R G B of value color
-                        break;
+                        //break;
                     }
                 }
             }
@@ -258,7 +260,7 @@ int screen_timeouts_draw(CritterCl& critter, uint skill, string& skillname, int 
     timeout = critter.Timeout[skill];
 
     timeout /= __TimeMultiplier;
-                            //we are adding 1s to skills cooldown because they were disappearing faster then they should 
+                            //we are adding 1s to skills cooldown because they were disappearing faster then they should
     if(!custom)             //(example skill cd no longer displayed while character's skill is still about 1s on cd).
         timeout += 1;       //it's like that because timeout /= __TimeMultiplier is rounding down
 
@@ -375,7 +377,7 @@ int screen_timeouts_draw(CritterCl& critter, uint skill, string& skillname, int 
                 DrawText(skillname + ":", x, y, __ScreenWidth, 10, color1, TimeoutsCustom[z].Font, Timeouts.FontFlags);
                 x += TimeoutsCustom[z].SpacingX;
             }
-            DrawText(text, x, y, __ScreenWidth, 10, color2, TimeoutsCustom[z].Font, Timeouts.FontFlags);        
+            DrawText(text, x, y, __ScreenWidth, 10, color2, TimeoutsCustom[z].Font, Timeouts.FontFlags);
             y = yy;
         }
         else
@@ -387,7 +389,7 @@ int screen_timeouts_draw(CritterCl& critter, uint skill, string& skillname, int 
             if(Timeouts.Direction == 0)
                 y += Timeouts.SpacingY;
             else
-                y -= Timeouts.SpacingY;        
+                y -= Timeouts.SpacingY;
         }
     }
     return(y);
@@ -496,7 +498,7 @@ void TimeoutsDraw() // client_main@render_iface
         {
             y = screen_timeouts_draw(critter, TO_SK_FIRST_AID, "First Aid", x, y, z, TimeoutsCustom[z].CustomMode);
         }
-        if(z == 12   && critter.Timeout[TO_CIGARETTES] > 0)
+        if(z == 12 && critter.Timeout[TO_CIGARETTES] > 0)
         {
             y = screen_timeouts_draw(critter, TO_CIGARETTES, "Cigarettes", x, y, z, TimeoutsCustom[z].CustomMode);
         }
@@ -687,6 +689,24 @@ void _add_unsafe(int value, int, int, string@ name, array<int>@)
 
     return;
 };
+
+void remove_unsafe(int value, int, int, string@ name, array<int>@ unused) {
+    if (MyTimeouts.length() > 0)
+    {
+        for (uint i = 0; i < MyTimeouts.length(); i++)
+        {
+            if(MyTimeouts[i].name == name)
+            {
+                # ifdef __DEBUG__
+                Message("Dropping custom timeout: " + name + " (" + value + ")");
+                Message("Custom timeouts: " + MyTimeouts.length());
+                # endif
+                MyTimeouts.removeAt(i);
+                return;
+            }
+        }
+    }
+}
 #endif // CUSTOM_TIMEOUTS
 
 #ifndef CUSTOM_TIMEOUTS
