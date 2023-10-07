@@ -145,6 +145,12 @@
 #define MAP_DATA_SHA_ENIN_OWNER                 (20)
 #define MAP_DATA_SHA_ENIN_BANDITS_COUNT         (21)
 
+#define MAP_DATA_FISH_SPAWNED                   (21)
+#define MAP_DATA_FISH_AVAILABLE                 (22)
+#define MAP_DATA_FISH_CAPACITY                  (23)
+#define MAP_DATA_FISH_FEED                      (24)
+#define MAP_DATA_FISH_REGEN_TICK                (25)
+
 #ifndef __MAPDATA__
 
 import int GetRootMapData(Map& map, uint index) from "mapdata";
