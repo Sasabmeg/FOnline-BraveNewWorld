@@ -84,4 +84,10 @@ uint __GetColor(int r, int g, int b, int a = 0xFF)
 
 // Other
 #define COLOR_GAME_RGB          # (r, g, b)(__GetColor(r + __Light, g + __Light, b + __Light))
+
+//  Floating heal text
+#define COLOR_HEAL_TEXT_CRIT_SUCCESS    (COLOR_RGB(0, 0xFF, 0))
+#define COLOR_HEAL_TEXT_SUCCESS         (COLOR_RGB(0, 0xCC, 0))
+#define COLOR_HEAL_TEXT_FAILURE         (COLOR_RGB(0, 0xA5, 0x88))
+
 #endif // __COLORS__

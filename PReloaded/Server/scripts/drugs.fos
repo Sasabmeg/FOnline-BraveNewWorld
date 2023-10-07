@@ -9,6 +9,9 @@
 #include "_macros.fos"
 #include "MsgStr.h"
 
+import void FloatingHealText(Critter& cr, int healAmount, int reason, int successType = SKILL_CHECK_SUCCESS) from "utils";
+import void FloatingHealTextByDrugPid(Critter& cr, int healAmount, uint16 drugPid) from "utils";
+
 import void VerboseAction(Critter& cr, string& text) from "utils";
 import void VerboseAction(Critter& cr, Critter& target, string& text) from "utils";
 
@@ -61,10 +64,9 @@ void UseDrug(Critter& cr, Item& drug)   // Export
     _SubItem(drug, 1);
     if(pid == PID_STIMPAK || pid == PID_SUPER_STIMPAK)
     {
-        if(pid==PID_STIMPAK) VerboseAction(cr, "injects stimpak");
-        else VerboseAction(cr, "injects super stimpak");
-        if(Random(0, 1) == 0)
+        if (/*cr.GetMapProtoId() != MAP_Arena && */Random(0, 1) == 1) {
             cr.AddItem(PID_HYPODERMIC_NEEDLE, 1);
+        }
     }
     else if(pid == PID_CIGARETTES)
     {
@@ -135,9 +137,9 @@ void UseDrug(Critter& cr, Item& drug)   // Export
         VerboseAction(cr, "drinks drug antidote");
 
     // adventurers
-    else if(pid == PID_HEALING_POWDER)
-        VerboseAction(cr, "uses healing powder");
-    else if(pid == PID_RAD_X)
+    else if(pid == PID_HEALING_POWDER) {
+        //VerboseAction(cr, "uses healing powder");
+    } else if(pid == PID_RAD_X)
         VerboseAction(cr, "swallows rad-x");
     else if(pid == PID_RADAWAY)
         VerboseAction(cr, "injects radaway");
@@ -178,15 +180,13 @@ void UseDrugOn(Critter& cr, Critter& onCr, Item& drug)   // Export
         SetDrug(onCr, drug.GetProtoId());
         _SubItem(drug, 1);
 
-        if((pid == PID_STIMPAK || pid == PID_SUPER_STIMPAK))
-        {
-            VerboseAction(cr, onCr, "injects stimpak to TARGET");
-            if(Random(0, 1) == 0)
+        if (pid == PID_STIMPAK || pid == PID_SUPER_STIMPAK) {
+            if (/*cr.GetMapProtoId() != MAP_Arena && */Random(0, 1) == 1) {
                 cr.AddItem(PID_HYPODERMIC_NEEDLE, 1);
-        }
-        else if(pid == PID_HEALING_POWDER)
-            VerboseAction(cr, onCr, "uses healing powder on TARGET");
-        else if(pid == PID_RAD_X)
+            }
+        } else if(pid == PID_HEALING_POWDER) {
+            //VerboseAction(cr, onCr, "uses healing powder on TARGET");
+        } else if(pid == PID_RAD_X)
             VerboseAction(cr, onCr, "uses rad-x on TARGET");
         else if(pid == PID_RADAWAY)
             VerboseAction(cr, onCr, "uses radaway on TARGET");
@@ -403,9 +403,14 @@ uint ProcessDrug(Critter& cr, uint16 drugPid, uint& rate)
                         amount = 16;
                     if(amount > 0 && cr.Trait[TRAIT_CHEM_RELIANT] != 0)
                         amount = (amount*2)/3;
+                    int healAmount = MIN(amount, cr.Stat[ST_MAX_LIFE] - cr.Stat[ST_CURRENT_HP]);
                     cr.StatBase[ST_CURRENT_HP] = CLAMP(statVal + amount, -9999, cr.Stat[ST_MAX_LIFE]);
                     if(amount < 0 && cr.Stat[ST_CURRENT_HP] < 0)
                         cr.ToDead(Random(0, 1) == 0 ? ANIM2_DEAD_FRONT : ANIM2_DEAD_BACK, null);      // buggy, make macro for safety
+                    //  Show heal amount above head, but do not show 0 HP ticks form drugs. (Super Stimpacks)
+                    if (healAmount != 0) {
+                        FloatingHealTextByDrugPid(cr, healAmount, drugPid);
+                    }
                 }
                 else if(stat == ST_POISONING_LEVEL)
                     AffectPoison(cr, amount);                                                         // cr.SetStat(ST_POISONING_LEVEL,CLAMP(statVal+amount,0,2000));
