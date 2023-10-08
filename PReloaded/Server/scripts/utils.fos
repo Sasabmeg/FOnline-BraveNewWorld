@@ -58,7 +58,6 @@ import uint     GetDaysInMonth(uint16 year, uint16 month) from "time";
  */
 void FloatingHealText(Critter& cr, int healAmount, int reason, int successType = SKILL_CHECK_SUCCESS) {
     string text;
-    string reasonText = "";
     uint color = 0;
     switch (successType) {
         case SKILL_CHECK_CRITICAL_FAILURE:
@@ -72,39 +71,11 @@ void FloatingHealText(Critter& cr, int healAmount, int reason, int successType =
             color = COLOR_HEAL_TEXT_CRIT_SUCCESS;
             break;
     }
-    if (IS_HEAL_TEXT_REASON_ENABLED) {
-        switch (reason) {
-            case HEAL_TEXT_REASON_FIRSTAID:
-                reasonText = "FA";
-                break;
-            case HEAL_TEXT_REASON_WEAKHEALINGPOWDER:
-                reasonText = "WHPow";
-                break;
-            case HEAL_TEXT_REASON_HEALINGPOWDER:
-                reasonText = "HPow";
-                break;
-            case HEAL_TEXT_REASON_STIMPAK:
-                reasonText = "Stim";
-                break;
-            case HEAL_TEXT_REASON_SUPERSTIMPAK:
-                reasonText = "SStim";
-                break;
-            case HEAL_TEXT_REASON_HYPO:
-                reasonText = "Hypo";
-                break;
-            case HEAL_TEXT_REASON_NOREASON:
-                reasonText = "";
-                break;
-        }
-    }
-    else {
-        reasonText = "";
-    }
     //  Just in case critical failure hurts later.
     if(healAmount >= 0)
-        text = "+ " + healAmount + "  " + reasonText;
+        text = "+ " + healAmount + " " + reason;
     else
-        text = "- " + healAmount + "  " + reasonText;
+        text = "- " + healAmount + " " + reason;
 
     Map@   map = cr.GetMap();
     if (!valid(map)) {
