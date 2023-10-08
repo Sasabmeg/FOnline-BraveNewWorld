@@ -65,6 +65,7 @@ import bool IsReplaying() from "client_recording";
 import void Replay() from "client_recording";
 
 import void TimeoutsConfig(string& customConfig) from "client_timeouts";
+import void ClientMessagesConfig(string& customConfig) from "client_messages";
 import void CombatLogConfig() from "client_combat";
 
 import void InitNameColorizing() from "name_colorizing";
@@ -866,6 +867,7 @@ void InitConfig()
     __ConfigCustomBorderColor       = COLOR_RGB(30, 30, 90);
 
     TimeoutsConfig("");
+    ClientMessagesConfig("");
     CombatLogConfig();
 
     // [2238] part 1/2

@@ -44,6 +44,100 @@ import void InitNameColorizing() from "name_colorizing";
 bool isListen    = false;
 bool LogAutoSave = false;
 
+#define MESSAGES_SECTION                "Messages"
+#define MESSAGES_FLOAT_TEXT_INVALID     (-50000)
+
+class CMessagesConfig
+{
+    bool    Enabled;                                /**< on/off - not implemented */
+    uint    HealOverHeadVerbosity;                  /**< 0 -  disabled, 1 - brief, 2 - verbose */
+    string  HealOverHeadFirstAid = "";
+    string  HealOverHeadWeakHealingPowder = "";
+    string  HealOverHeadHealingPowder = "";
+    string  HealOverHeadStimpak = "";
+    string  HealOverHeadSuperStimpak = "";
+    string  HealOverHeadHypo = "";
+    int     FloatTextFromX = MESSAGES_FLOAT_TEXT_INVALID;
+    int     FloatTextFromY = MESSAGES_FLOAT_TEXT_INVALID;
+    int     FloatTextToX = MESSAGES_FLOAT_TEXT_INVALID;
+    int     FloatTextToY = MESSAGES_FLOAT_TEXT_INVALID;
+
+    CMessagesConfig()
+    {
+        this.Enabled = true;
+        this.HealOverHeadVerbosity = 2;
+    }
+};
+CMessagesConfig MessagesConfig;
+
+void ClientMessagesConfig(string& customConfig) {
+    IConfigSection@ section = GetConfigSection(CONFIG_FILE, MESSAGES_SECTION);
+
+    Log("ClientMessagesConfig()");
+
+    if(valid(section))
+    {
+        Log("ClientMessagesConfig() - valid section");
+        array<string> vars;
+        section.GetVars(vars);
+
+        if(vars.length() == 0)
+            return;
+
+        for(uint v = 0; v < vars.length(); v++) {
+            IConfigVar@ var = section.GetVar(vars[v]);
+            if(!valid(var))
+                continue;
+
+            if(var.GetName() == "HealOverHeadVerbosity") {
+                MessagesConfig.HealOverHeadVerbosity = string2int(var.GetValue());
+                Log("ClientMessagesConfig() - HealOverHeadVerbosity = " + MessagesConfig.HealOverHeadVerbosity);
+            }
+            if(var.GetName() == "HealOverHeadFirstAid") {
+                MessagesConfig.HealOverHeadFirstAid = var.GetValue();
+                Log("ClientMessagesConfig() - HealOverHeadFirstAid = " + MessagesConfig.HealOverHeadFirstAid);
+            }
+            if(var.GetName() == "HealOverHeadWeakHealingPowder") {
+                MessagesConfig.HealOverHeadWeakHealingPowder = var.GetValue();
+                Log("ClientMessagesConfig() - HealOverHeadWeakHealingPowder = " + MessagesConfig.HealOverHeadWeakHealingPowder);
+            }
+            if(var.GetName() == "HealOverHeadHealingPowder") {
+                MessagesConfig.HealOverHeadHealingPowder = var.GetValue();
+                Log("ClientMessagesConfig() - HealOverHeadHealingPowder = " + MessagesConfig.HealOverHeadHealingPowder);
+            }
+            if(var.GetName() == "HealOverHeadStimpak") {
+                MessagesConfig.HealOverHeadStimpak = var.GetValue();
+                Log("ClientMessagesConfig() - HealOverHeadStimpak = " + MessagesConfig.HealOverHeadStimpak);
+            }
+            if(var.GetName() == "HealOverHeadSuperStimpak") {
+                MessagesConfig.HealOverHeadSuperStimpak = var.GetValue();
+                Log("ClientMessagesConfig() - HealOverHeadSuperStimpak = " + MessagesConfig.HealOverHeadSuperStimpak);
+            }
+            if(var.GetName() == "HealOverHeadHypo") {
+                MessagesConfig.HealOverHeadHypo = var.GetValue();
+                Log("ClientMessagesConfig() - HealOverHeadHypo = " + MessagesConfig.HealOverHeadHypo);
+            }
+            if(var.GetName() == "FloatTextFromX") {
+                MessagesConfig.FloatTextFromX = string2int(var.GetValue());
+                Log("ClientMessagesConfig() - FloatTextFromX = " + MessagesConfig.FloatTextFromX);
+            }
+            if(var.GetName() == "FloatTextFromY") {
+                MessagesConfig.FloatTextFromY = string2int(var.GetValue());
+                Log("ClientMessagesConfig() - FloatTextFromY = " + MessagesConfig.FloatTextFromY);
+            }
+            if(var.GetName() == "FloatTextToX") {
+                MessagesConfig.FloatTextToX = string2int(var.GetValue());
+                Log("ClientMessagesConfig() - FloatTextToX = " + MessagesConfig.FloatTextToX);
+            }
+            if(var.GetName() == "FloatTextToY") {
+                MessagesConfig.FloatTextToY = string2int(var.GetValue());
+                Log("ClientMessagesConfig() - FloatTextToY = " + MessagesConfig.FloatTextToY);
+            }
+        }
+    }
+}
+
+
 /*
    // chance for replacing words in player sentence, starting from 1IN
    // if IN is bigger than array length, nothing is done
@@ -886,6 +980,16 @@ void sayEx(int type, int crId, int, string@ text, array<int>@)
     Message(who + ": |" + color + " " + text, MSGBOX_TALK);
 }
 
+//  Floating Heal Text related, should be same as in utils_h.fos
+    //  Heal floating text reason definitions
+#define HEAL_TEXT_REASON_NOREASON           (0)
+#define HEAL_TEXT_REASON_FIRSTAID           (1)
+#define HEAL_TEXT_REASON_WEAKHEALINGPOWDER  (2)
+#define HEAL_TEXT_REASON_HEALINGPOWDER      (3)
+#define HEAL_TEXT_REASON_STIMPAK            (4)
+#define HEAL_TEXT_REASON_SUPERSTIMPAK       (5)
+#define HEAL_TEXT_REASON_HYPO               (6)
+
 void mapMessage(int type, int hx, int hy, string@ text, array<int>@ data)
 {
     if(type < 0 || type >= FLOAT_MAX || hx <= 0 || hy <= 0 ||
@@ -903,31 +1007,111 @@ void mapMessage(int type, int hx, int hy, string@ text, array<int>@ data)
     int fromY = data[5];
     int toY = data[6];
 
+    array<string@>@ vals = split(text, " ");
+    string reasonText = "";
+    string formattedText;
+    if (vals.length() == 3 && (vals[0] == "+" || vals[0] == "-")) {
+        int reason = string2int(vals[2]);
+        formattedText = vals[0] + " " + vals[1];
+        if (reason != HEAL_TEXT_REASON_NOREASON) {
+            //  brief healing reason
+            switch (reason) {
+                case HEAL_TEXT_REASON_FIRSTAID:
+                    if (MessagesConfig.HealOverHeadFirstAid.length() > 0) {
+                        reasonText = MessagesConfig.HealOverHeadFirstAid;
+                    } else if (MessagesConfig.HealOverHeadVerbosity == 1){
+                        reasonText = "FA";
+                    } else if (MessagesConfig.HealOverHeadVerbosity == 2) {
+                        reasonText = "First Aid";
+                    }
+                    break;
+                case HEAL_TEXT_REASON_WEAKHEALINGPOWDER:
+                    if (MessagesConfig.HealOverHeadWeakHealingPowder.length() > 0) {
+                        reasonText = MessagesConfig.HealOverHeadWeakHealingPowder;
+                    } else if (MessagesConfig.HealOverHeadVerbosity == 1){
+                        reasonText = "WHP";
+                    } else if (MessagesConfig.HealOverHeadVerbosity == 2) {
+                        reasonText = "Weak Healing Powder";
+                    }
+                    break;
+                case HEAL_TEXT_REASON_HEALINGPOWDER:
+                    if (MessagesConfig.HealOverHeadHealingPowder.length() > 0) {
+                        reasonText = MessagesConfig.HealOverHeadHealingPowder;
+                    } else if (MessagesConfig.HealOverHeadVerbosity == 1){
+                        reasonText = "HP";
+                    } else if (MessagesConfig.HealOverHeadVerbosity == 2) {
+                        reasonText = "Healing Powder";
+                    }
+                    break;
+                case HEAL_TEXT_REASON_STIMPAK:
+                    if (MessagesConfig.HealOverHeadStimpak.length() > 0) {
+                        reasonText = MessagesConfig.HealOverHeadStimpak;
+                    } else if (MessagesConfig.HealOverHeadVerbosity == 1){
+                        reasonText = "ST";
+                    } else if (MessagesConfig.HealOverHeadVerbosity == 2) {
+                        reasonText = "Stimpak";
+                    }
+                    break;
+                case HEAL_TEXT_REASON_SUPERSTIMPAK:
+                    if (MessagesConfig.HealOverHeadSuperStimpak.length() > 0) {
+                        reasonText = MessagesConfig.HealOverHeadSuperStimpak;
+                    } else if (MessagesConfig.HealOverHeadVerbosity == 1){
+                        reasonText = "SS";
+                    } else if (MessagesConfig.HealOverHeadVerbosity == 2) {
+                        reasonText = "Super Stimpak";
+                    }
+                    break;
+                case HEAL_TEXT_REASON_HYPO:
+                    if (MessagesConfig.HealOverHeadHypo.length() > 0) {
+                        reasonText = MessagesConfig.HealOverHeadHypo;
+                    } else if (MessagesConfig.HealOverHeadVerbosity == 1){
+                        reasonText = "HY";
+                    } else if (MessagesConfig.HealOverHeadVerbosity == 2) {
+                        reasonText = "Hypo";
+                    }
+                    break;
+            }
+            formattedText += "  " + reasonText;
+        }
+    } else {
+        //  not float over head text, because it doesn't start with +/- and it cannot be split into 3 parts with space as separator
+        formattedText = text;
+    }
+
     //Log("client_messages@map :: delay = " + delay + ", color = " + color + ", fade = " + fade + ", fromX = " + fromX + ", toX = " + toX + ", fromY = " + fromY + ", toY = " + toY);
 
     switch(type)
     {
-    case FLOAT_ENFORCED:
-        break;
+        case FLOAT_ENFORCED:
+            if (MessagesConfig.FloatTextFromX != MESSAGES_FLOAT_TEXT_INVALID)
+                fromX = MessagesConfig.FloatTextFromX;
+            if (MessagesConfig.FloatTextToX != MESSAGES_FLOAT_TEXT_INVALID)
+                toX   = MessagesConfig.FloatTextToX;
+            if (MessagesConfig.FloatTextFromY != MESSAGES_FLOAT_TEXT_INVALID)
+                fromY = MessagesConfig.FloatTextFromY;
+            if (MessagesConfig.FloatTextToY != MESSAGES_FLOAT_TEXT_INVALID)
+                toY   = MessagesConfig.FloatTextToY;
+            break;
 
-    case FLOAT_VERBOSE_ACTION:
-        if(!__ConfigVerboseActionHead)
+        case FLOAT_VERBOSE_ACTION:
+            if(!__ConfigVerboseActionHead)
+                return;
+            color = __ConfigVerboseActionColor;
+            fromX = __ConfigVerboseActionOffXfrom;
+            toX   = __ConfigVerboseActionOffXto;
+            fromY = __ConfigVerboseActionOffYfrom;
+            toY   = __ConfigVerboseActionOffYto;
+            break;
+
+        case FLOAT_EXPERIENCE:
+            if(!__ConfigFollowerExperience)
+                return;
+            break;
+
+        default:
             return;
-        color = __ConfigVerboseActionColor;
-        fromX = __ConfigVerboseActionOffXfrom;
-        toX   = __ConfigVerboseActionOffXto;
-        fromY = __ConfigVerboseActionOffYfrom;
-        toY   = __ConfigVerboseActionOffYto;
-        break;
-
-    case FLOAT_EXPERIENCE:
-        if(!__ConfigFollowerExperience)
-            return;
-        break;
-
-    default:
-        return;
     }
     //Log("client_messages@map :: delay = " + delay + ", color = " + color + ", fade = " + fade + ", fromX = " + fromX + ", toX = " + toX + ", fromY = " + fromY + ", toY = " + toY);
-    MapMessage(text, hx, hy, __TextDelay + text.length() * delay, color, fade, Random(fromX, toX), Random(fromY, toY));
+    MapMessage(formattedText, hx, hy, __TextDelay + formattedText.length() * delay, color, fade, Random(fromX, toX), Random(fromY, toY));
 }
+
