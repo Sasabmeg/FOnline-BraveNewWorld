@@ -29,6 +29,9 @@ funcdef bool SmartValidate( ItemCl& item, ItemCl@ tool );
 import uint8 GetCurrentAim() from "client_keybinds";
 import bool GUI_IsKeyPressed(uint8 key) from "client_gui";
 
+import int GUI_GetActiveMainScreen() from "client_gui";
+import int GUI_GetActiveScreen() from "client_gui";
+
 class SmartCollection
 {
     array<uint16>  Items;
@@ -195,7 +198,7 @@ class SmartCursor
         if( this.drawTool )
             __HideCursor = false;
 
-        if( GetCurrentMapPid() > 0 && GetCurrentCursor() == CURSOR_DEFAULT )
+        if( GetCurrentMapPid() > 0 && GetCurrentCursor() == CURSOR_DEFAULT && GUI_GetActiveScreen() == CLIENT_MAIN_SCREEN_GAME )
         {
             // if there's no item under cursor, no magick can be done
             ItemCl@ item = GetMonitorItem( __MouseX, __MouseY, false );
