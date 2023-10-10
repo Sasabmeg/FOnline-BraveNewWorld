@@ -269,6 +269,12 @@ class SmartCursor
                                     }
                                 }
 
+                                if (tool.Proto.ProtoId == PID_SHOVEL) {
+                                    if (GUI_IsKeyPressed(DIK_LSHIFT) || GUI_IsKeyPressed(DIK_RSHIFT)) {
+                                        txt = "Loot Grave";
+                                    }
+                                }
+
                                 if( txt.length() > 0 )
                                 {
                                     if( needTool && this.drawInfoTool )
@@ -278,6 +284,8 @@ class SmartCursor
                                             if ((tool.Proto.ProtoId == PID_SPEAR || tool.Proto.ProtoId == PID_SHARP_SPEAR || tool.Proto.ProtoId == PID_SHARPENED_POLE)
                                                     && (GUI_IsKeyPressed(DIK_LSHIFT) || GUI_IsKeyPressed(DIK_RSHIFT))) {
                                                 txt += " (Barley)";
+                                            } else if (tool.Proto.ProtoId == PID_SHOVEL && (GUI_IsKeyPressed(DIK_LSHIFT) || GUI_IsKeyPressed(DIK_RSHIFT))) {
+                                                txt += " (Hands)";
                                             } else {
                                                 txt += " ("+txtTool+")";
                                             }
@@ -320,6 +328,13 @@ class SmartCursor
                                         __HideCursor = true;
                                         DrawSprite( spriteId, -1, __MouseX + this.drawToolOffsetX, __MouseY + this.drawToolOffsetY, this.drawToolSize, this.drawToolSize, true, false, 0 );
                                     }
+                                } else if (tool.Proto.ProtoId == PID_SHOVEL && (GUI_IsKeyPressed(DIK_LSHIFT) || GUI_IsKeyPressed(DIK_RSHIFT))) {
+                                    CritterCl@ chosen = GetChosen();
+                                    if (!valid(chosen)) {
+                                        Message("Invalid Chosen");
+                                        return;
+                                    }
+                                    //  need to draw hands
                                 } else {
                                     uint spriteId = LoadSprite( tool.PicInv > 0 ? tool.PicInv : tool.Proto.PicInv, tool.Dir );
                                     if( spriteId > 0 )
@@ -427,6 +442,9 @@ class SmartCursor
                             }
                             RunServerScriptUnsafe("prod_fishing@unsafe_SpearFish", this.clickToolPid, this.clickTargetId, range, null, null);
                         }
+                    } else if (this.clickToolPid == PID_SHOVEL && (GUI_IsKeyPressed(DIK_LSHIFT) || GUI_IsKeyPressed(DIK_RSHIFT))) {
+                        array<uint> click = { CHOSEN_PICK_ITEM, this.clickTargetPid, this.clickTargetHexX, this.clickTargetHexY, 0, 0, 0 };
+                        SetChosenActions( click );
                     } else {
                         array<uint> click = { CHOSEN_USE_ITEM, this.clickToolId, this.clickToolPid, TARGET_ITEM, this.clickTargetId, USE_USE, 0 };
                         SetChosenActions( click );
@@ -435,7 +453,7 @@ class SmartCursor
             }
             else
             {
-                array<uint> click = { CHOSEN_PICK_ITEM, this.clickTargetPid, this.clickTargetHexX, this.clickTargetHexY };
+                array<uint> click = { CHOSEN_PICK_ITEM, this.clickTargetPid, this.clickTargetHexX, this.clickTargetHexY, 0, 0, 0 };
                 SetChosenActions( click );
             }
             return( true );
