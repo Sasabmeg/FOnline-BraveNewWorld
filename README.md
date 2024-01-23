@@ -23,6 +23,6 @@ Since I only work from time to time on this project, not sure if anyone would su
 
 ## Download
 
-Well, in case you are new to git and have trouble getting all parts together, here is the version of june 2023 in a zip file: https://drive.google.com/drive/folders/1vwbpr6ibALMCTicI_XowWplHcCb66LTO?usp=sharing 
+Well, in case you are new to git and have trouble getting all parts together, here is the version of june 2023 in a zip file: https://www.dropbox.com/scl/fi/y62j5ps0nimr4qyq15y02/FOClassic-BNW_fishing_test.zip?rlkey=l6j4rlcqt3054tafxcs50ppzp&dl=0
 
 Working versions or ones that need testing may be added later, periodaically, but should not count on them.
