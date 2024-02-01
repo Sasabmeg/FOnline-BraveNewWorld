@@ -318,13 +318,13 @@ bool key_down(uint8 key,string& keyText)
 {
     if(Plugins_KeyDown(key,keyText))
         return true;
-	
+
 	if(key == DIK_D && ShowDoorScript) ShowDoorScript = false;
 	else if(key== DIK_D && !ShowDoorScript) ShowDoorScript = true;
-	
+
 	if(key == DIK_C && ShowContainerScript) ShowContainerScript = false;
 	else if(key == DIK_D && !ShowContainerScript) ShowContainerScript = true;
-	
+
 	return false;
 }
 
@@ -401,9 +401,9 @@ void DrawMenu()
 	DrawPrimitive(DRAW_PRIMITIVE_TRIANGLESTRIP, menubackground); */
 	DrawText("FOClassic Mapper", 15, 15, 195, 10, COLOR_LGREEN, FONT_TYPE_DEFAULT, 0);
 	MapperMap@ map = GetActiveMap();
-	
+
 	if(!valid(map))
-	{		
+	{
 		DrawSprite(LoadSprite("options_singleplayer.png", PATH_ART_INTRFACE),0,(__ScreenWidth / 2) - (164 / 2),100,0);
 		DrawText("NEW MAP", (__ScreenWidth / 2) - 164 / 2 + 18, 123, 130, 25, COLOR_LGREEN, FONT_TYPE_BIG, FONT_FLAG_CENTERX);
 		DrawText("LOAD MAP", (__ScreenWidth / 2) - 164 / 2 + 18, 159, 130, 25, COLOR_LGREEN, FONT_TYPE_BIG, FONT_FLAG_CENTERX);
@@ -418,7 +418,7 @@ void DrawDescForItems()
 {
 	MapperMap@ map = GetActiveMap();
 	if(!valid(map)) return;
-	
+
 	array<MapperObject@> items;
 	for(uint i = 0, n = map.GetObjects(1, 1, 10000, MAP_OBJECT_ITEM, 0, items); i < n; i++)
 	{
@@ -427,9 +427,9 @@ void DrawDescForItems()
 		int MoveX = 20, MoveY = 50;
 		uint16 WidthForFalloutFont = 300;
 		GetHexPos(items[i].MapX, items[i].MapY, x, y);
-		
+
 		if(item.Type == ITEM_TYPE_CONTAINER && ShowContainerScript)
-		{			
+		{
 			if(items[i].ScriptName == "item_spawner_container")
 			{
 				DrawText("Container script: " + items[i].ScriptName + "\nFunction: " + items[i].FuncName + "\nVal4: " + items[i].Item_Val4, x-MoveX, y-MoveY, WidthForFalloutFont, 30, COLOR_LGREEN, FONT_TYPE_DEFAULT, 0);
@@ -447,11 +447,11 @@ void DrawDescForItems()
 				DrawText("Container script: " + items[i].ScriptName + "\nFunction: " + items[i].FuncName, x-MoveX, y-MoveY, WidthForFalloutFont, 20, COLOR_LGREEN, FONT_TYPE_DEFAULT, 0);
 			}
 		}
-		
+
 		if(item.Type == ITEM_TYPE_DOOR && ShowDoorScript)
 		{
-			
-			
+
+
 			if(items[i].ScriptName == "multihex")
 			{
 				DrawText("MULTIHEXED", x-MoveX, y-MoveY, WidthForFalloutFont, 30, COLOR_LGREEN, FONT_TYPE_DEFAULT, 0);
@@ -469,7 +469,7 @@ void DrawDescForItems()
 				DrawText("Door script: " + items[i].ScriptName + "\nFunction: " + items[i].FuncName, x-MoveX, y-MoveY, WidthForFalloutFont, 20, COLOR_LGREEN, FONT_TYPE_DEFAULT, 0);
 			}
 		}
-		
+
 		if(item.ProtoId == 10004 || item.ProtoId == 10005 || item.ProtoId == 10006)
 		{
 			string state;
@@ -1033,15 +1033,236 @@ string FixLockers(string)
     return "Lockers and doors fixed, save and reload the map.";
 }
 
+
+/**
+    NOT OPTIMIZED, RUNS FOREVER ON BIG MAPS
+*/
+string CleanDuplTech(string s) {
+	if(s == "")
+			return ("WARNING: LONG RUN. Usage: #CleanDuplTech [argument] Arguments: all, greengrids, browngrids, secretblockers/2067, walls/5621, walls2/5622, scrollblockers/4012, entires/3853, exits/2049.");
+
+	MapperMap@ map = GetActiveMap();
+    if(!valid(map))
+        return "Map not loaded.";
+
+    uint deleted = 0;
+    uint deletedSecret = 0;
+    uint deletedScroll = 0;
+    uint deletedWall = 0;
+    uint deletedEntire = 0;
+    uint deletedExit = 0;
+    uint deletedGreen = 0;
+    uint deletedBrown = 0;
+
+    if (s == "all" || s == "secretblockers" || s == "2067") {
+        for (uint hx = 0; hx < map.Width; hx++) {
+            for (uint hy = 0; hy < map.Height; hy++) {
+                array<MapperObject@> blockers;
+                for (uint i = 0, n = map.GetObjects(hx, hy, 0, MAP_OBJECT_SCENERY, 2067, blockers); i < n; i++)
+                {
+                    if (i >= 1) {
+                        MapperObject@ obj = blockers[i];
+                        DeleteObject(obj);
+                        deleted++;
+                        deletedSecret++;
+                    }
+                }
+            }
+        }
+    }
+    if (s == "all" || s == "walls" || s == "5621") {
+        for (uint hx = 0; hx < map.Width; hx++) {
+            for (uint hy = 0; hy < map.Height; hy++) {
+                array<MapperObject@> blockers;
+                for (uint i = 0, n = map.GetObjects(hx, hy, 0, MAP_OBJECT_SCENERY, 5621, blockers); i < n; i++)
+                {
+                    if (i >= 1) {
+                        MapperObject@ obj = blockers[i];
+                        DeleteObject(obj);
+                        deleted++;
+                        deletedWall++;
+                    }
+                }
+            }
+        }
+    }
+    if (s == "all" || s == "walls2" || s == "5622") {
+        for (uint hx = 0; hx < map.Width; hx++) {
+            for (uint hy = 0; hy < map.Height; hy++) {
+                array<MapperObject@> blockers;
+                for (uint i = 0, n = map.GetObjects(hx, hy, 0, MAP_OBJECT_SCENERY, 5622, blockers); i < n; i++)
+                {
+                    if (i >= 1) {
+                        MapperObject@ obj = blockers[i];
+                        DeleteObject(obj);
+                        deleted++;
+                        deletedWall++;
+                    }
+                }
+            }
+        }
+    }
+    if (s == "all" || s == "scrollblockers" || s == "4012") {
+        for (uint hx = 0; hx < map.Width; hx++) {
+            for (uint hy = 0; hy < map.Height; hy++) {
+                array<MapperObject@> blockers;
+                for (uint i = 0, n = map.GetObjects(hx, hy, 0, MAP_OBJECT_SCENERY, 4012, blockers); i < n; i++)
+                {
+                    if (i >= 1) {
+                        MapperObject@ obj = blockers[i];
+                        DeleteObject(obj);
+                        deleted++;
+                        deletedScroll++;
+                    }
+                }
+            }
+        }
+    }
+    if (s == "all" || s == "entires" || s == "3853") {
+        for (uint hx = 0; hx < map.Width; hx++) {
+            for (uint hy = 0; hy < map.Height; hy++) {
+                array<MapperObject@> blockers;
+                for (uint i = 0, n = map.GetObjects(hx, hy, 0, MAP_OBJECT_SCENERY, 3853, blockers); i < n; i++)
+                {
+                    if (i >= 1) {
+                        MapperObject@ obj = blockers[i];
+                        DeleteObject(obj);
+                        deleted++;
+                        deletedEntire++;
+                    }
+                }
+            }
+        }
+    }
+    if (s == "all" || s == "exits" || s == "2049") {
+        for (uint hx = 0; hx < map.Width; hx++) {
+            for (uint hy = 0; hy < map.Height; hy++) {
+                array<MapperObject@> blockers;
+                for (uint i = 0, n = map.GetObjects(hx, hy, 0, MAP_OBJECT_SCENERY, 2049, blockers); i < n; i++)
+                {
+                    if (i >= 1) {
+                        MapperObject@ obj = blockers[i];
+                        DeleteObject(obj);
+                        deleted++;
+                        deletedExit++;
+                    }
+                }
+            }
+        }
+    }
+    if (s == "all" || s == "browngrids" || s == "4031") {
+        for (uint hx = 0; hx < map.Width; hx++) {
+            for (uint hy = 0; hy < map.Height; hy++) {
+                array<MapperObject@> blockers;
+                for (uint i = 0, n = map.GetObjects(hx, hy, 0, MAP_OBJECT_SCENERY, 4031, blockers); i < n; i++)
+                {
+                    if (i >= 1) {
+                        MapperObject@ obj = blockers[i];
+                        DeleteObject(obj);
+                        deleted++;
+                        deletedBrown++;
+                    }
+                }
+            }
+        }
+    }
+    if (s == "all" || s == "browngrids" || s == "4032") {
+        for (uint hx = 0; hx < map.Width; hx++) {
+            for (uint hy = 0; hy < map.Height; hy++) {
+                array<MapperObject@> blockers;
+                for (uint i = 0, n = map.GetObjects(hx, hy, 0, MAP_OBJECT_SCENERY, 4032, blockers); i < n; i++)
+                {
+                    if (i >= 1) {
+                        MapperObject@ obj = blockers[i];
+                        DeleteObject(obj);
+                        deleted++;
+                        deletedBrown++;
+                    }
+                }
+            }
+        }
+    }
+    if (s == "all" || s == "browngrids" || s == "4033") {
+        for (uint hx = 0; hx < map.Width; hx++) {
+            for (uint hy = 0; hy < map.Height; hy++) {
+                array<MapperObject@> blockers;
+                for (uint i = 0, n = map.GetObjects(hx, hy, 0, MAP_OBJECT_SCENERY, 4033, blockers); i < n; i++)
+                {
+                    if (i >= 1) {
+                        MapperObject@ obj = blockers[i];
+                        DeleteObject(obj);
+                        deleted++;
+                        deletedBrown++;
+                    }
+                }
+            }
+        }
+    }
+    if (s == "all" || s == "browngrids" || s == "4034") {
+        for (uint hx = 0; hx < map.Width; hx++) {
+            for (uint hy = 0; hy < map.Height; hy++) {
+                array<MapperObject@> blockers;
+                for (uint i = 0, n = map.GetObjects(hx, hy, 0, MAP_OBJECT_SCENERY, 4034, blockers); i < n; i++)
+                {
+                    if (i >= 1) {
+                        MapperObject@ obj = blockers[i];
+                        DeleteObject(obj);
+                        deleted++;
+                        deletedBrown++;
+                    }
+                }
+            }
+        }
+    }
+    if (s == "all" || s == "browngrids" || s == "4035") {
+        for (uint hx = 0; hx < map.Width; hx++) {
+            for (uint hy = 0; hy < map.Height; hy++) {
+                array<MapperObject@> blockers;
+                for (uint i = 0, n = map.GetObjects(hx, hy, 0, MAP_OBJECT_SCENERY, 4035, blockers); i < n; i++)
+                {
+                    if (i >= 1) {
+                        MapperObject@ obj = blockers[i];
+                        DeleteObject(obj);
+                        deleted++;
+                        deletedBrown++;
+                    }
+                }
+            }
+        }
+    }
+    if (s == "all" || s == "browngrids" || s == "4037") {
+        for (uint hx = 0; hx < map.Width; hx++) {
+            for (uint hy = 0; hy < map.Height; hy++) {
+                array<MapperObject@> blockers;
+                for (uint i = 0, n = map.GetObjects(hx, hy, 0, MAP_OBJECT_SCENERY, 4037, blockers); i < n; i++)
+                {
+                    if (i >= 1) {
+                        MapperObject@ obj = blockers[i];
+                        DeleteObject(obj);
+                        deleted++;
+                        deletedBrown++;
+                    }
+                }
+            }
+        }
+    }
+    if (s== "all") {
+        return "Done. Deleted " + deleted + " tech objects. (ScrollBlockers: " + deletedScroll + ", Walls: " + deletedWall + ", SecretBlockers: " + deletedSecret
+                + ", Entires: " + deletedEntire + ", Exits: " + deletedExit + ", BrownGrids: " + deletedBrown + ")";
+    } else {
+        return "Done. Deleted " + deleted + " tech objects.";
+    }
+}
+
 string CleanTech(string s)
 {
 	if(s == "")
 			return ("No argument. Usage: #CleanTech [argument] Arguments: afterconv, greengrids, browngrids, 3853, 4012, 2049.");
-    
-		MapperMap@ map = GetActiveMap();
+
+	MapperMap@ map = GetActiveMap();
     if(!valid(map))
         return "Map not loaded.";
-	
+
 	if(s == "afterconv" || s == "4012")
 	{
 		array<MapperObject@> blockers;
@@ -1190,9 +1411,9 @@ string ReplaceHex(string s)
 {
 	if(s == "")
 			return ("No argument. Usage: #ReplaceHex [replacebyTechPID]");
-		
+
 	int replacer = 0;
-	bool replaced = false;	
+	bool replaced = false;
 
 	if(!StrToInt(s, replacer))
 	{
@@ -1205,7 +1426,7 @@ string ReplaceHex(string s)
 		{
 			return ("PID "+ replacer +" is not a Tech Hex's PID. Usage: #ReplaceHex [replacebyTechPID]");
 		}
-	
+
 	MapperMap@ map = GetActiveMap();
 	array<MapperObject@> objs;
     for(uint i = 0, n = GetSelectedObjects(objs); i < n; i++)
@@ -1222,7 +1443,7 @@ string ReplaceHex(string s)
 				replaced = true;
 			}
 		}
-		
+
 	}
 	if(replaced == false)
 		return "No hexes replaced.";
@@ -1233,21 +1454,21 @@ string ReplaceHex(string s)
 {
     MapperMap@ map = GetActiveMap();
 	uint countsigned = 0;
-	
+
     if(!valid(map))
         return "Map not loaded.";
-	
+
 	if(s == "")
 		return ("No argument. Arguments: unguardedtown, guardedtown, privatedungeon, publicdungeon, encounter");
-		
+
 	if(s != "unguardedtown" && s != "guardedtown" && s != "privatedungeon" && s != "publicdungeon" && s != "encounter")
 		return ("Wrong argument. Arguments: unguardedtown, guardedtown, privatedungeon, publicdungeon, encounter");
-		
+
     array<MapperObject@> spawners;
     for(uint i = 0, n = map.GetObjects(1, 1, 10000, MAP_OBJECT_ITEM, 0, spawners); i < n; i++)
     {
 		ProtoItem@ container = GetProtoItem(spawners[i].ProtoId);
-		
+
 		if(container.Type == ITEM_TYPE_CONTAINER)
 		{
 			MapperObject@ spawner = spawners[i];
@@ -1255,25 +1476,25 @@ string ReplaceHex(string s)
 					{
 						spawner.ScriptName = "item_spawner_container" ;
 						spawner.FuncName = "item_init" ;
-						
+
 						if(s == "unguardedtown")
 							{
 								spawner.Item_Val4 = 3;
 								countsigned++;
 							}
-							
+
 						if(s == "guardedtown")
 							{
 								spawner.Item_Val4 = 1;
 								countsigned++;
 							}
-					
+
 						if(s == "encounter")
 							{
 								spawner.Item_Val4 = 2;
 								countsigned++;
 							}
-							
+
 						if(s == "privatedungeon")
 							{
 								switch(Random(1, 25))
@@ -1304,7 +1525,7 @@ string ReplaceHex(string s)
 									case 24: spawner.Item_Val4 = 55; break;
 									case 25: spawner.Item_Val4 = 56; break;
 								}
-							
+
 							countsigned++;
 							}
 						if(s == "publicdungeon")
@@ -1324,11 +1545,11 @@ string ReplaceHex(string s)
 									case 11: spawner.Item_Val4 = 67; break;
 									case 12: spawner.Item_Val4 = 68; break;
 								}
-							
+
 							countsigned++;
 							}
 					}
-					
+
 		}
 	}
     return "Script is signed to " + countsigned + " spawners, resave the map.";
@@ -1337,27 +1558,27 @@ string ReplaceHex(string s)
 string FixLockersOnAllMaps(string s)
 {
     uint countsigned = 0, countall = 0, success = 0, failload = 0, failsave = 0;
-	
+
 	if(s == "")
 		return ("No argument. Arguments: unguardedtown, guardedtown, privatedungeon, publicdungeon, encounter");
-		
+
 	if(s != "unguardedtown" && s != "guardedtown" && s != "privatedungeon" && s != "publicdungeon" && s != "encounter")
 		return ("Wrong argument. Arguments: unguardedtown, guardedtown, privatedungeon, publicdungeon, encounter");
-	
+
 	array<string@> mapNames;
     GetMapFileNames(null, mapNames);
-	
+
     for(uint i = 0; i < mapNames.length(); i++)
     {
         MapperMap@ map = LoadMap(mapNames[i], PATH_SERVER_MAPS);
-		
+
         if(not (map is null))
         {
             array<MapperObject@> spawners;
 			for(uint i = 0, n = map.GetObjects(1, 1, 10000, MAP_OBJECT_ITEM, 0, spawners); i < n; i++)
 			{
 				ProtoItem@ container = GetProtoItem(spawners[i].ProtoId);
-		
+
 				if(container.Type == ITEM_TYPE_CONTAINER)
 				{
 					MapperObject@ spawner = spawners[i];
@@ -1365,25 +1586,25 @@ string FixLockersOnAllMaps(string s)
 					{
 						spawner.ScriptName = "item_spawner_container" ;
 						spawner.FuncName = "item_init" ;
-						
+
 						if(s == "unguardedtown")
 							{
 								spawner.Item_Val4 = 3;
 								countsigned++;
 							}
-							
+
 						if(s == "guardedtown")
 							{
 								spawner.Item_Val4 = 1;
 								countsigned++;
 							}
-					
+
 						if(s == "encounter")
 							{
 								spawner.Item_Val4 = 2;
 								countsigned++;
 							}
-							
+
 						if(s == "privatedungeon")
 							{
 								switch(Random(1, 25))
@@ -1414,7 +1635,7 @@ string FixLockersOnAllMaps(string s)
 									case 24: spawner.Item_Val4 = 55; break;
 									case 25: spawner.Item_Val4 = 56; break;
 								}
-							
+
 							countsigned++;
 							}
 						if(s == "publicdungeon")
@@ -1434,14 +1655,14 @@ string FixLockersOnAllMaps(string s)
 									case 11: spawner.Item_Val4 = 67; break;
 									case 12: spawner.Item_Val4 = 68; break;
 								}
-							
+
 							countsigned++;
 							}
 					}
-					
+
 				}
 			}
-			
+
 			if(SaveMap(map, mapNames[i], PATH_SERVER_MAPS))
             {
                 Message("Saved " + mapNames[i] + " with " + countsigned + " reworked lockers.");
@@ -1470,10 +1691,10 @@ string MakeMobsDynamics(string)
 {
 	MapperMap@ map = GetActiveMap();
 	uint countsigned = 0;
-	
+
     if(!valid(map))
         return "Map not loaded.";
-		
+
 	array<MapperObject@> mobs;
     for(uint i = 0, n = map.GetObjects(1, 1, 10000, MAP_OBJECT_CRITTER, 0, mobs); i < n; i++)
     {
