@@ -2466,7 +2466,7 @@ void FOClient::GameKeyDown( uint8 dik, const char* dik_text )
                 else
                     CHOSEN_ANIMATE( 14 );
                 break;
-            case DIK_U:
+            case DIK_F:
                 if( Keyb::CtrlDwn )
                     anim_offs = 150;
                 else
