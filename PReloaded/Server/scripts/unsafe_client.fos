@@ -21,6 +21,7 @@
 #include "worldmap_h.fos"
 #include "caravans_h.fos"
 #include "map_tent_h.fos"
+#include "item_misc_h.fos"
 
 #define GETACCESS_FILE    "config\\GetAccess.cfg"
 
@@ -42,6 +43,7 @@ import void CommenceDischargeEx(Critter@ attacker, Map@ map, uint16 tx, uint16 t
 
 import bool ReversableItem(Item& item) from "fix_boy";
 import bool ReverseAllItems(Critter& cr, array<Item@>& items, uint cnt, uint max) from "fix_boy";
+import bool ReadMapToLocationSilently(Item& item, Critter& cr) from "item_misc";
 
 import void WearHandsOnDeath(Critter& cr) from "repair";
 
@@ -405,7 +407,7 @@ void unsafe_Suicide2(Critter& player, int, int, int, string@, array<int>@)     /
         player.Say(SAY_NETMSG, "Not on worldmap.");
         return;
     }
-    
+
     /*
     for(uint idx = 0; idx < islands.length(); idx += 2)
     {
@@ -489,8 +491,8 @@ void unsafe_TakeAll(Critter& target, int contId, int bodyId, int useFilter, stri
 
         for(uint i = 0, j = items.length(); i < j; i++)
         {
-            if(items[i].GetProtoId()==PID_ADVANCED_BENCH || items[i].GetProtoId()==PID_WORKBENCH_RAIDERS 
-            || items[i].GetProtoId()==PID_AMMO_FACILITY || items[i].GetProtoId()==PID_WORKBENCH 
+            if(items[i].GetProtoId()==PID_ADVANCED_BENCH || items[i].GetProtoId()==PID_WORKBENCH_RAIDERS
+            || items[i].GetProtoId()==PID_AMMO_FACILITY || items[i].GetProtoId()==PID_WORKBENCH
             || items[i].GetProtoId()==PID_MED_MACHINE ||  items[i].GetProtoId()==PID_WORKBENCH_PRIMITIVE || items[i].GetType()==ITEM_TYPE_CONTAINER)
             {
                 items.removeAt(i);
@@ -566,10 +568,10 @@ void unsafe_TakeAll(Critter& target, int contId, int bodyId, int useFilter, stri
 void unsafe_PutAll(Critter& target, int contId, int bodyId, int useFilter, string@, array<int>@)
 {
     if(!target.IsKnockout() && !target.IsDead() && target.Stat[ST_CURRENT_AP] >= 0) //&& !target.IsBusy())
-    {       
+    {
         if(target.Mode[MODE_HIDE] != 0 && target.GetAccess() < ACCESS_TESTER)
         target.ModeBase[MODE_HIDE] = 0;
-        
+
         array<Item@> items;
         int          count = target.GetItems(SLOT_INV, items);
         Map@         map = target.GetMap();
@@ -579,8 +581,8 @@ void unsafe_PutAll(Critter& target, int contId, int bodyId, int useFilter, strin
             //target.StatBase[ST_CURRENT_AP] -= 100;
             for(uint i = 0, j = items.length(); i < j; i++)
             {
-                if(items[i].GetProtoId()==PID_ADVANCED_BENCH || items[i].GetProtoId()==PID_WORKBENCH_RAIDERS 
-                || items[i].GetProtoId()==PID_AMMO_FACILITY || items[i].GetProtoId()==PID_WORKBENCH 
+                if(items[i].GetProtoId()==PID_ADVANCED_BENCH || items[i].GetProtoId()==PID_WORKBENCH_RAIDERS
+                || items[i].GetProtoId()==PID_AMMO_FACILITY || items[i].GetProtoId()==PID_WORKBENCH
                 || items[i].GetProtoId()==PID_MED_MACHINE ||  items[i].GetProtoId()==PID_WORKBENCH_PRIMITIVE || items[i].GetType()==ITEM_TYPE_CONTAINER)
                 {
                     items.removeAt(i);
@@ -624,7 +626,7 @@ void unsafe_PutAll(Critter& target, int contId, int bodyId, int useFilter, strin
                     }
                 }
             }
-                
+
             if(valid(map))
             {
                 if(contId > 0)
@@ -655,7 +657,7 @@ void unsafe_PutAll(Critter& target, int contId, int bodyId, int useFilter, strin
 
                     uint containerItemsVolume = 0;
                     array<Item@> cItems;
-                    uint itemCount = container.GetItems(0, cItems);                    
+                    uint itemCount = container.GetItems(0, cItems);
                     for(uint i = 0, j = cItems.length(); i < j; i++)
                         containerItemsVolume += cItems[i].Proto.Volume * cItems[i].GetCount();
 
@@ -673,7 +675,7 @@ void unsafe_PutAll(Critter& target, int contId, int bodyId, int useFilter, strin
                 else if(bodyId > 0)
                 {
                     Critter@ body = GetCritter(bodyId);
-                    
+
                     if(valid(body) && body.IsDead() && target.GetMap().Id == body.GetMap().Id)
                     {
                         if(items.length() == 0)
@@ -686,7 +688,7 @@ void unsafe_PutAll(Critter& target, int contId, int bodyId, int useFilter, strin
 
                         _CritAnimatePickup(target);
                         //target.Wait(1000);
-                        
+
                         uint playerItemsVolume = 0;
                         for(uint i = 0, j = items.length(); i < j; i++)
                             playerItemsVolume += items[i].Proto.Volume * items[i].GetCount();
@@ -714,7 +716,7 @@ void unsafe_PutAll(Critter& target, int contId, int bodyId, int useFilter, strin
                 //{
                 //    target.Say(SAY_NETMSG, "Can't do this now.");
                 //}
-            } 
+            }
         }
         //else
         //   target.Say(SAY_NETMSG, "Nothing to put.");
@@ -727,7 +729,7 @@ void unsafe_PickAll(Critter& target, int, int, int, string@, array<int>@)
 {
     Map@         map = target.GetMap();
     array<Item@> items;
-    
+
     if(valid(map))
     {
     if(!target.IsKnockout() && !target.IsDead() && target.Stat[ST_CURRENT_AP]>=5 && !target.IsBusy())
@@ -737,8 +739,8 @@ void unsafe_PickAll(Critter& target, int, int, int, string@, array<int>@)
         if(count > 0)
         {
             target.StatBase[ST_CURRENT_AP]-=500;
-            if(target.Mode[MODE_HIDE]!=0) target.ModeBase[MODE_HIDE]=0; 
-   
+            if(target.Mode[MODE_HIDE]!=0) target.ModeBase[MODE_HIDE]=0;
+
             for(uint i = 0, j = items.length(); i < j; i++)
             {
             if(!FLAG(items[i].Flags, ITEM_FLAG_CAN_PICKUP)) @items[i] = null;
@@ -746,13 +748,13 @@ void unsafe_PickAll(Critter& target, int, int, int, string@, array<int>@)
             else if(items[i].GetProtoId()==1826) @items[i]=null; // Xander Plant
             else if(items[i].GetProtoId()==1827) @items[i]=null; // Broc Plant
             else if(items[i].GetProtoId()==1812) @items[i]=null; // Tobacco Plant
-            else if(items[i].GetProtoId()==9920) @items[i]=null; // Mutated Barley			
+            else if(items[i].GetProtoId()==9920) @items[i]=null; // Mutated Barley
             else if(items[i].GetProtoId()==9850) @items[i]=null; // beartrap
             else if(items[i].GetProtoId()==9851) @items[i]=null; // beartrap
             else if(items[i].GetProtoId()==1854) @items[i]=null; // shit
             else if(items[i].GetProtoId()==1855) @items[i]=null; // shit
             else if(items[i].GetProtoId()==1856) @items[i]=null; // shit
-            else if(items[i].GetProtoId()==1857) @items[i]=null; // shit            
+            else if(items[i].GetProtoId()==1857) @items[i]=null; // shit
             }
             target.Say(SAY_NETMSG, "Picking all items.");
             _CritAnimatePickup(target);
@@ -772,31 +774,31 @@ void unsafe_PickAll(Critter& target, int, int, int, string@, array<int>@)
 void unsafe_DropAll(Critter& target, int, int, int, string@, array<int>@)
 {
     if(!target.IsKnockout() && !target.IsDead() && target.Stat[ST_CURRENT_AP]>=5 && !target.IsBusy())
-    {       
+    {
     array<Item@> items;
     int          count = target.GetItems(SLOT_INV, items);
     if(count > 0)
     {
         target.StatBase[ST_CURRENT_AP]-=500;
             Critter@[] critters;
-            if(valid(target.GetMap())) 
+            if(valid(target.GetMap()))
             {target.GetMap().GetCrittersHex(target.HexX,target.HexY,1,FIND_LIFE,critters);
-            if(critters.length()>1) 
+            if(critters.length()>1)
             {
             target.Say(SAY_NETMSG, "Cannot use hotkey.");
             return;
             }
             }
-            else 
+            else
             {target.Say(SAY_NETMSG, "Cannot use hotkey.");
             return;}
-        
+
         for(uint i = 0, j = items.length(); i < j; i++)
         {
-            if(items[i].GetProtoId()==PID_ADVANCED_BENCH || items[i].GetProtoId()==PID_WORKBENCH_RAIDERS || items[i].GetProtoId()==PID_AMMO_FACILITY 
-            || items[i].GetProtoId()==PID_WORKBENCH || items[i].GetProtoId()==PID_MED_MACHINE ||  items[i].GetProtoId()==PID_WORKBENCH_PRIMITIVE 
-            || items[i].GetProtoId()==PID_CARAVAN_BOX || items[i].GetProtoId()==PID_ACTIVE_DYNAMITE || items[i].GetProtoId()==PID_ACTIVE_PLASTIC_EXPLOSIVE 
-            || items[i].GetProtoId()==PID_ACTIVE_MINE || items[i].GetProtoId()==PID_ACTIVE_PERSONNEL_MINE || items[i].GetType()==ITEM_TYPE_CONTAINER) 
+            if(items[i].GetProtoId()==PID_ADVANCED_BENCH || items[i].GetProtoId()==PID_WORKBENCH_RAIDERS || items[i].GetProtoId()==PID_AMMO_FACILITY
+            || items[i].GetProtoId()==PID_WORKBENCH || items[i].GetProtoId()==PID_MED_MACHINE ||  items[i].GetProtoId()==PID_WORKBENCH_PRIMITIVE
+            || items[i].GetProtoId()==PID_CARAVAN_BOX || items[i].GetProtoId()==PID_ACTIVE_DYNAMITE || items[i].GetProtoId()==PID_ACTIVE_PLASTIC_EXPLOSIVE
+            || items[i].GetProtoId()==PID_ACTIVE_MINE || items[i].GetProtoId()==PID_ACTIVE_PERSONNEL_MINE || items[i].GetType()==ITEM_TYPE_CONTAINER)
                 @items[i] = null;
         }
         target.Say(SAY_NETMSG, "Dropping all items.");
@@ -813,7 +815,7 @@ void unsafe_DropAll(Critter& target, int, int, int, string@, array<int>@)
 void unsafe_DropOne(Critter& target, int id, int, int, string@, array<int>@)
 {
     if(!target.IsKnockout() && !target.IsDead() && !target.IsBusy() && target.StatBase[ST_CURRENT_AP] > 0)
-    {       
+    {
         Item@ itm = GetItem(id);
         if(valid(itm) && itm.CritId == target.Id && !(itm.CritSlot == SLOT_ARMOR))
         {
@@ -833,7 +835,7 @@ void unsafe_DropOne(Critter& target, int id, int, int, string@, array<int>@)
 void unsafe_MoveItemCrit2Cont(Critter& target, int itemId, int contId, int, string@, array<int>@)
 {
     if(!target.IsKnockout() && !target.IsDead() && !target.IsBusy() && target.StatBase[ST_CURRENT_AP] > 0)
-    {       
+    {
         Item@ itm = GetItem(itemId);
         if(valid(itm) && itm.CritId == target.Id)
         {
@@ -852,7 +854,7 @@ void unsafe_MoveItemCrit2Cont(Critter& target, int itemId, int contId, int, stri
                     uint playerItemsVolume = itm.Proto.Volume * itm.GetCount();
                     uint containerItemsVolume = 0;
                     array<Item@> cItems;
-                    uint itemCount = cont.GetItems(0, cItems);                    
+                    uint itemCount = cont.GetItems(0, cItems);
                     for(uint i = 0, j = cItems.length(); i < j; i++)
                         containerItemsVolume += cItems[i].Proto.Volume * cItems[i].GetCount();
 
@@ -878,7 +880,7 @@ void unsafe_MoveItemCrit2Cont(Critter& target, int itemId, int contId, int, stri
                         if(itm.GetCount() > 1)
                         {
                             int newCnt = (pContainer.Container_Volume - containerItemsVolume);
-                            if(itm.Proto.Volume > 0) 
+                            if(itm.Proto.Volume > 0)
                                 newCnt = newCnt / itm.Proto.Volume;
                             if(newCnt > 0)
                             {
@@ -917,7 +919,7 @@ void unsafe_MoveItemCrit2Cont(Critter& target, int itemId, int contId, int, stri
 void unsafe_MoveItemCont2Crit(Critter& target, int itemId, int contId, int, string@, array<int>@)
 {
     if(!target.IsKnockout() && !target.IsDead() && !target.IsBusy() && target.StatBase[ST_CURRENT_AP] > 0)
-    {       
+    {
         Item@ itm = GetItem(itemId);
         if(valid(itm))
         {
@@ -985,12 +987,12 @@ void unsafe_MoveItemCont2Crit(Critter& target, int itemId, int contId, int, stri
 void unsafe_MoveItemBody2Crit(Critter& target, int itemId, int bodyId, int, string@, array<int>@)
 {
     if(!target.IsKnockout() && !target.IsDead() && !target.IsBusy() && target.StatBase[ST_CURRENT_AP] > 0)
-    {       
+    {
         Item@ itm = GetItem(itemId);
         if(valid(itm))
         {
             Critter@ body = GetCritter(bodyId);
-            
+
             if(valid(body) && body.IsDead() && target.GetMap().Id == body.GetMap().Id && itm.CritId == body.Id)
             {
                 int freeWeight = 2*target.Stat[ST_CARRY_WEIGHT] - target.ItemsWeight();
@@ -1009,7 +1011,7 @@ void unsafe_MoveItemBody2Crit(Critter& target, int itemId, int bodyId, int, stri
                         itemCount = freeWeight / itemWeight;
                     if(itemCount > 0)
                         makeTransaction = true;
-                }                    
+                }
                 if(makeTransaction)
                 {
                     if(target.Mode[MODE_HIDE] != 0 && Random(0, 1) == 1 && target.GetAccess() < ACCESS_TESTER)
@@ -1033,12 +1035,12 @@ void unsafe_MoveItemBody2Crit(Critter& target, int itemId, int bodyId, int, stri
 void unsafe_MoveItemCrit2Body(Critter& target, int itemId, int bodyId, int, string@, array<int>@)
 {
     if(!target.IsKnockout() && !target.IsDead() && !target.IsBusy() && target.StatBase[ST_CURRENT_AP] > 0)
-    {       
+    {
         Item@ itm = GetItem(itemId);
         if(valid(itm) && itm.CritId == target.Id)
         {
             Critter@ body = GetCritter(bodyId);
-            
+
             if(valid(body) && body.IsDead() && target.GetMap().Id == body.GetMap().Id  && itm.CritId == target.Id)
             {
                 int freeWeight = 2*body.Stat[ST_CARRY_WEIGHT] - body.ItemsWeight();
@@ -1057,7 +1059,7 @@ void unsafe_MoveItemCrit2Body(Critter& target, int itemId, int bodyId, int, stri
                         itemCount = freeWeight / itemWeight;
                     if(itemCount > 0)
                         makeTransaction = true;
-                }                    
+                }
                 if(makeTransaction)
                 {
                     if(target.Mode[MODE_HIDE] != 0 && Random(0, 1) == 1 && target.GetAccess() < ACCESS_TESTER)
@@ -1087,7 +1089,7 @@ void unsafe_play_rr(Critter& player, int, int, int, string@, array<int>@)
     if(count>0)
     {
         const ProtoItem@ protoBron = items[0].Proto;
-        if (items[0].GetProtoId() == PID_44_MAGNUM_REVOLVER && items[0].AmmoCount!=0) 
+        if (items[0].GetProtoId() == PID_44_MAGNUM_REVOLVER && items[0].AmmoCount!=0)
         {
         int roll=Random(0,99);
         int baseChance=items[0].AmmoCount*100;
@@ -1119,10 +1121,10 @@ void unsafe_play_rr(Critter& player, int, int, int, string@, array<int>@)
         }
     }
     player.Say(SAY_NETMSG, "To play russian roulette, you need a loaded magnum revolver.");
-    
+
 
     return;
-}   
+}
 
 bool PushCritter(Map& map, Critter@ cr, uint8 leadDir, uint8 depth)
 {
@@ -1662,6 +1664,7 @@ void unsafe_Discharge(Critter& player, int, int, int, string@, int[]@)
     CommenceDischargeEx(player, map, player.HexX, player.HexY, RADIUS, DMG_MIN, DMG_MAX, EFFECT_CHANCE, RECHARGE_VALUE);
 }
 
+
 void unsafe_ScienceAtHex(Critter& player, int mode, int, int, string@, array<int>@)
 {
 
@@ -1679,15 +1682,16 @@ void unsafe_ScienceAtHex(Critter& player, int mode, int, int, string@, array<int
         }
 
         if(player.Stat[ST_CURRENT_AP] < 3)
-            return;     
+            return;
         player.StatBase[ST_CURRENT_AP] -= 300;
-         
+
         player.Wait(__Breaktime);
         _CritAnimateUse(player);
-   
+
         uint itemCount = map.GetItems(player.HexX, player.HexY, allItems);
 
         array<Item@> validItems;
+        array<Item@> mapItems;
         for(uint i=0; i < itemCount; ++i)
         {
             if(valid(allItems[i]) && ReversableItem(allItems[i]))
@@ -1699,8 +1703,11 @@ void unsafe_ScienceAtHex(Critter& player, int mode, int, int, string@, array<int
                 }
                 validItems.insertLast(allItems[i]);
             }
+            if (valid(allItems[i]) && ITEM_MAP_TARGET(allItems[i]) > 0) {
+                mapItems.insertLast(allItems[i]);
+            }
         }
-        
+
         if(validItems.length() > 0 && ReverseAllItems(player, validItems, validItems.length(), 100))
         {
             player.Say(SAY_NETMSG, "Sciencing items on current hex.");
@@ -1710,8 +1717,24 @@ void unsafe_ScienceAtHex(Critter& player, int mode, int, int, string@, array<int
             }
         }
         else
+        {
             player.Say(SAY_NETMSG, "Nothing to science here.");
+        }
 
+        uint mapReadCount = 0;
+        if (mapItems.length() > 0) {
+            for (uint i = 0; i < mapItems.length(); i++) {
+                if (ReadMapToLocationSilently(mapItems[i], player))
+                    mapReadCount++;
+            }
+            if (mapReadCount > 0) {
+                player.Say(SAY_NETMSG, "Read " + mapReadCount + " new maps.");
+            } else {
+                player.Say(SAY_NETMSG, "No new maps to read here.");
+            }
+        } else {
+            player.Say(SAY_NETMSG, "No maps to read here.");
+        }
     }
     else
         player.Say(SAY_NETMSG, "Can't do that here.");
