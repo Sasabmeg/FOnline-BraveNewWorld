@@ -192,4 +192,49 @@ bool _MapToLocationUse(Item& item, Critter& cr, Critter@ onCritter, Item@ onItem
 
     return(true);
 }
+
+/**
+ *  Sasabmeg:
+    - this will not trigger map read dialog, just say in net message how many maps read successfully
+    - used for science at hex to read all maps fast
+**/
+bool ReadMapToLocationSilently(Item& item, Critter& cr) {
+    Log("ReadMapToLocationSilently() called");
+    if (ITEM_MAP_TARGET(item) == 0) {
+        cr.Say(SAY_NETMSG, "Not map item.");
+        return false;
+    }
+
+    Location@ location = GetLocation(ITEM_MAP_TARGET(item));
+    if(!valid(location)) {
+        cr.Say(SAY_NETMSG, "This map is heavily damaged, it's impossible to read anything from it.");
+        return false;
+    }
+
+    string tentName = "Unnamed Tent";
+
+    if(cr.IsKnownLoc(true, ITEM_MAP_TARGET(item))) {
+        if(IsLexem(item, "$+")) {
+            tentName = GetLexem(item, "$+");
+            cr.Say(SAY_NETMSG, "You already have " + tentName + " position marked in your Pip-Boy.");
+        } else {
+            cr.Say(SAY_NETMSG, "You already have that position marked in your Pip-Boy.");
+        }
+        return false;
+    } else {
+        cr.SetKnownLoc(true, ITEM_MAP_TARGET(item));
+        if(IsLexem(item, "$+")) {
+            tentName = GetLexem(item, "$+");
+            cr.Say(SAY_NETMSG, "You've marked " + tentName + " position in your Pip-Boy.");
+        } else {
+            cr.Say(SAY_NETMSG, "You've marked the position in your Pip-Boy.");
+        }
+
+        if(FLAG(ITEM_MAP_FLAGS(item), ITEM_MAP_DELETE_ON_USE))
+            DeleteItem(item);
+
+        return true;
+    }
+}
+
 #endif // __ITEM_MISC__ //
