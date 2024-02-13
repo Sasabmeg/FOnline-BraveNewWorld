@@ -5634,7 +5634,7 @@ void FOClient::GmapKeyDown( uint8 dik, const char* dik_text )
         case DIK_P:
             ShowScreen( CLIENT_SCREEN_PIPBOY );
             break;
-        case DIK_F:
+        case DIK_U:
             ShowScreen( CLIENT_SCREEN_FIXBOY );
             break;
         case DIK_O:
