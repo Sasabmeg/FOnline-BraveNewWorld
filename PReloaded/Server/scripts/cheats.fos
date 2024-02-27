@@ -140,7 +140,7 @@ string[] commandlist =
     "la", "lastregistered", "lastspawned", "listauthenticated",     "listcommands",
     "listfollowers", "listfactions", "listmaps", "listplayers",     "listtents",
     "listtracked", "lock", "lockcar", "log",  "lootdrop", "lp", "lt",
-    "makeencounter", "maps", "mapinfo", "maplist", "masssetanim", "massslap", "modchar", "move",
+    "makeencounter", "maps", "mapinfo", "maplist", "masssetanim", "massslap", "massspawn", "modchar", "move",
     "name2id", "netmsg", "normaldeadly", "numplayers",
     "param", "perkadjust", "pickitems", "phase", "phaseteam", "playerkarma",
     "playmusic", "playsound", "playspeech", "poison", "profadjust",
@@ -184,7 +184,7 @@ string[] gmcommandlist =
     "la", "lastregistered", "lastspawned", "listauthenticated",     "listcommands",
     "listfollowers", "listfactions", "listmaps", "listplayers",     "listtents",
     "listtracked", "lp", "lt", "lock", "lockcar", "log", "lootdrop",
-    "makeencounter", "mapinfo", "massslap", "modchar",
+    "makeencounter", "mapinfo", "massslap", "massspawn", "modchar",
     "name2id", "netmsg", "normaldeadly", "numplayers",
     "param", "pickitems", "phase", "phaseteam", "playerkarma", "playmusic",
     "playsound", "playspeech", "poison",
@@ -1027,6 +1027,12 @@ void ExecGiveCommand(array<string@>@ command, Critter@ player, Critter@ target)
 
         player.Say(SAY_NETMSG, "Whoa, I've just found " + number + " item(s) with pid " + pid);
 
+        if (pid == PID_RADIO) {
+            item.RadioBroadcastSend = RADIO_BROADCAST_WORLD;
+            item.RadioBroadcastRecv = RADIO_BROADCAST_WORLD;
+            item.RadioFlags ^= RADIO_DISABLE_RECV;
+            item.Update();
+        }
         string script = GetParameterString(command, "-script");
         if(script != "")
         {
@@ -1049,6 +1055,12 @@ void ExecGiveCommand(array<string@>@ command, Critter@ player, Critter@ target)
             for(int i = 1; i < number; i++)
             {
                 @item = target.AddItem(pid, 1);
+                if (pid == PID_RADIO) {
+                    item.RadioBroadcastSend = RADIO_BROADCAST_WORLD;
+                    item.RadioBroadcastRecv = RADIO_BROADCAST_WORLD;
+                    item.RadioFlags ^= RADIO_DISABLE_RECV;
+                    item.Update();
+                }
                 if(legit)     // record spawner id
                 {
                     ILog("legitspawn", AuthedInfo(player.Id) +  " gave legit item " +  "(Id:" + item.Id + ") to critter " + target.Id);
@@ -3071,6 +3083,109 @@ void ExecMassSlapCommand(array<string@>@ command, Critter@ player, Critter@ targ
     {
         if(!crits[i].IsDead() && !GodOfTheRealm(crits[i].Id))
             crits[i].ToKnockout(KNOCKOUT_ANIM2_DEFAULT(Random(0, 1) == 0), lostAp, crits[i].HexX + Random(-r, r), crits[i].HexY + Random(-r, r));
+    }
+}
+
+void ExecMassSpawnCommand(array<string@>@ command, Critter@ player, Critter@ target)
+{
+    player.Say(SAY_NETMSG, "Executing mass spawn command. To be used for debug only!");
+    bool legit = false;
+    cheatGetOption(command, legit, "-legit");
+    if(legit && player.GetAccess() < ACCESS_ADMIN)
+    {
+        player.Say(SAY_NETMSG, "You need admin access level to spawn a legit item.");
+        return;
+    }
+
+    Map@ map = target.GetMap();
+    if(!valid(map))
+    {
+        player.Say(SAY_NETMSG, "Target on worldmap...");
+        return;
+    }
+    if(command.length() < 3)
+    {
+        player.Say(SAY_NETMSG, "Wrong number of parameters");
+        return;
+    }
+    uint16 pid = 0;
+    // try to parse pid if it was passed as number
+    bool   parsed = StrToInt(command[2], pid);
+    // otherwise, check in the global dictionary
+    if(!parsed)
+    {
+        if(!GetItemPid(command[2], pid))
+        {
+            player.Say(SAY_NETMSG, "Item pid does not exist in the list.");
+            return;
+        }
+    }
+    int count = 1;
+    if(command.length() > 3)
+        StrToInt(command[3], count);
+    if(count == 0)
+    {
+        player.Say(SAY_NETMSG, "Nothing to spawn.");
+        return;
+    }
+    else if(count < 0)
+    {
+        player.Say(SAY_NETMSG, "Negative value, nothing to spawn.");
+        return;
+    }
+    ProtoItem@ proto = GetProtoItem(pid);
+    if(!valid(proto))
+    {
+        player.Say(SAY_NETMSG, "Wrong proto number.");
+        return;
+    }
+    uint16 x = target.HexX;
+    uint16 y = target.HexY;
+    StrToInt(GetParameterString(command, "-x"), x);
+    StrToInt(GetParameterString(command, "-y"), y);
+
+
+    Item@ it;
+    uint  spawned = 0;
+    int   radius = 0;
+    StrToInt(GetParameterString(command, "-r"), radius);
+    radius = CLAMP(radius, 0, 100);
+
+    array<uint16> xList;
+    array<uint16> yList;
+    if (radius < 1)
+        radius = 0;
+    HexCircle(x, y, radius, xList, yList);
+
+    player.Say(SAY_NETMSG, "Spawning items with proto: (" + pid + ") in hex circle around (" + x + ", " + y + ") with radius: (" + radius + ")");
+    for (int i = -radius; i <= radius; i++) {
+        for (int j = -radius; j <= radius; j++) {
+            for (int k = 0; k < count; k++) {
+                @it = map.AddItem(x + i, y + j, pid, 1);
+                if (valid(it))
+                {
+                    if(legit)     // record spawner id
+                    {
+                        ILog("legitspawn", AuthedInfo(player.Id) + " spawned legit item (Id:" + it.Id + ")");
+                        _SetSpawnerLegit(it, player);
+                    }
+                    else
+                    {
+                        _SetSpawner(it, player);
+                    }
+
+                    if (pid == PID_RADIO) {
+                        it.RadioBroadcastSend = RADIO_BROADCAST_WORLD;
+                        it.RadioBroadcastRecv = RADIO_BROADCAST_WORLD;
+                        it.RadioFlags ^= RADIO_DISABLE_RECV;
+                        it.Update();
+                    }
+
+                    spawned++;
+                }
+            }
+        }
+        player.Say(SAY_NETMSG, "" + spawned + " item(s) spawned.");
     }
 }
 
@@ -10133,6 +10248,10 @@ bool ExecCommand(Critter& player, string@ commandString)
     else if(command[1] == "massslap")
     {
         ExecMassSlapCommand(command, player, target);
+    }
+    else if(command[1] == "massspawn")
+    {
+        ExecMassSpawnCommand(command, player, target);
     }
     else if(command[1] == "startevent")
     {
