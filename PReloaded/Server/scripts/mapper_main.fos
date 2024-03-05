@@ -311,25 +311,34 @@ void mouse_move(int x, int y)
     Plugins_MouseMove(x, y);
 }
 
+bool altDown = false;
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Keyboard behaviours. Key codes look in _mapper_defines.fos DirectInput keyboard scan codes.
 // Return true to disable engine events.
 bool key_down(uint8 key,string& keyText)
 {
+    if (key == DIK_LMENU || key == DIK_RMENU) {
+        altDown = true;
+    }
+
     if(Plugins_KeyDown(key,keyText))
         return true;
 
-	if(key == DIK_D && ShowDoorScript) ShowDoorScript = false;
-	else if(key== DIK_D && !ShowDoorScript) ShowDoorScript = true;
+	if (key == DIK_D && altDown && ShowDoorScript) ShowDoorScript = false;
+	else if(key== DIK_D && altDown && !ShowDoorScript) ShowDoorScript = true;
 
-	if(key == DIK_C && ShowContainerScript) ShowContainerScript = false;
-	else if(key == DIK_D && !ShowContainerScript) ShowContainerScript = true;
+	if(key == DIK_F && altDown && ShowContainerScript) ShowContainerScript = false;
+	else if(key == DIK_F && altDown && !ShowContainerScript) ShowContainerScript = true;
 
 	return false;
 }
 
 bool key_up(uint8 key,string& keyText)
 {
+    if (key == DIK_LMENU || key == DIK_RMENU) {
+        altDown = false;
+    }
     if(Plugins_KeyUp(key,keyText))
         return true;
     return false;

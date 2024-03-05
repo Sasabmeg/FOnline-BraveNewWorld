@@ -42,6 +42,8 @@ class CGrid : IMapperPlugin
     private bool enabled = true;
     private uint color = COLOR_RGB(160, 160, 160);
 
+    private bool controlDown = false;
+
     void Render(uint layer)
     {
         if(layer == 1)
@@ -195,9 +197,12 @@ class CGrid : IMapperPlugin
     bool MouseDown(int)      { return false; }
     bool MouseUp(int)        { return false; }
     void MouseMove(int, int) {}
-    bool KeyDown(uint8 key,string& keyText)
+    bool KeyDown(uint8 key, string& keyText)
     {
-        if(key == DIK_G)
+        if (key == DIK_LCONTROL || key == DIK_RCONTROL) {
+            controlDown = true;
+        }
+        if(key == DIK_G && controlDown)
         {
             if(hexGrid)
             {
@@ -211,7 +216,12 @@ class CGrid : IMapperPlugin
         }
         return false;
     }
-    bool KeyUp(uint8,string&) { return false; }
+    bool KeyUp(uint8 key, string& keyText) {
+        if (key == DIK_LCONTROL || key == DIK_RCONTROL) {
+            controlDown = false;
+        }
+        return false;
+    }
     void InputLost()          {}
     void Loop()               {}
 
