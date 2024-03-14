@@ -1043,6 +1043,18 @@ string FixLockers(string)
 }
 
 
+string maxFps(string num) {
+    int maxFps = 30;
+    if (!StrToInt(num, maxFps))
+        return("#maxFps <number> (not an integer: " + num + ")");
+    if (maxFps < 1)
+        maxFps = 1;
+    if (maxFps > 500)
+        maxFps = 500;
+    __FixedFPS = maxFps;
+    return "FPS limit changed to: " + maxFps;
+}
+
 /**
     NOT OPTIMIZED, RUNS FOREVER ON BIG MAPS
 */
