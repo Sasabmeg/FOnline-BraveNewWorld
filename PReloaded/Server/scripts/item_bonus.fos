@@ -72,22 +72,22 @@ void AddSpecialBonusEncounterBoss(Item@ it)
 {
 	if(it.GetType() == ITEM_TYPE_WEAPON && !it.IsStackable())
 	{
-	int roll = Random(0,99);
-	if(roll>=0) AddWeaponBonus(it, 1, true); // 100%
-	if(roll>29)	AddWeaponBonus(it, 2, true); // 70%
-	if(roll>59)	AddWeaponBonus(it, 3, true); // 40%
-	if(roll>89)	AddWeaponBonus(it, 4, true); // 10%
-	if(roll>94) AddWeaponBonus(it, 5, true); // 5%
+        int roll = Random(0,99);
+        if(roll>=0) AddWeaponBonus(it, 1, true); // 100%
+        if(roll>29)	AddWeaponBonus(it, 2, true); // 70%
+        if(roll>59)	AddWeaponBonus(it, 3, true); // 40%
+        if(roll>89)	AddWeaponBonus(it, 4, true); // 10%
+        if(roll>94) AddWeaponBonus(it, 5, true); // 5%
 	}
 
 	else if(it.GetType() == ITEM_TYPE_ARMOR)
 	{
-	int roll = Random(0,99);
-	if(roll>=0) AddArmorBonus(it, 1);
-	if(roll>29)	AddArmorBonus(it, 2);
-	if(roll>59)	AddArmorBonus(it, 3);
-	if(roll>89)	AddArmorBonus(it, 4);
-	if(roll>94) AddArmorBonus(it, 5);
+        int roll = Random(0,99);
+        if(roll>=0) AddArmorBonus(it, 1);
+        if(roll>29)	AddArmorBonus(it, 2);
+        if(roll>59)	AddArmorBonus(it, 3);
+        if(roll>89)	AddArmorBonus(it, 4);
+        if(roll>94) AddArmorBonus(it, 5);
 	}
 	return;
 }
@@ -154,11 +154,11 @@ void AddBonuses(Item@ it, string@ crafter)
 	else if(it.GetType() == ITEM_TYPE_ARMOR)
 	{
 		int roll = Random(0,99);
-		if(roll>55) AddArmorBonus(it, 1);
-		if(roll>76)	AddArmorBonus(it, 2);
-		if(roll>88)	AddArmorBonus(it, 3);
-		if(roll>95)	AddArmorBonus(it, 4);
-		if(roll==99) AddArmorBonus(it, 5);
+		if(roll>55) AddArmorBonus(it, 1);   //  44%
+		if(roll>76)	AddArmorBonus(it, 2);   //  23%
+		if(roll>88)	AddArmorBonus(it, 3);   //  11%
+		if(roll>95)	AddArmorBonus(it, 4);   //  4%
+		if(roll==99) AddArmorBonus(it, 5);  //  1%
 		SetLexem(it, "$crafter", crafter);
 	}
 	return;
