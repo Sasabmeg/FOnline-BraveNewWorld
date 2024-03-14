@@ -12,6 +12,7 @@
  */
 /*@{*/
 
+#include "mapdata_h.fos"
 #include "_macros.fos"
 #include "MsgStr.h"
 #include "debug_h.fos"
@@ -59,17 +60,17 @@ bool UseItemOnCar(Critter& cr, Item& car, Item& item)   // Export
         {
             int skill=cr.Skill[SK_REPAIR]+50;
             uint     keyId = Random(5000,7500);
-            
+
             car.LockerComplexity = Random(skill, skill+20);
             car.LockerId = keyId;
             car.Update();
-            
+
             Item@ key = cr.AddItem(PID_KEY, 1);
             if(valid(key))
             {
             key.LockerId = keyId;
             key.Update();
-            
+
             Item@ bag = car.GetChild(0);
             if(valid(bag))
             {
@@ -78,12 +79,12 @@ bool UseItemOnCar(Critter& cr, Item& car, Item& item)   // Export
             bag.Update();
             }
             }
-            
-            cr.Say(SAY_NETMSG, "You have successfully installed a new lock on this car.");      
+
+            cr.Say(SAY_NETMSG, "You have successfully installed a new lock on this car.");
             uint pidlock = item.GetProtoId();
             _CritDeleteItem(cr,pidlock,1);
         }
-    
+
         return true;
     }
 
@@ -171,7 +172,7 @@ bool UseItemOnCar(Critter& cr, Item& car, Item& item)   // Export
         bool isEnergo = (pid == PID_SMALL_ENERGY_CELL || pid == PID_MICRO_FUSION_CELL);
         bool isBio = (pid == PID_BEER || pid == PID_BOOZE || pid == PID_GAMMA_GULP_BEER || pid == PID_ROT_GUT || pid == PID_ROENTGEN_RUM);
         bool isTool = (item.Proto.Misc_ToolSkillNum == SK_REPAIR);
-	
+
         if(!isEnergo && !isBio && !isTool)
             return false;
 
@@ -411,7 +412,11 @@ bool UseSkillOnCar(Critter& cr, Item& car, int skill)   // Export
     else if(skill == SK_LOCKPICK)
     {
 		Map@ map = cr.GetMap();
-	
+        if (valid(map) && _MapHasMode(map, MAP_MODE_NO_CAR_PICK)) {
+            cr.Say(SAY_NETMSG, "This area is guarded against lock picking cars.");
+            return true;
+        }
+
         if(cr.Timeout[TO_SK_LOCKPICK] > 0)
         {
             cr.SayMsg(SAY_NETMSG, TEXTMSG_GAME, STR_SKILL_WEARINESS);
@@ -429,8 +434,8 @@ bool UseSkillOnCar(Critter& cr, Item& car, int skill)   // Export
             cr.SayMsg(SAY_NETMSG, TEXTMSG_GAME, STR_SKILL_LOCKPICK_FAIL);
             return true;
         }
-		
-		
+
+
         if(car.LockerId==0)
         {
             cr.SayMsg(SAY_NETMSG, TEXTMSG_GAME, STR_SKILL_LOCKPICK_FAIL);
@@ -665,7 +670,7 @@ bool entrance_city(Location& Loc, array<Critter@>& critters, uint8 entrance)
         uint eventId = CreateTimeEvent(AFTER(REAL_MINUTE(15)), "car@e_UnlockLockpicking", items[0].Id, true);
         items[0].Val5 = eventId;
         items[0].Update();
-    }    
+    }
 
     return true;
 }
