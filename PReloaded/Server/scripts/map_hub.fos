@@ -22,12 +22,19 @@ void map_init(Map& map, bool firstTime)
     map.SetData(MAP_DATA_BANK, BANK_HUB);
 
     uint proto = map.GetProtoId();
-
+    string protoName;
+    map.ProtoName(protoName);
 	if (proto == MAP_HubDowntown || proto == MAP_HubOldtown || proto == MAP_HubHeights
-            || proto == MAP_HubWatermerchants || proto == MAP_HubUnderground || proto == MAP_HubUndergroundthief) {
-        Log("Setting NO PVP and NO LOOTING for location Hub, map ID: " + proto);
+            || proto == MAP_HubWatermerchants || proto == MAP_HubUnderground || proto == MAP_HubUndergroundthief
+            || proto == MAP_HubParkingLot) {
         _MapSetMode(map, MAP_MODE_NO_PVP);
         _MapSetMode(map, MAP_MODE_NO_LOOT_DROP);
+        if (proto == MAP_HubParkingLot) {
+            _MapSetMode(map, MAP_MODE_NO_CAR_PICK);
+            Log("Setting NO PVP, NO LOOTING and NO CAR LOCKPICKING for location Hub (" + proto + ", " + protoName + ")");
+        } else {
+            Log("Setting NO PVP and NO LOOTING for location Hub (" + proto + ", " + protoName + ")");
+        }
 	}
     // barrels rules
     if(proto == MAP_HubArena)
@@ -52,8 +59,11 @@ void map_init(Map& map, bool firstTime)
             uint[] maxes = { 10, 10 };
             SetAlertMap(map, maxes);
         }
+        else if (proto == MAP_HubParkingLot)
+        {
+            _MapSetMode(map, MAP_MODE_NO_CAR_PICK);
+        }
     }
-
 }
 
 void _CritterArenaIn(Map& map, Critter& cr)
