@@ -30,7 +30,9 @@ void map_init(Map& map, bool firstTime)
     }
 
     uint proto = map.GetProtoId();
-    Log("Setting NO PVP and NO LOOTING for location Junktown, map ID: " + proto);
+    string protoName;
+    map.ProtoName(protoName);
+    Log("Setting NO PVP and NO LOOTING for location Junktown (" + proto + ", " + protoName + ")");
     _MapSetMode(map, MAP_MODE_NO_LOOT_DROP);
     _MapSetMode(map, MAP_MODE_NO_PVP);
 
