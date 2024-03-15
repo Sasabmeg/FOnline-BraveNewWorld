@@ -11,6 +11,7 @@
 #include "_defines.fos"
 #include "_entires.fos"
 #include "_maps.fos"
+#include "messages_h.fos"
 #include "utils_h.fos"
 #include "mapdata_h.fos"
 #include "reinforcements_h.fos"
@@ -59,10 +60,6 @@ void map_init(Map& map, bool firstTime)
             uint[] maxes = { 10, 10 };
             SetAlertMap(map, maxes);
         }
-        else if (proto == MAP_HubParkingLot)
-        {
-            _MapSetMode(map, MAP_MODE_NO_CAR_PICK);
-        }
     }
 }
 
@@ -90,4 +87,38 @@ void _CritterOut(Map& map, Critter& cr)
     {
         StartFirstTentQuest(cr);
     }
+}
+
+void t_NearParkEntrance(Critter& critter, Scenery& trigger, bool entered, uint8 dir)
+{
+    Log("t_NearParkEntrance - entered =  " + entered + ", dir = " + dir + ")");
+
+    if(!critter.IsPlayer() || !entered)
+        return;
+
+    //  let players throw this direction, to get out of parking lot
+    if(dir == 1 || dir == 2 || dir == 3)
+        return;
+
+    critter.SendMessage(MSG_HUB_PLAYER_NEAR_PARKING_ENTRANCE, 0, MESSAGE_TO_VISIBLE_ME);
+}
+
+void t_TryPassParkEntrance(Critter& critter, Scenery& trigger, bool entered, uint8 dir)
+{
+    Log("t_TryPassParkEntrance - entered =  " + entered + ", dir = " + dir + ")");
+
+    if(!critter.IsPlayer())
+        return;
+
+    //  let players throw this direction, to get out of parking lot
+    if(dir == 1 || dir == 2 || dir == 3)
+        return;
+
+    //  entered trigger hex, give final warning, attack when leaving hex in wrong direction
+    if (entered) {
+        critter.SendMessage(MSG_HUB_PLAYER_PARKING_ENTRANCE, 0, MESSAGE_TO_VISIBLE_ME);
+    } else {
+        critter.SendMessage(MSG_HUB_PLAYER_PARKING_ILLEGAL_ENTRY, 0, MESSAGE_TO_VISIBLE_ME);
+    }
+
 }

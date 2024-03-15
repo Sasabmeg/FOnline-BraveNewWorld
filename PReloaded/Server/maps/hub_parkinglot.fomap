@@ -2,12 +2,12 @@
 Version              4
 MaxHexX              340
 MaxHexY              310
-WorkHexX             70
-WorkHexY             191
-ScriptModule         map_hub
-ScriptFunc           map_init
+WorkHexX             111
+WorkHexY             151
+ScriptModule         -
+ScriptFunc           -
 NoLogOut             0
-Time                 -1
+Time                 0
 DayTime              300  600  1140 1380
 DayColor0            18  18  53 
 DayColor1            128 128 128
@@ -17965,16 +17965,6 @@ MapY                 153
 
 MapObjType           2
 ProtoId              3179
-MapX                 127
-MapY                 153
-
-MapObjType           2
-ProtoId              3179
-MapX                 124
-MapY                 152
-
-MapObjType           2
-ProtoId              3179
 MapX                 121
 MapY                 153
 
@@ -28644,46 +28634,6 @@ MapY                 152
 
 MapObjType           2
 ProtoId              2067
-MapX                 123
-MapY                 153
-
-MapObjType           2
-ProtoId              2067
-MapX                 123
-MapY                 152
-
-MapObjType           2
-ProtoId              2067
-MapX                 125
-MapY                 153
-
-MapObjType           2
-ProtoId              2067
-MapX                 125
-MapY                 152
-
-MapObjType           2
-ProtoId              2067
-MapX                 126
-MapY                 153
-
-MapObjType           2
-ProtoId              2067
-MapX                 126
-MapY                 152
-
-MapObjType           2
-ProtoId              2067
-MapX                 128
-MapY                 153
-
-MapObjType           2
-ProtoId              2067
-MapX                 128
-MapY                 152
-
-MapObjType           2
-ProtoId              2067
 MapX                 129
 MapY                 154
 
@@ -33140,8 +33090,8 @@ MapY                 195
 
 MapObjType           2
 ProtoId              2141
-MapX                 191
-MapY                 195
+MapX                 192
+MapY                 194
 LightColor           99994000
 LightDistance        8
 LightIntensity       50
@@ -33166,8 +33116,8 @@ MapY                 163
 
 MapObjType           2
 ProtoId              2141
-MapX                 191
-MapY                 163
+MapX                 192
+MapY                 162
 LightColor           99994000
 LightDistance        8
 LightIntensity       50
@@ -33194,7 +33144,7 @@ MapY                 125
 
 MapObjType           2
 ProtoId              2141
-MapX                 128
+MapX                 129
 MapY                 125
 LightColor           99994000
 LightDistance        8
@@ -33207,8 +33157,8 @@ MapY                 125
 
 MapObjType           2
 ProtoId              2141
-MapX                 191
-MapY                 229
+MapX                 192
+MapY                 228
 LightColor           99994000
 LightDistance        8
 LightIntensity       50
@@ -33549,8 +33499,8 @@ MapY                 241
 
 MapObjType           2
 ProtoId              2141
-MapX                 118
-MapY                 229
+MapX                 119
+MapY                 230
 LightColor           99994000
 LightDistance        8
 LightIntensity       50
@@ -33562,8 +33512,8 @@ MapY                 229
 
 MapObjType           2
 ProtoId              2141
-MapX                 127
-MapY                 175
+MapX                 128
+MapY                 174
 LightColor           99994000
 LightDistance        8
 LightIntensity       50
@@ -38311,8 +38261,8 @@ MapY                 217
 
 MapObjType           2
 ProtoId              2141
-MapX                 127
-MapY                 217
+MapX                 128
+MapY                 216
 LightColor           99994000
 LightDistance        8
 LightIntensity       50
@@ -38489,5 +38439,440 @@ MapObjType           2
 ProtoId              2101
 MapX                 79
 MapY                 180
+
+MapObjType           2
+ProtoId              2067
+MapX                 127
+MapY                 152
+
+MapObjType           2
+ProtoId              2067
+MapX                 121
+MapY                 151
+
+MapObjType           2
+ProtoId              2067
+MapX                 128
+MapY                 150
+
+MapObjType           2
+ProtoId              3180
+MapX                 128
+MapY                 151
+
+MapObjType           2
+ProtoId              2067
+MapX                 122
+MapY                 149
+
+MapObjType           2
+ProtoId              2067
+MapX                 122
+MapY                 151
+
+MapObjType           2
+ProtoId              3181
+MapX                 122
+MapY                 151
+
+MapObjType           2
+ProtoId              2067
+MapX                 129
+MapY                 151
+
+MapObjType           2
+ProtoId              2067
+MapX                 123
+MapY                 150
+
+MapObjType           2
+ProtoId              2067
+MapX                 128
+MapY                 152
+
+MapObjType           2
+ProtoId              3852
+MapX                 125
+MapY                 151
+ScriptName           map_hub
+FuncName             t_TryPassParkEntrance
+
+MapObjType           2
+ProtoId              3852
+MapX                 126
+MapY                 151
+ScriptName           map_hub
+FuncName             t_TryPassParkEntrance
+
+MapObjType           2
+ProtoId              2067
+MapX                 122
+MapY                 150
+
+MapObjType           2
+ProtoId              3852
+MapX                 124
+MapY                 150
+ScriptName           map_hub
+FuncName             t_TryPassParkEntrance
+
+MapObjType           0
+ProtoId              24
+MapX                 118
+MapY                 153
+Dir                  2
+ScriptName           hub_guard
+FuncName             critter_init
+Critter_Cond         1
+Critter_Anim1        0
+Critter_Anim2        0
+Critter_ParamIndex0  ST_DIALOG_ID
+Critter_ParamValue0  1708
+Critter_ParamIndex1  ST_AI_ID
+Critter_ParamValue1  243
+Critter_ParamIndex2  ST_BAG_ID
+Critter_ParamValue2  15
+Critter_ParamIndex3  ST_TEAM_ID
+Critter_ParamValue3  89
+Critter_ParamIndex4  ST_NPC_ROLE
+Critter_ParamValue4  42
+Critter_ParamIndex5  ST_REPLICATION_TIME
+Critter_ParamValue5  0
+Critter_ParamIndex6  ST_FACTION_RANK
+Critter_ParamValue6  1
+Critter_ParamIndex7  ST_FACTION_MODE
+Critter_ParamValue7  1
+Critter_ParamIndex8  ST_OVERRIDE_CRTYPE
+Critter_ParamValue8  0
+
+MapObjType           2
+ProtoId              2141
+MapX                 200
+MapY                 124
+LightColor           99994000
+LightDistance        8
+LightIntensity       50
+
+MapObjType           2
+ProtoId              2141
+MapX                 200
+MapY                 92
+LightColor           99994000
+LightDistance        8
+LightIntensity       50
+
+MapObjType           2
+ProtoId              2141
+MapX                 185
+MapY                 87
+LightColor           99994000
+LightDistance        8
+LightIntensity       50
+
+MapObjType           2
+ProtoId              2141
+MapX                 175
+MapY                 93
+LightColor           99994000
+LightDistance        8
+LightIntensity       50
+
+MapObjType           2
+ProtoId              2141
+MapX                 175
+MapY                 125
+LightColor           99994000
+LightDistance        8
+LightIntensity       50
+
+MapObjType           2
+ProtoId              2141
+MapX                 164
+MapY                 124
+LightColor           99994000
+LightDistance        8
+LightIntensity       50
+
+MapObjType           2
+ProtoId              2141
+MapX                 164
+MapY                 92
+LightColor           99994000
+LightDistance        8
+LightIntensity       50
+
+MapObjType           2
+ProtoId              2141
+MapX                 151
+MapY                 87
+LightColor           99994000
+LightDistance        8
+LightIntensity       50
+
+MapObjType           2
+ProtoId              2141
+MapX                 139
+MapY                 92
+LightColor           99994000
+LightDistance        8
+LightIntensity       50
+
+MapObjType           2
+ProtoId              2141
+MapX                 139
+MapY                 125
+LightColor           99994000
+LightDistance        8
+LightIntensity       50
+
+MapObjType           2
+ProtoId              2141
+MapX                 59
+MapY                 99
+LightColor           99994000
+LightDistance        8
+LightIntensity       50
+
+MapObjType           2
+ProtoId              2292
+MapX                 55
+MapY                 99
+
+MapObjType           2
+ProtoId              2141
+MapX                 59
+MapY                 131
+LightColor           99994000
+LightDistance        8
+LightIntensity       50
+
+MapObjType           2
+ProtoId              2292
+MapX                 55
+MapY                 131
+
+MapObjType           2
+ProtoId              2001
+MapX                 92
+MapY                 214
+LightColor           99975000
+LightDistance        8
+LightIntensity       50
+
+MapObjType           2
+ProtoId              3852
+MapX                 123
+MapY                 154
+ScriptName           map_hub
+FuncName             t_NearParkEntrance
+
+MapObjType           2
+ProtoId              3852
+MapX                 124
+MapY                 154
+ScriptName           map_hub
+FuncName             t_NearParkEntrance
+
+MapObjType           2
+ProtoId              3852
+MapX                 125
+MapY                 155
+ScriptName           map_hub
+FuncName             t_NearParkEntrance
+
+MapObjType           2
+ProtoId              3852
+MapX                 126
+MapY                 155
+ScriptName           map_hub
+FuncName             t_NearParkEntrance
+
+MapObjType           2
+ProtoId              3852
+MapX                 127
+MapY                 155
+ScriptName           map_hub
+FuncName             t_NearParkEntrance
+
+MapObjType           2
+ProtoId              3852
+MapX                 128
+MapY                 154
+ScriptName           map_hub
+FuncName             t_NearParkEntrance
+
+MapObjType           0
+ProtoId              128
+MapX                 128
+MapY                 153
+Dir                  2
+ScriptName           hub_guard
+FuncName             critter_init
+Critter_Cond         1
+Critter_Anim1        0
+Critter_Anim2        0
+Critter_ParamIndex0  ST_DIALOG_ID
+Critter_ParamValue0  2500
+Critter_ParamIndex1  ST_AI_ID
+Critter_ParamValue1  273
+Critter_ParamIndex2  ST_BAG_ID
+Critter_ParamValue2  13
+Critter_ParamIndex3  ST_TEAM_ID
+Critter_ParamValue3  90
+Critter_ParamIndex4  ST_NPC_ROLE
+Critter_ParamValue4  40
+Critter_ParamIndex5  ST_REPLICATION_TIME
+Critter_ParamValue5  0
+Critter_ParamIndex6  ST_FACTION_RANK
+Critter_ParamValue6  1
+Critter_ParamIndex7  ST_FACTION_MODE
+Critter_ParamValue7  1
+Critter_ParamIndex8  ST_OVERRIDE_CRTYPE
+Critter_ParamValue8  0
+
+MapObjType           0
+ProtoId              44
+MapX                 134
+MapY                 149
+Dir                  1
+ScriptName           hub_guard
+FuncName             critter_init
+Critter_Cond         1
+Critter_Anim1        0
+Critter_Anim2        0
+Critter_ParamIndex0  ST_DIALOG_ID
+Critter_ParamValue0  2500
+Critter_ParamIndex1  ST_AI_ID
+Critter_ParamValue1  273
+Critter_ParamIndex2  ST_BAG_ID
+Critter_ParamValue2  183
+Critter_ParamIndex3  ST_TEAM_ID
+Critter_ParamValue3  90
+Critter_ParamIndex4  ST_NPC_ROLE
+Critter_ParamValue4  41
+Critter_ParamIndex5  ST_REPLICATION_TIME
+Critter_ParamValue5  0
+Critter_ParamIndex6  ST_FACTION_RANK
+Critter_ParamValue6  1
+Critter_ParamIndex7  ST_FACTION_MODE
+Critter_ParamValue7  1
+Critter_ParamIndex8  ST_OVERRIDE_CRTYPE
+Critter_ParamValue8  0
+
+MapObjType           0
+ProtoId              129
+MapX                 134
+MapY                 151
+Dir                  5
+ScriptName           hub_guard
+FuncName             critter_init
+Critter_Cond         1
+Critter_Anim1        0
+Critter_Anim2        0
+Critter_ParamIndex0  ST_DIALOG_ID
+Critter_ParamValue0  2500
+Critter_ParamIndex1  ST_AI_ID
+Critter_ParamValue1  273
+Critter_ParamIndex2  ST_BAG_ID
+Critter_ParamValue2  13
+Critter_ParamIndex3  ST_TEAM_ID
+Critter_ParamValue3  90
+Critter_ParamIndex4  ST_NPC_ROLE
+Critter_ParamValue4  41
+Critter_ParamIndex5  ST_REPLICATION_TIME
+Critter_ParamValue5  0
+Critter_ParamIndex6  ST_FACTION_RANK
+Critter_ParamValue6  1
+Critter_ParamIndex7  ST_FACTION_MODE
+Critter_ParamValue7  1
+Critter_ParamIndex8  ST_OVERRIDE_CRTYPE
+Critter_ParamValue8  0
+
+MapObjType           0
+ProtoId              129
+MapX                 118
+MapY                 142
+Dir                  1
+ScriptName           hub_guard
+FuncName             critter_init
+Critter_Cond         1
+Critter_Anim1        0
+Critter_Anim2        0
+Critter_ParamIndex0  ST_DIALOG_ID
+Critter_ParamValue0  2500
+Critter_ParamIndex1  ST_AI_ID
+Critter_ParamValue1  273
+Critter_ParamIndex2  ST_BAG_ID
+Critter_ParamValue2  13
+Critter_ParamIndex3  ST_TEAM_ID
+Critter_ParamValue3  90
+Critter_ParamIndex4  ST_NPC_ROLE
+Critter_ParamValue4  41
+Critter_ParamIndex5  ST_REPLICATION_TIME
+Critter_ParamValue5  0
+Critter_ParamIndex6  ST_FACTION_RANK
+Critter_ParamValue6  1
+Critter_ParamIndex7  ST_FACTION_MODE
+Critter_ParamValue7  1
+Critter_ParamIndex8  ST_OVERRIDE_CRTYPE
+Critter_ParamValue8  0
+
+MapObjType           0
+ProtoId              253
+MapX                 132
+MapY                 149
+Dir                  3
+ScriptName           hub_guard
+FuncName             critter_init
+Critter_Cond         1
+Critter_Anim1        0
+Critter_Anim2        0
+Critter_ParamIndex0  ST_DIALOG_ID
+Critter_ParamValue0  2500
+Critter_ParamIndex1  ST_AI_ID
+Critter_ParamValue1  273
+Critter_ParamIndex2  ST_BAG_ID
+Critter_ParamValue2  182
+Critter_ParamIndex3  ST_TEAM_ID
+Critter_ParamValue3  90
+Critter_ParamIndex4  ST_NPC_ROLE
+Critter_ParamValue4  41
+Critter_ParamIndex5  ST_REPLICATION_TIME
+Critter_ParamValue5  0
+Critter_ParamIndex6  ST_FACTION_RANK
+Critter_ParamValue6  1
+Critter_ParamIndex7  ST_FACTION_MODE
+Critter_ParamValue7  1
+Critter_ParamIndex8  ST_OVERRIDE_CRTYPE
+Critter_ParamValue8  0
+
+MapObjType           0
+ProtoId              40
+MapX                 116
+MapY                 142
+Dir                  3
+ScriptName           hub_guard
+FuncName             critter_init
+Critter_Cond         1
+Critter_Anim1        0
+Critter_Anim2        0
+Critter_ParamIndex0  ST_DIALOG_ID
+Critter_ParamValue0  2500
+Critter_ParamIndex1  ST_AI_ID
+Critter_ParamValue1  273
+Critter_ParamIndex2  ST_BAG_ID
+Critter_ParamValue2  12
+Critter_ParamIndex3  ST_TEAM_ID
+Critter_ParamValue3  90
+Critter_ParamIndex4  ST_NPC_ROLE
+Critter_ParamValue4  41
+Critter_ParamIndex5  ST_REPLICATION_TIME
+Critter_ParamValue5  0
+Critter_ParamIndex6  ST_FACTION_RANK
+Critter_ParamValue6  1
+Critter_ParamIndex7  ST_FACTION_MODE
+Critter_ParamValue7  1
+Critter_ParamIndex8  ST_OVERRIDE_CRTYPE
+Critter_ParamValue8  0
 
 

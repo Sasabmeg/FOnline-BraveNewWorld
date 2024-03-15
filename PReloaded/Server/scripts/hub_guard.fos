@@ -33,7 +33,7 @@ void critter_init(Critter& guard, bool firstTime)
     if(guard.Stat[ST_NPC_ROLE] == ROLE_HUB_GUARD_CLINIC || guard.Stat[ST_NPC_ROLE] == ROLE_HUB_GUARD_CHURCH)
     {
         guard.ModeBase[MODE_NO_HOME] = 1;
-    }       
+    }
 
     if(firstTime)
     {
@@ -93,9 +93,67 @@ void _Idle(Critter& guard)
     }
 }
 
+array<string> hubGuardParkingGruntAttackText_Male_to_Male = {"It's target practice boys!", "Another day, another trophy!"};
+array<string> hubGuardParkingGruntAttackText_Male_to_Female = {"Bang, Bang, Baby!", "Shouldn't have left the vault kitchen!"};
+array<string> hubGuardParkingGruntAttackText_Female_to_Male = {"Another day, another trophy!", "Your baby shot you down! Bang! Bang!"};
+array<string> hubGuardParkingGruntAttackText_Female_to_Female = {"Dibs on her purse!", "Sorry honey!", "Dibs on her cosmetic case!"};
+array<string> hubGuardParkingTicketsAttackText = {"Not another bluesuit", "Another one bites the asphalt", "Wasteland is harsh"};
+array<string> hubGuardParkingTicketsAttackTextFemale = {"You got away with anything in that Vault, huh?", "Should have stayed in the kitchen", "Wasteland isn't pink kiddo"};
+
+
 void _OnMessage(Critter& npc, Critter& player, int num, int val)
 {
     GuardOnMessage(npc, player, num, val);
+
+    switch(num)
+    {
+        case MSG_HUB_PLAYER_NEAR_PARKING_ENTRANCE:
+            if (npc.Stat[ST_NPC_ROLE] == ROLE_HUB_GUARD_PARKING_BOSS) {
+                npc.Say(SAY_NORM_ON_HEAD, "Parking tickets over there ...");
+            }
+            if (npc.Stat[ST_NPC_ROLE] == ROLE_HUB_GUARD_PARKING_TICKETS) {
+                npc.Say(SAY_NORM_ON_HEAD, "Pay the parking fee here first to enter.");
+            }
+        break;
+        case MSG_HUB_PLAYER_PARKING_ENTRANCE:
+            if (npc.Stat[ST_NPC_ROLE] == ROLE_HUB_GUARD_PARKING_BOSS) {
+                npc.Say(SAY_SHOUT_ON_HEAD, "STOP!");
+            }
+        break;
+        case MSG_HUB_PLAYER_PARKING_ILLEGAL_ENTRY:
+            if (npc.Stat[ST_NPC_ROLE] == ROLE_HUB_GUARD_PARKING_BOSS) {
+                npc.Say(SAY_SHOUT_ON_HEAD, "Intruder ALERT!");
+            }
+            if (npc.Stat[ST_NPC_ROLE] == ROLE_HUB_GUARD_PARKING_GRUNT) {
+                if (Random(1, 100) > 50) {
+                    string text;
+                    if (_CritIsFemale(npc)) {
+                        if (_CritIsFemale(player)) {
+                            text = random_from_array(hubGuardParkingGruntAttackText_Female_to_Female);
+                        } else {
+                            text = random_from_array(hubGuardParkingGruntAttackText_Female_to_Male);
+                        }
+
+                    } else {
+                        if (_CritIsFemale(player)) {
+                            text = random_from_array(hubGuardParkingGruntAttackText_Male_to_Female);
+                        } else {
+                            text = random_from_array(hubGuardParkingGruntAttackText_Male_to_Male);
+                        }
+                    }
+                    npc.Say(SAY_SHOUT_ON_HEAD, text);
+                }
+            }
+            if (npc.Stat[ST_NPC_ROLE] == ROLE_HUB_GUARD_PARKING_TICKETS) {
+                if (_CritIsFemale(player)) {
+                    npc.Say(SAY_NORM_ON_HEAD, random_from_array(hubGuardParkingTicketsAttackTextFemale));
+                } else {
+                    npc.Say(SAY_NORM_ON_HEAD, random_from_array(hubGuardParkingTicketsAttackText));
+                }
+            }
+        break;
+    }
+
 }
 
 
