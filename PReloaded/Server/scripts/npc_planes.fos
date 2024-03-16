@@ -54,6 +54,30 @@ bool AddWalkPlane(Critter& npc, uint priority, uint16 hexX, uint16 hexY, uint8 d
     return npc.AddPlane(plane);
 }
 
+bool AddWalkAndWaitPlane(Critter& npc, uint priority, uint16 hexX, uint16 hexY, uint8 dir, bool run, uint cut, uint waitTimeMiliseconds)
+{
+    if(!npc.IsCanWalk())
+        return false;
+
+    NpcPlane@ plane = CreatePlane();
+    plane.Type = AI_PLANE_WALK;
+    plane.Priority = (priority == 0 ? AI_PLANE_WALK_PRIORITY : priority);
+    plane.Walk_HexX = hexX;
+    plane.Walk_HexY = hexY;
+    plane.Walk_Dir = dir;
+    plane.Run = run;
+    plane.Walk_Cut = cut;
+
+    NpcPlane@ waitPlane = CreatePlane();
+    waitPlane.Type = AI_PLANE_MISC;
+    waitPlane.Priority = (priority == 0 ? AI_PLANE_MISC_PRIORITY : priority);
+    waitPlane.Misc_WaitSecond = AFTER(REAL_MS(waitTimeMiliseconds));
+    plane.SetChild(waitPlane);
+
+    return npc.AddPlane(plane);
+}
+
+
 bool AddWalkPlane(Critter& npc, uint priority, int identifier, uint identifierExt, uint16 hexX, uint16 hexY, uint8 dir, bool run, uint cut)
 {
     if(!npc.IsCanWalk())
