@@ -15,6 +15,7 @@
 import bool AddMiscPlane(Critter& npc, uint priority, uint waitMinute, string@ funcName) from "npc_planes";
 import bool AddMiscPlane(Critter& npc, uint priority, int identifier, uint identifierExt, uint waitSecond, string@ funcName) from "npc_planes";
 import bool AddWalkPlane(Critter& npc, uint priority, uint16 hexX, uint16 hexY, uint8 dir, bool run, uint cut) from "npc_planes";
+import bool AddWalkAndWaitPlane(Critter& npc, uint priority, uint16 hexX, uint16 hexY, uint8 dir, bool run, uint cut, uint waitTimeMiliseconds) from "npc_planes";
 import bool AddWalkPlane(Critter& npc, uint priority, int identifier, uint identifierExt, uint16 hexX, uint16 hexY, uint8 dir, bool run, uint cut) from "npc_planes";
 import bool AddAttackPlane(Critter& npc, uint priority, Critter& target) from "npc_planes";
 import bool AddAttackPlane(Critter& npc, uint priority, uint critId) from "npc_planes";

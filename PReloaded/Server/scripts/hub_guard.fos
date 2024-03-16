@@ -42,6 +42,33 @@ void critter_init(Critter& guard, bool firstTime)
     }
 }
 
+void critter_init_parking(Critter& guard, bool firstTime)
+{
+    //if(guard.Stat[ST_NPC_ROLE] == ROLE_HUB_SHERRIF)
+        //InitBountyRecord(guard);
+
+    guard.SetEvent(CRITTER_EVENT_IDLE, "_IdleParking");
+    guard.SetEvent(CRITTER_EVENT_MESSAGE, "_OnMessage");
+    guard.SetEvent(CRITTER_EVENT_SHOW_CRITTER, "_OnShowCritter");
+    guard.SetEvent(CRITTER_EVENT_SMTH_STEALING, "_OnSomeoneSteal");
+
+    GuardInit(guard);
+
+    if (guard.Stat[ST_NPC_ROLE] == ROLE_HUB_GUARD_PARKING1 || guard.Stat[ST_NPC_ROLE] == ROLE_HUB_GUARD_PARKING2 || guard.Stat[ST_NPC_ROLE] == ROLE_HUB_GUARD_PARKING3
+       || guard.Stat[ST_NPC_ROLE] == ROLE_HUB_GUARD_PARKING4 || guard.Stat[ST_NPC_ROLE] == ROLE_HUB_GUARD_PARKING5 || guard.Stat[ST_NPC_ROLE] == ROLE_HUB_GUARD_PARKING6
+       || guard.Stat[ST_NPC_ROLE] == ROLE_HUB_GUARD_PARKING7)
+    {
+        guard.ModeBase[MODE_NO_HOME] = 1;
+    }
+
+    if(firstTime)
+    {
+        NpcSetLevel(guard, 26);
+        GuardPerks(guard);
+    }
+}
+
+
 bool IsPatrolling(Critter& guard)
 {
     return(guard.Stat[ST_NPC_ROLE] == ROLE_HUB_GUARD_ENTRANCE1 ||
@@ -50,7 +77,14 @@ bool IsPatrolling(Critter& guard)
            guard.Stat[ST_NPC_ROLE] == ROLE_HUB_GUARD_ENTRANCE4 ||
            guard.Stat[ST_NPC_ROLE] == ROLE_HUB_GUARD_BRAHMIN1  ||
            guard.Stat[ST_NPC_ROLE] == ROLE_HUB_METROGUARD_1 ||
-           guard.Stat[ST_NPC_ROLE] == ROLE_HUB_METROGUARD_2);
+           guard.Stat[ST_NPC_ROLE] == ROLE_HUB_METROGUARD_2 ||
+           guard.Stat[ST_NPC_ROLE] == ROLE_HUB_GUARD_PARKING1 ||
+           guard.Stat[ST_NPC_ROLE] == ROLE_HUB_GUARD_PARKING2 ||
+           guard.Stat[ST_NPC_ROLE] == ROLE_HUB_GUARD_PARKING3 ||
+           guard.Stat[ST_NPC_ROLE] == ROLE_HUB_GUARD_PARKING4 ||
+           guard.Stat[ST_NPC_ROLE] == ROLE_HUB_GUARD_PARKING5 ||
+           guard.Stat[ST_NPC_ROLE] == ROLE_HUB_GUARD_PARKING6 ||
+           guard.Stat[ST_NPC_ROLE] == ROLE_HUB_GUARD_PARKING7);
 }
 
 void _Idle(Critter& guard)
@@ -93,11 +127,41 @@ void _Idle(Critter& guard)
     }
 }
 
-array<string> hubGuardParkingGruntAttackText_Male_to_Male = {"It's target practice boys!", "Another day, another trophy!"};
-array<string> hubGuardParkingGruntAttackText_Male_to_Female = {"Bang, Bang, Baby!", "Shouldn't have left the vault kitchen!"};
-array<string> hubGuardParkingGruntAttackText_Female_to_Male = {"Another day, another trophy!", "Your baby shot you down! Bang! Bang!"};
-array<string> hubGuardParkingGruntAttackText_Female_to_Female = {"Dibs on her purse!", "Sorry honey!", "Dibs on her cosmetic case!"};
-array<string> hubGuardParkingTicketsAttackText = {"Not another bluesuit", "Another one bites the asphalt", "Wasteland is harsh"};
+void _IdleParking(Critter& guard)
+{
+    GuardOnIdle(guard);
+
+    if(guard.Stat[ST_NPC_ROLE] == ROLE_HUB_GUARD_PARKING1) {
+        _GetNextNode(guard, 10)         // Route index 10 as defined (by array position) in patrolroutes.fos
+    }
+    else if(guard.Stat[ST_NPC_ROLE] == ROLE_HUB_GUARD_PARKING2) {
+        _GetNextNode(guard, 11)         // Route index 11 as defined (by array position) in patrolroutes.fos
+    }
+    else if(guard.Stat[ST_NPC_ROLE] == ROLE_HUB_GUARD_PARKING3) {
+        _GetNextNode(guard, 12)         // Route index 12 as defined in patrolroutes.fos
+    }
+    else if(guard.Stat[ST_NPC_ROLE] == ROLE_HUB_GUARD_PARKING4) {
+        _GetNextNode(guard, 13)         // Route index 13 as defined in patrolroutes.fos
+    }
+    else if(guard.Stat[ST_NPC_ROLE] == ROLE_HUB_GUARD_PARKING5) {
+        _GetNextNode(guard, 14)         // Route index 14 as defined in patrolroutes.fos
+    }
+    else if(guard.Stat[ST_NPC_ROLE] == ROLE_HUB_GUARD_PARKING6) {
+        _GetNextNode(guard, 15)         // Route index 15 as defined in patrolroutes.fos
+    }
+    else if(guard.Stat[ST_NPC_ROLE] == ROLE_HUB_GUARD_PARKING7) {
+        _GetNextNode(guard, 16)         // Route index 16 as defined in patrolroutes.fos
+    }
+
+    uint waitTime = node.GetWait() * Random(1, 3);
+    AddWalkAndWaitPlane(guard, 0, node.GetX(), node.GetY(), node.GetDir(), false, 0, waitTime);
+}
+
+array<string> hubGuardParkingGruntAttackText_Male_to_Male = {"Dibs on his mirrored shades!", "It's target practice boys!", "Another day, another trophy!", "Wasteland is harsh!"};
+array<string> hubGuardParkingGruntAttackText_Male_to_Female = {"Bang, Bang, Baby!", "Shouldn't have left the vault kitchen!", "We are equal in the grave only!", "Wasteland is harsh!"};
+array<string> hubGuardParkingGruntAttackText_Female_to_Male = {"Another day, another trophy!", "Your baby shot you down! Bang! Bang!", "Wasteland is harsh!"};
+array<string> hubGuardParkingGruntAttackText_Female_to_Female = {"Sorry honey!", "Dibs on her cosmetic case!", "Wasteland is harsh!"};
+array<string> hubGuardParkingTicketsAttackText = {"Not another blue suit", "Another one bites the asphalt", "Wasteland is harsh"};
 array<string> hubGuardParkingTicketsAttackTextFemale = {"You got away with anything in that Vault, huh?", "Should have stayed in the kitchen", "Wasteland isn't pink kiddo"};
 
 
@@ -125,7 +189,7 @@ void _OnMessage(Critter& npc, Critter& player, int num, int val)
                 npc.Say(SAY_SHOUT_ON_HEAD, "Intruder ALERT!");
             }
             if (npc.Stat[ST_NPC_ROLE] == ROLE_HUB_GUARD_PARKING_GRUNT) {
-                if (Random(1, 100) > 50) {
+                if (Random(1, 100) > 66) {
                     string text;
                     if (_CritIsFemale(npc)) {
                         if (_CritIsFemale(player)) {
@@ -133,7 +197,6 @@ void _OnMessage(Critter& npc, Critter& player, int num, int val)
                         } else {
                             text = random_from_array(hubGuardParkingGruntAttackText_Female_to_Male);
                         }
-
                     } else {
                         if (_CritIsFemale(player)) {
                             text = random_from_array(hubGuardParkingGruntAttackText_Male_to_Female);
@@ -153,9 +216,7 @@ void _OnMessage(Critter& npc, Critter& player, int num, int val)
             }
         break;
     }
-
 }
-
 
 void _OnSomeoneSteal(Critter& guard, Critter& target, Critter& thief, bool success, Item& item, uint count)
 {

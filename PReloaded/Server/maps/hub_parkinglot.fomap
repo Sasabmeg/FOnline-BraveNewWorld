@@ -2,8 +2,8 @@
 Version              4
 MaxHexX              340
 MaxHexY              310
-WorkHexX             92
-WorkHexY             147
+WorkHexX             120
+WorkHexY             208
 ScriptModule         -
 ScriptFunc           -
 NoLogOut             0
@@ -38535,7 +38535,7 @@ Critter_ParamValue2  15
 Critter_ParamIndex3  ST_TEAM_ID
 Critter_ParamValue3  89
 Critter_ParamIndex4  ST_NPC_ROLE
-Critter_ParamValue4  42
+Critter_ParamValue4  40
 Critter_ParamIndex5  ST_REPLICATION_TIME
 Critter_ParamValue5  0
 Critter_ParamIndex6  ST_FACTION_RANK
@@ -38720,7 +38720,7 @@ Critter_ParamValue2  13
 Critter_ParamIndex3  ST_TEAM_ID
 Critter_ParamValue3  90
 Critter_ParamIndex4  ST_NPC_ROLE
-Critter_ParamValue4  40
+Critter_ParamValue4  38
 Critter_ParamIndex5  ST_REPLICATION_TIME
 Critter_ParamValue5  0
 Critter_ParamIndex6  ST_FACTION_RANK
@@ -38749,7 +38749,7 @@ Critter_ParamValue2  183
 Critter_ParamIndex3  ST_TEAM_ID
 Critter_ParamValue3  90
 Critter_ParamIndex4  ST_NPC_ROLE
-Critter_ParamValue4  41
+Critter_ParamValue4  39
 Critter_ParamIndex5  ST_REPLICATION_TIME
 Critter_ParamValue5  0
 Critter_ParamIndex6  ST_FACTION_RANK
@@ -38778,7 +38778,7 @@ Critter_ParamValue2  13
 Critter_ParamIndex3  ST_TEAM_ID
 Critter_ParamValue3  90
 Critter_ParamIndex4  ST_NPC_ROLE
-Critter_ParamValue4  41
+Critter_ParamValue4  39
 Critter_ParamIndex5  ST_REPLICATION_TIME
 Critter_ParamValue5  0
 Critter_ParamIndex6  ST_FACTION_RANK
@@ -38807,7 +38807,7 @@ Critter_ParamValue2  13
 Critter_ParamIndex3  ST_TEAM_ID
 Critter_ParamValue3  90
 Critter_ParamIndex4  ST_NPC_ROLE
-Critter_ParamValue4  41
+Critter_ParamValue4  39
 Critter_ParamIndex5  ST_REPLICATION_TIME
 Critter_ParamValue5  0
 Critter_ParamIndex6  ST_FACTION_RANK
@@ -38836,7 +38836,7 @@ Critter_ParamValue2  182
 Critter_ParamIndex3  ST_TEAM_ID
 Critter_ParamValue3  90
 Critter_ParamIndex4  ST_NPC_ROLE
-Critter_ParamValue4  41
+Critter_ParamValue4  39
 Critter_ParamIndex5  ST_REPLICATION_TIME
 Critter_ParamValue5  0
 Critter_ParamIndex6  ST_FACTION_RANK
@@ -38865,7 +38865,7 @@ Critter_ParamValue2  12
 Critter_ParamIndex3  ST_TEAM_ID
 Critter_ParamValue3  90
 Critter_ParamIndex4  ST_NPC_ROLE
-Critter_ParamValue4  41
+Critter_ParamValue4  39
 Critter_ParamIndex5  ST_REPLICATION_TIME
 Critter_ParamValue5  0
 Critter_ParamIndex6  ST_FACTION_RANK
@@ -38944,13 +38944,13 @@ MapObjType           1
 ProtoId              1851
 MapX                 136
 MapY                 155
-Item_Val1            1001
+Item_Val1            1101
 
 MapObjType           1
 ProtoId              1851
 MapX                 136
 MapY                 172
-Item_Val1            1002
+Item_Val1            1102
 
 MapObjType           0
 ProtoId              40
@@ -38958,7 +38958,217 @@ MapX                 136
 MapY                 172
 Dir                  1
 ScriptName           hub_guard
-FuncName             critter_init
+FuncName             critter_init_parking
+Critter_Cond         1
+Critter_Anim1        0
+Critter_Anim2        0
+Critter_ParamIndex0  ST_DIALOG_ID
+Critter_ParamValue0  2500
+Critter_ParamIndex1  ST_AI_ID
+Critter_ParamValue1  273
+Critter_ParamIndex2  ST_BAG_ID
+Critter_ParamValue2  13
+Critter_ParamIndex3  ST_TEAM_ID
+Critter_ParamValue3  90
+Critter_ParamIndex4  ST_NPC_ROLE
+Critter_ParamValue4  41
+Critter_ParamIndex5  ST_REPLICATION_TIME
+Critter_ParamValue5  0
+Critter_ParamIndex6  ST_FACTION_RANK
+Critter_ParamValue6  3
+Critter_ParamIndex7  ST_FACTION_MODE
+Critter_ParamValue7  1
+Critter_ParamIndex8  ST_OVERRIDE_CRTYPE
+Critter_ParamValue8  0
+
+MapObjType           1
+ProtoId              1851
+MapX                 118
+MapY                 171
+Item_Val1            1103
+
+MapObjType           1
+ProtoId              1851
+MapX                 136
+MapY                 216
+Item_Val1            1104
+
+MapObjType           1
+ProtoId              1851
+MapX                 111
+MapY                 116
+Item_Val1            1302
+
+MapObjType           1
+ProtoId              1851
+MapX                 111
+MapY                 145
+Item_Val1            1303
+
+MapObjType           1
+ProtoId              1851
+MapX                 55
+MapY                 144
+Item_Val1            1304
+
+MapObjType           1
+ProtoId              1851
+MapX                 55
+MapY                 116
+Item_Val1            1301
+
+MapObjType           0
+ProtoId              40
+MapX                 77
+MapY                 155
+Dir                  2
+ScriptName           hub_guard
+FuncName             critter_init_parking
+Critter_Cond         1
+Critter_Anim1        0
+Critter_Anim2        0
+Critter_ParamIndex0  ST_DIALOG_ID
+Critter_ParamValue0  2500
+Critter_ParamIndex1  ST_AI_ID
+Critter_ParamValue1  273
+Critter_ParamIndex2  ST_BAG_ID
+Critter_ParamValue2  12
+Critter_ParamIndex3  ST_TEAM_ID
+Critter_ParamValue3  90
+Critter_ParamIndex4  ST_NPC_ROLE
+Critter_ParamValue4  42
+Critter_ParamIndex5  ST_REPLICATION_TIME
+Critter_ParamValue5  0
+Critter_ParamIndex6  ST_FACTION_RANK
+Critter_ParamValue6  1
+Critter_ParamIndex7  ST_FACTION_MODE
+Critter_ParamValue7  1
+Critter_ParamIndex8  ST_OVERRIDE_CRTYPE
+Critter_ParamValue8  0
+
+MapObjType           1
+ProtoId              1851
+MapX                 110
+MapY                 153
+Item_Val1            1201
+
+MapObjType           1
+ProtoId              1851
+MapX                 112
+MapY                 169
+Item_Val1            1202
+
+MapObjType           1
+ProtoId              1851
+MapX                 70
+MapY                 169
+Item_Val1            1203
+
+MapObjType           1
+ProtoId              1851
+MapX                 54
+MapY                 153
+Item_Val1            1204
+
+MapObjType           2
+ProtoId              2067
+MapX                 70
+MapY                 170
+
+MapObjType           0
+ProtoId              71
+MapX                 135
+MapY                 86
+Dir                  3
+ScriptName           hub_guard
+FuncName             critter_init_parking
+Critter_Cond         1
+Critter_Anim1        0
+Critter_Anim2        0
+Critter_ParamIndex0  ST_DIALOG_ID
+Critter_ParamValue0  2500
+Critter_ParamIndex1  ST_AI_ID
+Critter_ParamValue1  273
+Critter_ParamIndex2  ST_BAG_ID
+Critter_ParamValue2  13
+Critter_ParamIndex3  ST_TEAM_ID
+Critter_ParamValue3  90
+Critter_ParamIndex4  ST_NPC_ROLE
+Critter_ParamValue4  45
+Critter_ParamIndex5  ST_REPLICATION_TIME
+Critter_ParamValue5  0
+Critter_ParamIndex6  ST_FACTION_RANK
+Critter_ParamValue6  1
+Critter_ParamIndex7  ST_FACTION_MODE
+Critter_ParamValue7  1
+Critter_ParamIndex8  ST_OVERRIDE_CRTYPE
+Critter_ParamValue8  0
+
+MapObjType           0
+ProtoId              71
+MapX                 207
+MapY                 103
+Dir                  2
+ScriptName           hub_guard
+FuncName             critter_init_parking
+Critter_Cond         1
+Critter_Anim1        0
+Critter_Anim2        0
+Critter_ParamIndex0  ST_DIALOG_ID
+Critter_ParamValue0  2500
+Critter_ParamIndex1  ST_AI_ID
+Critter_ParamValue1  273
+Critter_ParamIndex2  ST_BAG_ID
+Critter_ParamValue2  13
+Critter_ParamIndex3  ST_TEAM_ID
+Critter_ParamValue3  90
+Critter_ParamIndex4  ST_NPC_ROLE
+Critter_ParamValue4  46
+Critter_ParamIndex5  ST_REPLICATION_TIME
+Critter_ParamValue5  0
+Critter_ParamIndex6  ST_FACTION_RANK
+Critter_ParamValue6  1
+Critter_ParamIndex7  ST_FACTION_MODE
+Critter_ParamValue7  1
+Critter_ParamIndex8  ST_OVERRIDE_CRTYPE
+Critter_ParamValue8  0
+
+MapObjType           0
+ProtoId              71
+MapX                 55
+MapY                 86
+Dir                  3
+ScriptName           hub_guard
+FuncName             critter_init_parking
+Critter_Cond         1
+Critter_Anim1        0
+Critter_Anim2        0
+Critter_ParamIndex0  ST_DIALOG_ID
+Critter_ParamValue0  2500
+Critter_ParamIndex1  ST_AI_ID
+Critter_ParamValue1  273
+Critter_ParamIndex2  ST_BAG_ID
+Critter_ParamValue2  13
+Critter_ParamIndex3  ST_TEAM_ID
+Critter_ParamValue3  90
+Critter_ParamIndex4  ST_NPC_ROLE
+Critter_ParamValue4  44
+Critter_ParamIndex5  ST_REPLICATION_TIME
+Critter_ParamValue5  0
+Critter_ParamIndex6  ST_FACTION_RANK
+Critter_ParamValue6  1
+Critter_ParamIndex7  ST_FACTION_MODE
+Critter_ParamValue7  1
+Critter_ParamIndex8  ST_OVERRIDE_CRTYPE
+Critter_ParamValue8  0
+
+MapObjType           0
+ProtoId              71
+MapX                 54
+MapY                 115
+Dir                  3
+ScriptName           hub_guard
+FuncName             critter_init_parking
 Critter_Cond         1
 Critter_Anim1        0
 Critter_Anim2        0
@@ -38975,122 +39185,159 @@ Critter_ParamValue4  43
 Critter_ParamIndex5  ST_REPLICATION_TIME
 Critter_ParamValue5  0
 Critter_ParamIndex6  ST_FACTION_RANK
-Critter_ParamValue6  3
+Critter_ParamValue6  1
 Critter_ParamIndex7  ST_FACTION_MODE
 Critter_ParamValue7  1
 Critter_ParamIndex8  ST_OVERRIDE_CRTYPE
 Critter_ParamValue8  0
+
+MapObjType           0
+ProtoId              71
+MapX                 193
+MapY                 148
+Dir                  2
+ScriptName           hub_guard
+FuncName             critter_init_parking
+Critter_Cond         1
+Critter_Anim1        0
+Critter_Anim2        0
+Critter_ParamIndex0  ST_DIALOG_ID
+Critter_ParamValue0  2500
+Critter_ParamIndex1  ST_AI_ID
+Critter_ParamValue1  273
+Critter_ParamIndex2  ST_BAG_ID
+Critter_ParamValue2  13
+Critter_ParamIndex3  ST_TEAM_ID
+Critter_ParamValue3  90
+Critter_ParamIndex4  ST_NPC_ROLE
+Critter_ParamValue4  47
+Critter_ParamIndex5  ST_REPLICATION_TIME
+Critter_ParamValue5  0
+Critter_ParamIndex6  ST_FACTION_RANK
+Critter_ParamValue6  1
+Critter_ParamIndex7  ST_FACTION_MODE
+Critter_ParamValue7  1
+Critter_ParamIndex8  ST_OVERRIDE_CRTYPE
+Critter_ParamValue8  0
+
+MapObjType           1
+ProtoId              1851
+MapX                 54
+MapY                 83
+Item_Val1            1401
+
+MapObjType           1
+ProtoId              1851
+MapX                 111
+MapY                 84
+Item_Val1            1402
+
+MapObjType           1
+ProtoId              1851
+MapX                 115
+MapY                 107
+Item_Val1            1403
+
+MapObjType           1
+ProtoId              1851
+MapX                 114
+MapY                 137
+Item_Val1            1404
+
+MapObjType           1
+ProtoId              1851
+MapX                 134
+MapY                 83
+Item_Val1            1501
+
+MapObjType           1
+ProtoId              1851
+MapX                 170
+MapY                 84
+Item_Val1            1502
+
+MapObjType           1
+ProtoId              1851
+MapX                 170
+MapY                 123
+Item_Val1            1503
+
+MapObjType           1
+ProtoId              1851
+MapX                 134
+MapY                 123
+Item_Val1            1504
+
+MapObjType           1
+ProtoId              1851
+MapX                 206
+MapY                 81
+Item_Val1            1601
+
+MapObjType           1
+ProtoId              1851
+MapX                 230
+MapY                 108
+Item_Val1            1602
+
+MapObjType           1
+ProtoId              1851
+MapX                 230
+MapY                 153
+Item_Val1            1603
+
+MapObjType           1
+ProtoId              1851
+MapX                 206
+MapY                 147
+Item_Val1            1604
+
+MapObjType           1
+ProtoId              1851
+MapX                 195
+MapY                 148
+Item_Val1            1701
+
+MapObjType           1
+ProtoId              1851
+MapX                 196
+MapY                 178
+Item_Val1            1702
+
+MapObjType           1
+ProtoId              1851
+MapX                 196
+MapY                 210
+Item_Val1            1703
+
+MapObjType           1
+ProtoId              1851
+MapX                 196
+MapY                 240
+Item_Val1            1704
+
+MapObjType           1
+ProtoId              1851
+MapX                 114
+MapY                 240
+Item_Val1            1705
 
 MapObjType           1
 ProtoId              1851
 MapX                 118
-MapY                 171
-Item_Val1            1003
+MapY                 170
+Item_Val1            1706
 
 MapObjType           1
 ProtoId              1851
 MapX                 136
-MapY                 216
-Item_Val1            1004
+MapY                 171
+Item_Val1            1707
 
 MapObjType           1
 ProtoId              1851
-MapX                 111
-MapY                 116
-Item_Val1            1102
-
-MapObjType           1
-ProtoId              1851
-MapX                 111
-MapY                 145
-Item_Val1            1103
-
-MapObjType           1
-ProtoId              1851
-MapX                 55
-MapY                 144
-Item_Val1            1104
-
-MapObjType           0
-ProtoId              40
-MapX                 55
-MapY                 116
-Dir                  3
-ScriptName           hub_guard
-FuncName             critter_init
-Critter_Cond         1
-Critter_Anim1        0
-Critter_Anim2        0
-Critter_ParamIndex0  ST_DIALOG_ID
-Critter_ParamValue0  2500
-Critter_ParamIndex1  ST_AI_ID
-Critter_ParamValue1  273
-Critter_ParamIndex2  ST_BAG_ID
-Critter_ParamValue2  12
-Critter_ParamIndex3  ST_TEAM_ID
-Critter_ParamValue3  90
-Critter_ParamIndex4  ST_NPC_ROLE
-Critter_ParamValue4  44
-Critter_ParamIndex5  ST_REPLICATION_TIME
-Critter_ParamValue5  0
-Critter_ParamIndex6  ST_FACTION_RANK
-Critter_ParamValue6  1
-Critter_ParamIndex7  ST_FACTION_MODE
-Critter_ParamValue7  1
-Critter_ParamIndex8  ST_OVERRIDE_CRTYPE
-Critter_ParamValue8  0
-
-MapObjType           1
-ProtoId              1851
-MapX                 55
-MapY                 116
-Item_Val1            1101
-
-MapObjType           0
-ProtoId              40
-MapX                 77
-MapY                 155
-Dir                  2
-ScriptName           hub_guard
-FuncName             critter_init2
-Critter_Cond         1
-Critter_Anim1        0
-Critter_Anim2        0
-Critter_ParamIndex0  ST_DIALOG_ID
-Critter_ParamValue0  2500
-Critter_ParamIndex1  ST_AI_ID
-Critter_ParamValue1  273
-Critter_ParamIndex2  ST_BAG_ID
-Critter_ParamValue2  12
-Critter_ParamIndex3  ST_TEAM_ID
-Critter_ParamValue3  90
-Critter_ParamIndex4  ST_NPC_ROLE
-Critter_ParamValue4  44
-Critter_ParamIndex5  ST_REPLICATION_TIME
-Critter_ParamValue5  0
-Critter_ParamIndex6  ST_FACTION_RANK
-Critter_ParamValue6  1
-Critter_ParamIndex7  ST_FACTION_MODE
-Critter_ParamValue7  1
-Critter_ParamIndex8  ST_OVERRIDE_CRTYPE
-Critter_ParamValue8  0
-
-MapObjType           1
-ProtoId              1851
-MapX                 90
-MapY                 154
-Item_Val1            1201
-
-MapObjType           1
-ProtoId              1851
-MapX                 92
-MapY                 168
-Item_Val1            1202
-
-MapObjType           1
-ProtoId              1851
-MapX                 79
-MapY                 169
-Item_Val1            1203
+MapX                 138
+MapY                 147
+Item_Val1            1708
 
 
