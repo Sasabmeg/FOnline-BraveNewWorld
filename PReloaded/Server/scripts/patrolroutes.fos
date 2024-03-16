@@ -72,7 +72,7 @@ void InitRoutes()
               .AddNode(8, 5, 50000)
               .AddNode(9, 1, 65000)
               .AddNode(3, 4, 65000)
-              .AddNode(2, 5, 55000));     // id 8
+              .AddNode(2, 5, 55000));       // id 8
 
     ADD_ROUTE(hub_metro2_patrol, MAP_HubDowntown, AddNode(11, 5, 80000)
               .AddNode(10, 2, 45000)
@@ -84,7 +84,45 @@ void InitRoutes()
               .AddNode(17, 5, 50000)
               .AddNode(18, 0, 65000)
               .AddNode(12, 5, 65000)
-              .AddNode(10, 5, 55000));     // id 9
+              .AddNode(10, 5, 55000));      // id 9
+
+    ADD_ROUTE(HUB_PARKGUARD_PATROL1, MAP_HubParkingLot, AddNode(1101, 5, 5000)
+              .AddNode(1102, 2, 5000)
+              .AddNode(1103, 1, 5000)
+              .AddNode(1102, 3, 5000)
+              .AddNode(1104, 2, 5000)
+              .AddNode(1102, 5, 5000));    // id 10
+    ADD_ROUTE(HUB_PARKGUARD_PATROL2, MAP_HubParkingLot, AddNode(1201, 3, 5000)
+              .AddNode(1202, 2, 5000)
+              .AddNode(1203, 0, 5000)
+              .AddNode(1204, 4, 5000));    // id 11
+    ADD_ROUTE(HUB_PARKGUARD_PATROL3, MAP_HubParkingLot, AddNode(1301, 3, 5000)
+              .AddNode(1302, 2, 5000)
+              .AddNode(1303, 0, 5000)
+              .AddNode(1304, 4, 5000));    // id 12
+    ADD_ROUTE(HUB_PARKGUARD_PATROL4, MAP_HubParkingLot, AddNode(1401, 3, 5000)
+              .AddNode(1402, 2, 5000)
+              .AddNode(1403, 0, 5000)
+              .AddNode(1404, 4, 5000)
+              .AddNode(1403, 0, 5000)
+              .AddNode(1402, 2, 5000)
+              .AddNode(1401, 3, 5000));    // id 13
+    ADD_ROUTE(HUB_PARKGUARD_PATROL5, MAP_HubParkingLot, AddNode(1501, 3, 5000)
+              .AddNode(1502, 2, 5000)
+              .AddNode(1503, 0, 5000)
+              .AddNode(1504, 4, 5000));    // id 14
+    ADD_ROUTE(HUB_PARKGUARD_PATROL6, MAP_HubParkingLot, AddNode(1601, 3, 5000)
+              .AddNode(1602, 2, 5000)
+              .AddNode(1603, 0, 5000)
+              .AddNode(1604, 4, 5000));    // id 15
+    ADD_ROUTE(HUB_PARKGUARD_PATROL7, MAP_HubParkingLot, AddNode(1701, 2, 5000)
+              .AddNode(1702, 2, 5000)
+              .AddNode(1703, 2, 5000)
+              .AddNode(1704, 0, 5000)
+              .AddNode(1705, 5, 5000)
+              .AddNode(1706, 4, 5000)
+              .AddNode(1707, 5, 5000)
+              .AddNode(1708, 3, 5000));    // id 16
 
     // ===================================
     // Junktown routes #2
