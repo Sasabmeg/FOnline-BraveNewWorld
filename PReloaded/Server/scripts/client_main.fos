@@ -1226,7 +1226,7 @@ void _ShowCarOwnerIndicator(int param1, int param2, int param3, string@ param4, 
         for (int i = 0, j = data.length(); i < j; i++) {
             ItemCl@ car = GetItem(data[i]);
             if (valid(car)) {
-                if (car.GetType() != ITEM_TYPE_CAR) {
+                if (car.GetType() == ITEM_TYPE_CAR) {
                     Log("Found a car: (" + car.HexX + ", " + car.HexY + ") owned by " + car.Val6);
                     Message("Found a car at: (" + car.HexX + ", " + car.HexY + ") owned by " + car.Val6);
                 } else {
