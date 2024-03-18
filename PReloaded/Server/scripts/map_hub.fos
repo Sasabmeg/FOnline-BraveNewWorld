@@ -10,6 +10,7 @@
 #include "economy_h.fos"
 #include "_defines.fos"
 #include "_entires.fos"
+#include "entire.fos"
 #include "_maps.fos"
 #include "messages_h.fos"
 #include "utils_h.fos"
@@ -17,6 +18,7 @@
 #include "reinforcements_h.fos"
 
 import void StartFirstTentQuest(Critter& player) from "quest_first_tent";
+import string getCarTypeName(Item@ car) from "car";
 
 void map_init(Map& map, bool firstTime)
 {
@@ -61,6 +63,32 @@ void map_init(Map& map, bool firstTime)
             SetAlertMap(map, maxes);
         }
     }
+
+    if (proto == MAP_HubParkingLot) {
+        map.SetEvent(MAP_EVENT_LOOP_0, "_Loop0");
+        map.SetLoopTime(0, 30000);
+    }
+}
+
+void _Loop0(Map& map) {
+    /*
+    Log("Parking lot loop proc.");
+    array<Entire> entires;
+    ParseEntires(map, entires, ENTIRE_CAR);
+    for(int i = 0, j = entires.length(); i < j; i++) {
+        Item@ car = map.GetCar(entires[i].HexX, entires[i].HexY);
+        if (valid(car)) {
+            string ownerName = "0";
+            if (car.Val6 > 0) {
+                Critter@ owner = GetCritter(car.Val6);
+                if (valid(owner)) {
+                    ownerName = owner.Name;
+                }
+            }
+            Log("Found car on (" + entires[i].HexX + ", " + entires[i].HexY + ") type = " + getCarTypeName(car) + " , owner = " + ownerName);
+        }
+    }
+    */
 }
 
 void _CritterArenaIn(Map& map, Critter& cr)

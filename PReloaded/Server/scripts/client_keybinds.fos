@@ -104,6 +104,8 @@ bool InitBinds() // export
     ret = ret && InitDocSelfBind();
     ret = ret && InitSSOtherBind();
     ret = ret && InitInventoryTrackerBind();
+    ret = ret && InitCarTrackerBind();
+    ret = ret && InitCarTrackerBeepBind();
     ret = ret && InitMsFovBind();
     ret = ret && InitRoofBind();
     ret = ret && InitWallBind();
@@ -283,6 +285,20 @@ bool InitInventoryTrackerBind()
 {
     string@    s = GetConfigValue(CONFIG_FILE, CONFIG_BINDINGS, "ToggleInventoryTracker");
     InventoryTrackerBind bnd;
+    return TryAddBind(s, bnd);
+}
+
+bool InitCarTrackerBind()
+{
+    string@    s = GetConfigValue(CONFIG_FILE, CONFIG_BINDINGS, "ToggleCarTracker");
+    CarTrackerBind bnd;
+    return TryAddBind(s, bnd);
+}
+
+bool InitCarTrackerBeepBind()
+{
+    string@    s = GetConfigValue(CONFIG_FILE, CONFIG_BINDINGS, "CarTrackerBeep");
+    CarTrackerBeepBind bnd;
     return TryAddBind(s, bnd);
 }
 

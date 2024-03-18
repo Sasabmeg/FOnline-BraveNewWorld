@@ -9,7 +9,10 @@ import bool GUI_IsKeyPressed(uint8 key) from "client_gui";
 import void SetLastMode(uint8 mode) from "client_mapper_animation";
 import bool ToggleWallRoofTransparency() from "client_interface";
 import void ToggleInventoryTracker() from "client_InventoryTracker";
-import bool IsEnabled() from "client_InventoryTracker";
+import bool IsInventoryTrackerEnabled() from "client_InventoryTracker";
+import void ToggleCarTracker() from "client_CarTracker";
+import bool IsCarTrackerEnabled() from "client_CarTracker";
+import void BeepCarTracker() from "client_CarTracker";
 
 shared interface IBind
 {
@@ -283,12 +286,33 @@ class SSOtherBind : BaseBind
     }
 }
 
+class CarTrackerBind : BaseBind
+{
+    void Exec()
+    {
+        ToggleCarTracker();
+        if (IsCarTrackerEnabled()) {
+            Message("Car Tracker enabled.");
+        } else {
+            Message("Car Tracker disabled.");
+        }
+    }
+}
+
+class CarTrackerBeepBind : BaseBind
+{
+    void Exec()
+    {
+        BeepCarTracker();
+    }
+}
+
 class InventoryTrackerBind : BaseBind
 {
     void Exec()
     {
         ToggleInventoryTracker();
-        if (IsEnabled()) {
+        if (IsInventoryTrackerEnabled()) {
             Message("Inventory Tracker enabled.");
         } else {
             Message("Inventory Tracker disabled.");
