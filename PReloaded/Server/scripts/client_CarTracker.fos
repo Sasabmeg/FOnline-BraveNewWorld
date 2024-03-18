@@ -56,17 +56,20 @@ class CCarTracker {
     bool beepActive;
     uint beepActivationTime;
     uint beepDuration;
+    uint cricketDuration;
+    array<int> carIds;
     array<ItemCl@> cars;
 
     CCarTracker() {
         enabled = true;
         beepActive = false;
         beepDuration = 1000;
+        cricketDuration = 3000;
     }
 
     void SelfDisableBeepAfterDurationExpired() {
-        if (beepActive && (GetTick() + 10 > beepActivationTime + beepDuration)) {
-            Message("Beep End.");
+        if (beepActive && (GetTick() + 10 > beepActivationTime + (carIds.length() > 0 ? beepDuration : cricketDuration) )) {
+            //Message("Beep End.");
             beepActive = false;
         }
     }
@@ -76,85 +79,138 @@ class CCarTracker {
             beepActive = true;
             beepActivationTime = GetTick();
             //  play beep sound.
-            if (cars.length() > 0) {
+            if (valid(carIds) && carIds.length() > 0) {
+                string idsText = "";
+                for (int i = 0, j = carIds.length(); i < j; i++) {
+                    idsText += "" + carIds[i] + ", ";
+                }
+                Message("Car Ids: " + idsText);
+            } else {
+                Message("Car Ids length = " + carIds.length());
+            }
+            if (carIds.length() > 0) {
                 PlaySound("car_beep1.ogg");
+                Message("You can hear your car beeping.");
             } else {
                 PlaySound("cricket");
+                Message("No sign of your faithful vehicle, only the crickets respond.");
             }
         } else {
-            Message("Car beep still in progress.");
+            if (carIds.length() > 0) {
+                Message("Your car is still beeping.");
+            } else {
+                Message("You can still hear the crickets, but not your car.");
+            }
         }
     }
 
 
     void refresh(array<int>@ data) {
-        array<ItemCl@> carsTmp;
-        CritterCl@ chosen = GetChosen();
+        array<int> carIdsTmp;
+        carIds = carIdsTmp;
         for (int i = 0, j = data.length(); i < j; i++) {
-            ItemCl@ car = GetItem(data[i]);
+            carIds.insertLast(data[i]);
+        }
+    }
+
+    void refreshVisibleCars() {
+        array<ItemCl@> carsTmp;
+        for (int i = 0, j = carIds.length(); i < j; i++) {
+            ItemCl@ car = GetItem(carIds[i]);
             if (valid(car)) {
                 if (car.GetType() == ITEM_TYPE_CAR) {
-                    Log("Added car: (" + car.HexX + ", " + car.HexY + ") owned by " + car.Val6);
-                    Message("Added car: (" + car.HexX + ", " + car.HexY + ") owned by " + car.Val6);
+                    //Log("Added car: (" + car.HexX + ", " + car.HexY + ") owned by " + car.Val6);
+                    //Message("Added car: (" + car.HexX + ", " + car.HexY + ") owned by " + car.Val6);
                     carsTmp.insertLast(car);
                 } else {
-                    Log("It's not a car!");
-                    Message("It's not a car.");
+                    //Log("It's not a car!");
+                    //Message("It's not a car.");
                 }
             } else {
-                Log("Null object: " + data[i]);
-                Message("Null object: " + data[i]);
+                //  if the car is not valid, it means that client does not load it, because not in screen or close to that
+                //Log("Null object: " + carIds[i]);
+                //Message("Null object: " + carIds[i]);
             }
         }
         cars = carsTmp;
+
+        /*
+        if (carIds.length() > 0) {
+            string idsText = "";
+            for (int i = 0, j = carIds.length(); i < j; i++) {
+                idsText += "" + carIds[i] + ", ";
+            }
+            Message("Car Ids: " + idsText);
+        } else {
+            Message("Car Ids length = " + carIds.length());
+        }
+        */
     }
 
     void Draw() {
         if (!enabled) {
-            Message("CarTracker disabled.");
+            //Message("CarTracker disabled.");
             return;
         }
 
         if (GUI_GetActiveMainScreen() != CLIENT_MAIN_SCREEN_GAME) {
-            Message("CarTracker not on main screen.");
+            //Message("CarTracker not on main screen.");
             return;
         }
 
         CritterCl@ chosen = GetChosen();
         if (!valid(chosen)) {
-            Message("Chosen is fake!");
+            //Message("Chosen is fake!");
             return;
         }
 
+        refreshVisibleCars();
 
         for (int i = 0, j = cars.length(); i < j; i++) {
-            int carX = -1, carY = -1;
+            int carX = -1, carY = -1, carXAdjust = -1, carYAdjust = 90;
             if (GetHexPos(cars[i].HexX, cars[i].HexY, carX, carY)) {
                 if (carX < __ScreenWidth || carY < __ScreenHeight ||
                         carX >= 0 || carY >= 0) {
+
+                    string ownerName = "Owner: N/A";
+                    if (cars[i].Val6 > 0) {
+                        CritterCl@ owner = GetCritter(cars[i].Val6);
+                        if (valid(owner)) {
+                            ownerName = "" + owner.Name;
+                        }
+                    }
+                    string carNumber = "" + cars[i].LockerId;
+                    string fuelAndDamage = "" + (cars[i].Charge / 100) + "/" + (_CarGetFuelTank(cars[i]) / 100) +
+                        " " + (cars[i].Deterioration * 100 / _CarGetMaxDeterioration(cars[i])) + "%";
                     uint color = COLOR_CONTOUR_YELLOW;
-                    string carIndicatorText = "YOUR CAR";
                     int w = 0, h = 0, l = 0;
-                    GetTextInfo(carIndicatorText, 0, 0, FONT_TYPE_DEFAULT, FONT_FLAG_BORDERED, w, h, l);
-                    carX -= w / 2;
-                    carY -= 50 / __SpritesZoom;
-                    carY = DrawClientText(carIndicatorText, carX, carY, h, color);
+                    carY -= carYAdjust / __SpritesZoom;
+
+                    GetTextInfo(carNumber, 0, 0, FONT_TYPE_DEFAULT, FONT_FLAG_BORDERED, w, h, l);
+                    carXAdjust = carX - w / 2;
+                    carY = DrawClientText(carNumber, carXAdjust, carY, h, color);
+
+                    GetTextInfo(ownerName, 0, 0, FONT_TYPE_DEFAULT, FONT_FLAG_BORDERED, w, h, l);
+                    carXAdjust = carX - w / 2;
+                    carY = DrawClientText(ownerName, carXAdjust, carY, h, color);
+
+                    GetTextInfo(fuelAndDamage, 0, 0, FONT_TYPE_DEFAULT, FONT_FLAG_BORDERED, w, h, l);
+                    carXAdjust = carX - w / 2;
+                    carY = DrawClientText(fuelAndDamage, carXAdjust, carY, h, color);
                 } else {
                     //Log("Indicator out of screen coords.");
                     //Message("Indicator out of screen coords. (" + carX + ", " + carY + ")");
                 }
             } else {
-                Log("Failed to get map to screen coordinates.");
-                Message("Failed to get map to screen coordinates.");
+                Log("CarTracker::Draw() - Failed to get map to screen coordinates.");
+                //Message("Failed to get map to screen coordinates.");
             }
         }
-
         SelfDisableBeepAfterDurationExpired();
     }
 
     int DrawClientText(string& text, int x, int y, int y_fix, uint color)
     {
-        //Message("DrawClientText Called");
         DrawText(text, x, y, __ScreenWidth, (y_fix > 10 ? y_fix : 10), color, FONT_TYPE_DEFAULT, 0);
 
         if(y_fix > 0)
