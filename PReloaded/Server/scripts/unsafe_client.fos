@@ -22,6 +22,7 @@
 #include "caravans_h.fos"
 #include "map_tent_h.fos"
 #include "item_misc_h.fos"
+#include "entire.fos"
 
 #define GETACCESS_FILE    "config\\GetAccess.cfg"
 
@@ -46,6 +47,7 @@ import bool ReverseAllItems(Critter& cr, array<Item@>& items, uint cnt, uint max
 import bool ReadMapToLocationSilently(Item& item, Critter& cr) from "item_misc";
 
 import void WearHandsOnDeath(Critter& cr) from "repair";
+import string getCarTypeName(Item@ car) from "car";
 
 void unsafe_GetTimer(Critter& player, int p0, int p1, int p2, string@ commandString, array<int>@ param4)     // anti-bot
 {
@@ -1738,4 +1740,40 @@ void unsafe_ScienceAtHex(Critter& player, int mode, int, int, string@, array<int
     }
     else
         player.Say(SAY_NETMSG, "Can't do that here.");
+}
+
+void unsafe_ShowCarInfo(Critter& player, int p0, int p1, int p2, string@ message, array<int>@ param4) {
+    player.Say(SAY_NETMSG, "unsafe_ShowCarInfo called!");
+    Log("Player " + player.Name + " ran command: ~car");
+
+    Map@ map = player.GetMap();
+    if (!valid(map))
+        return;
+
+    array<Entire> entires;
+    array<int> cars;
+    ParseEntires(map, entires, ENTIRE_CAR);
+    if (entires.length() > 0) {
+        for(int i = 0, j = entires.length(); i < j; i++) {
+            Item@ car = map.GetCar(entires[i].HexX, entires[i].HexY);
+            if (valid(car)) {
+                string ownerName = "N/A";
+                if (car.Val6 > 0) {
+                    Critter@ owner = GetCritter(car.Val6);
+                    if (valid(owner)) {
+                        ownerName = owner.Name;
+                    }
+                }
+                Log("Found car on (" + entires[i].HexX + ", " + entires[i].HexY + ") type = " + getCarTypeName(car) + " , owner = " + ownerName);
+                if (player.Id == car.Val6) {
+                    Log("Adding car to array: " + car.Id);
+                    cars.insertLast(car.Id);
+                }
+            }
+        }
+    } else {
+        player.Say(SAY_NETMSG, "No parking spots found.");
+        Log("No parking spots found.");
+    }
+    player.RunClientScript("client_main@_ShowCarOwnerIndicator", 0, 0, 0, null, cars);
 }

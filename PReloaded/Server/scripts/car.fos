@@ -12,6 +12,9 @@
  */
 /*@{*/
 
+#ifndef _CAR_
+#define _CAR_
+
 #include "mapdata_h.fos"
 #include "_macros.fos"
 #include "MsgStr.h"
@@ -484,6 +487,7 @@ void DriveToGlobal(Critter& cr, Item& car, bool requestGroup)
     if (eventId > 0)
         EraseTimeEvent(eventId);
     car.Val5 = 0;
+    car.Val6 = cr.Id;   //  faster to query owner
     car.Update();
     UNSETFLAG(car.Val0, CAR_LOCKPICK_TIMEOUT);
 
@@ -674,5 +678,51 @@ bool entrance_city(Location& Loc, array<Critter@>& critters, uint8 entrance)
 
     return true;
 }
+
+string getCarTypeName(Item@ car) {
+    if (!valid(car))
+        return "NULL";
+    if (car.Proto.ProtoId == PID_HUMMER) {
+        return "Hummer";
+    } else if (car.Proto.ProtoId == PID_BUGGY) {
+        return "Buggy";
+    } else if (car.Proto.ProtoId == PID_SCOUT) {
+        return "Scout";
+    } else if (car.Proto.ProtoId == PID_VERTIBIRD) {
+        return "Vertibird";
+    } else if (car.Proto.ProtoId == PID_HIGHWAYMAN) {
+        return "Highwayman";
+    } else if (car.Proto.ProtoId == PID_RUSTY_HIGHWAYMAN) {
+        return "Rusty Highwayman";
+    } else if (car.Proto.ProtoId == PID_CARAVAN_WHITE) {
+        return "White Caravan";
+    } else if (car.Proto.ProtoId == PID_CARAVAN_ORANGE) {
+        return "Orange Carvan";
+    } else if (car.Proto.ProtoId == PID_COCKROACH) {
+        return "Cockroach";
+    } else if (car.Proto.ProtoId == PID_WRECKED_CAR) {
+        return "Wrecked Car";
+    } else if (car.Proto.ProtoId == PID_BOAT) {
+        return "Boat";
+    } else if (car.Proto.ProtoId == PID_CORVEGA) {
+        return "Corvega";
+    } else if (car.Proto.ProtoId == PID_TARDIS) {
+        return "Tardis";
+    } else if (car.Proto.ProtoId == PID_POLICE_CAR) {
+        return "Police Car";
+    } else if (car.Proto.ProtoId == PID_MOTORCYCLE) {
+        return "Motorcycle";
+    } else if (car.Proto.ProtoId == PID_FIRETRUCK) {
+        return "Firetruck";
+    } else if (car.Proto.ProtoId == PID_TRUCK) {
+        return "Truck";
+    } else if (car.Proto.ProtoId == PID_BARGE) {
+        return "Barge";
+    } else {
+        return "PID=" + car.Proto.ProtoId;
+    }
+}
+
+#endif
 
 /*@}*/

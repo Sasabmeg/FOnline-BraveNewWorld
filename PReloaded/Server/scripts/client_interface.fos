@@ -42,6 +42,7 @@ import void changedParam_Hide(CritterCl& cr, uint, int oldValue) from "parameter
 import void DrawChosenTabs() from "chosen_tabs";
 import void DrawQuestTracker() from "client_QuestTracker";
 import void DrawInventoryTracker() from "client_InventoryTracker";
+import void DrawCarTracker() from "client_CarTracker";
 
 import bool IsPossessMode() from "client_dev_menu";
 import bool IsAuthorized() from "client_dev_menu";
@@ -734,6 +735,7 @@ void render_iface(uint layer)
         DrawChosenTabs();
 		DrawQuestTracker();
         DrawInventoryTracker();
+        DrawCarTracker();
     }
 
     if((layer == 100 || layer == 101) && __WorldmapActive)
