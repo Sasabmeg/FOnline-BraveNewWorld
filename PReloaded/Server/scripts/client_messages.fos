@@ -666,6 +666,11 @@ bool out_message(string& message, int& sayType)
             RunServerScriptUnsafe("unsafe_client@unsafe_FactionInfo", full, 0, 0, " ", null);
             return(false);
         }
+        if(words.length() > 0 && words[0] == "~car")
+        {
+            RunServerScriptUnsafe("unsafe_client@unsafe_ShowCarInfo", 0, 0, 0, message, null);
+            return(false);
+        }
 
         #ifdef __DEBUG__
         if(words.length() >= 4 && words[0] == "~seteffect")

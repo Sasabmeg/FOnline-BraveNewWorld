@@ -28,6 +28,8 @@ import void InitCritterOnHead() from "client_critter_onhead";
 import void InitChosenTabs() from "chosen_tabs";
 import void InitQuestTracker() from "client_QuestTracker";
 import void InitInventoryTracker() from "client_InventoryTracker";
+import void InitCarTracker() from "client_CarTracker";
+import void RefreshCars(array<int>@ data) from "client_CarTracker";
 
 import void BroadcastProcess() from "client_broadcast";
 
@@ -148,6 +150,7 @@ bool start()
     InitChosenTabs();
     InitQuestTracker();
     InitInventoryTracker();
+    InitCarTracker();
 
     InitBarterFilters();
     InitFixboyAddons();
@@ -1215,4 +1218,30 @@ void _OpenURL(int, int, int, string@ url, array<int>@)
     Log("Opening URL: " + url);
     Message("Opening URL: " + url);
     OpenURL(url);
+}
+
+void _ShowCarOwnerIndicator(int param1, int param2, int param3, string@ param4, array<int>@ data) {
+    CritterCl@ chosen = GetChosen();
+    if (data.length() > 0) {
+        for (int i = 0, j = data.length(); i < j; i++) {
+            ItemCl@ car = GetItem(data[i]);
+            if (valid(car)) {
+                if (car.GetType() != ITEM_TYPE_CAR) {
+                    Log("Found a car: (" + car.HexX + ", " + car.HexY + ") owned by " + car.Val6);
+                    Message("Found a car at: (" + car.HexX + ", " + car.HexY + ") owned by " + car.Val6);
+                } else {
+                    Log("It's not a car!");
+                    Message("It's not a car.");
+
+                }
+            } else {
+                Log("Null object: " + data[i]);
+                Message("Null object: " + data[i]);
+            }
+        }
+    } else {
+        Log("No items." + data.length());
+        Message("No items." + data.length());
+    }
+    RefreshCars(data);
 }
