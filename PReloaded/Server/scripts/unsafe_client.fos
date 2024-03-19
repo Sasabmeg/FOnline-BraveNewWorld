@@ -1743,11 +1743,12 @@ void unsafe_ScienceAtHex(Critter& player, int mode, int, int, string@, array<int
 }
 
 void unsafe_ShowCarInfo(Critter& player, int p0, int p1, int p2, string@ message, array<int>@ param4) {
-    player.Say(SAY_NETMSG, "unsafe_ShowCarInfo called!");
-    Log("Player " + player.Name + " ran command: ~car");
+    //player.Say(SAY_NETMSG, "unsafe_ShowCarInfo called!");
+    //Log("Player " + player.Name + " ran command: ~car");
     sendCarInfoToPlayer(player);
 }
 
+//  Export to main
 void sendCarInfoToPlayer(Critter& player) {
     Map@ map = player.GetMap();
     if (!valid(map))
@@ -1768,16 +1769,16 @@ void sendCarInfoToPlayer(Critter& player) {
                     }
                 }
                 Log("Found car on (" + entires[i].HexX + ", " + entires[i].HexY + ") type = " + getCarTypeName(car) + " , owner = " + ownerName);
-                if (player.Id == car.Val6) {
+                if (player.Id == uint(car.Val6)) {
                     Log("Adding car to array: " + car.Id);
-                    player.Say(SAY_NETMSG, "Adding car to array: id = " + car.Id + "(" + entires[i].HexX + ", " + entires[i].HexY + ") type = " + getCarTypeName(car) + " , owner = " + ownerName);
-                    cars.insertLast(car.Id);
+                    player.Say(SAY_NETMSG, "sendCarInfoToPlayer - Adding car to array: id = " + car.Id + "(" + entires[i].HexX + ", " + entires[i].HexY + ") type = " + getCarTypeName(car) + " , owner = " + ownerName);
+                    cars.insertLast(int(car.Id));
                 }
             }
         }
     } else {
-        player.Say(SAY_NETMSG, "No parking spots found.");
-        Log("No parking spots found.");
+        //player.Say(SAY_NETMSG, "No parking spots found.");
+        //Log("No parking spots found.");
     }
     player.RunClientScript("client_main@_ShowCarOwnerIndicator", 0, 0, 0, null, cars);
 }
