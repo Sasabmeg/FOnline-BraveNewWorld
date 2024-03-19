@@ -1,464 +1,4612 @@
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              
 
-import uint8 GetCurrentAim()from"client_keybinds";
-import bool GUI_IsKeyPressed(uint8 key)from"client_gui";
-
-import int GUI_GetActiveMainScreen()from"client_gui";
-import int GUI_GetActiveScreen()from"client_gui";
-
-class SmartCollection
+uint __GetColor(int r,int g,int b,int a=0xFF)
 {
-	array<uint16>Items;
-	array<uint16>Tools;
-	array<uint8>Slots;
-	string Text;    
+	r=(((r)>(255))?(255):(((r)<(0))?(0):(r)));
+	g=(((g)>(255))?(255):(((g)<(0))?(0):(g)));
+	b=(((b)>(255))?(255):(((b)<(0))?(0):(b)));
+	a=(((a)>(255))?(255):(((a)<(0))?(0):(a)));
+	return(uint((((a)&0xFF)<<24)|(((r)&0xFF)<<16)|(((g)&0xFF)<<8)|((b)&0xFF)));
+}                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           
+
+shared interface IBroadcastBuffer
+{
+	string GetString();
 	
-	SmartCollection(array<uint16>&items,array<uint8>&slots,string@text,uint msg,uint idx)
-	{
-		Items=items;
-		Tools.resize(0);
-		Slots=slots;
-		
-		if((@text!=null))
-		Text=text;
-		else
-		Text=GetMsgStr(msg,idx);
-	} 
+	void SetType(int type);
+	int GetType();
+	void SetTime(int time);
+	int GetTime();
+	void SetSetup(int setup);
+	int GetSetup();
+	void SetMessage(string message);
+	void AppendMessage(string message);
+	string GetMessage();
+	void SetData(array<int>data);
 	
-	SmartCollection(array<uint16>&items,array<uint16>&tools,array<uint8>&slots,string@text,uint msg,uint idx)
+	void SetStart(int time);
+	void ResetStart();
+	
+	void SetLifetime(int lifetime);
+	
+	void SetFilters(int filters);
+	void SetFilter(int filter);
+	void SetFilter(int filter,int data);
+	void UnsetFilter(int filter);
+	bool Filter(int filter);
+	bool CheckFilters(Critter@player);
+	
+	bool Send(Critter@player);
+	uint SendToAll();
+	
+	void SetGM(int id);
+	void UnsetGM();
+	
+	void ToDelete();
+};  
+
+import void UpdateBroadcast()from"broadcast";
+
+import IBroadcastBuffer@AddBroadcastBuffer(int type,int time,int setup,string&message,array<int>&data,int lifetime,int flags)from"broadcast";
+import void DumpBroadcastBuffer(Critter@player)from"broadcast";
+import uint FindBroadcastBufferByType(int type,array<IBroadcastBuffer@>&buf)from"broadcast";
+import uint FindBroadcastBufferByGM(int id,array<IBroadcastBuffer@>&buf)from"broadcast"; 
+
+import IBroadcastBuffer@Broadcast_Message(string&message,int time,int filters,bool send)from"broadcast";
+import IBroadcastBuffer@Broadcast_Message(string&message,int time,int filters)from"broadcast";
+import IBroadcastBuffer@Broadcast_Message(string&message,int&time)from"broadcast";
+import IBroadcastBuffer@Broadcast_Message(string&message,bool send)from"broadcast";
+import IBroadcastBuffer@Broadcast_Message(string&message)from"broadcast"; 
+
+import void Broadcast_TownControl_Set(string&message,int location,int time,int faction)from"broadcast";
+import void Broadcast_TownControl_Set(int location,int time,int faction)from"broadcast";
+import void Broadcast_TownControl_Stop(int location)from"broadcast"; 
+
+import IBroadcastBuffer@Broadcast_Influence(int location,int time,string&message)from"broadcast"; 
+
+import uint Broadcast_RequestHelp(Critter@player,string&message)from"broadcast";
+import void Broadcast_CheckRequestHelpBuffer(Critter@gm)from"broadcast";
+import void Broadcast_DumpRequestHelpBuffer(Critter@gm)from"broadcast"; 
+
+import void baseControl(string msg,int mapId,uint time)from"broadcast";
+import void baseControlLocal(string msg,int mapId,uint time)from"broadcast";
+import void baseControlRadio(string msg,uint time,int mapId,uint factionId)from"broadcast"; 
+
+import void ServerEventMSG(uint time,string msg)from"broadcast"; 
+
+import IBroadcastBuffer@GetEventCountDownBuffer(int location,int type)from"broadcast";
+import void ServerEventCNTSet(string message,uint location,uint type,uint time)from"broadcast";
+import void ServerEventCNTSet(uint location,uint type,uint time)from"broadcast";
+import void ServerEventCNTStop(uint location,uint type)from"broadcast";                   
+
+shared interface IConfigVar
+{
+	string GetName();
+	string GetValue();
+	array<string>GetValueAsArray();
+	array<string>GetValueAsArray(string&delimeter);
+	void SetValue(int val);
+	void SetValue(uint val);
+	void SetValue(string&val);
+	void SetValue(array<string>&val);
+	void SetValue(array<string>&val,string&delimeter);
+};
+
+shared interface IConfigSection
+{
+	string GetName();
+	bool AddVar(string&var,string&val);
+	bool DeleteVar(string&var);
+	bool DeleteVar(string&var,bool caseSensitive);
+	IConfigVar@GetVar(string&var);
+	IConfigVar@GetVar(string&varname,bool caseSensitive);
+	void GetVars(array<string>&list);
+	bool SetVar(string&varname,string val);
+	bool VarExists(string&var);
+	bool VarExists(string&var,bool caseSensitive);
+};
+
+shared interface IConfigFile
+{
+	bool IsVirtual();
+	string GetName();
+	bool AddSection(string&section);
+	IConfigSection@GetSection(string&section);
+	IConfigSection@GetSection(string&sectioname,bool caseSensitive);
+	void GetSections(array<string>&list);
+	bool SectionExists(string&section);
+	bool SectionExists(string&section,bool caseSensitive);
+};  
+
+import IConfigFile@NewConfig(string&filename)from"config_file";
+import bool LoadConfig(string&filename)from"config_file";
+import bool SaveConfig(string&filename)from"config_file";
+import bool UnloadConfig(string&filename)from"config_file";
+
+import IConfigFile@GetConfigFile(string&filename)from"config_file";
+import IConfigFile@GetConfigFile(string&filename,bool caseSensitive)from"config_file";
+import IConfigSection@GetConfigSection(string&filename,string&sectioname)from"config_file";
+import IConfigSection@GetConfigSection(string&filename,string&sectioname,bool caseSensitive)from"config_file";
+import IConfigVar@GetConfigVar(string&filename,string&sectioname,string@varname)from"config_file";
+import IConfigVar@GetConfigVar(string&filename,string&sectioname,string@varname,bool caseSensitive)from"config_file";
+
+import string@GetConfigValue(string&filename,string&section,string@varname)from"config_file";
+import string@GetConfigValue(string&filename,string&sectioname,string@varname,bool caseSensitive)from"config_file";
+
+import bool SetConfigValue(string&filename,string&sectioname,string@varname,string&value)from"config_file";
+import bool SetConfigValue(string&filename,string&sectioname,string@varname,bool value)from"config_file";
+import bool SetConfigValue(string&filename,string&sectioname,string@varname,int value)from"config_file";
+import bool SetConfigValue(string&filename,string&sectioname,string@varname,uint value)from"config_file";                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     
+
+import void FloatingHealText(Critter&cr,int healAmount,int reason,int successType=(2))from"utils";
+import void FloatingHealTextByDrugPid(Critter&cr,int healAmount,uint16 drugPid)from"utils";
+import Location@GetLocationOf(Critter&critter)from"utils";
+import string GetLocationName(uint locId)from"utils";
+import string GetLocationName(Location@loc)from"utils";
+import bool ReadPids(array<int>&out pids,bool removeinvalid)from"utils";
+import void ReadDefines(string@fileName,dictionary&items,array<string>@defines)from"utils";
+import void ReadMsgStrings(string&fileName,dictionary&output)from"utils";
+import bool ParseDefine(const string&in line,string&out spid,int&out id)from"utils";
+import int SkipWhitespaces(const string&in str,int start)from"utils";
+import int SkipNonWhitespaces(const string&in str,int start)from"utils";
+import bool IsParameterTag(string&str)from"utils";
+import string GetParameterString(array<string@>@arr,string&parameter)from"utils";
+import int GetIndexOfString(array<string@>@arr,string&str)from"utils";
+import string GetConcatenatedString(array<string@>@arr,uint startindex,int stopindex)from"utils";
+import string GetMsgStr(int textMsg,uint strNum)from"utils";
+import string GetConditionOfCritter(Critter@cr)from"utils";
+import string GetExtConditionOfCritter(Critter@cr)from"utils";
+import uint GetAllOnlinePlayers(array<Critter@>&out players)from"utils";
+import uint GetAuthenticatedPlayers(array<Critter@>&out players)from"utils";
+import uint GetAuthenticatedPlayers(array<Critter@>&out players,bool ignorePriviledges)from"utils";
+import uint GetNumberOfPlayersOnline()from"utils";
+import void SetTurnBasedAvailability(Location@loc)from"utils";
+import bool IsEncounterMap(Map@map)from"utils";
+import bool IsSpecialEncounterMap(Map@map)from"utils";
+import bool IsTown(Map@map)from"utils";
+import uint GetMapType(Map@map)from"utils";
+import void LockDoor(uint x,uint y,Map@map,uint complexity,uint lockid)from"utils";
+import void UnlockDoor(uint x,uint y,Map@map)from"utils";
+import void ClearContainer(Item@container)from"utils";
+import void MoveItemsCritterToCont(Critter&crFrom,Item&contTo,uint specid)from"utils";
+import string GetCritterInfo(Critter&cr)from"utils";
+import bool AddExpTeam(Critter&critter,int xp)from"utils";
+import void ClearEnemyStack(Critter&critter)from"utils";
+import void ClearEnemyStacksOnMap(Map@map)from"utils";
+import bool IsCurrentEnemy(Critter&cr,uint targetId)from"utils";
+import string@GetSafePlayerName(uint id)from"utils";
+import string GetSafePlayerName(uint id,string&onSuccess,string&onError)from"utils";
+import IDateTime@GetCurrentDateTime()from"utils";
+import string GetCurrentDateTimeString()from"utils";
+import string GetCurrentDateTimeString(bool date,bool time)from"utils";
+import Critter@GetMostSkilled(array<Critter@>@group,int skill)from"utils";
+import string GetAuthString(Critter&player)from"utils";
+import string GetAuthString(int accesslevel)from"utils";
+import bool CanRequestHelp(Critter&player)from"utils";
+import void SetRequestedHelp(Critter&player)from"utils";
+import void SetRequestedHelp(Critter&player,int minutes)from"utils";
+import Critter@GetOnlineGM()from"utils";
+import void Preprocess(Critter&player,string&commandString)from"utils";
+import bool IsHumanoid(Critter@cr)from"utils";
+import uint GetGroupIndex(Critter&cr)from"utils";
+import uint GetGroupIndex(int st)from"utils";
+import void SetGroupIndex(Critter&cr,uint val)from"utils";
+import uint GetGroupRank(Critter&cr)from"utils";
+import void SetGroupRank(Critter&cr,uint val)from"utils";
+import uint GetGroupMode(Critter&cr)from"utils";
+import void SetGroupMode(Critter&cr,uint val)from"utils";
+import void SetGroupInfo(Critter&cr,uint faction,uint rank,uint mode)from"utils";
+import void SetGroupInfoPack(Critter&cr,uint packInfo)from"utils";
+import void ClearEvents(Critter&cr)from"utils";
+import void MapRefreshVisible(Map@map,uint hexX,uint hexY,uint radius)from"utils";
+
+import int GetGvar(uint gvar)from"utils";
+import void SetGvar(uint gvar,uint value)from"utils";
+import int GetLLvar(Location&location,uint llvar)from"utils";
+import int GetLLvar(uint locationId,uint llvar)from"utils";
+import void SetLLvar(Location&location,uint llvar,uint value)from"utils";
+import int GetLMvar(Map&map,uint llvar)from"utils";
+import int GetLMvar(uint mapId,uint llvar)from"utils";
+import void SetLMvar(Map&map,uint llvar,uint value)from"utils";
+import int GetLIvar(Item&item,uint llvar)from"utils";
+import int GetLIvar(uint itemId,uint llvar)from"utils";
+import void SetLIvar(Item&item,uint llvar,uint value)from"utils";
+import int GetLvar(Critter&critter,uint lvar)from"utils";
+import int GetLvar(uint id,uint lvar)from"utils";
+import void SetLvar(Critter&critter,uint lvar,uint value)from"utils";
+import void SetLvar(uint id,uint lvar,uint value)from"utils";
+import int GetUvar(uint uvar,uint key,uint index)from"utils";
+import void SetUvar(uint uvar,uint key,uint index,uint value)from"utils";
+import void SetLLvar(uint locationId,uint llvar,uint value)from"utils";
+
+import uint GetContainerValue(Item@container)from"utils";
+import uint BaseItemValue(uint pid,bool ammo)from"utils";
+import uint BaseItemValue(uint pid,uint broken,uint det,bool ammo)from"utils";
+import uint BaseItemValue(Item@item)from"utils";
+import uint BaseItemValue(Item@item,uint proc)from"utils";
+import uint BaseSingleItemValue(Item@item)from"utils";
+import uint BaseSingleItemValue(Item@item,uint proc)from"utils";
+
+import void SetBloodType(Critter@cr)from"utils";
+import string GetBloodType(Critter@cr)from"utils";
+import string GetBloodRandom()from"utils";
+
+import void LogCommandUsage(Critter&player,string&commandString)from"utils";
+import void DropTimeouts(Critter&cr)from"utils";
+
+import bool HasItem(Critter@cr,uint pid)from"utils";
+import bool HasSomeWeapon(Critter@cr)from"utils";
+import uint GetBestWeaponSkill(Critter@cr)from"utils";
+import void GiveBag(uint bag,Critter@cr)from"utils";
+import void SetQuestGarbager(uint time,uint playerid,uint locid,uint var,uint val)from"utils";
+import void SetQuestVariableGarbager(uint time,uint playerid,uint var,uint val)from"utils";
+
+import Critter@AddNpc(Map@map,uint16 pid,uint16 x,uint16 y,uint8 dir,uint dialogId,string&script,uint aiPack,uint bagId,uint teamId,bool isMob,uint level)from"utils";
+import Critter@AddNpc(Map@map,uint16 pid,uint16 x,uint16 y,uint8 dir,uint dialogId,string&script,uint aiPack,uint bagId,uint teamId,uint factionRank,uint factionMode,bool isMob,uint level)from"utils";
+import Critter@AddNpc(Map@map,uint16 pid,uint16 x,uint16 y,uint8 dir,array<int>params,uint dialogId,string&script,uint aiPack,uint bagId,uint teamId,bool isMob,uint level)from"utils";
+import Critter@AddNpc(Map@map,uint16 pid,uint16 x,uint16 y,uint8 dir,array<int>params,uint dialogId,string&script,uint aiPack,uint bagId,uint teamId,uint factionRank,uint factionMode,bool isMob,uint level)from"utils";
+import void AddScore(Critter@cr,uint score,uint points)from"utils";
+
+import bool ReloadWeapon(Critter&cr)from"utils";
+import Item@GetRadio(Critter&cr)from"utils";
+import Item@GetRepairTool(Critter&cr)from"utils";
+import Item@GetEquippedItem(Critter&cr,uint Pid)from"utils";
+import Item@GetEquippedItem(Critter&cr,array<uint>&Pids)from"utils";
+import Item@GetEquippedItemByType(Critter&cr,uint ItemType)from"utils"; 
+
+import bool SkillRoll(Critter@cr,int skill,int bonus)from"utils";
+import int SkillCheck(Critter&cr,int skill,int skillused,Item@item,int bonus)from"utils";
+import string SkillName(uint8 skill)from"utils";
+import void ChangeCrTypeSafe(Critter&cr,uint16 crType)from"utils";
+
+import bool Pickable(Item@item)from"utils";
+
+import void TransferItemsToContOnMap(Critter&cr,Map@map,int entid,int contpid,int itemtypes)from"utils";
+import void TransferItemsFromContOnMap(Critter&cr,Map@map,int entid,int contpid)from"utils";
+
+import string IpToString(uint ip)from"utils";
+
+import void VerboseAction(Critter&cr,string&text)from"utils";
+import void VerboseAction(Critter&cr,Critter&target,string&text)from"utils";
+import void VerboseExperience(Critter&cr,int xpDiff,int levelDiff)from"utils";
+
+import void SetChosenActions(Critter&cr,array<int>&actions)from"utils";
+
+import void HexLine(uint16 x0,uint16 y0,uint16 x1,uint16 y1,array<uint16>@xList,array<uint16>@yList)from"utils";
+import void HexCircle(uint16 x0,uint16 y0,uint16 radius,array<uint16>@xList,array<uint16>@yList)from"utils";
+
+import bool FindPreferredGridApprox(Map&map,uint16&hx,uint16&hy)from"utils";           
+
+import bool StrToInt(string@s,uint64&inout val)from"strtoint";
+import bool StrToInt(string@s,uint&inout val)from"strtoint";
+import bool StrToInt(string@s,uint16&inout val)from"strtoint";
+import bool StrToInt(string@s,uint8&inout val)from"strtoint";
+import bool StrToInt(string@s,int64&inout val)from"strtoint";
+import bool StrToInt(string@s,int16&inout val)from"strtoint";
+import bool StrToInt(string@s,int8&inout val)from"strtoint";    
+
+import int FindInArray(array<int>&arr,int value)from"utils";
+import int FindInArray(array<uint>&arr,uint value)from"utils";
+import int FindInArray(array<uint16>&arr,uint16 value)from"utils";
+import int FindInArray(array<uint8>&arr,uint8 value)from"utils";
+import bool FindInArray(array<int>&arr,int id,int&index)from"utils";
+import bool FindInArray(array<uint>&arr,uint id,int&index)from"utils";
+import bool FindInArray(array<uint8>&arr,uint8 id,int&index)from"utils";
+import int FindInArray(array<string>&arr,string&value)from"utils";
+import int FindInArray(array<string@>@arr,string&value)from"utils";
+import bool Present(int what,array<int>&where)from"utils";
+import bool Present(uint what,array<uint>&where)from"utils";
+import bool Present(uint16 what,array<uint16>&where)from"utils";
+import bool Present(string&what,array<string>&where)from"utils";
+import bool Present(string&what,array<string@>@where)from"utils";
+
+import uint CreateLocationForGroup(Critter&player,uint16 pid,uint16 worldX,uint16 worldY,array<Critter@>&)from"utils";
+import bool FindFirstFreeHex(Map@map,uint16&x,uint16&y,uint8 dir,uint16 maxSteps)from"utils";
+import bool FindNearestFreeHex(Map&map,uint16&x,uint16&y,uint radius)from"utils";
+
+import bool GetItemCoordinates(Item&item,uint&mapID,uint16&x,uint16&y)from"utils";
+import bool ItemOnHex(uint16 pid,Map@map,uint16 x,uint16 y)from"utils";
+
+import void PrintCallstack()from"utils";
+import void PrintCallstack(int level)from"utils";
+
+import bool LocationHasCritters(Location&loc,uint findType)from"utils";
+import uint LocationGetCritters(Location&loc,uint findType,array<Critter@>@critters)from"utils";
+import bool LocationHasItems(Location&loc,uint16 protoId)from"utils";
+import uint LocationGetItems(Location&loc,uint16 protoId,array<Item@>@items)from"utils";
+import void LocationDeleteItems(Location&loc,uint16 protoId)from"utils";
+
+import bool IsDisposableEncounter(Location@loc)from"utils"; 
+
+shared class CPosition
+{
+	uint x;
+	uint y;
+	uint dir;
+};
+
+shared interface IRect
+{
+	bool IsWithin(Critter&cr);
+};
+
+shared class Rect:IRect
+{
+	uint x1;
+	uint y1;
+	uint x2;
+	uint y2;
+	
+	Rect(uint x1,uint y1,uint x2,uint y2)
 	{
-		Items=items;
-		Tools=tools;
-		Slots=slots;
-		
-		if((@text!=null))
-		Text=text;
-		else
-		Text=GetMsgStr(msg,idx);
+		this.x1=x1;
+		this.y1=y1;
+		this.x2=x2;
+		this.y2=y2;
+	}
+	
+	bool IsWithin(Critter&cr)
+	{
+		return((cr.HexX>=this.x1&&cr.HexX<=this.x2)&&(cr.HexY>=this.y1&&cr.HexY<=this.y2));
+	}
+};
+
+shared interface IDateTime
+{
+	uint16 get_Year();
+	uint16 get_Month();
+	uint16 get_DayOfWeek();
+	uint16 get_Day();
+	uint16 get_Hour();
+	uint16 get_Minute();
+	uint16 get_Second();
+	uint16 get_Milliseconds();
+	string@ToString();
+};                                                                                                                                                
+
+const string@FD_Result2String(int res)
+{
+	if(res==(0))
+	return"FD_RESULT_SUCCESS";
+	else if(res==(1))
+	return"FD_RESULT_ALREADY_EXISTS";
+	else if(res==(2))
+	return"FD_RESULT_NOT_FOUND";
+	else if(res==(3))
+	return"FD_RESULT_ANY_DATA_ERROR";
+	else if(res==(4))
+	return"FD_RESULT_INVALID_ARGUMENT";
+	else if(res==(5))
+	return"FD_RESULT_LVAR_ERROR";
+	else if(res==(6))
+	return"FD_RESULT_DB_NOT_FOUND";
+	else if(res==(7))
+	return"FD_RESULT_DB_FULL";
+	else if(res==(8))
+	return"FD_RESULT_DB_EMPTY";
+	else
+	return"FD_Result: Unknown error code";
+}      
+
+import bool IsBigFaction(uint faction)from"factions";
+import bool IsTheSameFaction(uint player1Id,uint player2Id)from"factions";
+import void _Resign(uint playerId)from"factions"; 
+
+import int RegisterFaction(uint id,const string@name,bool playerDriven)from"factions";
+import int RegisterFaction(const string@name,bool playerDriven,uint&out id)from"factions";
+
+import bool RemoveFaction(uint faction)from"factions"; 
+
+import bool GetFactionNameStr(uint faction,string&out name)from"factions";
+import bool GetFactionId(const string@name,uint&out id)from"factions"; 
+
+import bool IsFactionNameFree(const string&)from"factions";
+import bool IsFactionNameValid(const string&)from"factions";
+
+import bool IsGang(uint faction)from"factions";
+
+import uint16 GetFactionRadioChannel(uint faction)from"factions";
+import void SetFactionRadioChannel(uint faction,uint16 channel)from"factions"; 
+
+import int AddPlayer(uint faction,uint id)from"factions";
+import int AddPlayer(uint faction,uint id,uint playerFaction)from"factions";
+import int AddPlayer(uint faction,uint id,uint playerFaction,uint rank)from"factions";
+import int AddPlayer(uint faction,uint id,uint playerFaction,uint rank,uint status)from"factions"; 
+
+import int RemovePlayer(uint faction,uint id)from"factions"; 
+
+import int GetFaction(uint faction,uint id)from"factions";
+import int GetStatus(uint faction,uint id)from"factions";
+import int GetRank(uint faction,uint id)from"factions";
+import bool IsMember(uint faction,Critter&cr)from"factions";
+import bool IsMemberOffline(uint faction,uint id)from"factions";
+import bool StoredInDB(uint faction,uint id)from"factions";
+import uint GetRecordsCount(uint faction)from"factions";
+import uint GetMembersCount(uint faction)from"factions";
+import uint GetMembers(uint faction,array<uint>&ids)from"factions";
+import uint GetLeaderId(uint faction)from"factions";
+import void SetLeaderId(uint faction,uint id)from"factions";
+import uint GetClaimId(uint faction)from"factions";
+import void SetClaimId(uint faction,uint id)from"factions";
+import uint GetLeaderTime(uint faction)from"factions";
+import void SetLeaderTime(uint faction,uint time)from"factions";
+import uint GetClaimTime(uint faction)from"factions";
+import void SetClaimTime(uint faction,uint time)from"factions";
+import uint GetFactionLocationId(uint faction)from"factions";
+import bool GetFactionLocation(uint faction,uint&out locId,uint&out pid,uint&out x,uint&out y)from"factions";
+
+import void GetFactionLocationCoords(uint faction,uint&out x,uint&out y)from"factions";
+
+import uint GetFactionScore(uint faction)from"factions";
+import void ModifyFactionScore(uint faction,int amount)from"factions";
+import void UpdateLastUsed(uint faction)from"factions";
+import uint GetFactionsCount()from"factions"; 
+
+import int GetPrevId(uint faction,uint currId,bool members,uint&out prevId)from"factions";
+import int GetNextId(uint faction,uint currId,bool members,uint&out nextId)from"factions";
+import int GetFirstId(uint faction,bool members,uint&out id)from"factions"; 
+
+import int ModifyRank(uint faction,uint id,uint newRank)from"factions";
+import int ModifyStatus(uint faction,uint id,uint newStatus)from"factions";
+import int ModifyFaction(uint faction,uint id,uint newFaction)from"factions"; 
+
+import int InvitePlayer(uint faction,uint playerId)from"factions";
+import int ConfirmInvitation(uint faction,uint playerId)from"factions";
+import int AddMember(uint faction,uint playerId)from"factions";
+import int AddMember(uint faction,uint playerId,bool applyModifiers)from"factions";
+import int ChangeRank(uint faction,uint playerId,uint newRank)from"factions";
+import int ExpelMember(uint faction,uint playerId)from"factions";
+import int ExpelMember(uint faction,uint playerId,bool applyModifiers)from"factions";
+
+import uint GetPlayerFaction(uint playerId)from"factions";
+import uint GetPlayerRank(uint playerId)from"factions"; 
+
+import void AddFactionNews(uint faction,uint master,uint slave,uint type)from"factions";
+import bool GetFactionNews(uint faction,uint index,uint&out master,uint&out slave,uint&out type,uint16&out year,uint8&out month,uint8&out day,uint8&out hour,uint8&out minute)from"factions";
+import uint GetFactionNewsCount(uint faction)from"factions"; 
+
+import uint CheckFactionBaseCoords(uint x,uint y)from"factions";
+
+import bool SaveFactionData(uint faction)from"factions";
+import bool FactionExists(uint faction)from"factions"; 
+
+import uint GetFactionLog(uint faction,bool fullLog,array<string>&strings,uint begin,uint end)from"factions";   
+
+import void InitFactions()from"factions";
+import void UpdateFactionsInfo(Critter&cr)from"factions";
+import IFaction@GetFaction(int)from"factions";
+import IFaction@GetFaction(const string&)from"factions";
+import IFaction@GetFactionByIdx(int idx)from"factions";
+import void UpdateGroupVars(Critter&player)from"factions";     
+
+shared interface IFaction
+{
+	int get_Id()const;
+	string get_Name()const;
+	int get_StringId()const;
+	string get_Database()const;
+	int get_UpdateSeq()const;
+	void set_UpdateSeq(int);
+	
+	int GetStatus(int id)const;
+	void SetStatus(int id,int status);
+	int GetRank(int id)const;
+	void SetRank(int id,int rank);   
+	
+	int GetMembers(array<uint>&)const;
+	int GetRecords(array<uint>&)const;  
+	
+	void AddKnownFaction(int);   
+	
+	int GetKnownFactions(array<int>&)const;
+	void Remove();
+};                                                                                                                                                                                                                                                                                                                                                                                                                                                        
+
+import string GetCritterLexems(Critter&critter)from"lexems";
+import string GetItemLexems(Item&item)from"lexems";
+
+import bool IsLexem(Critter&critter,string&lex)from"lexems";
+import bool IsLexem(Item&it,string&lex)from"lexems";
+import bool IsLexem(string&lexems,string&lex)from"lexems";
+
+import string GetLexem(Critter&critter,string&lex)from"lexems";
+import string GetLexem(Item&item,string&lex)from"lexems";
+import string GetLexem(string&lexems,string&lex)from"lexems"; 
+
+import void SetLexem(Critter&critter,string&lex,string&value)from"lexems";
+import void SetLexem(Item&item,string&lex,string&value)from"lexems";
+import string SetLexem(string&lexems,string&lex,string&value)from"lexems";
+
+import void UnsetLexem(Critter&critter,string&lex)from"lexems";
+import void UnsetLexem(Item&item,string&lex)from"lexems";
+import string UnsetLexem(string&lexems,string&lex)from"lexems";                                                                                                                                                                                                                                                                                                                                                       
+
+import void AddWaitPlan(Critter&critter,uint waittime)from"npc_common";
+import bool AttackCritter(Critter&attacker,Critter&target,uint minhp)from"npc_common";
+import bool AttackCritter(Critter&attacker,Critter&target)from"npc_common";
+import bool CanUseWeapon(Critter&critter,Item@weapon)from"npc_common";
+import bool CanUseWeapon(Critter&critter,uint proto)from"npc_common";
+import void ClearIllegalFlags(Critter&critter)from"npc_common";
+import bool HasIntelligentBrain(Critter&follower)from"npc_common";
+import void SetCritterIllegalFlag(Critter&critter,int reason)from"npc_common";
+import void SetCritterIllegalFlag(Critter&critter,int location,int reason)from"npc_common";
+import bool HasSameScript(Critter&critter1,Critter&critter2)from"npc_common";
+import bool IsFlaggedAsIllegal(Critter&critter)from"npc_common";
+import bool IsFlaggedAsIllegal(Critter&critter,int location)from"npc_common";
+import bool IsInLocation(Critter&critter,int locationPID)from"npc_common";
+import bool MoveByDir(Critter&critter,uint8 dir,uint steps,bool run)from"npc_common";
+import void MoveRandom(Critter&npc,uint maxDist)from"npc_common";
+import void MoveRandom(Critter&npc,uint maxDist,bool Run)from"npc_common";
+import void MoveRandom(Critter&npc,uint maxDist,uint stepDist,bool Run)from"npc_common";
+import void TransferToNPCMap(Critter&critter)from"npc_common";
+import void UnsetCritterIllegalFlag(Critter&critter)from"npc_common";
+import void UnsetCritterIllegalFlag(Critter&critter,int location)from"npc_common";
+import void UnsetCritterIllegalFlag(uint id,int location)from"npc_common";
+import int GetCritterIllegalFlag(Critter&critter)from"npc_common";
+import int GetCritterIllegalFlag(Critter&critter,int location)from"npc_common";
+import bool HasUnusableWeapon(Critter&critter,uint bag)from"npc_common";
+import bool HasUnusableWeapon(Critter&critter)from"npc_common";
+import bool HasUnusableWeapon(uint crpid,uint bag)from"npc_common";
+import Item@ArmBestWeapon(Critter&critter)from"npc_common";
+import Item@ArmFavoriteWeapon(Critter&critter)from"npc_common";
+import void PutAwayItems(Critter&critter)from"npc_common";
+import void DropAllItems(Critter&critter)from"npc_common";
+import void Heal(Critter&cr)from"npc_common";
+import void TryReportOffense(Critter@cr,Critter@offender,int reputationdrop)from"npc_common";
+import uint GetCrittersWithScript(Map&map,uint16 pid,uint findType,string&scriptName,string&funcDeclaration,array<Critter@>@critters)from"npc_common";
+import uint GetCrittersLoc(Location&loc,uint16 pid,uint findType,array<Critter@>@critters)from"npc_common";
+import uint GetNearGuards(Map@map,uint16 hexX,uint16 hexY,uint radius,array<Critter@>@crits)from"npc_common";
+import uint GetNearFactionGuards(Map@map,uint16 hexX,uint16 hexY,uint radius,uint faction,array<Critter@>@crits)from"npc_common";
+import string GenerateNewName(Critter&critter)from"npc_common";
+import string GetStoredName(Critter&critter)from"npc_common";
+import string GetStoredFirstName(Critter&critter)from"npc_common";
+import bool Flee(Critter&cr)from"npc_common";
+import bool Flee(Critter&cr,bool Run)from"npc_common";
+import void FindFreeHexes(Map@map,uint16 hexX,uint16 hexY,int&num,array<uint16>&coordsX,array<uint16>&coordsY)from"npc_common";
+import bool FindNearestFreeHex(Map@map,uint16 hexX,uint16 hexY,uint16&outX,uint16&outY)from"npc_common";
+import void SetDeleteEvent(Critter&cr,uint time)from"npc_common";
+import void DropDeleteEvent(Critter&cr)from"npc_common";                  
+
+import string GetRandomFirstName(uint gender)from"npc_names";
+import string GetRandomFirstName(uint gender,int&index)from"npc_names";
+
+import string GetRandomNick(uint gender)from"npc_names";
+
+import string GetRandomSurname()from"npc_names";
+
+import string GetRandomFullName(uint gender)from"npc_names";
+import string GetRandomFullName(uint gender,int&firstName,bool&genderNick,int&nick,int&surname)from"npc_names"; 
+
+import string GetFirstName(uint gender,uint index)from"npc_names";
+import string GetNick(uint gender,uint index,bool genderNick)from"npc_names";
+import string GetSurname(uint index)from"npc_names";  
+
+import void LogNames(bool printNames)from"npc_names";                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             
+
+shared class Serializator
+{
+	Serializator()
+	{
+		CurPos=0;
+		BufSize=0;
+		DataSize=0;
+	}
+	
+	Serializator(uint approxSize)
+	{
+		CurPos=0;
+		BufSize=0;
+		DataSize=0;
+		GrowBuffer(approxSize);
+	}
+	
+	void GrowBuffer()
+	{
+		BufSize+=(128);
+		Array.resize(BufSize);
+	}
+	
+	void GrowBuffer(uint length)
+	{
+		BufSize+=length;
+		Array.resize(BufSize);
+	}
+	
+	bool Save(string&name)
+	{
+		if(DataSize==0)
+		return false;
+		bool result=SetAnyData(name,Array,DataSize);
+		Clear();
+		return result;
+	}
+	
+	bool Load(string&name)
+	{
+		Clear();
+		if(!IsAnyData(name))
+		return false;
+		if(!GetAnyData(name,Array))
+		return false;
+		BufSize=Array.length();
+		DataSize=BufSize;
+		return true;
+	}
+	
+	void Clear()
+	{
+		CurPos=0;
+		BufSize=0;
+		DataSize=0;
+	}
+	
+	Serializator@SetCurPos(uint pos)
+	{
+		if(pos>BufSize)
+		GrowBuffer(pos-BufSize+(128));
+		CurPos=pos;
+		return this;
+	}
+	
+	Serializator@Fill(uint8 value,uint length)
+	{
+		if(CurPos+length>BufSize)
+		GrowBuffer(CurPos+length-BufSize+(128));
+		for(uint i=0;i<length;i++)
+		Array[CurPos++]=value;
+		if(CurPos>DataSize)
+		DataSize=CurPos;
+		return this;
+	}
+	
+	Serializator@Set(const int64&value)
+	{
+		if(CurPos+8>BufSize)
+		GrowBuffer();
+		Array[CurPos++]=(value>>56)&0xFF;
+		Array[CurPos++]=(value>>48)&0xFF;
+		Array[CurPos++]=(value>>40)&0xFF;
+		Array[CurPos++]=(value>>32)&0xFF;
+		Array[CurPos++]=(value>>24)&0xFF;
+		Array[CurPos++]=(value>>16)&0xFF;
+		Array[CurPos++]=(value>>8)&0xFF;
+		Array[CurPos++]=value&0xFF;
+		if(CurPos>DataSize)
+		DataSize=CurPos;
+		return this;
+	}
+	
+	Serializator@opShl(const int64&value)
+	{
+		return Set(value);
+	}
+	
+	Serializator@Set(const int32&value)
+	{
+		if(CurPos+4>BufSize)
+		GrowBuffer();
+		Array[CurPos++]=(value>>24)&0xFF;
+		Array[CurPos++]=(value>>16)&0xFF;
+		Array[CurPos++]=(value>>8)&0xFF;
+		Array[CurPos++]=value&0xFF;
+		if(CurPos>DataSize)
+		DataSize=CurPos;
+		return this;
+	}
+	
+	Serializator@opShl(const int32&value)
+	{
+		return Set(value);
+	}
+	
+	Serializator@Set(const int16&value)
+	{
+		if(CurPos+2>BufSize)
+		GrowBuffer();
+		Array[CurPos++]=(value>>8)&0xFF;
+		Array[CurPos++]=value&0xFF;
+		if(CurPos>DataSize)
+		DataSize=CurPos;
+		return this;
+	}
+	
+	Serializator@opShl(const int16&value)
+	{
+		return Set(value);
+	}
+	
+	Serializator@Set(const int8&value)
+	{
+		if(CurPos+1>BufSize)
+		GrowBuffer();
+		Array[CurPos++]=value;
+		if(CurPos>DataSize)
+		DataSize=CurPos;
+		return this;
+	}
+	
+	Serializator@opShl(const int8&value)
+	{
+		return Set(value);
+	}
+	
+	Serializator@Set(const uint64&value)
+	{
+		if(CurPos+8>BufSize)
+		GrowBuffer();
+		Array[CurPos++]=(value>>56)&0xFF;
+		Array[CurPos++]=(value>>48)&0xFF;
+		Array[CurPos++]=(value>>40)&0xFF;
+		Array[CurPos++]=(value>>32)&0xFF;
+		Array[CurPos++]=(value>>24)&0xFF;
+		Array[CurPos++]=(value>>16)&0xFF;
+		Array[CurPos++]=(value>>8)&0xFF;
+		Array[CurPos++]=value&0xFF;
+		if(CurPos>DataSize)
+		DataSize=CurPos;
+		return this;
+	}
+	
+	Serializator@opShl(const uint64&value)
+	{
+		return Set(value);
+	}
+	
+	Serializator@Set(const uint32&value)
+	{
+		if(CurPos+4>BufSize)
+		GrowBuffer();
+		Array[CurPos++]=(value>>24)&0xFF;
+		Array[CurPos++]=(value>>16)&0xFF;
+		Array[CurPos++]=(value>>8)&0xFF;
+		Array[CurPos++]=value&0xFF;
+		if(CurPos>DataSize)
+		DataSize=CurPos;
+		return this;
+	}
+	
+	Serializator@opShl(const uint32&value)
+	{
+		return Set(value);
+	}
+	
+	Serializator@Set(const uint16&value)
+	{
+		if(CurPos+2>BufSize)
+		GrowBuffer();
+		Array[CurPos++]=(value>>8)&0xFF;
+		Array[CurPos++]=value&0xFF;
+		if(CurPos>DataSize)
+		DataSize=CurPos;
+		return this;
+	}
+	
+	Serializator@opShl(const uint16&value)
+	{
+		return Set(value);
+	}
+	
+	Serializator@Set(const uint8&value)
+	{
+		if(CurPos+1>BufSize)
+		GrowBuffer();
+		Array[CurPos++]=value;
+		if(CurPos>DataSize)
+		DataSize=CurPos;
+		return this;
+	}
+	
+	Serializator@opShl(const uint8&value)
+	{
+		return Set(value);
+	}
+	
+	Serializator@Set(const bool&value)
+	{
+		if(CurPos+1>BufSize)
+		GrowBuffer();
+		Array[CurPos++]=value?1:0;
+		if(CurPos>DataSize)
+		DataSize=CurPos;
+		return this;
+	}
+	
+	Serializator@opShl(const bool&value)
+	{
+		return Set(value);
+	}
+	
+	Serializator@Set(const string&value)
+	{
+		uint len=value.rawLength();
+		if(CurPos+len+1>BufSize)
+		GrowBuffer(CurPos+len+1-BufSize+(128));
+		for(uint i=0;i<len;i++)
+		Array[CurPos++]=value.rawGet(i);
+		Array[CurPos++]=0;
+		if(CurPos>DataSize)
+		DataSize=CurPos;
+		return this;
+	}
+	
+	Serializator@opShl(const string&value)
+	{
+		return Set(value);
+	}
+	
+	Serializator@Set(const float&value)
+	{
+		int dummy=FloatToInt(value);
+		return Set(dummy);
+	}
+	
+	Serializator@opShl(const float&value)
+	{
+		return Set(value);
+	}
+	
+	Serializator@Set(const array<int64>&values)
+	{
+		uint valuesLen=values.length();
+		uint len=4+valuesLen*8;
+		if(CurPos+len>BufSize)
+		GrowBuffer(CurPos+len-BufSize);
+		Set(valuesLen);
+		for(uint i=0,j=valuesLen;i<j;i++)
+		Set(values[i]);
+		if(CurPos>DataSize)
+		DataSize=CurPos;
+		return this;
+	}
+	
+	Serializator@opShl(const array<int64>&values)
+	{
+		return Set(values);
+	}
+	
+	Serializator@Set(const array<int32>&values)
+	{
+		uint valuesLen=values.length();
+		uint len=4+valuesLen*4;
+		if(CurPos+len>BufSize)
+		GrowBuffer(CurPos+len-BufSize);
+		Set(valuesLen);
+		for(uint i=0,j=valuesLen;i<j;i++)
+		Set(values[i]);
+		if(CurPos>DataSize)
+		DataSize=CurPos;
+		return this;
+	}
+	
+	Serializator@opShl(const array<int32>&values)
+	{
+		return Set(values);
+	}
+	
+	Serializator@Set(const array<int16>&values)
+	{
+		uint valuesLen=values.length();
+		uint len=4+valuesLen*2;
+		if(CurPos+len>BufSize)
+		GrowBuffer(CurPos+len-BufSize);
+		Set(valuesLen);
+		for(uint i=0,j=valuesLen;i<j;i++)
+		Set(values[i]);
+		if(CurPos>DataSize)
+		DataSize=CurPos;
+		return this;
+	}
+	
+	Serializator@opShl(const array<int16>&values)
+	{
+		return Set(values);
+	}
+	
+	Serializator@Set(const array<int8>&values)
+	{
+		uint valuesLen=values.length();
+		uint len=4+valuesLen;
+		if(CurPos+len>BufSize)
+		GrowBuffer(CurPos+len-BufSize);
+		Set(valuesLen);
+		for(uint i=0,j=valuesLen;i<j;i++)
+		Set(values[i]);
+		if(CurPos>DataSize)
+		DataSize=CurPos;
+		return this;
+	}
+	
+	Serializator@opShl(const array<int8>&values)
+	{
+		return Set(values);
+	}
+	
+	Serializator@Set(const array<uint64>&values)
+	{
+		uint valuesLen=values.length();
+		uint len=4+valuesLen*8;
+		if(CurPos+len>BufSize)
+		GrowBuffer(CurPos+len-BufSize);
+		Set(valuesLen);
+		for(uint i=0,j=valuesLen;i<j;i++)
+		Set(values[i]);
+		if(CurPos>DataSize)
+		DataSize=CurPos;
+		return this;
+	}
+	
+	Serializator@opShl(const array<uint64>&values)
+	{
+		return Set(values);
+	}
+	
+	Serializator@Set(const array<uint32>&values)
+	{
+		uint valuesLen=values.length();
+		uint len=4+valuesLen*4;
+		if(CurPos+len>BufSize)
+		GrowBuffer(CurPos+len-BufSize);
+		Set(valuesLen);
+		for(uint i=0,j=valuesLen;i<j;i++)
+		Set(values[i]);
+		if(CurPos>DataSize)
+		DataSize=CurPos;
+		return this;
+	}
+	
+	Serializator@opShl(const array<uint32>&values)
+	{
+		return Set(values);
+	}
+	
+	Serializator@Set(const array<uint16>&values)
+	{
+		uint valuesLen=values.length();
+		uint len=4+valuesLen*2;
+		if(CurPos+len>BufSize)
+		GrowBuffer(CurPos+len-BufSize);
+		Set(valuesLen);
+		for(uint i=0,j=valuesLen;i<j;i++)
+		Set(values[i]);
+		if(CurPos>DataSize)
+		DataSize=CurPos;
+		return this;
+	}
+	
+	Serializator@opShl(const array<uint16>&values)
+	{
+		return Set(values);
+	}
+	
+	Serializator@Set(const array<uint8>&values)
+	{
+		uint valuesLen=values.length();
+		uint len=4+valuesLen;
+		if(CurPos+len>BufSize)
+		GrowBuffer(CurPos+len-BufSize);
+		Set(valuesLen);
+		for(uint i=0,j=valuesLen;i<j;i++)
+		Set(values[i]);
+		if(CurPos>DataSize)
+		DataSize=CurPos;
+		return this;
+	}
+	
+	Serializator@opShl(const array<uint8>&values)
+	{
+		return Set(values);
+	}
+	
+	Serializator@Set(const array<bool>&values)
+	{
+		uint valuesLen=values.length();
+		uint len=4+valuesLen;
+		if(CurPos+len>BufSize)
+		GrowBuffer(CurPos+len-BufSize);
+		Set(valuesLen);
+		for(uint i=0,j=valuesLen;i<j;i++)
+		Set(values[i]);
+		if(CurPos>DataSize)
+		DataSize=CurPos;
+		return this;
+	}
+	
+	Serializator@opShl(const array<bool>&values)
+	{
+		return Set(values);
+	}
+	
+	Serializator@Set(const array<string>&values)
+	{
+		uint valuesLen=values.length();
+		uint len=4+valuesLen;
+		for(uint i=0,j=valuesLen;i<j;i++)
+		len+=values[i].length();
+		if(CurPos+len>BufSize)
+		GrowBuffer(CurPos+len-BufSize);
+		Set(valuesLen);
+		for(uint i=0,j=valuesLen;i<j;i++)
+		Set(values[i]);
+		if(CurPos>DataSize)
+		DataSize=CurPos;
+		return this;
+	}
+	
+	Serializator@opShl(const array<string>&values)
+	{
+		return Set(values);
+	}
+	
+	Serializator@Set(const array<float>&values)
+	{
+		uint valuesLen=values.length();
+		uint len=4+valuesLen*4;
+		if(CurPos+len>BufSize)
+		GrowBuffer(CurPos+len-BufSize);
+		Set(valuesLen);
+		for(uint i=0,j=valuesLen;i<j;i++)
+		Set(FloatToInt(values[i]));
+		if(CurPos>DataSize)
+		DataSize=CurPos;
+		return this;
+	}
+	
+	Serializator@opShl(const array<float>&values)
+	{
+		return Set(values);
+	}
+	
+	Serializator@Set(const Critter&cr)
+	{
+		if(CurPos+4>BufSize)
+		GrowBuffer();
+		uint value=cr.Id;
+		Array[CurPos++]=(value>>24)&0xFF;
+		Array[CurPos++]=(value>>16)&0xFF;
+		Array[CurPos++]=(value>>8)&0xFF;
+		Array[CurPos++]=value&0xFF;
+		if(CurPos>DataSize)
+		DataSize=CurPos;
+		return this;
+	}
+	
+	Serializator@opShl(const Critter&cr)
+	{
+		return Set(cr);
+	}
+	
+	Serializator@Set(const Item&item)
+	{
+		if(CurPos+4>BufSize)
+		GrowBuffer();
+		uint value=item.Id;
+		Array[CurPos++]=(value>>24)&0xFF;
+		Array[CurPos++]=(value>>16)&0xFF;
+		Array[CurPos++]=(value>>8)&0xFF;
+		Array[CurPos++]=value&0xFF;
+		if(CurPos>DataSize)
+		DataSize=CurPos;
+		return this;
+	}
+	
+	Serializator@opShl(const Item&item)
+	{
+		return Set(item);
+	}
+	
+	Serializator@Get(int64&value)
+	{
+		value=0;
+		if(CurPos+8>DataSize)
+		return this;
+		value|=Array[CurPos++]<<56;
+		value|=Array[CurPos++]<<48;
+		value|=Array[CurPos++]<<40;
+		value|=Array[CurPos++]<<32;
+		value|=Array[CurPos++]<<24;
+		value|=Array[CurPos++]<<16;
+		value|=Array[CurPos++]<<8;
+		value|=Array[CurPos++];
+		return this;
+	}
+	
+	Serializator@opShr(int64&value)
+	{
+		return Get(value);
+	}
+	
+	Serializator@Get(int32&value)
+	{
+		value=0;
+		if(CurPos+4>DataSize)
+		return this;
+		value|=Array[CurPos++]<<24;
+		value|=Array[CurPos++]<<16;
+		value|=Array[CurPos++]<<8;
+		value|=Array[CurPos++];
+		return this;
+	}
+	
+	Serializator@opShr(int32&value)
+	{
+		return Get(value);
+	}
+	
+	Serializator@Get(int16&value)
+	{
+		value=0;
+		if(CurPos+2>DataSize)
+		return this;
+		value|=Array[CurPos++]<<8;
+		value|=Array[CurPos++];
+		return this;
+	}
+	
+	Serializator@opShr(int16&value)
+	{
+		return Get(value);
+	}
+	
+	Serializator@Get(int8&value)
+	{
+		value=0;
+		if(CurPos+1>DataSize)
+		return this;
+		value=Array[CurPos++];
+		return this;
+	}
+	
+	Serializator@opShr(int8&value)
+	{
+		return Get(value);
+	}
+	
+	Serializator@Get(uint64&value)
+	{
+		value=0;
+		if(CurPos+8>DataSize)
+		return this;
+		value|=Array[CurPos++]<<56;
+		value|=Array[CurPos++]<<48;
+		value|=Array[CurPos++]<<40;
+		value|=Array[CurPos++]<<32;
+		value|=Array[CurPos++]<<24;
+		value|=Array[CurPos++]<<16;
+		value|=Array[CurPos++]<<8;
+		value|=Array[CurPos++];
+		return this;
+	}
+	
+	Serializator@opShr(uint64&value)
+	{
+		return Get(value);
+	}
+	
+	Serializator@Get(uint32&value)
+	{
+		value=0;
+		if(CurPos+4>DataSize)
+		return this;
+		value|=Array[CurPos++]<<24;
+		value|=Array[CurPos++]<<16;
+		value|=Array[CurPos++]<<8;
+		value|=Array[CurPos++];
+		return this;
+	}
+	
+	Serializator@opShr(uint32&value)
+	{
+		return Get(value);
+	}
+	
+	Serializator@Get(uint16&value)
+	{
+		value=0;
+		if(CurPos+2>DataSize)
+		return this;
+		value|=Array[CurPos++]<<8;
+		value|=Array[CurPos++];
+		return this;
+	}
+	
+	Serializator@opShr(uint16&value)
+	{
+		return Get(value);
+	}
+	
+	Serializator@Get(uint8&value)
+	{
+		value=0;
+		if(CurPos+1>DataSize)
+		return this;
+		value=Array[CurPos++];
+		return this;
+	}
+	
+	Serializator@opShr(uint8&value)
+	{
+		return Get(value);
+	}
+	
+	Serializator@Get(bool&value)
+	{
+		value=false;
+		if(CurPos+1>DataSize)
+		return this;
+		value=Array[CurPos++]==1?true:false;
+		return this;
+	}
+	
+	Serializator@opShr(bool&value)
+	{
+		return Get(value);
+	}
+	
+	Serializator@Get(string&str)
+	{
+		uint len=0;
+		for(uint i=CurPos;;i++)
+		{
+			if(i==DataSize)
+			{
+				str="";
+				return this;
+			}
+			if(Array[i]==0)
+			{
+				len=i-CurPos;
+				break;
+			}
+		}
+		str.rawResize(len);
+		for(uint i=0;i<len;i++)
+		str.rawSet(i,Array[CurPos++]);
+		CurPos++;
+		return this;
+	}
+	
+	Serializator@opShr(string&str)
+	{
+		return Get(str);
+	}
+	
+	Serializator@Get(float&value)
+	{
+		int dummy=0;
+		Get(dummy);
+		value=IntToFloat(dummy);
+		return this;
+	}
+	
+	Serializator@opShr(float&value)
+	{
+		return Get(value);
+	}
+	
+	Serializator@Get(array<int64>&values)
+	{
+		uint valuesLen=0;
+		Get(valuesLen);
+		values.resize(valuesLen);
+		for(uint i=0;i<valuesLen;i++)
+		Get(values[i]);
+		return this;
+	}
+	
+	Serializator@opShr(array<int64>&values)
+	{
+		return Get(values);
+	}
+	
+	Serializator@Get(array<int32>&values)
+	{
+		uint valuesLen=0;
+		Get(valuesLen);
+		values.resize(valuesLen);
+		for(uint i=0;i<valuesLen;i++)
+		Get(values[i]);
+		return this;
+	}
+	
+	Serializator@opShr(array<int32>&values)
+	{
+		return Get(values);
+	}
+	
+	Serializator@Get(array<float>&values)
+	{
+		uint valuesLen=0;
+		Get(valuesLen);
+		values.resize(valuesLen);
+		for(uint i=0;i<valuesLen;i++)
+		{
+			int dummy=0;
+			Get(dummy);
+			values[i]=IntToFloat(dummy);
+		}
+		return this;
+	}
+	
+	Serializator@opShr(array<float>&values)
+	{
+		return Get(values);
+	}
+	
+	Serializator@Get(array<int16>&values)
+	{
+		uint valuesLen=0;
+		Get(valuesLen);
+		values.resize(valuesLen);
+		for(uint i=0;i<valuesLen;i++)
+		Get(values[i]);
+		return this;
+	}
+	
+	Serializator@opShr(array<int16>&values)
+	{
+		return Get(values);
+	}
+	
+	Serializator@Get(array<int8>&values)
+	{
+		uint valuesLen=0;
+		Get(valuesLen);
+		values.resize(valuesLen);
+		for(uint i=0;i<valuesLen;i++)
+		Get(values[i]);
+		return this;
+	}
+	
+	Serializator@opShr(array<int8>&values)
+	{
+		return Get(values);
+	}
+	
+	Serializator@Get(array<uint64>&values)
+	{
+		uint valuesLen=0;
+		Get(valuesLen);
+		values.resize(valuesLen);
+		for(uint i=0;i<valuesLen;i++)
+		Get(values[i]);
+		return this;
+	}
+	
+	Serializator@opShr(array<uint64>&values)
+	{
+		return Get(values);
+	}
+	
+	Serializator@Get(array<uint32>&values)
+	{
+		uint valuesLen=0;
+		Get(valuesLen);
+		values.resize(valuesLen);
+		for(uint i=0;i<valuesLen;i++)
+		Get(values[i]);
+		return this;
+	}
+	
+	Serializator@opShr(array<uint32>&values)
+	{
+		return Get(values);
+	}
+	
+	Serializator@Get(array<uint16>&values)
+	{
+		uint valuesLen=0;
+		Get(valuesLen);
+		values.resize(valuesLen);
+		for(uint i=0;i<valuesLen;i++)
+		Get(values[i]);
+		return this;
+	}
+	
+	Serializator@opShr(array<uint16>&values)
+	{
+		return Get(values);
+	}
+	
+	Serializator@Get(array<uint8>&values)
+	{
+		uint valuesLen=0;
+		Get(valuesLen);
+		values.resize(valuesLen);
+		for(uint i=0;i<valuesLen;i++)
+		Get(values[i]);
+		return this;
+	}
+	
+	Serializator@opShr(array<uint8>&values)
+	{
+		return Get(values);
+	}
+	
+	Serializator@Get(array<bool>&values)
+	{
+		uint valuesLen=0;
+		Get(valuesLen);
+		values.resize(valuesLen);
+		for(uint i=0;i<valuesLen;i++)
+		Get(values[i]);
+		return this;
+	}
+	
+	Serializator@opShr(array<bool>&values)
+	{
+		return Get(values);
+	}
+	
+	Serializator@Get(array<string>&values)
+	{
+		uint valuesLen=0;
+		Get(valuesLen);
+		values.resize(valuesLen);
+		for(uint i=0;i<valuesLen;i++)
+		Get(values[i]);
+		return this;
+	}
+	
+	Serializator@opShr(array<string>&values)
+	{
+		return Get(values);
+	}
+	
+	Serializator@Get(Critter@&cr)
+	{
+		@cr=null;
+		if(CurPos+4>DataSize)
+		return this;
+		uint id=0;
+		id|=Array[CurPos++]<<24;
+		id|=Array[CurPos++]<<16;
+		id|=Array[CurPos++]<<8;
+		id|=Array[CurPos++];
+		@cr=::GetCritter(id);
+		return this;
+	}
+	
+	Serializator@opShr(Critter@&cr)
+	{
+		return Get(cr);
+	}
+	
+	Serializator@Get(Item@&item)
+	{
+		@item=null;
+		if(CurPos+4>DataSize)
+		return this;
+		uint id=0;
+		id|=Array[CurPos++]<<24;
+		id|=Array[CurPos++]<<16;
+		id|=Array[CurPos++]<<8;
+		id|=Array[CurPos++];
+		@item=::GetItem(id);
+		return this;
+	}
+	
+	Serializator@opShr(Item@&item)
+	{
+		return Get(item);
+	}
+	
+	array<uint8>Array;
+	uint CurPos;
+	uint BufSize;
+	uint DataSize;
+};   
+
+import bool AddToFollowerlist(Critter&master,Critter&follower)from"follower_common";  
+
+uint e_DisableBagRefresh(array<uint>@values)
+{
+	Critter@cr=GetCritter(values[0]);
+	if((@cr!=null))
+	{
+		cr.SetBagRefreshTime((uint(-1)));
+		{;};
+	}
+	return 0;
+}
+
+void NerfWeaponSkills(Critter&cr,uint primary,uint secondary)
+{
+	for(uint i=(200);i<=(205);i++)
+	{
+		if(i!=(204)&&i!=primary&&i!=secondary)
+		{
+			if(i==(201))
+			cr.SkillBase[i]=-80;
+			else
+			cr.SkillBase[i]=-30;
+		}
 	}
 }
 
-class SmartCursor
+shared interface IMerc
 {
-	uint drawLayer; 
+	IMerc@Dialog(int dialogid);
+	IMerc@Script(string&script);
+	IMerc@AI(int aipack);
+	IMerc@Bag(int bagid);
+	IMerc@Team(int teamid);
+	IMerc@Level(int level);
+	IMerc@PID(int pid);
+	IMerc@PID(array<int>npcpids);
+	IMerc@Type(int type);
+	IMerc@ID(int id);
+	IMerc@Cost(int cost);
+	IMerc@StartCost(int cost);
+	IMerc@SellPrice(int price);
+	IMerc@DynamicPrice();
 	
-	bool drawInfo;
-	bool drawInfoTool;
-	int drawInfoOffsetX;
-	int drawInfoOffsetY;
-	uint drawInfoColor;
-	int drawInfoFont;
-	int drawInfoFlags; 
+	bool IsDynamicPrice();
+	int GetDialog();
+	string@GetScript();
+	int GetAIPack();
+	int GetBagID();
+	int GetBagValue();
+	int GetTeamID();
+	int GetLevel();
+	int GetLastPID();
+	array<int>GetPIDs();
+	uint GetType();
+	int8 GetBaseType();
+	int GetCost();
+	int GetSellPrice();
+	uint GetID();
+	string@GetName();
 	
-	bool drawTool;
-	int drawToolOffsetX;
-	int drawToolOffsetY;
-	uint drawToolSize; 
+	bool Spawn(Critter&master);
+}; 
+
+class CMerc:IMerc
+{
+	bool dynamicprice;
+	int dir;
+	int dialogid;
+	string script;
+	int aipack;
+	int8 basetype;
+	int bagid;
+	int teamid;
+	int level;
+	int respawnTime;
+	array<int>npcpids;
+	int npcpid;
+	int cost;
+	int bagvalue;
+	int startcost;
+	uint type;
+	int sellprice;
+	uint id;
+	string name;
 	
-	array<SmartCollection>collections; 
+	Serializator serializer;
 	
-	private uint clickTargetId;
-	private uint clickTargetPid;
-	private uint16 clickTargetHexX;
-	private uint16 clickTargetHexY;
-	private bool clickTool;
-	private uint clickToolId;
-	private uint16 clickToolPid;
-	
-	SmartCursor()
+	CMerc()
 	{
-		this.drawLayer=3;
-		this.DrawInfo(true);
-		this.DrawTool(true);
-		
-		this.ClickReset();
-	}    
-	
-	void DrawInfo(bool enable,bool toolName=true,int offsetX=2,int offsetY=-12,uint color=0,int font=5,int flags=0x0200)
-	{
-		this.drawInfo=enable;
-		this.drawInfoTool=toolName;
-		this.drawInfoOffsetX=offsetX;
-		this.drawInfoOffsetY=offsetY;
-		this.drawInfoColor=color;
-		this.drawInfoFont=font;
-		this.drawInfoFlags=flags;
+		dir=Random(0,6);
+		dialogid=(9310);
+		script="follower@critter_init";
+		basetype=-1;
+		aipack=0;
+		bagid=0;
+		teamid=0;
+		level=1;
+		respawnTime=(-2);
+		cost=0;
+		sellprice=0;
+		id=0;
+		type=0;
+		dynamicprice=false;
 	}
 	
-	void DrawTool(bool enable,int offsetX=3,int offsetY=5,uint size=45)
+	bool Spawn(Critter&master)
 	{
-		this.drawTool=enable;
-		this.drawToolOffsetX=offsetX;
-		this.drawToolOffsetY=offsetY;
-		this.drawToolSize=size;
-	}    
-	
-	void Add(SmartCollection&collection)final
-	{
-		this.collections.insertLast(collection);
+		npcpid=(npcpids[Random(0,npcpids.length()-1)]);
 		
-		if(this.collections.last().Text=="error")
-		this.collections.last().Text="";
-	}   
-	
-	private ItemCl@FindTool(CritterCl&chosen,SmartCollection&collection)
-	{
-		uint slotsLength=collection.Slots.length();
-		
-		if(slotsLength==0)
-		return null;
-		
-		for(uint s=0;s<slotsLength;s++)
+		Critter@SpawnedNpc=AddNpc(master.GetMap(),npcpid,master.HexX,master.HexY,dir,dialogid,script,aipack,bagid,teamid,false,level);
+		if((@SpawnedNpc!=null))
 		{
-			array<ItemCl@>items;
-			uint count=chosen.GetItems(collection.Slots[s],items); 
+			SpawnedNpc.FollowerVarBase[(929)]=(master.Stat[(106)]);
+			SpawnedNpc.FollowerVarBase[(932)]=type;
+			SpawnedNpc.FollowerVarBase[(930)]=id;
+			basetype=SpawnedNpc.CrType;
+			SpawnedNpc.FollowerVarBase[(933)]=master.Id;
+			SpawnedNpc.StatBase[(84)]=respawnTime;
 			
-			for(uint i=0;i<count;i++)
+			if(type==(3)||type==(4)||type==(2))
+			SpawnedNpc.StatBase[(103)]=master.Id;
+			
+			switch(type)
 			{
-				if(collection.Tools.find(items[i].Proto.ProtoId)>=0)
-				return items[i];
+				case(6):
+				case(12):
+				NerfWeaponSkills(SpawnedNpc,(203),0);
+				break;
+				case(7):
+				case(13):
+				NerfWeaponSkills(SpawnedNpc,(200),0);
+				break;
+				case(8):
+				case(11):
+				NerfWeaponSkills(SpawnedNpc,(201),0);
+				break;
+				case(5):
+				case(10):
+				NerfWeaponSkills(SpawnedNpc,(203),0);
+				break;
+				case(9):
+				NerfWeaponSkills(SpawnedNpc,(202),0);
+				break;
+				default:
+				break;
 			}
+			
+			SpawnedNpc.ChangeCrType(SpawnedNpc.StatBase[(112)]);
+			
+			CreateTimeEvent(((__FullSecond)+(((3)*60))),"e_DisableBagRefresh",SpawnedNpc.Id,true);
+			ArmBestWeapon(SpawnedNpc);
+			
+			if(Random(0,24)==0)SpawnedNpc.PerkBase[(306)]+=1;
+			if(Random(0,24)==0)SpawnedNpc.PerkBase[(315)]+=1;
+			if(Random(0,14)==0)SpawnedNpc.PerkBase[(405)]+=1;
+			if(Random(0,14)==0)SpawnedNpc.PerkBase[(309)]+=1;
+			if(Random(0,14)==0)SpawnedNpc.PerkBase[(313)]+=1;
+			if(Random(0,14)==0)SpawnedNpc.PerkBase[(330)]+=1;
+			
+			for(uint i=0;i<=6;i++)SpawnedNpc.StatBase[i]+=Random(-1,1);   
+			
+			SpawnedNpc.StatBase[(7)]+=(Random(0,20));
+			SpawnedNpc.StatBase[(7)]-=10;
+			
+			SpawnedNpc.StatBase[(72)]=SpawnedNpc.Stat[(7)];
+			SpawnedNpc.StatBase[(103)]=master.Id;
+			
+			if(!AddToFollowerlist(master,SpawnedNpc))
+			Log("Failed to assign merc's id to master("+master.Id+") followerlist");
+			
+			this.name=GenerateNewName(SpawnedNpc);
+			
+			if(this.name.length()>0)
+			SetLexem(SpawnedNpc,"$name",this.name);
+			
+			return true;
+		}
+		else
+		{
+			Log("Failed to create mercenary of PID "+npcpid+" with mercid "+id+" on map id "+master.GetMapId());
+			master.Say((11),"Failed to create mercenary, report this error immediately");
+		} 
+		
+		return false;
+	}
+	
+	IMerc@Dialog(int dialogid)
+	{
+		this.dialogid=dialogid;
+		return this;
+	}
+	
+	IMerc@Script(string&script)
+	{
+		this.script=script;
+		return this;
+	}
+	
+	IMerc@AI(int aipack)
+	{
+		this.aipack=aipack;
+		return this;
+	}
+	
+	IMerc@Bag(int bagid)
+	{
+		this.bagid=bagid;
+		
+		bagvalue=0;
+		array<uint>mincounts,maxcounts;
+		array<int>slots;
+		array<uint16>pids;
+		uint num=GetBagItems(bagid,pids,mincounts,maxcounts,slots);
+		uint cost=0;
+		for(uint i=0;i<num;i++)
+		{
+			bagvalue+=BaseItemValue(pids[i],7,80,true)*(mincounts[i]+maxcounts[i])/2;
 		}
 		
-		return null;
-	}         
-	
-	void Draw(uint layer)
-	{
-		CritterCl@chosen=GetChosen();
-		if((@chosen!=null))
-		this.Draw(layer,chosen);
+		return this;
 	}
 	
-	void Draw(uint layer,CritterCl&chosen)
+	IMerc@Team(int teamid)
+	{
+		this.teamid=teamid;
+		return this;
+	}
+	
+	IMerc@Level(int level)
+	{
+		this.level=level;
+		return this;
+	}
+	
+	IMerc@PID(int npcpid)
+	{
+		this.npcpids.insertLast(npcpid);
+		return this;
+	}
+	
+	IMerc@PID(array<int>npcpids)
+	{
+		for(uint i=0;i<npcpids.length();i++)
+		{
+			this.npcpids.insertLast(npcpids[i]);
+		}
+		return this;
+	}
+	
+	IMerc@Type(int type)
+	{
+		this.type=type;
+		return this;
+	}
+	
+	IMerc@ID(int id)
+	{
+		this.id=id;
+		return this;
+	}
+	
+	IMerc@DynamicPrice()
+	{
+		dynamicprice=true;
+		return this;
+	}
+	
+	bool IsDynamicPrice()
+	{
+		return dynamicprice;
+	}
+	
+	IMerc@StartCost(int cost)
+	{
+		serializer.Clear();
+		if(!serializer.Load("merc_"+id)||GetGvar((22005))==0)
+		{
+			this.cost=cost;
+			serializer.Clear();
+			serializer.Set(this.cost).Save("merc_"+id);
+		}
+		else
+		serializer.Get(this.cost);
+		
+		return this;
+	}
+	
+	IMerc@Cost(int cost)
+	{
+		{;};
+		this.cost=cost;
+		
+		serializer.Clear();
+		serializer.Set(this.cost).Save("merc_"+id);
+		
+		return this;
+	}
+	
+	IMerc@SellPrice(int sellprice)
+	{
+		this.sellprice=sellprice;
+		return this;
+	}
+	
+	int GetDialog(){return dialogid;}
+	string@GetScript(){return script;}
+	int8 GetBaseType(){return basetype;}
+	int GetAIPack(){return aipack;}
+	int GetBagID(){return bagid;}
+	int GetTeamID(){return teamid;}
+	int GetLevel(){return level;}
+	int GetLastPID(){return npcpid;}
+	array<int>GetPIDs(){return npcpids;}
+	int GetCost(){return cost;}
+	int GetBagValue(){return bagvalue;}
+	int GetSellPrice(){return sellprice;}
+	uint GetID(){return id;}
+	uint GetType(){return type;}
+	string@GetName(){return name;}
+}; 
+
+import bool IsFollowing(Critter&critter)from"follower_common";
+import bool IsOwnersFollower(Critter&owner,Critter&critter)from"follower_common";
+import bool CanHaveMoreFollowers(Critter&player,uint FollowerType)from"follower_common";
+import Critter@GetFollowersOwner(Critter&critter)from"follower_common";
+import bool RightDistance(Critter&follower,Critter&owner)from"follower_common";
+import bool HasFollowerOfBaseType(Critter&owner,uint basetype)from"follower_common";
+import Critter@GetFollowerByBaseType(Critter&owner,uint basetype)from"follower_common";
+import bool RemoveFollowerByBaseType(Critter&owner,uint basetype)from"follower_common";
+import int GetNumberOfFollowingFollowersOfPlayer(Critter&player)from"follower_common";
+import int GetNumberOfFollowersOfPlayer(Critter&player)from"follower_common";
+import uint GetSlaveTypes(Critter&player)from"follower_common";
+import void ClearFollowersEnemy(Critter&player,Critter&target)from"follower_common";
+import void AddFollowersEnemy(Critter&player,Critter&target)from"follower_common";
+import uint NumberOfFollowersOnMap(Map@map)from"follower_common";
+import uint GetFollowerType(Critter&critter)from"follower_common";
+import bool DisbandFollower(Critter&player,Critter&cr,bool reset)from"follower_common";
+import bool MakeFollower(Critter&critter,uint type,string&script,uint dialogid,Critter&owner,bool FreeBarter)from"follower_common";
+import Critter@LocateFollowerByType(IMerc@merc,Critter&owner)from"follower_common";
+import Critter@LocateFollowerByID(uint id,Critter&owner)from"follower_common";
+import int GetFollowers(Critter&player,Map@map,array<Critter@>&followers,bool OnlyIsSeen)from"follower_common";
+import int GetFollowers(Critter&player,Map@map,array<Critter@>&followers)from"follower_common";
+import int GetFollowers(Critter&player,bool all,array<Critter@>&followers)from"follower_common";
+import uint CountFollowers(Critter&player,bool all)from"follower_common";
+import uint CountFollowers(Critter&player,Map@map)from"follower_common";
+import uint GetPartyPointsMax(Critter&player)from"follower_common";
+import uint GetPartyPointsUsed(Critter&player)from"follower_common";
+import bool IsMerc(Critter&follower)from"follower_common";                                                                                                                                                               
+
+import void InitLogs()from"logging";
+import void FLog(uint logindex,string&text)from"logging";
+import void ILog(string&section,string&text)from"logging";
+import void GMLog(Critter&cr,string&text)from"logging";
+import void CloseLogs()from"logging";
+import uint AddLog(string&filename)from"logging";
+import uint AddLog(string&filename,uint index)from"logging";
+import void DynamicLocationAddLog(Critter&cr,Critter&npc,GameVar&var,string file)from"logging";
+import void DynamicLocationDelLog(Critter&cr,Critter&npc,GameVar&var,string file)from"logging";                                                                                                                                                                                               
+
+import int GetRootMapData(Map&map,uint index)from"mapdata";
+import void SetRootMapData(Map&map,uint index,int val)from"mapdata";
+import int GetRootMapData(Location&loc,uint index)from"mapdata";
+import void SetRootMapData(Location&loc,uint index,int val)from"mapdata";                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             
+
+shared interface IPolygon
+{
+	IPolygon@AddVertex(uint16 x,uint16 y);
+	IPolygon@AddVertices(array<uint16>&hexes);   
+	
+	bool IsWithin(Critter&cr);
+	bool IsWithin(Item&item);
+	
+	bool IsWithin(uint16 x,uint16 y);
+};  
+
+import IPolygon@NewPolygon()from"polygon"; 
+
+import IPolygon@LoadShapeFromEntires(Map&map,uint first,uint last)from"polygon";          
+
+import ITown@GetTownByIndex(uint index)from"towns";
+import ITown@GetTown(uint id)from"towns";
+import uint GetTownCount()from"towns";
+import uint GetTowns(array<ITown@>@towns)from"towns";  
+
+import bool AddMilitia(Map@map)from"town";
+import void InitMilitia()from"town";
+import bool IsTCTown(Map@map)from"town";
+import uint RetrieveTownId(Map@map)from"town";
+import uint RetrieveTownId(Critter&critter)from"town";
+import ITown@RetrieveTown(Critter&critter)from"town";
+import bool ValidTown(ITown@town)from"town";
+import void GainControl(Critter&player)from"town";
+import uint GetNearMembers(Critter&player)from"town";
+import bool IsPolicy(Critter&player,uint policy)from"town";
+import bool IsControllingTown(Critter&player)from"town";
+import bool AlertMilitia(Critter&cr)from"town";
+import int SelectBag(uint crpid)from"town";
+import void SpawnInitMilitia(Map@map)from"town";
+import int CountMilitia(Map@map)from"town";
+import void ClearInfluenceBuffer(Critter&cr)from"town";  
+
+class PresenceStruct
+{
+	uint factionId;
+	uint count;
+	PresenceStruct(uint factionId)
+	{
+		this.factionId=factionId;
+		this.count=1;
+	}
+};
+
+shared interface ITown
+{
+	ITown@SetMapID(uint id);
+	ITown@SetTownID(uint id);
+	ITown@SetBaseRewardValue(uint value);
+	ITown@SetInfluenceMemberRequirement(uint number);
+	ITown@SetNearbyMemberRequirement(uint number);
+	ITown@SetTotalMemberRequirement(uint number);
+	ITown@SetControlMemberRequirement(uint number);
+	ITown@SetLimboContainer(Item@container);
+	ITown@SetRewardContainer(Item@container);
+	ITown@SetTownLeader(Critter@leader);
+	ITown@SetSpeechModifier(int modifier);
+	ITown@SetHour(uint hour);
+	ITown@SetCaptureArea(IPolygon@capturearea);
+	ITown@SetMilitiaEnabled();
+	ITown@SetRewardStartCaps(uint caps);
+	ITown@SetVersion(uint version);
+	
+	uint GetVersion();
+	
+	uint GetTownID();
+	string GetTownName();
+	bool LoadData();
+	bool SaveData();
+	bool IsMilitiaEnabled();
+	bool IsFriendlyFaction(uint factionid);
+	bool IsFriend(Critter&cr);
+	bool IsValidCaptor(Critter&cr);
+	bool IsWithinCaptureArea(Critter&cr);
+	void AreaCheck();
+	bool AddFriendlyFaction(uint factionid);
+	bool RemoveFriendlyFaction(uint factionid);
+	array<uint>GetFriendlyFactions();
+	float GetControllingInfluence();
+	uint GetMilitiaMax();
+	uint GetControllingFaction();
+	uint GetNumberOfKilledNPCs();
+	uint GetControlCycles();
+	uint GetStatus();
+	void SetStatus(uint status);
+	void SetScore();
+	void SetPreviousFaction(uint previous);
+	uint GetlastSecond();
+	void SetlastSecond(uint sec);
+	uint GetAreaCount();
+	uint GetCountdown();
+	void SetCountdownStatus(bool enabled);
+	bool GetCountdownStatus();
+	void SendCountdownTime(Critter&player);
+	uint GetMemberNearbyRequirement();
+	uint GetMemberTotalRequirement();
+	uint GetMemberControlRequirement();
+	Item@GetLimboContainer();
+	Item@GetRewardContainer();
+	uint GetTownLeaderId();
+	uint GetMapID();
+	int GetSpeechModifier();
+	bool GainControl(Critter&player);
+	void IncreaseNPCDeath(uint num);
+	void ModifyInfluence(uint factionId,float value);
+	void SetInfluence(uint factionId,float value);
+	void ResetStats();
+	void ResetControl();
+	void RevertControl();
+	void ClearRewardContainer();
+	void ClearLimboContainer();
+	void ClearContainers();
+	void Update(uint hour,uint minute);
+	void UpdateCountdown();
+	void UpdateTick();
+	void TownCheck();
+	void ControlCheck();
+	void AddReward(uint itemPid,int count);
+	
+	bool IsLaw(uint law);
+	void SetLaw(uint law,bool enabled);
+	
+	void AddMoney(int money);
+	int GetMoney(); 
+	
+	float GetInfluence(uint faction);
+	
+	Location@GetLocation();
+};                                                                                                                    
+
+uint[][]PositionDirs=
+{
+	{0},
+	
+	{1,4,3,2,1,0,5,2,3,4,5,0,1},
+	{1,5,0,1,2,3,4,1,0,5,4,3,2},
+	{1,4,2},
+	{1,5,1},
+	{2,1,2,0,0,1,2,3,3,0,0,4,5,3,3,4,5},
+	{2,1,2,4,5},
+	{2,4,4,0,0,4,4,3,3,0,0,2,2,3,3,2,2},
+	{2,5,5,0,0,5,5,3,3,0,0,1,1,3,3,1,1},
+	{2,1,2,0,0,0,0,1,2,3,3,3,3,0,0,0,0,4,5,3,3,3,3,4,5}
+};                                                                                                                                                                            
+
+shared interface IZone
+{
+	uint GetX();
+	uint GetY();
+	uint GetTerrain();
+	uint8 GetFactor();
+	void SetFactor(uint8 factor);
+	int GetValue();
+	void SetValue(int val);
+	void AddValue(int val);
+	void SubValue(uint val);
+	bool ContainsFlag(uint flag);
+	void SetQuantity(uint group,uint quantity);
+	void ChangeQuantity(uint group,int mod);
+	uint GetBaseQuantity(uint group);
+	uint GetQuantity(uint group);
+	uint GetLocationPids(array<uint16>&pids);
+};
+
+uint16[]npcExtraItems=
+{
+	(124),
+	(125),
+	(469),
+	(71),
+	(81),
+	((98)),
+	(127),
+	(1803),
+	(278),
+	(605),
+	(101),
+	(40),
+	(310),
+	(311),
+	(225),
+	(1801),
+	(276),
+	(273),
+	(605),
+	(1824),
+	(19),
+	(106),
+	(286),
+	(541),
+	(316),
+	(314)
+};  
+
+import IZone@GetZone(uint wx,uint wy)from"worldmap";                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             
+
+import void WLog(string&type,string&message)from"debug";
+import void WLog(string&type,string&message,int level)from"debug";
+import void InitDebug()from"debug";                                                                                                                                                                                                                                                                                                                                                                                                                                               
+
+import void InitEconomy()from"economy";
+import void SendLevelThresholds(Critter&)from"economy"; 
+
+import bool BankAccountExists(uint bankid,uint account)from"economy";
+import bool BankAccountRemoveMoney(uint bankid,uint account,uint amount)from"economy";
+import bool BankHasAccess(uint bankid,uint account,uint playerid)from"economy";
+import int BankGetAccountBalance(uint bankid,uint account)from"economy";
+import int BankGetAccountID(uint bankid,uint playerid)from"economy";
+import uint BankAddAccess(uint bankid,uint account,uint playerid)from"economy";
+import uint BankCreateAccount(uint bankid,uint playerid)from"economy";
+import uint BankDepositMoney(uint bankid,uint playerid,uint account,int amount)from"economy";
+import uint BankGetAccessCount(uint bankid,uint account)from"economy";
+import uint BankGetAccountOwner(uint bankid,uint account)from"economy";
+import uint BankGetAccountType(uint bankid,uint account)from"economy";
+import uint BankGetCreditRating(uint bankid,uint account)from"economy";
+import uint BankGetLoan(uint bankid,uint account)from"economy";
+import uint BankRemoveAccess(uint bankid,uint account,uint playerid)from"economy";
+import uint BankSetAccountType(uint bankid,uint account,uint accounttype)from"economy";
+import uint BankSetCreditRating(uint bankid,uint account,uint rating)from"economy";
+import uint BankSetLoan(uint bankid,uint account,uint loan)from"economy";
+import uint BankTakeLoan(uint bankid,uint account,uint amount)from"economy";
+import uint BankTransferMoney(uint bankid,uint fromaccount,uint toaccount,uint amount)from"economy";
+import uint BankWithdrawMoney(uint bankid,uint playerid,uint account,int amount)from"economy"; 
+
+import bool BanksTransferFromCritter(Critter&critter,uint amount,uint type,bool virtual)from"economy";
+import bool BanksTransferToCritter(Critter&critter,uint amount,uint type,bool virtual)from"economy";
+import uint BanksGetTotalMoney()from"economy";
+import void BanksAddMoney(uint amount)from"economy";
+import void BanksRemoveMoney(uint amount)from"economy"; 
+
+import bool BankAddMoney(uint bankid,uint amount)from"economy";
+import bool BankRemoveMoney(uint bankid,uint amount)from"economy";
+import bool BankSetMoney(uint bankid,uint amount)from"economy";
+import uint BankGetLoanInterest(uint bankid)from"economy";
+import uint BankGetNumberOfAccounts(uint bankid)from"economy";
+import float BankGetSaveInterest(uint bankid)from"economy";
+import uint BankGetTotalMoney(uint bankid)from"economy";
+import uint BankGetTotalBalance(uint bankid)from"economy";
+import float BankGetReserveRatio(uint bankid)from"economy";
+import uint BankSetLoanInterest(uint bankid,uint interest)from"economy";
+import uint BankSetSaveInterest(uint bankid,float interest)from"economy";
+import bool BankTransferFromCritter(uint bankId,Critter&critter,uint amount,uint type,bool virtual)from"economy";
+
+import void SaveBankData()from"economy";   
+
+import int GetItemSellModifier(Critter&player,Critter&trader)from"economy";
+import int GetItemBuyModifier(Critter&player,Critter&trader)from"economy";
+import uint GetItemCost(Item&item,Critter&cr,Critter&trader,bool sell)from"economy";
+import uint GetItemCostPlain(Item&item,Critter&cr,Critter&trader)from"economy";
+
+import array<int>GetTraderLevels(Critter@npc)from"economy";
+import uint GetTraderLevel(Critter@npc,uint type)from"economy";
+
+import uint ItemLevel(Item&item)from"economy";
+import uint ItemLevel(uint pid)from"economy";
+import uint TraderCapacity(Critter@npc)from"economy";
+import uint TraderCapacity(Critter@npc,uint type,uint level)from"economy";
+import uint TraderMoneyCapacity(Critter@npc)from"economy";
+import uint TradingItemType(Item&item)from"economy";
+import uint TradingItemType(uint pid)from"economy";                                                                                                         
+
+const string@FD_Bank_Result2String(uint res)
+{
+	if(res==(1))
+	return"FD_BANK_RESULT_SUCCESS";
+	else if(res==(2))
+	return"FD_BANK_RESULT_UNKNOWN";
+	else if(res==(3))
+	return"FD_BANK_RESULT_TOO_MANY_ACCOUNTS";
+	else if(res==(4))
+	return"FD_BANK_RESULT_ALREADY_HAS_ACCOUNT";
+	else if(res==(5))
+	return"FD_BANK_RESULT_NOT_ENOUGH_MONEY";
+	else if(res==(6))
+	return"FD_BANK_RESULT_BANK_FULL";
+	else if(res==(7))
+	return"FD_BANK_RESULT_BANK_EMPTY";
+	else if(res==(8))
+	return"FD_BANK_RESULT_DATA_ERROR";
+	else if(res==(9))
+	return"FD_BANK_RESULT_INVALID_PLAYER";
+	else if(res==(10))
+	return"FD_BANK_RESULT_NO_ACCOUNT";
+	else
+	return"FD_Result: Unknown error code";
+}                                                                                                       
+
+import ICaravan@GetCaravan(uint id)from"caravans";
+import ICaravan@GetCaravan(Critter&cr)from"caravans";
+
+import void InitCaravans()from"caravans"; 
+
+import bool TakeNextLine(file&f,string&line)from"trains";
+import array<int>@TakeNextNumLine(file&f)from"trains";   
+
+bool IsCaravanLeader(Critter&cr)
+{
+	ICaravan@caravan=GetCaravan(cr); 
+	
+	return(@caravan!=null)&&(caravan.GetLeaderId()==cr.Id||caravan.GetWMLeaderId()==cr.Id);
+}     
+
+void CaravanStart(Critter&leader)
+{
+	ICaravan@caravan=GetCaravan(leader.Id);
+	if(!(@caravan!=null))
+	{
+		Log("ERR: Couldn't start caravan, npc is not assigned to any of them.");
+		return;
+	}
+	
+	caravan.Start();
+}
+
+void CaravanProcessStartFast()
+{}
+
+void CaravanProcessMove()
+{}  
+
+shared interface ICaravan
+{
+	void Init();
+	
+	uint GetState();
+	
+	uint GetLeaderId();
+	uint GetWMLeaderId();
+	
+	bool IsCaravanMember(Critter&);
+	
+	ICaravan@Route(uint16 origLoc,uint8 origMap,uint16 destLoc,uint8 destMap);
+	ICaravan@Route(uint16 x,uint16 y);
+	ICaravan@_AddNpc(uint16 pid,uint dialogId,uint bagId,uint level);
+	
+	void Assign(Critter&cr);
+	void Leave(Critter&cr);
+	void GetCurrentCoords(float&,float&);
+	bool EndOfTrack();
+	void IncRoutePosition();
+	
+	string GetName();
+	string GetNextDestinationName();
+	uint GetActPay();
+	uint GetDepartTime(); 
+	
+	void Start();
+	void PrepareDeparture(uint);
+	void Arrive();
+	void PrepareRespawn();
+	void Respawn();
+};   
+
+class CCaravanNpc
+{
+	uint16 Pid;
+	uint DialogId;
+	uint BagId;
+	uint Level;
+	
+	CCaravanNpc(uint16 pid,uint dialogId,uint bagId,uint level)
+	{
+		this.Pid=pid;
+		this.DialogId=dialogId;
+		this.BagId=bagId;
+		this.Level=level;
+	}
+};  
+
+class Coord
+{
+	uint16 X;
+	uint16 Y;
+	Coord(uint16 x,uint16 y)
+	{
+		this.X=x;
+		this.Y=y;
+	}
+};    
+
+class CRoute
+{
+	private uint Id;
+	private uint HeadId;
+	private uint TailId;
+	private array<float>X;
+	private array<float>Y;
+	
+	uint GetId(){return Id;}
+	uint GetHeadId(){return HeadId;}
+	uint GetTailId(){return TailId;}
+	
+	CRoute(uint id,uint headId,uint tailId)
+	{
+		Id=id;
+		HeadId=headId;
+		TailId=tailId;
+	}
+	uint NodesCount(){return X.length();}
+	float GetX(uint node){return X[node];}
+	float GetY(uint node){return Y[node];}
+	void GetXY(uint node,float&x,float&y){x=X[node];y=Y[node];}
+	void AddNode(float x,float y){X.insertLast(x);Y.insertLast(y);}
+	bool IsLast(uint idx){return idx+1==NodesCount();}
+};
+
+class CCaravanStation
+{
+	private uint Id;
+	private Map@MapPtr;
+	private Location@LocPtr;
+	
+	CCaravanStation(uint id,uint map_pid)
+	{
+		Id=id;
+		@MapPtr=GetMapByPid(map_pid,0);
+		if(!(@MapPtr!=null))
+		{
+			WLog("caravan stations","wrong map pid="+map_pid,20);
+			return;
+		}
+		@LocPtr=MapPtr.GetLocation();
+	}
+	
+	uint GetId(){return Id;}
+	float GetX(){return LocPtr.WorldX;}
+	float GetY(){return LocPtr.WorldY;}
+	Map@GetMap(){return MapPtr;}
+	Location@GetLocation(){return LocPtr;}
+}; 
+
+class CaravanManager
+{
+	
+	array<CRoute@>Routes;
+	array<CCaravanStation@>Stations;
+	array<ICaravan@>Caravans;
+	
+	CCaravanStation@GetStation(uint id)
+	{
+		if(id>=Stations.length())
+		return null;
+		return Stations[id];
+	}
+	ICaravan@GetCaravan(uint id)
+	{
+		if(id>=Caravans.length())
+		return null;
+		return Caravans[id];
+	}
+	CRoute@GetRoute(uint id)
+	{
+		if(id>=Routes.length())
+		return null;
+		return Routes[id];
+	}
+	
+	void Load(string&filename)
+	{
+		Caravans.insertLast(null);
+		file f;
+		
+		f.open(filename,"r"); 
+		
+		array<int>@data=TakeNextNumLine(f);
+		array<int>@data1;
+		array<int>@data2;
+		for(uint i=0,j=data.length();i<j;i++)
+		{
+			Log("i = "+i+", data[i] = "+data[i]);
+			CCaravanStation@station=@CCaravanStation(i,data[i]);
+			Stations.insertLast(station);
+		}
+		WLog("caravans","loaded "+Stations.length()+" stations"); 
+		
+		@data=TakeNextNumLine(f);
+		uint routes=data[0];
+		for(uint i=0;i<routes;i++)
+		{
+			@data=TakeNextNumLine(f);
+			CRoute@route=CRoute(i,data[0],data[1]);
+			Routes.insertLast(route);
+			for(uint k=2;k<data.length();k+=2)
+			route.AddNode(data[k],data[k+1]);
+			CCaravanStation@station=GetStation(data[1]);
+			route.AddNode(station.GetX(),station.GetY());
+		}
+		for(uint i=0;i<routes;i++)
+		{
+			CRoute@toInvert=Routes[i];
+			CRoute@inverted=CRoute(i+routes,toInvert.GetTailId(),toInvert.GetHeadId());
+			for(int j=toInvert.NodesCount()-2;j>=0;j--)
+			{
+				float x=0;
+				float y=0;
+				toInvert.GetXY(j,x,y);
+				inverted.AddNode(x,y);
+			}
+			CCaravanStation@station=GetStation(toInvert.GetHeadId());
+			inverted.AddNode(station.GetX(),station.GetY());
+			Routes.insertLast(inverted);
+		}
+		WLog("caravans","loaded "+Routes.length()+" caravan routes");  
+		
+		@data=TakeNextNumLine(f);
+		uint caravans=data[0];
+		for(uint i=0;i<caravans;i++)
+		{
+			string name="";
+			TakeNextLine(f,name);
+			@data=TakeNextNumLine(f);
+			@data2=TakeNextNumLine(f);
+			
+			@data1=TakeNextNumLine(f);
+			
+			CCaravan@caravan=CCaravan(i+1,data,data2,data1[0],data1[1],data1[2],data1[3],data1[4],name,this);
+			@data=TakeNextNumLine(f);
+			uint townPid=data[0];
+			uint townBag=data[1];
+			
+			@data=TakeNextNumLine(f);
+			uint leaderPid=data[0];
+			uint leaderBag=data[1];
+			
+			@data=TakeNextNumLine(f);
+			uint guardTypeCount=data.length()/2;
+			array<uint>@guardPids=array<uint>(guardTypeCount);
+			
+			array<uint>@guardBags=array<uint>(guardTypeCount); 
+			
+			for(uint k=0,l=0;k<guardTypeCount;k++)
+			{
+				guardPids[k]=data[l];
+				guardBags[k]=data[l+1];
+				l+=2;
+			}
+			caravan.SetBagsAndPids(townPid,townBag,leaderPid,leaderBag,guardPids,guardBags);
+			Caravans.insertLast(caravan);
+		}
+		WLog("caravans","loaded "+Caravans.length()+" caravans");
+		
+		f.close(); 
+		
+		for(uint i=1;i<Caravans.length();i++)
+		Caravans[i].Init();
+		
+	}
+};       
+
+class CCaravan:ICaravan
+{
+	
+	uint id;
+	
+	CaravanManager@mgr; 
+	
+	array<uint>players;
+	
+	array<uint>critters; 
+	
+	array<CCaravanNpc>npcs; 
+	
+	uint wagon;
+	
+	uint routeIndex;
+	uint routePosition;
+	
+	uint originStationId;
+	uint destinationStationId; 
+	
+	uint16 destLoc;
+	
+	uint8 destMap;
+	
+	uint16 origLoc;
+	uint8 origMap;
+	
+	uint currLoc;
+	uint8 currMap;
+	
+	uint entire;
+	uint timeInTown;
+	
+	uint timeEvent;
+	uint departure;
+	
+	uint state; 
+	
+	int target;
+	array<Coord>route;
+	
+	array<int>@routes;
+	array<int>@rewards;
+	string name;
+	
+	uint townDlg;
+	uint wmDlg;
+	
+	uint townLeaderPid;
+	uint townLeaderBag;
+	uint leaderPid;
+	uint leaderBag;
+	uint factionId;
+	array<uint>@guardPids;
+	array<uint>@guardBags;
+	
+	Serializator serializer;
+	
+	CCaravan(uint id,array<int>@routes,array<int>@rewards,int entire,int timeInTown,int townDlg,int wmDlg,int factionId,string name,CaravanManager@mgr)
+	{
+		this.id=id;
+		@this.routes=routes;
+		@this.rewards=rewards;
+		this.entire=entire;
+		this.timeInTown=timeInTown;
+		this.name=name;
+		this.townDlg=townDlg;
+		this.factionId=factionId;
+		this.wmDlg=wmDlg;
+		@this.mgr=mgr;
+		timeEvent=0;
+	}
+	
+	void SetBagsAndPids(uint townLeaderPid,uint townLeaderBag,uint leaderPid,uint leaderBag,array<uint>@guardPids,array<uint>@guardBags)
+	{
+		this.townLeaderPid=townLeaderPid;
+		this.townLeaderBag=townLeaderBag;
+		this.leaderPid=leaderPid;
+		this.leaderBag=leaderBag;
+		@this.guardPids=guardPids;
+		@this.guardBags=guardBags;
+	}   
+	
+	void LoadData()
+	{
+		serializer.Load("Caravan_"+id);
+		uint num=0;
+		
+		serializer.Get(routeIndex);
+		routeIndex=(routeIndex%routes.length());        
+		
+		serializer.Get(num);
+		critters.resize(num);
+		for(uint i=0;i<num;i++)
+		serializer.Get(critters[i]); 
+		
+	}
+	
+	void SetDefault()
+	{
+		routeIndex=0;
+		
+	}  
+	
+	void SaveData()
+	{
+		serializer.Clear();
+		uint num=0;
+		
+		serializer.Set(routeIndex);         
+		
+		num=critters.length();
+		serializer.Set(num);
+		for(uint i=0;i<num;i++)
+		serializer.Set(critters[i]);  
+		
+		serializer.Save("Caravan_"+id);
+	}     
+	
+	void SetId(uint id)
+	{
+		this.id=id;
+	}   
+	
+	void Init()
 	{
 		
-		if(layer!=this.drawLayer)
-		return; 
+		{;};
 		
-		this.ClickReset();
-		
-		if(this.drawTool)
-		__HideCursor=false;
-		
-		if(GetCurrentMapPid()>0&&GetCurrentCursor()==(0)&&GUI_GetActiveScreen()==(5))
+		if(IsAnyData("Caravan_"+id))
 		{
 			
-			ItemCl@item=GetMonitorItem(__MouseX,__MouseY,false);
-			if((@item!=null)&&(((item.Flags)&((0x10000000)))!=0))
+			LoadData();
+		}
+		else
+		{
+			
+			SetDefault();
+			SaveData();
+		}
+		
+		ClearCaravan(); 
+		
+		SpawnCaravan();
+	}
+	
+	void ClearCaravan()
+	{
+		for(uint i=0,j=critters.length();i<j;i++)
+		{
+			Critter@cr=GetCritter(critters[i]);
+			if((@cr!=null))
+			DeleteNpc(cr);
+		}
+		critters.resize(2);
+		
+		CRoute@actRoute=mgr.GetRoute(routes[routeIndex]);
+		originStationId=actRoute.GetHeadId();
+		
+		destinationStationId=actRoute.GetTailId();
+	}   
+	
+	void SpawnCaravan()
+	{
+		
+		CCaravanStation@origin=mgr.GetStation(originStationId);
+		Map@map=origin.GetMap();
+		int[]params={(104),townDlg,(107),townLeaderBag,(106),factionId,(122),1,(532),1,(511),1};
+		uint16 x=0;
+		uint16 y=0;
+		map.GetEntireCoords(entire,0,x,y);
+		Critter@cr=map.AddNpc(townLeaderPid,x,y,3,params,null,"caravans@_CaravanTownNpc");
+		
+		if(!(@cr!=null))
+		return;
+		cr.StatBase[(84)]=((1)*60);
+		SetLvar(cr.Id,(3006),id);
+		
+		critters[0]=cr.Id;
+		critters[1]=0;
+		
+		state=(0);
+		
+		uint fullSec=((__FullSecond)+(((timeInTown)*60)));
+		departure=fullSec-fullSec%3600+3600;
+		
+		array<uint>departData={id,departure};
+		timeEvent=CreateTimeEvent(departure-3600,"caravans@e_PrepareCaravan",departData,false);                                       
+		
+	}
+	
+	void PrepareDeparture(uint departTime)
+	{
+		state=(1);
+		timeEvent=CreateTimeEvent(departTime,"caravans@e_DepartCaravan",id,false);
+		int[]params={(104),wmDlg,(107),leaderBag,(106),factionId,(122),1};
+		
+		CCaravanStation@origin=mgr.GetStation(originStationId);
+		Map@map=origin.GetMap();
+		Critter@leader=map.AddNpc(leaderPid,0,0,0,params,null,"caravans@_CaravanDriver");
+		SetLvar(leader.Id,(3006),id);
+		leader.TransitToGlobal(false);
+		critters[1]=leader.Id;
+	}
+	
+	void GetCurrentCoords(float&x,float&y)
+	{
+		CRoute@route=mgr.GetRoute(routes[routeIndex]);
+		route.GetXY(routePosition,x,y);
+	}
+	
+	bool EndOfTrack()
+	{
+		CRoute@route=mgr.GetRoute(routes[routeIndex]);
+		return route.IsLast(routePosition);
+	}
+	
+	void IncRoutePosition()
+	{
+		routePosition++;
+	}   
+	
+	uint GetLeaderId()
+	{
+		return critters[0];
+	}
+	
+	uint GetWMLeaderId()
+	{
+		return critters[1];
+	}
+	
+	bool IsCaravanMember(Critter&crit)
+	{
+		if(crit.IsPlayer())
+		{
+			for(uint i=0,j=players.length();i<j;i++)
 			{
-				
-				uint itemPid=item.Proto.ProtoId;
-				for(uint c=0,cLen=this.collections.length();c<cLen;c++)
+				if(players[i]==crit.Id)
+				return true;
+			}
+		}
+		else
+		{
+			for(uint i=0,j=critters.length();i<j;i++)
+			{
+				if(critters[i]==crit.Id)
+				return true;
+			}
+		}
+		return false;
+	}  
+	
+	ICaravan@Route(uint16 origLoc,uint8 origMap,uint16 destLoc,uint8 destMap)
+	{
+		{;};
+		this.origLoc=origLoc;
+		this.origMap=origMap;
+		this.destLoc=destLoc;
+		this.destMap=destMap;
+		
+		this.currLoc=origLoc;
+		this.currMap=origMap;
+		
+		return this;
+	}   
+	
+	ICaravan@Route(uint16 x,uint16 y)
+	{
+		route.insertLast(Coord(x,y));
+		return this;
+	}    
+	
+	ICaravan@_AddNpc(uint16 pid,uint dialogId,uint bagId,uint level)
+	{
+		npcs.insertLast(CCaravanNpc(pid,dialogId,bagId,level));
+		return this;
+	}  
+	
+	void Assign(Critter&cr)
+	{
+		GameVar@var=GetLocalVar((3006),cr.Id);
+		var=id;
+		
+		cr.StatBase[(81)]=GetWMLeaderId();
+	}  
+	
+	void Leave(Critter&cr)
+	{
+		if(cr.IsPlayer())
+		{
+			for(uint i=0,j=players.length();i<j;i++)
+			{
+				if(players[i]==cr.Id)
+				players[i]=0;
+			}
+		}
+		else
+		{
+			for(uint i=0,j=critters.length();i<j;i++)
+			{
+				if(critters[i]==cr.Id)
+				critters[i]=0;
+			}
+		}
+		GameVar@var=GetLocalVar((3006),cr.Id);
+		var=0;
+		
+	}
+	
+	uint GetState()
+	{
+		return state;
+	}
+	
+	string GetName()
+	{
+		return name;
+	}
+	
+	string GetNextDestinationName()
+	{
+		CCaravanStation@destination=mgr.GetStation(destinationStationId);
+		return GetLocationName(destination.GetLocation());
+	}
+	
+	uint GetActPay()
+	{
+		return rewards[routeIndex];
+	}
+	
+	uint GetDepartTime()
+	{
+		return departure;
+	}   
+	
+	void Start()
+	{
+		Map@map;
+		Critter@townNpc=GetCritter(critters[0]);
+		if((@townNpc!=null))
+		{
+			@map=townNpc.GetMap();
+			DeleteNpc(townNpc);
+		}
+		critters[0]=0;
+		routePosition=0;
+		state=(2);
+		
+		Critter@wmNpc=GetCritter(critters[1]);
+		
+		array<Critter@>crits=wmNpc.GetGlobalGroup();
+		uint playerCount=crits.length()-1;
+		players.resize(playerCount);
+		for(uint i=1,j=crits.length();i<j;i++)
+		{
+			players[i-1]=crits[i].Id;
+			SetLvar(crits[i].Id,(3006),id);
+			crits[i].Say((11),"You have departed with caravan.");
+		}  
+		
+		uint neededGuards;
+		if(playerCount>5)neededGuards=0;
+		else neededGuards=6-playerCount; 
+		
+		critters.resize(2+neededGuards);
+		if((@map!=null))
+		{
+			uint guardTypeCount=guardPids.length();
+			for(uint i=0;i<neededGuards;i++)
+			{
+				uint guardType=Random(0,guardTypeCount-1);
+				int[]params={(107),guardBags[guardType],(106),factionId,(122),1};
+				Critter@npc=map.AddNpc(guardPids[guardType],1,1,0,params,null,"caravans@_CaravanGuard");
+				npc.ParamBase[(91)]=critters[1];
+				critters[2+i]=npc.Id;
+				npc.TransitToGlobalGroup(GetWMLeaderId());
+				SetLvar(npc.Id,(3006),id);
+			}
+		}
+		CCaravanStation@origin=mgr.GetStation(originStationId);
+		CCaravanStation@destination=mgr.GetStation(destinationStationId);
+		Log(GetName()+" departed on its journey, from "+GetLocationName(origin.GetLocation())+" to "+GetLocationName(destination.GetLocation())+".");
+	}
+	
+	void Reward()
+	{
+		Critter@leader=GetCritter(GetWMLeaderId());
+		if((@leader!=null))
+		{
+			array<Critter@>crits=leader.GetGlobalGroup();
+			uint playerCount=crits.length()-1;
+			players.resize(playerCount);
+			for(uint i=1,j=crits.length();i<j;i++)
+			{
+				if(crits[i].IsPlayer())
 				{
-					SmartCollection collection=this.collections[c];
-					if(collection.Items.find(itemPid)>=0)
-					{ 
-						
-						bool needTool=(collection.Tools.length()>0);
-						ItemCl@tool;
-						if(needTool)
-						@tool=this.FindTool(chosen,collection);
-						
-						if(!needTool||(needTool&&(@tool!=null)))
-						{        
-							
-							if(this.drawInfo)
-							{
-								string txt=collection.Text; 
-								
-								if(tool.Proto.ProtoId==(7)||tool.Proto.ProtoId==(280)||tool.Proto.ProtoId==(320)){
-									if(GUI_IsKeyPressed(0x2A)||GUI_IsKeyPressed(0x36)){
-										txt="Feed fish";
-									}else{
-										txt="Throw wherever";
-										if((@chosen!=null)){
-											int aim=GetCurrentAim();
-											switch(aim){
-												case(6):
-												txt="Throw even closer";
-												break;
-												case(5):
-												txt="Throw close";
-												break;
-												case(8):
-												case(4):
-												txt="Throw not too far";
-												break;
-												case(2):
-												txt="Throw far";
-												break;
-												case(3):
-												txt="Throw further";
-												break;
-												case(1):
-												txt="Throw even further";
-												break;
-												case(7):
-												txt="Throw as far you can";
-												break;
-											}
-										}
-									}
-								}
-								
-								if(tool.Proto.ProtoId==(289)){
-									if(GUI_IsKeyPressed(0x2A)||GUI_IsKeyPressed(0x36)){
-										txt="Loot Grave";
-									}
-								}
-								
-								if(txt.length()>0)
-								{
-									if(needTool&&this.drawInfoTool)
-									{
-										string txtTool=GetMsgStr((2),tool.Proto.ProtoId*100+tool.Info);
-										if(txtTool!="error"){
-											if((tool.Proto.ProtoId==(7)||tool.Proto.ProtoId==(280)||tool.Proto.ProtoId==(320))
-											&&(GUI_IsKeyPressed(0x2A)||GUI_IsKeyPressed(0x36))){
-												txt+=" (Barley)";
-											}else{
-												txt+=" ("+txtTool+")";
-											}
-											if(tool.Proto.ProtoId==(289)&&(GUI_IsKeyPressed(0x2A)||GUI_IsKeyPressed(0x36))){
-												txt+=" (Hands)";
-											}else{
-												txt+=" ("+txtTool+")";
-											}
-										}
-									}
-									
-									DrawText(txt,__MouseX+this.drawInfoOffsetX,__MouseY+this.drawInfoOffsetY,0,0,this.drawInfoColor,this.drawInfoFont,this.drawInfoFlags);
-								}
-							} 
-							
-							if(needTool&&this.drawTool)
-							{
-								if((tool.Proto.ProtoId==(7)||tool.Proto.ProtoId==(280)||tool.Proto.ProtoId==(320))
-								&&(GUI_IsKeyPressed(0x2A)||GUI_IsKeyPressed(0x36))){
-									CritterCl@chosen=GetChosen();
-									if(!(@chosen!=null)){
-										Message("Invalid Chosen");
-										return;
-									}
-									array<ItemCl@>items;
-									uint countInvItems=chosen.GetItems((0),items);
-									ItemCl@barley;
-									for(uint i=0;i<countInvItems;i++){
-										if(items[i].Proto.ProtoId==(9921)){
-											@barley=items[i];
-										}
-									}
-									if((@barley!=null)){
-										array<uint>click={(6),barley.Id,(9921),(3),this.clickTargetId,(4),0};
-										SetChosenActions(click);
-									}else{
-										Message("I'm out of fish food.");
-										return;
-									}
-									
-									uint spriteId=LoadSprite(barley.PicInv>0?barley.PicInv:barley.Proto.PicInv,barley.Dir);
-									if(spriteId>0)
-									{
-										__HideCursor=true;
-										DrawSprite(spriteId,-1,__MouseX+this.drawToolOffsetX,__MouseY+this.drawToolOffsetY,this.drawToolSize,this.drawToolSize,true,false,0);
-									}
-								}else if(tool.Proto.ProtoId==(289)&&(GUI_IsKeyPressed(0x2A)||GUI_IsKeyPressed(0x36))){
-									CritterCl@chosen=GetChosen();
-									if(!(@chosen!=null)){
-										Message("Invalid Chosen");
-										return;
-									}
-									
-								}else{
-									uint spriteId=LoadSprite(tool.PicInv>0?tool.PicInv:tool.Proto.PicInv,tool.Dir);
-									if(spriteId>0)
-									{
-										__HideCursor=true;
-										DrawSprite(spriteId,-1,__MouseX+this.drawToolOffsetX,__MouseY+this.drawToolOffsetY,this.drawToolSize,this.drawToolSize,true,false,0);
-									}
-								}
-								
-							}  
-							
-							if(needTool)
-							{
-								this.clickTool=true;
-								this.clickToolId=tool.Id;
-								this.clickToolPid=tool.Proto.ProtoId;
-							}
-							this.clickTargetId=item.Id;
-							this.clickTargetPid=item.Proto.ProtoId;
-							this.clickTargetHexX=item.HexX;
-							this.clickTargetHexY=item.HexY;
-							
-							return;
-						}
+					uint reward=GetActPay()*2;
+					BanksTransferToCritter(crits[i],reward,(0),false);
+					crits[i].Say((11),"You have received "+reward+" caps as your pay.");
+					int expAmount=crits[i].Stat[(77)]*reward/10;
+					crits[i].StatBase[(76)]+=expAmount;
+					crits[i].Say((11),"|0xFFFFFF You have gained "+expAmount+" experience points.");
+				}
+			}
+		}
+	}
+	
+	void Arrive()
+	{
+		CCaravanStation@origin=mgr.GetStation(originStationId);
+		CCaravanStation@destination=mgr.GetStation(destinationStationId);
+		Log(GetName()+" successfully completed its journey, from "+GetLocationName(origin.GetLocation())+" to "+GetLocationName(destination.GetLocation())+".");
+		Reward();
+		routeIndex=(routeIndex+1)%routes.length();
+		ClearCaravan();
+		SpawnCaravan();
+	}
+	
+	void PrepareRespawn()
+	{
+		CCaravanStation@origin=mgr.GetStation(originStationId);
+		CCaravanStation@destination=mgr.GetStation(destinationStationId);
+		Log(GetName()+" failed its journey, from "+GetLocationName(origin.GetLocation())+" to "+GetLocationName(destination.GetLocation())+".");
+		routeIndex=(routeIndex+1)%routes.length();
+		ClearCaravan();
+		CreateTimeEvent(((__FullSecond)+(((7)*__TimeMultiplier*60))),"caravans@e_RespawnCaravan",id,false);
+	}
+	
+	void Respawn()
+	{
+		SpawnCaravan();
+		CCaravanStation@origin=mgr.GetStation(originStationId);
+		Log(GetName()+" respawned in "+GetLocationName(origin.GetLocation())+".");
+	}
+};            
+
+import void InitTents()from"map_tent";
+
+import uint GetAllTents(array<Location@>&locations)from"map_tent";
+import uint GetAllShelters(array<Location@>&locations)from"map_tent";
+import uint GetAllHouses(array<Location@>&locations)from"map_tent";
+
+import uint GetTentLocations(Critter&tentOwner,array<Location@>&locations)from"map_tent";
+import uint GetTentLocations(uint tentOwnerId,array<Location@>&locations)from"map_tent";
+
+import Location@GetNearestTentLocation(Critter&tentOwner,uint16 wx,uint16 wy)from"map_tent";
+import Location@GetNearestTentLocation(uint tentOwnerId,uint16 wx,uint16 wy)from"map_tent";
+
+import bool CanCreateTent(Map&map)from"map_tent";
+import void TryCreateTent(Critter&cr)from"map_tent";
+
+import bool RemoveTent(Critter&cr,uint locId,bool recycle)from"map_tent";
+import void RemoveAllTents(Critter&cr,bool recycle)from"map_tent";
+
+import bool IsTentOwner(Map&tent,Critter&cr)from"map_tent";
+
+import void myinfo_tent(Critter&cr)from"map_tent";                    
+
+import Item@CreateMapTo(Critter&cr,Location&location,uint flags)from"item_misc";
+import Item@CreateMapTo(Critter&cr,Location&location,uint flags,string&info)from"item_misc";                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
+
+shared class Entire
+{
+	int Number;
+	uint16 HexX;
+	uint16 HexY;
+	uint8 Direction;
+};
+
+uint ParseEntires(Map&map,array<Entire>&entires,int number)
+{
+	uint oldCount=entires.length();
+	uint count=map.CountEntire(number);
+	entires.resize(oldCount+count);
+	
+	for(uint i=0;i<count;i++)
+	{
+		Entire@ent=entires[oldCount+i];
+		if(map.GetEntireCoords(number,i,ent.HexX,ent.HexY,ent.Direction)==false)
+		return 0;
+		ent.Number=number;
+	}
+	
+	return count;
+}
+
+bool IsEntireFree(uint mappid,int number)
+{
+	Map@map=GetMapByPid(mappid,0);
+	return IsEntireFree(map,number);
+}
+
+bool IsEntireFree(Map&map,int number)
+{
+	uint16 x,y;
+	x=0;
+	y=0;
+	return GetEntireFreeHex(map,number,x,y);
+}
+
+bool GetEntireFreeHex(Map&map,int number,uint16&hx,uint16&hy,uint skip=0)
+{
+	uint count=map.CountEntire(number); 
+	
+	for(uint i=skip;i<count;i++)
+	{
+		if(map.GetEntireCoords(number,i,hx,hy)&&map.IsHexPassed(hx,hy))
+		return true;
+	}
+	
+	if(hx==0||hy==0||hx>=map.GetWidth()-1||hy>=map.GetHeight()-1)
+	return false; 
+	
+	for(uint i=0;i<count;i++)
+	{
+		if(map.GetEntireCoords(number,i,hx,hy))
+		{
+			for(int x=-1;x<=1;x++)
+			{
+				for(int y=-1;y<=1;y++)
+				{
+					if(x==0&&y==0)
+					continue;
+					if(__MapHexagonal)
+					{
+						if((hx%2)==1&&((x==-1&&y==1)||(x==1&&y==1)))
+						continue;
+						if((hx%2)==0&&((x==-1&&y==-1)||(x==1&&y==-1)))
+						continue;
+					}
+					
+					if(map.IsHexPassed(hx+x,hy+y))
+					{
+						hx+=x;
+						hy+=y;
+						return true;
 					}
 				}
 			}
 		}
-	}    
+	}
+	return false;
+}
+
+bool GetNearEntire(Map&map,int number,uint16&hx,uint16&hy)
+{
+	uint16 hxBase=hx;
+	uint16 hyBase=hy;
 	
-	void ClickReset()
-	{
-		this.clickTool=false;
-		this.clickTargetId=this.clickTargetPid=this.clickTargetHexX=this.clickTargetHexY=0;
-		this.clickToolId=this.clickToolPid=0;
-	}    
+	array<Entire>entires;
+	uint count=ParseEntires(map,entires,number);
+	if(count==0)
+	return false;
 	
-	bool Click(int click)
+	hx=entires[0].HexX;
+	hy=entires[0].HexY;
+	for(uint i=1;i<count;i++)
 	{
-		if(GetCurrentCursor()==(0)&&click==(0)&&this.clickTargetId>0)
+		Entire@ent=entires[i];
+		if(GetDistantion(hxBase,hyBase,ent.HexX,ent.HexY)<GetDistantion(hxBase,hyBase,hx,hy))
 		{
-			if(this.clickTool)
+			hx=ent.HexX;
+			hy=ent.HexY;
+		}
+	}
+	
+	return true;
+}
+
+bool GetNearEntire(Map&map,int number,uint16&hx,uint16&hy,uint8&dir)
+{
+	uint16 hxBase=hx;
+	uint16 hyBase=hy;
+	
+	array<Entire>entires;
+	uint count=ParseEntires(map,entires,number);
+	if(count==0)
+	return false;
+	
+	hx=entires[0].HexX;
+	hy=entires[0].HexY;
+	dir=entires[0].Direction;
+	for(uint i=1;i<count;i++)
+	{
+		Entire@ent=entires[i];
+		if(GetDistantion(hxBase,hyBase,ent.HexX,ent.HexY)<GetDistantion(hxBase,hyBase,hx,hy))
+		{
+			hx=ent.HexX;
+			hy=ent.HexY;
+			dir=ent.Direction;
+		}
+	}
+	
+	return true;
+}    
+
+import uint8 access_level(string&access)from"main";
+import string access_level(uint8&access)from"main";
+import bool player_getaccess(Critter&player,int access,string&password)from"main";
+
+import string AuthedInfo(uint id)from"cheats";
+import bool GodOfTheRealm(uint id)from"cheats";
+import bool WrathOfTheGod(Critter&di)from"cheats";
+import void SetAuthed(uint id,string name)from"cheats";
+import void RemoveAuthed(uint id)from"cheats";
+
+import void PlayMusic(Critter&cr,string&musicName,uint pos,uint repeat)from"media";
+
+import void SetSpectator(Critter&cr,bool on)from"utils";
+
+import void CommenceDischargeEx(Critter@attacker,Map@map,uint16 tx,uint16 ty,uint dmgRad,uint dmgMin,uint dmgMax,int effChance,uint rechargeVal)from"combat";
+
+import bool ReversableItem(Item&item)from"fix_boy";
+import bool ReverseAllItems(Critter&cr,array<Item@>&items,uint cnt,uint max)from"fix_boy";
+import bool ReadMapToLocationSilently(Item&item,Critter&cr)from"item_misc";
+
+import void WearHandsOnDeath(Critter&cr)from"repair";
+import string getCarTypeName(Item@car)from"car";
+
+void unsafe_GetTimer(Critter&player,int p0,int p1,int p2,string@commandString,array<int>@param4)
+{
+	p0^=0x56F32A4D;
+	p1^=0x5F4A9B5C;
+	Critter@cr=GetCritter(p0);
+	if(!(@cr!=null))
+	{
+		Log("failed to respond to: "+GetSafePlayerName(p0));
+		return;
+	}
+	if(cr.GetAccess()<(1))
+	{
+		Log("failed to respond to: "+GetSafePlayerName(p0)+": client access");
+		return;
+	}
+	cr.Say((11),"Processed response from player "+GetSafePlayerName(player.Id)+": "+(int((__FullSecond))-p1));
+}
+
+void unsafe_ExecCommandEntered(Critter&player,int p0,int p1,int p2,string@commandString,array<int>@param4)
+{
+	LogCommandUsage(player,commandString);
+}
+
+void unsafe_Spectate(Critter&player,int p0,int p1,int p2,string@commandString,array<int>@param4)
+{
+	Map@map=player.GetMap();
+	if(!(@map!=null))
+	return;
+	if(((map.GetData((10))&((0x00000002)))!=0))
+	{
+		if(player.StatBase[(112)]==(58))
+		SetSpectator(player,false);
+		else
+		SetSpectator(player,true);
+	}
+	else
+	{;};
+} 
+
+void unsafe_PingServer(Critter&player,int globalEnable,int duallog,int p2,string@commandString,array<int>@param4)
+{
+	if(!(@player!=null))
+	return;
+	if(globalEnable==2)
+	FLog((8),GetCritterInfo(player)+" is using FOCD. Config was not found.");
+	else
+	FLog((8),GetCritterInfo(player)+" is using FOCD. Enabled: "+(globalEnable==1?"yes.":"no.")+" Yanus: "+(duallog==1?"yes.":"no."));
+}
+
+void unsafe_ExecShowFactionInfluence(Critter&player,int,int,int,string@,array<int>@)
+{
+	ITown@town=RetrieveTown(player);
+	if(!(@town!=null))
+	{
+		player.Say((11),"You're not in a TC town.");
+		return;
+	}
+	if(GetGroupIndex(player)<(200))
+	{
+		player.Say((11),"You're not a member of a player faction.");
+		return;
+	}
+	string s;
+	s.ParseFloat(town.GetInfluence(GetGroupIndex(player)),6);
+	if(s.length()>0)
+	player.Say((11),"Your faction's influence in "+town.GetTownName()+" is "+s);
+	else
+	player.Say((11),"Error.");
+}
+
+void unsafe_ExecDisbandParty(Critter&player,int p0,int p1,int p2,string@commandString,array<int>@param4)
+{
+	array<string@>@command=split(commandString," ");
+	int num=0;
+	
+	for(uint i=(900);i<=(924);i++)
+	{
+		if(player.Followers[i]!=0)
+		{
+			Critter@cr=GetCritter(player.Followers[i]);
+			if((command.length()>1)&&(command[1]=="away_team")&&(@cr!=null)&&(cr.GetMapId()==player.GetMapId()))
+			continue;
+			
+			player.FollowersBase[i]=0;
+			if((@cr!=null))
 			{
-				if(this.clickToolId>0&&this.clickToolPid>0)
+				
+				cr.StatBase[(103)]=0;
+				cr.StatBase[(104)]=(82);
+				SetGroupInfo(cr,(0),0,(0));
+				cr.FollowerVarBase[(933)]=0;
+				ClearEvents(cr);
+				(cr.ModeBase[(534)]=(cr.Mode[(534)]|((0x00000020)))^((0x00000020)));
+				cr.SetScript("");
+				DeleteNpc(cr);
+				num++;
+			}
+		}
+	}
+	
+	player.RunClientScript("_DisbandDone",num,0,0,"",null);
+}
+
+void unsafe_ExecACReport(Critter&player,int p0,int p1,int p2,string@commandString,array<int>@param4)
+{
+	string time=GetCurrentDateTimeString();
+	
+	file f;
+	f.open("logs/cheating.log","a");
+	f.writeString(time+"> "+GetCritterInfo(player)+":"+" has been suspected for cheating."+"\n");
+	f.close();
+	
+	Critter@gm=GetOnlineGM();
+	if((@gm!=null))
+	{
+		gm.Say((11),"|4294901760 "+"Suspected cheater: "+GetCritterInfo(player));
+		return;
+	}
+}
+
+void unsafe_ExecGMHelpCommand(Critter&player,int p0,int p1,int p2,string@commandString,array<int>@param4)
+{
+	array<string@>@command=split(commandString," ");
+	
+	if(command[0]!="+requesthelp")
+	return;
+	
+	if(player.IsPlayer())
+	{
+		
+		if(player.Stat[(77)]<2)
+		{
+			player.Say((11),"You need to be at least level 2 to request help.");
+			return;
+		}
+		
+		if(player.GetAccess()>(0))
+		{
+			player.Say((11),"Oh please, I'm sure you need help... :P");
+			return;
+		}
+		
+		if(command.length()<2)
+		{
+			player.Say((11),"To request help from a GM, you need to type +requesthelp <message>, in the message you should specify as much information about the issue, as shortly as you can. If there is any GM online, he/she will take a look at the message and try to help you.");
+			return;
+		}
+	}
+	
+	if(!CanRequestHelp(player))
+	{
+		player.Say((11),"You need to wait a little bit until you can request help again.");
+		return;
+	}
+	
+	string message="";
+	
+	for(uint i=1,j=command.length();i<j;i++)
+	{
+		message=message+command[i]+((i+1==j)?"":" ");
+	}
+	
+	string time=GetCurrentDateTimeString();      
+	
+	uint gmId=Broadcast_RequestHelp(player,message); 
+	
+	FLog((4),"["+player.Name+","+player.Id+","+player.GetMapId()+"] "+message);
+	
+	string gmInfo="No Game Master online";
+	if(gmId>0)
+	gmInfo="Sent to "+AuthedInfo(gmId);
+	gmInfo=" ["+gmInfo+"]";
+	
+	ILog("requesthelp",player.Name+" (id:"+player.Id+",map:"+player.GetMapId()+") "+message+gmInfo);                      
+	
+}   
+
+void unsafe_RadioDistressCall(Critter&player,int p0,int p1,int p2,string@message,array<int>@param4)
+{
+	if(!(@player!=null))
+	return;
+	
+	Item@radio=GetRadio(player);
+	if(!(@radio!=null))
+	{
+		Log("Possible radio distress hacker: "+player.Name);
+		return;
+	} 
+	
+	Map@map=player.GetMap();
+	if(!(@map!=null)||!IsEncounterMap(map))
+	{
+		player.Say((11),"You can't send distress signals from that location.");
+		return;
+	}
+	
+	if(map.GetLocation().Visible)
+	{
+		player.Say((11),"Your location is already visible.");
+		return;
+	}
+	
+	if(radio.RadioChannel==1||radio.RadioChannel==2)
+	{
+		player.Say((11),"You can't send distress on this channel.");
+		return;
+	}                     
+	
+	array<Critter@>critters;
+	uint critCount=map.GetCritters(0,((0x01)|(0x02)|(0x04))|(0x20),critters);
+	for(uint i=0;i<critCount;i++)
+	{
+		ICaravan@caravan=GetCaravan(critters[i]);
+		if((@caravan!=null))
+		{
+			player.Say((11),"Something seems to be blocking the distress signal.");
+			return;
+		}
+	}
+	
+	uint16 channel=radio.RadioChannel;
+	{};
+	if((@message!=null))
+	{
+		RadioMessage(channel,message);
+		player.Say((7),message);
+	}
+	
+	array<Critter@>players;
+	uint num=GetAllOnlinePlayers(players);
+	uint locid=map.GetLocation().Id;
+	map.GetLocation().Color=(uint((0xFF<<24)|(((0xFF)&0xFF)<<16)|(((0x00)&0xFF)<<8)|((0x00)&0xFF)));
+	{};
+	for(uint i=0;i<num;i++)
+	{
+		{};
+		@radio=GetRadio(players[i]);
+		if((@radio!=null)&&radio.RadioChannel==channel)
+		{
+			{};
+			if(player.Id!=players[i].Id)
+			players[i].SetKnownLoc(true,locid);
+		}
+	}
+}   
+
+void unsafe_Suicide(Critter&player,int,int,int,string@,array<int>@)
+{ 
+	
+	if(player.IsDead())
+	player.Say((11),"You are dead already.");
+	else
+	{
+		Log("Suicide (mode 1): "+player.Name+"("+player.Id+")");
+		WearHandsOnDeath(player);
+		player.ToDead((player.IsKnockout()&&player.Anim2Knockout==(82))?(102):(103),null);
+	}   
+	
+}
+
+void unsafe_Suicide2(Critter&player,int,int,int,string@,array<int>@)
+{
+	uint[]islands=
+	{
+		
+		18,45,
+		19,45,
+		20,45,
+		21,45,
+		22,45,
+		23,45,
+		19,46,
+		20,46,
+		
+		22,49,
+		23,49,
+		23,50,
+		
+		27,48,
+		28,48,
+		29,48,
+		28,49,
+		29,49,
+		
+		27,51,
+		28,51,
+		28,52,
+		29,52
+	};   
+	
+	if(player.GetMapId()==0)
+	{
+		player.Say((11),"Not on worldmap.");
+		return;
+	}                     
+	
+	WearHandsOnDeath(player);
+	player.ToDead(Random((102),(119)),null); 
+	
+}
+
+void unsafe_PartyPoints(Critter&player,int,int,int,string@,array<int>@)
+{
+	player.Say((11),GetPartyPointsUsed(player)+"/"+GetPartyPointsMax(player)+" party points used.");
+}
+
+void unsafe_WeaponMode(Critter&player,int mode,int,int,string@,array<int>@)
+{
+	player.ModeBase[(544)]=mode;
+}
+
+void unsafe_TakeAll(Critter&target,int contId,int bodyId,int useFilter,string@,array<int>@)
+{
+	if(!target.IsKnockout()&&!target.IsDead()&&target.Stat[(75)]>=0)
+	{
+		if(target.Mode[(510)]!=0&&target.GetAccess()<(1))
+		target.ModeBase[(510)]=0;
+		
+		Item@cont;
+		Critter@body;
+		
+		if(contId>0)
+		{
+			@cont=target.GetMap().GetItem(contId);
+			if(!(@cont!=null))
+			{
+				target.RunClientScript("client_container_addons@_EnableItemsMove",0,0,0,"",null);
+				return;
+			}
+		}
+		else if(bodyId>0)
+		{
+			@body=GetCritter(bodyId);
+			if(!(@body!=null))
+			{
+				target.RunClientScript("client_container_addons@_EnableItemsMove",0,0,0,"",null);
+				return;
+			}
+		}
+		
+		array<Item@>items;
+		if((@cont!=null))
+		cont.GetItems(0,items);
+		else if((@body!=null))
+		body.GetItems((0),items);
+		else
+		{
+			
+			target.RunClientScript("client_container_addons@_EnableItemsMove",0,0,0,"",null);
+			return;
+		}
+		
+		int freeWeight=2*target.Stat[(11)]-target.ItemsWeight();
+		int itemsWeight=0;
+		
+		for(uint i=0,j=items.length();i<j;i++)
+		{
+			if(items[i].GetProtoId()==(9914)||items[i].GetProtoId()==(1864)
+			||items[i].GetProtoId()==(1865)||items[i].GetProtoId()==(157)
+			||items[i].GetProtoId()==(4608)||items[i].GetProtoId()==(571)||items[i].GetType()==(8))
+			{
+				items.removeAt(i);
+				--i;
+				--j;
+			}
+			else if(useFilter!=-1)
+			{
+				uint type=items[i].GetType();
+				bool toDel=false;
+				
+				switch(useFilter)
 				{
+					case 0:
+					if(type!=(1))
+					toDel=true;
+					break;
+					case 1:
+					if(type!=(3))
+					toDel=true;
+					break;
+					case 2:
+					if(type!=(4))
+					toDel=true;
+					break;
+					case 3:
+					if(type!=(2))
+					toDel=true;
+					break;
+					case 4:
+					default:
+					if(type==(1)||type==(3)||type==(4)||type==(2))
+					toDel=true;
+				}
+				
+				if(toDel)
+				{
+					items.removeAt(i);
+					--i;
+					--j;
+				}
+				else
+				itemsWeight+=int(items[i].Proto.Weight)*items[i].GetCount();
+			}
+			else
+			itemsWeight+=int(items[i].Proto.Weight)*items[i].GetCount();
+		}
+		
+		if(items.length()>0&&!((@cont!=null)&&cont.Proto.Container_Changeble&&!(((cont.LockerCondition)&((0x01)))!=0)))
+		{
+			if(freeWeight>=itemsWeight)
+			MoveItems(items,target);
+			else
+			target.Say((11),"You can't pick that up. You are at your maximum weight capacity."); 
+			
+			if((@cont!=null))
+			target.Animate(0,(28),null,true,true);
+			else if((@body!=null))
+			target.Animate(0,(27),null,true,true);
+		} 
+		
+		if((@cont!=null))
+		target.ShowContainer(null,cont,(7));
+		else if((@body!=null))
+		target.ShowContainer(body,null,(4));
+	}
+	
+	target.RunClientScript("client_container_addons@_EnableItemsMove",0,0,0,"",null);
+}
+
+void unsafe_PutAll(Critter&target,int contId,int bodyId,int useFilter,string@,array<int>@)
+{
+	if(!target.IsKnockout()&&!target.IsDead()&&target.Stat[(75)]>=0)
+	{
+		if(target.Mode[(510)]!=0&&target.GetAccess()<(1))
+		target.ModeBase[(510)]=0;
+		
+		array<Item@>items;
+		int count=target.GetItems((0),items);
+		Map@map=target.GetMap();
+		
+		if(count>0)
+		{
+			
+			for(uint i=0,j=items.length();i<j;i++)
+			{
+				if(items[i].GetProtoId()==(9914)||items[i].GetProtoId()==(1864)
+				||items[i].GetProtoId()==(1865)||items[i].GetProtoId()==(157)
+				||items[i].GetProtoId()==(4608)||items[i].GetProtoId()==(571)||items[i].GetType()==(8))
+				{
+					items.removeAt(i);
+					--i;
+					--j;
+				}
+				else if(useFilter!=-1)
+				{
+					uint type=items[i].GetType();
+					bool toDel=false;
 					
-					if(this.clickToolPid==(7)||this.clickToolPid==(280)||this.clickToolPid==(320)){
-						if(GUI_IsKeyPressed(0x2A)||GUI_IsKeyPressed(0x36)){
-							CritterCl@chosen=GetChosen();
-							if(!(@chosen!=null)){
-								Message("Invalid Chosen");
-								return false;
-							}
-							array<ItemCl@>items;
-							uint countInvItems=chosen.GetItems((0),items);
-							ItemCl@barley;
-							for(uint i=0;i<countInvItems;i++){
-								if(items[i].Proto.ProtoId==(9921)){
-									@barley=items[i];
-								}
-							}
-							if((@barley!=null)){
-								array<uint>click={(6),barley.Id,(9921),(3),this.clickTargetId,(4),0};
-								SetChosenActions(click);
-							}else{
-								Message("I'm out of fish food.");
-								return false;
-							}
-						}else{
-							int aim=GetCurrentAim();
-							int range=0;
-							switch(aim){
-								case(6):
-								range=1;
-								break;
-								case(5):
-								range=2;
-								break;
-								case(8):
-								case(4):
-								range=3;
-								break;
-								case(2):
-								range=4;
-								break;
-								case(3):
-								range=5;
-								break;
-								case(1):
-								range=6;
-								break;
-								case(7):
-								range=7;
-								break;
-							}
-							RunServerScriptUnsafe("prod_fishing@unsafe_SpearFish",this.clickToolPid,this.clickTargetId,range,null,null);
-						}
-					}else if(this.clickToolPid==(289)&&(GUI_IsKeyPressed(0x2A)||GUI_IsKeyPressed(0x36))){
-						array<uint>click={(14),this.clickTargetPid,this.clickTargetHexX,this.clickTargetHexY};
-						SetChosenActions(click);
-					}else{
-						array<uint>click={(6),this.clickToolId,this.clickToolPid,(3),this.clickTargetId,(4),0};
-						SetChosenActions(click);
+					switch(useFilter)
+					{
+						case 0:
+						if(type!=(1))
+						toDel=true;
+						break;
+						case 1:
+						if(type!=(3))
+						toDel=true;
+						break;
+						case 2:
+						if(type!=(4))
+						toDel=true;
+						break;
+						case 3:
+						if(type!=(2))
+						toDel=true;
+						break;
+						case 4:
+						default:
+						if(type==(1)||type==(3)||type==(4)||type==(2))
+						toDel=true;
 					}
+					
+					if(toDel)
+					{
+						items.removeAt(i);
+						--i;
+						--j;
+					}
+				}
+			}
+			
+			if((@map!=null))
+			{
+				if(contId>0)
+				{
+					Item@container=target.GetMap().GetItem(contId);
+					
+					if(!(@container!=null)||(container.Proto.Container_Changeble&&!(((container.LockerCondition)&((0x01)))!=0)))
+					{
+						target.ShowScreen((0),0,"");
+						target.RunClientScript("client_container_addons@_EnableItemsMove",0,0,0,"",null);
+						return;
+					}
+					
+					if(items.length()==0)
+					{
+						
+						target.ShowContainer(null,container,(7));
+						target.RunClientScript("client_container_addons@_EnableItemsMove",0,0,0,"",null);
+						return;
+					}
+					
+					target.Animate(0,(28),null,true,true); 
+					
+					uint playerItemsVolume=0;
+					for(uint i=0,j=items.length();i<j;i++)
+					playerItemsVolume+=items[i].Proto.Volume*items[i].GetCount();
+					
+					uint containerItemsVolume=0;
+					array<Item@>cItems;
+					uint itemCount=container.GetItems(0,cItems);
+					for(uint i=0,j=cItems.length();i<j;i++)
+					containerItemsVolume+=cItems[i].Proto.Volume*cItems[i].GetCount();
+					
+					ProtoItem@pContainer=GetProtoItem(container.GetProtoId());
+					if((playerItemsVolume+containerItemsVolume)<=pContainer.Container_Volume)
+					{
+						MoveItems(items,container,0);
+						
+					}
+					else
+					target.Say((11),"Not enough free space in container.");
+					
+					target.ShowContainer(null,container,(7));
+				}
+				else if(bodyId>0)
+				{
+					Critter@body=GetCritter(bodyId);
+					
+					if((@body!=null)&&body.IsDead()&&target.GetMap().Id==body.GetMap().Id)
+					{
+						if(items.length()==0)
+						{
+							
+							target.ShowContainer(body,null,(4));
+							target.RunClientScript("client_container_addons@_EnableItemsMove",0,0,0,"",null);
+							return;
+						}
+						
+						target.Animate(0,(27),null,true,true); 
+						
+						uint playerItemsVolume=0;
+						for(uint i=0,j=items.length();i<j;i++)
+						playerItemsVolume+=items[i].Proto.Volume*items[i].GetCount();
+						
+						uint freeWeight=2*body.Stat[(11)]-body.ItemsWeight();
+						
+						if(playerItemsVolume<=freeWeight)
+						{
+							MoveItems(items,body);
+							
+						}
+						else
+						target.Say((11),"Not enough free space in body.");
+						
+						target.ShowContainer(body,null,(4));
+					}
+					else
+					{
+						target.ShowScreen((0),0,"");
+						target.RunClientScript("client_container_addons@_EnableItemsMove",0,0,0,"",null);
+						return;
+					}
+				}   
+				
+			}
+		} 
+		
+	}
+	
+	target.RunClientScript("client_container_addons@_EnableItemsMove",0,0,0,"",null);
+}
+
+void unsafe_PickAll(Critter&target,int,int,int,string@,array<int>@)
+{
+	Map@map=target.GetMap();
+	array<Item@>items;
+	
+	if((@map!=null))
+	{
+		if(!target.IsKnockout()&&!target.IsDead()&&target.Stat[(75)]>=5&&!target.IsBusy())
+		{
+			
+			int count=map.GetItems(target.HexX,target.HexY,items);
+			if(count>0)
+			{
+				target.StatBase[(75)]-=500;
+				if(target.Mode[(510)]!=0)target.ModeBase[(510)]=0;
+				
+				for(uint i=0,j=items.length();i<j;i++)
+				{
+					if(!(((items[i].Flags)&((0x08000000)))!=0))@items[i]=null;
+					else if(items[i].GetProtoId()==1825)@items[i]=null;
+					else if(items[i].GetProtoId()==1826)@items[i]=null;
+					else if(items[i].GetProtoId()==1827)@items[i]=null;
+					else if(items[i].GetProtoId()==1812)@items[i]=null;
+					else if(items[i].GetProtoId()==9920)@items[i]=null;
+					else if(items[i].GetProtoId()==9850)@items[i]=null;
+					else if(items[i].GetProtoId()==9851)@items[i]=null;
+					else if(items[i].GetProtoId()==1854)@items[i]=null;
+					else if(items[i].GetProtoId()==1855)@items[i]=null;
+					else if(items[i].GetProtoId()==1856)@items[i]=null;
+					else if(items[i].GetProtoId()==1857)@items[i]=null;
+				}
+				target.Say((11),"Picking all items.");
+				target.Animate(0,(27),null,true,true);
+				target.Wait(1000);
+				MoveItems(items,target);
+			}
+			else
+			target.Say((11),"Nothing to pick up.");
+		}
+	}
+	else
+	{
+		target.Say((11),"You are on worldmap.");
+	}
+}
+
+void unsafe_DropAll(Critter&target,int,int,int,string@,array<int>@)
+{
+	if(!target.IsKnockout()&&!target.IsDead()&&target.Stat[(75)]>=5&&!target.IsBusy())
+	{
+		array<Item@>items;
+		int count=target.GetItems((0),items);
+		if(count>0)
+		{
+			target.StatBase[(75)]-=500;
+			Critter@[]critters;
+			if((@target.GetMap()!=null))
+			{target.GetMap().GetCrittersHex(target.HexX,target.HexY,1,(0x01),critters);
+				if(critters.length()>1)
+				{
+					target.Say((11),"Cannot use hotkey.");
+					return;
 				}
 			}
 			else
+			{target.Say((11),"Cannot use hotkey.");
+				return;}
+			
+			for(uint i=0,j=items.length();i<j;i++)
 			{
-				array<uint>click={(14),this.clickTargetPid,this.clickTargetHexX,this.clickTargetHexY};
-				SetChosenActions(click);
+				if(items[i].GetProtoId()==(9914)||items[i].GetProtoId()==(1864)||items[i].GetProtoId()==(1865)
+				||items[i].GetProtoId()==(157)||items[i].GetProtoId()==(4608)||items[i].GetProtoId()==(571)
+				||items[i].GetProtoId()==(9626)||items[i].GetProtoId()==(206)||items[i].GetProtoId()==(209)
+				||items[i].GetProtoId()==(545)||items[i].GetProtoId()==(9853)||items[i].GetType()==(8))
+				@items[i]=null;
 			}
-			return(true);
+			target.Say((11),"Dropping all items.");
+			target.Animate(0,(27),null,true,true);
+			target.Wait(1000);
+			if((@target.GetMap()!=null))MoveItems(items,target.GetMap(),target.HexX,target.HexY);
+			else DeleteItems(items);
 		}
-		
-		return(false);
+		else
+		target.Say((11),"Nothing to drop.");
 	}
-};                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    
-
-SmartCursor smart_cursor();       
-
-void InitSmartCursor()
-{
-	smart_cursor.drawLayer=2;    
-	
-	array<uint8>slot_all={(1),(2),(0)};
-	array<uint8>slot_hands={(1),(2)};
-	array<uint8>slot_active={(1)};  
-	
-	array<uint16>tool_knife={(319),(4),(45),(236),(517),(522)};
-	array<uint16>tool_axe={(1863),(543)};
-	array<uint16>tool_mine_1={(1863),(6),(115)};
-	array<uint16>tool_mine_2={(6),(115)};
-	array<uint16>tool_mine_3={(115)};
-	array<uint16>tool_junk={(75)};
-	array<uint16>tool_shovel={(600),(289)};
-	array<uint16>tool_fishingpole={(280),(7),(320)};  
-	
-	array<uint16>fibers={(1817)}; 
-	
-	array<uint16>graves={(344),(345)};
-	
-	array<uint16>junk_metal={22100,22101,22102,22103,22104,22105,22106,22107,22108,22109,22110,22111};
-	array<uint16>junk_wooden={22200,22201,22202,22203,22204,22205};
-	array<uint16>junk_paper={22300,22301,22302,22303};
-	array<uint16>junk_barrel={22304,22305,22306,22307,22308};
-	
-	array<uint16>meat_table={(1823)}; 
-	
-	array<uint16>poo={(1854),(1855),(1856),(1857)};
-	
-	array<uint16>vein_iron_1={(22000)};
-	array<uint16>vein_iron_2={(22001)};
-	array<uint16>vein_minerals_1={(22002)};
-	array<uint16>vein_minerals_2={(22003)};
-	array<uint16>vein_uranium={(22004)};
-	array<uint16>vein_gold={(22005)}; 
-	
-	array<uint16>wood={(1820),(1821),(1822)};
-	
-	array<uint16>fishing_pool={26770};  
-	
-	SmartCollection scGraves(graves,tool_shovel,slot_all,null,((0)),(1810));   
-	
-	smart_cursor.Add(SmartCollection(fibers,tool_knife,slot_all,null,((0)),(1807)));
-	smart_cursor.Add(scGraves);
-	smart_cursor.Add(SmartCollection(junk_metal,tool_junk,slot_all,null,((0)),(1812)));
-	smart_cursor.Add(SmartCollection(junk_wooden,tool_junk,slot_all,null,((0)),(1812)));
-	smart_cursor.Add(SmartCollection(junk_paper,tool_junk,slot_all,null,((0)),(1812)));
-	smart_cursor.Add(SmartCollection(junk_barrel,tool_junk,slot_all,null,((0)),(1812)));
-	smart_cursor.Add(SmartCollection(meat_table,tool_knife,slot_all,null,((0)),(1811)));
-	smart_cursor.Add(SmartCollection(poo,tool_shovel,slot_all,null,((0)),(1808)));
-	smart_cursor.Add(SmartCollection(wood,tool_axe,slot_all,null,((0)),(1809)));
-	
-	smart_cursor.Add(SmartCollection(vein_iron_1,tool_mine_1,slot_all,null,((0)),(1801)));
-	smart_cursor.Add(SmartCollection(vein_minerals_1,tool_mine_1,slot_all,null,((0)),(1803)));
-	smart_cursor.Add(SmartCollection(vein_iron_2,tool_mine_2,slot_all,null,((0)),(1802)));
-	smart_cursor.Add(SmartCollection(vein_minerals_2,tool_mine_2,slot_all,null,((0)),(1804)));
-	smart_cursor.Add(SmartCollection(vein_uranium,tool_mine_3,slot_all,null,((0)),(1805)));
-	smart_cursor.Add(SmartCollection(vein_gold,tool_mine_3,slot_all,null,((0)),(1806)));
-	smart_cursor.Add(SmartCollection(fishing_pool,tool_fishingpole,slot_all,"Throw spear",((0)),(1806)));
 }
 
-void SmartCursorDraw(uint layer)
+void unsafe_DropOne(Critter&target,int id,int,int,string@,array<int>@)
 {
-	smart_cursor.Draw(layer);
+	if(!target.IsKnockout()&&!target.IsDead()&&!target.IsBusy()&&target.StatBase[(75)]>0)
+	{
+		Item@itm=GetItem(id);
+		if((@itm!=null)&&itm.CritId==target.Id&&!(itm.CritSlot==(3)))
+		{
+			if((@target.GetMap()!=null))
+			{
+				MoveItem(itm,itm.GetCount(),target.GetMap(),target.HexX,target.HexY);
+				target.Wait(100);
+			}
+			else
+			DeleteItem(itm);
+		}
+	}
+	
+	target.RunClientScript("client_interface@_EnableItemsMove",0,0,0,"",null);
 }
 
-bool SmartCursorClick(int click)
+void unsafe_MoveItemCrit2Cont(Critter&target,int itemId,int contId,int,string@,array<int>@)
 {
-	return smart_cursor.Click(click);
+	if(!target.IsKnockout()&&!target.IsDead()&&!target.IsBusy()&&target.StatBase[(75)]>0)
+	{
+		Item@itm=GetItem(itemId);
+		if((@itm!=null)&&itm.CritId==target.Id)
+		{
+			if((@target.GetMap()!=null))
+			{
+				Item@cont=target.GetMap().GetItem(contId);
+				if((@cont!=null)&&cont.GetType()==(8))
+				{
+					
+					if(cont.Proto.Container_Changeble&&!(((cont.LockerCondition)&((0x01)))!=0))
+					{
+						target.RunClientScript("client_interface@_EnableItemsMove",0,0,0,"",null);
+						return;
+					}
+					
+					uint playerItemsVolume=itm.Proto.Volume*itm.GetCount();
+					uint containerItemsVolume=0;
+					array<Item@>cItems;
+					uint itemCount=cont.GetItems(0,cItems);
+					for(uint i=0,j=cItems.length();i<j;i++)
+					containerItemsVolume+=cItems[i].Proto.Volume*cItems[i].GetCount();
+					
+					ProtoItem@pContainer=GetProtoItem(cont.GetProtoId());
+					if((playerItemsVolume+containerItemsVolume)<=pContainer.Container_Volume)
+					{
+						if(target.Mode[(510)]!=0&&target.GetAccess()<(1))
+						{
+							int sk=target.Skill[(210)]-10*((itm.Proto.Weight*itm.GetCount())/453);
+							sk=(((sk)>(95))?(95):(((sk)<(5))?(5):(sk)));
+							if(sk<Random(1,100))
+							target.ModeBase[(510)]=0;
+						}
+						
+						MoveItem(itm,itm.GetCount(),cont,0);
+						cont.Update();
+						itm.Update();
+						target.ShowContainer(null,cont,(7));
+						target.RunClientScript("client_interface@_SetScrolls",0,0,0,"",null);
+					}
+					else
+					{
+						if(itm.GetCount()>1)
+						{
+							int newCnt=(pContainer.Container_Volume-containerItemsVolume);
+							if(itm.Proto.Volume>0)
+							newCnt=newCnt/itm.Proto.Volume;
+							if(newCnt>0)
+							{
+								if(target.Mode[(510)]!=0&&target.GetAccess()<(1))
+								{
+									int sk=target.Skill[(210)]-10*((itm.Proto.Weight*newCnt)/453);
+									sk=(((sk)>(95))?(95):(((sk)<(5))?(5):(sk)));
+									if(sk<Random(1,100))
+									target.ModeBase[(510)]=0;
+								}
+								
+								MoveItem(itm,newCnt,cont,0);
+								cont.Update();
+								itm.Update();
+								target.ShowContainer(null,cont,(7));
+								target.RunClientScript("client_interface@_SetScrolls",0,0,0,"",null);
+							}
+							else
+							{
+								target.Say((11),"Not enough free space in container.");
+							}
+						}
+						else
+						{
+							target.Say((11),"Not enough free space in container.");
+						}
+					}
+				}
+			}
+		}
+	}
+	
+	target.RunClientScript("client_interface@_EnableItemsMove",0,0,0,"",null);
+}
+
+void unsafe_MoveItemCont2Crit(Critter&target,int itemId,int contId,int,string@,array<int>@)
+{
+	if(!target.IsKnockout()&&!target.IsDead()&&!target.IsBusy()&&target.StatBase[(75)]>0)
+	{
+		Item@itm=GetItem(itemId);
+		if((@itm!=null))
+		{
+			if((@target.GetMap()!=null))
+			{
+				Item@cont=target.GetMap().GetItem(contId);
+				if((@cont!=null)&&cont.GetType()==(8))
+				{
+					int freeWeight=2*target.Stat[(11)]-target.ItemsWeight();
+					int itemWeight=int(itm.Proto.Weight);
+					int itemCount=itm.GetCount();
+					
+					if(freeWeight<0)
+					freeWeight=0;
+					
+					bool makeTransaction=false;
+					if(freeWeight>=itemWeight*itemCount)
+					makeTransaction=true;
+					else if(itemCount>1)
+					{
+						if(itemWeight>0)
+						itemCount=freeWeight/itemWeight;
+						if(itemCount>0)
+						makeTransaction=true;
+					}
+					
+					if(itm.ContainerId!=uint(contId))
+					{
+						target.RunClientScript("client_interface@_EnableItemsMove",0,0,0,"",null);
+						return;
+					}
+					
+					if(cont.Proto.Container_Changeble&&!(((cont.LockerCondition)&((0x01)))!=0))
+					{
+						target.RunClientScript("client_interface@_EnableItemsMove",0,0,0,"",null);
+						return;
+					}
+					
+					if(makeTransaction)
+					{
+						if(target.Mode[(510)]!=0&&target.GetAccess()<(1))
+						{
+							int sk=target.Skill[(210)]-10*((itm.Proto.Weight*itemCount)/453);
+							sk=(((sk)>(95))?(95):(((sk)<(5))?(5):(sk)));
+							if(sk<Random(1,100))
+							target.ModeBase[(510)]=0;
+						}
+						
+						MoveItem(itm,itemCount,target);
+						cont.Update();
+						itm.Update();
+						target.ShowContainer(null,cont,(7));
+						target.RunClientScript("client_interface@_SetScrolls",0,0,0,"",null);
+					}
+					else
+					target.Say((11),"You can't pick that up. You are at your maximum weight capacity.");
+				}
+			}
+		}
+	}
+	
+	target.RunClientScript("client_interface@_EnableItemsMove",0,0,0,"",null);
+}
+
+void unsafe_MoveItemBody2Crit(Critter&target,int itemId,int bodyId,int,string@,array<int>@)
+{
+	if(!target.IsKnockout()&&!target.IsDead()&&!target.IsBusy()&&target.StatBase[(75)]>0)
+	{
+		Item@itm=GetItem(itemId);
+		if((@itm!=null))
+		{
+			Critter@body=GetCritter(bodyId);
+			
+			if((@body!=null)&&body.IsDead()&&target.GetMap().Id==body.GetMap().Id&&itm.CritId==body.Id)
+			{
+				int freeWeight=2*target.Stat[(11)]-target.ItemsWeight();
+				int itemWeight=int(itm.Proto.Weight);
+				int itemCount=itm.GetCount();
+				
+				if(freeWeight<0)
+				freeWeight=0;
+				
+				bool makeTransaction=false;
+				if(freeWeight>=itemWeight*itemCount)
+				makeTransaction=true;
+				else if(itemCount>1)
+				{
+					if(itemWeight>0)
+					itemCount=freeWeight/itemWeight;
+					if(itemCount>0)
+					makeTransaction=true;
+				}
+				if(makeTransaction)
+				{
+					if(target.Mode[(510)]!=0&&Random(0,1)==1&&target.GetAccess()<(1))
+					target.ModeBase[(510)]=0;
+					
+					MoveItem(itm,itemCount,target);
+					
+					itm.Update();
+					target.ShowContainer(body,null,(4));
+					target.RunClientScript("client_interface@_SetScrolls",0,0,0,"",null);
+				}
+				else
+				target.Say((11),"You can't pick that up. You are at your maximum weight capacity.");
+			}
+		}
+	}
+	
+	target.RunClientScript("client_interface@_EnableItemsMove",0,0,0,"",null);
+}
+
+void unsafe_MoveItemCrit2Body(Critter&target,int itemId,int bodyId,int,string@,array<int>@)
+{
+	if(!target.IsKnockout()&&!target.IsDead()&&!target.IsBusy()&&target.StatBase[(75)]>0)
+	{
+		Item@itm=GetItem(itemId);
+		if((@itm!=null)&&itm.CritId==target.Id)
+		{
+			Critter@body=GetCritter(bodyId);
+			
+			if((@body!=null)&&body.IsDead()&&target.GetMap().Id==body.GetMap().Id&&itm.CritId==target.Id)
+			{
+				int freeWeight=2*body.Stat[(11)]-body.ItemsWeight();
+				int itemWeight=int(itm.Proto.Weight);
+				int itemCount=itm.GetCount();
+				
+				if(freeWeight<0)
+				freeWeight=0;
+				
+				bool makeTransaction=false;
+				if(freeWeight>=itemWeight*itemCount)
+				makeTransaction=true;
+				else if(itemCount>1)
+				{
+					if(itemWeight>0)
+					itemCount=freeWeight/itemWeight;
+					if(itemCount>0)
+					makeTransaction=true;
+				}
+				if(makeTransaction)
+				{
+					if(target.Mode[(510)]!=0&&Random(0,1)==1&&target.GetAccess()<(1))
+					target.ModeBase[(510)]=0;
+					
+					MoveItem(itm,itemCount,body);
+					
+					itm.Update();
+					target.ShowContainer(body,null,(4));
+					target.RunClientScript("client_interface@_SetScrolls",0,0,0,"",null);
+				}
+				else
+				target.Say((11),"Not enough free space.");
+			}
+		}
+	}
+	
+	target.RunClientScript("client_interface@_EnableItemsMove",0,0,0,"",null);
+}
+
+void unsafe_play_rr(Critter&player,int,int,int,string@,array<int>@)
+{
+	Item@[]items;
+	
+	uint count=player.GetItems((1),items);
+	
+	if(count>0)
+	{
+		const ProtoItem@protoBron=items[0].Proto;
+		if(items[0].GetProtoId()==(313)&&items[0].AmmoCount!=0)
+		{
+			int roll=Random(0,99);
+			int baseChance=items[0].AmmoCount*100;
+			int extChance=0;
+			
+			if(player.Skill[(216)]>50)extChance+=(player.Skill[(216)]-50)/2;
+			if(baseChance>extChance)baseChance=baseChance-extChance;
+			else baseChance=50;
+			baseChance=(((baseChance)>(600))?(600):(((baseChance)<(50))?(50):(baseChance)));
+			
+			if(Random(0,599)>baseChance)
+			{
+				player.PlaySound((Random(0,1)==0?"WOVXXXX1.ACM":"WOV1XXX1.ACM"),true);
+				if(items[0].AmmoCount==1)player.Say((2),"|"+(uint((0xFF<<24)|(((255)&0xFF)<<16)|(((0)&0xFF)<<8)|((0)&0xFF)))+" Pulls the trigger, uses "+items[0].AmmoCount+" bullet.");
+				else player.Say((2),"|"+(uint((0xFF<<24)|(((255)&0xFF)<<16)|(((0)&0xFF)<<8)|((0)&0xFF)))+" Pulls the trigger using "+items[0].AmmoCount+" bullets.");
+				return;
+			}
+			else
+			{
+				player.PlaySound((Random(0,1)==0?"WAE1XXX1.ACM":"WAE1XXX2.ACM"),true);
+				if(items[0].AmmoCount==1)player.Say((2),"|"+(uint((0xFF<<24)|(((255)&0xFF)<<16)|(((0)&0xFF)<<8)|((0)&0xFF)))+" Pulls the trigger, uses "+items[0].AmmoCount+" bullet.");
+				else player.Say((2),"|"+(uint((0xFF<<24)|(((255)&0xFF)<<16)|(((0)&0xFF)<<8)|((0)&0xFF)))+" Pulls the trigger using "+items[0].AmmoCount+" bullets.");
+				player.ToDead(Random(102,103),null);
+				items[0].AmmoCount-=1;
+				items[0].Update();
+				return;
+			}
+			
+		}
+	}
+	player.Say((11),"To play russian roulette, you need a loaded magnum revolver."); 
+	
+	return;
+}
+
+bool PushCritter(Map&map,Critter@cr,uint8 leadDir,uint8 depth)
+{
+	if(!(@cr!=null))
+	return true;
+	
+	if(depth==0)
+	return false;
+	
+	uint16 hx=cr.HexX;
+	uint16 hy=cr.HexY;
+	map.MoveHexByDir(hx,hy,leadDir,1);
+	if(map.IsHexPassed(hx,hy)||(@map.GetCritter(hx,hy)!=null))
+	if(PushCritter(map,map.GetCritter(hx,hy),leadDir,depth-1))
+	{
+		cr.ToKnockout(((!(cr.Dir==leadDir||cr.Dir==((leadDir+1)%6)||cr.Dir==((leadDir-1)%6)))?(82):(83)),((!(cr.Dir==leadDir||cr.Dir==((leadDir+1)%6)||cr.Dir==((leadDir-1)%6)))?(86):(87)),((!(cr.Dir==leadDir||cr.Dir==((leadDir+1)%6)||cr.Dir==((leadDir-1)%6)))?(88):(89)),0,hx,hy);
+		return true;
+	}
+	
+	hx=cr.HexX;
+	hy=cr.HexY;
+	map.MoveHexByDir(hx,hy,(leadDir+1)%6,1);
+	if(map.IsHexPassed(hx,hy)||(@map.GetCritter(hx,hy)!=null))
+	if(PushCritter(map,map.GetCritter(hx,hy),leadDir,depth-1))
+	{
+		cr.ToKnockout(((!(cr.Dir==leadDir||cr.Dir==((leadDir+1)%6)||cr.Dir==((leadDir-1)%6)))?(82):(83)),((!(cr.Dir==leadDir||cr.Dir==((leadDir+1)%6)||cr.Dir==((leadDir-1)%6)))?(86):(87)),((!(cr.Dir==leadDir||cr.Dir==((leadDir+1)%6)||cr.Dir==((leadDir-1)%6)))?(88):(89)),0,hx,hy);
+		return true;
+	}
+	
+	hx=cr.HexX;
+	hy=cr.HexY;
+	map.MoveHexByDir(hx,hy,(leadDir-1)%6,1);
+	if(map.IsHexPassed(hx,hy)||(@map.GetCritter(hx,hy)!=null))
+	if(PushCritter(map,map.GetCritter(hx,hy),leadDir,depth-1))
+	{
+		cr.ToKnockout(((!(cr.Dir==leadDir||cr.Dir==((leadDir+1)%6)||cr.Dir==((leadDir-1)%6)))?(82):(83)),((!(cr.Dir==leadDir||cr.Dir==((leadDir+1)%6)||cr.Dir==((leadDir-1)%6)))?(86):(87)),((!(cr.Dir==leadDir||cr.Dir==((leadDir+1)%6)||cr.Dir==((leadDir-1)%6)))?(88):(89)),0,hx,hy);
+		return true;
+	}
+	return false;
+}
+
+void unsafe_PushCritter(Critter&player,int p0,int p1,int p2,string@message,array<int>@param4)
+{
+	Critter@cr=GetCritter(p0);
+	if(!(@cr!=null))
+	return;
+	if(!cr.IsPlayer())
+	return;
+	if(!IsFlaggedAsIllegal(cr))
+	return;
+	if(GetCritterIllegalFlag(cr)&(0x00000004)==0)
+	{
+		player.Say((11),"This one isn't blocking anything yet.");
+		return;
+	}
+	Map@map=cr.GetMap();
+	if(!(@map!=null))
+	return;
+	if(GetCrittersDistantion(player,cr)!=1)
+	return;
+	if(PushCritter(map,cr,GetDirection(player.HexX,player.HexY,cr.HexX,cr.HexY),5))
+	{
+		cr.Say((11),"You were pushed away by "+GetSafePlayerName(player.Id)+".");
+		
+	}
+	else
+	player.Say((11),"It's too crowded here.");
+}
+
+void unsafe_OOC(Critter&player,int,int,int,string@message,array<int>@)
+{
+	if(!(@message!=null)||message.length()==0)
+	return;
+	
+	bool skip=true;
+	for(uint m=0,mlen=message.length();m<mlen;m++)
+	{
+		if(message[m]!=" ")
+		{
+			skip=false;
+			break;
+		}
+	}
+	if(skip)
+	return;
+	
+	uint color=(uint((0xFF<<24)|(((130)&0xFF)<<16)|(((115)&0xFF)<<8)|((77)&0xFF)));
+	uint sayType=(1);
+	if(player.IsKnockout()||player.IsDead())return; 
+	
+	player.Say(sayType,"|"+color+" "+message);
+}
+
+import void unsafe_ExecCommand(Critter&player,int p0,int p1,int p2,string@commandString,array<int>@param4)from"cheats";
+void unsafe_gameinfo(Critter&player,int,int,int,string@message,array<int>@)
+{
+	player.Say((11),"Command: "+message+".");
+	if(player.GetAccess()<(1))
+	{
+		player.Say((11),"Access denied.");
+	}
+	else
+	{
+		unsafe_ExecCommand(player,0,0,0,message,null);
+	}
+}
+
+string@AuthPasswordOwner(string&password)
+{
+	IConfigFile@getaccess=GetConfigFile("config\\GetAccess.cfg");
+	if(!(@getaccess!=null))
+	{
+		Log("AccessFile invalid.");
+		return(null);
+	}
+	
+	array<string>sections;
+	getaccess.GetSections(sections);
+	for(uint s=0;s<sections.length();s++)
+	{
+		string@pass=GetConfigValue(getaccess.GetName(),sections[s],"Password");
+		if((@pass!=null)&&password==pass)
+		return(sections[s]);
+	}
+	return(null);
+}
+
+bool accessfile_loaded=false;
+void accessfile_load(string&filename)
+{
+	if(LoadConfig(filename))
+	{
+		accessfile_loaded=true;
+		return;
+	}
+	else
+	{
+		if((@GetConfigFile(filename)!=null))
+		{
+			accessfile_loaded=true;
+			return;
+		}
+	}
+	
+	Log("!!! ACCESS FILE NOT LOADED !!! Panic.");
+}
+
+void unsafe_getaccess(Critter&player,int,int,int,string@message,array<int>@)
+{
+	if(!accessfile_loaded)
+	accessfile_load("config\\GetAccess.cfg");
+	
+	if(!(@message!=null))
+	return;
+	
+	if(message.length()==0)
+	return;
+	
+	string denied="Access denied.";
+	array<string@>@words=splitEx(message,"|");
+	if(words.length()!=2)
+	{
+		player.Say((11),denied);
+		return;
+	}
+	
+	uint8 access=access_level(words[0]);
+	uint8 oldaccess=player.GetAccess();
+	
+	if(access==(0))
+	{
+		if(words[1]=="pass")
+		{
+			RemoveAuthed(player.Id);
+			player.Say((11),"Access changed.");
+			player.SetAccess(access);
+		}
+		else
+		player.Say((11),denied);
+		return;
+	}
+	else
+	{
+		string@owner=AuthPasswordOwner(words[1]);
+		if((@owner!=null))
+		{
+			int maxaccess=(0);
+			string@sMaxaccess=GetConfigValue("config\\GetAccess.cfg",owner,"Access");
+			if((@sMaxaccess!=null))
+			{
+				maxaccess=access_level(sMaxaccess);
+				if(int(access)>maxaccess)
+				{
+					player.Say((11),denied);
+					return;
+				}
+				else
+				{
+					SetAuthed(player.Id,owner);
+					player.Say((11),"Access changed."+(oldaccess==(0)?" Welcome back, "+owner+".":""));
+					player.SetAccess(access);
+					GMLog(player,"Authenticated: "+owner+" ("+access_level(oldaccess)+"->"+access_level(access)+")");
+					
+					string@crs=GetConfigValue("config\\GetAccess.cfg",owner,"Critters");
+					if((@crs!=null))
+					{
+						bool found=false;
+						array<string@>@critters=splitEx(crs,",");
+						for(uint c=0;c<critters.length();c++)
+						{
+							if(critters[c]==(""+player.Id))
+							{
+								found=true;
+								break;
+							}
+						}
+						if(!found)
+						{
+							critters.insertLast(""+player.Id);
+							
+							SetConfigValue("config\\GetAccess.cfg",owner,"Critters",join(critters,","));
+							SaveConfig("config\\GetAccess.cfg");
+						}
+					}
+					else
+					{
+						SetConfigValue("config\\GetAccess.cfg",owner,"Critters",player.Id);
+						SaveConfig("config\\GetAccess.cfg");
+					}
+					
+					player_getaccess(player,access,words[1]);
+				}
+			}
+			else
+			player.Say((11),denied);
+		}
+		else
+		player.Say((11),denied);
+	}
+}
+
+void unsafe_disconnect(Critter&player,int,int,int,string@message,array<int>@)
+{
+	player.Disconnect();
+}
+
+void unsafe_GetFactionCount(Critter&player,int,int,int,string@,array<int>@)
+{
+	uint num=GetFactionsCount();
+	player.RunClientScript("client_critter_onhead@_SetFactionCount",num,0,0,"",null);
+}   
+
+import uint GetUnassignedFactionNames(array<int>&res)from"factions";
+void unsafe_FreeFactionNames(Critter&player,int,int,int,string@,array<int>@)
+{
+	array<int>list;
+	uint num=GetUnassignedFactionNames(list);
+	player.RunClientScript("_FreeFactionNames",0,0,0,"",list);
 } 
 
+void unsafe_FactionNames(Critter&player,int,int,int,string@,array<int>@)
+{
+	int id=-1;
+	player.Say((11),"FACTION LIST:");
+	for(uint f=0,fcount=GetFactionsCount();f<fcount;f++)
+	{
+		IFaction@faction=GetFactionByIdx(f);
+		if(!(@faction!=null))
+		continue;
+		if((id>0&&faction.get_Id()!=id)||
+		(id<0&&(faction.get_Id()<2||faction.get_Id()>4096)))
+		continue;
+		
+		int fid=(id>0?id:faction.get_Id());
+		
+		player.Say((11),""+fid+" "+faction.get_Name());
+	}
+	
+}
+
+void unsafe_MyInfo(Critter&player,int,int,int,string@,array<int>@)
+{
+	string red="|"+(uint((0xFF<<24)|(((255)&0xFF)<<16)|(((0)&0xFF)<<8)|((0)&0xFF)))+" ";
+	string green="|"+(uint((0xFF<<24)|(((0)&0xFF)<<16)|(((255)&0xFF)<<8)|((0)&0xFF)))+" ";
+	
+	GameVar@var; 
+	
+	player.Say((11),
+	"Name: "+red+player.Name+
+	green+", Id: "+red+player.Id+
+	(player.GetAccess()>(0)?(green+", Access: "+red+GetAuthString(player.GetAccess())):"")
+	);
+	
+	player.Say((11),"You were born "+red+
+	GetLvar(player,(20003))+"."+
+	GetLvar(player,(20004))+"."+
+	GetLvar(player,(20005)));
+	
+	myinfo_tent(player);
+	
+	if(GodOfTheRealm(player.Id))
+	player.Say((11),red+"You are "+(WrathOfTheGod(player)?"":"forgotten ")+"god of this realm.");
+}
+
+void unsafe_FactionInfo(Critter&player,int,int,int,string@,array<int>@)
+{
+	string red="|"+(uint((0xFF<<24)|(((255)&0xFF)<<16)|(((0)&0xFF)<<8)|((0)&0xFF)))+" "; 
+	
+	GameVar@var; 
+	
+	bool isMember=false;
+	@var=GetLocalVar((4101),player.Id);
+	if((@var!=null))
+	{
+		int fid=var.GetValue();
+		if(fid>1&&FactionExists(fid)&&(fid<((4096))))
+		{
+			IFaction@faction=GetFaction(fid);
+			if((@faction!=null))
+			{
+				player.Say((11),"Faction: "+red+faction.get_Name());
+				isMember=true;
+			}
+			else
+			{
+				string err="Cannot get faction <"+fid+"> for player <"+player.Id+">";
+				Log(err);
+				player.Say((11),err+", please report.");
+			}
+		}                                    
+		
+	}  
+	
+	bool isFriend=false;
+	bool isInvited=false;
+	{
+		array<string>ffactions;
+		array<string>ifactions;
+		for(uint f=0,fc=GetFactionsCount()-1;f<fc;f++)
+		{
+			IFaction@faction=GetFactionByIdx(f);
+			if((@faction!=null))
+			{
+				switch(faction.GetStatus(player.Id))
+				{
+					case(1):
+					{
+						ffactions.insertLast(faction.get_Name());
+						isFriend=true;
+					}
+					case(4):
+					{
+						ifactions.insertLast(faction.get_Name());
+						isInvited=true;
+					}
+				}
+			}
+		}
+		if(ffactions.length()>0)
+		{
+			ffactions.sortAsc();
+			player.Say((11),"Friendly factions:");
+			for(uint f=0,fc=ffactions.length();f<fc;f++)
+			{
+				player.Say((11),red+" "+ffactions[f]);
+			}
+		}
+		if(ifactions.length()>0)
+		{
+			ifactions.sortAsc();
+			player.Say((11),"Factions invitations:");
+			for(uint f=0,fc=ifactions.length();f<fc;f++)
+			{
+				player.Say((11),red+" "+ifactions[f]);
+			}
+		}
+	} 
+	
+	if(!isMember&&!isFriend&&!isInvited)
+	{
+		string[]messages=
+		{
+			"Not a single faction has you in its ranks.",
+			"You are not in any faction.",
+			"You don't belong to any faction."
+		};
+		
+		player.Say((11),messages[Random(0,messages.length()-1)]);
+	}
+}
+
+void unsafe_CombatMode(Critter&player,int mode,int,int,string@,array<int>@)
+{
+	if(mode<(0)||mode>(2))
+	{
+		Log("Player "+player.Name+"<"+player.Id+"> sent invalid combat mode<"+mode+">");
+		return;
+	}
+	
+	if(player.Param[(516)]==mode)
+	return; 
+	
+	player.ParamBase[(516)]=mode;
+} 
+
+void unsafe_EndTurnBasedTurn(Critter&player,int,int,int,string@,int[]@)
+{
+	Map@map=player.GetMap();
+	if(!(@map!=null))
+	return;
+	
+	if(map.IsTurnBased()&&player.Stat[(75)]>0||player.StatBase[(88)]>0)
+	{
+		player.StatBase[(75)]=0;
+		player.StatBase[(88)]=0;
+	}
+}
+
+void unsafe_EndTurnBasedCombat(Critter&player,int,int,int,string@,int[]@)
+{
+	Map@map=player.GetMap();
+	if(!(@map!=null))
+	return;
+	
+	if(map.IsTurnBased()&&player.Stat[(75)]>0||player.StatBase[(88)]>0)
+	{
+		player.ModeBase[(515)]=1;
+		player.StatBase[(75)]=0;
+		player.StatBase[(88)]=0;
+	}
+}
+
+void unsafe_Discharge(Critter&player,int,int,int,string@,int[]@)
+{
+	Map@map=player.GetMap();
+	if(!(@map!=null))
+	return;
+	
+	if(player.IsDead()||player.IsKnockout())
+	return;        
+	
+	Item@usedArmor=player.GetItem(0,(3));
+	if(!(@usedArmor!=null)||usedArmor.GetProtoId()!=(240))
+	{
+		player.Say((11),"You can only do that in tesla armor.");
+		return;
+	}
+	
+	if(((map.GetData((10))&((0x00000020)))!=0))
+	{
+		player.Say((11),"You can't do that here.");
+		return;
+	}
+	
+	if(usedArmor.Charge<100)
+	{
+		player.Say((11),"No free charges.");
+		player.Say((11),"Charges: "+usedArmor.Charge+"/"+usedArmor.Proto.Misc_ChargeMax+".");
+		return;
+	}
+	
+	if(player.StatBase[(75)]<5*100)
+	{
+		
+		return;
+	}
+	
+	player.Say((11),"Discharging...");
+	
+	if(player.ModeBase[(510)]!=0)
+	player.ModeBase[(510)]=0;
+	
+	player.Animate(0,(28),null,true,true);
+	player.Wait(1000);
+	player.StatBase[(75)]-=100*5;
+	usedArmor.Charge-=100;
+	usedArmor.Update();
+	player.Say((11),"Charges: "+usedArmor.Charge+"/"+usedArmor.Proto.Misc_ChargeMax+".");
+	
+	CommenceDischargeEx(player,map,player.HexX,player.HexY,7,60,120,7,100);
+} 
+
+void unsafe_ScienceAtHex(Critter&player,int mode,int,int,string@,array<int>@)
+{
+	
+	array<Item@>allItems;
+	Map@map=player.GetMap();
+	if((@map!=null)&&!((map.GetData((10))&((0x00000040)))!=0)&&!map.GetLocation().IsTown())
+	{
+		if(player.IsKnockout()||player.IsDead()&&!player.IsBusy())
+		return;
+		
+		if(player.Timeout[(238)]>0)
+		{
+			player.Say((11),"Combat timeout.");
+			return;
+		}
+		
+		if(player.Stat[(75)]<3)
+		return;
+		player.StatBase[(75)]-=300;
+		
+		player.Wait(__Breaktime);
+		player.Animate(0,(28),null,true,true);
+		
+		uint itemCount=map.GetItems(player.HexX,player.HexY,allItems);
+		
+		array<Item@>validItems;
+		array<Item@>mapItems;
+		for(uint i=0;i<itemCount;++i)
+		{
+			if((@allItems[i]!=null)&&ReversableItem(allItems[i]))
+			{
+				if((((((allItems[i].Val9))&((0x80000000)))!=0)))
+				{
+					
+					continue;
+				}
+				validItems.insertLast(allItems[i]);
+			}
+			if((@allItems[i]!=null)&&allItems[i].Val5>0){
+				mapItems.insertLast(allItems[i]);
+			}
+		}
+		
+		if(validItems.length()>0&&ReverseAllItems(player,validItems,validItems.length(),100))
+		{
+			player.Say((11),"Sciencing items on current hex.");
+			if((player.Mode[(510)]!=0)&&(player.IsPlayer()&&player.GetAccess()==(0)))
+			{
+				player.ModeBase[(510)]=0;
+			}
+		}
+		else
+		{
+			player.Say((11),"Nothing to science here.");
+		}
+		
+		uint mapReadCount=0;
+		if(mapItems.length()>0){
+			for(uint i=0;i<mapItems.length();i++){
+				if(ReadMapToLocationSilently(mapItems[i],player))
+				mapReadCount++;
+			}
+			if(mapReadCount>0){
+				player.Say((11),"Read "+mapReadCount+" new maps.");
+			}else{
+				player.Say((11),"No new maps to read here.");
+			}
+		}else{
+			player.Say((11),"No maps to read here.");
+		}
+	}
+	else
+	player.Say((11),"Can't do that here.");
+}
+
+void unsafe_ShowCarInfo(Critter&player,int p0,int p1,int p2,string@message,array<int>@param4){ 
+	
+	sendCarInfoToPlayer(player);
+} 
+
+void sendCarInfoToPlayer(Critter&player){
+	Map@map=player.GetMap();
+	if(!(@map!=null))
+	return;
+	
+	array<Entire>entires;
+	array<int>cars;
+	ParseEntires(map,entires,(243));
+	if(entires.length()>0){
+		for(int i=0,j=entires.length();i<j;i++){
+			Item@car=map.GetCar(entires[i].HexX,entires[i].HexY);
+			if((@car!=null)){
+				string ownerName="N/A";
+				if(car.Val6>0){
+					Critter@owner=GetCritter(car.Val6);
+					if((@owner!=null)){
+						ownerName=owner.Name;
+					}
+				}
+				
+				if(player.Id==uint(car.Val6)){ 
+					
+					cars.insertLast(int(car.Id));
+				}
+			}
+		}
+	}else{ 
+		
+	}
+	player.RunClientScript("client_main@_ShowCarOwnerIndicator",0,0,0,null,cars);
+}

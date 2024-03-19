@@ -141,6 +141,8 @@ import void TC_BarterReward(Critter& player, int caps) from "town";
 import string IntToIp(int d) from "utils";
 import string GetTimeString(uint fullsecond) from "time";
 
+import void sendCarInfoToPlayer(Critter& player) from "unsafe_client";
+
 dictionary    ItemPids;
 dictionary    VarIds;
 dictionary    BaseTypes;
@@ -2920,7 +2922,6 @@ void map_critter_in(Map& map, Critter& cr)
 
     if(cr.IsPlayer() || _IsFollower(cr))
     {
-
         if(loc.IsEncounter())
         {
             // Spawning predators in encounters disabled here
@@ -3009,6 +3010,23 @@ void map_critter_in(Map& map, Critter& cr)
         //	GameVar@ lastCityVar = GetLocalVar(LVAR_last_city, cr.Id);
         //	if (lastCityVar is null) return;
         //	lastCityVar = locPid;
+    }
+
+    //  refresh car info for player entering the map
+    if(cr.IsPlayer()) {
+        //cr.Say(SAY_NETMSG, "CRITTERN MAP IN");
+        //Log("CRITTERN MAP IN");
+        //sendCarInfoToPlayer(cr);
+        //  send car info
+        array<Critter@> critters;
+        uint num = map.GetCritters(0, FIND_ALL | FIND_ONLY_PLAYERS, critters);
+        for (uint i = 0, j = critters.length(); i < j; i++) {
+            if (critters[i].IsPlayer()) {
+                sendCarInfoToPlayer(critters[i]);
+                //critters[i].Say(SAY_NETMSG, "CRITTERN MAP IN");
+            }
+        }
+        //Log("Players on map = " + critters.length());
     }
 }
 
@@ -3105,16 +3123,33 @@ void map_critter_out(Map& map, Critter& cr)
                 #endif
             }
 
-		array<Critter@>@ players = WorldmapGetPlayers(ZONE_X(cr.WorldX), ZONE_Y(cr.WorldY));
-		string characters;
-		if(players.length()-1>0)
-		{
-		characters +="Other characters on worldmap in zone: ";
-        for(uint i = 0, j = players.length(); i < j; i++)  if(cr.Id!=players[i].Id) characters+=""+(IsLexem(players[i], "$@")?GetLexem(players[i], "$@"):players[i].Name)+",";
-		cr.Say(SAY_NETMSG, characters);
-		}
+            array<Critter@>@ players = WorldmapGetPlayers(ZONE_X(cr.WorldX), ZONE_Y(cr.WorldY));
+            string characters;
+            if(players.length()-1>0)
+            {
+                characters +="Other characters on worldmap in zone: ";
+                for(uint i = 0, j = players.length(); i < j; i++)  if(cr.Id!=players[i].Id) characters+=""+(IsLexem(players[i], "$@")?GetLexem(players[i], "$@"):players[i].Name)+",";
+                cr.Say(SAY_NETMSG, characters);
+            }
 
         }
+    }
+
+    //  refresh car info for player entering the map
+    if(cr.IsPlayer()) {
+        //cr.Say(SAY_NETMSG, "CRITTERN MAP OUT");
+        //Log("CRITTERN MAP OUT");
+        //sendCarInfoToPlayer(cr);
+        //  send car info
+        array<Critter@> critters;
+        uint num = map.GetCritters(0, FIND_ALL | FIND_ONLY_PLAYERS, critters);
+        for (uint i = 0, j = critters.length(); i < j; i++) {
+            if (critters[i].IsPlayer()) {
+                sendCarInfoToPlayer(critters[i]);
+                //critters[i].Say(SAY_NETMSG, "CRITTERN MAP OUT");
+            }
+        }
+        //Log("Players on map = " + critters.length());
     }
 }
 

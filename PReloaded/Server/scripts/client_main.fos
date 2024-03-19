@@ -1227,21 +1227,21 @@ void _ShowCarOwnerIndicator(int param1, int param2, int param3, string@ param4, 
             ItemCl@ car = GetItem(data[i]);
             if (valid(car)) {
                 if (car.GetType() == ITEM_TYPE_CAR) {
-                    Log("Found a car: (" + car.HexX + ", " + car.HexY + ") owned by " + car.Val6);
-                    Message("Found a car at: (" + car.HexX + ", " + car.HexY + ") owned by " + car.Val6);
+                    Log("_ShowCarOwnerIndicator - Found a car: (" + car.HexX + ", " + car.HexY + ") owned by " + car.Val6);
+                    Message("_ShowCarOwnerIndicator - Found a car at: (" + car.HexX + ", " + car.HexY + ") owned by " + car.Val6);
                 } else {
-                    Log("It's not a car!");
-                    Message("It's not a car.");
+                    Log("_ShowCarOwnerIndicator - It's not a car!");
+                    Message("_ShowCarOwnerIndicator - It's not a car.");
 
                 }
             } else {
-                Log("Null object: " + data[i]);
-                Message("Null object: " + data[i]);
+                Log("_ShowCarOwnerIndicator - Null object: " + data[i]);
+                Message("_ShowCarOwnerIndicator - Null object: " + data[i]);
             }
         }
     } else {
-        Log("No items." + data.length());
-        Message("No items." + data.length());
+        //Log("No items." + data.length());
+        //Message("No items." + data.length());
     }
     RefreshCars(data);
 }
