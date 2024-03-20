@@ -29,7 +29,7 @@ import void InitChosenTabs() from "chosen_tabs";
 import void InitQuestTracker() from "client_QuestTracker";
 import void InitInventoryTracker() from "client_InventoryTracker";
 import void InitCarTracker() from "client_CarTracker";
-import void RefreshCars(array<int>@ data) from "client_CarTracker";
+import void RefreshCars(array<int>@ data, string@ ownerList) from "client_CarTracker";
 
 import void BroadcastProcess() from "client_broadcast";
 
@@ -1244,5 +1244,5 @@ void _ShowCarOwnerIndicator(int param1, int param2, int param3, string@ param4, 
         //Log("No items." + data.length());
         //Message("No items." + data.length());
     }*/
-    RefreshCars(data);
+    RefreshCars(data, param4);
 }
