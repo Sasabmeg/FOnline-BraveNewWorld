@@ -64,6 +64,8 @@ import uint GetCartValue(Item& car, uint16 locId) from "car";
 #define CARS_INIT_ID                 (50000)
 #define CARS_SOLD                    (GetGvar(GVAR_car_id) - CARS_INIT_ID)
 
+import void sendCarInfoToPlayer(Critter& player) from "unsafe_client";
+
 array<int>   CarPrices;
 Serializator serializer;
 
@@ -379,7 +381,7 @@ bool d_CanNotAffordCaravanOrange(Critter& player, Critter@ tray)
 
 uint TryCreateCar(Critter& player, uint16 protoCar)
 {
-    if(protoCar != PID_HUMMER && protoCar != PID_BUGGY && protoCar != PID_SCOUT && protoCar != PID_HIGHWAYMAN && protoCar != PID_COCKROACH && protoCar != PID_CARAVAN_WHITE && protoCar != PID_CARAVAN_ORANGE 
+    if(protoCar != PID_HUMMER && protoCar != PID_BUGGY && protoCar != PID_SCOUT && protoCar != PID_HIGHWAYMAN && protoCar != PID_COCKROACH && protoCar != PID_CARAVAN_WHITE && protoCar != PID_CARAVAN_ORANGE
 	&& protoCar != PID_POLICE_CAR && protoCar != PID_MOTORCYCLE && protoCar != PID_FIRETRUCK && protoCar != PID_TRUCK && protoCar != PID_CORVEGA)
         return FD_GENERIC_ERROR;
 
@@ -462,6 +464,11 @@ uint TryCreateCar(Critter& player, uint16 protoCar)
     player.DeleteItem(PID_BOTTLE_CAPS, cost);
     BanksAddMoney(cost);
     ChangeCarPrice(protoCar, Random(500, 1000));
+
+    car.Val6 = player.Id;   //  set owner here for CarTracker in client
+    sendCarInfoToPlayer(player);
+
+
     if(entNum == ENTIRE_WORKSHOP)
         return FD_BUY_SUCCESS_WORKSHOP;
     else
