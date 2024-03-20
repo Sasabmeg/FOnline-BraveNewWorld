@@ -678,6 +678,7 @@ bool entrance_city(Location& Loc, array<Critter@>& critters, uint8 entrance)
     {
         if (!valid(items[0]))
             return true;
+        //Log("CAR ENTER CITY - found car with ID " + items[0].Id + " at (" + items[0].HexX + ", " + items[0].HexY + ")");
 
         SETFLAG(items[0].Val0, CAR_LOCKPICK_TIMEOUT);
 
