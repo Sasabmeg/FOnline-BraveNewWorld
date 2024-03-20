@@ -1871,6 +1871,11 @@ void critter_init(Critter& cr, bool firstTime)
         UpdateFactionsInfo(cr);
     }
 
+    //  send Car Tracker info to client, this is needed because when fast relog, then critter in map will not trigger.
+    if(cr.IsPlayer()) {
+        sendCarInfoToPlayer(cr);
+    }
+
     if(firstTime)
     {
         // INITIALIZE PARAMS
@@ -3133,25 +3138,6 @@ void map_critter_out(Map& map, Critter& cr)
 
         }
     }
-
-    /*
-    //  refresh car info for player leaving the map
-    if(cr.IsPlayer()) {
-        //cr.Say(SAY_NETMSG, "CRITTERN MAP OUT");
-        //Log("CRITTERN MAP OUT");
-        //sendCarInfoToPlayer(cr);
-        //  send car info
-        array<Critter@> critters;
-        uint num = map.GetCritters(0, FIND_ALL | FIND_ONLY_PLAYERS, critters);
-        for (uint i = 0, j = critters.length(); i < j; i++) {
-            if (critters[i].IsPlayer()) {
-                sendCarInfoToPlayer(critters[i]);
-                //critters[i].Say(SAY_NETMSG, "CRITTERN MAP OUT");
-            }
-        }
-        //Log("Players on map = " + critters.length());
-    }
-    */
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
