@@ -20,6 +20,8 @@
 #include "_colors.fos"
 #include "client_gui_h.fos"
 
+#define TEXT_HEIGHT_CORRECTION (2)
+
 //import string getCarTypeName(uint protoId) from "car";
 
 CCarTracker carTracker;// = CCarTracker();
@@ -45,8 +47,8 @@ void InitCarTracker() {
 }
 
 //  Exported - client_main
-void RefreshCars(array<int>@ data) {
-    carTracker.refresh(data);
+void RefreshCars(array<int>@ data, string@ ownerList) {
+    carTracker.refresh(data, ownerList);
     //carTracker.enabled = true;
 }
 
@@ -61,6 +63,7 @@ class CCarTrackerCar {
 	uint Id;
 	uint LockerId;
 	uint OwnerId;
+	string OwnerName;
    	uint16 HexX;
 	uint16 HexY;
 	uint16 Charge;
@@ -86,7 +89,7 @@ class CCarTrackerCar {
     }
 };
 
-CCarTrackerCar@ copyFromIntArray(array<int>@ data, uint index) {
+CCarTrackerCar@ copyFromIntArray(array<int>@ data, array<string@>@ ownerNames, uint index) {
     if (data.length() >= (index + 1) * CTC_SIZE) {
         CCarTrackerCar ctcCar = CCarTrackerCar(data[index * CTC_SIZE]);
         ctcCar.LockerId = data[index * CTC_SIZE + 1];
@@ -98,6 +101,7 @@ CCarTrackerCar@ copyFromIntArray(array<int>@ data, uint index) {
         ctcCar.Deterioration = data[index * CTC_SIZE + 7];
         ctcCar.MaxDeterioration = data[index * CTC_SIZE + 8];
         ctcCar.Type = data[index * CTC_SIZE + 9];
+        ctcCar.OwnerName = ownerNames[index];
         //Message("Car: " + ctcCar.Id + " (" + ctcCar.HexX + ", " + ctcCar.HexY + ") owned by " + ctcCar.OwnerId);
         return ctcCar;
     } else {
@@ -112,17 +116,34 @@ class CCarTracker {
     uint beepActivationTime;
     uint beepDuration;
     uint cricketDuration;
+    uint headerColor;
+    uint blinkingStartTime;
+    uint beepingBlinkInterval;
     array<CCarTrackerCar@> cars;
 
     CCarTracker() {
         enabled = true;
         beepActive = false;
-        beepDuration = 1000;
+        beepDuration = 2000;
         cricketDuration = 3000;
+        beepingBlinkInterval = 750;
+    }
+
+    bool hasOwnCarOnMap() {
+        CritterCl@ chosen = GetChosen();
+        if(!valid(chosen)) {
+            return false;
+        }
+        for (int i = 0, j = cars.length(); i < j; i++) {
+            if (cars[i].OwnerId == chosen.Id) {
+                return true;
+            }
+        }
+        return false;
     }
 
     void SelfDisableBeepAfterDurationExpired() {
-        if (beepActive && (GetTick() + 10 > beepActivationTime + (cars.length() > 0 ? beepDuration : cricketDuration) )) {
+        if (beepActive && (GetTick() + 10 > beepActivationTime + (hasOwnCarOnMap() ? beepDuration : cricketDuration) )) {
             //Message("Beep End.");
             beepActive = false;
         }
@@ -133,7 +154,7 @@ class CCarTracker {
             beepActive = true;
             beepActivationTime = GetTick();
             //  play response sound
-            if (cars.length() > 0) {
+            if (hasOwnCarOnMap()) {
                 PlaySound("car_beep1.ogg");
                 //Message("You can hear your car beeping.");
                 debugPrintCars();
@@ -151,25 +172,29 @@ class CCarTracker {
     }
 
 
-    void refresh(array<int>@ data) {
+    void refresh(array<int>@ data, string@ ownerList) {
         array<CCarTrackerCar@> carsTmp;
+        array<string@>@ ownerNames = split(ownerList, ",");
         cars = carsTmp;
         for (int i = 0, j = data.length(); (i * CTC_SIZE) < j; i++) {
-            cars.insertLast(copyFromIntArray(data, i));
+            cars.insertLast(copyFromIntArray(data, ownerNames, i));
+            //Message("Added car with name: " + cars[i].OwnerName + ", id = " + cars[i].Id);
         }
-        //debugPrintCars();
     }
 
     void debugPrintCars() {
+        CritterCl@ chosen = GetChosen();
+        if(!valid(chosen))
+            return;
         for (int i = 0, j = cars.length(); i < j; i++) {
-            CritterCl@ chosen = GetChosen();
-            if(!valid(chosen))
-                return;
-            uint dist = GetDistantion(chosen.HexX, chosen.HexY, cars[i].HexX, cars[i].HexY);
-            uint dir = GetDirection(chosen.HexX, chosen.HexY, cars[i].HexX, cars[i].HexY);
-            string directionStr = getDirectionName(dir);
-            string distanceStr = dist > 40 ? "far away" : dist > 20 ? "a bit further" : "up close";
-            Message("You can hear your " + getCarTypeName(cars[i].Type) + " with key " + cars[i].LockerId + " beeping " + distanceStr + " to the " + directionStr);
+            if (cars[i].OwnerId == chosen.Id) {
+                uint dist = GetDistantion(chosen.HexX, chosen.HexY, cars[i].HexX, cars[i].HexY);
+                uint dir = GetDirection(chosen.HexX, chosen.HexY, cars[i].HexX, cars[i].HexY);
+                string directionStr = getDirectionName(dir);
+                string distanceStr = dist > 40 ? "far away" : dist > 20 ? "a bit further" : "up close";
+                //Message("DEBUG - Car at with ID " + cars[i].Id + " at (" + cars[i].HexX + ", " + cars[i].HexY + ")");
+                Message("You can hear your " + getCarTypeName(cars[i].Type) + " with key " + cars[i].LockerId + " beeping " + distanceStr + " to the " + directionStr);
+            }
         }
     }
 
@@ -202,31 +227,51 @@ class CCarTracker {
             if (GetHexPos(cars[i].HexX, cars[i].HexY, carX, carY)) {
                 if (carX < __ScreenWidth && carY < __ScreenHeight && carX >= 0 && carY >= 0 && playerSight >= carDistance) {
 
-                    string ownerName = "Owner: N/A";
-                    if (cars[i].OwnerId > 0) {
-                        CritterCl@ owner = GetCritter(cars[i].OwnerId);
-                        if (valid(owner)) {
-                            ownerName = "" + owner.Name;
+                    string ownerName = cars[i].OwnerName;
+                    if (!beepActive) {
+                        string carNumber = "" + cars[i].LockerId;
+                        string fuelAndDamage = "" + (cars[i].Charge / 100) + "/" + (cars[i].MaxCharge / 100) +
+                            " " + (cars[i].Deterioration * 100 / cars[i].MaxDeterioration) + "%";
+                        headerColor = cars[i].OwnerId == chosen.Id ? COLOR_CONTOUR_GREEN : COLOR_CONTOUR_YELLOW;
+                        int w = 0, h = 0, l = 0;
+                        carY -= carYAdjust / __SpritesZoom;
+
+                        if (ownerName.length() > 0) {
+                            GetTextInfo(ownerName, 0, 0, FONT_TYPE_DEFAULT, FONT_FLAG_BORDERED, w, h, l);
+                            carXAdjust = carX - w / 2;
+                            carY = DrawClientText(ownerName, carXAdjust, carY, h, headerColor) + TEXT_HEIGHT_CORRECTION;
                         }
+                        if (cars[i].LockerId != 0) {
+                            GetTextInfo(carNumber, 0, 0, FONT_TYPE_DEFAULT, FONT_FLAG_BORDERED, w, h, l);
+                            carXAdjust = carX - w / 2;
+                            carY = DrawClientText(carNumber, carXAdjust, carY, h, headerColor) + TEXT_HEIGHT_CORRECTION;
+                        }
+                        GetTextInfo(fuelAndDamage, 0, 0, FONT_TYPE_DEFAULT, FONT_FLAG_BORDERED, w, h, l);
+                        carXAdjust = carX - w / 2;
+                        carY = DrawClientText(fuelAndDamage, carXAdjust, carY, h, headerColor);
+                    } else if (chosen.Id == cars[i].OwnerId) {
+                        string carNumber = "" + cars[i].LockerId;
+                        string fuelAndDamage = "" + (cars[i].Charge / 100) + "/" + (cars[i].MaxCharge / 100) +
+                            " " + (cars[i].Deterioration * 100 / cars[i].MaxDeterioration) + "%";
+                        headerColor = cars[i].OwnerId == chosen.Id ? COLOR_CONTOUR_GREEN : COLOR_CONTOUR_YELLOW;
+                        int w = 0, h = 0, l = 0;
+                        carY -= carYAdjust / __SpritesZoom;
+
+                        GetTextInfo(ownerName, 0, 0, FONT_TYPE_DEFAULT, FONT_FLAG_BORDERED, w, h, l);
+                        carXAdjust = carX - w / 2;
+                        carY = DrawBlinkingClientText(ownerName, carXAdjust, carY, h, headerColor, GetTick()) + TEXT_HEIGHT_CORRECTION;
+
+                        if (cars[i].LockerId != 0) {
+                            GetTextInfo(carNumber, 0, 0, FONT_TYPE_DEFAULT, FONT_FLAG_BORDERED, w, h, l);
+                            carXAdjust = carX - w / 2;
+                            carY = DrawBlinkingClientText(carNumber, carXAdjust, carY, h, headerColor, GetTick()) + TEXT_HEIGHT_CORRECTION;
+                        }
+
+                        GetTextInfo(fuelAndDamage, 0, 0, FONT_TYPE_DEFAULT, FONT_FLAG_BORDERED, w, h, l);
+                        carXAdjust = carX - w / 2;
+                        //carY = DrawClientText(fuelAndDamage, carXAdjust, carY, h, headerColor);
+                        carY = DrawBlinkingClientText(fuelAndDamage, carXAdjust, carY, h, headerColor, GetTick()) + TEXT_HEIGHT_CORRECTION;
                     }
-                    string carNumber = "" + cars[i].LockerId;
-                    string fuelAndDamage = "" + (cars[i].Charge / 100) + "/" + (cars[i].MaxCharge / 100) +
-                        " " + (cars[i].Deterioration * 100 / cars[i].MaxDeterioration) + "%";
-                    uint color = COLOR_CONTOUR_YELLOW;
-                    int w = 0, h = 0, l = 0;
-                    carY -= carYAdjust / __SpritesZoom;
-
-                    GetTextInfo(carNumber, 0, 0, FONT_TYPE_DEFAULT, FONT_FLAG_BORDERED, w, h, l);
-                    carXAdjust = carX - w / 2;
-                    carY = DrawClientText(carNumber, carXAdjust, carY, h, color);
-
-                    GetTextInfo(ownerName, 0, 0, FONT_TYPE_DEFAULT, FONT_FLAG_BORDERED, w, h, l);
-                    carXAdjust = carX - w / 2;
-                    carY = DrawClientText(ownerName, carXAdjust, carY, h, color);
-
-                    GetTextInfo(fuelAndDamage, 0, 0, FONT_TYPE_DEFAULT, FONT_FLAG_BORDERED, w, h, l);
-                    carXAdjust = carX - w / 2;
-                    carY = DrawClientText(fuelAndDamage, carXAdjust, carY, h, color);
                 } else {
                     //Log("Indicator out of screen coords.");
                     //Message("Indicator out of screen coords. (" + carX + ", " + carY + ")");
@@ -241,7 +286,7 @@ class CCarTracker {
 
     int DrawClientText(string& text, int x, int y, int y_fix, uint color)
     {
-        DrawText(text, x, y, __ScreenWidth, (y_fix > 10 ? y_fix : 10), color, FONT_TYPE_DEFAULT, 0);
+        DrawText(text, x, y, __ScreenWidth, (y_fix > 10 ? y_fix : 10), color, FONT_TYPE_DEFAULT, FONT_FLAG_BORDERED);
 
         if(y_fix > 0)
             return(y + y_fix);
@@ -250,6 +295,20 @@ class CCarTracker {
         else
             return(y);
     }
+
+
+    int DrawBlinkingClientText(string& text, int x, int y, int y_fix, uint color, uint time) {
+        uint relativeTime = (time - beepActivationTime) % beepingBlinkInterval;
+        float percentage = (0.0f + relativeTime) / (0.0f + beepingBlinkInterval);
+        percentage = percentage > 0.5 ? 1 : 0;
+        return DrawClientText(text, x, y, y_fix, GetAlphaOfColors(color, percentage));
+    }
+
+    uint GetAlphaOfColors(uint color, float ratio) {
+        uint8 headerAlpha = color >> 24;
+        return COLOR_CHANGE_ALPHA(color, headerAlpha * ratio);
+    }
+
 
 };
 
