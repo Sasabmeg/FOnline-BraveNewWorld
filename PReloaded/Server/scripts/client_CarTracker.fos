@@ -132,19 +132,11 @@ class CCarTracker {
         if (!beepActive) {
             beepActive = true;
             beepActivationTime = GetTick();
-            if (valid(cars) && cars.length() > 0) {
-                string idsText = "";
-                for (int i = 0, j = cars.length(); i < j; i++) {
-                    idsText += "" + cars[i].Id + ", ";
-                }
-                Message("Car Ids: " + idsText);
-            } else {
-                //Message("Car Ids length = " + carIds.length());
-            }
-            //  play beep sound.
+            //  play response sound
             if (cars.length() > 0) {
                 PlaySound("car_beep1.ogg");
-                Message("You can hear your car beeping.");
+                //Message("You can hear your car beeping.");
+                debugPrintCars();
             } else {
                 PlaySound("cricket");
                 Message("No sign of your faithful vehicle, only the crickets respond to the frequency.");
@@ -176,8 +168,8 @@ class CCarTracker {
             uint dist = GetDistantion(chosen.HexX, chosen.HexY, cars[i].HexX, cars[i].HexY);
             uint dir = GetDirection(chosen.HexX, chosen.HexY, cars[i].HexX, cars[i].HexY);
             string directionStr = getDirectionName(dir);
-
-            Message(getCarTypeName(cars[i].Type) + " " + cars[i].Id + " (" + cars[i].HexX + ", " + cars[i].HexY + ") " + dist + " to the " + directionStr + ", owned by " + cars[i].OwnerId + ", key: " + cars[i].LockerId);
+            string distanceStr = dist > 40 ? "far away" : dist > 20 ? "a bit further" : "up close";
+            Message("You can hear your " + getCarTypeName(cars[i].Type) + " with key " + cars[i].LockerId + " beeping " + distanceStr + " to the " + directionStr);
         }
     }
 
@@ -306,12 +298,12 @@ string getCarTypeName(uint protoId) {
 string getDirectionName(uint dir) {
     string directionStr;
     switch (dir) {
-        case 0: directionStr = "NE"; break;
-        case 1: directionStr = "E"; break;
-        case 2: directionStr = "SE"; break;
-        case 3: directionStr = "SW"; break;
-        case 4: directionStr = "W"; break;
-        case 5: directionStr = "NW"; break;
+        case 0: directionStr = "North East"; break;
+        case 1: directionStr = "East"; break;
+        case 2: directionStr = "South East"; break;
+        case 3: directionStr = "South West"; break;
+        case 4: directionStr = "West"; break;
+        case 5: directionStr = "North West"; break;
         default: directionStr = "somewhere";
     }
     return directionStr;

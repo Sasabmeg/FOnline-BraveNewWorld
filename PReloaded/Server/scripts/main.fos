@@ -2208,13 +2208,6 @@ void critter_init(Critter& cr, bool firstTime)
                 }
         }
     }
-
-    //  send car tracker data when log in
-    if (cr.IsPlayer()) {
-        sendCarInfoToPlayer(cr);
-    }
-
-
 }
 
 uint e_CritterInit_Broadcast(array<int>@ data)
@@ -3020,8 +3013,6 @@ void map_critter_in(Map& map, Critter& cr)
 
     //  refresh car info for player entering the map
     if(cr.IsPlayer()) {
-        //cr.Say(SAY_NETMSG, "CRITTERN MAP IN");
-        //Log("CRITTERN MAP IN");
         sendCarInfoToPlayer(cr);
         /*
         //  send car info
