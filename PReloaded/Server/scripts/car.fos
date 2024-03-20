@@ -25,6 +25,7 @@ import void AddScore(Critter@ cr, uint score, uint points) from "utils";
 import bool IsKeyAviable(Critter& cr, uint lockerId) from "lockers";
 import void InjureCritter(Critter& cr, uint dmg, uint dmgType, uint8 dir, uint attackerId) from "combat";
 import string GetLocationName(uint locId) from "utils";
+import void sendCarInfoToPlayer(Critter& player) from "unsafe_client";
 
 #define STR_CAR_INFO    (2100)
 
@@ -481,13 +482,22 @@ void DriveToGlobal(Critter& cr, Item& car, bool requestGroup)
 {
     // become owner
     GameVar@ ownervar = GetLocalVar(LIVAR_car_owner_id, car.Id);
+    if (ownervar != cr.Id) {
+        Critter@ prevOwner = GetCritter(ownervar.GetValue());
+        if (valid(prevOwner)) {
+            car.Val6 = cr.Id;   //  set this here as well as later, because this is used to check car owner for CarTracker at client
+            sendCarInfoToPlayer(prevOwner);
+        } else {
+            //Log("Drive to Global - previous car owned invalid.");
+        }
+    }
     ownervar = cr.Id;
 
     uint eventId = car.Val5;
     if (eventId > 0)
         EraseTimeEvent(eventId);
     car.Val5 = 0;
-    car.Val6 = cr.Id;   //  faster to query owner
+    car.Val6 = cr.Id;   //  store owner here for easier access
     car.Update();
     UNSETFLAG(car.Val0, CAR_LOCKPICK_TIMEOUT);
 
