@@ -1754,12 +1754,13 @@ void sendCarInfoToPlayer(Critter& player) {
     if (!valid(map))
         return;
 
-    array<Entire> entires;
     array<int> cars;
-    ParseEntires(map, entires, ENTIRE_CAR);
-    if (entires.length() > 0) {
-        for(int i = 0, j = entires.length(); i < j; i++) {
-            Item@ car = map.GetCar(entires[i].HexX, entires[i].HexY);
+    array<Item@> carsOnMap;
+    uint carsCount = map.GetItemsByType(ITEM_TYPE_CAR, carsOnMap);
+
+    if (carsCount > 0) {
+        for(int i = 0, j = carsCount; i < j; i++) {
+            Item@ car = carsOnMap[i];
             if (valid(car)) {
                 string ownerName = "N/A";
                 if (car.Val6 > 0) {
