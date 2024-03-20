@@ -47,7 +47,7 @@ import bool ReverseAllItems(Critter& cr, array<Item@>& items, uint cnt, uint max
 import bool ReadMapToLocationSilently(Item& item, Critter& cr) from "item_misc";
 
 import void WearHandsOnDeath(Critter& cr) from "repair";
-import string getCarTypeName(Item@ car) from "car";
+import string getCarTypeName(uint protoId) from "car";
 
 void unsafe_GetTimer(Critter& player, int p0, int p1, int p2, string@ commandString, array<int>@ param4)     // anti-bot
 {
@@ -1768,11 +1768,11 @@ void sendCarInfoToPlayer(Critter& player) {
                         ownerName = owner.Name;
                     }
                 }
-                Log("Found car on (" + entires[i].HexX + ", " + entires[i].HexY + ") type = " + getCarTypeName(car) + " , owner = " + ownerName);
+                //Log("Found car on (" + entires[i].HexX + ", " + entires[i].HexY + ") type = " + getCarTypeName(car.Proto.ProtoId) + " , owner = " + ownerName);
                 if (player.Id == uint(car.Val6)) {
-                    Log("Adding car to array: " + car.Id);
-                    player.Say(SAY_NETMSG, "sendCarInfoToPlayer - Adding car to array: id = " + car.Id + "(" + entires[i].HexX + ", " + entires[i].HexY + ") type = " + getCarTypeName(car) + " , owner = " + ownerName);
-                    cars.insertLast(int(car.Id));
+                    //Log("Adding car to array: " + car.Id);
+                    //player.Say(SAY_NETMSG, "sendCarInfoToPlayer - Adding car to array: id = " + car.Id + "(" + entires[i].HexX + ", " + entires[i].HexY + ") type = " + getCarTypeName(car.Proto.ProtoId) + " , owner = " + ownerName);
+                    insertCarsIntoDataArray(cars, car);
                 }
             }
         }
@@ -1781,4 +1781,17 @@ void sendCarInfoToPlayer(Critter& player) {
         //Log("No parking spots found.");
     }
     player.RunClientScript("client_main@_ShowCarOwnerIndicator", 0, 0, 0, null, cars);
+}
+
+void insertCarsIntoDataArray(array<int>@ data, Item@ car) {
+    data.insertLast(int(car.Id));
+    data.insertLast(int(car.LockerId));
+    data.insertLast(int(car.Val6));
+    data.insertLast(int(car.HexX));
+    data.insertLast(int(car.HexY));
+    data.insertLast(int(car.Charge));
+    data.insertLast(int(_CarGetFuelTank(car)));
+    data.insertLast(int(car.Deterioration));
+    data.insertLast(int(_CarGetMaxDeterioration(car)));
+    data.insertLast(int(car.Proto.ProtoId));
 }

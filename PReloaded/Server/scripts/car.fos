@@ -679,47 +679,45 @@ bool entrance_city(Location& Loc, array<Critter@>& critters, uint8 entrance)
     return true;
 }
 
-string getCarTypeName(Item@ car) {
-    if (!valid(car))
-        return "NULL";
-    if (car.Proto.ProtoId == PID_HUMMER) {
+string getCarTypeName(uint protoId) {
+    if (protoId == PID_HUMMER) {
         return "Hummer";
-    } else if (car.Proto.ProtoId == PID_BUGGY) {
+    } else if (protoId == PID_BUGGY) {
         return "Buggy";
-    } else if (car.Proto.ProtoId == PID_SCOUT) {
+    } else if (protoId == PID_SCOUT) {
         return "Scout";
-    } else if (car.Proto.ProtoId == PID_VERTIBIRD) {
+    } else if (protoId == PID_VERTIBIRD) {
         return "Vertibird";
-    } else if (car.Proto.ProtoId == PID_HIGHWAYMAN) {
+    } else if (protoId == PID_HIGHWAYMAN) {
         return "Highwayman";
-    } else if (car.Proto.ProtoId == PID_RUSTY_HIGHWAYMAN) {
+    } else if (protoId == PID_RUSTY_HIGHWAYMAN) {
         return "Rusty Highwayman";
-    } else if (car.Proto.ProtoId == PID_CARAVAN_WHITE) {
+    } else if (protoId == PID_CARAVAN_WHITE) {
         return "White Caravan";
-    } else if (car.Proto.ProtoId == PID_CARAVAN_ORANGE) {
+    } else if (protoId == PID_CARAVAN_ORANGE) {
         return "Orange Carvan";
-    } else if (car.Proto.ProtoId == PID_COCKROACH) {
+    } else if (protoId == PID_COCKROACH) {
         return "Cockroach";
-    } else if (car.Proto.ProtoId == PID_WRECKED_CAR) {
+    } else if (protoId == PID_WRECKED_CAR) {
         return "Wrecked Car";
-    } else if (car.Proto.ProtoId == PID_BOAT) {
+    } else if (protoId == PID_BOAT) {
         return "Boat";
-    } else if (car.Proto.ProtoId == PID_CORVEGA) {
+    } else if (protoId == PID_CORVEGA) {
         return "Corvega";
-    } else if (car.Proto.ProtoId == PID_TARDIS) {
+    } else if (protoId == PID_TARDIS) {
         return "Tardis";
-    } else if (car.Proto.ProtoId == PID_POLICE_CAR) {
+    } else if (protoId == PID_POLICE_CAR) {
         return "Police Car";
-    } else if (car.Proto.ProtoId == PID_MOTORCYCLE) {
+    } else if (protoId == PID_MOTORCYCLE) {
         return "Motorcycle";
-    } else if (car.Proto.ProtoId == PID_FIRETRUCK) {
+    } else if (protoId == PID_FIRETRUCK) {
         return "Firetruck";
-    } else if (car.Proto.ProtoId == PID_TRUCK) {
+    } else if (protoId == PID_TRUCK) {
         return "Truck";
-    } else if (car.Proto.ProtoId == PID_BARGE) {
+    } else if (protoId == PID_BARGE) {
         return "Barge";
     } else {
-        return "PID=" + car.Proto.ProtoId;
+        return "N/A";
     }
 }
 

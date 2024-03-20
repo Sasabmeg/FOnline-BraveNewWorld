@@ -18,7 +18,6 @@
 #include "reinforcements_h.fos"
 
 import void StartFirstTentQuest(Critter& player) from "quest_first_tent";
-import string getCarTypeName(Item@ car) from "car";
 
 void map_init(Map& map, bool firstTime)
 {
