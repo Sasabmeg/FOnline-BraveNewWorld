@@ -1221,6 +1221,7 @@ void _OpenURL(int, int, int, string@ url, array<int>@)
 }
 
 void _ShowCarOwnerIndicator(int param1, int param2, int param3, string@ param4, array<int>@ data) {
+    /*
     CritterCl@ chosen = GetChosen();
     if (data.length() > 0) {
         for (int i = 0, j = data.length(); i < j; i++) {
@@ -1242,6 +1243,6 @@ void _ShowCarOwnerIndicator(int param1, int param2, int param3, string@ param4, 
     } else {
         //Log("No items." + data.length());
         //Message("No items." + data.length());
-    }
+    }*/
     RefreshCars(data);
 }

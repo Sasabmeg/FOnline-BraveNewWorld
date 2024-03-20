@@ -5,6 +5,9 @@
 *
 *   Description:    It's just a pop-up above a player's own car, useful in parking lots.
 *                   Aim is to provide 21st century look and feel and QoL modules for FOClassic.
+*                   I had some issues using ItemCl to store the cars, because the Client would drop the data behind the reference
+*                   in C, but valid() check would show it still exist. This happened a few times after some time, and decided for a
+*                   workaround, hence we store the car data in an AS class.
 */
 
 #ifndef __CAR_TRACKER__
@@ -17,6 +20,7 @@
 #include "_colors.fos"
 #include "client_gui_h.fos"
 
+//import string getCarTypeName(uint protoId) from "car";
 
 CCarTracker carTracker;// = CCarTracker();
 
@@ -51,14 +55,64 @@ void DrawCarTracker() {
     carTracker.Draw();
 }
 
+#define CTC_SIZE (10)
+
+class CCarTrackerCar {
+	uint Id;
+	uint LockerId;
+	uint OwnerId;
+   	uint16 HexX;
+	uint16 HexY;
+	uint16 Charge;
+	uint16 MaxCharge;
+    uint16 Deterioration;
+    uint16 MaxDeterioration;
+    int Type;
+
+    CCarTrackerCar(uint carId) {
+        Id = carId;
+    }
+
+    //  not used, maybe later
+    void copyFromItemCl(ItemCl& item) {
+        LockerId = item.LockerId;
+        HexX = item.HexX;
+        HexY = item.HexY;
+        OwnerId = item.Val6;
+        Charge = item.Charge;
+        MaxCharge = _CarGetFuelTank(item);
+        Deterioration = item.Deterioration;
+        MaxDeterioration = _CarGetMaxDeterioration(item);
+    }
+};
+
+CCarTrackerCar@ copyFromIntArray(array<int>@ data, uint index) {
+    if (data.length() >= (index + 1) * CTC_SIZE) {
+        CCarTrackerCar ctcCar = CCarTrackerCar(data[index * CTC_SIZE]);
+        ctcCar.LockerId = data[index * CTC_SIZE + 1];
+        ctcCar.OwnerId = data[index * CTC_SIZE + 2];
+        ctcCar.HexX = data[index * CTC_SIZE + 3];
+        ctcCar.HexY = data[index * CTC_SIZE + 4];
+        ctcCar.Charge = data[index * CTC_SIZE + 5];
+        ctcCar.MaxCharge = data[index * CTC_SIZE + 6];
+        ctcCar.Deterioration = data[index * CTC_SIZE + 7];
+        ctcCar.MaxDeterioration = data[index * CTC_SIZE + 8];
+        ctcCar.Type = data[index * CTC_SIZE + 9];
+        //Message("Car: " + ctcCar.Id + " (" + ctcCar.HexX + ", " + ctcCar.HexY + ") owned by " + ctcCar.OwnerId);
+        return ctcCar;
+    } else {
+        return null;
+    }
+}
+
+
 class CCarTracker {
     bool enabled;                           //  use this to toggle on/off
     bool beepActive;
     uint beepActivationTime;
     uint beepDuration;
     uint cricketDuration;
-    array<int> carIds;
-    array<ItemCl@> cars;
+    array<CCarTrackerCar@> cars;
 
     CCarTracker() {
         enabled = true;
@@ -68,7 +122,7 @@ class CCarTracker {
     }
 
     void SelfDisableBeepAfterDurationExpired() {
-        if (beepActive && (GetTick() + 10 > beepActivationTime + (carIds.length() > 0 ? beepDuration : cricketDuration) )) {
+        if (beepActive && (GetTick() + 10 > beepActivationTime + (cars.length() > 0 ? beepDuration : cricketDuration) )) {
             //Message("Beep End.");
             beepActive = false;
         }
@@ -78,78 +132,57 @@ class CCarTracker {
         if (!beepActive) {
             beepActive = true;
             beepActivationTime = GetTick();
-            if (valid(carIds) && carIds.length() > 0) {
+            if (valid(cars) && cars.length() > 0) {
                 string idsText = "";
-                for (int i = 0, j = carIds.length(); i < j; i++) {
-                    idsText += "" + carIds[i] + ", ";
+                for (int i = 0, j = cars.length(); i < j; i++) {
+                    idsText += "" + cars[i].Id + ", ";
                 }
                 Message("Car Ids: " + idsText);
             } else {
-                Message("Car Ids length = " + carIds.length());
+                //Message("Car Ids length = " + carIds.length());
             }
             //  play beep sound.
-            if (carIds.length() > 0) {
+            if (cars.length() > 0) {
                 PlaySound("car_beep1.ogg");
                 Message("You can hear your car beeping.");
             } else {
                 PlaySound("cricket");
-                Message("No sign of your faithful vehicle, only the crickets respond.");
+                Message("No sign of your faithful vehicle, only the crickets respond to the frequency.");
             }
         } else {
-            if (carIds.length() > 0) {
+            if (cars.length() > 0) {
                 Message("Your car is still beeping.");
             } else {
-                Message("You can still hear the crickets, but not your car.");
+                Message("You still cannot hear your car, but the crickets.");
             }
         }
     }
 
 
     void refresh(array<int>@ data) {
-        array<int> carIdsTmp;
-        carIds = carIdsTmp;
-        for (int i = 0, j = data.length(); i < j; i++) {
-            carIds.insertLast(data[i]);
+        array<CCarTrackerCar@> carsTmp;
+        cars = carsTmp;
+        for (int i = 0, j = data.length(); (i * CTC_SIZE) < j; i++) {
+            cars.insertLast(copyFromIntArray(data, i));
         }
-        Message("refresh called: " + carIds.length());
+        //debugPrintCars();
     }
 
-    void refreshVisibleCars() {
-        array<ItemCl@> carsTmp;
-        for (int i = 0, j = carIds.length(); i < j; i++) {
-            ItemCl@ car = GetItem(carIds[i]);
-            if (valid(car)) {
-                if (car.GetType() == ITEM_TYPE_CAR) {
-                    //Log("Added car: (" + car.HexX + ", " + car.HexY + ") owned by " + car.Val6);
-                    //Message("Added car: (" + car.HexX + ", " + car.HexY + ") owned by " + car.Val6);
-                    carsTmp.insertLast(car);
-                } else {
-                    //Log("It's not a car!");
-                    //Message("It's not a car.");
-                }
-            } else {
-                //  if the car is not valid, it means that client does not load it, because not in screen or close to that
-                //Log("Null object: " + carIds[i]);
-                //Message("Null object: " + carIds[i]);
-            }
-        }
-        cars = carsTmp;
+    void debugPrintCars() {
+        for (int i = 0, j = cars.length(); i < j; i++) {
+            CritterCl@ chosen = GetChosen();
+            if(!valid(chosen))
+                return;
+            uint dist = GetDistantion(chosen.HexX, chosen.HexY, cars[i].HexX, cars[i].HexY);
+            uint dir = GetDirection(chosen.HexX, chosen.HexY, cars[i].HexX, cars[i].HexY);
+            string directionStr = getDirectionName(dir);
 
-        /*
-        if (carIds.length() > 0) {
-            string idsText = "";
-            for (int i = 0, j = carIds.length(); i < j; i++) {
-                idsText += "" + carIds[i] + ", ";
-            }
-            Message("Car Ids: " + idsText);
-        } else {
-            Message("Car Ids length = " + carIds.length());
+            Message(getCarTypeName(cars[i].Type) + " " + cars[i].Id + " (" + cars[i].HexX + ", " + cars[i].HexY + ") " + dist + " to the " + directionStr + ", owned by " + cars[i].OwnerId + ", key: " + cars[i].LockerId);
         }
-        */
     }
 
     void Draw() {
-        if (!enabled) {
+        if (!enabled && !beepActive) {
             //Message("CarTracker disabled.");
             return;
         }
@@ -165,24 +198,28 @@ class CCarTracker {
             return;
         }
 
-        refreshVisibleCars();
-
         for (int i = 0, j = cars.length(); i < j; i++) {
             int carX = -1, carY = -1, carXAdjust = -1, carYAdjust = 90;
+            uint16 bonus = 0;
+            ItemCl@ item = chosen.GetItem(0, SLOT_HAND1);
+            if (valid(item) && item.GetProtoId() == PID_BINOCULARS)
+                bonus = 6;
+            uint playerSight = chosen.IsLife() ? __LookNormal + chosen.Stat[ST_PERCEPTION] * 3 + chosen.Param[PE_SHARPSHOOTER] * 6 + bonus : __LookMinimum;
+            uint carDistance = GetDistantion(chosen.HexX, chosen.HexY, cars[i].HexX, cars[i].HexY);
+
             if (GetHexPos(cars[i].HexX, cars[i].HexY, carX, carY)) {
-                if (carX < __ScreenWidth || carY < __ScreenHeight ||
-                        carX >= 0 || carY >= 0) {
+                if (carX < __ScreenWidth && carY < __ScreenHeight && carX >= 0 && carY >= 0 && playerSight >= carDistance) {
 
                     string ownerName = "Owner: N/A";
-                    if (cars[i].Val6 > 0) {
-                        CritterCl@ owner = GetCritter(cars[i].Val6);
+                    if (cars[i].OwnerId > 0) {
+                        CritterCl@ owner = GetCritter(cars[i].OwnerId);
                         if (valid(owner)) {
                             ownerName = "" + owner.Name;
                         }
                     }
                     string carNumber = "" + cars[i].LockerId;
-                    string fuelAndDamage = "" + (cars[i].Charge / 100) + "/" + (_CarGetFuelTank(cars[i]) / 100) +
-                        " " + (cars[i].Deterioration * 100 / _CarGetMaxDeterioration(cars[i])) + "%";
+                    string fuelAndDamage = "" + (cars[i].Charge / 100) + "/" + (cars[i].MaxCharge / 100) +
+                        " " + (cars[i].Deterioration * 100 / cars[i].MaxDeterioration) + "%";
                     uint color = COLOR_CONTOUR_YELLOW;
                     int w = 0, h = 0, l = 0;
                     carY -= carYAdjust / __SpritesZoom;
@@ -223,5 +260,61 @@ class CCarTracker {
     }
 
 };
+
+string getCarTypeName(uint protoId) {
+    if (protoId == PID_HUMMER) {
+        return "Hummer";
+    } else if (protoId == PID_BUGGY) {
+        return "Buggy";
+    } else if (protoId == PID_SCOUT) {
+        return "Scout";
+    } else if (protoId == PID_VERTIBIRD) {
+        return "Vertibird";
+    } else if (protoId == PID_HIGHWAYMAN) {
+        return "Highwayman";
+    } else if (protoId == PID_RUSTY_HIGHWAYMAN) {
+        return "Rusty Highwayman";
+    } else if (protoId == PID_CARAVAN_WHITE) {
+        return "White Caravan";
+    } else if (protoId == PID_CARAVAN_ORANGE) {
+        return "Orange Carvan";
+    } else if (protoId == PID_COCKROACH) {
+        return "Cockroach";
+    } else if (protoId == PID_WRECKED_CAR) {
+        return "Wrecked Car";
+    } else if (protoId == PID_BOAT) {
+        return "Boat";
+    } else if (protoId == PID_CORVEGA) {
+        return "Corvega";
+    } else if (protoId == PID_TARDIS) {
+        return "Tardis";
+    } else if (protoId == PID_POLICE_CAR) {
+        return "Police Car";
+    } else if (protoId == PID_MOTORCYCLE) {
+        return "Motorcycle";
+    } else if (protoId == PID_FIRETRUCK) {
+        return "Firetruck";
+    } else if (protoId == PID_TRUCK) {
+        return "Truck";
+    } else if (protoId == PID_BARGE) {
+        return "Barge";
+    } else {
+        return "N/A";
+    }
+}
+
+string getDirectionName(uint dir) {
+    string directionStr;
+    switch (dir) {
+        case 0: directionStr = "NE"; break;
+        case 1: directionStr = "E"; break;
+        case 2: directionStr = "SE"; break;
+        case 3: directionStr = "SW"; break;
+        case 4: directionStr = "W"; break;
+        case 5: directionStr = "NW"; break;
+        default: directionStr = "somewhere";
+    }
+    return directionStr;
+}
 
 #endif 	//	__CAR_TRACKER__

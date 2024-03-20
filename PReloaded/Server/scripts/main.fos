@@ -2209,6 +2209,12 @@ void critter_init(Critter& cr, bool firstTime)
         }
     }
 
+    //  send car tracker data when log in
+    if (cr.IsPlayer()) {
+        sendCarInfoToPlayer(cr);
+    }
+
+
 }
 
 uint e_CritterInit_Broadcast(array<int>@ data)
@@ -3016,7 +3022,8 @@ void map_critter_in(Map& map, Critter& cr)
     if(cr.IsPlayer()) {
         //cr.Say(SAY_NETMSG, "CRITTERN MAP IN");
         //Log("CRITTERN MAP IN");
-        //sendCarInfoToPlayer(cr);
+        sendCarInfoToPlayer(cr);
+        /*
         //  send car info
         array<Critter@> critters;
         uint num = map.GetCritters(0, FIND_ALL | FIND_ONLY_PLAYERS, critters);
@@ -3027,6 +3034,7 @@ void map_critter_in(Map& map, Critter& cr)
             }
         }
         //Log("Players on map = " + critters.length());
+        */
     }
 }
 
@@ -3135,7 +3143,8 @@ void map_critter_out(Map& map, Critter& cr)
         }
     }
 
-    //  refresh car info for player entering the map
+    /*
+    //  refresh car info for player leaving the map
     if(cr.IsPlayer()) {
         //cr.Say(SAY_NETMSG, "CRITTERN MAP OUT");
         //Log("CRITTERN MAP OUT");
@@ -3151,6 +3160,7 @@ void map_critter_out(Map& map, Critter& cr)
         }
         //Log("Players on map = " + critters.length());
     }
+    */
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
