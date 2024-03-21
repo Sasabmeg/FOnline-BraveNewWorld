@@ -1760,6 +1760,7 @@ void SendCarInfoToPlayer(Critter& player) {
 
     array<int> cars;
     string ownerList = "";
+    bool foundValidCars = false;
     array<Item@> carsOnMap;
     uint carsCount = map.GetItemsByType(ITEM_TYPE_CAR, carsOnMap);
 
@@ -1780,6 +1781,7 @@ void SendCarInfoToPlayer(Critter& player) {
                 if (!TRACK_OWN_CARS_ONLY || player.Id == uint(car.Val6)) {
                     //Log("Adding car to array: " + car.Id);
                     //player.Say(SAY_NETMSG, "SendCarInfoToPlayer - Adding car to array: id = " + car.Id + "(" + entires[i].HexX + ", " + entires[i].HexY + ") type = " + GetCarTypeName(car.Proto.ProtoId) + " , owner = " + ownerName);
+                    foundValidCars = true;
                     InsertCarsIntoDataArray(cars, car);
                     if (ownerList.length() > 0) {
                         ownerList += ",";
@@ -1792,7 +1794,9 @@ void SendCarInfoToPlayer(Critter& player) {
         //player.Say(SAY_NETMSG, "No parking spots found.");
         //Log("No parking spots found.");
     }
-    player.RunClientScript("client_main@_ShowCarOwnerIndicator", 0, 0, 0, ownerList, cars);
+    //  if we send empty string over to client, the server will nullify the pointer to it and client will log null ptr exception
+    //  and not clear car names when map has no cars, this is why "No cars." is sent if empty
+    player.RunClientScript("client_main@_ShowCarOwnerIndicator", 0, 0, 0, foundValidCars ? ownerList : "No cars.", cars);
 }
 
 void SendCarInfoToPlayersOnMap(Map& map) {
