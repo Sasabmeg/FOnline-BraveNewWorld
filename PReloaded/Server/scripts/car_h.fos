@@ -1,0 +1,75 @@
+#ifndef __CAR_H__
+#define __CAR_H__
+
+#define CAR_TYPE_DIR_NA         (0)
+#define CAR_TYPE_DIR_NW         (1)
+#define CAR_TYPE_DIR_SW         (2)
+
+//  used for parking, can be 0 = N/A, 1 = NW or 2 = SW, for example: firetruck = SW, Highwayman = NW
+int GetCarTypeDirection(uint protoId) {
+    if (protoId == PID_BUGGY || protoId == PID_HUMMER || protoId == PID_HIGHWAYMAN || protoId == PID_RUSTY_HIGHWAYMAN || protoId == PID_CORVEGA || protoId == PID_POLICE_CAR
+            || protoId == PID_COCKROACH || protoId == PID_CARAVAN_WHITE || protoId == PID_CARAVAN_ORANGE || protoId == PID_MOTORCYCLE) {
+        return CAR_TYPE_DIR_NW;
+    } else if (protoId == PID_SCOUT || protoId == PID_FIRETRUCK || protoId == PID_TRUCK || protoId == PID_WRECKED_CAR) {
+        return CAR_TYPE_DIR_SW;
+    } else {
+        return CAR_TYPE_DIR_NA;
+    }
+}
+
+string GetCarTypeName(uint protoId) {
+    if (protoId == PID_HUMMER) {
+        return "Hummer";
+    } else if (protoId == PID_BUGGY) {
+        return "Buggy";
+    } else if (protoId == PID_SCOUT) {
+        return "Scout";
+    } else if (protoId == PID_VERTIBIRD) {
+        return "Vertibird";
+    } else if (protoId == PID_HIGHWAYMAN) {
+        return "Highwayman";
+    } else if (protoId == PID_RUSTY_HIGHWAYMAN) {
+        return "Rusty Highwayman";
+    } else if (protoId == PID_CARAVAN_WHITE) {
+        return "White Caravan";
+    } else if (protoId == PID_CARAVAN_ORANGE) {
+        return "Orange Carvan";
+    } else if (protoId == PID_COCKROACH) {
+        return "Cockroach";
+    } else if (protoId == PID_WRECKED_CAR) {
+        return "Wrecked Car";
+    } else if (protoId == PID_BOAT) {
+        return "Boat";
+    } else if (protoId == PID_CORVEGA) {
+        return "Corvega";
+    } else if (protoId == PID_TARDIS) {
+        return "Tardis";
+    } else if (protoId == PID_POLICE_CAR) {
+        return "Police Car";
+    } else if (protoId == PID_MOTORCYCLE) {
+        return "Motorcycle";
+    } else if (protoId == PID_FIRETRUCK) {
+        return "Firetruck";
+    } else if (protoId == PID_TRUCK) {
+        return "Truck";
+    } else if (protoId == PID_BARGE) {
+        return "Barge";
+    } else {
+        return "N/A";
+    }
+}
+
+string GetDirectionName(uint dir) {
+    string directionStr;
+    switch (dir) {
+        case 0: directionStr = "North East"; break;
+        case 1: directionStr = "East"; break;
+        case 2: directionStr = "South East"; break;
+        case 3: directionStr = "South West"; break;
+        case 4: directionStr = "West"; break;
+        case 5: directionStr = "North West"; break;
+        default: directionStr = "somewhere";
+    }
+    return directionStr;
+}
+#endif

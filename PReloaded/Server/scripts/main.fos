@@ -141,7 +141,7 @@ import void TC_BarterReward(Critter& player, int caps) from "town";
 import string IntToIp(int d) from "utils";
 import string GetTimeString(uint fullsecond) from "time";
 
-import void sendCarInfoToPlayer(Critter& player) from "unsafe_client";
+import void SendCarInfoToPlayer(Critter& player) from "unsafe_client";
 
 dictionary    ItemPids;
 dictionary    VarIds;
@@ -1873,7 +1873,7 @@ void critter_init(Critter& cr, bool firstTime)
 
     //  send Car Tracker info to client, this is needed because when fast relog, then critter in map will not trigger.
     if(cr.IsPlayer()) {
-        sendCarInfoToPlayer(cr);
+        SendCarInfoToPlayer(cr);
     }
 
     if(firstTime)
@@ -3018,14 +3018,14 @@ void map_critter_in(Map& map, Critter& cr)
 
     //  refresh car info for player entering the map
     if(cr.IsPlayer()) {
-        sendCarInfoToPlayer(cr);
+        SendCarInfoToPlayer(cr);
         /*
         //  send car info
         array<Critter@> critters;
         uint num = map.GetCritters(0, FIND_ALL | FIND_ONLY_PLAYERS, critters);
         for (uint i = 0, j = critters.length(); i < j; i++) {
             if (critters[i].IsPlayer()) {
-                sendCarInfoToPlayer(critters[i]);
+                SendCarInfoToPlayer(critters[i]);
                 //critters[i].Say(SAY_NETMSG, "CRITTERN MAP IN");
             }
         }
