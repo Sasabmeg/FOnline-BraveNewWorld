@@ -19,10 +19,9 @@
 #include "_macros.fos"
 #include "_colors.fos"
 #include "client_gui_h.fos"
+#include "car_h.fos"
 
 #define TEXT_HEIGHT_CORRECTION (2)
-
-//import string getCarTypeName(uint protoId) from "car";
 
 CCarTracker carTracker;// = CCarTracker();
 
@@ -190,7 +189,7 @@ class CCarTracker {
             if (cars[i].OwnerId == chosen.Id) {
                 uint dist = GetDistantion(chosen.HexX, chosen.HexY, cars[i].HexX, cars[i].HexY);
                 uint dir = GetDirection(chosen.HexX, chosen.HexY, cars[i].HexX, cars[i].HexY);
-                string directionStr = getDirectionName(dir);
+                string directionStr = GetDirectionName(dir);
                 string distanceStr = dist > 40 ? "far away" : dist > 20 ? "a bit further" : "up close";
                 //Message("DEBUG - Car at with ID " + cars[i].Id + " at (" + cars[i].HexX + ", " + cars[i].HexY + ")");
                 Message("You can hear your " + getCarTypeName(cars[i].Type) + " with key " + cars[i].LockerId + " beeping " + distanceStr + " to the " + directionStr);
@@ -352,20 +351,6 @@ string getCarTypeName(uint protoId) {
     } else {
         return "N/A";
     }
-}
-
-string getDirectionName(uint dir) {
-    string directionStr;
-    switch (dir) {
-        case 0: directionStr = "North East"; break;
-        case 1: directionStr = "East"; break;
-        case 2: directionStr = "South East"; break;
-        case 3: directionStr = "South West"; break;
-        case 4: directionStr = "West"; break;
-        case 5: directionStr = "North West"; break;
-        default: directionStr = "somewhere";
-    }
-    return directionStr;
 }
 
 #endif 	//	__CAR_TRACKER__
