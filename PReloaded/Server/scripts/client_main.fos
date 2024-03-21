@@ -1221,28 +1221,6 @@ void _OpenURL(int, int, int, string@ url, array<int>@)
 }
 
 void _ShowCarOwnerIndicator(int param1, int param2, int param3, string@ param4, array<int>@ data) {
-    /*
-    CritterCl@ chosen = GetChosen();
-    if (data.length() > 0) {
-        for (int i = 0, j = data.length(); i < j; i++) {
-            ItemCl@ car = GetItem(data[i]);
-            if (valid(car)) {
-                if (car.GetType() == ITEM_TYPE_CAR) {
-                    Log("_ShowCarOwnerIndicator - Found a car: (" + car.HexX + ", " + car.HexY + ") owned by " + car.Val6);
-                    Message("_ShowCarOwnerIndicator - Found a car at: (" + car.HexX + ", " + car.HexY + ") owned by " + car.Val6);
-                } else {
-                    Log("_ShowCarOwnerIndicator - It's not a car!");
-                    Message("_ShowCarOwnerIndicator - It's not a car.");
-
-                }
-            } else {
-                Log("_ShowCarOwnerIndicator - Null object: " + data[i]);
-                Message("_ShowCarOwnerIndicator - Null object: " + data[i]);
-            }
-        }
-    } else {
-        //Log("No items." + data.length());
-        //Message("No items." + data.length());
-    }*/
+    //Message("_ShowCarOwnerIndicator called");
     RefreshCars(data, param4);
 }
