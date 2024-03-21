@@ -18,7 +18,9 @@
 #include "reinforcements_h.fos"
 #include "car_h.fos"
 
-#define FREE_PARKING_TIME               (15000)
+#define PARKING_LOT_CHECK_FREQUENCY     (5000)  //  later this will be 5 minutes
+#define FREE_PARKING_TIME               (15000) //  later this will be 15 minutes
+#define PAYED_PARKING_TIME              (30000) //  later this will be 3 days
 #define ENTIRE_PARKINGLOT_NW            (210)
 #define ENTIRE_PARKINGLOT_SW            (220)
 
@@ -72,12 +74,45 @@ void map_init(Map& map, bool firstTime)
 
     if (proto == MAP_HubParkingLot) {
         map.SetEvent(MAP_EVENT_LOOP_0, "_LoopParkingLot");
-        map.SetLoopTime(0, 5000);
+        map.SetLoopTime(0, PARKING_LOT_CHECK_FREQUENCY);
     }
 }
 
 void _LoopParkingLot(Map& map) {
     Log("Parking lot loop proc.");
+    //  process pay to leave parking spaces and remove locker from those that are past due, so players cannot block this area
+    array<Entire> carParkSpotPayNW;
+    ParseEntires(map, carParkSpotPayNW, ENTIRE_PARKINGLOT_NW);
+    for(int i = 0, j = carParkSpotPayNW.length(); i < j; i++) {
+        Item@ payCar = map.GetCar(carParkSpotPayNW[i].HexX, carParkSpotPayNW[i].HexY);
+        if (valid(payCar)) {
+            if (payCar.LockerId != 0) {
+                if (GetTick() > uint(payCar.Val9 + PAYED_PARKING_TIME)) {
+                    Log("_LoopParkingLot - Unlocking payCar with lockerId = " + payCar.LockerId + " on (" + carParkSpotPayNW[i].HexX + ", " + carParkSpotPayNW[i].HexY + ") type = " + GetCarTypeName(payCar.GetProtoId()));
+                    payCar.LockerId = 0;
+                    payCar.Update();
+                    SendCarInfoToPlayersOnMap(map);
+                }
+            }
+        }
+    }
+    array<Entire> carParkSpotPaySW;
+    ParseEntires(map, carParkSpotPaySW, ENTIRE_PARKINGLOT_SW);
+    for(int i = 0, j = carParkSpotPaySW.length(); i < j; i++) {
+        Item@ payCar = map.GetCar(carParkSpotPaySW[i].HexX, carParkSpotPaySW[i].HexY);
+        if (valid(payCar)) {
+            if (payCar.LockerId != 0) {
+                if (GetTick() > uint(payCar.Val9 + PAYED_PARKING_TIME)) {
+                    Log("_LoopParkingLot - Unlocking payCar with lockerId = " + payCar.LockerId + " on (" + carParkSpotPaySW[i].HexX + ", " + carParkSpotPaySW[i].HexY + ") type = " + GetCarTypeName(payCar.GetProtoId()));
+                    payCar.LockerId = 0;
+                    payCar.Update();
+                    SendCarInfoToPlayersOnMap(map);
+                }
+            }
+        }
+    }
+
+    //  process free parking spaces and move all cars that are past due to payed zone, so players cannot block this area
     array<Entire> entires;
     ParseEntires(map, entires, ENTIRE_CAR);
     for(int i = 0, j = entires.length(); i < j; i++) {
@@ -89,7 +124,7 @@ void _LoopParkingLot(Map& map) {
             }
             if (car.Val9 > 0) {
                 if (GetTick() > uint(car.Val9 + FREE_PARKING_TIME)) {
-                    Log("_LoopParkingLot tick = " + GetTick() + " - Moving car on (" + entires[i].HexX + ", " + entires[i].HexY + ") type = " + GetCarTypeName(car.GetProtoId()) + " , owner = " + ownerName);
+                    Log("_LoopParkingLot - Moving car on (" + entires[i].HexX + ", " + entires[i].HexY + ") type = " + GetCarTypeName(car.GetProtoId()) + " , owner = " + ownerName);
                     if (GetCarTypeDirection(car.GetProtoId()) == CAR_TYPE_DIR_NW) {
                         array<Entire> carParkSpotNW;
                         ParseEntires(map, carParkSpotNW, ENTIRE_PARKINGLOT_NW);
@@ -98,10 +133,11 @@ void _LoopParkingLot(Map& map) {
                             if (!valid(tmpCarSpace)) {
                                 //  move car here
                                 Item@ trunk = car.GetChild(0);
+                                /*
                                 if (valid(trunk)) {
                                     Log("_LoopParkingLot - Found TRUNK at (" + trunk.HexX + ", " + trunk.HexY +
                                         ") of car type = " + GetCarTypeName(car.GetProtoId()) + " at (" + car.HexX + ", " + car.HexY + ")");
-                                }
+                                }*/
                                 if (MoveCarWithTrunk(car, map, carParkSpotNW[ii].HexX, carParkSpotNW[ii].HexY)) {
                                     SendCarInfoToPlayersOnMap(map);
                                 } else {
@@ -118,10 +154,12 @@ void _LoopParkingLot(Map& map) {
                             if (!valid(tmpCarSpace)) {
                                 //  move car here
                                 Item@ trunk = car.GetChild(0);
+                                /*
                                 if (valid(trunk)) {
                                     Log("_LoopParkingLot - Found TRUNK at (" + trunk.HexX + ", " + trunk.HexY +
                                         ") of car type = " + GetCarTypeName(car.GetProtoId()) + " at (" + car.HexX + ", " + car.HexY + ")");
                                 }
+                                */
                                 if (MoveCarWithTrunk(car, map, carParkSpotSW[ii].HexX, carParkSpotSW[ii].HexY)) {
                                     SendCarInfoToPlayersOnMap(map);
                                 } else {
@@ -130,7 +168,6 @@ void _LoopParkingLot(Map& map) {
                             }
                         }
                     }
-
                 }
             } else {
                 car.Val9 = GetTick();
