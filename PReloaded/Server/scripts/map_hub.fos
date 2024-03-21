@@ -16,8 +16,15 @@
 #include "utils_h.fos"
 #include "mapdata_h.fos"
 #include "reinforcements_h.fos"
+#include "car_h.fos"
+
+#define FREE_PARKING_TIME               (15000)
+#define ENTIRE_PARKINGLOT_NW            (210)
+#define ENTIRE_PARKINGLOT_SW            (220)
 
 import void StartFirstTentQuest(Critter& player) from "quest_first_tent";
+import bool MoveCarWithTrunk(Item@ car, Map& map, uint HexX, uint HexY) from "car";
+import void SendCarInfoToPlayersOnMap(Map& map) from "unsafe_client";
 
 void map_init(Map& map, bool firstTime)
 {
@@ -64,13 +71,12 @@ void map_init(Map& map, bool firstTime)
     }
 
     if (proto == MAP_HubParkingLot) {
-        map.SetEvent(MAP_EVENT_LOOP_0, "_Loop0");
-        map.SetLoopTime(0, 30000);
+        map.SetEvent(MAP_EVENT_LOOP_0, "_LoopParkingLot");
+        map.SetLoopTime(0, 5000);
     }
 }
 
-void _Loop0(Map& map) {
-    /*
+void _LoopParkingLot(Map& map) {
     Log("Parking lot loop proc.");
     array<Entire> entires;
     ParseEntires(map, entires, ENTIRE_CAR);
@@ -79,15 +85,60 @@ void _Loop0(Map& map) {
         if (valid(car)) {
             string ownerName = "0";
             if (car.Val6 > 0) {
-                Critter@ owner = GetCritter(car.Val6);
-                if (valid(owner)) {
-                    ownerName = owner.Name;
-                }
+                ownerName = GetPlayerName(car.Val6);
             }
-            Log("Found car on (" + entires[i].HexX + ", " + entires[i].HexY + ") type = " + getCarTypeName(car) + " , owner = " + ownerName);
+            if (car.Val9 > 0) {
+                if (GetTick() > uint(car.Val9 + FREE_PARKING_TIME)) {
+                    Log("_LoopParkingLot tick = " + GetTick() + " - Moving car on (" + entires[i].HexX + ", " + entires[i].HexY + ") type = " + GetCarTypeName(car.GetProtoId()) + " , owner = " + ownerName);
+                    if (GetCarTypeDirection(car.GetProtoId()) == CAR_TYPE_DIR_NW) {
+                        array<Entire> carParkSpotNW;
+                        ParseEntires(map, carParkSpotNW, ENTIRE_PARKINGLOT_NW);
+                        for(int ii = 0, jj = carParkSpotNW.length(); ii < jj; ii++) {
+                            Item@ tmpCarSpace = map.GetCar(carParkSpotNW[ii].HexX, carParkSpotNW[ii].HexY);
+                            if (!valid(tmpCarSpace)) {
+                                //  move car here
+                                Item@ trunk = car.GetChild(0);
+                                if (valid(trunk)) {
+                                    Log("_LoopParkingLot - Found TRUNK at (" + trunk.HexX + ", " + trunk.HexY +
+                                        ") of car type = " + GetCarTypeName(car.GetProtoId()) + " at (" + car.HexX + ", " + car.HexY + ")");
+                                }
+                                if (MoveCarWithTrunk(car, map, carParkSpotNW[ii].HexX, carParkSpotNW[ii].HexY)) {
+                                    SendCarInfoToPlayersOnMap(map);
+                                } else {
+                                    Log("MoveCarWithTrunk failed: Type = " + GetCarTypeName(car.GetProtoId()) + " , carId = " + car.Id);
+                                }
+                            }
+                        }
+                    }
+                    if (GetCarTypeDirection(car.GetProtoId()) == CAR_TYPE_DIR_SW) {
+                        array<Entire> carParkSpotSW;
+                        ParseEntires(map, carParkSpotSW, ENTIRE_PARKINGLOT_SW);
+                        for(int ii = 0, jj = carParkSpotSW.length(); ii < jj; ii++) {
+                            Item@ tmpCarSpace = map.GetCar(carParkSpotSW[ii].HexX, carParkSpotSW[ii].HexY);
+                            if (!valid(tmpCarSpace)) {
+                                //  move car here
+                                Item@ trunk = car.GetChild(0);
+                                if (valid(trunk)) {
+                                    Log("_LoopParkingLot - Found TRUNK at (" + trunk.HexX + ", " + trunk.HexY +
+                                        ") of car type = " + GetCarTypeName(car.GetProtoId()) + " at (" + car.HexX + ", " + car.HexY + ")");
+                                }
+                                if (MoveCarWithTrunk(car, map, carParkSpotSW[ii].HexX, carParkSpotSW[ii].HexY)) {
+                                    SendCarInfoToPlayersOnMap(map);
+                                } else {
+                                    Log("MoveCarWithTrunk failed: Type = " + GetCarTypeName(car.GetProtoId()) + " , carId = " + car.Id);
+                                }
+                            }
+                        }
+                    }
+
+                }
+            } else {
+                car.Val9 = GetTick();
+                Log("_LoopParkingLot tick = " + car.Val9 + " - New car on (" + entires[i].HexX + ", " + entires[i].HexY + ") type = " + GetCarTypeName(car.GetProtoId()) + " , owner = " + ownerName);
+            }
+            //car.Val9 = 0;
         }
     }
-    */
 }
 
 void _CritterArenaIn(Map& map, Critter& cr)
