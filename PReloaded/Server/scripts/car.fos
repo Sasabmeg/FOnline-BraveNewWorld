@@ -27,6 +27,7 @@ import bool IsKeyAviable(Critter& cr, uint lockerId) from "lockers";
 import void InjureCritter(Critter& cr, uint dmg, uint dmgType, uint8 dir, uint attackerId) from "combat";
 import string GetLocationName(uint locId) from "utils";
 import void SendCarInfoToPlayer(Critter& player) from "unsafe_client";
+import void SendCarInfoToPlayersOnMap(Map& map) from "unsafe_client";
 
 #define STR_CAR_INFO            (2100)
 
@@ -73,21 +74,25 @@ bool UseItemOnCar(Critter& cr, Item& car, Item& item)   // Export
             Item@ key = cr.AddItem(PID_KEY, 1);
             if(valid(key))
             {
-            key.LockerId = keyId;
-            key.Update();
+                key.LockerId = keyId;
+                key.Update();
 
-            Item@ bag = car.GetChild(0);
-            if(valid(bag))
-            {
-            bag.LockerId = keyId;
-            bag.LockerComplexity = Random(skill, skill+20);
-            bag.Update();
-            }
+                Item@ bag = car.GetChild(0);
+                if(valid(bag))
+                {
+                    bag.LockerId = keyId;
+                    bag.LockerComplexity = Random(skill, skill+20);
+                    bag.Update();
+                }
             }
 
             cr.Say(SAY_NETMSG, "You have successfully installed a new lock on this car.");
             uint pidlock = item.GetProtoId();
             _CritDeleteItem(cr,pidlock,1);
+            Map@ map = cr.GetMap();
+            if (valid(map)) {
+                SendCarInfoToPlayersOnMap(map);
+            }
         }
 
         return true;
@@ -117,6 +122,10 @@ bool UseItemOnCar(Critter& cr, Item& car, Item& item)   // Export
 
             car.Charge = MIN(_CarGetFuelTank(car), car.Charge + 300);
             CarMessage(cr, car, STR_CAR_FUEL_TANK_FILL);
+            Map@ map = cr.GetMap();
+            if (valid(map)) {
+                SendCarInfoToPlayersOnMap(map);
+            }
         }
     }
     else
@@ -145,6 +154,11 @@ bool UseItemOnCar(Critter& cr, Item& car, Item& item)   // Export
                     _CritAddItem(cr, newpid, max);
                     car.Val2 += max;
                     DSay(cr, "added " + max + " water");
+                    Map@ map = cr.GetMap();
+                    if (valid(map)) {
+                        SendCarInfoToPlayersOnMap(map);
+                    }
+
                 }
                 else
                     DSay(cr, "no space for water");
@@ -166,6 +180,10 @@ bool UseItemOnCar(Critter& cr, Item& car, Item& item)   // Export
                     _CritAddItem(cr, newpid, max);
                     car.Val2 -= max;
                     DSay(cr, "removed " + max + " water");
+                    Map@ map = cr.GetMap();
+                    if (valid(map)) {
+                        SendCarInfoToPlayersOnMap(map);
+                    }
                 }
                 else
                     DSay(cr, "no water");
@@ -184,6 +202,10 @@ bool UseItemOnCar(Critter& cr, Item& car, Item& item)   // Export
         if(isTool)
         {
             RepairCar(cr, car, item);
+            Map@ map = cr.GetMap();
+            if (valid(map)) {
+                SendCarInfoToPlayersOnMap(map);
+            }
             return true;
         }
 
@@ -221,6 +243,10 @@ bool UseItemOnCar(Critter& cr, Item& car, Item& item)   // Export
                 item.SetCount(newCount);
             car.Charge += count;
             CarMessage(cr, car, STR_CAR_FUEL_TANK_FILL);
+            Map@ map = cr.GetMap();
+            if (valid(map)) {
+                SendCarInfoToPlayersOnMap(map);
+            }
         }
     }
     return true;
@@ -409,8 +435,13 @@ bool UseSkillOnCar(Critter& cr, Item& car, int skill)   // Export
     else if(skill == SK_REPAIR)
     {
         Item@ tool = _CritGetItemHand(cr);
-        if(valid(tool) && (tool.Proto.Misc_ToolSkillNum == SK_REPAIR))
+        if(valid(tool) && (tool.Proto.Misc_ToolSkillNum == SK_REPAIR)) {
             RepairCar(cr, car, tool);
+            Map@ map = cr.GetMap();
+            if (valid(map)) {
+                SendCarInfoToPlayersOnMap(map);
+            }
+        }
         else
             CarMessage(cr, car, STR_CAR_REPAIR_NO_TOOLS);
     }
@@ -465,6 +496,9 @@ bool UseSkillOnCar(Critter& cr, Item& car, int skill)   // Export
             car.LockerId = 0;
             cr.SayMsg(SAY_NETMSG, TEXTMSG_GAME, STR_SKILL_LOCKPICK_SUCCESS);
             AddScore(cr, SCORE_CRACKER, 1);
+            if (valid(map)) {
+                SendCarInfoToPlayersOnMap(map);
+            }
         }
         else
         {
@@ -487,7 +521,6 @@ void DriveToGlobal(Critter& cr, Item& car, bool requestGroup)
         Critter@ prevOwner = GetCritter(ownervar.GetValue());
         if (valid(prevOwner)) {
             car.Val6 = cr.Id;   //  set this here as well as later, because this is used to check car owner for CarTracker at client
-            car.Val9 = 0;       //  reset parking lot timer
             SendCarInfoToPlayer(prevOwner);
         } else {
             //Log("Drive to Global - previous car owned invalid.");
@@ -500,6 +533,7 @@ void DriveToGlobal(Critter& cr, Item& car, bool requestGroup)
         EraseTimeEvent(eventId);
     car.Val5 = 0;
     car.Val6 = cr.Id;   //  store owner here for easier access
+    car.Val9 = 0;       //  reset parking lot timer
     car.Update();
     UNSETFLAG(car.Val0, CAR_LOCKPICK_TIMEOUT);
 
@@ -525,6 +559,10 @@ void DriveToGlobal(Critter& cr, Item& car, bool requestGroup)
         cr.PlaySound("stardis1.acm", true);
     else
         cr.PlaySound("carstart.acm", true);
+    Map@ map = cr.GetMap();
+    if (valid(map)) {
+        SendCarInfoToPlayersOnMap(map);
+    }
 }
 
 bool IsCaravan(Item@ car)
@@ -632,6 +670,13 @@ void MoveCars(Map& from, Map& to)   // export
         else
             DLog("No free car entire found");
     }
+    if (valid(from)) {
+        SendCarInfoToPlayersOnMap(from);
+    }
+    if (valid(to)) {
+        SendCarInfoToPlayersOnMap(to);
+    }
+
 }
 
 //  Exported to parking lot map scripts: map_hub
@@ -639,7 +684,7 @@ bool MoveCarWithTrunk(Item@ car, Map& map, uint HexX, uint HexY) {
     if (valid(car)) {
         Item@ trunk = car.GetChild(0);
         if (valid(trunk)) {
-            Log("MoveCarWithTrunk - Found TRUNK type = " + trunk.GetProtoId() + " (" + trunk.HexX + ", " + trunk.HexY + ") for car " + GetCarTypeName(car.GetProtoId()));
+            //Log("MoveCarWithTrunk - Found TRUNK type = " + trunk.GetProtoId() + " (" + trunk.HexX + ", " + trunk.HexY + ") for car " + GetCarTypeName(car.GetProtoId()));
             //  Buggy (175, 186) Trunk (176, 184)
             if (car.GetProtoId() == PID_BUGGY && trunk.GetProtoId() == PID_BUGGY_BAG) {
                 MoveItem(car, 1, map, HexX, HexY);
