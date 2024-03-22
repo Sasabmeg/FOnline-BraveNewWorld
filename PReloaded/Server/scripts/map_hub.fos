@@ -219,14 +219,12 @@ void t_NearParkEntrance(Critter& critter, Scenery& trigger, bool entered, uint8 
     //  if timeout is not ready, it means the player still has time left to enter parking lot since the last pay
     Map@ map = critter.GetMap();
     if (valid(map)) {
-        if (map.GetNpcCount(ROLE_HUB_GUARD_PARKING_TICKETS, FIND_ONLY_NPC | FIND_ALL) >= 0) {
-            Critter@ ticketSeller = map.GetNpc(ROLE_HUB_GUARD_PARKING_TICKETS, FIND_ONLY_NPC | FIND_ALL, 0);
-            if (valid(ticketSeller)) {
-                if (d_QuestTimeoutNotReady(critter, ticketSeller)) {
-                    critter.SendMessage(MSG_HUB_PLAYER_NEAR_PARKING_ENTRANCE_PAYED, 0, MESSAGE_TO_VISIBLE_ME);
-                } else {
-                    critter.SendMessage(MSG_HUB_PLAYER_NEAR_PARKING_ENTRANCE, 0, MESSAGE_TO_VISIBLE_ME);
-                }
+        Critter@ ticketSeller = map.GetNpc(ROLE_HUB_GUARD_PARKING_TICKETS, FIND_ONLY_NPC | FIND_LIFE, 0);
+        if (valid(ticketSeller)) {
+            if (d_QuestTimeoutNotReady(critter, ticketSeller)) {
+                critter.SendMessage(MSG_HUB_PLAYER_NEAR_PARKING_ENTRANCE_PAYED, 0, MESSAGE_TO_VISIBLE_ME);
+            } else {
+                critter.SendMessage(MSG_HUB_PLAYER_NEAR_PARKING_ENTRANCE, 0, MESSAGE_TO_VISIBLE_ME);
             }
         }
     }
@@ -245,7 +243,7 @@ void t_TryPassParkEntrance(Critter& critter, Scenery& trigger, bool entered, uin
     //  entered trigger hex, give final warning, attack when leaving hex in wrong direction
     Map@ map = critter.GetMap();
     if (valid(map)) {
-        Critter@ ticketSeller = map.GetNpc(ROLE_HUB_GUARD_PARKING_TICKETS, FIND_ONLY_NPC | FIND_ALL, 0);
+        Critter@ ticketSeller = map.GetNpc(ROLE_HUB_GUARD_PARKING_TICKETS, FIND_ONLY_NPC | FIND_LIFE, 0);
         if (valid(ticketSeller)) {
             if (entered) {
                 if (d_QuestTimeoutNotReady(critter, ticketSeller)) {
