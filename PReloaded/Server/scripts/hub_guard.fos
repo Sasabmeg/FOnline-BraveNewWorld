@@ -40,6 +40,11 @@ void critter_init(Critter& guard, bool firstTime)
         NpcSetLevel(guard, 26);
         GuardPerks(guard);
     }
+
+    if (guard.Stat[ST_NPC_ROLE] == ROLE_HUB_GUARD_PARKING_BOSS || guard.Stat[ST_NPC_ROLE] == ROLE_HUB_GUARD_PARKING_TICKETS || guard.Stat[ST_NPC_ROLE] == ROLE_HUB_GUARD_PARKING_GRUNT)
+    {
+        guard.StatBase[ST_REPLICATION_TIME] = REPLICATION_MINUTE(1);
+    }
 }
 
 void critter_init_parking(Critter& guard, bool firstTime)
@@ -59,6 +64,7 @@ void critter_init_parking(Critter& guard, bool firstTime)
        || guard.Stat[ST_NPC_ROLE] == ROLE_HUB_GUARD_PARKING7)
     {
         guard.ModeBase[MODE_NO_HOME] = 1;
+        guard.StatBase[ST_REPLICATION_TIME] = REPLICATION_MINUTE(1);
     }
 
     if(firstTime)
@@ -187,6 +193,7 @@ void _OnMessage(Critter& npc, Critter& player, int num, int val)
         case MSG_HUB_PLAYER_PARKING_ILLEGAL_ENTRY:
             if (npc.Stat[ST_NPC_ROLE] == ROLE_HUB_GUARD_PARKING_BOSS) {
                 npc.Say(SAY_SHOUT_ON_HEAD, "Intruder ALERT!");
+                AddAttackPlane(npc, 100, player, true);
             }
             if (npc.Stat[ST_NPC_ROLE] == ROLE_HUB_GUARD_PARKING_GRUNT) {
                 if (Random(1, 100) > 66) {
@@ -206,6 +213,7 @@ void _OnMessage(Critter& npc, Critter& player, int num, int val)
                     }
                     npc.Say(SAY_SHOUT_ON_HEAD, text);
                 }
+                AddAttackPlane(npc, 100, player, true);
             }
             if (npc.Stat[ST_NPC_ROLE] == ROLE_HUB_GUARD_PARKING_TICKETS) {
                 if (_CritIsFemale(player)) {
@@ -213,6 +221,7 @@ void _OnMessage(Critter& npc, Critter& player, int num, int val)
                 } else {
                     npc.Say(SAY_NORM_ON_HEAD, random_from_array(hubGuardParkingTicketsAttackText));
                 }
+                AddAttackPlane(npc, 100, player, true);
             }
         break;
         case MSG_HUB_PLAYER_NEAR_PARKING_ENTRANCE_PAYED:
