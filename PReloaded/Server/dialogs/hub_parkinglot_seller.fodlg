@@ -1,0 +1,40 @@
+[comment]
+
+
+[data]
+lang=engl
+
+[dialog]
+&
+1 1000 None 0 #
+40 1010 D _script dialog@d_QuestTimeoutNotReady 0  #
+2 1020 D _var n name_mem_npc_player = 0 R _var n name_mem_npc_player = 1 #
+20 1030 @
+20 2000 None 0 #
+30 2010 D _item p PID_BOTTLE_CAPS } 200 R _item p PID_BOTTLE_CAPS - 200 R _script dialog@r_QuestTimeoutRealMinutes 1 1 #
+0 2020 @
+2 3000 None 0 #
+30 3010 D _item p PID_BOTTLE_CAPS } 200 R _item p PID_BOTTLE_CAPS - 200 R _script dialog@r_QuestTimeoutRealMinutes 1 1 #
+0 3020 @
+30 4000 None 0 #
+0 4010 @
+40 5000 None 0 &
+
+[engl]
+{100}{}{Ticket Seller}
+{200}{}{You see a parking lot ticket seller.}
+{210}{}{He looks pretty busy with incoming cars.}
+{1000}{}{Predialogue installations}
+{1010}{}{Still got time from last ticket.}
+{1020}{}{We are talking the first time.}
+{1030}{}{We talked already.}
+{2000}{}{Need a ticket? 200 caps.}
+{2010}{}{Yes, here are the caps.}
+{2020}{}{Maybe next time. See ya.}
+{3000}{}{I haven't seen you around here. This is the payed parking lot, you want in, you pay 200 caps.}
+{3010}{}{Here's the caps. Let me in.}
+{3020}{}{Good to know, thanks. Bye.}
+{4000}{}{All right. You got one minute to do your business, then you need to pay again to enter. }
+{4010}{}{Thanks, bye.}
+{5000}{}{You already payed, Go in.}
+

@@ -215,6 +215,16 @@ void _OnMessage(Critter& npc, Critter& player, int num, int val)
                 }
             }
         break;
+        case MSG_HUB_PLAYER_NEAR_PARKING_ENTRANCE_PAYED:
+            if (npc.Stat[ST_NPC_ROLE] == ROLE_HUB_GUARD_PARKING_TICKETS) {
+                npc.Say(SAY_NORM_ON_HEAD, "Payed.");
+            }
+        break;
+        case MSG_HUB_PLAYER_PARKING_ENTRANCE_PAYED:
+            if (npc.Stat[ST_NPC_ROLE] == ROLE_HUB_GUARD_PARKING_BOSS) {
+                npc.Say(SAY_NORM_ON_HEAD, "Go on.");
+            }
+        break;
     }
 }
 

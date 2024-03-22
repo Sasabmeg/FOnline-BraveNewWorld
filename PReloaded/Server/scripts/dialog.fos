@@ -1078,6 +1078,19 @@ void r_QuestTimeout(Critter& player, Critter@ npc, int timeout)
 }
 
 /**
+ * Assignes timeout for given npc so he will remember that player made some quest for him lately.
+ * @param timeout       Quest timeout in ingame hours
+ */
+void r_QuestTimeoutRealMinutes(Critter& player, Critter@ npc, int timeout)
+{
+    if(!valid(player) || !valid(npc))
+        return;
+
+    GameVar@ var = GetUnicumVar(UVAR_quest_timeout, npc.Id, player.Id);
+    var = AFTER(REAL_MINUTE(timeout));
+}
+
+/**
  * Checks timeout for given npc, in order to check if some repeatable quest can be given again.
  * It works per npc, so you can't make it for each quest. But it's simplier that way.
  * @return true - quest can be given, false - need to wait
@@ -1391,7 +1404,7 @@ bool d_ExploredWasteland(Critter& player, Critter@ npc)
         player.IsKnownLoc(false, LOCATION_Trainyard3)   &&
         player.IsKnownLoc(false, LOCATION_Trainyard4)
     )
-        return true;			
+        return true;
     return false;
 }
 
