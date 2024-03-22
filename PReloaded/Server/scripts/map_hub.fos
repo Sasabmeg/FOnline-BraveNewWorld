@@ -17,6 +17,7 @@
 #include "mapdata_h.fos"
 #include "reinforcements_h.fos"
 #include "car_h.fos"
+#include "npc_roles_h.fos"
 
 #define PARKING_LOT_CHECK_FREQUENCY     (5000)  //  later this will be 5 minutes
 #define FREE_PARKING_TIME               (15000) //  later this will be 15 minutes
@@ -27,6 +28,7 @@
 import void StartFirstTentQuest(Critter& player) from "quest_first_tent";
 import bool MoveCarWithTrunk(Item@ car, Map& map, uint HexX, uint HexY) from "car";
 import void SendCarInfoToPlayersOnMap(Map& map) from "unsafe_client";
+import bool d_QuestTimeoutNotReady(Critter& player, Critter@ npc) from "dialog";
 
 void map_init(Map& map, bool firstTime)
 {
@@ -206,8 +208,7 @@ void _CritterOut(Map& map, Critter& cr)
 
 void t_NearParkEntrance(Critter& critter, Scenery& trigger, bool entered, uint8 dir)
 {
-    Log("t_NearParkEntrance - entered =  " + entered + ", dir = " + dir + ")");
-
+    //Log("t_NearParkEntrance - entered =  " + entered + ", dir = " + dir + ")");
     if(!critter.IsPlayer() || !entered)
         return;
 
@@ -215,13 +216,25 @@ void t_NearParkEntrance(Critter& critter, Scenery& trigger, bool entered, uint8 
     if(dir == 1 || dir == 2 || dir == 3)
         return;
 
-    critter.SendMessage(MSG_HUB_PLAYER_NEAR_PARKING_ENTRANCE, 0, MESSAGE_TO_VISIBLE_ME);
+    //  if timeout is not ready, it means the player still has time left to enter parking lot since the last pay
+    Map@ map = critter.GetMap();
+    if (valid(map)) {
+        if (map.GetNpcCount(ROLE_HUB_GUARD_PARKING_TICKETS, FIND_ONLY_NPC | FIND_ALL) >= 0) {
+            Critter@ ticketSeller = map.GetNpc(ROLE_HUB_GUARD_PARKING_TICKETS, FIND_ONLY_NPC | FIND_ALL, 0);
+            if (valid(ticketSeller)) {
+                if (d_QuestTimeoutNotReady(critter, ticketSeller)) {
+                    critter.SendMessage(MSG_HUB_PLAYER_NEAR_PARKING_ENTRANCE_PAYED, 0, MESSAGE_TO_VISIBLE_ME);
+                } else {
+                    critter.SendMessage(MSG_HUB_PLAYER_NEAR_PARKING_ENTRANCE, 0, MESSAGE_TO_VISIBLE_ME);
+                }
+            }
+        }
+    }
 }
 
 void t_TryPassParkEntrance(Critter& critter, Scenery& trigger, bool entered, uint8 dir)
 {
-    Log("t_TryPassParkEntrance - entered =  " + entered + ", dir = " + dir + ")");
-
+    //Log("t_TryPassParkEntrance - entered =  " + entered + ", dir = " + dir + ")");
     if(!critter.IsPlayer())
         return;
 
@@ -230,10 +243,22 @@ void t_TryPassParkEntrance(Critter& critter, Scenery& trigger, bool entered, uin
         return;
 
     //  entered trigger hex, give final warning, attack when leaving hex in wrong direction
-    if (entered) {
-        critter.SendMessage(MSG_HUB_PLAYER_PARKING_ENTRANCE, 0, MESSAGE_TO_VISIBLE_ME);
-    } else {
-        critter.SendMessage(MSG_HUB_PLAYER_PARKING_ILLEGAL_ENTRY, 0, MESSAGE_TO_VISIBLE_ME);
+    Map@ map = critter.GetMap();
+    if (valid(map)) {
+        Critter@ ticketSeller = map.GetNpc(ROLE_HUB_GUARD_PARKING_TICKETS, FIND_ONLY_NPC | FIND_ALL, 0);
+        if (valid(ticketSeller)) {
+            if (entered) {
+                if (d_QuestTimeoutNotReady(critter, ticketSeller)) {
+                    critter.SendMessage(MSG_HUB_PLAYER_PARKING_ENTRANCE_PAYED, 0, MESSAGE_TO_VISIBLE_ME);
+                } else {
+                    critter.SendMessage(MSG_HUB_PLAYER_PARKING_ENTRANCE, 0, MESSAGE_TO_VISIBLE_ME);
+                }
+            } else {
+                if (!d_QuestTimeoutNotReady(critter, ticketSeller)) {
+                    critter.SendMessage(MSG_HUB_PLAYER_PARKING_ILLEGAL_ENTRY, 0, MESSAGE_TO_VISIBLE_ME);
+                }
+            }
+        }
     }
 
 }
