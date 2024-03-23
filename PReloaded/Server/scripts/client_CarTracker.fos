@@ -69,7 +69,7 @@ class CCarTrackerCar {
 	uint16 MaxCharge;
     uint16 Deterioration;
     uint16 MaxDeterioration;
-    int Type;
+    int ProtoId;
 
     CCarTrackerCar(uint carId) {
         Id = carId;
@@ -99,7 +99,7 @@ CCarTrackerCar@ copyFromIntArray(array<int>@ data, array<string@>@ ownerNames, u
         ctcCar.MaxCharge = data[index * CTC_SIZE + 6];
         ctcCar.Deterioration = data[index * CTC_SIZE + 7];
         ctcCar.MaxDeterioration = data[index * CTC_SIZE + 8];
-        ctcCar.Type = data[index * CTC_SIZE + 9];
+        ctcCar.ProtoId = data[index * CTC_SIZE + 9];
         ctcCar.OwnerName = ownerNames[index];
         //Message("Car: " + ctcCar.Id + " (" + ctcCar.HexX + ", " + ctcCar.HexY + ") owned by " + ctcCar.OwnerId);
         return ctcCar;
@@ -192,7 +192,7 @@ class CCarTracker {
                 string directionStr = GetDirectionName(dir);
                 string distanceStr = dist > 40 ? "far away" : dist > 20 ? "a bit further" : "up close";
                 //Message("DEBUG - Car at with ID " + cars[i].Id + " at (" + cars[i].HexX + ", " + cars[i].HexY + ")");
-                Message("You can hear your " + getCarTypeName(cars[i].Type) + " with key " + cars[i].LockerId + " beeping " + distanceStr + " to the " + directionStr);
+                Message("You can hear your " + getCarTypeName(cars[i].ProtoId) + " with key " + cars[i].LockerId + " beeping " + distanceStr + " to the " + directionStr);
             }
         }
     }
@@ -225,8 +225,8 @@ class CCarTracker {
 
             if (GetHexPos(cars[i].HexX, cars[i].HexY, carX, carY)) {
                 if (carX < __ScreenWidth && carY < __ScreenHeight && carX >= 0 && carY >= 0 && playerSight >= carDistance) {
-
                     string ownerName = cars[i].OwnerName;
+                    AdjustCArTrackerTextCoords(cars[i].ProtoId, carX, carY);
                     if (!beepActive) {
                         string carNumber = "" + cars[i].LockerId;
                         string fuelAndDamage = "" + (cars[i].Charge / 100) + "/" + (cars[i].MaxCharge / 100) +
@@ -352,5 +352,52 @@ string getCarTypeName(uint protoId) {
         return "N/A";
     }
 }
+
+void AdjustCArTrackerTextCoords(uint protoId, int& x, int& y) {
+    if (protoId == PID_HUMMER) {
+        x += 40;
+        y -= 20;
+    } else if (protoId == PID_BUGGY) {
+        x -= 2;
+        y -= 0;
+    } else if (protoId == PID_SCOUT) {
+        y -= 6;
+    } else if (protoId == PID_VERTIBIRD) {
+    } else if (protoId == PID_HIGHWAYMAN) {
+        x -= 24;
+        y += 0;
+    } else if (protoId == PID_RUSTY_HIGHWAYMAN) {
+    } else if (protoId == PID_CARAVAN_WHITE) {
+        x -= 0;
+        y -= 12;
+
+    } else if (protoId == PID_CARAVAN_ORANGE) {
+        x -= 0;
+        y -= 12;
+    } else if (protoId == PID_COCKROACH) {
+        x += 23;
+        y += 7;
+    } else if (protoId == PID_WRECKED_CAR) {
+    } else if (protoId == PID_BOAT) {
+    } else if (protoId == PID_CORVEGA) {
+        x += 0;
+        y += 7;
+    } else if (protoId == PID_TARDIS) {
+    } else if (protoId == PID_POLICE_CAR) {
+        x -= 15;
+        y += 6;
+    } else if (protoId == PID_MOTORCYCLE) {
+        x -= 4;
+        y += 4;
+    } else if (protoId == PID_FIRETRUCK) {
+        x -= 23;
+        y -= 43;
+    } else if (protoId == PID_TRUCK) {
+        x -= 0;
+        y -= 60;
+    } else if (protoId == PID_BARGE) {
+    }
+}
+
 
 #endif 	//	__CAR_TRACKER__

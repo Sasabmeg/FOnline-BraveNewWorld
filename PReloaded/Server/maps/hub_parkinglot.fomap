@@ -2,8 +2,8 @@
 Version              4
 MaxHexX              340
 MaxHexY              310
-WorkHexX             115
-WorkHexY             153
+WorkHexX             120
+WorkHexY             154
 ScriptModule         map_hub
 ScriptFunc           map_init
 NoLogOut             0
@@ -38227,35 +38227,6 @@ MapY                 150
 ScriptName           map_hub
 FuncName             t_TryPassParkEntrance
 
-MapObjType           0
-ProtoId              24
-MapX                 118
-MapY                 153
-Dir                  2
-ScriptName           hub_guard
-FuncName             critter_init
-Critter_Cond         1
-Critter_Anim1        0
-Critter_Anim2        0
-Critter_ParamIndex0  ST_DIALOG_ID
-Critter_ParamValue0  2600
-Critter_ParamIndex1  ST_AI_ID
-Critter_ParamValue1  243
-Critter_ParamIndex2  ST_BAG_ID
-Critter_ParamValue2  15
-Critter_ParamIndex3  ST_TEAM_ID
-Critter_ParamValue3  89
-Critter_ParamIndex4  ST_NPC_ROLE
-Critter_ParamValue4  40
-Critter_ParamIndex5  ST_REPLICATION_TIME
-Critter_ParamValue5  0
-Critter_ParamIndex6  ST_FACTION_RANK
-Critter_ParamValue6  1
-Critter_ParamIndex7  ST_FACTION_MODE
-Critter_ParamValue7  1
-Critter_ParamIndex8  ST_OVERRIDE_CRTYPE
-Critter_ParamValue8  0
-
 MapObjType           2
 ProtoId              2141
 MapX                 200
@@ -38443,8 +38414,8 @@ Critter_ParamValue8  0
 
 MapObjType           0
 ProtoId              44
-MapX                 134
-MapY                 149
+MapX                 135
+MapY                 150
 Dir                  1
 ScriptName           hub_guard
 FuncName             critter_init
@@ -38472,8 +38443,8 @@ Critter_ParamValue8  0
 
 MapObjType           0
 ProtoId              129
-MapX                 134
-MapY                 151
+MapX                 135
+MapY                 152
 Dir                  5
 ScriptName           hub_guard
 FuncName             critter_init
@@ -38501,8 +38472,8 @@ Critter_ParamValue8  0
 
 MapObjType           0
 ProtoId              129
-MapX                 118
-MapY                 142
+MapX                 119
+MapY                 145
 Dir                  1
 ScriptName           hub_guard
 FuncName             critter_init
@@ -38530,8 +38501,8 @@ Critter_ParamValue8  0
 
 MapObjType           0
 ProtoId              253
-MapX                 132
-MapY                 149
+MapX                 131
+MapY                 150
 Dir                  3
 ScriptName           hub_guard
 FuncName             critter_init
@@ -38559,9 +38530,9 @@ Critter_ParamValue8  0
 
 MapObjType           0
 ProtoId              40
-MapX                 116
-MapY                 142
-Dir                  3
+MapX                 117
+MapY                 144
+Dir                  2
 ScriptName           hub_guard
 FuncName             critter_init
 Critter_Cond         1
@@ -39050,5 +39021,92 @@ ProtoId              1851
 MapX                 138
 MapY                 147
 Item_Val1            1708
+
+MapObjType           0
+ProtoId              40
+MapX                 117
+MapY                 146
+Dir                  4
+ScriptName           hub_guard
+FuncName             critter_init
+Critter_Cond         1
+Critter_Anim1        0
+Critter_Anim2        0
+Critter_ParamIndex0  ST_DIALOG_ID
+Critter_ParamValue0  2500
+Critter_ParamIndex1  ST_AI_ID
+Critter_ParamValue1  273
+Critter_ParamIndex2  ST_BAG_ID
+Critter_ParamValue2  12
+Critter_ParamIndex3  ST_TEAM_ID
+Critter_ParamValue3  90
+Critter_ParamIndex4  ST_NPC_ROLE
+Critter_ParamValue4  39
+Critter_ParamIndex5  ST_REPLICATION_TIME
+Critter_ParamValue5  0
+Critter_ParamIndex6  ST_FACTION_RANK
+Critter_ParamValue6  1
+Critter_ParamIndex7  ST_FACTION_MODE
+Critter_ParamValue7  1
+Critter_ParamIndex8  ST_OVERRIDE_CRTYPE
+Critter_ParamValue8  0
+
+MapObjType           0
+ProtoId              40
+MapX                 132
+MapY                 147
+Dir                  2
+ScriptName           hub_guard
+FuncName             critter_init
+Critter_Cond         1
+Critter_Anim1        0
+Critter_Anim2        0
+Critter_ParamIndex0  ST_DIALOG_ID
+Critter_ParamValue0  2500
+Critter_ParamIndex1  ST_AI_ID
+Critter_ParamValue1  273
+Critter_ParamIndex2  ST_BAG_ID
+Critter_ParamValue2  12
+Critter_ParamIndex3  ST_TEAM_ID
+Critter_ParamValue3  90
+Critter_ParamIndex4  ST_NPC_ROLE
+Critter_ParamValue4  39
+Critter_ParamIndex5  ST_REPLICATION_TIME
+Critter_ParamValue5  0
+Critter_ParamIndex6  ST_FACTION_RANK
+Critter_ParamValue6  1
+Critter_ParamIndex7  ST_FACTION_MODE
+Critter_ParamValue7  1
+Critter_ParamIndex8  ST_OVERRIDE_CRTYPE
+Critter_ParamValue8  0
+
+MapObjType           0
+ProtoId              58
+MapX                 118
+MapY                 153
+Dir                  2
+ScriptName           hub_guard
+FuncName             critter_init
+Critter_Cond         1
+Critter_Anim1        0
+Critter_Anim2        0
+Critter_ParamIndex0  ST_DIALOG_ID
+Critter_ParamValue0  2600
+Critter_ParamIndex1  ST_AI_ID
+Critter_ParamValue1  238
+Critter_ParamIndex2  ST_BAG_ID
+Critter_ParamValue2  15
+Critter_ParamIndex3  ST_TEAM_ID
+Critter_ParamValue3  90
+Critter_ParamIndex4  ST_NPC_ROLE
+Critter_ParamValue4  40
+Critter_ParamIndex5  ST_REPLICATION_TIME
+Critter_ParamValue5  0
+Critter_ParamIndex6  ST_FACTION_RANK
+Critter_ParamValue6  1
+Critter_ParamIndex7  ST_FACTION_MODE
+Critter_ParamValue7  1
+Critter_ParamIndex8  ST_OVERRIDE_CRTYPE
+Critter_ParamValue8  0
 
 

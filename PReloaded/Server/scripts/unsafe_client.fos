@@ -1752,6 +1752,10 @@ void unsafe_ShowCarInfo(Critter& player, int p0, int p1, int p2, string@ message
 
 //  Export to main
 void SendCarInfoToPlayer(Critter& player) {
+    if (!valid(player)) {
+        //Log("###### WARNING: ####### player not found when sending car info.");
+        return;
+    }
     //player.Say(SAY_NETMSG, "sendCarInfoToPlayer called!");
     //Log("sendCarInfoToPlayer called!");
     Map@ map = player.GetMap();
@@ -1774,7 +1778,16 @@ void SendCarInfoToPlayer(Critter& player) {
                     if (valid(owner)) {
                         ownerName = owner.Name;
                     } else {
-                        ownerName = GetPlayerName(car.Val6);
+                        if (valid(car)) {
+                            Log("valid(car)");
+                            //Log("car = " + car);
+                            Log("car.Val6 = " + car.Val6);
+                            ownerName = GetPlayerName(car.Val6);
+                            Log("ownerName = ?");
+                        } else {
+                            Log("invalid(car)");
+                            ownerName = "Unknown";
+                        }
                     }
                 }
                 //Log("Found car on (" + entires[i].HexX + ", " + entires[i].HexY + ") type = " + GetCarTypeName(car.Proto.ProtoId) + " , owner = " + ownerName);

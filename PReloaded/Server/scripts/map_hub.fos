@@ -135,11 +135,11 @@ void _LoopParkingLot(Map& map) {
                             if (!valid(tmpCarSpace)) {
                                 //  move car here
                                 Item@ trunk = car.GetChild(0);
-                                /*
                                 if (valid(trunk)) {
-                                    Log("_LoopParkingLot - Found TRUNK at (" + trunk.HexX + ", " + trunk.HexY +
-                                        ") of car type = " + GetCarTypeName(car.GetProtoId()) + " at (" + car.HexX + ", " + car.HexY + ")");
-                                }*/
+                                    //  WHEN YOU ADD NEW CARS TO GAME, use this log to check the hex distance from car and trunk,
+                                    //  use that info in car.fos -> MoveCarWithTrunk(..)
+                                    //  Log("_LoopParkingLot - Found TRUNK at (" + trunk.HexX + ", " + trunk.HexY + ") of car type = " + GetCarTypeName(car.GetProtoId()) + " at (" + car.HexX + ", " + car.HexY + ")");
+                                }
                                 if (MoveCarWithTrunk(car, map, carParkSpotNW[ii].HexX, carParkSpotNW[ii].HexY)) {
                                     SendCarInfoToPlayersOnMap(map);
                                 } else {
