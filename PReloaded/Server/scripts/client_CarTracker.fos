@@ -355,46 +355,45 @@ string getCarTypeName(uint protoId) {
 
 void AdjustCArTrackerTextCoords(uint protoId, int& x, int& y) {
     if (protoId == PID_HUMMER) {
-        x += 40;
-        y -= 20;
+        x += 40 / __SpritesZoom;
+        y -= 20 / __SpritesZoom;
     } else if (protoId == PID_BUGGY) {
-        x -= 2;
-        y -= 0;
+        x -= 2 / __SpritesZoom;
+        y -= 0 / __SpritesZoom;
     } else if (protoId == PID_SCOUT) {
-        y -= 6;
+        y -= 6 / __SpritesZoom;
     } else if (protoId == PID_VERTIBIRD) {
     } else if (protoId == PID_HIGHWAYMAN) {
-        x -= 24;
-        y += 0;
+        x -= 24 / __SpritesZoom;
+        y += 0 / __SpritesZoom;
     } else if (protoId == PID_RUSTY_HIGHWAYMAN) {
     } else if (protoId == PID_CARAVAN_WHITE) {
-        x -= 0;
-        y -= 12;
-
+        x -= 0 / __SpritesZoom;
+        y -= 12 / __SpritesZoom;
     } else if (protoId == PID_CARAVAN_ORANGE) {
-        x -= 0;
-        y -= 12;
+        x -= 0 / __SpritesZoom;
+        y -= 12 / __SpritesZoom;
     } else if (protoId == PID_COCKROACH) {
-        x += 23;
-        y += 7;
+        x += 23 / __SpritesZoom;
+        y += 7 / __SpritesZoom;
     } else if (protoId == PID_WRECKED_CAR) {
     } else if (protoId == PID_BOAT) {
     } else if (protoId == PID_CORVEGA) {
-        x += 0;
-        y += 7;
+        x += 0 / __SpritesZoom;
+        y += 7 / __SpritesZoom;
     } else if (protoId == PID_TARDIS) {
     } else if (protoId == PID_POLICE_CAR) {
-        x -= 15;
-        y += 6;
+        x -= 15 / __SpritesZoom;
+        y += 6 / __SpritesZoom;
     } else if (protoId == PID_MOTORCYCLE) {
-        x -= 4;
-        y += 4;
+        x -= 4 / __SpritesZoom;
+        y += 4 / __SpritesZoom;
     } else if (protoId == PID_FIRETRUCK) {
-        x -= 23;
-        y -= 43;
+        x -= 23 / __SpritesZoom;
+        y -= 43 / __SpritesZoom;
     } else if (protoId == PID_TRUCK) {
-        x -= 0;
-        y -= 60;
+        x -= 0 / __SpritesZoom;
+        y -= 60 / __SpritesZoom;
     } else if (protoId == PID_BARGE) {
     }
 }
