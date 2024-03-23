@@ -466,6 +466,7 @@ uint TryCreateCar(Critter& player, uint16 protoCar)
     ChangeCarPrice(protoCar, Random(500, 1000));
 
     car.Val6 = player.Id;   //  set owner here for CarTracker in client
+    car.Update();
     SendCarInfoToPlayer(player);
 
 
