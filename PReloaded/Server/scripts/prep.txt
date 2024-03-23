@@ -1680,24 +1680,47 @@ string getCarTypeName(uint protoId){
 	}
 }
 
-void AdjustCArTrackerTextCoords(uint protoId,int&x,int&y){
+void AdjustCArTrackerTextCoords(uint protoId,int&x,int&y,){
 	if(protoId==(800)){
+		x+=40/__SpritesZoom;
+		y-=20/__SpritesZoom;
 	}else if(protoId==(802)){
+		x-=2/__SpritesZoom;
+		y-=0/__SpritesZoom;
 	}else if(protoId==(805)){
+		y-=6/__SpritesZoom;
 	}else if(protoId==(808)){
 	}else if(protoId==(816)){
+		x-=24/__SpritesZoom;
+		y+=0/__SpritesZoom;
 	}else if(protoId==(550)){
 	}else if(protoId==(558)){
+		x-=0/__SpritesZoom;
+		y-=12/__SpritesZoom;
 	}else if(protoId==(559)){
+		x-=0/__SpritesZoom;
+		y-=12/__SpritesZoom;
 	}else if(protoId==(560)){
+		x+=23/__SpritesZoom;
+		y+=7/__SpritesZoom;
 	}else if(protoId==(563)){
 	}else if(protoId==(824)){
 	}else if(protoId==(831)){
+		x+=0/__SpritesZoom;
+		y+=7/__SpritesZoom;
 	}else if(protoId==(9673)){
 	}else if(protoId==(9746)){
+		x-=15/__SpritesZoom;
+		y+=6/__SpritesZoom;
 	}else if(protoId==(9925)){
+		x-=4/__SpritesZoom;
+		y+=4/__SpritesZoom;
 	}else if(protoId==(9927)){
+		x-=23/__SpritesZoom;
+		y-=43/__SpritesZoom;
 	}else if(protoId==(9929)){
+		x-=0/__SpritesZoom;
+		y-=60/__SpritesZoom;
 	}else if(protoId==(9931)){
 	}
 }  
