@@ -1,148 +1,1302 @@
-                                                                                                                                                                           
+                         
 
-import int GetRootMapData(Map&map,uint index)from"mapdata";
-import void SetRootMapData(Map&map,uint index,int val)from"mapdata";
-import int GetRootMapData(Location&loc,uint index)from"mapdata";
-import void SetRootMapData(Location&loc,uint index,int val)from"mapdata";                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 
-
-import void WLog(string&type,string&message)from"debug";
-import void WLog(string&type,string&message,int level)from"debug";
-import void InitDebug()from"debug";                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
-
-shared class Entire
+shared class Sprite
 {
-	int Number;
-	uint16 HexX;
-	uint16 HexY;
-	uint8 Direction;
-};
-
-uint ParseEntires(Map&map,array<Entire>&entires,int number)
-{
-	uint oldCount=entires.length();
-	uint count=map.CountEntire(number);
-	entires.resize(oldCount+count);
-	
-	for(uint i=0;i<count;i++)
+	Sprite()
 	{
-		Entire@ent=entires[oldCount+i];
-		if(map.GetEntireCoords(number,i,ent.HexX,ent.HexY,ent.Direction)==false)
-		return 0;
-		ent.Number=number;
+		Id=0;
+		Width=0;
+		Height=0;
+		FrmCount=0;
 	}
 	
-	return count;
-}
-
-bool IsEntireFree(uint mappid,int number)
-{
-	Map@map=GetMapByPid(mappid,0);
-	return IsEntireFree(map,number);
-}
-
-bool IsEntireFree(Map&map,int number)
-{
-	uint16 x,y;
-	x=0;
-	y=0;
-	return GetEntireFreeHex(map,number,x,y);
-}
-
-bool GetEntireFreeHex(Map&map,int number,uint16&hx,uint16&hy,uint skip=0)
-{
-	uint count=map.CountEntire(number); 
-	
-	for(uint i=skip;i<count;i++)
+	bool Load(string&name,int path)
 	{
-		if(map.GetEntireCoords(number,i,hx,hy)&&map.IsHexPassed(hx,hy))
-		return true;
-	}
-	
-	if(hx==0||hy==0||hx>=map.GetWidth()-1||hy>=map.GetHeight()-1)
-	return false; 
-	
-	for(uint i=0;i<count;i++)
-	{
-		if(map.GetEntireCoords(number,i,hx,hy))
+		if(name.length()>0)
 		{
-			for(int x=-1;x<=1;x++)
+			Id=LoadSprite(name,path);
+			Filename=name;
+		}
+		else
+		Id=0;
+		RefreshData();
+		return Id!=0;
+	}
+	
+	void LoadHash(uint nameHash,uint8 dir)
+	{
+		Id=LoadSprite(nameHash,dir);
+		RefreshData();
+	}
+	
+	void LoadByIni(string&iniKey,int path)
+	{
+		string@name=GetIfaceIniStr(iniKey);
+		if(@name!=null&&name.length()>0)
+		Id=LoadSprite(name,path);
+		else
+		Id=0;
+		RefreshData();
+	}
+	
+	void Draw(int x,int y)
+	{
+		if(Id!=0)
+		DrawSprite(Id,-1,x,y,0);
+	}
+	
+	private void RefreshData()
+	{
+		if(Id!=0)
+		{
+			Width=GetSpriteWidth(Id,0);
+			Height=GetSpriteHeight(Id,0);
+			FrmCount=GetSpriteCount(Id);
+		}
+		else
+		{
+			Width=0;
+			Height=0;
+			FrmCount=0;
+			Filename="";
+		}
+	}
+	
+	uint Id;
+	int Width;
+	int Height;
+	uint FrmCount;
+	string Filename;
+};                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
+
+uint __GetColor(int r,int g,int b,int a=0xFF)
+{
+	r=(((r)>(255))?(255):(((r)<(0))?(0):(r)));
+	g=(((g)>(255))?(255):(((g)<(0))?(0):(g)));
+	b=(((b)>(255))?(255):(((b)<(0))?(0):(b)));
+	a=(((a)>(255))?(255):(((a)<(0))?(0):(a)));
+	return(uint((((a)&0xFF)<<24)|(((r)&0xFF)<<16)|(((g)&0xFF)<<8)|((b)&0xFF)));
+}                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            
+
+shared interface IControl
+{
+	void SetParent(IControl@parent); 
+	
+	bool IsVisible();
+	bool IsActive();
+	
+	void Disable();
+	void Enable();
+	
+	void Show(bool showAll=false);
+	void Show(int left,int top);
+	void Hide(); 
+	
+	void ShowWindow();
+	void ShowWindow(int left,int top);
+	void HideWindow();
+	void Center();
+	
+	int Left();
+	int Right();
+	int Top();
+	int Bottom();
+	int Width();
+	int Height();
+	
+	IControl@Position(int,int);
+	IControl@Position(string&iniKey);
+	IControl@Left(int);
+	IControl@Top(int);
+	IControl@Width(int);
+	IControl@Height(int);
+	IControl@Size(int,int);
+	
+	void Init();
+	void Draw();
+	void Update();
+	bool MouseDown(int x,int y,int click);
+	bool MouseUp(int x,int y,int click);
+	void MouseMove(int fromX,int fromY,int toX,int toY);
+	bool KeyDown(uint8 key,string&keyText);
+	void KeyUp(uint8 key,string&keyText);
+};   
+
+class Control:IControl
+{
+	
+	IControl@parent;
+	
+	array<IControl@>controls; 
+	
+	int left;
+	int top;
+	int width;
+	int height;     
+	
+	bool active;
+	
+	bool visible;
+	
+	bool focus; 
+	
+	bool mousePressed;
+	int mouseX;
+	int mouseY;
+	
+	Control()
+	{
+		active=true;
+		visible=true;
+		focus=false;
+		
+		mousePressed=false;
+		mouseX=0;
+		mouseY=0;
+		
+		left=top=width=height=0;
+	}
+	
+	Control(int left,int top,int width,int height)
+	{
+		active=true;
+		visible=true;
+		focus=false;
+		
+		mousePressed=false;
+		mouseX=0;
+		mouseY=0;
+		
+		this.left=left;
+		this.top=top;
+		this.width=width;
+		this.height=height;
+	}    
+	
+	bool IsVisible(){return visible;}
+	bool IsActive(){return active;}   
+	
+	int Left()
+	{
+		if((@parent!=null))
+		return parent.Left()+left;
+		else
+		return left;
+	}
+	int Top()
+	{
+		if((@parent!=null))
+		return parent.Top()+top;
+		else
+		return top;
+	}
+	int Right(){return Left()+Width();}
+	int Bottom(){return Top()+Height();}
+	int Height(){return height;}
+	int Width(){return width;}
+	
+	IControl@Position(int x,int y){left=x;top=y;return this;}
+	IControl@Left(int x){left=x;return this;}
+	IControl@Top(int y){top=y;return this;}
+	IControl@Width(int w){width=w;return this;}
+	IControl@Height(int h){height=h;return this;}
+	IControl@Size(int w,int h){height=h;width=w;return this;}
+	
+	IControl@Position(string&iniKey)
+	{
+		left=0;
+		top=0;
+		width=0;
+		height=0; 
+		
+		string@str=GetIfaceIniStr(iniKey);
+		if(@str==null||str=="")
+		return this;
+		
+		array<string@>@valuesStr=split(str," ");
+		if(valuesStr.length()!=4)
+		return this;
+		
+		array<int>values(4);
+		for(int i=0;i<4;i++)
+		if(!StrToInt(valuesStr[i],values[i]))
+		return this;
+		
+		left=values[0];
+		top=values[1];
+		width=values[2]-values[0]+1;
+		height=values[3]-values[1]+1;
+		return this;
+	}   
+	
+	bool IsInside(int x,int y)
+	{
+		return(x>=Left())&&(x<Right())&&(y>=Top())&&(y<Bottom());
+	}   
+	
+	void SetParent(IControl@control)
+	{
+		@parent=control;
+	}   
+	
+	void Enable()
+	{
+		active=true;
+		OnEnabled();
+	}
+	void Disable()
+	{
+		active=false;
+		OnDisabled();
+	}   
+	
+	void Show(bool showAll=false)
+	{
+		visible=true;
+		if(showAll)
+		{
+			for(uint i=0,j=controls.length();i<j;i++)
+			controls[i].Show(showAll);
+		}
+		OnShow();
+	}
+	void Show(int left,int top)
+	{
+		this.left=left;
+		this.top=top;
+		visible=true;
+		OnShow();
+	}
+	void Hide()
+	{
+		visible=false;
+		for(uint i=0,j=controls.length();i<j;i++)
+		controls[i].Hide();
+		OnHide();
+	}
+	
+	void ShowWindow()
+	{
+		Message("This control does not have window attached.");
+	}
+	void ShowWindow(int x,int y)
+	{
+		Message("This control does not have window attached.");
+	}
+	void HideWindow()
+	{
+		Message("This control does not have window attached.");
+	}  
+	
+	void Center()
+	{
+		Position(parent.Width()/2-Width()/2,parent.Height()/2-Height()/2);
+	}
+	void Init()
+	{
+		for(uint i=0,j=controls.length();i<j;i++)
+		controls[i].Init();
+	}  
+	
+	void SetFocus(bool focused)
+	{
+		this.focus=focused;
+		
+		if(focused)
+		GotFocus();
+		else
+		LostFocus();
+	}   
+	
+	void AddControl(IControl@control)
+	{
+		control.SetParent(this);
+		controls.insertLast(@control);
+	}    
+	
+	bool MouseDown(int x,int y,int click)
+	{
+		bool intercepted=false;
+		for(uint i=0,j=controls.length();i<j;i++)
+		{
+			if(controls[i].IsVisible()&&controls[i].IsActive())
+			intercepted=controls[i].MouseDown(x,y,click)?true:intercepted;
+		}
+		if(!intercepted)
+		{
+			if(click!=(4)&&click!=(3))
 			{
-				for(int y=-1;y<=1;y++)
+				if(IsInside(x,y))
 				{
-					if(x==0&&y==0)
-					continue;
-					if(__MapHexagonal)
-					{
-						if((hx%2)==1&&((x==-1&&y==1)||(x==1&&y==1)))
-						continue;
-						if((hx%2)==0&&((x==-1&&y==-1)||(x==1&&y==-1)))
-						continue;
-					}
-					
-					if(map.IsHexPassed(hx+x,hy+y))
-					{
-						hx+=x;
-						hy+=y;
-						return true;
-					}
+					mousePressed=true;
+					mouseX=x;
+					mouseY=y;
+					SetFocus(true);
+					intercepted=true;
+				}
+				else
+				{
+					SetFocus(false);
 				}
 			}
 		}
+		return intercepted;
 	}
-	return false;
-}
-
-bool GetNearEntire(Map&map,int number,uint16&hx,uint16&hy)
-{
-	uint16 hxBase=hx;
-	uint16 hyBase=hy;
-	
-	array<Entire>entires;
-	uint count=ParseEntires(map,entires,number);
-	if(count==0)
-	return false;
-	
-	hx=entires[0].HexX;
-	hy=entires[0].HexY;
-	for(uint i=1;i<count;i++)
+	bool MouseUp(int x,int y,int click)
 	{
-		Entire@ent=entires[i];
-		if(GetDistantion(hxBase,hyBase,ent.HexX,ent.HexY)<GetDistantion(hxBase,hyBase,hx,hy))
+		bool intercepted=false;
+		if(IsInside(x,y)&&mousePressed)
 		{
-			hx=ent.HexX;
-			hy=ent.HexY;
+			
+			Click();
+			intercepted=true;
+		}
+		
+		mousePressed=false;
+		
+		for(uint i=0,j=controls.length();i<j;i++)
+		{
+			if(controls[i].IsVisible()&&controls[i].IsActive())
+			intercepted=controls[i].MouseUp(x,y,click)?true:intercepted;
+		}
+		return intercepted;
+	}
+	void MouseMove(int fromX,int fromY,int toX,int toY)
+	{
+		for(uint i=0,j=controls.length();i<j;i++)
+		{
+			if(controls[i].IsVisible()&&controls[i].IsActive())
+			controls[i].MouseMove(fromX,fromY,toX,toY);
 		}
 	}
-	
-	return true;
-}
-
-bool GetNearEntire(Map&map,int number,uint16&hx,uint16&hy,uint8&dir)
-{
-	uint16 hxBase=hx;
-	uint16 hyBase=hy;
-	
-	array<Entire>entires;
-	uint count=ParseEntires(map,entires,number);
-	if(count==0)
-	return false;
-	
-	hx=entires[0].HexX;
-	hy=entires[0].HexY;
-	dir=entires[0].Direction;
-	for(uint i=1;i<count;i++)
+	bool KeyDown(uint8 key,string&keyText)
 	{
-		Entire@ent=entires[i];
-		if(GetDistantion(hxBase,hyBase,ent.HexX,ent.HexY)<GetDistantion(hxBase,hyBase,hx,hy))
+		bool intercepted=false;
+		for(uint i=0,j=controls.length();i<j;i++)
 		{
-			hx=ent.HexX;
-			hy=ent.HexY;
-			dir=ent.Direction;
+			if(controls[i].IsVisible()&&controls[i].IsActive())
+			intercepted=controls[i].KeyDown(key,keyText)?true:intercepted;
 		}
+		return intercepted;
+	}
+	void KeyUp(uint8 key,string&keyText)
+	{
+		for(uint i=0,j=controls.length();i<j;i++)
+		{
+			if(controls[i].IsVisible()&&controls[i].IsActive())
+			controls[i].KeyUp(key,keyText);
+		}
+	}   
+	
+	void Draw()
+	{
+		for(uint i=0,j=controls.length();i<j;i++)
+		if(controls[i].IsVisible())
+		controls[i].Draw();
+	}  
+	
+	void Update()
+	{
+		for(uint i=0,j=controls.length();i<j;i++)
+		{
+			if(controls[i].IsActive())
+			controls[i].Update();
+		}
+	}        
+	
+	void Click()
+	{}  
+	
+	void GotFocus()
+	{}  
+	
+	void LostFocus()
+	{}  
+	
+	void OnShow()
+	{}  
+	
+	void OnHide()
+	{}  
+	
+	void OnEnabled()
+	{}  
+	
+	void OnDisabled()
+	{}
+};      
+
+class CButton:Control
+{
+	string caption;
+	Sprite spriteUp;
+	Sprite spriteDown;
+	
+	int textBorder;
+	
+	CButton(int left,int top,string@caption)
+	{
+		super(left,top,119,30);
+		spriteUp.Load("wm_tab.png",(4));
+		spriteDown.Load("wm_blanktab.png",(4));
+		this.caption=caption;
+		textBorder=30;
+	}
+	CButton(int left,int top,int width,int height,string&down)
+	{ 
+		
+		if(!spriteDown.Load(down,(4)))
+		Message("Couldn't load sprite: "+down);
+		super(left,top,(((width)>(spriteDown.Width))?(width):(spriteDown.Width)),(((height)>(spriteDown.Height))?(height):(spriteDown.Height)));
+		textBorder=0;
+	}
+	CButton(int left,int top,int width,int height,string&up,string&down)
+	{
+		if(!spriteUp.Load(up,(4)))
+		Message("Couldn't load sprite(up): "+up);
+		if(!spriteDown.Load(down,(4)))
+		Message("Couldn't load sprite(down): "+down);
+		super(left,top,(((width)>(spriteUp.Width))?(width):(spriteUp.Width)),(((height)>(spriteUp.Height))?(height):(spriteUp.Height)));
+		textBorder=0;
+	}
+	CButton(string&iniKey,string&down)
+	{ 
+		
+		if(!spriteDown.Load(down,(4)))
+		Message("Couldn't load sprite: "+down);
+		Control::Position(iniKey);
+		textBorder=0;
+	}  
+	
+	void SetCaption(string@caption){this.caption=caption;}
+	
+	void Draw()
+	{
+		if(mousePressed)
+		{
+			if(spriteDown.Id!=0)
+			DrawSprite(spriteDown.Id,0,Left(),Top(),0);
+		}
+		else
+		{
+			if(spriteUp.Id!=0)
+			DrawSprite(spriteUp.Id,0,Left(),Top(),0);
+		}
+		int color=active?0:int(0xffaaaaaa);
+		if(caption!="")
+		DrawText(caption,Left()+textBorder,Top(),Width()-textBorder,Height(),color,(5),(0x0008)|(0x0200));
+	}
+}; 
+
+class CDialogRedButton:Control
+{
+	Sprite spriteDown;
+	
+	CDialogRedButton(int left,int top)
+	{
+		super(left,top,16,16);
+		spriteDown.Load("di_rdbt1.frm",(4));
+	}  
+	
+	void Draw()
+	{
+		if(mousePressed)
+		DrawSprite(spriteDown.Id,0,Left(),Top(),0);
+	}
+};
+
+class CSmallButton:Control
+{
+	Sprite spriteDown;
+	
+	CSmallButton(int left,int top)
+	{
+		super(left,top,16,16);
+		spriteDown.Load("lilreddn.frm",(4));
+	}  
+	
+	void Draw()
+	{
+		if(mousePressed)
+		DrawSprite(spriteDown.Id,0,Left(),Top(),0);
+	}
+};
+
+class CSmallArrowUp:Control
+{
+	Sprite spriteDown;
+	
+	CSmallArrowUp(int left,int top)
+	{
+		super(left,top,16,16); 
+		
+	}  
+	
+	void Draw()
+	{ 
+		
+	}
+};
+
+class CSmallArrowDown:Control
+{
+	Sprite spriteDown;
+	
+	CSmallArrowDown(int left,int top)
+	{
+		super(left,top,16,16); 
+		
+	}  
+	
+	void Draw()
+	{ 
+		
+	}
+};   
+
+class CLabel:Control
+{
+	int font;
+	int color;
+	int format;
+	string@caption;
+	
+	CLabel(int left,int top,int width,int height,string@caption)
+	{
+		super(left,top,width,height);
+		@this.caption=@caption;
+		this.color=0;
+		font=(5);
+		format=(0x0008)|(0x0200);
+	}
+	CLabel(int left,int top,int width,int height,string@caption,int font)
+	{
+		super(left,top,width,height);
+		@this.caption=@caption;
+		this.color=0;
+		this.font=font;
+		format=(0x0008)|(0x0200);
+	}
+	void SetCaption(string@caption)
+	{
+		@this.caption=@caption;
+	}
+	void set_Caption(string@caption)
+	{
+		@this.caption=@caption;
+	}
+	string@get_Caption()
+	{
+		return@caption;
+	}
+	void SetColor(uint color)
+	{
+		this.color=color;
+	}
+	void set_Color(uint color)
+	{
+		this.color=color;
+	}
+	void SetFont(uint font)
+	{
+		this.font=font;
+	}
+	void set_Font(uint font)
+	{
+		this.font=font;
+	}
+	void SetFormat(uint format)
+	{
+		this.format=format;
+	}
+	void Draw()
+	{
+		DrawText(caption,Left(),Top(),Width(),Height(),color,font,format);
+	}
+};   
+
+class CTextBox:Control
+{
+	
+	string text;
+	
+	string drawnText;
+	uint cursorPos;
+	
+	uint cursorTime;
+	
+	uint cursorChangedTime;
+	
+	int showCursor;
+	
+	string cursor1;
+	string cursor2; 
+	
+	int color;
+	int format;
+	int font;
+	uint maxlength;
+	
+	CTextBox(int left,int top,int width,int height,string@text)
+	{
+		super(left,top,width,height);
+		this.text=text;
+		cursorPos=text.length();
+		cursorTime=400;
+		cursorChangedTime=0;
+		showCursor=0;
+		cursor1="!";
+		cursor2=".";
+		drawnText=text;
+		
+		color=0;
+		font=(5);
+		format=(0x0200);
+		maxlength=0;
+	}  
+	
+	string@Text()
+	{
+		return text;
+	}  
+	
+	string@GetCursor()
+	{
+		if(showCursor==0)
+		return"";
+		else if(showCursor==1)
+		return cursor1;
+		else
+		return cursor2;
+	}
+	void SetColor(uint color)
+	{
+		this.color=color;
+	}
+	void SetFormat(uint format)
+	{
+		this.format=format;
+	}
+	void SetText(string@text)
+	{
+		this.text=text;
+		cursorPos=text.length();
+		RefreshDrawnText();
+	}
+	void SetMaxLength(uint ml)
+	{
+		maxlength=ml;
+	}  
+	
+	void ShowCursor(int show)
+	{
+		showCursor=show;
+		RefreshDrawnText();
+	}  
+	
+	void RefreshDrawnText()
+	{
+		if(showCursor>0)
+		{
+			if(cursorPos==text.length())
+			drawnText=text+GetCursor();
+			else
+			drawnText=substring(text,0,cursorPos)+GetCursor()+substring(text,cursorPos,text.length()-cursorPos);
+		}
+		else
+		drawnText=text;
+	}  
+	
+	void InsertChar(uint8 key,string&keyText)
+	{
+		text=substring(text,0,cursorPos)+keyText+substring(text,cursorPos,text.length()-cursorPos);
+		cursorPos++;
 	}
 	
-	return true;
-}         
+	void Draw()
+	{
+		uint tick=GetTick();
+		
+		if(tick-cursorChangedTime>cursorTime)
+		{
+			cursorChangedTime=tick;
+			if(showCursor==1)
+			ShowCursor(2);
+			else if(focus)
+			ShowCursor(1);
+			else
+			ShowCursor(0);
+		} 
+		
+		DrawText(drawnText,Left(),Top(),Width(),Height(),color,font,format);
+	}
+	
+	bool KeyDown(uint8 key,string&keyText)
+	{
+		if(focus)
+		{
+			
+			if(key==0x0E)
+			{
+				if(text.length()>0&&cursorPos>0)
+				{
+					text=substring(text,0,cursorPos-1)+substring(text,cursorPos,text.length()-cursorPos);
+					cursorPos--;
+				}
+			}
+			else if(key==0xD3)
+			{
+				if(text.length()>0&&cursorPos<text.length())
+				{
+					text=substring(text,0,cursorPos)+substring(text,cursorPos+1,text.length()-cursorPos-1);
+				}
+			}
+			
+			else if(key==0xC7)
+			{
+				cursorPos=0;
+			}
+			else if(key==0xCF)
+			{
+				cursorPos=text.length();
+			}
+			
+			else if(key==0xCB)
+			{
+				if(cursorPos>0)
+				cursorPos--;
+			}
+			else if(key==0xCD)
+			{
+				if(cursorPos<text.length())
+				cursorPos++;
+			}
+			
+			else if(key==0x01||key==0x1C||key==0x9C)
+			{
+				SetFocus(false);
+			}
+			else
+			{
+				if(maxlength==0||maxlength>text.length())
+				InsertChar(key,keyText);
+			}
+			
+			RefreshDrawnText();
+			return true;
+		}
+		return Control::KeyDown(key,keyText);
+	}
+};   
+
+class CSprite:Control
+{
+	Sprite sprite;
+	
+	CSprite(string@spriteName,int path=(4))
+	{
+		super();
+		sprite.Load(spriteName,path);
+	}
+	CSprite(uint nameHash,int path=(4))
+	{
+		super();
+		sprite.LoadHash(nameHash,path);
+	}
+	CSprite(int left,int top,int width,int height,string@spriteName,int path=(4))
+	{
+		super(left,top,width,height);
+		sprite.Load(spriteName,path);
+	}
+	
+	void Draw()
+	{
+		DrawSprite(sprite.Id,-1,Left(),Top(),0);
+		Control::Draw();
+	}
+};   
+
+class CSpriteEx:CSprite
+{
+	int index;
+	bool scratch;
+	bool center;
+	uint color;
+	bool applyOffsets;
+	
+	CSpriteEx(string@spriteName)
+	{
+		super(spriteName);
+		Init();
+	}
+	
+	CSpriteEx(uint nameHash,int path=(4))
+	{
+		super(nameHash,path);
+		Init();
+	}
+	
+	CSpriteEx(int left,int top,int width,int height,string@spriteName)
+	{
+		super(left,top,width,height,spriteName);
+		Init();
+	}
+	
+	private void Init()
+	{
+		CSprite::Init();
+		this.index=-1;
+		this.scratch=false;
+		this.center=false;
+		this.color=0;
+		this.applyOffsets=true;
+	}
+	
+	void Draw()
+	{
+		if(this.sprite.Id>0)
+		DrawSprite(this.sprite.Id,this.index,Left(),Top(),this.sprite.Width,this.sprite.Height,this.scratch,this.center,this.color,this.applyOffsets);
+		Control::Draw();
+	}
+};   
+
+class CListBox:Control
+{
+	array<string@>elements;
+	
+	uint start;
+	
+	uint index;
+	
+	uint textHeight;
+	
+	CListBox(int left,int top,int width,int height)
+	{
+		super(left,top,width,height);
+		start=0;
+		textHeight=12;
+	}   
+	
+	uint GetRowCount()
+	{
+		return height/textHeight;
+	}  
+	
+	uint GetIndex()
+	{
+		return index;
+	}  
+	
+	void AddElement(string@elem)
+	{
+		elements.insertLast(elem);
+	}  
+	
+	void Scroll(int d)
+	{
+		start=(((int(start)+d)>(int(elements.length()-1)))?(int(elements.length()-1)):(((int(start)+d)<(0))?(0):(int(start)+d)));
+	}  
+	
+	void Draw()
+	{
+		for(uint i=start,j=(((elements.length())<(start+uint(Height()/textHeight)))?(elements.length()):(start+uint(Height()/textHeight)));i<j;i++)
+		{
+			DrawText(elements[i],Left(),Top()+(i-start)*textHeight,Width(),textHeight,i==index?0xffffffff:0,(5),(0x0200));
+		}
+	}   
+	
+	void Click()
+	{
+		uint el=start+(mouseY-Top())/textHeight;
+		if(el<elements.length())
+		index=el;
+		Control::Click();
+	}
+};   
+
+class CContextButton:CButton
+{
+	uint crId;
+	uint itemId;
+	uint16 hexX;
+	uint16 hexY;
+	
+	CContextButton(string caption)
+	{
+		super(0,0,caption);
+		hexX=0;
+		hexY=0;
+	}   
+	
+	void SetCritter(CritterCl@cr)
+	{
+		crId=itemId=0;
+		if((@cr!=null))
+		crId=cr.Id;
+	}  
+	
+	void SetItem(ItemCl@item)
+	{
+		crId=itemId=0;
+		if((@item!=null))
+		itemId=item.Id;
+	}  
+	
+	void SetHex(uint16 x,uint16 y)
+	{
+		this.hexX=x;
+		this.hexY=y;
+	}
+};   
+
+class Window:Control,IGUIScreenCallbackFocus,IGUIScreenCallbackShow
+{
+	IGUIScreenOpt@screen;
+	
+	int Left(){return screen.GetPosX();}
+	int Top(){return screen.GetPosY();}
+	int Width(){return screen.GetWidth();}
+	int Height(){return screen.GetHeight();}
+	
+	bool autoMode;
+	
+	Window()
+	{
+		super();
+		autoMode=false;
+	}
+	
+	void Init()
+	{
+		@screen=GUI_GetScreenOptions();
+		Control::Init();
+	}
+	
+	IControl@Position(int x,int y)
+	{
+		screen.Position(x,y);
+		return this;
+	}
+	IControl@Size(int w,int h)
+	{
+		screen.Size(w,h);
+		return this;
+	}  
+	
+	void Center()
+	{
+		Position(__ScreenWidth/2-Width()/2,__ScreenHeight/2-Height()/2);
+	} 
+	
+	void OnShow(int p0,int p1,int p2)
+	{
+		if(p0!=0||p1!=0)
+		Show(p0,p1);
+		else
+		Show();
+	}
+	
+	void Show(int x,int y)
+	{
+		screen.Position(x,y);
+		Control::Show(x,y);
+	} 
+	
+	void ShowWindow()
+	{
+		GUI_ShowScreen(screen.GetIndex(),0,0,0);
+	}
+	void ShowWindow(int x,int y)
+	{
+		screen.Position(x,y);
+		GUI_ShowScreen(screen.GetIndex(),x,y,0);
+	}
+	void HideWindow()
+	{
+		GUI_HideScreen(screen.GetIndex(),0,0,0);
+		Disable();
+	}
+	void OnLostFocus()
+	{
+		HideWindow();
+		Disable();
+	}
+	
+	bool MouseDown(int x,int y,int click)
+	{
+		bool intercepted=false;
+		for(uint i=0,j=controls.length();i<j;i++)
+		{
+			if(controls[i].IsVisible()&&controls[i].IsActive())
+			intercepted=controls[i].MouseDown(x,y,click)?true:intercepted;
+		}
+		if(!intercepted)
+		{
+			if(click!=(4)&&click!=(3))
+			{
+				if(IsInside(x,y))
+				{
+					mousePressed=true;
+					mouseX=x;
+					mouseY=y;
+					SetFocus(true);
+					intercepted=true;
+				}
+				else
+				{
+					SetFocus(false);
+				}
+				
+				return false;
+			}
+		}
+		return intercepted;
+	}   
+	
+	void Auto(bool v){autoMode=v;}
+	bool Auto(){return autoMode;}
+};       
+
+import void GUI_Init()from"client_gui";
+import void GUI_GetActiveScreens(array<int>&result)from"client_gui";
+import int GUI_GetActiveScreen()from"client_gui";
+import int GUI_GetActiveMainScreen()from"client_gui";
+import int GUI_GetMainScreen()from"client_gui";
+import void GUI_ShowScreen(int screenIndex,int p0,int p1,int p2)from"client_gui";
+import void GUI_HideScreen(int screenIndex,int p0,int p1,int p2)from"client_gui";
+import void GUI_Render(bool mainScreen)from"client_gui";
+import void GUI_Update(uint dt)from"client_gui";
+import bool GUI_MouseDown(int x,int y,int click)from"client_gui";
+import bool GUI_MouseUp(int x,int y,int click)from"client_gui";
+import void GUI_MouseMove(int fromX,int fromY,int toX,int toY)from"client_gui";
+import bool GUI_KeyDown(uint8 key,string&keyText)from"client_gui";
+import bool GUI_KeyUp(uint8 key,string&keyText)from"client_gui";
+import void GUI_InputLost()from"client_gui";
+import bool GUI_IsKeyPressed(uint8 key)from"client_gui"; 
+
+import void GUI_GetIniCoords(string&ini,int&left,int&top,int&right,int&bottom)from"client_gui"; 
+
+import IGUIScreenOpt@GUI_CreateScreen(int screenIndex,string@sprName)from"client_gui";
+
+import IGUIScreenOpt@GUI_GetScreen(int screenIndex)from"client_gui"; 
+
+import IGUIElementTextOpt@GUI_AddText(int screenIndex)from"client_gui";
+import IGUIElementTextOpt@GUI_AddText(int screenIndex,string@text,int x,int y)from"client_gui";
+import IGUIElementImageOpt@GUI_AddImage(int screenIndex)from"client_gui";
+import IGUIElementImageOpt@GUI_AddImage(int screenIndex,string@sprName,int patch,int x,int y)from"client_gui";
+import IGUIElementButtonOpt@GUI_AddButton(int screenIndex)from"client_gui";
+import IGUIElementButtonOpt@GUI_AddButton(int screenIndex,int x,int y)from"client_gui";
+
+import void GUI_DeleteScreen(int screenIndex)from"client_gui"; 
+
+import IGUIScreenOpt@GUI_GetScreenOptions()from"client_gui";     
+
+shared interface IGUIScreenCallbackShow
+{
+	void OnShow(int p0,int p1,int p2);
+};
+shared interface IGUIScreenCallbackHide
+{
+	void OnHide(int p0,int p1,int p2);
+};
+shared interface IGUIScreenCallbackMove
+{
+	void OnMove(int posX,int posY);
+};
+shared interface IGUIScreenCallbackFocus
+{
+	void OnLostFocus();
+};
+
+shared interface IGUIScreenCallbackKeyPress
+{
+	bool OnKeyPress(uint8 key,string&keyText);
+}
+
+shared interface IGUIScreenCallbackMouseDown
+{
+	bool OnMouseDown(int click);
+} 
+
+shared interface IGUIScreenOpt
+{
+	void SetCallbackShow(IGUIScreenCallbackShow@callback);
+	void SetCallbackHide(IGUIScreenCallbackHide@callback);
+	void SetCallbackMove(IGUIScreenCallbackMove@callback);
+	void SetCallbackFocus(IGUIScreenCallbackFocus@callback);
+	void SetCallbackMouseDown(IGUIScreenCallbackMouseDown@callback);
+	void SetCallbackKeyPress(IGUIScreenCallbackKeyPress@callback);
+	
+	IControl@Control();
+	void Control(IControl@control);
+	void Position(int x,int y);
+	void Size(int w,int h);
+	void CanMove(bool enabled);
+	void Modal(bool enabled);
+	void Multiinstance(bool enabled);
+	void IgnoreBorders(bool enabled);
+	void CloseOnMiss(bool enabled);
+	void AutoCursor(bool enabled,int cursorType);
+	void Hardcoded(bool enabled); 
+	
+	int GetPosX();
+	int GetPosY();
+	int GetWidth();
+	int GetHeight();
+	int GetIndex();
+};
+
+shared interface IGUIElementCallbackInit{void OnInit(int id);}
+shared interface IGUIElementCallbackDraw{void OnDraw(int id);}
+shared interface IGUIElementCallbackKeyPress{bool OnKeyPress(uint8 key,string&keyText);}
+shared interface IGUIElementCallbackMouseDown{void OnMouseDown(int click);}
+shared interface IGUIElementCallbackMouseClick{void OnMouseClick(int id,int click);}
+shared interface IGUIElementCallbackMouseMove{void OnMouseMove(int x,int y);}
+shared interface IGUIElementCallbackValueChange{void OnValueChange(int newValue);}
+shared interface IGUIElementCallbackStateChange{void OnStateChange(bool state);}
+
+shared interface IGUIElementOpt
+{
+	void CallbackInit(IGUIElementCallbackInit@callback);
+	void CallbackDraw(IGUIElementCallbackDraw@callback);
+	void CallbackKeyPress(IGUIElementCallbackKeyPress@callback);
+	void CallbackMouseDown(IGUIElementCallbackMouseDown@callback);
+	void CallbackMouseClick(IGUIElementCallbackMouseClick@callback);
+	void CallbackMouseMove(IGUIElementCallbackMouseMove@callback);
+	void Position(int x,int y);
+	void Position(int x,int y,int w,int h);
+	void Position(string&iniKey);
+	void Visible(bool visible);
+	void AbsolutePosition(bool absolutePosition);
+	void AbsolutePosition(int x,int y);
+	void CollisionTransparent(bool collisionTransparent);
+	void AddText(int id,string@text,int x,int y,int width,int height,int font,uint color,int flags);
+	void AddImage(int id,string@sprName,int x,int y);
+	void AddImage(int id,int patch,string@sprName,int x,int y);
+	IGUIElementCallbackInit@GetCallbackInit();
+	
+	void MouseDown(int click);
+	void MouseUp(int click,bool IsCollision);
+	void MouseMove(int x,int y); 
+	
+	void Draw(int screenX,int screenY);
+	void Update(uint dt);
+	void SetFocused(bool state);
+	void SetVisible(bool visible);
+	void SetAbsolutePosition(bool absolutePosition);
+	void SetCollisionTransparent(bool collisionTransparent);
+	void InputLost();
+	
+	IGUIElementOpt@GetNewInstance(); 
+	
+	bool IsVisible();
+	bool IsFocused();
+	bool IsAbsolutePosition();
+	bool IsCollisionTransparent();
+	bool IsCollision(int screenX,int screenY,int mouseX,int mouseY);
+	int GetId();
+	int GetPosX();
+	int GetPosY();
+	int GetHeight();
+	int GetWidth();
+	
+	bool KeyPress(uint8 key,string&keyText);
+	void KeyUp(uint8 key);
+}
+
+shared interface IGUIElementTextOpt
+{
+	void CallbackInit(IGUIElementCallbackInit@callback);
+	void CallbackDraw(IGUIElementCallbackDraw@callback);
+	void CallbackMouseDown(IGUIElementCallbackMouseDown@callback);
+	void CallbackMouseClick(IGUIElementCallbackMouseClick@callback);
+	void CallbackMouseMove(IGUIElementCallbackMouseMove@callback);
+	
+	void Position(int x,int y);
+	void Position(int x,int y,int w,int h);
+	void Position(string&iniKey);
+	void AbsolutePosition(int x,int y);
+	void AbsolutePosition(bool absolutePosition);
+	void Text(string@text);
+	void Text(string@text,int font,uint color);
+	void Text(string@text,int font,uint color,int flags);
+	void Text(string@text,int font,uint color,uint downColor,int flags);
+	void Visible(bool visible);
+	void TextBoxSize(int width,int height);
+	void TextOptions(int font,uint color);
+	void TextOptions(int font,uint color,int flags);
+	void TextOptions(int font,uint color,uint colorDown,int flags);
+	void TextColor(uint color);
+	
+	void Draw(int screenX,int screenY);
+	void SetText(string&text);
+	void SetVisible(bool visible);
+	void SetFocused(bool state); 
+	
+	bool IsVisible();
+	string@GetText();
+	int GetFont();
+	uint GetTextColor(); 
+	
+	int GetId();
+}
+
+shared interface IGUIElementImageOpt
+{
+	void CallbackInit(IGUIElementCallbackInit@callback);
+	void CallbackDraw(IGUIElementCallbackDraw@callback);
+	void CallbackMouseDown(IGUIElementCallbackMouseDown@callback);
+	void CallbackMouseClick(IGUIElementCallbackMouseClick@callback);
+	
+	void Position(int x,int y);
+	void Position(int x,int y,int w,int h);
+	void Position(string&iniKey);
+	void AbsolutePosition(bool absolutePosition);
+	void Visible(bool visible); 
+	
+	void SetVisible(bool visible);
+	void SetPosX(int x);
+	void SetPosY(int y);
+	void SetFocused(bool state);
+	void Draw(int screenX,int screenY);  
+	
+	bool IsVisible();
+	int GetPosX();
+	int GetPosY();
+	int GetImageWidth();
+	int GetImageHeight();
+	
+	bool IsCollision(int screenX,int screenY,int mouseX,int mouseY);
+}
+
+shared interface IGUIElementButtonOpt
+{
+	void CallbackInit(IGUIElementCallbackInit@callback);
+	void CallbackDraw(IGUIElementCallbackDraw@callback);
+	void CallbackMouseDown(IGUIElementCallbackMouseDown@callback);
+	void CallbackMouseClick(IGUIElementCallbackMouseClick@callback);
+	
+	void Position(int x,int y);
+	void Position(int x,int y,int w,int h);
+	void Position(string&iniKey);
+	void AbsolutePosition(bool absolutePosition);
+	void Text(string@text);
+	void Text(string@text,int font,uint color);
+	void Text(string@text,int font,uint color,int flags);
+	void Text(string@text,int font,uint color,uint downColor,int flags);
+	void Visible(bool visible);
+	void TextShift(int deltaX,int deltaY,int deltaDownX,int deltaDownY);
+	void TextWidth(int width);
+	void UpPic(string@sprName);
+	void DownPic(string@sprName);
+	void ClickableZone(int width,int height);
+	void ClickableZone(int x,int y,int width,int height);
+	
+	void SetVisible(bool visible);
+	void SetFocused(bool state); 
+	
+	bool IsVisible();
+}          
 
 int GetCarTypeDirection(uint protoId){
 	if(protoId==(802)||protoId==(800)||protoId==(816)||protoId==(550)||protoId==(831)||protoId==(9746)
@@ -209,778 +1363,342 @@ string GetDirectionName(uint dir){
 		default:directionStr="somewhere";
 	}
 	return directionStr;
+}    
+
+CCarTracker carTracker; 
+
+void ToggleCarTracker(){
+	carTracker.enabled=!carTracker.enabled;
+} 
+
+void BeepCarTracker(){
+	carTracker.Beep();
+} 
+
+bool IsCarTrackerEnabled(){
+	return carTracker.enabled;
+} 
+
+void InitCarTracker(){
+	carTracker=CCarTracker();
+} 
+
+void RefreshCars(array<int>@data,string@ownerList){
+	carTracker.refresh(data,ownerList);
+	
+} 
+
+void DrawCarTracker(){
+	carTracker.Draw();
 }  
 
-import void AddScore(Critter@cr,uint score,uint points)from"utils";
-import bool IsKeyAviable(Critter&cr,uint lockerId)from"lockers";
-import void InjureCritter(Critter&cr,uint dmg,uint dmgType,uint8 dir,uint attackerId)from"combat";
-import string GetLocationName(uint locId)from"utils";
-import void SendCarInfoToPlayer(Critter&player)from"unsafe_client";
-import void SendCarInfoToPlayersOnMap(Map&map)from"unsafe_client";   
-
-uint GetCarCost(uint16 protoCar)
-{
+class CCarTrackerCar{
+	uint Id;
+	uint LockerId;
+	uint OwnerId;
+	string OwnerName;
+	uint16 HexX;
+	uint16 HexY;
+	uint16 Charge;
+	uint16 MaxCharge;
+	uint16 Deterioration;
+	uint16 MaxDeterioration;
+	int ProtoId;
 	
-	ProtoItem@car=GetProtoItem(protoCar);
-	if((@car!=null))
+	CCarTrackerCar(uint carId){
+		Id=carId;
+	} 
 	
-	return car.Cost;
-	return 0;
-}
+	void copyFromItemCl(ItemCl&item){
+		LockerId=item.LockerId;
+		HexX=item.HexX;
+		HexY=item.HexY;
+		OwnerId=item.Val6;
+		Charge=item.Charge;
+		MaxCharge=(item.Proto.Car_TankVolume);
+		Deterioration=item.Deterioration;
+		MaxDeterioration=(item.Proto.Car_MaxDeterioration);
+	}
+};
 
-void CarMessage(Critter@cr,Item@car,int msg)
-{
-	if(IsCaravan(car))
-	cr.SayMsg((11),(3),msg+20);
-	else if(IsBarge(car))
-	cr.SayMsg((11),(3),msg+40);
-	else
-	cr.SayMsg((11),(3),msg);
+CCarTrackerCar@copyFromIntArray(array<int>@data,array<string@>@ownerNames,uint index){
+	if(data.length()>=(index+1)*(10)){
+		CCarTrackerCar ctcCar=CCarTrackerCar(data[index*(10)]);
+		ctcCar.LockerId=data[index*(10)+1];
+		ctcCar.OwnerId=data[index*(10)+2];
+		ctcCar.HexX=data[index*(10)+3];
+		ctcCar.HexY=data[index*(10)+4];
+		ctcCar.Charge=data[index*(10)+5];
+		ctcCar.MaxCharge=data[index*(10)+6];
+		ctcCar.Deterioration=data[index*(10)+7];
+		ctcCar.MaxDeterioration=data[index*(10)+8];
+		ctcCar.ProtoId=data[index*(10)+9];
+		ctcCar.OwnerName=ownerNames[index];
+		
+		return ctcCar;
+	}else{
+		return null;
+	}
 } 
 
-bool UseItemOnCar(Critter&cr,Item&car,Item&item)
-{
-	if(car.GetProtoId()==(563))
-	return false;
-	uint16 pid=item.GetProtoId();
-	int octane=100;
+class CCarTracker{
+	bool enabled;
+	bool beepActive;
+	uint beepActivationTime;
+	uint beepDuration;
+	uint cricketDuration;
+	uint headerColor;
+	uint blinkingStartTime;
+	uint beepingBlinkInterval;
+	array<CCarTrackerCar@>cars;
 	
-	if(pid==(549))
-	{
-		if(car.LockerId==0)
-		{
-			int skill=cr.Skill[(213)]+50;
-			uint keyId=Random(5000,7500);
-			
-			car.LockerComplexity=Random(skill,skill+20);
-			car.LockerId=keyId;
-			car.Update();
-			
-			Item@key=cr.AddItem((82),1);
-			if((@key!=null))
-			{
-				key.LockerId=keyId;
-				key.Update();
-				
-				Item@bag=car.GetChild(0);
-				if((@bag!=null))
-				{
-					bag.LockerId=keyId;
-					bag.LockerComplexity=Random(skill,skill+20);
-					bag.Update();
-				}
-			}
-			
-			cr.Say((11),"You have successfully installed a new lock on this car.");
-			uint pidlock=item.GetProtoId();
-			cr.DeleteItem(pidlock,1);
-			Map@map=cr.GetMap();
-			if((@map!=null)){
-				SendCarInfoToPlayersOnMap(map);
-			}
-		}
-		
-		return true;
+	CCarTracker(){
+		enabled=true;
+		beepActive=false;
+		beepDuration=2000;
+		cricketDuration=3000;
+		beepingBlinkInterval=750;
 	}
 	
-	if(IsCaravan(car)||IsBarge(car))
-	{
-		if(pid!=(605)&&pid!=(533))
-		return false;
-		
-		if(car.Charge==(car.Proto.Car_TankVolume))
-		{
-			CarMessage(cr,car,(10241));
-		}
-		else
-		{
-			uint16 newpid=0;
-			if(pid==(605))
-			newpid=(609);
-			else if(pid==(533))
-			newpid=(532); 
-			
-			cr.DeleteItem(pid,1);
-			if(newpid>0)
-			cr.AddItem(newpid,1);
-			
-			car.Charge=((((car.Proto.Car_TankVolume))<(car.Charge+300))?((car.Proto.Car_TankVolume)):(car.Charge+300));
-			CarMessage(cr,car,(10240));
-			Map@map=cr.GetMap();
-			if((@map!=null)){
-				SendCarInfoToPlayersOnMap(map);
-			}
-		}
-	}
-	else
-	{
-		if(IsFiretruck(car))
-		{
-			
-			if(car.Val2>car.Val1)
-			car.Val2=car.Val1;
-			
-			uint16 pid=item.Proto.ProtoId;
-			
-			if(pid==(605)||pid==(533))
-			{
-				uint16 newpid=0;
-				if(pid==(605))
-				newpid=(609);
-				else if(pid==(533))
-				newpid=(532); 
-				
-				int max=(((int(cr.CountItem(pid)))>(car.Val1-car.Val2))?(car.Val1-car.Val2):(((int(cr.CountItem(pid)))<(0))?(0):(int(cr.CountItem(pid)))));
-				if(max>0)
-				{
-					cr.DeleteItem(pid,max);
-					cr.AddItem(newpid,max);
-					car.Val2+=max;
-					{};
-					Map@map=cr.GetMap();
-					if((@map!=null)){
-						SendCarInfoToPlayersOnMap(map);
-					}
-					
-				}
-				else
-				{};
-				
-				return(true);
-			}
-			else if(pid==(609)||pid==(532))
-			{
-				uint16 newpid=0;
-				if(pid==(609))
-				newpid=(605);
-				else if(pid==(532))
-				newpid=(533);
-				
-				int max=(((car.Val2)>(int(cr.CountItem(pid))))?(int(cr.CountItem(pid))):(((car.Val2)<(0))?(0):(car.Val2)));
-				if(max>0)
-				{
-					cr.DeleteItem(pid,max);
-					cr.AddItem(newpid,max);
-					car.Val2-=max;
-					{};
-					Map@map=cr.GetMap();
-					if((@map!=null)){
-						SendCarInfoToPlayersOnMap(map);
-					}
-				}
-				else
-				{};
-				
-				return(true);
-			}
-		}
-		
-		bool isEnergo=(pid==(38)||pid==(39));
-		bool isBio=(pid==(124)||pid==(125)||pid==(310)||pid==(469)||pid==(311));
-		bool isTool=(item.Proto.Misc_ToolSkillNum==(213));
-		
-		if(!isEnergo&&!isBio&&!isTool)
-		return false;
-		
-		if(isTool)
-		{
-			RepairCar(cr,car,item);
-			Map@map=cr.GetMap();
-			if((@map!=null)){
-				SendCarInfoToPlayersOnMap(map);
-			}
-			return true;
-		}
-		
-		if(isBio&&!((car.Val0&(0x0001))!=0))
-		{
-			CarMessage(cr,car,(10244));
-			return true;
-		}
-		
-		octane=100;
-		if(pid==(124)||pid==(310))
-		octane=30;
-		else if(pid==(38))
-		octane=100;
-		else if(pid==(39))
-		octane=150;
-		else
-		octane=70;
-		
-		int need=(car.Proto.Car_TankVolume)-car.Charge;
-		int count=item.GetCount()*octane;
-		if(count>need)
-		count=need;
-		
-		if(count<=0)
-		{
-			CarMessage(cr,car,(10241));
-		}
-		else
-		{
-			int newCount=item.GetCount()-count/octane;
-			if(newCount<=0)
-			DeleteItem(item);
-			else
-			item.SetCount(newCount);
-			car.Charge+=count;
-			CarMessage(cr,car,(10240));
-			Map@map=cr.GetMap();
-			if((@map!=null)){
-				SendCarInfoToPlayersOnMap(map);
-			}
-		}
-	}
-	return true;
-}
-
-int GetFumbleThreshold(Item&car)
-{
-	switch(car.GetProtoId())
-	{
-		case(802):
-		return 50;
-		case(560):
-		return 50;
-		case(805):
-		return 60;
-		case(800):
-		return 75;
-		case(816):
-		return 100;
-		default:
-		return 75;
-	}
-	return 75;
-}
-
-void RemoveTool(Item&tool)
-{
-	int newCount=tool.GetCount()-1;
-	if(newCount<=0)
-	DeleteItem(tool);
-	else
-	tool.SetCount(newCount);
-}
-
-void RepairCar(Critter&cr,Item&car,Item&tool)
-{
-	if(car.Deterioration==0)
-	{
-		CarMessage(cr,car,(10243));
-		return;
-	}
-	else if(cr.IsPlayer()&&cr.Timeout[(232)]>0)
-	{
-		cr.SayMsg((11),(3),(3401));
-		return;
-	}
-	
-	int repair=cr.Skill[(213)]>0?cr.Skill[(213)]:1;
-	repair+=tool.Proto.Misc_ToolSkillBonus;
-	
-	if(cr.Skill[(213)]<GetFumbleThreshold(car))
-	{
-		bool SomethingHappened=false;
-		if(Random(0,1)==0)
-		{
-			cr.Say((11),"Due to your lack of repair skill, you've managed to botch the tools before getting any substantial repair work done. Damn!");
-			RemoveTool(tool);
-			SomethingHappened=true;
-		}
-		
-		if((cr.Stat[(6)]<3)&&(Random(0,1)==0))
-		{
-			cr.ToKnockout(((true)?(82):(83)),((true)?(86):(87)),((true)?(88):(89)),0,cr.HexX,cr.HexY);
-			cr.Say((11),"You slip and fall during the repair. Ouch!");
-			InjureCritter(cr,Random(5,15),(1),cr.Dir,0);
-			SomethingHappened=true;
-		}
-		if(SomethingHappened)
-		return;
-	}
-	
-	int fix=car.Deterioration-(repair)*100;
-	if(fix<0)
-	fix=0;
-	car.Deterioration=fix;
-	CarMessage(cr,car,(10242));    
-	
-	cr.PlaySound("CARREPAR.ACM",true);
-	
-	int breakBonus=cr.Skill[(213)]>0?cr.Skill[(213)]/10:0;
-	breakBonus+=cr.Stat[(6)]/2;
-	if(Random(0,1+breakBonus)==0)
-	{
-		CarMessage(cr,car,(10250));
-		RemoveTool(tool);
-	}
-}
-
-bool UseSkillOnCar(Critter&cr,Item&car,int skill)
-{
-	uint16 pid=car.GetProtoId();
-	if(pid==(563)&&skill!=(-1))
-	return false;
-	
-	if((pid==(9673))&&(cr.IsPlayer()&&cr.GetAccess()==(0)))
-	{
-		cr.Say((11),"Sadly you have no idea how this vehicle works.");
-		return false;
-	}
-	
-	if(skill==(-1))
-	{
-		if(pid==(563))
-		{
-			if(car.Val1==0)
-			{
-				car.Val2=cr.Id;
-				bool found=false;
-				if((cr.ItemsWeight()>=uint(cr.Stat[(11)])))
-				{
-					cr.SayMsg((11),(3),(425));
-					return true;
-				}
-				if(Random(0,9)==0)
-				{
-					cr.AddItem((253),1);
-					cr.Say((11),"You found a working fuel cell controller.");
-					found=true;
-				}
-				if(Random(0,2)==0)
-				{
-					cr.AddItem((98),Random(1,3));
-					if(Random(0,1)==1)
-					cr.AddItem((1801),1);
-					cr.Say((11),"You found some junk.");
-					found=true;
-				}
-				
-				if(!found)
-				cr.Say((11),"You find nothing of use.");
-				
-				car.Val1=1;
-			}
-			else
-			{
-				if(uint(car.Val2)==cr.Id)
-				cr.Say((11),"You've already searched the car.");
-				else
-				cr.Say((11),"Someone else has already searched the car.");
-				
-				car.Val1++;
-				if(car.Val1>19)
-				cr.Say((11),"Hello there, are you a bot?");
-			}
-			return true;
-		}
-		else
-		{
-			if(!IsKeyAviable(cr,car.LockerId))
-			{
-				cr.SayMsg((11),(3),(10100));
-			}
-			else if((@cr.GetMap()!=null))
-			{
-				if(cr.Timeout[(239)]>0)
-				cr.SayMsg((11),(3),(790));
-				else if(cr.Timeout[(238)]>0)
-				cr.SayMsg((11),(3),(791));
-				else if(car.Charge==0&&(car.Proto.Car_TankVolume)>0)
-				CarMessage(cr,car,(10245));
-				else if(car.Val4==1)
-				cr.Say((11),"You can't leave yet.");
-				else
-				DriveToGlobal(cr,car,true);
-			}
-		}
-	}
-	else if(skill==(212))
-	{
-		cr.SayMsg((11),(0),(2100),"$number"+car.LockerId+
-		"$fuel"+(car.Charge/100)+"$fuel_tank"+((car.Proto.Car_TankVolume)/100)+
-		"$wear"+(car.Deterioration*100/(car.Proto.Car_MaxDeterioration)));
-		if(IsFiretruck(car))
-		{
-			cr.Say((11),"Water: "+car.Val2+"/"+car.Val1);
-		}
-		if(IsCaravan(car)&&(@cr.GetMap()!=null)&&car.Val3>0)
-		{
-			cr.Say((11),"City of origin: "+GetLocationName(car.Val3));
-		}
-	}
-	else if(skill==(213))
-	{
-		Item@tool=cr.GetItem(0,(1));
-		if((@tool!=null)&&(tool.Proto.Misc_ToolSkillNum==(213))){
-			RepairCar(cr,car,tool);
-			Map@map=cr.GetMap();
-			if((@map!=null)){
-				SendCarInfoToPlayersOnMap(map);
-			}
-		}
-		else
-		CarMessage(cr,car,(10249));
-	}
-	else if(skill==(209))
-	{
-		Map@map=cr.GetMap();
-		if((@map!=null))&&((map.GetData((10))&((0x00000400)))!=0)){
-			cr.Say((11),"This area is guarded against lock picking cars.");
-			return true;
-		}
-		
-		if(cr.Timeout[(234)]>0)
-		{
-			cr.SayMsg((11),(3),(3401));
-			return true;
-		}
-		
-		if(((car.Val0&(0x0002))!=0))
-		{
-			cr.SayMsg((11),(3),(3440));
-			return true;
-		}
-		
-		if(((car.Val0&(0x0004))!=0))
-		{
-			cr.SayMsg((11),(3),(3440));
-			return true;
-		} 
-		
-		if(car.LockerId==0)
-		{
-			cr.SayMsg((11),(3),(3440));
-			return true;
-		}
-		
-		int base=cr.Skill[(209)]-50;
-		uint8 mode=0;
-		Item@tool=cr.GetItem(0,(1));
-		if((@tool!=null)&&tool.Proto.Misc_ToolSkillNum==(209))
-		{
-			base+=tool.Proto.Misc_ToolSkillBonus;
-			if(Random(0,30)==0)
-			cr.DeleteItem(tool.GetProtoId(),1);
-		}
-		
-		int minChance=cr.Stat[(6)]/2;
-		base=(((base)>(95))?(95):(((base)<(minChance))?(minChance):(base)));
-		if(base>=Random(1,100)&&car.LockerId!=1)
-		{
-			cr.StatBase[(76)]+=(250-base);
-			car.LockerId=0;
-			cr.SayMsg((11),(3),(3443));
-			AddScore(cr,(18),1);
-			if((@map!=null)){
-				SendCarInfoToPlayersOnMap(map);
-			}
-		}
-		else
-		{
-			cr.SayMsg((11),(3),(3440));
-		}
-		cr.TimeoutBase[(234)]=((__FullSecond)+((((15)*__TimeMultiplier))));
-	}
-	else
-	{
-		cr.SayMsg((11),(3),(10202));
-	}
-	return true;
-}
-
-void DriveToGlobal(Critter&cr,Item&car,bool requestGroup)
-{
-	
-	GameVar@ownervar=GetLocalVar((23012),car.Id);
-	if(ownervar!=cr.Id){
-		Critter@prevOwner=GetCritter(ownervar.GetValue());
-		if((@prevOwner!=null)){
-			car.Val6=cr.Id;
-			SendCarInfoToPlayer(prevOwner);
-		}else{
-			
-		}
-	}
-	ownervar=cr.Id;
-	
-	uint eventId=car.Val5;
-	if(eventId>0)
-	EraseTimeEvent(eventId);
-	car.Val5=0;
-	car.Val6=cr.Id;
-	car.Val9=0;
-	car.Update();
-	((car.Val0)=((car.Val0)|((0x0004)))^((0x0004))); 
-	
-	for(uint i=0;i<3;i++)
-	{
-		Item@bag=car.GetChild(i);
-		if((@bag!=null))
-		{
-			((bag.Flags)=(bag.Flags)|((0x00000001)));
-			MoveItem(bag,0,cr);
-		}
-	}
-	((car.Flags)=(car.Flags)|((0x00000001)));
-	MoveItem(car,0,cr);
-	cr.TransitToGlobal(true);
-	
-	if(IsCaravan(car))
-	cr.PlaySound("mabromaa.acm",true);
-	else if(IsBarge(car))
-	cr.PlaySound("gustwind.acm",true);
-	else if(IsTardis(car))
-	cr.PlaySound("stardis1.acm",true);
-	else
-	cr.PlaySound("carstart.acm",true);
-	Map@map=cr.GetMap();
-	if((@map!=null)){
-		SendCarInfoToPlayersOnMap(map);
-	}
-}
-
-bool IsCaravan(Item@car)
-{
-	return car.Proto.ProtoId==(558)||car.Proto.ProtoId==(559);
-}
-
-bool IsBarge(Item@car)
-{
-	return car.Proto.ProtoId==(9931);
-}
-
-bool IsFiretruck(Item@car)
-{
-	return car.Proto.ProtoId==(9927);
-}
-
-bool IsTardis(Item@car)
-{
-	return car.Proto.ProtoId==(9673);
-}
-
-bool IsCarTrunk(Item@item)
-{
-	return item.GetProtoId()==(801)||
-	item.GetProtoId()==(818)||
-	item.GetProtoId()==(819)||
-	item.GetProtoId()==(817)||
-	item.GetProtoId()==(809)||
-	item.GetProtoId()==(603)||
-	item.GetProtoId()==(604)||
-	item.GetProtoId()==(9747)||
-	item.GetProtoId()==(9926)||
-	item.GetProtoId()==(9928)||
-	item.GetProtoId()==(9930)||
-	item.GetProtoId()==(9933);
-}
-
-int GetCarTrunkComplexity(Item@item)
-{
-	if(item.GetProtoId()==(818))
-	return item.LockerComplexity;
-	if(item.GetProtoId()==(819))
-	return item.LockerComplexity;
-	if(item.GetProtoId()==(801))
-	return item.LockerComplexity;
-	if(item.GetProtoId()==(817))
-	return item.LockerComplexity;
-	if(item.GetProtoId()==(809))
-	return item.LockerComplexity;
-	if(item.GetProtoId()==(9747))
-	return item.LockerComplexity;
-	if(item.GetProtoId()==(9926))
-	return item.LockerComplexity;
-	if(item.GetProtoId()==(9928))
-	return item.LockerComplexity;
-	if(item.GetProtoId()==(9930))
-	return item.LockerComplexity;
-	if(item.GetProtoId()==(9933))
-	return item.LockerComplexity; 
-	
-	if(item.GetProtoId()==(603))
-	return item.LockerComplexity;
-	if(item.GetProtoId()==(604))
-	return item.LockerComplexity;
-	
-	Log("ERR: Improper item - not a car trunk");
-	return 0;
-}
-
-void MoveCars(Map&from,Map&to)
-{
-	array<Item@>cars;
-	uint num=from.GetItems((800),cars);
-	num+=from.GetItems((802),cars);
-	num+=from.GetItems((805),cars);
-	num+=from.GetItems((808),cars);
-	num+=from.GetItems((816),cars);
-	num+=from.GetItems((550),cars);
-	num+=from.GetItems((558),cars);
-	num+=from.GetItems((559),cars);
-	num+=from.GetItems((560),cars);
-	num+=from.GetItems((9746),cars);
-	num+=from.GetItems((9925),cars);
-	num+=from.GetItems((9927),cars);
-	num+=from.GetItems((9929),cars);
-	num+=from.GetItems((9931),cars);
-	num+=from.GetItems((824),cars);
-	num+=from.GetItems((9673),cars);
-	num+=from.GetItems((831),cars);
-	WLog("cars",num+" cars found");
-	for(uint i=0;i<num;i++)
-	{
-		uint16 x=0;
-		uint16 y=0;
-		if(GetEntireFreeHex(to,(243),x,y))
-		{
-			
-			Critter@dummy=from.AddNpc(1,0,0,0,null,null,"");
-			DriveToGlobal(dummy,cars[i],false);
-			dummy.TransitToMap(to.Id,0);
-			DeleteNpc(dummy);
-		}
-		else
-		{;};
-	}
-	if((@from!=null)){
-		SendCarInfoToPlayersOnMap(from);
-	}
-	if((@to!=null)){
-		SendCarInfoToPlayersOnMap(to);
-	}
-	
-} 
-
-bool MoveCarWithTrunk(Item@car,Map&map,uint HexX,uint HexY){
-	if((@car!=null)){
-		Item@trunk=car.GetChild(0);
-		if((@trunk!=null)){ 
-			
-			if(car.GetProtoId()==(802)&&trunk.GetProtoId()==(818)){
-				MoveItem(car,1,map,HexX,HexY);
-				MoveItem(trunk,1,map,HexX+1,HexY-2);
-				return true;
-			}
-			
-			if(car.GetProtoId()==(800)&&trunk.GetProtoId()==(801)){
-				MoveItem(car,1,map,HexX,HexY);
-				MoveItem(trunk,1,map,HexX-2,HexY+3);
-				return true;
-			}
-			
-			if(car.GetProtoId()==(805)&&trunk.GetProtoId()==(819)){
-				MoveItem(car,1,map,HexX,HexY);
-				MoveItem(trunk,1,map,HexX-2,HexY);
-				return true;
-			}
-			
-			if(car.GetProtoId()==(816)&&trunk.GetProtoId()==(817)){
-				MoveItem(car,1,map,HexX,HexY);
-				MoveItem(trunk,1,map,HexX+3,HexY-3);
-				return true;
-			}
-			
-			if(car.GetProtoId()==(831)&&trunk.GetProtoId()==(836)){
-				MoveItem(car,1,map,HexX,HexY);
-				MoveItem(trunk,1,map,HexX+3,HexY-1);
-				return true;
-			}
-			
-			if(car.GetProtoId()==(560)&&trunk.GetProtoId()==(562)){
-				MoveItem(car,1,map,HexX,HexY);
-				MoveItem(trunk,1,map,HexX+1,HexY-1);
-				return true;
-			}
-			
-			if(car.GetProtoId()==(9746)&&trunk.GetProtoId()==(9747)){
-				MoveItem(car,1,map,HexX,HexY);
-				MoveItem(trunk,1,map,HexX+4,HexY);
-				return true;
-			}
-			
-			if(car.GetProtoId()==(9925)&&trunk.GetProtoId()==(9926)){
-				MoveItem(car,1,map,HexX,HexY);
-				MoveItem(trunk,1,map,HexX,HexY-1);
-				return true;
-			}
-			
-			if(car.GetProtoId()==(9927)&&trunk.GetProtoId()==(9928)){
-				MoveItem(car,1,map,HexX,HexY);
-				MoveItem(trunk,1,map,HexX-3,HexY);
-				return true;
-			}
-			
-			if(car.GetProtoId()==(9929)&&trunk.GetProtoId()==(9930)){
-				MoveItem(car,1,map,HexX,HexY);
-				MoveItem(trunk,1,map,HexX-3,HexY);
-				return true;
-			}
-		}else{
-			Log("###### WARNING ####### MoveCarWithTrunk() - Invalid Trunk of Car ("+car.Id+", "+GetCarTypeName(car.GetProtoId())+"), if car was not generated by GM, a script bugs somewhere!");
+	bool hasOwnCarOnMap(){
+		CritterCl@chosen=GetChosen();
+		if(!(@chosen!=null)){
 			return false;
 		}
-	}
-	return false;
-} 
-
-uint GetCartValue(Item&car,uint16 locId)
-{
-	if((car.GetProtoId()==(558)||car.GetProtoId()==(559)))
-	{
-		
-		if(locId==uint16(car.Val3))
-		return 0;
-		
-		uint val=0;
-		
-		return val;
+		for(int i=0,j=cars.length();i<j;i++){
+			if(cars[i].OwnerId==chosen.Id){
+				return true;
+			}
+		}
+		return false;
 	}
 	
-	return 0;
-}
-
-uint e_UnlockLockpicking(array<uint>@values)
-{
-	Item@car=GetItem(values[0]);
-	if(!(@car!=null))
-	{
-		return 0;
-	}
-	
-	((car.Val0)=((car.Val0)|((0x0004)))^((0x0004)));
-	return 0;
-}
-
-bool entrance_city(Location&Loc,array<Critter@>&critters,uint8 entrance)
-{
-	array<Item@>items;
-	
-	for(uint i=0;i<critters.length();++i)
-	{
-		if(critters[i].IsPlayer())
-		{
-			critters[i].GetItemsByType((13),items);
-			if(items.length()>0)
-			break;
+	void SelfDisableBeepAfterDurationExpired(){
+		if(beepActive&&(GetTick()+10>beepActivationTime+(hasOwnCarOnMap()?beepDuration:cricketDuration))){
+			
+			beepActive=false;
 		}
 	}
 	
-	if(items.length()>0)
-	{
-		if(!(@items[0]!=null))
-		return true; 
-		
-		((items[0].Val0)=(items[0].Val0)|((0x0004)));
-		
-		uint eventId=CreateTimeEvent(((__FullSecond)+(((15)*__TimeMultiplier*60))),"car@e_UnlockLockpicking",items[0].Id,true);
-		items[0].Val5=eventId;
-		items[0].Update();
+	void Beep(){
+		if(!beepActive){
+			beepActive=true;
+			beepActivationTime=GetTick();
+			
+			if(hasOwnCarOnMap()){
+				PlaySound("car_beep1.ogg");
+				
+				debugPrintCars();
+			}else{
+				PlaySound("cricket");
+				Message("No sign of your faithful vehicle, only the crickets respond to the frequency.");
+			}
+		}else{
+			if(cars.length()>0){
+				Message("Your car is still beeping.");
+			}else{
+				Message("You still cannot hear your car, but the crickets.");
+			}
+		}
+	} 
+	
+	void refresh(array<int>@data,string@ownerList){
+		array<CCarTrackerCar@>carsTmp;
+		array<string@>@ownerNames=split(ownerList,",");
+		cars=carsTmp;
+		for(int i=0,j=data.length();(i*(10))<j;i++){
+			cars.insertLast(copyFromIntArray(data,ownerNames,i));
+			
+		}
 	}
 	
-	return true;
-}   
+	void debugPrintCars(){
+		CritterCl@chosen=GetChosen();
+		if(!(@chosen!=null))
+		return;
+		for(int i=0,j=cars.length();i<j;i++){
+			if(cars[i].OwnerId==chosen.Id){
+				uint dist=GetDistantion(chosen.HexX,chosen.HexY,cars[i].HexX,cars[i].HexY);
+				uint dir=GetDirection(chosen.HexX,chosen.HexY,cars[i].HexX,cars[i].HexY);
+				string directionStr=GetDirectionName(dir);
+				string distanceStr=dist>40?"far away":dist>20?"a bit further":"up close";
+				
+				Message("You can hear your "+getCarTypeName(cars[i].ProtoId)+" with key "+cars[i].LockerId+" beeping "+distanceStr+" to the "+directionStr);
+			}
+		}
+	}
+	
+	void Draw(){
+		if(!enabled&&!beepActive){
+			
+			return;
+		}
+		
+		if(GUI_GetActiveMainScreen()!=(5)){
+			
+			return;
+		}
+		
+		CritterCl@chosen=GetChosen();
+		if(!(@chosen!=null)){
+			
+			return;
+		}
+		
+		for(int i=0,j=cars.length();i<j;i++){
+			int carX=-1,carY=-1,carXAdjust=-1,carYAdjust=90;
+			uint16 bonus=0;
+			ItemCl@item=chosen.GetItem(0,(1));
+			if((@item!=null)&&item.GetProtoId()==(827))
+			bonus=6;
+			uint playerSight=chosen.IsLife()?__LookNormal+chosen.Stat[(1)]*3+chosen.Param[(315)]*6+bonus:__LookMinimum;
+			uint carDistance=GetDistantion(chosen.HexX,chosen.HexY,cars[i].HexX,cars[i].HexY);
+			
+			if(GetHexPos(cars[i].HexX,cars[i].HexY,carX,carY)){
+				if(carX<__ScreenWidth&&carY<__ScreenHeight&&carX>=0&&carY>=0&&playerSight>=carDistance){
+					string ownerName=cars[i].OwnerName;
+					AdjustCArTrackerTextCoords(cars[i].ProtoId,carX,carY);
+					if(!beepActive){
+						string carNumber=""+cars[i].LockerId;
+						string fuelAndDamage=""+(cars[i].Charge/100)+"/"+(cars[i].MaxCharge/100)+
+						" "+(cars[i].Deterioration*100/cars[i].MaxDeterioration)+"%";
+						headerColor=cars[i].OwnerId==chosen.Id?((uint((0xFF<<24)|(((0)&0xFF)<<16)|(((150)&0xFF)<<8)|((0)&0xFF)))):((uint((0xFF<<24)|(((150)&0xFF)<<16)|(((150)&0xFF)<<8)|((0)&0xFF))));
+						int w=0,h=0,l=0;
+						carY-=carYAdjust/__SpritesZoom;
+						
+						if(ownerName.length()>0){
+							GetTextInfo(ownerName,0,0,(5),(0x0200),w,h,l);
+							carXAdjust=carX-w/2;
+							carY=DrawClientText(ownerName,carXAdjust,carY,h,headerColor)+(2);
+						}
+						if(cars[i].LockerId!=0){
+							GetTextInfo(carNumber,0,0,(5),(0x0200),w,h,l);
+							carXAdjust=carX-w/2;
+							carY=DrawClientText(carNumber,carXAdjust,carY,h,headerColor)+(2);
+						}
+						GetTextInfo(fuelAndDamage,0,0,(5),(0x0200),w,h,l);
+						carXAdjust=carX-w/2;
+						carY=DrawClientText(fuelAndDamage,carXAdjust,carY,h,headerColor);
+					}else if(chosen.Id==cars[i].OwnerId){
+						string carNumber=""+cars[i].LockerId;
+						string fuelAndDamage=""+(cars[i].Charge/100)+"/"+(cars[i].MaxCharge/100)+
+						" "+(cars[i].Deterioration*100/cars[i].MaxDeterioration)+"%";
+						headerColor=cars[i].OwnerId==chosen.Id?((uint((0xFF<<24)|(((0)&0xFF)<<16)|(((150)&0xFF)<<8)|((0)&0xFF)))):((uint((0xFF<<24)|(((150)&0xFF)<<16)|(((150)&0xFF)<<8)|((0)&0xFF))));
+						int w=0,h=0,l=0;
+						carY-=carYAdjust/__SpritesZoom;
+						
+						GetTextInfo(ownerName,0,0,(5),(0x0200),w,h,l);
+						carXAdjust=carX-w/2;
+						carY=DrawBlinkingClientText(ownerName,carXAdjust,carY,h,headerColor,GetTick())+(2);
+						
+						if(cars[i].LockerId!=0){
+							GetTextInfo(carNumber,0,0,(5),(0x0200),w,h,l);
+							carXAdjust=carX-w/2;
+							carY=DrawBlinkingClientText(carNumber,carXAdjust,carY,h,headerColor,GetTick())+(2);
+						}
+						
+						GetTextInfo(fuelAndDamage,0,0,(5),(0x0200),w,h,l);
+						carXAdjust=carX-w/2;
+						
+						carY=DrawBlinkingClientText(fuelAndDamage,carXAdjust,carY,h,headerColor,GetTick())+(2);
+					}
+				}else{ 
+					
+				}
+			}else{ 
+				
+			}
+		}
+		SelfDisableBeepAfterDurationExpired();
+	}
+	
+	int DrawClientText(string&text,int x,int y,int y_fix,uint color)
+	{
+		DrawText(text,x,y,__ScreenWidth,(y_fix>10?y_fix:10),color,(5),(0x0200));
+		
+		if(y_fix>0)
+		return(y+y_fix);
+		else if(y_fix<0)
+		return(y-y_fix);
+		else
+		return(y);
+	} 
+	
+	int DrawBlinkingClientText(string&text,int x,int y,int y_fix,uint color,uint time){
+		uint relativeTime=(time-beepActivationTime)%beepingBlinkInterval;
+		float percentage=(0.0f+relativeTime)/(0.0f+beepingBlinkInterval);
+		percentage=percentage>0.5?1:0;
+		return DrawClientText(text,x,y,y_fix,GetAlphaOfColors(color,percentage));
+	}
+	
+	uint GetAlphaOfColors(uint color,float ratio){
+		uint8 headerAlpha=color>>24;
+		return((((color)|0xFF000000)^0xFF000000)|(uint(headerAlpha*ratio)&0xFF)<<24);
+	} 
+	
+};
+
+string getCarTypeName(uint protoId){
+	if(protoId==(800)){
+		return"Hummer";
+	}else if(protoId==(802)){
+		return"Buggy";
+	}else if(protoId==(805)){
+		return"Scout";
+	}else if(protoId==(808)){
+		return"Vertibird";
+	}else if(protoId==(816)){
+		return"Highwayman";
+	}else if(protoId==(550)){
+		return"Rusty Highwayman";
+	}else if(protoId==(558)){
+		return"White Caravan";
+	}else if(protoId==(559)){
+		return"Orange Carvan";
+	}else if(protoId==(560)){
+		return"Cockroach";
+	}else if(protoId==(563)){
+		return"Wrecked Car";
+	}else if(protoId==(824)){
+		return"Boat";
+	}else if(protoId==(831)){
+		return"Corvega";
+	}else if(protoId==(9673)){
+		return"Tardis";
+	}else if(protoId==(9746)){
+		return"Police Car";
+	}else if(protoId==(9925)){
+		return"Motorcycle";
+	}else if(protoId==(9927)){
+		return"Firetruck";
+	}else if(protoId==(9929)){
+		return"Truck";
+	}else if(protoId==(9931)){
+		return"Barge";
+	}else{
+		return"N/A";
+	}
+}
+
+void AdjustCArTrackerTextCoords(uint protoId,int&x,int&y){
+	if(protoId==(800)){
+	}else if(protoId==(802)){
+	}else if(protoId==(805)){
+	}else if(protoId==(808)){
+	}else if(protoId==(816)){
+	}else if(protoId==(550)){
+	}else if(protoId==(558)){
+	}else if(protoId==(559)){
+	}else if(protoId==(560)){
+	}else if(protoId==(563)){
+	}else if(protoId==(824)){
+	}else if(protoId==(831)){
+	}else if(protoId==(9673)){
+	}else if(protoId==(9746)){
+	}else if(protoId==(9925)){
+	}else if(protoId==(9927)){
+	}else if(protoId==(9929)){
+	}else if(protoId==(9931)){
+	}
+}  
 

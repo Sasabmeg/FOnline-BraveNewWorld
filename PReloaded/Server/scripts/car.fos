@@ -413,8 +413,23 @@ bool UseSkillOnCar(Critter& cr, Item& car, int skill)   // Export
 					CarMessage(cr, car, STR_CAR_FUEL_EMPTY);
 				else if (car.Val4 == 1)
 					cr.Say(SAY_NETMSG, "You can't leave yet.");
-                else
+                else {
                     DriveToGlobal(cr, car, true);
+                    if (car.Val6 != int(cr.Id)) {
+                        Critter@ prevOwner = GetCritter(car.Val6);
+                        car.Val6 = cr.Id;   //  set this here as well as later, because this is used to check car owner for CarTracker at client
+                        car.Update();
+                        if (valid(prevOwner)) {
+                            SendCarInfoToPlayer(prevOwner);
+                        } else {
+                            //Log("Drive to Global - previous car owned invalid.");
+                        }
+                    }
+                    Map@ map = cr.GetMap();
+                    if (valid(map)) {
+                        SendCarInfoToPlayersOnMap(map);
+                    }
+                }
             }
         }
     }
@@ -517,22 +532,12 @@ void DriveToGlobal(Critter& cr, Item& car, bool requestGroup)
 {
     // become owner
     GameVar@ ownervar = GetLocalVar(LIVAR_car_owner_id, car.Id);
-    if (ownervar != cr.Id) {
-        Critter@ prevOwner = GetCritter(ownervar.GetValue());
-        if (valid(prevOwner)) {
-            car.Val6 = cr.Id;   //  set this here as well as later, because this is used to check car owner for CarTracker at client
-            SendCarInfoToPlayer(prevOwner);
-        } else {
-            //Log("Drive to Global - previous car owned invalid.");
-        }
-    }
     ownervar = cr.Id;
 
     uint eventId = car.Val5;
     if (eventId > 0)
         EraseTimeEvent(eventId);
     car.Val5 = 0;
-    car.Val6 = cr.Id;   //  store owner here for easier access
     car.Val9 = 0;       //  reset parking lot timer
     car.Update();
     UNSETFLAG(car.Val0, CAR_LOCKPICK_TIMEOUT);
@@ -559,10 +564,6 @@ void DriveToGlobal(Critter& cr, Item& car, bool requestGroup)
         cr.PlaySound("stardis1.acm", true);
     else
         cr.PlaySound("carstart.acm", true);
-    Map@ map = cr.GetMap();
-    if (valid(map)) {
-        SendCarInfoToPlayersOnMap(map);
-    }
 }
 
 bool IsCaravan(Item@ car)
@@ -663,6 +664,7 @@ void MoveCars(Map& from, Map& to)   // export
         {
             // Workaround, because bag is not easily movable.
             Critter@ dummy = from.AddNpc(1, 0, 0, 0, null, null, "");
+            Log("Drive to global dummy ID = " + dummy.Id);
             DriveToGlobal(dummy, cars[i], false);
             dummy.TransitToMap(to.Id, 0);
             DeleteNpc(dummy);
@@ -743,6 +745,18 @@ bool MoveCarWithTrunk(Item@ car, Map& map, uint HexX, uint HexY) {
             if (car.GetProtoId() == PID_TRUCK && trunk.GetProtoId() == PID_TRUCK_BAG) {
                 MoveItem(car, 1, map, HexX, HexY);
                 MoveItem(trunk, 1, map, HexX - 3, HexY);
+                return true;
+            }
+            //  Orange Carvan (175, 186) Trunk (174, 189)
+            if (car.GetProtoId() == PID_CARAVAN_ORANGE && trunk.GetProtoId() == PID_CARAVAN_ORANGE_BAG) {
+                MoveItem(car, 1, map, HexX, HexY);
+                MoveItem(trunk, 1, map, HexX - 1, HexY + 3);
+                return true;
+            }
+            //  White Caravan (159, 203) Trunk (158, 206)
+            if (car.GetProtoId() == PID_CARAVAN_WHITE && trunk.GetProtoId() == PID_CARAVAN_WHITE_BAG) {
+                MoveItem(car, 1, map, HexX, HexY);
+                MoveItem(trunk, 1, map, HexX - 1, HexY + 3);
                 return true;
             }
         } else {
