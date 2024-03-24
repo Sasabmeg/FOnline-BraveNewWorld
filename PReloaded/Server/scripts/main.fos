@@ -142,6 +142,8 @@ import string IntToIp(int d) from "utils";
 import string GetTimeString(uint fullsecond) from "time";
 
 import void SendCarInfoToPlayer(Critter& player) from "unsafe_client";
+import void SendCarInfoToPlayersOnMap(Map& map) from "unsafe_client";
+import void _PlayerEnterParkinglot(Map& map, Critter& player) from "map_hub";
 
 dictionary    ItemPids;
 dictionary    VarIds;
@@ -3017,9 +3019,9 @@ void map_critter_in(Map& map, Critter& cr)
     }
 
     //  refresh car info for player entering the map
-    if(cr.IsPlayer()) {
-        SendCarInfoToPlayer(cr);
-        /*
+    if (cr.IsPlayer()) {
+        //SendCarInfoToPlayer(cr);
+
         //  send car info
         array<Critter@> critters;
         uint num = map.GetCritters(0, FIND_ALL | FIND_ONLY_PLAYERS, critters);
@@ -3030,7 +3032,12 @@ void map_critter_in(Map& map, Critter& cr)
             }
         }
         //Log("Players on map = " + critters.length());
-        */
+
+    }
+
+    //  parking lot function call
+    if (cr.IsPlayer() && map.GetProtoId() == MAP_HubParkingLot) {
+        _PlayerEnterParkinglot(map, cr);
     }
 }
 
@@ -3138,6 +3145,14 @@ void map_critter_out(Map& map, Critter& cr)
 
         }
     }
+
+    if(cr.IsPlayer())
+    {
+        if (valid(map)) {
+            SendCarInfoToPlayersOnMap(map);
+        }
+    }
+
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -3832,6 +3847,13 @@ bool player_login(uint ip, string& name, uint id, uint& textMsg, uint& strNum)
     uint16 year=0, month=0, day=0, dayofweek=0, hour=0, minute=0, second=0;
     GetGameTime( __FullSecond, year, month, day, dayofweek, hour, minute, second );
     FLog(LOG_LOGIN, GetTimeString(__FullSecond) + " " + name + " " +  IntToIp(ip));
+
+    if (valid(player)) {
+        if (player.IsPlayer()) {
+            SendCarInfoToPlayer(player);
+        }
+    }
+
     return true;
 }
 

@@ -22,6 +22,7 @@
 #include "entire.fos"
 #include "car_h.fos"
 
+import bool FindNearestFreeHex(Map& map, uint16& x, uint16& y, uint radius) from "utils";
 import void AddScore(Critter@ cr, uint score, uint points) from "utils";
 import bool IsKeyAviable(Critter& cr, uint lockerId) from "lockers";
 import void InjureCritter(Critter& cr, uint dmg, uint dmgType, uint8 dir, uint attackerId) from "combat";
@@ -530,7 +531,8 @@ bool UseSkillOnCar(Critter& cr, Item& car, int skill)   // Export
 
 void DriveToGlobal(Critter& cr, Item& car, bool requestGroup)
 {
-    // become owner
+    //  maybe check here if critter is player, else they cannot become car owner?
+    //  become owner
     GameVar@ ownervar = GetLocalVar(LIVAR_car_owner_id, car.Id);
     ownervar = cr.Id;
 
@@ -767,6 +769,32 @@ bool MoveCarWithTrunk(Item@ car, Map& map, uint HexX, uint HexY) {
     return false;
 }
 
+//  move player near car in parking lots
+bool MovePlayerToFreeHexNearLocation(Map& map, Critter& player, uint16 x, uint16 y, uint8 dir) {
+    if (FindNearestFreeHex(map, uint16(x), uint16(y), uint(3))) {
+        if (player.TransitToHex(x, y, dir)) {
+            Log("Player moved.");
+            return true;
+        } else {
+            if (player.TransitToMap(map.Id, x, y, dir)) {
+                Log("Player moved.");
+                return true;
+            } else {
+                uint[] values = { map.Id, player.Id, x, y, dir };
+                CreateTimeEvent(AFTER(REAL_MS(500)), "cte_TransitToPayedParkingSpotNearCar", values, false);
+                Log("Could not move player, making timed event for it.");
+            }
+        }
+    }
+
+    return false;
+}
+
+uint cte_TransitToPayedParkingSpotNearCar(array<uint>@ values) {
+    Critter@ player = GetCritter(values[1]);
+    player.TransitToHex(values[2], values[3], values[4]);
+    return 0;
+}
 
 uint GetCartValue(Item& car, uint16 locId)
 {
