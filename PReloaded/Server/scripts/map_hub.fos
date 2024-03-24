@@ -26,9 +26,10 @@
 #define ENTIRE_PARKINGLOT_SW            (220)
 
 import void StartFirstTentQuest(Critter& player) from "quest_first_tent";
+import bool d_QuestTimeoutNotReady(Critter& player, Critter@ npc) from "dialog";
+import bool MovePlayerToFreeHexNearLocation(Map& map, Critter& player, uint16 x, uint16 y, uint8 dir) from "car";
 import bool MoveCarWithTrunk(Item@ car, Map& map, uint HexX, uint HexY) from "car";
 import void SendCarInfoToPlayersOnMap(Map& map) from "unsafe_client";
-import bool d_QuestTimeoutNotReady(Critter& player, Critter@ npc) from "dialog";
 
 void map_init(Map& map, bool firstTime)
 {
@@ -134,12 +135,12 @@ void _LoopParkingLot(Map& map) {
                             Item@ tmpCarSpace = map.GetCar(carParkSpotNW[ii].HexX, carParkSpotNW[ii].HexY);
                             if (!valid(tmpCarSpace)) {
                                 //  move car here
-                                Item@ trunk = car.GetChild(0);
-                                if (valid(trunk)) {
-                                    //  WHEN YOU ADD NEW CARS TO GAME, use this log to check the hex distance from car and trunk,
-                                    //  use that info in car.fos -> MoveCarWithTrunk(..)
-                                    //  Log("_LoopParkingLot - Found TRUNK at (" + trunk.HexX + ", " + trunk.HexY + ") of car type = " + GetCarTypeName(car.GetProtoId()) + " at (" + car.HexX + ", " + car.HexY + ")");
-                                }
+                                //  WHEN YOU ADD NEW CARS TO GAME, use this log to check the hex distance from car and trunk,
+                                //  use that info in car.fos -> MoveCarWithTrunk(..)
+                                //Item@ trunk = car.GetChild(0);
+                                //if (valid(trunk)) {
+                                    //Log("_LoopParkingLot - Found TRUNK at (" + trunk.HexX + ", " + trunk.HexY + ") of car type = " + GetCarTypeName(car.GetProtoId()) + " at (" + car.HexX + ", " + car.HexY + ")");
+                                //}
                                 if (MoveCarWithTrunk(car, map, carParkSpotNW[ii].HexX, carParkSpotNW[ii].HexY)) {
                                     SendCarInfoToPlayersOnMap(map);
                                 } else {
@@ -155,13 +156,12 @@ void _LoopParkingLot(Map& map) {
                             Item@ tmpCarSpace = map.GetCar(carParkSpotSW[ii].HexX, carParkSpotSW[ii].HexY);
                             if (!valid(tmpCarSpace)) {
                                 //  move car here
-                                Item@ trunk = car.GetChild(0);
-                                /*
-                                if (valid(trunk)) {
-                                    Log("_LoopParkingLot - Found TRUNK at (" + trunk.HexX + ", " + trunk.HexY +
-                                        ") of car type = " + GetCarTypeName(car.GetProtoId()) + " at (" + car.HexX + ", " + car.HexY + ")");
-                                }
-                                */
+                                //  WHEN YOU ADD NEW CARS TO GAME, use this log to check the hex distance from car and trunk,
+                                //  use that info in car.fos -> MoveCarWithTrunk(..)
+                                //Item@ trunk = car.GetChild(0);
+                                //if (valid(trunk)) {
+                                    //Log("_LoopParkingLot - Found TRUNK at (" + trunk.HexX + ", " + trunk.HexY + ") of car type = " + GetCarTypeName(car.GetProtoId()) + " at (" + car.HexX + ", " + car.HexY + ")");
+                                //}
                                 if (MoveCarWithTrunk(car, map, carParkSpotSW[ii].HexX, carParkSpotSW[ii].HexY)) {
                                     SendCarInfoToPlayersOnMap(map);
                                 } else {
@@ -176,6 +176,59 @@ void _LoopParkingLot(Map& map) {
                 Log("_LoopParkingLot tick = " + car.Val9 + " - New car on (" + entires[i].HexX + ", " + entires[i].HexY + ") type = " + GetCarTypeName(car.GetProtoId()) + " , owner = " + ownerName);
             }
             //car.Val9 = 0;
+        }
+    }
+}
+
+//  Exported main.fos
+void _PlayerEnterParkinglot(Map& map, Critter& player) {
+    //  need to move SW oriented cars immediately
+    array<Entire> entires;
+    ParseEntires(map, entires, ENTIRE_CAR);
+    for (int i = 0, j = entires.length(); i < j; i++) {
+        Item@ car = map.GetCar(entires[i].HexX, entires[i].HexY);
+        if (valid(car)) {
+            string ownerName = "0";
+            if (car.Val6 > 0) {
+                ownerName = GetPlayerName(car.Val6);
+            }
+            //  new car on parking lot
+            if (car.Val9 <= 0) {
+                car.Val9 = GetTick();
+            }
+            //  car has same owner as player and entered recently (idk how else to track if player entered map with car)
+            if (car.Val6 == int(player.Id) && car.Val9 + 1000 > int(GetTick())) {
+                Log("_LoopParkingLot - Player entered with car on (" + entires[i].HexX + ", " + entires[i].HexY + ") type = " + GetCarTypeName(car.GetProtoId()) + " , owner = " + ownerName);
+                if (GetCarTypeDirection(car.GetProtoId()) == CAR_TYPE_DIR_SW) {
+                    array<Entire> carParkSpotSW;
+                    ParseEntires(map, carParkSpotSW, ENTIRE_PARKINGLOT_SW);
+                    for(int ii = 0, jj = carParkSpotSW.length(); ii < jj; ii++) {
+                        Item@ tmpCarSpace = map.GetCar(carParkSpotSW[ii].HexX, carParkSpotSW[ii].HexY);
+                        if (!valid(tmpCarSpace)) {
+                            //  move car here
+                            //  WHEN YOU ADD NEW CARS TO GAME, use this log to check the hex distance from car and trunk,
+                            //  use that info in car.fos -> MoveCarWithTrunk(..)
+                            //Item@ trunk = car.GetChild(0);
+                            //if (valid(trunk)) {
+                                //Log("_LoopParkingLot - Found TRUNK at (" + trunk.HexX + ", " + trunk.HexY + ") of car type = " + GetCarTypeName(car.GetProtoId()) + " at (" + car.HexX + ", " + car.HexY + ")");
+                            //}
+                            if (MoveCarWithTrunk(car, map, carParkSpotSW[ii].HexX, carParkSpotSW[ii].HexY)) {
+                                SendCarInfoToPlayersOnMap(map);
+                                if (MovePlayerToFreeHexNearLocation(map, player, carParkSpotSW[ii].HexX, carParkSpotSW[ii].HexY, 2)) {
+                                    player.Say(SAY_NETMSG, "Moved to payed parking zone.");
+                                    break;
+                                } else {
+                                    player.Say(SAY_NETMSG, "Your car has been moved inside the pay parking zone.");
+                                    break;
+                                }
+                            } else {
+                                Log("MoveCarWithTrunk failed: Type = " + GetCarTypeName(car.GetProtoId()) + " , carId = " + car.Id);
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
 }

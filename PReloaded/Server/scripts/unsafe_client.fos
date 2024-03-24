@@ -1779,13 +1779,13 @@ void SendCarInfoToPlayer(Critter& player) {
                         ownerName = owner.Name;
                     } else {
                         if (valid(car)) {
-                            Log("valid(car)");
+                            //Log("valid(car)");
                             //Log("car = " + car);
-                            Log("car.Val6 = " + car.Val6);
+                            //Log("car.Val6 = " + car.Val6);
                             ownerName = GetPlayerName(car.Val6);
-                            Log("ownerName = ?");
+                            //Log("ownerName = ?");
                         } else {
-                            Log("invalid(car)");
+                            //Log("invalid(car)");
                             ownerName = "Unknown";
                         }
                     }
@@ -1819,7 +1819,7 @@ void SendCarInfoToPlayersOnMap(Map& map) {
     for (uint i = 0, j = critters.length(); i < j; i++) {
         if (critters[i].IsPlayer()) {
             SendCarInfoToPlayer(critters[i]);
-            //critters[i].Say(SAY_NETMSG, "CRITTERN MAP IN");
+            //critters[i].Say(SAY_NETMSG, "SENT CAR INFO TO PLAYER");
         }
     }
     //Log("Players on map = " + critters.length());
