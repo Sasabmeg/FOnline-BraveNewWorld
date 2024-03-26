@@ -129,6 +129,9 @@ class CContextMenu : Control
     }
 };
 
+#define AUTOWALL_TEXT_POS_X                      (390)
+#define AUTOWALL_TEXT_POS_Y                      (0)
+
 #define SECT_WALL_H1                    (5001) // long piece
 #define SECT_WALL_H2                    (5003) // short piece
 #define SECT_WALL_V1                    (5018)
@@ -202,7 +205,7 @@ class CAutowall : CGuiManager
 
                 if(ABS(int(hX) - int(autowallX)) > 3 && ABS(int(hY) - int(autowallY)) > 3)
                 {
-                    DrawText("Room placement", 10, 10, 768, 80, COLOR_GREEN, FONT_TYPE_FAT, 0);
+                    DrawText("Room placement", AUTOWALL_TEXT_POS_X + 10, AUTOWALL_TEXT_POS_Y + 10, 768, 80, COLOR_GREEN, FONT_TYPE_FAT, 0);
                     autowallUsed = true;
                     autowallRoom = true;
                     bool ok = true;
@@ -269,14 +272,14 @@ class CAutowall : CGuiManager
                                     autowallData[3] >>= 1;
                                     autowallData[4] += dy;
                                     autowallData[4] >>= 1;
-                                    DrawText(((hY < autowallY) ? "South" : "North") + " wall placement", 10, 10, 768, 80, COLOR_GREEN, FONT_TYPE_FAT, 0);
+                                    DrawText(((hY < autowallY) ? "South" : "North") + " wall placement", AUTOWALL_TEXT_POS_X + 10, AUTOWALL_TEXT_POS_Y + 10, 768, 80, COLOR_GREEN, FONT_TYPE_FAT, 0);
                                     DrawPrimitive(DRAW_PRIMITIVE_LINELIST, autowallData);
                                     autowallHoriz = true;
                                 }
                             }
                             else
                             {
-                                DrawText(((hY < autowallY) ? "South" : "North") + " wall placement", 10, 10, 768, 80, COLOR_GREEN, FONT_TYPE_FAT, 0);
+                                DrawText(((hY < autowallY) ? "South" : "North") + " wall placement", AUTOWALL_TEXT_POS_X + 10, AUTOWALL_TEXT_POS_Y + 10, 768, 80, COLOR_GREEN, FONT_TYPE_FAT, 0);
                                 DrawPrimitive(DRAW_PRIMITIVE_LINELIST, autowallData);
                                 autowallHoriz = true;
                             }
@@ -284,7 +287,7 @@ class CAutowall : CGuiManager
                     }
                     else if(GetHexPos(autowallX, autowallY, autowallData[0], autowallData[1]) && GetHexPos(autowallX, hY, autowallData[3], autowallData[4]))
                     {
-                        DrawText(((hX < autowallX) ? "West" : "East") + " wall placement", 10, 10, 768, 80, COLOR_GREEN, FONT_TYPE_FAT, 0);
+                        DrawText(((hX < autowallX) ? "West" : "East") + " wall placement", AUTOWALL_TEXT_POS_X + 10, AUTOWALL_TEXT_POS_Y + 10, 768, 80, COLOR_GREEN, FONT_TYPE_FAT, 0);
                         DrawPrimitive(DRAW_PRIMITIVE_LINELIST, autowallData);
                         autowallHoriz = false;
                     }
