@@ -1,0 +1,160 @@
+//
+// FOClassic: Brave New World
+// Sasabmeg (Slowhand)
+//
+// mapper_entitySwapper.fos
+//
+
+// Entity Swapper Plugin - allows to swap selected entities thematically, for example: Rust Railing Wall -> Silver Painted Wall
+
+
+#ifndef __MAPPER_INPUT_VISUALIZER__
+#define __MAPPER_INPUT_VISUALIZER__
+
+#include "_mapper_macros.fos"
+#include "mapper_plugin_h.fos"
+#include "mapper_utils_h.fos"
+#include "strtoint_h.fos"
+
+
+#define IV_TEXT_POS_X                       (390)
+#define IV_TEXT_POS_Y                       (0)
+
+
+class CInputVisualizer {
+
+    string statusText = "";
+    string controlText = "";
+    string letterText = "";
+    uint color = 0;
+
+
+
+    bool controlDown = false;
+    bool buttonPressed;
+    bool lClick;
+
+    CInputVisualizer() {
+        controlDown = false;
+        buttonPressed = false;
+        lClick = false;
+    }
+
+    void Draw() {
+        DrawText((controlText.length() > 0 ? (controlText + " + " + letterText) : (letterText)), IV_TEXT_POS_X + 10, IV_TEXT_POS_Y + 10, 768, 80, COLOR_GREEN, FONT_TYPE_FAT, FONT_FLAG_BORDERED);
+    }
+
+    bool MouseDown(int click) {
+        if (click == MOUSE_CLICK_WHEEL_DOWN) {
+                letterText = "MWHEEL DOWN";
+        }
+        if (click == MOUSE_CLICK_WHEEL_UP) {
+                letterText = "MWHEEL UP";
+        }
+        return false;
+    }
+
+    bool MouseUp(int click) {
+        return false;
+    }
+
+    void MouseMove(int x, int y) {
+    }
+
+    bool KeyDown(uint8 key) {
+        return false;
+    }
+
+    bool KeyUp(uint8 key) {
+        return false;
+    }
+
+    void InputLost() {
+        controlDown = false;
+        buttonPressed = false;
+        lClick = false;
+    }
+
+    //  return false to let other plugins parse the command, or true if this command was for Input Visualizer only
+    bool Message(string& message) {
+        if (message == "iv" || message == "vis") {
+            message = "Input Visualizer commands: on, off, color <r> <g> <b>.";
+            return true;
+        } else if (substring(message, 0, 3) == "iv " || substring(message, 0, 4) == "vis ") {
+            array<string@>@ args = split(message, " ");
+            if (valid(args)) {
+            } else {
+                message = "Input Visualizer Error: Could not parse command arguments.";
+                return true;
+            }
+            if (args[1] == "on") {
+                //
+                return true;
+            }
+            if (args[1] == "off") {
+                //
+                return true;
+            }
+            if (args[1] == "color") {
+                //
+                if (args.length() == 3) {
+                    color = COLOR_ARGB(255, 130, 30, 30);
+                    return true;
+                } else if (args.length() == 5) {
+                    color = COLOR_ARGB(255, 30, 30, 130);
+                    return true;
+                } else {
+                    message = "Input Visualizer Error: Incorrect arguments after 'color', either specify one more argument as RRGGBB hexadecimal value or 3 arguments in decimal format <r> <g> <b>";
+                    return true;
+                }
+            }
+
+        }
+        return false;
+    }
+};
+
+
+class CInputVisualizerPlugin : IMapperPlugin {
+    CInputVisualizer inputVisualizer;
+    CInputVisualizerPlugin() {
+        inputVisualizer = CInputVisualizer();
+    }
+
+    void Render(uint layer) {
+        if (layer == 1) {
+            MapperMap@ map = GetActiveMap();
+            if (!valid(map)) {
+                return;
+            }
+        }
+        if(layer == 2) {
+            inputVisualizer.Draw();
+        }
+    }
+
+    void Draw() {
+        inputVisualizer.Draw();
+    }
+
+    string GetName()                            { return "Input Visualizer"; }
+    bool MouseDown(int click)                   { return inputVisualizer.MouseDown(click); }
+    bool MouseUp(int click)                     { return inputVisualizer.MouseUp(click); }
+    void MouseMove(int x, int y)                { inputVisualizer.MouseMove(x, y); }
+    bool KeyDown(uint8 key,string& keyText)     { return inputVisualizer.KeyDown(key); }
+    bool KeyUp(uint8 key,string& keyText)       { return inputVisualizer.KeyUp(key); }
+    void InputLost()                            { inputVisualizer.InputLost(); }
+    void Loop()                                 {}
+    bool Message(string& msg)                   { return inputVisualizer.Message(msg); }
+    void RenderMap()                            {}
+};
+
+void RegisterInputVisualizer() {
+    IMapperPlugin@ inputVisualizerPlugin = CInputVisualizerPlugin();
+    //  add file init here?
+    if (Plugins_Register(inputVisualizerPlugin)) {
+        Message("Input Visualizer plugin registered. Keyboard events should be displayed on the sides.  ");
+    }
+}
+
+#endif // __MAPPER_INPUT_VISUALIZER__ //
