@@ -232,7 +232,7 @@ void RegisterGrid()
     IMapperPlugin@ grid = CGrid();
     if(Plugins_Register(grid))
     {
-        Message("Grid plugin (WIP) registered. Press G to switch grid mode.");
+        Message("Grid plugin (WIP) registered. Press Ctrl + G to switch grid mode.");
     }
 }
 #endif // __MAPPER_GRID__ //
