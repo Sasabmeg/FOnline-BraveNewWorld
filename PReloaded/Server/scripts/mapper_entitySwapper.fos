@@ -1,0 +1,243 @@
+//
+// FOClassic: Brave New World
+// Sasabmeg (Slowhand)
+//
+// mapper_entitySwapper.fos
+//
+
+// Entity Swapper Plugin - allows to swap selected entities thematically, for example: Rust Railing Wall -> Silver Painted Wall
+
+
+#ifndef __MAPPER_ENTITY_SWAPPER__
+#define __MAPPER_ENTITY_SWAPPER__
+
+#include "_mapper_macros.fos"
+#include "mapper_plugin_h.fos"
+#include "mapper_utils_h.fos"
+#include "strtoint_h.fos"
+
+
+#define ES_TEXT_POS_X                       (390)
+#define ES_TEXT_POS_Y                       (0)
+
+
+class CEntitySwapper {
+    bool controlDown = false;
+    bool shiftDown = false;
+    bool altDown = false;
+
+    string messageText = "";
+    int xAdjustMessage = 150;
+    int yAdjustMessage = 10;
+    int messageWidth = 500;
+    int messageHeight = 500;
+    bool messageEnabled = true;
+    uint messageActivationTime = 0;
+    uint messageShowDuration = 15000;
+    uint messageColor = COLOR_GREEN;
+
+
+    array<array<uint>> wallIds = {
+        {5161, 5162, 5163, 5164, 5165, 5166, 5167, 5168, 5169, 5170, 5171, 5172, 5173},
+        {6669, 6670, 6671, 6672, 6673, 6674, 6675, 6676, 6677, 6678, 6679, 6680, 6681}
+    };
+
+    array<string> wallIdMessages = {"Fence: Silver Steel Railing", "Fence: Rusty Steel Railing"};
+
+    CEntitySwapper() {
+        controlDown = false;
+        shiftDown = false;
+        altDown = false;
+        messageEnabled = true;
+        xAdjustMessage = __ScreenWidth - (__ScreenWidth * 0.8);
+        messageWidth = __ScreenWidth * 0.6;
+        messageHeight = __ScreenHeight * 0.5;
+    }
+
+    void Draw() {
+        //  Messages
+        if (messageEnabled) {
+            if (GetTick() < messageActivationTime + messageShowDuration) {
+                DrawText(messageText, xAdjustMessage, yAdjustMessage, messageWidth, messageHeight, messageColor, FONT_TYPE_FAT, FONT_FLAG_BORDERED | FONT_FLAG_CENTERX);
+            }
+        }
+    }
+
+    bool MouseDown(int click) {
+        if (click == MOUSE_CLICK_WHEEL_DOWN) {
+            if (controlDown) {
+                messageActivationTime = GetTick();
+                shiftSelected(true);
+                return true;
+            }
+        }
+        if (click == MOUSE_CLICK_WHEEL_UP) {
+            if (controlDown) {
+                messageActivationTime = GetTick();
+                shiftSelected(false);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    bool MouseUp(int click) {
+        return false;
+    }
+
+    void MouseMove(int x, int y) {
+    }
+
+    bool KeyDown(uint8 key) {
+        if (key == DIK_LCONTROL || key == DIK_RCONTROL) {
+            controlDown = true;
+        } else if (key == DIK_LSHIFT || key == DIK_RSHIFT) {
+            shiftDown = true;
+        } else if (key == DIK_LMENU || key == DIK_RMENU) {
+            altDown = true;
+        } else {
+            //  handle hotkeys here
+        }
+        return false;
+    }
+
+    bool KeyUp(uint8 key) {
+        if (key == DIK_LCONTROL || key == DIK_RCONTROL) {
+            controlDown = false;
+        } else if (key == DIK_LSHIFT || key == DIK_RSHIFT) {
+            shiftDown = false;
+        } else if (key == DIK_LMENU || key == DIK_RMENU) {
+            altDown = false;
+        } else {
+            //  handle hotkeys here
+        }
+        return false;
+    }
+
+    void InputLost() {
+        controlDown = false;
+        shiftDown = false;
+        altDown = false;
+    }
+
+    void shiftSelected(bool directionDown) {
+        messageText = "Wall IDs: \n";
+        for (uint i = 0; i < wallIds.length(); i++) {
+            for (uint j = 0; j < wallIds[i].length(); j++) {
+                messageText += "" + wallIds[i][j] + ", ";
+            }
+            messageText += "\n";
+        }
+        MapperMap@ map = GetActiveMap();
+        array<MapperObject@> objects;
+        array<MapperObject@> lastSelectedObjects;
+        Log("lastSelectedObjects count = " + lastSelectedObjects.length());
+        uint selectCount = GetSelectedObjects(objects);
+        uint index1 = 0, index2 = 0;
+        if (selectCount > 0) {
+            Log("selectedCount = " + selectCount + ", array.length() = " + objects.length());
+            for (uint i = 0; i < selectCount; i++) {
+                MapperObject@ object = objects[i];
+                if (valid(object)) {
+                    if (object.MapObjType == MAP_OBJECT_SCENERY) {
+                        if (doesContainProtoId(object.ProtoId, index1, index2)) {
+                            //Log("Found relevant object with proto ID: " + object.ProtoId + " at [" + index1 + " , " + index2 + "]");
+                            if (directionDown) {
+                                if (index1 > 0) {
+                                    index1--;
+                                    MapperObject@ newObj = map.AddObject( object.MapX, object.MapY, MAP_OBJECT_SCENERY, wallIds[index1][index2]);
+                                    DeleteObject(object);
+                                    lastSelectedObjects.insertLast(newObj);
+                                } else {
+                                    lastSelectedObjects.insertLast(object);
+                                }
+                                messageText = wallIdMessages[index1];
+                            } else if (!directionDown) {
+                                if (index1 < wallIds.length() - 1) {
+                                    index1++;
+                                    MapperObject@ newObj = map.AddObject( object.MapX, object.MapY, MAP_OBJECT_SCENERY, wallIds[index1][index2]);
+                                    DeleteObject(object);
+                                    lastSelectedObjects.insertLast(newObj);
+                                } else {
+                                    lastSelectedObjects.insertLast(object);
+                                }
+                                messageText = wallIdMessages[index1];
+                            } else {
+                                lastSelectedObjects.insertLast(object);
+                            }
+                        } else {
+                            lastSelectedObjects.insertLast(object);
+                        }
+                    } else {
+                        lastSelectedObjects.insertLast(object);
+                    }
+                } else {
+                    Log("Found invalid mapper object!!!");
+                }
+            }
+        } else {
+            Log("Nothing selected.");
+            messageText = "Nothing selected.";
+        }
+        SelectObjects(lastSelectedObjects, false);
+        SelectObjects(lastSelectedObjects, true);
+    }
+
+    bool doesContainProtoId(uint objectProtoId, uint& index1, uint& index2) {
+        for (uint i = 0; i < wallIds.length(); i++) {
+            for (uint j = 0; j < wallIds[i].length(); j++) {
+                if (wallIds[i][j] == objectProtoId) {
+                    index1 = i;
+                    index2 = j;
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+};
+
+
+class CEntitySwapperPlugin : IMapperPlugin {
+    CEntitySwapper entitySwapper;
+    CEntitySwapperPlugin() {
+        entitySwapper = CEntitySwapper();
+    }
+
+    void Render(uint layer) {
+        if (layer == 1) {
+            MapperMap@ map = GetActiveMap();
+            if (!valid(map)) {
+                return;
+            }
+        }
+        if(layer == 2) {
+            entitySwapper.Draw();
+        }
+    }
+
+    void Draw() {
+        entitySwapper.Draw();
+    }
+
+    string GetName()                            { return "Entity Swapper"; }
+    bool MouseDown(int click)                   { return entitySwapper.MouseDown(click); }
+    bool MouseUp(int click)                     { return entitySwapper.MouseUp(click); }
+    void MouseMove(int x, int y)                { entitySwapper.MouseMove(x, y); }
+    bool KeyDown(uint8 key,string& keyText)     { return entitySwapper.KeyDown(key); }
+    bool KeyUp(uint8 key,string& keyText)       { return entitySwapper.KeyUp(key); }
+    void InputLost()                            { entitySwapper.InputLost(); }
+    void Loop()                                 {}
+    bool Message(string&)                       { return false; }
+    void RenderMap()                            {}
+};
+
+void RegisterEntitySwapper() {
+    IMapperPlugin@ entitySwapperPlugin = CEntitySwapperPlugin();
+    //  add file init here?
+    if (Plugins_Register(entitySwapperPlugin)) {
+        Message("Entity Swapper plugin (WIP) registered. Ctrl + Scroll for basic message.");
+    }
+}
+
+#endif // __MAPPER_ENTITY_SWAPPER__ //
