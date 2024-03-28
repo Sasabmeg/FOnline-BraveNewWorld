@@ -48,6 +48,7 @@ import void RegisterCrtypes() from "mapper_crtypes";
 import void RegisterAutowall() from "mapper_autowall";
 import void RegisterTilemap() from "mapper_tilemap";
 import void RegisterGrid() from "mapper_grid";
+import void RegisterEntitySwapper() from "mapper_entitySwapper";
 import void RegisterInputVisualizer() from "mapper_inputVisualizer";
 
 bool ShowDoorScript = false, ShowContainerScript = false;
@@ -86,11 +87,12 @@ void finish()
 
 void InitializePlugins()
 {
+    RegisterInputVisualizer();
     RegisterAutowall();
     RegisterCrtypes();
     RegisterTilemap();
     RegisterGrid();
-    RegisterInputVisualizer();
+    RegisterEntitySwapper();
 }
 
 // helper
