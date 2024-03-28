@@ -216,7 +216,7 @@ class CInputVisualizer {
     //  return false to let other plugins parse the command, or true if this command was for Input Visualizer only
     bool Message(string& message) {
         if (message == "iv" || message == "vis") {
-            message = "Input Visualizer commands: on, off, color <r> <g> <b>.";
+            message = "Input Visualizer commands: on, off, color [AARRGGBB], msg [message].";
             messageActivationTime = GetTick();
             messageText = " " + message;
             return true;
@@ -230,27 +230,37 @@ class CInputVisualizer {
                 return true;
             }
             if (args[1] == "on") {
-                //
+                enabled = true;
                 return true;
             }
             if (args[1] == "off") {
-                //
+                enabled = false;
                 return true;
             }
             if (args[1] == "color") {
-                //
-                if (args.length() == 3) {
-                    color = COLOR_ARGB(255, 130, 30, 30);
-                    return true;
-                } else if (args.length() == 5) {
-                    color = COLOR_ARGB(255, 30, 30, 130);
+                if (args.length() == 3 && args[2].length() <= 8) {
+                    if (StrToIntFromHexadecimalFormat(args[2], color)) {
+                        message = "Color Set to: " + args[2];
+                        messageActivationTime = GetTick();
+                        messageText = " " + message;
+                    } else {
+                        message = "Input Visualizer Error: Incorrect arguments after 'color', try to specify AARRGGBB hexadecimal value.";
+                        messageActivationTime = GetTick();
+                        messageText = " " + message;
+                    }
                     return true;
                 } else {
-                    message = "Input Visualizer Error: Incorrect arguments after 'color', either specify one more argument as RRGGBB hexadecimal value or 3 arguments in decimal format <r> <g> <b>";
+                    message = "Input Visualizer Error: Incorrect arguments after 'color', either specify one more argument as RRGGBB hexadecimal value.";
                     messageActivationTime = GetTick();
-                    messageText = " " + message;
+                    messageText = "" + message;
                     return true;
                 }
+            }
+            if (args[1] == "msg") {
+                string subStr = substring(message, 7, message.length() - 7);
+                message = subStr;
+                messageActivationTime = GetTick();
+                messageText = " " + message;
             }
         }
         //  Display messages on top of screen in big
