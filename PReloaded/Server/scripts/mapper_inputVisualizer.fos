@@ -16,40 +16,118 @@
 #include "mapper_utils_h.fos"
 #include "strtoint_h.fos"
 
+#define OBJ_PANEL_SIZE_W            (385)
+#define OBJ_PANEL_SIZE_H            (560)
+#define INT_PANEL_SIZE_W            (1050)
+#define INT_PANEL_SIZE_H            (165)
 
-#define IV_TEXT_POS_X                       (390)
-#define IV_TEXT_POS_Y                       (0)
-
+// Flags
+#define TOGGLE_FLAG                 # (x, flag)((x) ^= (flag))
+#define SET_FLAG                    # (x, flag)((x) |= (flag))
+#define CTRL_FLAG                   (1)
+#define SHIFT_FLAG                  (2)
+#define ALT_FLAG                    (4)
 
 class CInputVisualizer {
 
+    //  Input keys
     string statusText = "";
     string controlText = "";
     string letterText = "";
-    uint color = 0;
+    uint color = COLOR_WHITE;
+    uint activationTime;
+    uint activeDuration;
+    uint nonControlKeyLastActiveTime;
+    uint controlKeyComboTheshold;
+    int xAdjust;
+    int yAdjust;
+    uint8 lastKeyPressed = 0;
+    uint8 lastKeyPressedControlFlag = 0;
+    int sameKeyPressedNr = 0;
 
-
-
+    bool enabled = true;
     bool controlDown = false;
-    bool buttonPressed;
+    bool shiftDown = false;
+    bool altDown = false;
+    bool active = false;
+    int buttonHold = 0;
     bool lClick;
 
+    //  Messages after commands
+    string messageText = "";
+    int xAdjustMessage = 150;
+    int yAdjustMessage = 50;
+    int messageWidth = 500;
+    int messageHeight = 500;
+    uint messageActivationTime = 0;
+    uint messageShowDuration = 15000;
+    uint messageColor = COLOR_WHITE;
+    bool messageEnabled = true;
+
     CInputVisualizer() {
+        activationTime = 0;
+        activeDuration = 1000;
+        nonControlKeyLastActiveTime = 0;
+        controlKeyComboTheshold = 500;
         controlDown = false;
-        buttonPressed = false;
+        buttonHold = 0;
         lClick = false;
+        xAdjust = 30;
+        yAdjust = __ScreenHeight - INT_PANEL_SIZE_H - 50;
+        xAdjustMessage = __ScreenWidth - (__ScreenWidth * 0.8);
+        messageWidth = __ScreenWidth * 0.6;
+        messageHeight = __ScreenHeight * 0.5;
+        loadConfigFromCfgFile();
     }
 
     void Draw() {
-        DrawText((controlText.length() > 0 ? (controlText + " + " + letterText) : (letterText)), IV_TEXT_POS_X + 10, IV_TEXT_POS_Y + 10, 768, 80, COLOR_GREEN, FONT_TYPE_FAT, FONT_FLAG_BORDERED);
+        //  Input Visualized
+        if (enabled && ((GetTick() < activationTime + activeDuration))) {
+            //Log("Tick = " + GetTick() + " < activationTime + activeDuration = " + (activationTime + activeDuration) + " (" + activationTime + ", " + activeDuration + ")");
+            //  looks like trying to draw empty string will fuck with DrawText, so careful
+            string nrText = sameKeyPressedNr > 1 ? (" x" + sameKeyPressedNr) : " ";
+            if (letterText.length() == 0) {
+                nrText = "";
+            }
+            statusText = (controlText.length() > 0 ? (controlText + " + " + letterText) : (letterText)) + nrText;
+            active = true;
+        } else {
+            active = false;
+            statusText = "";
+            controlText = "";
+            letterText = "";
+            sameKeyPressedNr = 0;
+        }
+        if (active && statusText.length() > 0) {
+            DrawText(statusText, xAdjust, yAdjust, 768, 80, color, FONT_TYPE_FAT, FONT_FLAG_BORDERED);
+        }
+        //  Messages
+        if (messageEnabled) {
+            if (GetTick() < messageActivationTime + messageShowDuration) {
+                DrawText(messageText, xAdjustMessage, yAdjustMessage, messageWidth, messageHeight, messageColor, FONT_TYPE_FAT, FONT_FLAG_BORDERED | FONT_FLAG_CENTERX);
+            }
+        }
+
     }
 
     bool MouseDown(int click) {
         if (click == MOUSE_CLICK_WHEEL_DOWN) {
-                letterText = "MWHEEL DOWN";
+            letterText = "MWHEEL DOWN";
+            activationTime = GetTick();
+            nonControlKeyLastActiveTime = GetTick();
+            refreshControlText();
         }
         if (click == MOUSE_CLICK_WHEEL_UP) {
-                letterText = "MWHEEL UP";
+            letterText = "MWHEEL UP";
+            activationTime = GetTick();
+            nonControlKeyLastActiveTime = GetTick();
+            refreshControlText();
+        }
+        if (click == MOUSE_CLICK_MIDDLE) {
+            letterText = "MWHEEL MIDDLE";
+            activationTime = GetTick();
+            nonControlKeyLastActiveTime = GetTick();
+            refreshControlText();
         }
         return false;
     }
@@ -62,16 +140,76 @@ class CInputVisualizer {
     }
 
     bool KeyDown(uint8 key) {
+        if (key == DIK_LCONTROL || key == DIK_RCONTROL) {
+            activationTime = GetTick();
+            controlDown = true;
+            refreshControlText();
+            if (buttonHold == 0) {
+                letterText = "";
+            }
+        } else if (key == DIK_LSHIFT || key == DIK_RSHIFT) {
+            activationTime = GetTick();
+            shiftDown = true;
+            refreshControlText();
+            if (buttonHold == 0) {
+                letterText = "";
+            }
+        } else if (key == DIK_LMENU || key == DIK_RMENU) {
+            activationTime = GetTick();
+            altDown = true;
+            refreshControlText();
+            if (buttonHold == 0) {
+                letterText = "";
+            }
+        } else {
+            buttonHold++;
+            activationTime = GetTick();
+            nonControlKeyLastActiveTime = GetTick();
+            letterText = getKeyCodeName(key);
+            if (lastKeyPressed == key && lastKeyPressedControlFlag == getCurrentFlags()) {
+                sameKeyPressedNr++;
+            } else {
+                sameKeyPressedNr = 1;
+            }
+            //Log("INPUT VISUALIZER - KEY DN: (" + key + ", " + lastKeyPressed + ") x" + sameKeyPressedNr + " flags (" + getCurrentFlags() + ", " + lastKeyPressedControlFlag + ")");
+            refreshControlText();
+
+        }
         return false;
     }
 
     bool KeyUp(uint8 key) {
+        if (key == DIK_LCONTROL || key == DIK_RCONTROL) {
+            controlDown = false;
+            if (GetTick() > nonControlKeyLastActiveTime + controlKeyComboTheshold && (buttonHold == 0 || altDown || shiftDown)) {
+                refreshControlText();
+            }
+        } else if (key == DIK_LSHIFT || key == DIK_RSHIFT) {
+            shiftDown = false;
+            if (GetTick() > nonControlKeyLastActiveTime + controlKeyComboTheshold && (buttonHold == 0 || altDown || controlDown)) {
+                refreshControlText();
+            }
+        } else if (key == DIK_LMENU || key == DIK_RMENU) {
+            altDown = false;
+            if (GetTick() > nonControlKeyLastActiveTime + controlKeyComboTheshold && (buttonHold == 0 || controlDown || shiftDown)) {
+                refreshControlText();
+            }
+        } else {
+            buttonHold--;
+            setControlFlags();
+            //Log("INPUT VISUALIZER - KEY UP: (" + key + ", " + lastKeyPressed + ") x" + sameKeyPressedNr + " flags (" + getCurrentFlags() + ", " + lastKeyPressedControlFlag + ")");
+            lastKeyPressed = key;
+            activationTime = GetTick();
+            nonControlKeyLastActiveTime = GetTick();
+        }
         return false;
     }
 
     void InputLost() {
+        buttonHold = 0;
         controlDown = false;
-        buttonPressed = false;
+        shiftDown = false;
+        altDown = false;
         lClick = false;
     }
 
@@ -79,12 +217,16 @@ class CInputVisualizer {
     bool Message(string& message) {
         if (message == "iv" || message == "vis") {
             message = "Input Visualizer commands: on, off, color <r> <g> <b>.";
+            messageActivationTime = GetTick();
+            messageText = " " + message;
             return true;
         } else if (substring(message, 0, 3) == "iv " || substring(message, 0, 4) == "vis ") {
             array<string@>@ args = split(message, " ");
             if (valid(args)) {
             } else {
                 message = "Input Visualizer Error: Could not parse command arguments.";
+                messageActivationTime = GetTick();
+                messageText = " " + message;
                 return true;
             }
             if (args[1] == "on") {
@@ -105,12 +247,244 @@ class CInputVisualizer {
                     return true;
                 } else {
                     message = "Input Visualizer Error: Incorrect arguments after 'color', either specify one more argument as RRGGBB hexadecimal value or 3 arguments in decimal format <r> <g> <b>";
+                    messageActivationTime = GetTick();
+                    messageText = " " + message;
                     return true;
                 }
             }
+        }
+        //  Display messages on top of screen in big
+        return false;
+    }
+
+    uint8 getCurrentFlags() {
+        uint8 flags = 0;
+        if (controlDown) {
+            SETFLAG(flags, CTRL_FLAG);
+        }
+        if (shiftDown) {
+            SETFLAG(flags, SHIFT_FLAG);
+        }
+        if (altDown) {
+            SETFLAG(flags, ALT_FLAG);
+        }
+        return flags;
+    }
+
+    void setControlFlags() {
+        lastKeyPressedControlFlag = 0;
+        if (controlDown) {
+            SETFLAG(lastKeyPressedControlFlag, CTRL_FLAG);
+        }
+        if (shiftDown) {
+            SETFLAG(lastKeyPressedControlFlag, SHIFT_FLAG);
+        }
+        if (altDown) {
+            SETFLAG(lastKeyPressedControlFlag, ALT_FLAG);
+        }
+    }
+
+    void refreshControlText() {
+        if (controlDown) {
+            controlText = "Ctrl";
+        } else {
+            controlText = "";
+        }
+        if (shiftDown) {
+            if (controlText.length() > 0) {
+                controlText += " + Shift";
+            } else {
+                controlText = "Shift";
+            }
+        }
+        if (altDown) {
+            if (controlText.length() > 0) {
+                controlText += " + Alt";
+            } else {
+                controlText = "Alt";
+            }
+        }
+    }
+
+    string getKeyCodeName(uint8 key) {
+        switch (key) {
+            case DIK_ESCAPE: return "ESC";
+            case DIK_1: return "1";
+            case DIK_2: return "2";
+            case DIK_3: return "3";
+            case DIK_4: return "4";
+            case DIK_5: return "5";
+            case DIK_6: return "6";
+            case DIK_7: return "7";
+            case DIK_8: return "8";
+            case DIK_9: return "9";
+            case DIK_0: return "0";
+            case DIK_MINUS: return "-";
+            case DIK_EQUALS: return "=";
+            case DIK_BACK: return "BACK";
+            case DIK_TAB: return "TAB";
+            case DIK_Q: return "Q";
+            case DIK_W: return "W";
+            case DIK_E: return "E";
+            case DIK_R: return "R";
+            case DIK_T: return "T";
+            case DIK_Y: return "Y";
+            case DIK_U: return "U";
+            case DIK_I: return "I";
+            case DIK_O: return "O";
+            case DIK_P: return "P";
+            case DIK_LBRACKET: return "[";
+            case DIK_RBRACKET: return "]";
+            case DIK_RETURN: return "ENTER";
+            case DIK_A: return "A";
+            case DIK_S: return "S";
+            case DIK_D: return "D";
+            case DIK_F: return "F";
+            case DIK_G: return "G";
+            case DIK_H: return "H";
+            case DIK_J: return "J";
+            case DIK_K: return "K";
+            case DIK_L: return "L";
+            case DIK_SEMICOLON: return ";";
+            case DIK_APOSTROPHE: return "\'";
+            case DIK_GRAVE: return "GRAVE";
+            case DIK_BACKSLASH: return "\\";
+            case DIK_Z: return "Z";
+            case DIK_X: return "X";
+            case DIK_C: return "C";
+            case DIK_V: return "V";
+            case DIK_B: return "B";
+            case DIK_N: return "N";
+            case DIK_M: return "M";
+            case DIK_COMMA: return ",";
+            case DIK_PERIOD: return ".";
+            case DIK_SLASH: return "/";
+            case DIK_MULTIPLY: return "*";
+            case DIK_SPACE: return "SPACE";
+            case DIK_CAPITAL: return "CAPS LOCK";
+            case DIK_F1: return "F1";
+            case DIK_F2: return "F2";
+            case DIK_F3: return "F3";
+            case DIK_F4: return "F4";
+            case DIK_F5: return "F5";
+            case DIK_F6: return "F6";
+            case DIK_F7: return "F7";
+            case DIK_F8: return "F8";
+            case DIK_F9: return "F9";
+            case DIK_F10: return "F10";
+            case DIK_NUMLOCK: return "NUM LOCK";
+            case DIK_SCROLL: return "SCROLL LOCK";
+            case DIK_NUMPAD7: return "7";
+            case DIK_NUMPAD8: return "8";
+            case DIK_NUMPAD9: return "9";
+            case DIK_SUBTRACT: return "-";
+            case DIK_NUMPAD4: return "4";
+            case DIK_NUMPAD5: return "5";
+            case DIK_NUMPAD6: return "6";
+            case DIK_ADD: return "+";
+            case DIK_NUMPAD1: return "1";
+            case DIK_NUMPAD2: return "2";
+            case DIK_NUMPAD3: return "3";
+            case DIK_NUMPAD0: return "0";
+            case DIK_DECIMAL: return ".";
+            case DIK_F11: return "F11";
+            case DIK_F12: return "F12";
+            case DIK_NUMPADENTER: return "ENTER";
+            case DIK_DIVIDE: return "/";
+            case DIK_SYSRQ: return "SYS RQ";
+            case DIK_PAUSE: return "PAUSE";
+            case DIK_HOME: return "HOME";
+            case DIK_UP: return "UP";
+            case DIK_PRIOR: return "PAGE UP";
+            case DIK_LEFT: return "LEFT";
+            case DIK_RIGHT: return "RIGHT";
+            case DIK_END: return "END";
+            case DIK_DOWN: return "DOWN";
+            case DIK_NEXT: return "PAGE DOWN";
+            case DIK_INSERT: return "INSERT";
+            case DIK_DELETE: return "DEL";
+            case DIK_LWIN: return "LWIN";
+            case DIK_RWIN: return "RWIN";
+            case DIK_CLIPBOARD_PASTE: return "CLIPB PASTE";
+        }
+        return "N/A";
+    }
+
+    bool loadConfigFromCfgFile() {
+        file f;
+        if (f.open("data/InputVisualizer.cfg", "r") == -1) {
+            Message("File data/InputVisualizer.cfg not found.");
+            Log("File data/InputVisualizer.cfg not found.");
+            return false;
+        }
+        uint lineCount = 0;
+        uint len = 0;
+        uint act = 0;
+
+        while (!f.isEndOfFile()) {
+            string line;
+            // read one line and preprocess (trim trailing spaces and comments)
+            len = f.readLine(line);
+            lineCount++;
+            //Log("[" + lineCount + ", " + line.length() + "] " + line);
+            if (len == 0) {
+                continue;
+            }
+            //  remove line feed, new line and dash comments from end of line
+            act = 0;
+            while (act < len && (line.rawGet(act) != 10 && line.rawGet(act) != 13 && line[act] != "#")) {
+                act++;
+            }
+            //Log("1");
+            if (act == 0) {
+                continue;
+            }
+            line = substring(line, 0, act);
+            //  skip white spaces from start
+            act = 0;
+            len = line.length();
+            while (act < len && (line[act] == " " || line[act] == "\t")) {
+                act++;
+            }
+            //Log("2");
+            line = substring(line, act, line.length() - act);
+            if (line.length() == 0) {
+                continue;
+            }
+            //  skip white spaces from end
+            act = line.length() - 1;
+            while (act > 0 && (line[act] == " " || line[act] == "\t"))
+                act--;
+            //Log("3");
+            line = substring(line, 0, act + 1);
+            //Log("4");
+            len = line.length();
+            if(len == 0) {
+                continue;
+            }
+            Log("[" + lineCount + "]: " + line);
+
+            array<string@>@ splittedLine = split(line, "=");
+            if (splittedLine.length() == 2 && splittedLine[0].length() > 0 && splittedLine[1].length() > 0) {
+                if (splittedLine[0] == "enabled") {
+                    enabled = splittedLine[1] == "true" ? true : splittedLine[1] == "yes" ? true : splittedLine[1] == "1" ? true : false;
+                    Log("Input Visualizer: 'enabled' changed to: " + enabled);
+                }
+                if (splittedLine[0] == "color") {
+                    uint colorIn = 0;
+                    if (StrToIntAnyFormat(splittedLine[1], colorIn)) {
+                        Log("Input Visualizer: 'color' changed to '" + colorIn + "'");
+                    } else {
+                        Log("Input Visualizer: Failed to load color format. [" + splittedLine[1] + "]");
+                    }
+                }
+            } else {
+                Log("Line " + lineCount + ": cannot load (" + line + ")");
+            }
 
         }
-        return false;
+        f.close();
+        return true;
     }
 };
 
@@ -118,16 +492,10 @@ class CInputVisualizer {
 class CInputVisualizerPlugin : IMapperPlugin {
     CInputVisualizer inputVisualizer;
     CInputVisualizerPlugin() {
-        inputVisualizer = CInputVisualizer();
+        //inputVisualizer = CInputVisualizer();
     }
 
     void Render(uint layer) {
-        if (layer == 1) {
-            MapperMap@ map = GetActiveMap();
-            if (!valid(map)) {
-                return;
-            }
-        }
         if(layer == 2) {
             inputVisualizer.Draw();
         }
@@ -152,9 +520,70 @@ class CInputVisualizerPlugin : IMapperPlugin {
 void RegisterInputVisualizer() {
     IMapperPlugin@ inputVisualizerPlugin = CInputVisualizerPlugin();
     //  add file init here?
+    //  inputVisualizerPlugin.Init();
+
     if (Plugins_Register(inputVisualizerPlugin)) {
         Message("Input Visualizer plugin registered. Keyboard events should be displayed on the sides.  ");
     }
+}
+
+bool StrToIntAnyFormat(string& str, uint& value) {
+    if (str.length() == 0) {
+        return false;
+    }
+    if (str.length() > 2 && str[0] == "0" && str[1] == "x") {
+        return StrToIntFromHexadecimalFormat(substring(str, 2, str.length() - 2), value);
+    } else {
+        return StrToInt(str, value);
+    }
+}
+
+//  util, making uint from hexadecimal format for colors
+bool StrToIntFromHexadecimalFormat(string& str, uint& value) {
+    //Log("StrToIntFromHexadecimalFormat: [" + str + "]");
+    if (str.length() == 0 || str.length() > 8) {
+        return false;
+    }
+    uint ret = 0;
+    int val = 0;
+    uint i = 0;
+    while (i < str.length()) {
+        if ((val = getValue(str[i])) >= 0) {
+            ret = ret << 4;
+            ret += val;
+        } else {
+            return false;
+        }
+        i++;
+    }
+    value = ret;
+    return true;
+}
+
+int getValue(string& letter) {
+    if (letter[0] == "0") return 0;
+    if (letter[0] == "1") return 1;
+    if (letter[0] == "2") return 2;
+    if (letter[0] == "3") return 3;
+    if (letter[0] == "4") return 4;
+    if (letter[0] == "5") return 5;
+    if (letter[0] == "6") return 6;
+    if (letter[0] == "7") return 7;
+    if (letter[0] == "8") return 8;
+    if (letter[0] == "9") return 9;
+    if (letter[0] == "a") return 10;
+    if (letter[0] == "A") return 10;
+    if (letter[0] == "b") return 11;
+    if (letter[0] == "B") return 11;
+    if (letter[0] == "c") return 12;
+    if (letter[0] == "C") return 12;
+    if (letter[0] == "d") return 13;
+    if (letter[0] == "D") return 13;
+    if (letter[0] == "e") return 14;
+    if (letter[0] == "E") return 14;
+    if (letter[0] == "f") return 15;
+    if (letter[0] == "F") return 15;
+    return -1;
 }
 
 #endif // __MAPPER_INPUT_VISUALIZER__ //
