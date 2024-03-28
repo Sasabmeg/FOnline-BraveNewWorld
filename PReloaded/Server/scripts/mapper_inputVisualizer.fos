@@ -471,15 +471,35 @@ class CInputVisualizer {
                     Log("Input Visualizer: 'enabled' changed to: " + enabled);
                 }
                 if (splittedLine[0] == "color") {
-                    uint colorIn = 0;
-                    if (StrToIntAnyFormat(splittedLine[1], colorIn)) {
-                        Log("Input Visualizer: 'color' changed to '" + colorIn + "'");
+                    if (StrToIntAnyFormat(splittedLine[1], color)) {
+                        Log("Input Visualizer: 'color' changed to '" + color + "'");
                     } else {
                         Log("Input Visualizer: Failed to load color format. [" + splittedLine[1] + "]");
                     }
                 }
+                if (splittedLine[0] == "activeDuration") {
+                    if (StrToIntAnyFormat(splittedLine[1], activeDuration)) {
+                        Log("Input Visualizer: 'activeDuration' changed to '" + activeDuration + "'");
+                    } else {
+                        Log("Input Visualizer: Failed to load 'activeDuration' value [" + splittedLine[1] + "]");
+                    }
+                }
+                if (splittedLine[0] == "posX") {
+                    if (StrToInt(splittedLine[1], xAdjust)) {
+                        Log("Input Visualizer: 'posX' changed to '" + xAdjust + "'");
+                    } else {
+                        Log("Input Visualizer: Failed to load 'posX' value [" + splittedLine[1] + "]");
+                    }
+                }
+                if (splittedLine[0] == "posY") {
+                    if (StrToInt(splittedLine[1], yAdjust)) {
+                        Log("Input Visualizer: 'posY' changed to '" + yAdjust + "'");
+                    } else {
+                        Log("Input Visualizer: Failed to load 'posY' value [" + splittedLine[1] + "]");
+                    }
+                }
             } else {
-                Log("Line " + lineCount + ": cannot load (" + line + ")");
+                Log("Line " + lineCount + ": cannot interpret (" + line + ")");
             }
 
         }
