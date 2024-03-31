@@ -88,4 +88,80 @@ bool GetMonitorHexSigh(int x, int y, uint16& hx, uint16& hy, bool ignoreInterfac
     __MouseY = saveMouseY;
     return result;
 }
+
+bool StrToIntAnyFormat(string& str, uint& value) {
+    if (str.length() == 0) {
+        return false;
+    }
+    if (str.length() > 2 && str[0] == "0" && str[1] == "x") {
+        return StrToIntFromHexadecimalFormat(substring(str, 2, str.length() - 2), value);
+    } else {
+        return StrToInt(str, int(value));
+    }
+}
+
+//  util, making uint from hexadecimal format for colors
+bool StrToIntFromHexadecimalFormat(string& str, uint& value) {
+    //Log("StrToIntFromHexadecimalFormat: [" + str + "]");
+    if (str.length() == 0 || str.length() > 8) {
+        return false;
+    }
+    uint ret = 0;
+    int val = 0;
+    uint i = 0;
+    while (i < str.length()) {
+        if ((val = getValue(str[i])) >= 0) {
+            ret = ret << 4;
+            ret += val;
+        } else {
+            return false;
+        }
+        i++;
+    }
+    value = ret;
+    return true;
+}
+
+int getValue(string& letter) {
+    if (letter[0] == "0") return 0;
+    if (letter[0] == "1") return 1;
+    if (letter[0] == "2") return 2;
+    if (letter[0] == "3") return 3;
+    if (letter[0] == "4") return 4;
+    if (letter[0] == "5") return 5;
+    if (letter[0] == "6") return 6;
+    if (letter[0] == "7") return 7;
+    if (letter[0] == "8") return 8;
+    if (letter[0] == "9") return 9;
+    if (letter[0] == "a") return 10;
+    if (letter[0] == "A") return 10;
+    if (letter[0] == "b") return 11;
+    if (letter[0] == "B") return 11;
+    if (letter[0] == "c") return 12;
+    if (letter[0] == "C") return 12;
+    if (letter[0] == "d") return 13;
+    if (letter[0] == "D") return 13;
+    if (letter[0] == "e") return 14;
+    if (letter[0] == "E") return 14;
+    if (letter[0] == "f") return 15;
+    if (letter[0] == "F") return 15;
+    return -1;
+}
+
+int getCharPos(string& str, string& charToFind, int skip = 0) {
+    if (!valid(str)) {
+        return -2;
+    }
+    for (int i = 0, len = str.length(); i < len; i++) {
+        if (str[i] == charToFind) {
+            if (skip == 0) {
+                return i;
+            } else {
+                skip--;
+            }
+        }
+    }
+    return -1;
+}
+
 #endif // __MAPPER_UTILS__ //

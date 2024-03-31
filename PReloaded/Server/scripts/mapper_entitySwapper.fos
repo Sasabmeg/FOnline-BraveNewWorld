@@ -22,25 +22,26 @@
 
 
 class CEntitySwapper {
+    bool enabled = true;
+
     bool controlDown = false;
     bool shiftDown = false;
     bool altDown = false;
 
     string messageText = "";
-    int xAdjustMessage = 150;
-    int yAdjustMessage = 10;
+    int xAdjust = 150;
+    int yAdjust = 10;
     int messageWidth = 500;
     int messageHeight = 500;
     bool messageEnabled = true;
     uint messageActivationTime = 0;
-    uint messageShowDuration = 15000;
+    uint messageShowDuration = 5000;
     uint messageColor = COLOR_GREEN;
 
+    array<array<array<uint>>> data;
+    array<array<string>> dataThemeName;
+    array<string> dataSectionName;
 
-    array<array<uint>> wallIds = {
-        {5161, 5162, 5163, 5164, 5165, 5166, 5167, 5168, 5169, 5170, 5171, 5172, 5173},
-        {6669, 6670, 6671, 6672, 6673, 6674, 6675, 6676, 6677, 6678, 6679, 6680, 6681}
-    };
 
     array<string> wallIdMessages = {"Fence: Silver Steel Railing", "Fence: Rusty Steel Railing"};
 
@@ -49,16 +50,24 @@ class CEntitySwapper {
         shiftDown = false;
         altDown = false;
         messageEnabled = true;
-        xAdjustMessage = __ScreenWidth - (__ScreenWidth * 0.8);
+        xAdjust = __ScreenWidth - (__ScreenWidth * 0.8);
         messageWidth = __ScreenWidth * 0.6;
         messageHeight = __ScreenHeight * 0.5;
+        //  best way to empty arrays?
+        array<array<array<uint>>> dataEmpty;
+        array<array<string>> dataThemeNameEmpty;
+        array<string> dataSectionNameEmpty;
+        data = dataEmpty;
+        dataThemeName = dataThemeNameEmpty;
+        dataSectionName = dataSectionNameEmpty;
+        loadConfigFromCfgFile();
     }
 
     void Draw() {
         //  Messages
         if (messageEnabled) {
             if (GetTick() < messageActivationTime + messageShowDuration) {
-                DrawText(messageText, xAdjustMessage, yAdjustMessage, messageWidth, messageHeight, messageColor, FONT_TYPE_FAT, FONT_FLAG_BORDERED | FONT_FLAG_CENTERX);
+                DrawText(messageText, xAdjust, yAdjust, messageWidth, messageHeight, messageColor, FONT_TYPE_FAT, FONT_FLAG_BORDERED | FONT_FLAG_CENTERX);
             }
         }
     }
@@ -121,47 +130,40 @@ class CEntitySwapper {
     }
 
     void shiftSelected(bool directionDown) {
-        messageText = "Wall IDs: \n";
-        for (uint i = 0; i < wallIds.length(); i++) {
-            for (uint j = 0; j < wallIds[i].length(); j++) {
-                messageText += "" + wallIds[i][j] + ", ";
-            }
-            messageText += "\n";
-        }
         MapperMap@ map = GetActiveMap();
         array<MapperObject@> objects;
         array<MapperObject@> lastSelectedObjects;
         Log("lastSelectedObjects count = " + lastSelectedObjects.length());
         uint selectCount = GetSelectedObjects(objects);
-        uint index1 = 0, index2 = 0;
+        uint index1 = 0, index2 = 0, index3 = 0;
         if (selectCount > 0) {
             Log("selectedCount = " + selectCount + ", array.length() = " + objects.length());
             for (uint i = 0; i < selectCount; i++) {
                 MapperObject@ object = objects[i];
                 if (valid(object)) {
                     if (object.MapObjType == MAP_OBJECT_SCENERY) {
-                        if (doesContainProtoId(object.ProtoId, index1, index2)) {
-                            //Log("Found relevant object with proto ID: " + object.ProtoId + " at [" + index1 + " , " + index2 + "]");
+                        if (getProtoIdIndex(object.ProtoId, index1, index2, index3)) {
+                            Log("Found relevant object with proto ID: " + object.ProtoId + " at [" + index1 + " , " + index2 + " , " + index3 + "]");
                             if (directionDown) {
-                                if (index1 > 0) {
-                                    index1--;
-                                    MapperObject@ newObj = map.AddObject( object.MapX, object.MapY, MAP_OBJECT_SCENERY, wallIds[index1][index2]);
+                                if (index2 > 0) {
+                                    index2--;
+                                    MapperObject@ newObj = map.AddObject( object.MapX, object.MapY, MAP_OBJECT_SCENERY, data[index1][index2][index3]);
                                     DeleteObject(object);
                                     lastSelectedObjects.insertLast(newObj);
                                 } else {
                                     lastSelectedObjects.insertLast(object);
                                 }
-                                messageText = wallIdMessages[index1];
+                                messageText = dataSectionName[index1] + ": " + dataThemeName[index1][index2];
                             } else if (!directionDown) {
-                                if (index1 < wallIds.length() - 1) {
-                                    index1++;
-                                    MapperObject@ newObj = map.AddObject( object.MapX, object.MapY, MAP_OBJECT_SCENERY, wallIds[index1][index2]);
+                                if (index2 < data[index1].length() - 1) {
+                                    index2++;
+                                    MapperObject@ newObj = map.AddObject( object.MapX, object.MapY, MAP_OBJECT_SCENERY, data[index1][index2][index3]);
                                     DeleteObject(object);
                                     lastSelectedObjects.insertLast(newObj);
                                 } else {
                                     lastSelectedObjects.insertLast(object);
                                 }
-                                messageText = wallIdMessages[index1];
+                                messageText = dataSectionName[index1] + ": " + dataThemeName[index1][index2];
                             } else {
                                 lastSelectedObjects.insertLast(object);
                             }
@@ -183,17 +185,195 @@ class CEntitySwapper {
         SelectObjects(lastSelectedObjects, true);
     }
 
-    bool doesContainProtoId(uint objectProtoId, uint& index1, uint& index2) {
-        for (uint i = 0; i < wallIds.length(); i++) {
-            for (uint j = 0; j < wallIds[i].length(); j++) {
-                if (wallIds[i][j] == objectProtoId) {
-                    index1 = i;
-                    index2 = j;
-                    return true;
+    bool getProtoIdIndex(uint objectProtoId, uint& index1, uint& index2, uint& index3) {
+        for (uint i = 0; i < data.length(); i++) {
+            for (uint j = 0; j < data[i].length(); j++) {
+                for (uint k = 0; k < data[i][j].length(); k++) {
+                    if (data[i][j][k] == objectProtoId) {
+                        index1 = i;
+                        index2 = j;
+                        index3 = k;
+                        return true;
+                    }
                 }
             }
         }
         return false;
+    }
+
+    bool loadConfigFromCfgFile() {
+        file f;
+        if (f.open("data/EntitySwapper.cfg", "r") == -1) {
+            Message("File data/EntitySwapper.cfg not found.");
+            Log("File data/EntitySwapper.cfg not found.");
+            return false;
+        }
+        uint lineCount = 0;
+        uint len = 0;
+        uint act = 0;
+        int currentSection = -1;
+        int currentTheme = -1;
+
+        while (!f.isEndOfFile()) {
+            string line;
+            // read one line and preprocess (trim trailing spaces and comments)
+            len = f.readLine(line);
+            lineCount++;
+            Log("[" + lineCount + "] " + line);
+            if (len == 0) {
+                continue;
+            }
+            //  remove line feed, new line and dash comments from end of line
+            act = 0;
+            while (act < len && (line.rawGet(act) != 10 && line.rawGet(act) != 13 && line[act] != "#")) {
+                act++;
+            }
+            //Log("1");
+            if (act == 0) {
+                continue;
+            }
+            line = substring(line, 0, act);
+            //  skip white spaces from start
+            act = 0;
+            len = line.length();
+            while (act < len && (line[act] == " " || line[act] == "\t")) {
+                act++;
+            }
+            //Log("2");
+            line = substring(line, act, line.length() - act);
+            if (line.length() == 0) {
+                continue;
+            }
+            //  skip white spaces from end
+            act = line.length() - 1;
+            while (act > 0 && (line[act] == " " || line[act] == "\t"))
+                act--;
+            //Log("3");
+            line = substring(line, 0, act + 1);
+            //Log("4");
+            len = line.length();
+            if(len == 0) {
+                continue;
+            }
+            //Log("[" + lineCount + "]: " + line);
+
+            if (getCharPos(line, "=") > 0) {
+                //  basic config of variables
+                array<string@>@ splittedLine = split(line, "=");
+                if (splittedLine.length() == 2 && splittedLine[0].length() > 0 && splittedLine[1].length() > 0) {
+                    if (splittedLine[0] == "enabled") {
+                        enabled = splittedLine[1] == "true" ? true : splittedLine[1] == "yes" ? true : splittedLine[1] == "1" ? true : false;
+                        Log("Input Visualizer: 'enabled' changed to: " + enabled);
+                    }
+                    if (splittedLine[0] == "messageColor") {
+                        if (StrToIntAnyFormat(splittedLine[1], messageColor)) {
+                            Log("Input Visualizer: 'messageColor' changed to '" + messageColor + "'");
+                        } else {
+                            Log("Input Visualizer: Failed to load color format. [" + splittedLine[1] + "]");
+                        }
+                    }
+                    if (splittedLine[0] == "messageShowDuration") {
+                        if (StrToIntAnyFormat(splittedLine[1], messageShowDuration)) {
+                            Log("Input Visualizer: 'activeDuration' changed to '" + messageShowDuration + "'");
+                        } else {
+                            Log("Input Visualizer: Failed to load 'activeDuration' value [" + splittedLine[1] + "]");
+                        }
+                    }
+                    if (splittedLine[0] == "posX") {
+                        if (StrToInt(splittedLine[1], xAdjust)) {
+                            Log("Input Visualizer: 'posX' changed to '" + xAdjust + "'");
+                        } else {
+                            Log("Input Visualizer: Failed to load 'posX' value [" + splittedLine[1] + "]");
+                        }
+                    }
+                    if (splittedLine[0] == "posY") {
+                        if (StrToInt(splittedLine[1], yAdjust)) {
+                            Log("Input Visualizer: 'posY' changed to '" + yAdjust + "'");
+                        } else {
+                            Log("Input Visualizer: Failed to load 'posY' value [" + splittedLine[1] + "]");
+                        }
+                    }
+                } else {
+                    Log("Line " + lineCount + ": cannot interpret (" + line + ")");
+                }
+            } else if (getCharPos(line, "[") >= 0 && getCharPos(line, "]") >= 0) {
+                //  DATA
+                //  section names
+                int pos = getCharPos(line, "[") + 1;
+                int len = getCharPos(line, "]") - pos;
+                if (pos > 0 && len > 0 && (pos + len) < int(line.length())) {
+                    string section = substring(line, pos, len);
+                    Log("Section Caption = " + section);
+                    array<string> newTheme;
+                    dataSectionName.insertLast(section);
+                    dataThemeName.insertLast(newTheme);
+                    array<array<uint>> dataEmpty;
+                    data.insertLast(dataEmpty);
+                    currentSection++;
+                    currentTheme = -1;
+                } else {
+                    Log("Invalid Section Caption format.");
+                    return false;
+                }
+            } else if (getCharPos(line, "\"") >= 0 && getCharPos(line, ":") >= 0) {
+                //  theme names and values
+                if (currentSection >= 0) {
+                    array<string@>@ splittedLine = split(line, ":");
+                    if (splittedLine.length() == 2 && splittedLine[0].length() > 0 && splittedLine[1].length() > 0) {
+                        //  theme name
+                        int pos = getCharPos(splittedLine[0], "\"") + 1;
+                        int len = getCharPos(splittedLine[0], "\"", 1) - pos;
+                        if (pos > 0 && len > 0 && (pos + len) < int(splittedLine[0].length())) {
+                            string themeName = substring(splittedLine[0], pos, len);
+                            Log("Theme Name = " + themeName);
+                            dataThemeName[currentSection].insertLast(themeName);
+                            array<uint> dataEmpty;
+                            data[currentSection].insertLast(dataEmpty);
+                            currentTheme++;
+                        } else {
+                            Log("Invalid Theme Name format.");
+                            return false;
+                        }
+                        //  theme data
+                        array<string@>@ splittedData = split(splittedLine[1], ",");
+                        if (splittedData.length() > 0) {
+                            for (uint i = 0; i < splittedData.length(); i++) {
+                                //Log("Trying to read number from: " + splittedData[i]);
+                                int value = 0;
+                                if (StrToInt(splittedData[i], value)) {
+                                    //Log("Read value = " + value);
+                                    data[currentSection][currentTheme].insertLast(value);
+                                } else {
+                                    Log("Failed to parse value from: '" + splittedData[i] + "'");
+                                }
+                            }
+                        } else {
+                            Log("Invalid Theme Data format.");
+                            return false;
+                        }
+                    }
+                } else {
+                    Log("Missing Section information. Specify Section first.");
+                    return false;
+                }
+            }
+        }
+        f.close();
+        printData();
+        return true;
+    }
+
+    void printData() {
+        for (uint i = 0; i < dataSectionName.length(); i++) {
+            Log("Section[" + i + "] " + dataSectionName[i]);
+            for (uint j = 0; j < dataThemeName[i].length(); j++) {
+                Log("\tTheme[" + i + ", " + j + "] " + dataThemeName[i][j]);
+                for (uint k = 0; k < data[i][j].length(); k++) {
+                    Log("\t\tData[" + i + ", " + j + ", " + k + "] " + data[i][j][k]);
+                }
+            }
+        }
+        Log("Data len = " + data.length());
     }
 };
 
