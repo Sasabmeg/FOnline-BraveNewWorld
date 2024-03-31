@@ -144,7 +144,7 @@ class CEntitySwapper {
                     if (object.MapObjType == MAP_OBJECT_SCENERY) {
                         if (getProtoIdIndex(object.ProtoId, index1, index2, index3)) {
                             Log("Found relevant object with proto ID: " + object.ProtoId + " at [" + index1 + " , " + index2 + " , " + index3 + "]");
-                            if (directionDown) {
+                            if (!directionDown) {
                                 if (index2 > 0) {
                                     index2--;
                                     MapperObject@ newObj = map.AddObject( object.MapX, object.MapY, MAP_OBJECT_SCENERY, data[index1][index2][index3]);
@@ -154,7 +154,7 @@ class CEntitySwapper {
                                     lastSelectedObjects.insertLast(object);
                                 }
                                 messageText = dataSectionName[index1] + ": " + dataThemeName[index1][index2];
-                            } else if (!directionDown) {
+                            } else if (directionDown) {
                                 if (index2 < data[index1].length() - 1) {
                                     index2++;
                                     MapperObject@ newObj = map.AddObject( object.MapX, object.MapY, MAP_OBJECT_SCENERY, data[index1][index2][index3]);
