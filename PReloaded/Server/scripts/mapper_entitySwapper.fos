@@ -28,6 +28,8 @@ class CEntitySwapper {
     bool shiftDown = false;
     bool altDown = false;
 
+    bool selectionDropped = true;
+
     string messageText = "";
     int xAdjust = 150;
     int yAdjust = 10;
@@ -38,9 +40,10 @@ class CEntitySwapper {
     uint messageShowDuration = 5000;
     uint messageColor = COLOR_GREEN;
 
-    array<array<array<uint>>> data;
+    array<array<array<array<uint>>>> data;
     array<array<string>> dataThemeName;
     array<string> dataSectionName;
+    array<CEntitySwapperMapObject> firstSelectionData;
 
 
     array<string> wallIdMessages = {"Fence: Silver Steel Railing", "Fence: Rusty Steel Railing"};
@@ -54,9 +57,11 @@ class CEntitySwapper {
         messageWidth = __ScreenWidth * 0.6;
         messageHeight = __ScreenHeight * 0.5;
         //  best way to empty arrays?
-        array<array<array<uint>>> dataEmpty;
+        array<array<array<array<uint>>>> dataEmpty;
         array<array<string>> dataThemeNameEmpty;
         array<string> dataSectionNameEmpty;
+        array<CEntitySwapperMapObject> selectionDataEmpty;
+        firstSelectionData = selectionDataEmpty;
         data = dataEmpty;
         dataThemeName = dataThemeNameEmpty;
         dataSectionName = dataSectionNameEmpty;
@@ -86,6 +91,12 @@ class CEntitySwapper {
                 shiftSelected(false);
                 return true;
             }
+        }
+        if (click == MOUSE_CLICK_LEFT) {
+            selectionDropped = true;
+            array<CEntitySwapperMapObject> selectionDataEmpty;
+            firstSelectionData = selectionDataEmpty;
+            return false;
         }
         return false;
     }
@@ -135,38 +146,47 @@ class CEntitySwapper {
         array<MapperObject@> lastSelectedObjects;
         Log("lastSelectedObjects count = " + lastSelectedObjects.length());
         uint selectCount = GetSelectedObjects(objects);
-        uint index1 = 0, index2 = 0, index3 = 0;
+        uint index1 = 0, index2 = 0, index3 = 0, index4 = 0;
         if (selectCount > 0) {
             Log("selectedCount = " + selectCount + ", array.length() = " + objects.length());
             for (uint i = 0; i < selectCount; i++) {
                 MapperObject@ object = objects[i];
                 if (valid(object)) {
                     if (object.MapObjType == MAP_OBJECT_SCENERY) {
-                        if (getProtoIdIndex(object.ProtoId, index1, index2, index3)) {
-                            Log("Found relevant object with proto ID: " + object.ProtoId + " at [" + index1 + " , " + index2 + " , " + index3 + "]");
-                            if (!directionDown) {
-                                if (index2 > 0) {
-                                    index2--;
-                                    MapperObject@ newObj = map.AddObject( object.MapX, object.MapY, MAP_OBJECT_SCENERY, data[index1][index2][index3]);
-                                    DeleteObject(object);
-                                    lastSelectedObjects.insertLast(newObj);
-                                } else {
-                                    lastSelectedObjects.insertLast(object);
+                        if (getProtoIdIndex(object.ProtoId, index1, index2, index3, index4)) {
+                            Log("Found relevant object with proto ID: " + object.ProtoId + " at [" + index1 + " , " + index2 + " , " + index3 + " , " + index4 + "]");
+                            if ((!directionDown && index2 > 0) || (directionDown && index2 < data[index1].length() - 1)) {
+                                if (selectionDropped) {
+                                    CEntitySwapperMapObject selectionObject = CEntitySwapperMapObject(object.ProtoId, object.MapX, object.MapY, index1, index2, index3, index4);
+                                    firstSelectionData.insertLast(selectionObject);
                                 }
-                                messageText = dataSectionName[index1] + ": " + dataThemeName[index1][index2];
-                            } else if (directionDown) {
-                                if (index2 < data[index1].length() - 1) {
+                                if (directionDown) {
                                     index2++;
-                                    MapperObject@ newObj = map.AddObject( object.MapX, object.MapY, MAP_OBJECT_SCENERY, data[index1][index2][index3]);
-                                    DeleteObject(object);
-                                    lastSelectedObjects.insertLast(newObj);
                                 } else {
-                                    lastSelectedObjects.insertLast(object);
+                                    index2--;
                                 }
-                                messageText = dataSectionName[index1] + ": " + dataThemeName[index1][index2];
+                                if (index3 >= data[index1][index2].length() || data[index1][index2][index3][0] <= 0) {
+                                    //index3 = data[index1][index2].length() - 1;
+                                    lastSelectedObjects.insertLast(object);
+                                    Log("Found proto = 0");
+                                    continue;
+                                }
+                                if (!selectionDropped) {
+                                    CEntitySwapperMapObject selectionObject = getFromSelected(object.MapX, object.MapY);
+                                    if (valid(selectionObject)) {
+                                        index4 = selectionObject.index4;
+                                    }
+                                }
+                                if (index4 >= data[index1][index2][index3].length()) {
+                                    index4 = 0;
+                                }
+                                MapperObject@ newObj = map.AddObject( object.MapX, object.MapY, MAP_OBJECT_SCENERY, data[index1][index2][index3][index4]);
+                                DeleteObject(object);
+                                lastSelectedObjects.insertLast(newObj);
                             } else {
                                 lastSelectedObjects.insertLast(object);
                             }
+                            messageText = dataSectionName[index1] + ": " + dataThemeName[index1][index2];
                         } else {
                             lastSelectedObjects.insertLast(object);
                         }
@@ -180,20 +200,27 @@ class CEntitySwapper {
         } else {
             Log("Nothing selected.");
             messageText = "Nothing selected.";
+            selectionDropped = true;
+            return;
         }
+        printLastSelectionData();
+        selectionDropped = false;
         SelectObjects(lastSelectedObjects, false);
         SelectObjects(lastSelectedObjects, true);
     }
 
-    bool getProtoIdIndex(uint objectProtoId, uint& index1, uint& index2, uint& index3) {
-        for (uint i = 0; i < data.length(); i++) {
-            for (uint j = 0; j < data[i].length(); j++) {
-                for (uint k = 0; k < data[i][j].length(); k++) {
-                    if (data[i][j][k] == objectProtoId) {
-                        index1 = i;
-                        index2 = j;
-                        index3 = k;
-                        return true;
+    bool getProtoIdIndex(uint objectProtoId, uint& index1, uint& index2, uint& index3, uint& index4) {
+        for (uint i1 = 0; i1 < data.length(); i1++) {
+            for (uint i2 = 0; i2 < data[i1].length(); i2++) {
+                for (uint i3 = 0; i3 < data[i1][i2].length(); i3++) {
+                    for (uint i4 = 0; i4 < data[i1][i2][i3].length(); i4++) {
+                        if (data[i1][i2][i3][i4] == objectProtoId) {
+                            index1 = i1;
+                            index2 = i2;
+                            index3 = i3;
+                            index4 = i4;
+                            return true;
+                        }
                     }
                 }
             }
@@ -213,6 +240,7 @@ class CEntitySwapper {
         uint act = 0;
         int currentSection = -1;
         int currentTheme = -1;
+        int currentUnit = -1;
 
         while (!f.isEndOfFile()) {
             string line;
@@ -307,8 +335,8 @@ class CEntitySwapper {
                     array<string> newTheme;
                     dataSectionName.insertLast(section);
                     dataThemeName.insertLast(newTheme);
-                    array<array<uint>> dataEmpty;
-                    data.insertLast(dataEmpty);
+                    array<array<array<uint>>> dataSectionEmpty;
+                    data.insertLast(dataSectionEmpty);
                     currentSection++;
                     currentTheme = -1;
                 } else {
@@ -327,8 +355,8 @@ class CEntitySwapper {
                             string themeName = substring(splittedLine[0], pos, len);
                             Log("Theme Name = " + themeName);
                             dataThemeName[currentSection].insertLast(themeName);
-                            array<uint> dataEmpty;
-                            data[currentSection].insertLast(dataEmpty);
+                            array<array<uint>> dataThemeEmpty;
+                            data[currentSection].insertLast(dataThemeEmpty);
                             currentTheme++;
                         } else {
                             Log("Invalid Theme Name format.");
@@ -337,14 +365,25 @@ class CEntitySwapper {
                         //  theme data
                         array<string@>@ splittedData = split(splittedLine[1], ",");
                         if (splittedData.length() > 0) {
-                            for (uint i = 0; i < splittedData.length(); i++) {
+                            for (currentUnit = 0; currentUnit < int(splittedData.length()); currentUnit++) {
                                 //Log("Trying to read number from: " + splittedData[i]);
                                 int value = 0;
-                                if (StrToInt(splittedData[i], value)) {
-                                    //Log("Read value = " + value);
-                                    data[currentSection][currentTheme].insertLast(value);
+                                trimWhiteSpaces(splittedData[currentUnit]);
+                                if (splittedData[currentUnit].length() > 0) {
+                                    array<uint> dataUnitEmpty;
+                                    data[currentSection][currentTheme].insertLast(dataUnitEmpty);
+                                    array<string@>@ variationData = split(splittedData[currentUnit], " ");
+                                    for (uint currentVariation = 0; currentVariation < variationData.length(); currentVariation++) {
+                                        if (StrToInt(variationData[currentVariation], value)) {
+                                            Log("Read value = " + value);
+                                            data[currentSection][currentTheme][currentUnit].insertLast(value);
+                                        } else {
+                                            Log("Failed to parse value from: '" + variationData[currentVariation] + "'");
+                                        }
+                                    }
                                 } else {
-                                    Log("Failed to parse value from: '" + splittedData[i] + "'");
+                                    Log("Missing Unit information or wrong format.");
+                                    return false;
                                 }
                             }
                         } else {
@@ -369,12 +408,63 @@ class CEntitySwapper {
             for (uint j = 0; j < dataThemeName[i].length(); j++) {
                 Log("\tTheme[" + i + ", " + j + "] " + dataThemeName[i][j]);
                 for (uint k = 0; k < data[i][j].length(); k++) {
-                    Log("\t\tData[" + i + ", " + j + ", " + k + "] " + data[i][j][k]);
+                    for (uint i4 = 0; i4 < data[i][j][k].length(); i4++) {
+                        Log("\t\tData[" + i + ", " + j + ", " + k + ", " + i4 + "] " + data[i][j][k][i4]);
+                    }
                 }
             }
         }
         Log("Data len = " + data.length());
     }
+
+    void trimWhiteSpaces(string& strIn) {
+        uint i = 0;
+        while (i < strIn.length() && (strIn[i] == " " || strIn[i] == "\t")) {
+            i++;
+        }
+        strIn = substring(strIn, i, strIn.length() - i);
+        i = strIn.length() -1;
+        while (i >= 0 && (strIn[i] == " " || strIn[i] == "\t")) {
+            i--;
+        }
+        strIn = substring(strIn, 0, i + 1);
+    }
+
+    void printLastSelectionData() {
+        for (uint i = 0; i < firstSelectionData.length(); i++) {
+            Log("[" + i + "] (" + firstSelectionData[i].protoId + " , " + firstSelectionData[i].hexX + ", " + firstSelectionData[i].hexY +
+                ", " + firstSelectionData[i].index1 + ", " + firstSelectionData[i].index2 + ", " + firstSelectionData[i].index3 + ", " + firstSelectionData[i].index4 + ")");
+        }
+    }
+
+    CEntitySwapperMapObject@ getFromSelected(uint16 x, uint16 y) {
+        for (uint i = 0; i < firstSelectionData.length(); i++) {
+            if (firstSelectionData[i].hexX == x && firstSelectionData[i].hexY == y) {
+                return firstSelectionData[i];
+            }
+        }
+        return null;
+    }
+};
+
+class CEntitySwapperMapObject {
+    uint protoId;
+    uint16 hexX;
+    uint16 hexY;
+    uint index1;
+    uint index2;
+    uint index3;
+    uint index4;
+    CEntitySwapperMapObject(uint proto, uint16 x, uint16 y, uint i1, uint i2, uint i3, uint i4) {
+        protoId = proto;
+        hexX = x;
+        hexY = y;
+        index1 = i1;
+        index2 = i2;
+        index3 = i3;
+        index4 = i4;
+    }
+
 };
 
 
