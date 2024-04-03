@@ -45,9 +45,6 @@ class CEntitySwapper {
     array<string> dataSectionName;
     array<CEntitySwapperMapObject> firstSelectionData;
 
-
-    array<string> wallIdMessages = {"Fence: Silver Steel Railing", "Fence: Rusty Steel Railing"};
-
     CEntitySwapper() {
         controlDown = false;
         shiftDown = false;
@@ -56,6 +53,10 @@ class CEntitySwapper {
         xAdjust = __ScreenWidth - (__ScreenWidth * 0.8);
         messageWidth = __ScreenWidth * 0.6;
         messageHeight = __ScreenHeight * 0.5;
+        loadConfigFromCfgFile();
+    }
+
+    void resetInternalVariables() {
         //  best way to empty arrays?
         array<array<array<array<uint>>>> dataEmpty;
         array<array<string>> dataThemeNameEmpty;
@@ -65,7 +66,6 @@ class CEntitySwapper {
         data = dataEmpty;
         dataThemeName = dataThemeNameEmpty;
         dataSectionName = dataSectionNameEmpty;
-        loadConfigFromCfgFile();
     }
 
     void Draw() {
@@ -116,6 +116,9 @@ class CEntitySwapper {
         } else if (key == DIK_LMENU || key == DIK_RMENU) {
             altDown = true;
         } else {
+            if (key == DIK_D && controlDown) {
+                printDebugLogs();
+            }
             //  handle hotkeys here
         }
         return false;
@@ -229,6 +232,7 @@ class CEntitySwapper {
     }
 
     bool loadConfigFromCfgFile() {
+        resetInternalVariables();
         file f;
         if (f.open("data/EntitySwapper.cfg", "r") == -1) {
             Message("File data/EntitySwapper.cfg not found.");
@@ -417,6 +421,34 @@ class CEntitySwapper {
         Log("Data len = " + data.length());
     }
 
+    void printDebugLogs() {
+        Log("printDebugLogs()");
+        MapperMap@ map = GetActiveMap();
+        array<MapperObject@> objects;
+        uint selectCount = GetSelectedObjects(objects);
+        if (selectCount > 0) {
+            Log("selectedCount = " + selectCount + ", array.length() = " + objects.length());
+            for (uint i = 0; i < selectCount; i++) {
+                MapperObject@ object = objects[i];
+                if (valid(object)) {
+                    Log("Selected mapper object: type = " + object.MapObjType + ", protoId = " + object.ProtoId + " at (" + object.MapX + ", " + object.MapY + ")");
+                    if (object.MapObjType == MAP_OBJECT_SCENERY) {
+
+                    } else {
+
+                    }
+                } else {
+                    Log("Found invalid mapper object!!!");
+                }
+            }
+        } else {
+            Log("Nothing selected.");
+            messageText = "Nothing selected.";
+            selectionDropped = true;
+            return;
+        }
+    }
+
     void trimWhiteSpaces(string& strIn) {
         uint i = 0;
         while (i < strIn.length() && (strIn[i] == " " || strIn[i] == "\t")) {
@@ -445,6 +477,34 @@ class CEntitySwapper {
         }
         return null;
     }
+
+    //  return false to let other plugins parse the command, or true if this command was for Input Visualizer only
+    bool Message(string& message) {
+        if (message == "es" || message == "swap") {
+            message = "Entity Swapper commands: reload";
+            messageActivationTime = GetTick();
+            messageText = " " + message;
+            return true;
+        } else if (substring(message, 0, 3) == "es " || substring(message, 0, 5) == "swap ") {
+            array<string@>@ args = split(message, " ");
+            if (valid(args)) {
+            } else {
+                message = "Entity Swapper Error: Could not parse command arguments.";
+                messageActivationTime = GetTick();
+                messageText = " " + message;
+                return true;
+            }
+            if (args[1] == "reload") {
+                Log("Entity Swapper - Reloading from config file.");
+                loadConfigFromCfgFile();
+                Log("Entity Swapper - Reload finished.");
+                return true;
+            }
+        }
+        //  Display messages on top of screen in big
+        return false;
+    }
+
 };
 
 class CEntitySwapperMapObject {
@@ -498,7 +558,7 @@ class CEntitySwapperPlugin : IMapperPlugin {
     bool KeyUp(uint8 key,string& keyText)       { return entitySwapper.KeyUp(key); }
     void InputLost()                            { entitySwapper.InputLost(); }
     void Loop()                                 {}
-    bool Message(string&)                       { return false; }
+    bool Message(string& msg)                   { return entitySwapper.Message(msg); }
     void RenderMap()                            {}
 };
 
