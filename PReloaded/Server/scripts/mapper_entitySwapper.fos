@@ -155,7 +155,7 @@ class CEntitySwapper {
             for (uint i = 0; i < selectCount; i++) {
                 MapperObject@ object = objects[i];
                 if (valid(object)) {
-                    if (object.MapObjType == MAP_OBJECT_SCENERY) {
+                    if (object.MapObjType == MAP_OBJECT_SCENERY || object.MapObjType == MAP_OBJECT_ITEM) {
                         if (getProtoIdIndex(object.ProtoId, index1, index2, index3, index4)) {
                             Log("Found relevant object with proto ID: " + object.ProtoId + " at [" + index1 + " , " + index2 + " , " + index3 + " , " + index4 + "]");
                             if ((!directionDown && index2 > 0) || (directionDown && index2 < data[index1].length() - 1)) {
@@ -480,12 +480,12 @@ class CEntitySwapper {
 
     //  return false to let other plugins parse the command, or true if this command was for Input Visualizer only
     bool Message(string& message) {
-        if (message == "es" || message == "swap") {
+        if (message == "es" || message == "swapper") {
             message = "Entity Swapper commands: reload";
             messageActivationTime = GetTick();
             messageText = " " + message;
             return true;
-        } else if (substring(message, 0, 3) == "es " || substring(message, 0, 5) == "swap ") {
+        } else if (substring(message, 0, 3) == "es " || substring(message, 0, 8) == "swapper ") {
             array<string@>@ args = split(message, " ");
             if (valid(args)) {
             } else {
