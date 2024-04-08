@@ -64,6 +64,22 @@ class CInputVisualizer {
     uint messageColor = COLOR_WHITE;
     bool messageEnabled = true;
 
+    //  Selected object info
+    string selectedInfoText = "";
+    int xAdjustSelectedInfo = 150;
+    int yAdjustSelectedInfo = 50;
+    int selectedInfoWidth = 500;
+    int selectedInfoHeight = 500;
+    uint selectedInfoColor = COLOR_WHITE;
+    bool selectedInfoEnabled = true;
+    uint lastSelectedTabIndex = 0;
+    uint lastSelectedSubTabIndex = 0;
+
+    //  tabs data
+    array<string@> mainTabNames;
+    array<array<string@>> subTabNames;
+    array<array<array<uint16>>> tabPids;
+
     CInputVisualizer() {
         activationTime = 0;
         activeDuration = 1000;
@@ -77,7 +93,13 @@ class CInputVisualizer {
         xAdjustMessage = __ScreenWidth - (__ScreenWidth * 0.8);
         messageWidth = __ScreenWidth * 0.6;
         messageHeight = __ScreenHeight * 0.5;
+        xAdjustSelectedInfo = 10;
+        yAdjustSelectedInfo = OBJ_PANEL_SIZE_H + 10;
+        selectedInfoWidth = OBJ_PANEL_SIZE_W;
+        selectedInfoHeight = 120;
         loadConfigFromCfgFile();
+        loadTabsConfig();
+        printTabsData();
     }
 
     void Draw() {
@@ -108,6 +130,13 @@ class CInputVisualizer {
             }
         }
 
+        if (selectedInfoEnabled) {
+            UpdateSelectionInfo();
+            if (valid(selectedInfoText) && selectedInfoText.length() > 0) {
+                DrawText(selectedInfoText, xAdjustSelectedInfo, yAdjustSelectedInfo, selectedInfoWidth, selectedInfoHeight, selectedInfoColor, FONT_TYPE_FAT, FONT_FLAG_BORDERED);
+            }
+        }
+
     }
 
     bool MouseDown(int click) {
@@ -133,7 +162,166 @@ class CInputVisualizer {
     }
 
     bool MouseUp(int click) {
+        if (click == MOUSE_CLICK_MIDDLE) {
+            //TabSelect()
+        }
         return false;
+    }
+
+    void UpdateSelectionInfo() {
+        uint index1 = 0, index2 = 0, index3 = 0;
+        MapperObject@ object = GetSelectedObject();
+        if (valid(object)) {
+            uint protoId = object.ProtoId;
+            if (getPidTabIndex(protoId, index1, index2, index3)) {
+                //Log("Input Visualizer::UpdateSelectionInfo() - [" + index1 + ", " + index2 + ", " + index3 + "]");
+                string objInfo = GetMsgStr(TEXTMSG_ITEM, protoId * 100 + 0);
+                selectedInfoText = "[" + protoId+ "] - " + mainTabNames[index1] + " -> " + subTabNames[index1][index2] + " -> " + objInfo;
+            } else {
+                //Log("Input Visualizer::UpdateSelectionInfo() - Couldn't find object index, pleaser revise tabs.cfg");
+                selectedInfoText = "N/A";
+            }
+        } else {
+            selectedInfoText = "";
+        }
+    }
+
+    void JumpToSelectedObjectTab() {
+        //Log("JUMP");
+        uint index1 = 0, index2 = 0, index3 = 0;
+        MapperObject@ object = GetSelectedObject();
+        if (valid(object)) {
+            uint protoId = object.ProtoId;
+            if (getPidTabIndex(protoId, index1, index2, index3)) {
+                //Log("Input Visualizer :: JumpToSelectedObjectTab() - protoId = " + protoId + " new index (" + index1 + ", " + index2 + ") vs old index (" + lastSelectedTabIndex + ", " + lastSelectedSubTabIndex + ")");
+                TabSelect(index1, subTabNames[index1][index2], true);
+                //if (lastSelectedTabIndex != index1 || lastSelectedSubTabIndex != index2) {
+                    //Log("Input Visualizer :: JumpToSelectedObjectTab() - protoId = " + protoId + " new index (" + index1 + ", " + index2 + ") vs old index (" + lastSelectedTabIndex + ", " + lastSelectedSubTabIndex + ")");
+                    //TabSelect(0, "", false);
+                    //TabSelect(index1, subTabNames[index1][index2], true);
+                    //lastSelectedTabIndex = index1;
+                    //lastSelectedSubTabIndex = index2;
+                //}
+            }
+        }
+    }
+
+    void loadTabsConfig() {
+        mainTabNames.insertLast("");        // index fix so empty
+        mainTabNames.insertLast("Norm");    // 1
+        mainTabNames.insertLast("Vehi");    // 2
+        mainTabNames.insertLast("Cont");    // 3
+        mainTabNames.insertLast("Door");    // 4
+        mainTabNames.insertLast("Spec");    // 5
+        mainTabNames.insertLast("Grid");    // 6
+        mainTabNames.insertLast("Scen");    // 7
+        mainTabNames.insertLast("Roof");    // 8
+        mainTabNames.insertLast("Humn");    // 9
+        mainTabNames.insertLast("Wall");    // 10
+        mainTabNames.insertLast("Flor");    // 11
+        mainTabNames.insertLast("Othr");    // 12
+        mainTabNames.insertLast("Tech");    // 13
+        file f;
+        if(f.open("tabs.cfg", "r") < 0) {
+            Message("Couldn't find tabs.cfg, ignored.");
+            return;
+        }
+        string        line;
+        int           tab = -1;
+        string        name = "";
+        array<uint16> pids;
+        while(!f.isEndOfFile()) {
+            f.readLine(line);
+            int len = line.rawLength();
+            while(len > 0 && (line.rawGet(len - 1) == 10 || line.rawGet(len - 1) == 13))
+                len--;
+            if(len == 0)
+                continue;
+            line.rawResize(len);
+            if(line == "[SubTab]") {
+                tab = -1;
+                name = "";
+                pids.resize(0);
+                continue;
+            }
+            array<string@>@ splitted = splitEx(line, "=");
+            if(splitted.length() < 2)
+                continue;
+            if(splitted[0] == "MainTab") {
+                StrToInt(splitted[1], tab);
+                continue;
+            }
+            if(splitted[0] == "Name") {
+                name = splitted[1];
+                continue;
+            }
+            if(splitted[0] == "Pids") {
+                if(tab < 0)
+                    continue;
+                array<string@>@ splitted2 = split(splitted[1], " ");
+                for(uint i = 0, j = splitted2.length(); i < j; i++) {
+                    uint16 pid = 0;
+                    StrToInt(splitted2[i], pid);
+                    if(pid != 0)
+                        pids.insertLast(pid);
+                }
+                //tabPids.insertLast(pids);
+                //subTabNames.insertLast(name);
+                //Log("Tab sub category name = " + name);
+                while (tab >= int(tabPids.length())) {
+                    Log("Inserting tab = " + tab + ", current length = " + tabPids.length());
+                    array<string@> tmpSubNames;
+                    subTabNames.insertLast(tmpSubNames);
+                    array<array<uint16>> tmpPids;
+                    tabPids.insertLast(tmpPids);
+                }
+                Log("Inserting name = " + name + ", pids = " + arrayToString(pids, ", "));
+                subTabNames[tab].insertLast("" + name);
+                tabPids[tab].insertLast(pids);
+            }
+        }
+        f.close();
+    }
+    bool getPidTabIndex(uint protoId, uint& index1, uint& index2, uint& index3) {
+        for (uint i1 = 0; i1 < tabPids.length(); i1++) {
+            for (uint i2 = 0; i2 < tabPids[i1].length(); i2++) {
+                for (uint i3 = 0; i3 < tabPids[i1][i2].length(); i3++) {
+                    if (protoId == tabPids[i1][i2][i3]) {
+                        index1 = i1;
+                        index2 = i2;
+                        index3 = i3;
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    string arrayToString(array<uint16>@ values, string& separator) {
+        string ret = "";
+        for (uint i = 0; i < values.length(); i++) {
+            if (i == 0) {
+                ret += "" + values[i];
+            } else {
+                ret += separator + values[i];
+            }
+        }
+        return ret;
+    }
+
+    void printTabsData() {
+        for (uint i = 0; i < tabPids.length(); i++) {
+            if (i < mainTabNames.length()) {
+                Log("Main Tab [" + i + "] = " + mainTabNames[i]);
+            } else {
+                Log("Warning: Main Tab [" + i + "] name not available, Main Tab names count = " + mainTabNames.length());
+            }
+            //Log("\tSub Tab = " + subTabNames[i]);
+            for (uint j = 0; j < tabPids[i].length(); j++) {
+                Log("\tName = '" + subTabNames[i][j] + "', pids = {" + arrayToString(tabPids[i][j], " ") + "}");
+            }
+        }
     }
 
     void MouseMove(int x, int y) {
@@ -173,6 +361,9 @@ class CInputVisualizer {
             }
             //Log("INPUT VISUALIZER - KEY DN: (" + key + ", " + lastKeyPressed + ") x" + sameKeyPressedNr + " flags (" + getCurrentFlags() + ", " + lastKeyPressedControlFlag + ")");
             refreshControlText();
+            if (controlDown && key == DIK_1) {
+                JumpToSelectedObjectTab();
+            }
 
         }
         return false;
@@ -506,6 +697,31 @@ class CInputVisualizer {
                         Log("Input Visualizer: 'posY' changed to '" + yAdjust + "'");
                     } else {
                         Log("Input Visualizer: Failed to load 'posY' value [" + splittedLine[1] + "]");
+                    }
+                }
+                if (splittedLine[0] == "selectedInfoEnabled") {
+                    selectedInfoEnabled = splittedLine[1] == "true" ? true : splittedLine[1] == "yes" ? true : splittedLine[1] == "1" ? true : false;
+                    Log("Input Visualizer: 'selectedInfoEnabled' changed to: " + selectedInfoEnabled);
+                }
+                if (splittedLine[0] == "selectedInfoColor") {
+                    if (StrToIntAnyFormat(splittedLine[1], selectedInfoColor)) {
+                        Log("Input Visualizer: 'color' changed to '" + selectedInfoColor + "'");
+                    } else {
+                        Log("Input Visualizer: Failed to load color format. [" + splittedLine[1] + "]");
+                    }
+                }
+                if (splittedLine[0] == "selectedInfoPosX") {
+                    if (StrToInt(splittedLine[1], xAdjustSelectedInfo)) {
+                        Log("Input Visualizer: 'selectedInfoPosX' changed to '" + xAdjustSelectedInfo + "'");
+                    } else {
+                        Log("Input Visualizer: Failed to load 'selectedInfoPosX' value [" + splittedLine[1] + "]");
+                    }
+                }
+                if (splittedLine[0] == "selectedInfoPosY") {
+                    if (StrToInt(splittedLine[1], yAdjustSelectedInfo)) {
+                        Log("Input Visualizer: 'selectedInfoPosY' changed to '" + yAdjustSelectedInfo + "'");
+                    } else {
+                        Log("Input Visualizer: Failed to load 'selectedInfoPosY' value [" + splittedLine[1] + "]");
                     }
                 }
             } else {
