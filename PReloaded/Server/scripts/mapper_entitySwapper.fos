@@ -379,7 +379,7 @@ class CEntitySwapper {
                                     array<string@>@ variationData = split(splittedData[currentUnit], " ");
                                     for (uint currentVariation = 0; currentVariation < variationData.length(); currentVariation++) {
                                         if (StrToInt(variationData[currentVariation], value)) {
-                                            Log("Read value = " + value);
+                                            //Log("Read value = " + value);
                                             data[currentSection][currentTheme][currentUnit].insertLast(value);
                                         } else {
                                             Log("Failed to parse value from: '" + variationData[currentVariation] + "'");
