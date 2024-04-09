@@ -29,6 +29,7 @@ class CEntitySwapper {
     bool altDown = false;
 
     bool selectionDropped = true;
+    int selectionShift = 0;
 
     string messageText = "";
     int xAdjust = 150;
@@ -66,6 +67,7 @@ class CEntitySwapper {
         data = dataEmpty;
         dataThemeName = dataThemeNameEmpty;
         dataSectionName = dataSectionNameEmpty;
+        selectionShift = 0;
     }
 
     void Draw() {
@@ -96,6 +98,7 @@ class CEntitySwapper {
             selectionDropped = true;
             array<CEntitySwapperMapObject> selectionDataEmpty;
             firstSelectionData = selectionDataEmpty;
+            selectionShift = 0;
             return false;
         }
         return false;
@@ -144,42 +147,87 @@ class CEntitySwapper {
     }
 
     void shiftSelected(bool directionDown) {
+        if (selectionShift > 10) {
+            Log("selectionShift out of bounds, maximum 10 in both directions. cur val = " + selectionShift);
+            CLAMP(selectionShift, -10, 10);
+            return;
+        }
         MapperMap@ map = GetActiveMap();
         array<MapperObject@> objects;
         array<MapperObject@> lastSelectedObjects;
-        Log("lastSelectedObjects count = " + lastSelectedObjects.length());
-        uint selectCount = GetSelectedObjects(objects);
+        bool firstTime = true;
+        //Log("lastSelectedObjects count = " + lastSelectedObjects.length());
         uint index1 = 0, index2 = 0, index3 = 0, index4 = 0;
+        uint selectCount = GetSelectedObjects(objects);
         if (selectCount > 0) {
-            Log("selectedCount = " + selectCount + ", array.length() = " + objects.length());
+            //Log("selectedCount = " + selectCount + ", array.length() = " + objects.length());
             for (uint i = 0; i < selectCount; i++) {
                 MapperObject@ object = objects[i];
                 if (valid(object)) {
                     if (object.MapObjType == MAP_OBJECT_SCENERY || object.MapObjType == MAP_OBJECT_ITEM) {
                         if (getProtoIdIndex(object.ProtoId, index1, index2, index3, index4)) {
-                            Log("Found relevant object with proto ID: " + object.ProtoId + " at [" + index1 + " , " + index2 + " , " + index3 + " , " + index4 + "]");
+                            //Log("Found relevant object with proto ID: " + object.ProtoId + " at [" + index1 + " , " + index2 + " , " + index3 + " , " + index4 + "]");
+                            //Log("selectionDropped = " + selectionDropped);
+                            if (selectionDropped) {
+                                //Log("11");
+                                CEntitySwapperMapObject selectionObject = CEntitySwapperMapObject(object.ProtoId, object.MapX, object.MapY, index1, index2, index3, index4);
+                                //Log("12");
+                                firstSelectionData.insertLast(selectionObject);
+                                //Log("13");
+                            }
                             if ((!directionDown && index2 > 0) || (directionDown && index2 < data[index1].length() - 1)) {
-                                if (selectionDropped) {
-                                    CEntitySwapperMapObject selectionObject = CEntitySwapperMapObject(object.ProtoId, object.MapX, object.MapY, index1, index2, index3, index4);
-                                    firstSelectionData.insertLast(selectionObject);
+                                //  new selection
+                                if (!selectionDropped) {
+                                    //Log("1");
+                                    CEntitySwapperMapObject@ oldObject;
+                                    //Log("2");
+                                    @oldObject = getFromSelected(object.MapX, object.MapY);
+                                    //Log("3");
+                                    if (valid(oldObject)) {
+                                        //Log("valid - old object");
+                                        index2 = oldObject.index2;
+                                    } else {
+                                        Log("invalid - old object");
+                                    }
                                 }
-                                if (directionDown) {
-                                    index2++;
+                                //  shift entities
+                                //Log("selectionShift = " + selectionShift + ", directionDown = " + directionDown);
+                                if (firstTime) {
+                                    firstTime = false;
+                                    if (directionDown) {
+                                        selectionShift++;
+                                    } else {
+                                        selectionShift--;
+                                    }
+                                }
+                                //Log("selectionShift = " + selectionShift);
+                                //Log("index2 = " + index2);
+                                if (selectionShift + index2 <= 0) {
+                                    index2 = 0;
+                                } else if (selectionShift + int(index2) >= int(data[index1].length()) - 1) {
+                                    index2 = data[index1].length() - 1;
                                 } else {
-                                    index2--;
+                                    index2 += selectionShift;
                                 }
+                                //Log("index2 = " + index2);
                                 if (index3 >= data[index1][index2].length() || data[index1][index2][index3][0] <= 0) {
                                     //index3 = data[index1][index2].length() - 1;
                                     lastSelectedObjects.insertLast(object);
-                                    Log("Found proto = 0");
+                                    //Log("Found proto = 0");
                                     continue;
                                 }
+                                //  old selection, use index4 from save
                                 if (!selectionDropped) {
-                                    CEntitySwapperMapObject selectionObject = getFromSelected(object.MapX, object.MapY);
+                                    //Log("before invalid selectionObject - 1");
+                                    CEntitySwapperMapObject@ selectionObject;
+                                    //Log("before invalid selectionObject - 2");
+                                    @selectionObject = getFromSelected(object.MapX, object.MapY);
+                                    //Log("before invalid selectionObject - 3");
                                     if (valid(selectionObject)) {
                                         index4 = selectionObject.index4;
                                     }
                                 }
+                                //  default to first element if current index not present
                                 if (index4 >= data[index1][index2][index3].length()) {
                                     index4 = 0;
                                 }
@@ -206,7 +254,7 @@ class CEntitySwapper {
             selectionDropped = true;
             return;
         }
-        printLastSelectionData();
+        //printLastSelectionData();
         selectionDropped = false;
         SelectObjects(lastSelectedObjects, false);
         SelectObjects(lastSelectedObjects, true);
@@ -470,11 +518,19 @@ class CEntitySwapper {
     }
 
     CEntitySwapperMapObject@ getFromSelected(uint16 x, uint16 y) {
+        //Log("getFromSelected()");
+        if (valid(firstSelectionData)) {
+            //Log("valid - firstSelectionData");
+        } else {
+            Log("invalid - firstSelectionData");
+        }
         for (uint i = 0; i < firstSelectionData.length(); i++) {
+            //Log("i = " + i);
             if (firstSelectionData[i].hexX == x && firstSelectionData[i].hexY == y) {
                 return firstSelectionData[i];
             }
         }
+        //Log("getFromSelected() - return null");
         return null;
     }
 
@@ -524,7 +580,6 @@ class CEntitySwapperMapObject {
         index3 = i3;
         index4 = i4;
     }
-
 };
 
 
