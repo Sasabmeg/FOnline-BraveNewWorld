@@ -85,12 +85,20 @@ class CEntitySwapper {
                 messageActivationTime = GetTick();
                 shiftSelected(true);
                 return true;
+            } else if (shiftDown) {
+                messageActivationTime = GetTick();
+                shiftSelectedVariation(true);
+                return true;
             }
         }
         if (click == MOUSE_CLICK_WHEEL_UP) {
             if (controlDown) {
                 messageActivationTime = GetTick();
                 shiftSelected(false);
+                return true;
+            } else if (shiftDown) {
+                messageActivationTime = GetTick();
+                shiftSelectedVariation(false);
                 return true;
             }
         }
@@ -226,6 +234,80 @@ class CEntitySwapper {
                                     if (valid(selectionObject)) {
                                         index4 = selectionObject.index4;
                                     }
+                                }
+                                //  default to first element if current index not present
+                                if (index4 >= data[index1][index2][index3].length()) {
+                                    index4 = 0;
+                                }
+                                MapperObject@ newObj = map.AddObject( object.MapX, object.MapY, MAP_OBJECT_SCENERY, data[index1][index2][index3][index4]);
+                                DeleteObject(object);
+                                lastSelectedObjects.insertLast(newObj);
+                            } else {
+                                lastSelectedObjects.insertLast(object);
+                            }
+                            messageText = dataSectionName[index1] + ": " + dataThemeName[index1][index2];
+                        } else {
+                            lastSelectedObjects.insertLast(object);
+                        }
+                    } else {
+                        lastSelectedObjects.insertLast(object);
+                    }
+                } else {
+                    Log("Found invalid mapper object!!!");
+                }
+            }
+        } else {
+            Log("Nothing selected.");
+            messageText = "Nothing selected.";
+            selectionDropped = true;
+            return;
+        }
+        //printLastSelectionData();
+        selectionDropped = false;
+        SelectObjects(lastSelectedObjects, false);
+        SelectObjects(lastSelectedObjects, true);
+    }
+
+    void shiftSelectedVariation(bool directionDown) {
+        MapperMap@ map = GetActiveMap();
+        array<MapperObject@> objects;
+        array<MapperObject@> lastSelectedObjects;
+        //Log("lastSelectedObjects count = " + lastSelectedObjects.length());
+        uint index1 = 0, index2 = 0, index3 = 0, index4 = 0;
+        uint selectCount = GetSelectedObjects(objects);
+        if (selectCount > 0) {
+            //Log("selectedCount = " + selectCount + ", array.length() = " + objects.length());
+            for (uint i = 0; i < selectCount; i++) {
+                MapperObject@ object = objects[i];
+                if (valid(object)) {
+                    if (object.MapObjType == MAP_OBJECT_SCENERY || object.MapObjType == MAP_OBJECT_ITEM) {
+                        if (getProtoIdIndex(object.ProtoId, index1, index2, index3, index4)) {
+                            //Log("Found relevant object with proto ID: " + object.ProtoId + " at [" + index1 + " , " + index2 + " , " + index3 + " , " + index4 + "]");
+                            //Log("selectionDropped = " + selectionDropped);
+                            if (selectionDropped) {
+                                //Log("11");
+                                CEntitySwapperMapObject selectionObject = CEntitySwapperMapObject(object.ProtoId, object.MapX, object.MapY, index1, index2, index3, index4);
+                                //Log("12");
+                                firstSelectionData.insertLast(selectionObject);
+                                //Log("13");
+                            }
+                            if ((!directionDown && index4 > 0) || (directionDown && index4 < data[index1][index2][index3].length() - 1)) {
+                                //  new selection
+                                //  shift entities
+                                //Log("selectionShift = " + selectionShift + ", directionDown = " + directionDown);
+                                if (directionDown) {
+                                    index4++;
+                                } else {
+                                    index4--;
+                                }
+                                //Log("selectionShift = " + selectionShift);
+                                //Log("index2 = " + index2);
+                                //Log("index2 = " + index2);
+                                if (index3 >= data[index1][index2].length() || data[index1][index2][index3][0] <= 0) {
+                                    //index3 = data[index1][index2].length() - 1;
+                                    lastSelectedObjects.insertLast(object);
+                                    //Log("Found proto = 0");
+                                    continue;
                                 }
                                 //  default to first element if current index not present
                                 if (index4 >= data[index1][index2][index3].length()) {
