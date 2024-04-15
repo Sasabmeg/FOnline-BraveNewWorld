@@ -45,6 +45,7 @@ class CEntitySwapper {
     array<array<string>> dataThemeName;
     array<string> dataSectionName;
     array<CEntitySwapperMapObject> firstSelectionData;
+    array<CEntitySwapperPosFixDataObject> posFixData;
 
     CEntitySwapper() {
         controlDown = false;
@@ -63,11 +64,13 @@ class CEntitySwapper {
         array<array<string>> dataThemeNameEmpty;
         array<string> dataSectionNameEmpty;
         array<CEntitySwapperMapObject> selectionDataEmpty;
+        array<CEntitySwapperPosFixDataObject> emptyPosFixData;
         firstSelectionData = selectionDataEmpty;
         data = dataEmpty;
         dataThemeName = dataThemeNameEmpty;
         dataSectionName = dataSectionNameEmpty;
         selectionShift = 0;
+        posFixData = emptyPosFixData;
     }
 
     void Draw() {
@@ -174,32 +177,55 @@ class CEntitySwapper {
                 if (valid(object)) {
                     if (object.MapObjType == MAP_OBJECT_SCENERY || object.MapObjType == MAP_OBJECT_ITEM) {
                         if (getProtoIdIndex(object.ProtoId, index1, index2, index3, index4)) {
+                            int oldPosX = 0, oldPosY = 0, curPosX = 0, curPosY = 0, newPosX = 0, newPosY = 0;
                             //Log("Found relevant object with proto ID: " + object.ProtoId + " at [" + index1 + " , " + index2 + " , " + index3 + " , " + index4 + "]");
                             //Log("selectionDropped = " + selectionDropped);
                             if (selectionDropped) {
                                 //Log("11");
                                 CEntitySwapperMapObject selectionObject = CEntitySwapperMapObject(object.ProtoId, object.MapX, object.MapY, index1, index2, index3, index4);
                                 //Log("12");
-                                firstSelectionData.insertLast(selectionObject);
+                                for (uint posFixIndex = 0; posFixIndex < posFixData.length(); posFixIndex++) {
+                                    if (posFixData[posFixIndex].protoId == object.ProtoId) {
+                                        oldPosX = posFixData[posFixIndex].posFixX;
+                                        oldPosY = posFixData[posFixIndex].posFixY;
+                                        selectionObject.posFixX = posFixData[posFixIndex].posFixX;
+                                        selectionObject.posFixY = posFixData[posFixIndex].posFixY;
+                                        //Log("Selection Dropped :: Fixing position for proto = " + object.ProtoId);
+                                        //break;
+                                    }
+                                }
                                 //Log("13");
+                                firstSelectionData.insertLast(selectionObject);
+                                //Log("14");
                             }
                             if ((!directionDown && index2 > 0) || (directionDown && index2 < data[index1].length() - 1)) {
                                 //  new selection
                                 if (!selectionDropped) {
-                                    //Log("1");
+                                    //Log("15");
+                                    for (uint posFixIndex = 0; posFixIndex < posFixData.length(); posFixIndex++) {
+                                        if (posFixData[posFixIndex].protoId == object.ProtoId) {
+                                            curPosX = posFixData[posFixIndex].posFixX;
+                                            curPosY = posFixData[posFixIndex].posFixY;
+                                            //Log("Old Selection :: Fixing position for proto = " + object.ProtoId);
+                                            //break;
+                                        }
+                                    }
+                                    //Log("16");
+
+                                    //Log("17");
                                     CEntitySwapperMapObject@ oldObject;
-                                    //Log("2");
-                                    @oldObject = getFromSelected(object.MapX, object.MapY);
-                                    //Log("3");
+                                    //Log("18");
+                                    @oldObject = getFromSelected(object.MapX - curPosX, object.MapY - curPosY);
+                                    //Log("19");
                                     if (valid(oldObject)) {
-                                        //Log("valid - old object");
+                                        //Log("20");
                                         index2 = oldObject.index2;
                                     } else {
-                                        Log("invalid - old object");
+                                        Log("invalid - old object (" + object.ProtoId + ") getFromSelected mapCoord (" + object.MapX + ", " + object.MapY + ") posFix (" + curPosX + ", " + curPosY + ")");
                                     }
                                 }
                                 //  shift entities
-                                //Log("selectionShift = " + selectionShift + ", directionDown = " + directionDown);
+                                //Log("21 - selectionShift = " + selectionShift + ", directionDown = " + directionDown);
                                 if (firstTime) {
                                     firstTime = false;
                                     if (directionDown) {
@@ -208,8 +234,8 @@ class CEntitySwapper {
                                         selectionShift--;
                                     }
                                 }
-                                //Log("selectionShift = " + selectionShift);
-                                //Log("index2 = " + index2);
+                                //Log("22 - selectionShift = " + selectionShift);
+                                //Log("23 - index2 = " + index2);
                                 if (selectionShift + index2 <= 0) {
                                     index2 = 0;
                                 } else if (selectionShift + int(index2) >= int(data[index1].length()) - 1) {
@@ -217,7 +243,7 @@ class CEntitySwapper {
                                 } else {
                                     index2 += selectionShift;
                                 }
-                                //Log("index2 = " + index2);
+                                //Log("24 - index2 = " + index2);
                                 if (index3 >= data[index1][index2].length() || data[index1][index2][index3][0] <= 0) {
                                     //index3 = data[index1][index2].length() - 1;
                                     lastSelectedObjects.insertLast(object);
@@ -226,20 +252,48 @@ class CEntitySwapper {
                                 }
                                 //  old selection, use index4 from save
                                 if (!selectionDropped) {
-                                    //Log("before invalid selectionObject - 1");
+                                    //Log("25");
                                     CEntitySwapperMapObject@ selectionObject;
-                                    //Log("before invalid selectionObject - 2");
-                                    @selectionObject = getFromSelected(object.MapX, object.MapY);
-                                    //Log("before invalid selectionObject - 3");
+                                    //Log("26");
+                                    @selectionObject = getFromSelected(object.MapX - curPosX, object.MapY - curPosY);
+                                    //Log("27");
                                     if (valid(selectionObject)) {
                                         index4 = selectionObject.index4;
+                                    } else {
+                                        Log("invalid - old object (" + object.ProtoId + ") getFromSelected mapCoord (" + object.MapX + ", " + object.MapY + ") posFix (" + curPosX + ", " + curPosY + ")");
                                     }
+                                    //Log("28");
+                                    for (uint posFixIndex = 0; posFixIndex < posFixData.length(); posFixIndex++) {
+                                        if (posFixData[posFixIndex].protoId == object.ProtoId) {
+                                            oldPosX = posFixData[posFixIndex].posFixX;
+                                            oldPosY = posFixData[posFixIndex].posFixY;
+                                            //Log("Old Selection :: Fixing position for proto = " + object.ProtoId);
+                                            //break;
+                                        }
+                                    }
+                                    //Log("29");
                                 }
                                 //  default to first element if current index not present
+                                //Log("30");
                                 if (index4 >= data[index1][index2][index3].length()) {
                                     index4 = 0;
                                 }
-                                MapperObject@ newObj = map.AddObject( object.MapX, object.MapY, MAP_OBJECT_SCENERY, data[index1][index2][index3][index4]);
+                                //Log("31");
+                                //  check if new object has position fix values
+                                for (uint posFixIndex = 0; posFixIndex < posFixData.length(); posFixIndex++) {
+                                    //  old has posfix
+                                    if (posFixData[posFixIndex].protoId == object.ProtoId) {
+                                        //Log("Old position " + object.ProtoId + " has fix: Old (" + oldPosX + ", " + oldPosY + ")" + " New (" + newPosX + ", " + newPosY + ")");
+                                    }
+                                    if (posFixData[posFixIndex].protoId == data[index1][index2][index3][index4]) {
+                                        newPosX = posFixData[posFixIndex].posFixX;
+                                        newPosY = posFixData[posFixIndex].posFixY;
+                                        //Log("New position " + data[index1][index2][index3][index4] + " has fix: Old (" + oldPosX + ", " + oldPosY + ")" + " New (" + newPosX + ", " + newPosY + ")");
+                                        //break;
+                                    }
+                                }
+                                //Log("32");
+                                MapperObject@ newObj = map.AddObject( object.MapX - oldPosX + newPosX, object.MapY - oldPosY + newPosY, MAP_OBJECT_SCENERY, data[index1][index2][index3][index4]);
                                 DeleteObject(object);
                                 lastSelectedObjects.insertLast(newObj);
                             } else {
@@ -529,6 +583,52 @@ class CEntitySwapper {
                     Log("Missing Section information. Specify Section first.");
                     return false;
                 }
+            } else if (getCharPos(line, "{") >= 0 && getCharPos(line, "}") >= 0) {
+                //  posFix
+                int pos = getCharPos(line, "{") + 1;
+                int len = getCharPos(line, "}") - pos;
+                if (pos > 0 && len > 0 && (pos + len) < int(line.length())) {
+                    string posFix = substring(line, pos, len);
+                    Log("Found Position Fix: " + posFix);
+                    array<string@>@ splittedData = split(posFix, ",");
+                    if (splittedData.length() > 0) {
+                        for (uint i = 0; i < splittedData.length(); i++) {
+                            //Log("Trying to read number from: " + splittedData[i]);
+                            int value = 0;
+                            trimWhiteSpaces(splittedData[i]);
+                            if (splittedData[i].length() > 0) {
+                                array<string@>@ threeValuesData = split(splittedData[i], " ");
+                                int[] posFixValues = {0, 0, 0};
+                                if (threeValuesData.length() == 3) {
+                                    for (uint j = 0; j < threeValuesData.length(); j++) {
+                                        if (StrToInt(threeValuesData[j], value)) {
+                                            //Log("Read value = " + value);
+                                            posFixValues[j] = value;
+                                            Log("####\t" + posFixValues[j]);
+                                        } else {
+                                            Log("Failed to parse value from: '" + threeValuesData[j] + "'");
+                                        }
+                                    }
+                                    if (posFixValues[0] > 0 && (posFixValues[1] != 0 || posFixValues[2] != 0)) {
+                                        CEntitySwapperPosFixDataObject posFixTemp = CEntitySwapperPosFixDataObject(posFixValues[0], posFixValues[1], posFixValues[2]);
+                                        posFixData.insertLast(posFixTemp);
+                                    }
+                                } else {
+                                    Log("Value data length is not 3: '" + splittedData[i] + "'");
+                                }
+                            } else {
+                                Log("Missing Unit information or wrong format.");
+                                return false;
+                            }
+                        }
+                    } else {
+                        Log("Invalid Theme Data format.");
+                        return false;
+                    }
+                } else {
+                    Log("Invalid Position Fix format.");
+                    return false;
+                }
             }
         }
         f.close();
@@ -549,6 +649,11 @@ class CEntitySwapper {
             }
         }
         Log("Data len = " + data.length());
+        Log("Position Fix Data:");
+        for (uint i = 0; i < posFixData.length(); i ++) {
+            Log("\tProto = " + posFixData[i].protoId + ", X = " + posFixData[i].posFixX + ", Y = " + posFixData[i].posFixY);
+        }
+        Log("PosFixData len = " + posFixData.length());
     }
 
     void printDebugLogs() {
@@ -608,7 +713,7 @@ class CEntitySwapper {
         }
         for (uint i = 0; i < firstSelectionData.length(); i++) {
             //Log("i = " + i);
-            if (firstSelectionData[i].hexX == x && firstSelectionData[i].hexY == y) {
+            if (firstSelectionData[i].hexX - firstSelectionData[i].posFixX == x && firstSelectionData[i].hexY - firstSelectionData[i].posFixY == y) {
                 return firstSelectionData[i];
             }
         }
@@ -653,6 +758,8 @@ class CEntitySwapperMapObject {
     uint index2;
     uint index3;
     uint index4;
+    uint posFixX = 0;
+    uint posFixY = 0;
     CEntitySwapperMapObject(uint proto, uint16 x, uint16 y, uint i1, uint i2, uint i3, uint i4) {
         protoId = proto;
         hexX = x;
@@ -664,6 +771,17 @@ class CEntitySwapperMapObject {
     }
 };
 
+
+class CEntitySwapperPosFixDataObject {
+    uint protoId;
+    int posFixX;
+    int posFixY;
+    CEntitySwapperPosFixDataObject(uint proto, int x, int y) {
+        protoId = proto;
+        posFixX = x;
+        posFixY = y;
+    }
+};
 
 class CEntitySwapperPlugin : IMapperPlugin {
     CEntitySwapper entitySwapper;
