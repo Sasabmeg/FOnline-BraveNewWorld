@@ -158,6 +158,7 @@ class CInputVisualizer {
             nonControlKeyLastActiveTime = GetTick();
             refreshControlText();
         }
+        Draw();
         return false;
     }
 
@@ -385,6 +386,7 @@ class CInputVisualizer {
             }
 
         }
+        Draw();
         return false;
     }
 
@@ -412,6 +414,7 @@ class CInputVisualizer {
             activationTime = GetTick();
             nonControlKeyLastActiveTime = GetTick();
         }
+        Draw();
         return false;
     }
 

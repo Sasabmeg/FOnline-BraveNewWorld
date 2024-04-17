@@ -245,10 +245,23 @@ class CEntitySwapper {
                                 }
                                 //Log("24 - index2 = " + index2);
                                 if (index3 >= data[index1][index2].length() || data[index1][index2][index3][0] <= 0) {
-                                    //index3 = data[index1][index2].length() - 1;
-                                    lastSelectedObjects.insertLast(object);
-                                    //Log("Found proto = 0");
-                                    continue;
+                                    if (index3 >= data[index1][index2].length()) {
+                                        //Log("shiftSelected :: Index3 out of bounds: " + index3 + " length() = " + data[index1][index2].length());
+                                    } else {
+                                        //Log("shiftSelected :: Proto <= 0.");
+                                    }
+                                    int indFix = 0;
+                                    while (index2 - indFix > 0 && (index3 >= data[index1][index2 - indFix].length() || data[index1][index2 - indFix][index3][0] <= 0)) {
+                                        indFix++;
+                                        //Log("index2 = " + index2 + ", indFix = " + indFix);
+                                    }
+                                    index2 -= indFix;
+                                    //Log("New Index2 = " + index2);
+                                    if (index3 >= data[index1][index2].length() || data[index1][index2][index3][0] <= 0) {
+                                        lastSelectedObjects.insertLast(object);
+                                        //Log("EntitySwapper :: shiftSelected() - Proto 0 or Index3 out of bounds and no suitable replacement.");
+                                        continue;
+                                    }
                                 }
                                 //  old selection, use index4 from save
                                 if (!selectionDropped) {
