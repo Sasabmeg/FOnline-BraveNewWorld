@@ -282,6 +282,7 @@ class CInputVisualizer {
         }
         f.close();
     }
+
     bool getPidTabIndex(uint protoId, uint& index1, uint& index2, uint& index3) {
         for (uint i1 = 0; i1 < tabPids.length(); i1++) {
             for (uint i2 = 0; i2 < tabPids[i1].length(); i2++) {
@@ -296,6 +297,24 @@ class CInputVisualizer {
             }
         }
         return false;
+    }
+
+    array<uint16>@ getMissingMapperObjects(array<uint16>@ values) {
+        array<uint16> missing;
+        uint index1, index2, index3;
+        uint protoId = 0;
+        for (uint i = 0; i < values.length(); i++) {
+            protoId = values[i];
+            if (!getPidTabIndex(protoId, index1, index2, index3)) {
+                missing.insertLast(protoId);
+            }
+        }
+        return missing;
+    }
+
+    bool isMissingMapperObjectProto(uint proto) {
+        uint index1, index2, index3;
+        return !getPidTabIndex(proto, index1, index2, index3);
     }
 
     string arrayToString(array<uint16>@ values, string& separator) {
@@ -452,6 +471,41 @@ class CInputVisualizer {
                 message = subStr;
                 messageActivationTime = GetTick();
                 messageText = " " + message;
+            }
+            if (args[1] == "missing") {
+                array<MapperObject@> objects;
+                uint selectCount = GetSelectedObjects(objects);
+                array<uint16> missing;
+                array<MapperObject@> toBeSelected;
+                for (uint i = 0; i < objects.length(); i++) {
+                    MapperObject@ object = objects[i];
+                    if (valid(object)) {
+                        if (object.MapObjType == MAP_OBJECT_SCENERY || object.MapObjType == MAP_OBJECT_ITEM) {
+                            //Log("Selected mapper object: type = " + object.MapObjType + ", protoId = " + object.ProtoId + " at (" + object.MapX + ", " + object.MapY + ")");
+                            if (isMissingMapperObjectProto(object.ProtoId)) {
+                                //Log("Missing mapper object proto = " + object.ProtoId + " at hex (" + object.MapX + ", " + object.MapY + ")" );
+                                if (missing.find(object.ProtoId) < 0) {
+                                    missing.insertLast(object.ProtoId);
+                                }
+                                toBeSelected.insertLast(object);
+                            }
+                        }
+                    } else {
+                        Log("Trying to find missing protos: Found invalid mapper object!!!");
+                    }
+                }
+                if (missing.length() > 0) {
+                    missing.sortAsc();
+                    message = "Found missing protos in mapper tabs: " + arrayToString(missing, " ");
+                    SelectObjects(objects, false);
+                    SelectObjects(toBeSelected, true);
+                } else {
+                    message = "No missing protos in mapper tabs.";
+                }
+                Log("Input Visualizer: " + message);
+                messageActivationTime = GetTick();
+                messageText = "" + message;
+                return true;
             }
         }
         //  Display messages on top of screen in big
