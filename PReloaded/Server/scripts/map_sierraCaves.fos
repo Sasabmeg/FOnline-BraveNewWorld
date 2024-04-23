@@ -92,7 +92,7 @@ bool _RopeGreasy(Critter& player, Scenery& shaft, int skill, Item@ item) {
     if(skill != -1) {
         return true;
     }
-    player.Say(SAY_WHISP_ON_HEAD, "As you touch the greasy rope again, you suddenly realize this was a one way trip.");
+    player.Say(SAY_EMOTE_ON_HEAD, "rope too greasy to climb up");
     player.Say(SAY_NETMSG, "As you touch the greasy rope again, you suddenly realize this was a one way trip.");
     Log("Sierra Caves::_OnShaftRopeUse() - Failed to use rope to climb up, it was too greasy");
     return true;
