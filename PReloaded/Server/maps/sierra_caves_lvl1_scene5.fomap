@@ -2,8 +2,8 @@
 Version              4
 MaxHexX              340
 MaxHexY              340
-WorkHexX             96
-WorkHexY             109
+WorkHexX             85
+WorkHexY             82
 ScriptModule         -
 ScriptFunc           -
 NoLogOut             1
@@ -16158,26 +16158,6 @@ MapY                 88
 OffsetX              2
 
 MapObjType           2
-ProtoId              3852
-MapX                 75
-MapY                 89
-ScriptName           Mk2
-FuncName             Trigger::t_Elevator
-OffsetX              2
-Scenery_ParamsCount  5
-Scenery_Param0       5
-
-MapObjType           2
-ProtoId              3852
-MapX                 75
-MapY                 90
-ScriptName           Mk2
-FuncName             Trigger::t_Elevator
-OffsetX              2
-Scenery_ParamsCount  5
-Scenery_Param0       5
-
-MapObjType           2
 ProtoId              2204
 MapX                 75
 MapY                 101
@@ -16238,25 +16218,10 @@ MapX                 76
 MapY                 83
 
 MapObjType           2
-ProtoId              2902
-MapX                 76
-MapY                 87
-
-MapObjType           2
 ProtoId              5622
-MapX                 76
+MapX                 77
 MapY                 88
 OffsetX              2
-
-MapObjType           2
-ProtoId              3852
-MapX                 76
-MapY                 89
-ScriptName           Mk2
-FuncName             Trigger::t_Elevator
-OffsetX              2
-Scenery_ParamsCount  5
-Scenery_Param0       5
 
 MapObjType           2
 ProtoId              3853
@@ -37418,5 +37383,29 @@ MapX                 181
 MapY                 66
 Scenery_ToEntire     21
 Scenery_ToDir        2
+
+MapObjType           1
+ProtoId              9677
+MapX                 76
+MapY                 87
+ScriptName           map_sierraCaves
+FuncName             _RopeInit
+Item_Val0            2535
+Item_Val1            10
+
+MapObjType           2
+ProtoId              5621
+MapX                 72
+MapY                 84
+
+MapObjType           2
+ProtoId              5621
+MapX                 80
+MapY                 84
+
+MapObjType           2
+ProtoId              2067
+MapX                 75
+MapY                 89
 
 
