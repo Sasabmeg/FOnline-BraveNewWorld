@@ -82,7 +82,7 @@ void map_init(Map& map, bool firstTime)
 }
 
 void _LoopParkingLot(Map& map) {
-    Log("Parking lot loop proc.");
+    //Log("Parking lot loop proc.");
     //  process pay to leave parking spaces and remove locker from those that are past due, so players cannot block this area
     array<Entire> carParkSpotPayNW;
     ParseEntires(map, carParkSpotPayNW, ENTIRE_PARKINGLOT_NW);
