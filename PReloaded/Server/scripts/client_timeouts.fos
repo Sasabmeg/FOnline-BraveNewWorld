@@ -359,14 +359,14 @@ int screen_timeouts_draw(CritterCl& critter, uint skill, string& skillname, int 
         int ratioY = y / modulator;
         if ((x >= modulator && x < screenDivisions * modulator) || (x <= -1 * modulator && x > -1 * screenDivisions * modulator)) {
             x = (__ScreenWidth / 2) + (ratioX * __ScreenWidth / 2 / screenDivisions) + (x % modulator);
-            Log("screen_timeouts_draw(): #1 x = " + x + ", __ScreenWidth = " + __ScreenWidth);
+            //Log("screen_timeouts_draw(): #1 x = " + x + ", __ScreenWidth = " + __ScreenWidth);
         } else if (x < 0) {
             x += __ScreenWidth;
         }
 
         if ((y >= modulator && y < screenDivisions * modulator) || (y <= -1 * modulator && y > -1 * screenDivisions * modulator)){
             y = (__ScreenHeight / 2) + (ratioY * __ScreenHeight / 2 / screenDivisions) + (y % modulator);
-            Log("screen_timeouts_draw(): #1 y = " + y + ", __ScreenHeight = " + __ScreenHeight);
+            //Log("screen_timeouts_draw(): #1 y = " + y + ", __ScreenHeight = " + __ScreenHeight);
         } else {
             if(y < 0)
                 y += __ScreenHeight;
