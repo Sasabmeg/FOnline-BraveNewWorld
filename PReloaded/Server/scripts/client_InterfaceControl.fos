@@ -1,0 +1,137 @@
+#ifndef __C_INTERFACE_CONTROL__
+#define __C_INTERFACE_CONTROL__
+
+#include "_defines.fos"
+#include "_colors.fos"
+#include "_macros.fos"
+#include "_client_defines.fos"
+
+#define INTERFACE_ALIGN_LEFT    (-1)
+#define INTERFACE_ALIGN_MIDDLE  (0)
+#define INTERFACE_ALIGN_RIGHT   (1)
+
+#define IFACE_FLAG_CENTERX                                (0x0001)
+#define IFACE_FLAG_RIGHT                                  (0x0002)
+#define IFACE_FLAG_CENTERY                                (0x0004)
+#define IFACE_FLAG_BOTTOM                                 (0x0008)
+
+
+shared interface IInterfaceControl {
+    void Init();
+    void Draw(int offsetX, int offsetY, int maxWidth, int maxHeight);
+    void Update();
+    void SetPosX(int x);
+    void SetPosY(int y);
+    void SetWidth(int w);
+    void SetHeight(int h);
+    void Move(int x, int y);
+    bool MouseDown(int x, int y, int click);
+    bool MouseUp(int x, int y, int click);
+    bool MouseMove(int fromX, int fromY, int toX, int toY);
+    bool KeyDown(uint8 key);
+    bool KeyUp(uint8 key);
+    uint getAlignment();
+}
+
+class CInterfaceControl : IInterfaceControl{
+
+    int posX, posY;
+    int width, height, minWidth, maxWidth, minHeight, maxHeight;
+    int mouseX, mouseY;
+    bool visible, active, locked, moveable, resizeable;
+    uint alignment;
+
+    CInterfaceControl() {
+        posX = 0;
+        posY = 0;
+        width = 0;
+        height = 0;
+        minWidth = 5;
+        maxWidth = 800;
+        minHeight = 5;
+        maxHeight = 600;
+        visible = true;
+        active = true;
+        locked = false;
+        moveable = true;
+        resizeable = true;
+        alignment = 0;
+    }
+
+    void Init() {
+    }
+
+    void Draw(int offsetX, int offsetY, int maxWidth, int maxHeight) {
+        Message("draw IC");
+    }
+
+    void Update() {
+    }
+
+    void Move(int x, int y) {
+        if (0 <= posX + x && posX + x + width <= __ScreenWidth) {
+            posX += x;
+        }
+        if (0 <= posY + y && posY + y + width <= __ScreenHeight) {
+            posY += y;
+        }
+    }
+    void SetPosX(int x) {
+        if (0 <= posX && posX <= __ScreenWidth) {
+            posX = x;
+        }
+    }
+    void SetPosY(int y) {
+        if (0 <= posY && posY <= __ScreenHeight) {
+            posY = y;
+        }
+    }
+    void SetWidth(int w) {
+        if (minWidth <= w && w <= maxWidth) {
+            width = w;
+        }
+    }
+    void SetHeight(int h) {
+        if (minHeight <= h && h <= maxHeight) {
+            height = h;
+        }
+    }
+
+    bool MouseDown(int x, int y, int click) {
+        return false;
+    }
+
+    bool MouseUp(int x, int y, int click) {
+        return false;
+    }
+
+    bool MouseMove(int fromX, int fromY, int toX, int toY) {
+        return false;
+    }
+
+    bool KeyDown(uint8 key) {
+        return false;
+    }
+
+    bool KeyUp(uint8 key) {
+        return false;
+    }
+
+    uint loadByIni(string& iniKey, int path)
+    {
+        string@ name = GetIfaceIniStr(iniKey);
+        uint id;
+        if (@name != null && name.length() > 0)
+            id = LoadSprite(name, path);
+        else
+            id = 0;
+        return id;
+    }
+
+    uint getAlignment() {
+        return alignment;
+    }
+
+}
+
+#endif  //  __C_INTERFACE_CONTROL__

@@ -13,6 +13,8 @@ import bool IsInventoryTrackerEnabled() from "client_InventoryTracker";
 import void ToggleCarTracker() from "client_CarTracker";
 import bool IsCarTrackerEnabled() from "client_CarTracker";
 import void BeepCarTracker() from "client_CarTracker";
+import void ToggleGuiMap() from "client_guiMap";
+import bool IsGuiMapEnabled() from "client_guiMap";
 
 shared interface IBind
 {
@@ -304,6 +306,17 @@ class CarTrackerBeepBind : BaseBind
     void Exec()
     {
         BeepCarTracker();
+    }
+}
+
+class GuiMapBind : BaseBind {
+    void Exec()     {
+        ToggleGuiMap();
+        if (IsGuiMapEnabled()) {
+            Message("GUI Map enabled.");
+        } else {
+            Message("GUI Map disabled.");
+        }
     }
 }
 

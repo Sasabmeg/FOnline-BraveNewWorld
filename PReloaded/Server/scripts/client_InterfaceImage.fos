@@ -1,0 +1,125 @@
+#ifndef __C_INTERFACE_IMAGE__
+#define __C_INTERFACE_IMAGE__
+
+#include "_defines.fos"
+#include "_colors.fos"
+#include "_macros.fos"
+#include "_client_defines.fos"
+#include "client_InterfaceControl.fos"
+
+class CInterfaceImage : CInterfaceControl {
+
+    bool hasBackground;
+    uint backgroundColor;
+    uint imageSprite;
+    bool canResize;
+
+
+    CInterfaceImage(int x, int y, int w, int h) {
+        posX = x;
+        posY = y;
+        width = w;
+        height = h;
+        hasBackground = false;
+    }
+
+    void Init() {
+        backgroundColor = COLOR_RGBA(0, 0, 0, 150);
+        int w = 0, h = 0, l = 0;
+    }
+
+    bool SetImage(string& imageName) {
+        imageSprite = LoadSprite(imageName, PATH_ART_INTRFACE);
+        if (imageSprite > 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    void Draw(int offsetX, int offsetY, int maxW, int maxH) {
+        int x = posX + offsetX;
+        int y = posY + offsetY;
+        /*
+        if (maxWidth > maxW - posX) {
+            maxWidth = maxW - posX;
+        }
+        if (maxHeight > maxH - posY) {
+            maxHeight = maxW - posY;
+        }*/
+        //int drawWidth = maxW - posX < width ? maxW - posX : width;
+        //int drawHeight = maxH - posY < height ? maxH - posY : height;
+
+        int drawWidth = maxW - posX;
+        int drawHeight = maxH - posY;
+
+
+        int drawWidthAligned= drawWidth;
+        int drawHeightAligned = drawHeight;
+
+        int spriteWidth = GetSpriteWidth(imageSprite, -1);
+        int spriteHeight = GetSpriteHeight(imageSprite, -1);
+        float ratio =  float(spriteWidth) / spriteHeight;
+        Message("Sprite ratio = " + ratio + ", w = " + spriteWidth + ", h = " + spriteHeight + ", w = " + int(float(drawWidth)) + ", h = " + int(float(drawWidth) / ratio));
+        if (drawWidth > int(drawHeight * ratio)) {
+            drawWidthAligned = int(drawHeight * ratio);
+        } else if (drawHeight > int(float(drawWidth) / ratio)) {
+            drawHeightAligned = int(float(drawWidth) / ratio);
+        }
+        if (drawWidth > drawWidthAligned) {
+            x += (drawWidth - drawWidthAligned) / 2;
+        }
+        if (drawHeight > drawHeightAligned) {
+            y += (drawHeight - drawHeightAligned) / 2;
+        }
+        //Message("drawBackground: " + x + ", " + y);
+        drawBackground(x, y);
+        //Message("drawSprite: " + x + ", " + y);
+        DrawSprite(imageSprite, -1, x, y, drawWidthAligned, drawHeightAligned, false, false, 0);
+        //  int(GetSpriteWidth(imageSprite, -1) / 1)
+        //  int(GetSpriteHeight(imageSprite, -1) / 1)
+    }
+
+    void drawBackground(int offsetX, int offsetY) {
+        //Message("drawBackground");
+        if (hasBackground) {
+            int x = posX + offsetX;
+            int y = posY + offsetY;
+            array<int> background;
+            int bcolor = int(backgroundColor);
+            //Message("drawBackground: " + x + ", " + y);
+            //  top left
+            background.insertLast(x);
+            background.insertLast(y);
+            background.insertLast(bcolor);
+
+            //  top right
+            background.insertLast(x + width);
+            background.insertLast(y);
+            background.insertLast(bcolor);
+
+            //  bottom right
+            background.insertLast(x + width);
+            background.insertLast(y + height);
+            background.insertLast(bcolor);
+
+            //  bottom left
+            background.insertLast(x);
+            background.insertLast(y + height);
+            background.insertLast(bcolor);
+            //  draw
+            DrawPrimitive(DRAW_PRIMITIVE_TRIANGLEFAN, background);
+        }
+    }
+
+    void SetWidth(int w) override {
+        CInterfaceControl::SetWidth(w);
+    }
+
+    void SetHeight(int h) override {
+        CInterfaceControl::SetHeight(h);
+    }
+}
+
+
+#endif // __C_INTERFACE_IMAGE__

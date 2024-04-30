@@ -1,0 +1,124 @@
+/**
+*   FO version:     FOClassic: Brave New World
+*   Contributor:    Sasabazmeg
+*   File:           client_gui_map.fos
+*
+*   Description:    Pop-up an image of a drawn map for quests or dungeons.
+*/
+
+#ifndef __GUI_MAP__
+#define __GUI_MAP__
+
+#include "sprite.fos"
+#include "_defines.fos"
+#include "_client_defines.fos"
+#include "_macros.fos"
+#include "_colors.fos"
+#include "client_gui_h.fos"
+#include "client_InterfaceControl.fos"
+#include "client_InterfaceTextbox.fos"
+#include "client_InterfaceWindow.fos"
+#include "client_InterfaceImage.fos"
+
+
+CGuiMap guiMap;// = CGuiMap();
+CInterfaceWindow interfaceWindow;
+CInterfaceImage interfaceImage;
+
+//  Exported
+void ToggleGuiMap() {
+    guiMap.enabled = !guiMap.enabled;
+}
+
+// Exported
+bool IsGuiMapEnabled() {
+    return guiMap.enabled;
+}
+
+//  Exported - client_main
+void InitGuiMap() {
+    Log("InitGuiMap()");
+    Message("InitGuiMap()");
+    guiMap = CGuiMap();
+    interfaceWindow = CInterfaceWindow(0, 0, 1000, 500);
+    interfaceWindow.maxWidth = __ScreenWidth * 4 / 5;
+    interfaceWindow.maxHeight = __ScreenHeight * 4 / 5;
+    interfaceImage = CInterfaceImage(0, 0, 1400, 810);
+    interfaceImage.hasBackground = false;
+    if (interfaceImage.SetImage("sierra_caves_lvl1_map1.png")) {
+        Log("Setting image: sierra_caves_lvl1_map1.png");
+        Message("Setting image: sierra_caves_lvl1_map1.png");
+    } else {
+        Log("Failed setting image: sierra_caves_lvl1_map1.png");
+        Message("Failed setting image: sierra_caves_lvl1_map1.png");
+    }
+    interfaceWindow.childControls.insertLast(interfaceImage);
+}
+
+//  Exported
+void DrawGuiMap() {
+    guiMap.Draw();
+}
+
+//  Exported
+bool GuiMapCatchMouseClick(int click) {
+    CritterCl@ chosen = GetChosen();
+    if(valid(chosen)) {
+        //Message("Gui Map CatchMouseClick Button: " + click);
+        return interfaceWindow.CatchMouseClick(click);
+    } else {
+        return false;
+    }
+}
+
+//  Exported
+bool GuiMapCatchMouseRelease(int click) {
+    CritterCl@ chosen = GetChosen();
+    if(valid(chosen)) {
+        //Message("Gui Map CatchMouseRelease Button: " + click);
+        return interfaceWindow.CatchMouseRelease();
+    } else {
+        return false;
+    }
+}
+
+//  Exported
+bool GuiMapUpdateMousePositionChange(int x, int y) {
+    //Message("Gui Map UpdateMousePositionChange (" + x + ", " + y + ")");
+    return interfaceWindow.UpdateMousePositionChange(x, y);
+}
+
+
+class CGuiMap {
+    bool enabled;                           //  use this to toggle on/off
+
+    CGuiMap() {
+        enabled = true;
+    }
+
+    void Draw() {
+        if (!enabled) {
+            //Message("GuiMap disabled.");
+            return;
+        }
+
+        if (GUI_GetActiveMainScreen() != CLIENT_MAIN_SCREEN_GAME) {
+            //Message("GuiMap not on main screen.");
+            return;
+        }
+
+        CritterCl@ chosen = GetChosen();
+        if (!valid(chosen)) {
+            //Message("Chosen is fake!");
+            return;
+        }
+
+        /*
+        uint mapSprite = LoadSprite("sierra_caves_lvl1_map1.png", PATH_ART_INTRFACE);
+        DrawSprite(mapSprite, -1, 10, 10, int(GetSpriteWidth(mapSprite, -1) / 1.5), int(GetSpriteHeight(mapSprite, -1) / 1.5), false, false, 0);
+        */
+        interfaceWindow.DrawWindow();
+    }
+};
+
+#endif 	//	__GUI_MAP__

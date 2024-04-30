@@ -29,6 +29,7 @@ import void InitChosenTabs() from "chosen_tabs";
 import void InitQuestTracker() from "client_QuestTracker";
 import void InitInventoryTracker() from "client_InventoryTracker";
 import void InitCarTracker() from "client_CarTracker";
+import void InitGuiMap() from "client_guiMap";
 import void RefreshCars(array<int>@ data, string@ ownerList) from "client_CarTracker";
 
 import void BroadcastProcess() from "client_broadcast";
@@ -151,6 +152,7 @@ bool start()
     InitQuestTracker();
     InitInventoryTracker();
     InitCarTracker();
+    InitGuiMap();
 
     InitBarterFilters();
     InitFixboyAddons();
