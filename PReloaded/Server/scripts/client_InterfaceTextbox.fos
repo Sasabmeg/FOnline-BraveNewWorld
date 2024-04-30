@@ -1,0 +1,196 @@
+#ifndef __C_INTERFACE_TEXTBOX__
+#define __C_INTERFACE_TEXTBOX__
+
+#include "_defines.fos"
+#include "_colors.fos"
+#include "_macros.fos"
+#include "_client_defines.fos"
+#include "client_InterfaceControl.fos"
+
+class CInterfaceTextbox : CInterfaceControl {
+
+    bool hasBackground;
+    uint backgroundColor, textColor;
+    array<string> lines;
+    string text;
+    uint currentLineToDrawIndex, lastLineToDrawIndex;
+    int oneLineHeight;
+
+
+    CInterfaceTextbox(int x, int y, int w, int h) {
+        posX = x;
+        posY = y;
+        width = w;
+        height = h;
+        hasBackground = false;
+    }
+
+    void Init() {
+        currentLineToDrawIndex = 0;
+        lastLineToDrawIndex = 0;
+        backgroundColor = COLOR_RGBA(0, 0, 0, 150);
+        textColor = COLOR_DGREEN;
+        int w = 0, h = 0, l = 0;
+        GetTextInfo("OneLineHeight", width, height, FONT_TYPE_DEFAULT, 0, w, h, l);
+        oneLineHeight = h;
+        text = "N/A";
+
+        lines.insertLast("Track 01: Traders being turned away/Courier shot near Goodsprings.");
+        lines.insertLast("Track 02: Frank Sinatra - Blue Moon.");
+        lines.insertLast("Track 03: Trouble in Primm/Monorail service fixed.");
+        lines.insertLast("Track 04: Gerhard Trede - Manhattan.");
+        lines.insertLast("Track 05: Caesar's Legion fortifies Nelson/No contact from Nipton.");
+        lines.insertLast("Track 06: Helen Forrest - Mad About The Boy.");
+        lines.insertLast("Track 07: NCR Correctional Facility riot/Figures spotted in Hidden Valley.");
+        lines.insertLast("Track 08: Gerhard Trede - Von Spanien Nach Sudamerika.");
+        lines.insertLast("Track 09: Helios One Dormant/Diners at The Gourmand.");
+        lines.insertLast("Track 10: Guy Mitchell - Heartaches By The Number. ");
+        lines.insertLast("Track 11: The Fiends/Shortage of rations at Bitter Springs.");
+        lines.insertLast("Track 12: Hal David and John Cacavas - Where Have You Been All My Life.");
+        lines.insertLast("Track 13: Tensions in Freeside/Stories of Legate Lanius.");
+        lines.insertLast("Track 14: Dean Martin - Ain't that a Kick in the Head.");
+        lines.insertLast("Track 15: Black Mountain Radio broadcasting/General Lee Oliver at Hoover Dam.");
+        lines.insertLast("Track 16: Peggy Lee and the Dave Barbour Quintet - Why Don't You Do Right.");
+        lines.insertLast("Track 17: Rumours of Super Mutant refuge/NCR Rangers redeployed.");
+        lines.insertLast("Track 18: Gerhard Trede - Strahlende Trompete.");
+        lines.insertLast("Track 19: Death toll at Camp Forlorn Hope/Goodsprings fights off Powder Gangers.");
+        lines.insertLast("Track 20: Pete Thomas and Ashley Slater - Sit and Dream.");
+        lines.insertLast("Track 21: New sheriff in Primm/Helios One firing.");
+        lines.insertLast("Track 22: The Ink Spots - It's a Sin to Tell a Lie.");
+        lines.insertLast("Track 23: Rockets launch at REPCONN/Hostages released peacefully.");
+        lines.insertLast("Track 24: Gerhard Trede - Hallo Mister X.");
+        lines.insertLast("Track 25: NCR soldiers breaking records/New report on violent crime.");
+        lines.insertLast("Track 26: The Kay Kyser Orchestra - Jingle Jangle Jingle.");
+        lines.insertLast("Track 27: Monorail bomb defused/Benny killed.");
+        lines.insertLast("Track 28: Marty Robbins - Big Iron.");
+        lines.insertLast("Track 29: Heck Gunderson arrested/NCR Rangers pulled off the front-line.");
+        lines.insertLast("Track 30: Bing Crosby - Something's Gotta Give.");
+        lines.insertLast("Track 31: Food shortages/Outsider meeting The Omertas.");
+        lines.insertLast("Track 32: Gerhard Trede - Slow Bounce.");
+        lines.insertLast("Track 33: 'The Lake Mead Monster' NCR retake Nelson.");
+        lines.insertLast("Track 34: Peggy Lee - Johnny Guitar. ");
+        lines.insertLast("Track 35: Black Mountain Radio dead/The Kings end hostilities with NCR.");
+        lines.insertLast("Track 36: Gerhard Trede - American Swing.");
+        lines.insertLast("Track 37: Caesar assassinated/Plane spotted over New Vegas.");
+        lines.insertLast("Track 38: Nat King Cole - Love Me as Though There Were No Tomorrow.");
+        lines.insertLast("Track 39: President Aaron Kimball assassination foiled/Outcome of The Battle of Hoover Dam.");
+
+    }
+
+    void SetLines(array<string> lines_) {
+        lines = lines_;
+    }
+
+    void AddLine(string line) {
+        lines.insertLast(line);
+    }
+
+    void Draw(int offsetX, int offsetY) {
+        drawBackground(offsetX, offsetY);
+        //drawText(offsetX, offsetY);
+        drawTextByLine(offsetX, offsetY);
+    }
+
+    void drawBackground(int offsetX, int offsetY) {
+        if (hasBackground) {
+            int x = posX + offsetX;
+            int y = posY + offsetY;
+            array<int> background;
+            int bcolor = int(backgroundColor);
+            //  top left
+            background.insertLast(x);
+            background.insertLast(y);
+            background.insertLast(bcolor);
+
+            //  top right
+            background.insertLast(x + width);
+            background.insertLast(y);
+            background.insertLast(bcolor);
+
+            //  bottom right
+            background.insertLast(x + width);
+            background.insertLast(y + height);
+            background.insertLast(bcolor);
+
+            //  bottom left
+            background.insertLast(x);
+            background.insertLast(y + height);
+            background.insertLast(bcolor);
+            //  draw
+            DrawPrimitive(DRAW_PRIMITIVE_TRIANGLEFAN, background);
+        }
+    }
+
+    void drawText(int offsetX, int offsetY) {
+        int x = offsetX + posX;
+        int y = offsetY + posY;
+        DrawText(text, x, y, width, height, textColor, FONT_TYPE_DEFAULT, 0);
+    }
+
+    void drawTextByLine(int offsetX, int offsetY) {
+        int x = offsetX + posX;
+        int y = offsetY + posY;
+        DrawText(text, x, y, width, height, textColor, FONT_TYPE_DEFAULT, 0);
+    }
+
+    void Update() {
+        text = "";
+        updateLastDrawableLine();
+        for (uint i = currentLineToDrawIndex; i < lines.length(); i++) {
+            text += lines[i] + "\n";
+        }
+        int w = 0, h = 0, l = 0;
+        GetTextInfo(text, width, height, FONT_TYPE_DEFAULT, 0, w, h, l);
+        //Message("width=" + w + ", height=" + h + ", lines=" + l + ", lastIndex=" + currentLineToDrawIndex);
+    }
+
+    void updateLastDrawableLine() {
+        int w = 0, h = 0, l = 0, currentHeight = height;
+        uint index = lines.length() - 1;
+        if (index <= 0) {
+            lastLineToDrawIndex = 0;
+        } else {
+            bool found = false;
+            while (!found) {
+                GetTextInfo(lines[index], width, height, FONT_TYPE_DEFAULT, 0, w, h, l);
+                currentHeight -= h + 1;
+                //Message("width=" + w + ", height=" + h + ", currH=" + currentHeight + ", lines=" + l + ", index=" + index);
+                if (currentHeight <= oneLineHeight || index <= 0) {
+                    found = true;
+                    lastLineToDrawIndex = index;
+                }
+                if (currentHeight < 0) {
+                    lastLineToDrawIndex = index + 1;
+                }
+                index--;
+            }
+        }
+    }
+
+    void MouseWheelDown() {
+        if (currentLineToDrawIndex < lastLineToDrawIndex) {
+            currentLineToDrawIndex++;
+            Update();
+        }
+    }
+
+    void MouseWheelUp() {
+        if (currentLineToDrawIndex > 0) {
+            currentLineToDrawIndex--;
+            Update();
+        }
+    }
+
+    void SetWidth(int w) override {
+        CInterfaceControl::SetWidth(w);
+        Update();
+    }
+
+    void SetHeight(int h) override {
+        CInterfaceControl::SetHeight(h);
+        Update();
+    }
+}
+
+
+#endif // __C_INTERFACE_TEXTBOX__

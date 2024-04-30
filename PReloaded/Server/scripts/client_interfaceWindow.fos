@@ -1,0 +1,533 @@
+#ifndef __C_INTERFACE_WINDOW__
+#define __C_INTERFACE_WINDOW__
+
+#include "_defines.fos"
+#include "_colors.fos"
+#include "_macros.fos"
+#include "_client_defines.fos"
+#include "client_InterfaceControl.fos"
+#include "client_InterfaceTextbox.fos"
+
+class CInterfaceWindow {
+
+    //  draw
+    private int posX, posY;
+    private int totalWidth, totalHeight;
+    private int borderSizeLeft, borderSizeRight, borderSizeTop, borderSizeBottom;
+    int minWidth, maxWidth, minHeight, maxHeight;
+    private int minPosX, maxPosX, minPosY, maxPosY;
+    private uint topLeftCornerImageH, topElementImage, topRightCornerImageH;
+    private uint topRightCornerImageV, rightElementImage, bottomRightCornerImageV;
+    private uint topLeftCornerImageV, leftElementImage, bottomLeftCornerImageV;
+    private uint bottomLeftCornerImageH, bottomElementImage, bottomRightCornerImageH;
+    private uint topLeftCornerResize, topRightCornerResize, bottomRightCornerResize, bottomLeftCornerResize;
+
+    //  move, resize
+    private bool moveWithMouse;
+    private bool resizeWithMouseTop, resizeWithMouseRight, resizeWithMouseLeft, resizeWithMouseBottom;
+    private bool resizeWithMouseTopLeftCorner, resizeWithMouseTopRightCorner, resizeWithMouseBottomLeftCorner, resizeWithMouseBottomRightCorner;
+
+    //  options
+    bool locked;            //  window cannot be moved or resized, default false
+    bool hasBackground;     //  windows has background, default, true
+    uint backgroundColor;   //  background color, default black
+
+    //  child controls
+    array<CInterfaceControl@> childControls;
+
+    //  textbox
+    //CInterfaceTextbox textBox;
+    string infoText;    //  used when window is moved or resized
+
+    CInterfaceWindow(int posX_, int posY_, int totalWidth_, int totalHeight_, int maxWidth_ = 800, int maxHeight_ = 600) {
+        posX = posX_;
+        posY = posY_;
+        totalWidth = totalWidth_;
+        totalHeight = totalHeight_;
+        borderSizeLeft = 5;
+        borderSizeRight = 5;
+        borderSizeTop = 5;
+        borderSizeBottom = 5;
+        minWidth = 10;
+        maxWidth = maxWidth_ > totalWidth_ ? maxWidth_ : totalWidth_;
+        minHeight = 10;
+        maxHeight = maxHeight_ > totalHeight_ ? maxHeight_ : totalHeight_;
+        minPosX = 0;
+        minPosY = 0;
+        moveWithMouse = false;
+        resizeWithMouseTopLeftCorner = false;
+        resizeWithMouseTopRightCorner = false;
+        resizeWithMouseBottomLeftCorner = false;
+        resizeWithMouseBottomRightCorner = false;
+        resizeWithMouseTop = false;
+        resizeWithMouseRight = false;
+        resizeWithMouseLeft = false;
+        resizeWithMouseBottom = false;
+        locked = false;
+        hasBackground = true;
+        backgroundColor = COLOR_RGBA(0, 0, 0, 150);
+        Init();
+    }
+
+    CInterfaceWindow() {
+        CInterfaceWindow(0, 0, 10, 10);
+    }
+
+    void Init() {
+        //Message("Init called for UnitTestWindow.");
+        //  top border
+        topLeftCornerImageH = loadByIni("CWindowTopLeftCornerH", PATH_ART_INTRFACE);
+        topElementImage = loadByIni("CWindowTopElement", PATH_ART_INTRFACE);
+        topRightCornerImageH = loadByIni("CWindowTopRightCornerH", PATH_ART_INTRFACE);
+        borderSizeTop = GetSpriteHeight(topElementImage, 0);
+        //  right border
+        topRightCornerImageV = loadByIni("CWindowTopRightCornerV", PATH_ART_INTRFACE);
+        rightElementImage = loadByIni("CWindowRightElement", PATH_ART_INTRFACE);
+        bottomRightCornerImageV = loadByIni("CWindowBottomRightCornerV", PATH_ART_INTRFACE);
+        borderSizeRight = GetSpriteWidth(rightElementImage, 0);
+        //  left border
+        topLeftCornerImageV = loadByIni("CWindowTopLeftCornerV", PATH_ART_INTRFACE);
+        leftElementImage = loadByIni("CWindowLeftElement", PATH_ART_INTRFACE);
+        bottomLeftCornerImageV = loadByIni("CWindowBottomLeftCornerV", PATH_ART_INTRFACE);
+        borderSizeLeft = GetSpriteWidth(leftElementImage, 0);
+        //  bottom border
+        bottomLeftCornerImageH = loadByIni("CWindowBottomLeftCornerH", PATH_ART_INTRFACE);
+        bottomElementImage = loadByIni("CWindowBottomElement", PATH_ART_INTRFACE);
+        bottomRightCornerImageH = loadByIni("CWindowBottomRightCornerH", PATH_ART_INTRFACE);
+        borderSizeBottom = GetSpriteHeight(bottomElementImage, 0);
+        //  resize corners
+        topLeftCornerResize= loadByIni("CWindowTopLeftCornerRed", PATH_ART_INTRFACE);
+        topRightCornerResize= loadByIni("CWindowTopRightCornerRed", PATH_ART_INTRFACE);
+        bottomRightCornerResize= loadByIni("CWindowBottomRightCornerRed", PATH_ART_INTRFACE);
+        bottomLeftCornerResize= loadByIni("CWindowBottomLeftCornerRed", PATH_ART_INTRFACE);
+        //  set minimal window width and height based on images
+        minWidth = GetSpriteWidth(topLeftCornerImageH, 0) + GetSpriteWidth(topRightCornerImageH, 0);
+        minHeight = GetSpriteHeight(topLeftCornerImageV, 0) + GetSpriteHeight(bottomLeftCornerImageV, 0);
+        //Log("Min width " + minWidth + ", min height: " + minHeight);
+        //Log("Max width " + maxWidth + ", max height: " + maxHeight);
+        //Message("Min width " + minWidth + ", min height: " + minHeight);
+        //Message("Max width " + maxWidth + ", max height: " + maxHeight);
+    }
+
+    void DrawWindow() {
+        drawBackground();
+        drawChildControls();
+        drawTopBorder();
+        drawRightBorder();
+        drawLeftBorder();
+        drawBottomBorder();
+        drawResizeBorders();
+    }
+
+    private void drawChildControls() {
+        for (uint i = 0; i < childControls.length(); i++) {
+            //Log("drawChildControls: " + i);
+            //Message("drawChildControls: " + i);
+            childControls[i].Draw(posX, posY, totalWidth, totalHeight);
+        }
+    }
+
+    void enableMove() {
+        if (!locked) {
+            moveWithMouse = true;
+        }
+    }
+
+    void disableMove() {
+        moveWithMouse = false;
+    }
+
+    void AddInterfaceControl(CInterfaceControl control) {
+        childControls.insertLast(control);
+    }
+
+    void SetTextbox(CInterfaceTextbox textBox_) {
+        //textBox = textBox_;
+    }
+
+    bool CatchMouseClick(int click) {
+        if (GetCurrentCursor() == CURSOR_DEFAULT && click == MOUSE_CLICK_WHEEL_DOWN) {
+            if (isWithinDrawArea(__MouseX, __MouseY)) {
+                //textBox.MouseWheelDown();
+                return true;
+            }
+        }
+        if (GetCurrentCursor() == CURSOR_DEFAULT && click == MOUSE_CLICK_WHEEL_UP) {
+            if (isWithinDrawArea(__MouseX, __MouseY)) {
+                //textBox.MouseWheelUp();
+                return true;
+            }
+        }
+		if (GetCurrentCursor() == CURSOR_DEFAULT && click == MOUSE_CLICK_LEFT) {
+			CritterCl@ chosen = GetChosen();
+			if(valid(chosen)) {
+                if (isOnTopLeftCornerDrawArea(__MouseX, __MouseY)) {
+                    resizeWithMouseTopLeftCorner = true;
+                    Message("Resize top left corner: " + resizeWithMouseTopLeftCorner);
+                    return true;
+                }
+                if (isOnTopRightCornerDrawArea(__MouseX, __MouseY)) {
+                    resizeWithMouseTopRightCorner = true;
+                    Message("Resize top right corner: " + resizeWithMouseTopRightCorner);
+                    return true;
+                }
+                if (isOnBottomRightCornerDrawArea(__MouseX, __MouseY)) {
+                    resizeWithMouseBottomRightCorner = true;
+                    Message("Resize bottom right corner: " + resizeWithMouseBottomRightCorner);
+                    return true;
+                }
+                if (isOnBottomLeftCornerDrawArea(__MouseX, __MouseY)) {
+                    resizeWithMouseBottomLeftCorner = true;
+                    Message("Resize bottom left corner: " + resizeWithMouseBottomLeftCorner);
+                    return true;
+                }
+                if (isOnTopBorderDrawArea(__MouseX, __MouseY)) {
+                    resizeWithMouseTop = true;
+                    Message("Resize top: " + resizeWithMouseTop);
+                    return true;
+                }
+                if (isOnRightBorderDrawArea(__MouseX, __MouseY)) {
+                    resizeWithMouseRight = true;
+                    Message("Resize right: " + resizeWithMouseRight);
+                    return true;
+                }
+                if (isOnLeftBorderDrawArea(__MouseX, __MouseY)) {
+                    resizeWithMouseLeft = true;
+                    Message("Resize left: " + resizeWithMouseLeft);
+                    return true;
+                }
+                if (isOnBottomBorderDrawArea(__MouseX, __MouseY)) {
+                    resizeWithMouseBottom = true;
+                    Message("Resize bottom: " + resizeWithMouseBottom);
+                    //Message("Min width: " + minWidth + ", min height: " + minHeight + ", max width: " + maxWidth + ", maxHeight: " + maxHeight + ", totalWidth: " + totalWidth + ", totalHeight: " + totalHeight);
+                    return true;
+                }
+                if (isWithinDrawArea(__MouseX, __MouseY)) {
+                    moveWithMouse = true;
+                    //Message("Mouse move: " + moveWithMouse);
+                    return true;
+                }
+                return false;
+			} else {
+                return false;
+			}
+		} else {
+            return false;
+		}
+	}
+
+	bool CatchMouseRelease() {
+	    moveWithMouse = false;
+        resizeWithMouseTopLeftCorner = false;
+        resizeWithMouseTopRightCorner = false;
+        resizeWithMouseBottomLeftCorner = false;
+        resizeWithMouseBottomRightCorner = false;
+	    resizeWithMouseTop = false;
+	    resizeWithMouseRight = false;
+	    resizeWithMouseLeft = false;
+	    resizeWithMouseBottom = false;
+        return true;
+	}
+
+	bool UpdateMousePositionChange(int x, int y) {
+        if (!locked) {
+            if (moveWithMouse) {
+                move(x, y);
+                return true;
+            } else {
+                if (resizeWithMouseTopLeftCorner) {
+                    resizeTop(y);
+                    resizeLeft(x);
+                    return true;
+                }
+                if (resizeWithMouseTopRightCorner) {
+                    resizeTop(y);
+                    resizeRight(x);
+                    return true;
+                }
+                if (resizeWithMouseBottomRightCorner) {
+                    resizeBottom(y);
+                    resizeRight(x);
+                    return true;
+                }
+                if (resizeWithMouseBottomLeftCorner) {
+                    resizeBottom(y);
+                    resizeLeft(x);
+                    return true;
+                }
+                if (resizeWithMouseTop) {
+                    resizeTop(y);
+                    return true;
+                }
+                if (resizeWithMouseRight) {
+                    resizeRight(x);
+                    return true;
+                }
+                if (resizeWithMouseLeft) {
+                    resizeLeft(x);
+                    return true;
+                }
+                if (resizeWithMouseBottom) {
+                    resizeBottom(y);
+                    return true;
+                }
+                return false;
+            }
+        } else {
+            return false;
+        }
+	}
+
+	private bool isWithinDrawArea(int x, int y) {
+		if (x >= posX && x <= posX + totalWidth &&
+			y >= posY && y <= posY + totalHeight) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	private bool isOnTopLeftCornerDrawArea(int x, int y) {
+		if (x >= posX && x <= posX + borderSizeLeft &&
+			y >= posY && y <= posY + borderSizeTop) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	private bool isOnTopRightCornerDrawArea(int x, int y) {
+		if (x >= posX + totalWidth - borderSizeRight && x <= posX + totalWidth &&
+			y >= posY && y <= posY + borderSizeTop) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	private bool isOnBottomRightCornerDrawArea(int x, int y) {
+		if (x >= posX + totalWidth - borderSizeRight && x <= posX + totalWidth &&
+			y >= posY + totalHeight - borderSizeBottom && y <= posY + totalHeight) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	private bool isOnBottomLeftCornerDrawArea(int x, int y) {
+		if (x >= posX && x <= posX + borderSizeLeft &&
+			y >= posY + totalHeight - borderSizeBottom && y <= posY + totalHeight) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+
+	private bool isOnTopBorderDrawArea(int x, int y) {
+		if (x >= posX && x <= posX + totalWidth &&
+			y >= posY && y <= posY + borderSizeTop) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	private bool isOnRightBorderDrawArea(int x, int y) {
+		if (x >= posX + totalWidth - borderSizeRight && x <= posX + totalWidth &&
+			y >= posY && y <= posY + totalHeight) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	private bool isOnLeftBorderDrawArea(int x, int y) {
+		if (x >= posX && x <= posX + borderSizeLeft &&
+			y >= posY && y <= posY + totalHeight) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	private bool isOnBottomBorderDrawArea(int x, int y) {
+		if (x >= posX && x <= posX + totalWidth &&
+			y >= posY + totalHeight - borderSizeBottom && y <= posY + totalHeight) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+    private uint loadByIni(string& iniKey, int path)
+    {
+        string@ name = GetIfaceIniStr(iniKey);
+        uint id;
+        if (@name != null && name.length() > 0) {
+            id = LoadSprite(name, path);
+            Log("Loading sprite: " + iniKey);
+        } else {
+            id = 0;
+            Log("Failed to log sprite:" + iniKey);
+        }
+        return id;
+    }
+
+    private void drawTopBorder() {
+        int step = getElementPosShift(GetSpriteWidth(topElementImage, 0), totalWidth);
+        int elementStep = GetSpriteWidth(topElementImage, 0);
+        int nrOfSteps = totalWidth /  elementStep;
+        DrawSprite(topLeftCornerImageH, -1, posX, posY, 0);
+        DrawSprite(topRightCornerImageH, -1, posX + totalWidth - GetSpriteWidth(topRightCornerImageH, 0), posY, 0);
+        for (int i = 0; i < nrOfSteps; i++) {
+            DrawSprite(topElementImage, -1, posX + step, posY, 0);
+            step += elementStep;
+        }
+    }
+
+    private void drawRightBorder() {
+        int step = getElementPosShift(GetSpriteHeight(rightElementImage, 0), totalHeight);
+        int elementStep = GetSpriteHeight(rightElementImage, 0);
+        int nrOfSteps = totalHeight /  elementStep;
+        for (int i = 0; i < nrOfSteps; i++) {
+            DrawSprite(rightElementImage, -1, posX + totalWidth - GetSpriteWidth(rightElementImage, 0), posY + step, 0);
+            step += elementStep;
+        }
+        DrawSprite(topRightCornerImageV, -1, posX + totalWidth - GetSpriteWidth(topRightCornerImageV, 0), posY, 0);
+        DrawSprite(bottomRightCornerImageV, -1, posX + totalWidth - GetSpriteWidth(bottomRightCornerImageV, 0),
+                   posY + totalHeight - GetSpriteHeight(bottomRightCornerImageV, 0), 0);
+    }
+
+    private void drawLeftBorder() {
+        int step = getElementPosShift(GetSpriteHeight(leftElementImage, 0), totalHeight);
+        int elementStep = GetSpriteHeight(leftElementImage, 0);
+        int nrOfSteps = totalHeight /  elementStep;
+        for (int i = 0; i < nrOfSteps; i++) {
+            DrawSprite(leftElementImage, -1, posX, posY + step, 0);
+            step += elementStep;
+        }
+        DrawSprite(topLeftCornerImageV, -1, posX, posY, 0);
+        DrawSprite(bottomLeftCornerImageV, -1, posX,
+                   posY + totalHeight - GetSpriteHeight(bottomLeftCornerImageV, 0), 0);
+    }
+
+    private void drawBottomBorder() {
+        int step = getElementPosShift(GetSpriteWidth(bottomElementImage, 0), totalWidth);
+        int elementStep = GetSpriteWidth(bottomElementImage, 0);
+        int nrOfSteps = totalWidth /  elementStep;
+        DrawSprite(bottomLeftCornerImageH, -1, posX,
+                   posY + totalHeight - GetSpriteHeight(bottomLeftCornerImageH, 0), 0);
+        DrawSprite(bottomRightCornerImageH, -1, posX + totalWidth - GetSpriteWidth(bottomRightCornerImageH, 0),
+                   posY + totalHeight - GetSpriteHeight(bottomRightCornerImageH, 0), 0);
+        for (int i = 0; i < nrOfSteps; i++) {
+            DrawSprite(bottomElementImage, -1, posX + step,
+                       posY + totalHeight - GetSpriteHeight(bottomElementImage, 0), 0);
+            step += elementStep;
+        }
+    }
+
+    private void drawResizeBorders() {
+        if (resizeWithMouseTopLeftCorner || resizeWithMouseTop || resizeWithMouseLeft) {
+            DrawSprite(topLeftCornerResize, -1, posX, posY, 0);
+        }
+        if (resizeWithMouseTopRightCorner || resizeWithMouseTop || resizeWithMouseRight) {
+            DrawSprite(topRightCornerResize, -1, posX + totalWidth - GetSpriteWidth(topRightCornerResize, 0), posY, 0);
+        }
+        if (resizeWithMouseBottomRightCorner || resizeWithMouseBottom || resizeWithMouseRight) {
+            DrawSprite(bottomRightCornerResize, -1, posX + totalWidth - GetSpriteWidth(bottomRightCornerResize, 0), posY + totalHeight - GetSpriteHeight(bottomRightCornerResize, 0), 0);
+        }
+        if (resizeWithMouseBottomLeftCorner || resizeWithMouseBottom || resizeWithMouseLeft) {
+            DrawSprite(bottomLeftCornerResize, -1, posX, posY + totalHeight - GetSpriteHeight(bottomLeftCornerResize, 0), 0);
+        }
+    }
+
+    private void drawBackground() {
+        if (hasBackground) {
+            //Message("Has background.");
+            array<int> background;
+            int bcolor = int(backgroundColor);
+            //  top left
+            background.insertLast(posX);
+            background.insertLast(posY);
+            background.insertLast(bcolor);
+
+            //  top right
+            background.insertLast(posX + totalWidth);
+            background.insertLast(posY);
+            background.insertLast(bcolor);
+
+            //  bottom right
+            background.insertLast(posX + totalWidth);
+            background.insertLast(posY + totalHeight);
+            background.insertLast(bcolor);
+
+            //  bottom left
+            background.insertLast(posX);
+            background.insertLast(posY + totalHeight);
+            background.insertLast(bcolor);
+            //  draw
+            DrawPrimitive(DRAW_PRIMITIVE_TRIANGLEFAN, background);
+        } else {
+            Message("No background.");
+        }
+    }
+
+    private int getElementPosShift(int elementLenght_, int totalLenght_) {
+        int remainder = (totalLenght_ % elementLenght_);
+        return remainder/2;
+    }
+
+    private void move(int x, int y) {
+        if (0 <= posX + x && posX + x + totalWidth <= __ScreenWidth) {
+            posX += x;
+        }
+        if (0 <= posY + y && posY + y +totalHeight <= __ScreenHeight) {
+            posY += y;
+        }
+    }
+
+    private void resizeTop(int y) {
+        if (minHeight <= totalHeight - y && totalHeight - y <= maxHeight) {
+            posY += y;
+            setTotalHeight(totalHeight - y);
+            //textBox.SetHeight(totalHeight - y - borderSizeTop - borderSizeBottom);
+        }
+    }
+    private void resizeRight(int x) {
+        setTotalWidth(totalWidth + x);
+        //textBox.SetWidth(totalWidth + x - borderSizeLeft - borderSizeRight);
+    }
+
+    private void resizeLeft(int x) {
+        if (minWidth <= totalWidth - x && totalWidth - x <= maxWidth) {
+            posX += x;
+            setTotalWidth(totalWidth - x);
+            //textBox.SetWidth(totalWidth - x - borderSizeLeft - borderSizeRight);
+        }
+    }
+
+    private void resizeBottom(int y) {
+        setTotalHeight(totalHeight + y);
+        //textBox.SetHeight(totalHeight + y - borderSizeTop - borderSizeBottom);
+    }
+
+    private void setPosX(int x) {
+        posX = x;
+    }
+    private void setPosY(int y) {
+        posY = y;
+    }
+    private void setTotalWidth(int w) {
+        if (minWidth <= w && w <= maxWidth) {
+            totalWidth = w;
+        }
+    }
+    private void setTotalHeight(int h) {
+        if (minHeight <= h && h <= maxHeight) {
+            totalHeight = h;
+        }
+    }
+}
+
+#endif 	//	__C_INTERFACE_WINDOW__

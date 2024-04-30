@@ -75,8 +75,10 @@ class GUIScreen : IGUIScreenOpt
 {
     GUIScreen(string@ sprName, int path)
     {
-        if(@sprName != null)
+        if(@sprName != null) {
             Surface.Load(sprName, path);
+            Log("GUIScreen::GUIScreen() " + sprName + ", " + path);
+        }
         Index = 0;
         IsCanMove = true;
         IsModal = true;
@@ -141,8 +143,8 @@ class GUIScreen : IGUIScreenOpt
         if(valid(screenControl))
             intercepted = screenControl.MouseDown(x, y, click);
 
-        if(@CallbackMouseDown != null) CallbackMouseDown.OnMouseDown(click); 
-         
+        if(@CallbackMouseDown != null) CallbackMouseDown.OnMouseDown(click);
+
         if(!intercepted)
         {
             if(!IsHardcoded && click == MOUSE_CLICK_LEFT && IS_COLLISION(x, y, PosX, PosY, GetWidth(), GetHeight()))
@@ -307,7 +309,7 @@ class GUIScreen : IGUIScreenOpt
     IGUIScreenCallbackHide@  CallbackHide;
     IGUIScreenCallbackMove@  CallbackMove;
     IGUIScreenCallbackFocus@ CallbackFocus;
-    IGUIScreenCallbackMouseDown@ CallbackMouseDown; 
+    IGUIScreenCallbackMouseDown@ CallbackMouseDown;
 	IGUIScreenCallbackKeyPress@ CallbackKeyPress;
     // main control container for all screen child-controls
     IControl@                screenControl;
@@ -655,7 +657,7 @@ GUIScreen@ GetScreen(int screenIndex)
 GUIScreen@ GetActiveScreen(int screenIndex)
 {
 	if(screenIndex ==0 ) return null;
-	for(uint i=0,j=ActiveScreens.length(); i<j; i++) 
+	for(uint i=0,j=ActiveScreens.length(); i<j; i++)
 	{
 		if(ActiveScreens[i].Index == screenIndex) return @ActiveScreens[i];
 	}
@@ -719,9 +721,9 @@ IGUIElementTextOpt@ GUI_AddText(int screenIndex, string@ text, int x, int y)
 	if(screenIndex==0) return null;
 	if(GetScreen(screenIndex) is null) CreateScreen(screenIndex,null);
 	GUIScreen@ screen=GetScreen(screenIndex);
-	
+
 	IGUIElementOpt@ element;
-	@element = GUIElementText(text, x, y);  
+	@element = GUIElementText(text, x, y);
 
 	screen.elements.insertLast(@element);
 
@@ -733,7 +735,7 @@ IGUIElementTextOpt@ GUI_AddText(int screenIndex, string@ text, int x, int y)
 			screen.elements.insertLast(@element);
 		}
 	}
-	
+
 	return cast<IGUIElementTextOpt@>(element);
 }
 
@@ -748,9 +750,9 @@ IGUIElementImageOpt@ GUI_AddImage(int screenIndex, string@ sprName, int patch, i
 	if(screenIndex==0) return null;
 	if(GetScreen(screenIndex) is null) CreateScreen(screenIndex,null);
 	GUIScreen@ screen=GetScreen(screenIndex);
-	
+
 	IGUIElementOpt@ element;
-	@element = GUIElementImage(sprName, patch, x, y);  
+	@element = GUIElementImage(sprName, patch, x, y);
 
 	screen.elements.insertLast(@element);
 
@@ -778,9 +780,9 @@ IGUIElementButtonOpt@ GUI_AddButton(int screenIndex, int x, int y)
 	if(screenIndex==0) return null;
 	if(GetScreen(screenIndex) is null) CreateScreen(screenIndex,null);
 	GUIScreen@ screen=GetScreen(screenIndex);
-	
+
 	IGUIElementOpt@ element;
-	@element = GUIElementButton(x, y);  
+	@element = GUIElementButton(x, y);
 
 	screen.elements.insertLast(@element);
 
@@ -821,10 +823,10 @@ class GUIElement : IGUIElementOpt
 		this.texts.resize(0);
 		this.images.resize(0);
 
-		
-		for(uint i=0,j=MousePressed.length();i<j;i++) 
+
+		for(uint i=0,j=MousePressed.length();i<j;i++)
 			MousePressed[i]=false;
-		
+
 		@callbackInit=null;
 		@callbackDraw=null;
 		@callbackMouseDown=null;
@@ -845,15 +847,15 @@ class GUIElement : IGUIElementOpt
 
 			if(not (callbackDraw is null)) callbackDraw.OnDraw(id);
 
-			for (uint i=0; i<images.length(); i++) 
+			for (uint i=0; i<images.length(); i++)
 				images[i].Draw(screenX+posX, screenY+posY);
 
-			for (uint i=0; i<texts.length(); i++) 
-				texts[i].Draw(screenX+posX, screenY+posY);	
+			for (uint i=0; i<texts.length(); i++)
+				texts[i].Draw(screenX+posX, screenY+posY);
 		}
 	}
 
-	void Update(uint dt) 
+	void Update(uint dt)
 	{
 	}
 
@@ -867,7 +869,7 @@ class GUIElement : IGUIElementOpt
 
 	void MouseUp(int click, bool isCollision)
 	{
-		if(not (callbackMouseClick is null) && MousePressed[click] && isCollision && readyForClickEvent) 
+		if(not (callbackMouseClick is null) && MousePressed[click] && isCollision && readyForClickEvent)
 		{
 			callbackMouseClick.OnMouseClick(id, click);
 
@@ -878,7 +880,7 @@ class GUIElement : IGUIElementOpt
 					callbackMouseClick.OnMouseClick(images[i].GetId(), click);
 				}
 			}
-		
+
 			for (uint i=0; i<texts.length(); i++)
 			{
 				if(IS_COLLISION(mousePosX,mousePosY,screenX+posX+texts[i].GetPosX(),screenY+posY+texts[i].GetPosY(),texts[i].GetWidth(),texts[i].GetHeight()))
@@ -904,7 +906,7 @@ class GUIElement : IGUIElementOpt
 		return false;
 	}
 
-	void KeyUp(uint8 key) 	
+	void KeyUp(uint8 key)
 	{
 	}
 
@@ -932,7 +934,7 @@ class GUIElement : IGUIElementOpt
 	{
 		posX=x;
 		posY=y;
-		
+
 	}
 
 	void Position(int x, int y, int w, int h)
@@ -970,13 +972,13 @@ class GUIElement : IGUIElementOpt
 	void Visible(bool visible)
 	{
 		this.visible = visible;
-		
+
 	}
 
-	void AbsolutePosition(bool absolutePosition) 
+	void AbsolutePosition(bool absolutePosition)
 	{
 		this.absolutePosition = absolutePosition;
-		
+
 	}
 
 	void AbsolutePosition(int x, int y)
@@ -988,7 +990,7 @@ class GUIElement : IGUIElementOpt
 	void CollisionTransparent(bool collisionTransparent)
 	{
 		this.collisionTransparent = collisionTransparent;
-		
+
 	}
 
 	void AddText(int id, string@ text, int x, int y, int width, int height, int font, uint color, int flags)
@@ -996,7 +998,7 @@ class GUIElement : IGUIElementOpt
 		uint textsLength = texts.length();
 		texts.resize(textsLength+1);
 		@texts[textsLength] = @GUIElementText(id, text, x, y, width, height, font, color, flags);
-		
+
 	}
 
 	void AddImage(int id, string@ sprName, int x, int y)
@@ -1010,7 +1012,7 @@ class GUIElement : IGUIElementOpt
 		//uint imagesLength = images.length();
 		//images.resize(imagesLength+1);
 		//@images[imagesLength] = @GUIElementImage(id, patch, sprName, x, y);
-		
+
 	}
 
 	void SetFocused(bool state){
@@ -1033,7 +1035,7 @@ class GUIElement : IGUIElementOpt
 		return @callbackInit;
 	}
 
-	
+
 
 	// Info
 	int GetId() { return id; }
@@ -1059,7 +1061,7 @@ class GUIElement : IGUIElementOpt
 	{
 		return visible;
 	}
-	
+
 	// Data
 	int id;
 	uint elementWidth;
@@ -1070,7 +1072,7 @@ class GUIElement : IGUIElementOpt
 	int mousePosY;
 	int screenX;
 	int screenY;
-	
+
 	bool isFocused;
 	bool visible;
 	bool collisionTransparent;
@@ -1098,31 +1100,31 @@ class GUIElementText : GUIElement, IGUIElementTextOpt
 	{
 		InitText(0, "", 0, 0, 50, 10, FONT_TYPE_DEFAULT, COLOR_TEXT, COLOR_TEXT, 0);
 	}
-	
+
 	GUIElementText(int id, string@ text, int x, int y)
 	{
 		InitText(id, text, x, y, 50, 10, FONT_TYPE_DEFAULT, COLOR_TEXT, COLOR_TEXT, 0);
-	}	
+	}
 
 	GUIElementText(string@ text, int x, int y)
 	{
 		InitText(0, text, x, y, 50, 10, FONT_TYPE_DEFAULT, COLOR_TEXT, COLOR_TEXT, 0);
-	}	
+	}
 
 	GUIElementText(string@ text, int x, int y, int width, int height)
 	{
 		InitText(0, text, x, y, width, height, FONT_TYPE_DEFAULT, COLOR_TEXT, COLOR_TEXT, 0);
-	}	
+	}
 
 	GUIElementText(int id, string@ text, int x, int y, int width, int height, int font, uint color, int flags)
 	{
 		InitText(id, text, x, y, width, height, font, color, color, flags);
-	}	
+	}
 
 	GUIElementText(int id, string@ text, int x, int y, int width, int height, int font, uint color, uint colorDown, int flags)
 	{
 		InitText(id, text, x, y, width, height, font, color, colorDown, flags);
-	}	
+	}
 
 	void InitText(int id, string@ text, int x, int y, int width, int height, int font, uint color, uint colorDown, int flags)
 	{
@@ -1136,21 +1138,21 @@ class GUIElementText : GUIElement, IGUIElementTextOpt
 		this.elementHeight = height;
 
 		this.dX = 0;
-		this.dY = 0; 
+		this.dY = 0;
 		this.upDX = 0;
-		this.upDY = 0; 
+		this.upDY = 0;
 		this.downDX = 0;
 		this.downDY = 0;
 
 		if(text is null) this.text="null";
-		else this.text=text; 
+		else this.text=text;
 
 		this.font = font;
 		this.textColor = color;
 		this.textColorUp = color;
 		this.textColorDown = colorDown;
 		this.textFlags = flags;
-		
+
 		collisionTransparent = true;
 		this.visible=true;
 	}
@@ -1161,7 +1163,7 @@ class GUIElementText : GUIElement, IGUIElementTextOpt
 		{
 			if(not absolutePosition)
 				DrawText(text, screenX+posX+dX, screenY+posY+dY, elementWidth, elementHeight, textColor, font, textFlags);
-			else 
+			else
 				DrawText(text, posX, posY, elementWidth, elementHeight, textColor, font, textFlags);
 		}
 	}
@@ -1195,7 +1197,7 @@ class GUIElementText : GUIElement, IGUIElementTextOpt
 	{
 		GUIElement::Visible(visible);
 	}
- 
+
 	void Text(string@ text)
 	{
 		Text(text, font, textColor);
@@ -1214,7 +1216,7 @@ class GUIElementText : GUIElement, IGUIElementTextOpt
 	void Text(string@ text, int font, uint color, uint downColor, int flags)
 	{
 		if(text is null) this.text="";
-		else this.text=text; 
+		else this.text=text;
 
 		this.font = font;
 		this.textColor = color;
@@ -1222,7 +1224,7 @@ class GUIElementText : GUIElement, IGUIElementTextOpt
 		this.textColorDown = downColor;
 		this.textFlags = flags;
 	}
-	
+
 	void TextBoxSize(int width, int height)
 	{
 		this.elementWidth = width;
@@ -1252,18 +1254,18 @@ class GUIElementText : GUIElement, IGUIElementTextOpt
 	{
 		this.textColor = color;
 	}
-	
-	
+
+
 	void SetTextShift(int deltaX, int deltaY, int deltaDownX, int deltaDownY) {
 		this.dX = deltaX;
 		this.dY = deltaY;
 		this.upDX = deltaX;
-		this.upDY = deltaY; 
+		this.upDY = deltaY;
 		this.downDX = deltaDownX;
 		this.downDY = deltaDownY;
 	}
 
-	void SetTextWidth(int width) 
+	void SetTextWidth(int width)
 	{
 		this.elementWidth = width;
 	}
@@ -1321,7 +1323,7 @@ class GUIElementText : GUIElement, IGUIElementTextOpt
 
 	string text;
 	int font;
-	
+
 	int dX;
 	int dY;
 	int upDX;
@@ -1351,12 +1353,12 @@ class GUIElementImage : GUIElement, IGUIElementImageOpt
 	GUIElementImage(int id, int patch, string@ sprName, int x, int y)
 	{
 		InitImage(id, sprName, patch, x, y);
-	}	
+	}
 
 	GUIElementImage(string@ sprName, int patch, int x, int y)
 	{
 		InitImage(0, sprName, patch, x, y);
-	}	
+	}
 
 	void InitImage(int id, string@ sprName, int patch, int x, int y)
 	{
@@ -1373,7 +1375,7 @@ class GUIElementImage : GUIElement, IGUIElementImageOpt
 
 		this.posX = x;
 		this.posY = y;
-		
+
 		collisionTransparent = true;
 		this.visible=true;
 	}
@@ -1387,7 +1389,7 @@ class GUIElementImage : GUIElement, IGUIElementImageOpt
 
 		if(visible)
 		{
-			if(this.image.Id!=0) DrawSprite(this.image.Id,-1,screenX+posX,screenY+posY,0); 
+			if(this.image.Id!=0) DrawSprite(this.image.Id,-1,screenX+posX,screenY+posY,0);
 		}
 	}
 
@@ -1506,7 +1508,7 @@ class GUIElementButton : GUIElement, IGUIElementButtonOpt
 				if(not (downSprite is null)) downSprite.Draw(screenX, screenY);
 				ButtonText.SetTextDown(true);
 			}
-			else 
+			else
 			{
 				if(not (upSprite is null)) upSprite.Draw(screenX, screenY);
 				ButtonText.SetTextDown(false);
@@ -1521,21 +1523,21 @@ class GUIElementButton : GUIElement, IGUIElementButtonOpt
 	{
 		GUIElement::Position(x, y);
 		UpdateelementsPositions();
-		
+
 	}
 
 	void Position(int x, int y, int w, int h)
 	{
 		GUIElement::Position(x, y, w, h);
 		UpdateelementsPositions();
-		
+
 	}
 
 	void Position(string& iniKey)
 	{
 		GUIElement::Position(iniKey);
 		UpdateelementsPositions();
-		
+
 	}
 
 	void AbsolutePosition(bool absolutePosition)
@@ -1571,19 +1573,19 @@ class GUIElementButton : GUIElement, IGUIElementButtonOpt
 	void Text(string@ text, int font, uint color, uint downColor, int flags)
 	{
 		@ButtonText = GUIElementText(0, text, posX, posY, elementWidth, elementHeight, font, color, downColor, flags);
-		 
+
 	}
 
 	void TextShift(int deltaX, int deltaY, int deltaDownX, int deltaDownY)
 	{
 		ButtonText.SetTextShift(deltaX,deltaY,deltaDownX,deltaDownY);
-		
+
 	}
 
 	void TextWidth(int width)
 	{
 		ButtonText.SetTextWidth(width);
-		
+
 	}
 
 	void UpPic(string@ sprName)
@@ -1591,7 +1593,7 @@ class GUIElementButton : GUIElement, IGUIElementButtonOpt
 		@upSprite = @GUIElementImage(id, sprName, posX, posY);
 		this.elementWidth = upSprite.image.Width;
 		this.elementHeight = upSprite.image.Height;
-	}	
+	}
 
 	void DownPic(string@ sprName)
 	{

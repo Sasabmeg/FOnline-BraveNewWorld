@@ -50,6 +50,10 @@ import bool SmartCursorClick( int click ) from "client/smart_cursor";
 
 // import void ShowAimScreen( CritterCl@ target ) from "client_gui_screens";
 
+import bool GuiMapCatchMouseClick(int click) from "client_guiMap";
+import bool GuiMapCatchMouseRelease(int click) from "client_guiMap";
+import bool GuiMapUpdateMousePositionChange(int x, int y) from "client_guiMap";
+
 #define LeftCtrl        GUI_IsKeyPressed(DIK_LCONTROL)
 #define RightCtrl       GUI_IsKeyPressed(DIK_RCONTROL)
 #define AnyCtrl         (LeftCtrl || RightCtrl)
@@ -211,6 +215,9 @@ bool key_up(uint8 key,string& keyText)
 // Return true to disable engine events.
 bool mouse_down(int click)
 {
+    if (GuiMapCatchMouseClick(click)) {
+        return true;
+    }
     if(ThrowingMouseDown(click))
         return true;
     if(HexShotingMouseDown(click))
@@ -264,6 +271,7 @@ bool mouse_down(int click)
 
 bool mouse_up(int click)
 {
+    GuiMapCatchMouseRelease(click);
     IndicatorMouse(false, 0);
 
     return(GUI_MouseUp(__MouseX, __MouseY, click));
@@ -277,6 +285,8 @@ void mouse_move(int x, int y)
         __MouseY = PrevMouseY;
         return;
     }
+
+    GuiMapUpdateMousePositionChange(__MouseX - PrevMouseX, __MouseY - PrevMouseY);
 
     GUI_MouseMove(PrevMouseX, PrevMouseY, __MouseX, __MouseY);
     PrevMouseX = __MouseX;
