@@ -43,7 +43,7 @@ import void DrawChosenTabs() from "chosen_tabs";
 import void DrawQuestTracker() from "client_QuestTracker";
 import void DrawInventoryTracker() from "client_InventoryTracker";
 import void DrawCarTracker() from "client_CarTracker";
-import void DrawGuiMap() from "client_guiMap";
+import void DrawGuiImage() from "client_gui_image";
 
 import bool IsPossessMode() from "client_dev_menu";
 import bool IsAuthorized() from "client_dev_menu";
@@ -497,7 +497,7 @@ void render_iface(uint layer)
         DrawMsFov();
         DrawCustomBorder();
         DrawCarTracker();
-        DrawGuiMap();
+        DrawGuiImage();
         RenderHexThrowing();
         RenderHexShoting();
 

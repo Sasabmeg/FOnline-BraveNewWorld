@@ -60,7 +60,7 @@ class CInterfaceImage : CInterfaceControl {
         int spriteWidth = GetSpriteWidth(imageSprite, -1);
         int spriteHeight = GetSpriteHeight(imageSprite, -1);
         float ratio =  float(spriteWidth) / spriteHeight;
-        Message("Sprite ratio = " + ratio + ", w = " + spriteWidth + ", h = " + spriteHeight + ", w = " + int(float(drawWidth)) + ", h = " + int(float(drawWidth) / ratio));
+        //Message("Sprite ratio = " + ratio + ", w = " + spriteWidth + ", h = " + spriteHeight + ", w = " + int(float(drawWidth)) + ", h = " + int(float(drawWidth) / ratio));
         if (drawWidth > int(drawHeight * ratio)) {
             drawWidthAligned = int(drawHeight * ratio);
         } else if (drawHeight > int(float(drawWidth) / ratio)) {
