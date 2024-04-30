@@ -6,8 +6,8 @@
 *   Description:    Pop-up an image of a drawn map for quests or dungeons.
 */
 
-#ifndef __GUI_MAP__
-#define __GUI_MAP__
+#ifndef __GUI_IMAGE__
+#define __GUI_IMAGE__
 
 #include "sprite.fos"
 #include "_defines.fos"
@@ -21,25 +21,25 @@
 #include "client_InterfaceImage.fos"
 
 
-CGuiMap guiMap;// = CGuiMap();
+CGuiImage guiImage;
 CInterfaceWindow interfaceWindow;
 CInterfaceImage interfaceImage;
 
 //  Exported
-void ToggleGuiMap() {
-    guiMap.enabled = !guiMap.enabled;
+void ToggleGuiImage() {
+    guiImage.enabled = !guiImage.enabled;
 }
 
 // Exported
-bool IsGuiMapEnabled() {
-    return guiMap.enabled;
+bool IsGuiImageEnabled() {
+    return guiImage.enabled;
 }
 
 //  Exported - client_main
-void InitGuiMap() {
-    Log("InitGuiMap()");
-    Message("InitGuiMap()");
-    guiMap = CGuiMap();
+void InitGuiImage() {
+    Log("InitGuiImage()");
+    Message("InitGuiImage()");
+    guiImage = CGuiImage();
     interfaceWindow = CInterfaceWindow(0, 0, 1000, 500);
     interfaceWindow.maxWidth = __ScreenWidth * 4 / 5;
     interfaceWindow.maxHeight = __ScreenHeight * 4 / 5;
@@ -56,15 +56,15 @@ void InitGuiMap() {
 }
 
 //  Exported
-void DrawGuiMap() {
-    guiMap.Draw();
+void DrawGuiImage() {
+    guiImage.Draw();
 }
 
 //  Exported
-bool GuiMapCatchMouseClick(int click) {
+bool GuiImageCatchMouseClick(int click) {
     CritterCl@ chosen = GetChosen();
     if(valid(chosen)) {
-        //Message("Gui Map CatchMouseClick Button: " + click);
+        //Message("Gui Image CatchMouseClick Button: " + click);
         return interfaceWindow.CatchMouseClick(click);
     } else {
         return false;
@@ -72,10 +72,10 @@ bool GuiMapCatchMouseClick(int click) {
 }
 
 //  Exported
-bool GuiMapCatchMouseRelease(int click) {
+bool GuiImageCatchMouseRelease(int click) {
     CritterCl@ chosen = GetChosen();
     if(valid(chosen)) {
-        //Message("Gui Map CatchMouseRelease Button: " + click);
+        //Message("Gui Image CatchMouseRelease Button: " + click);
         return interfaceWindow.CatchMouseRelease();
     } else {
         return false;
@@ -83,27 +83,27 @@ bool GuiMapCatchMouseRelease(int click) {
 }
 
 //  Exported
-bool GuiMapUpdateMousePositionChange(int x, int y) {
-    //Message("Gui Map UpdateMousePositionChange (" + x + ", " + y + ")");
+bool GuiImageUpdateMousePositionChange(int x, int y) {
+    //Message("Gui Image UpdateMousePositionChange (" + x + ", " + y + ")");
     return interfaceWindow.UpdateMousePositionChange(x, y);
 }
 
 
-class CGuiMap {
+class CGuiImage {
     bool enabled;                           //  use this to toggle on/off
 
-    CGuiMap() {
+    CGuiImage() {
         enabled = true;
     }
 
     void Draw() {
         if (!enabled) {
-            //Message("GuiMap disabled.");
+            //Message("GuiImage disabled.");
             return;
         }
 
         if (GUI_GetActiveMainScreen() != CLIENT_MAIN_SCREEN_GAME) {
-            //Message("GuiMap not on main screen.");
+            //Message("GuiImage not on main screen.");
             return;
         }
 
@@ -112,13 +112,8 @@ class CGuiMap {
             //Message("Chosen is fake!");
             return;
         }
-
-        /*
-        uint mapSprite = LoadSprite("sierra_caves_lvl1_map1.png", PATH_ART_INTRFACE);
-        DrawSprite(mapSprite, -1, 10, 10, int(GetSpriteWidth(mapSprite, -1) / 1.5), int(GetSpriteHeight(mapSprite, -1) / 1.5), false, false, 0);
-        */
         interfaceWindow.DrawWindow();
     }
 };
 
-#endif 	//	__GUI_MAP__
+#endif 	//	__GUI_IMAGE__

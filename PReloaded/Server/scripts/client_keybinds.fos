@@ -106,7 +106,7 @@ bool InitBinds() // export
     ret = ret && InitInventoryTrackerBind();
     ret = ret && InitCarTrackerBind();
     ret = ret && InitCarTrackerBeepBind();
-    ret = ret && InitGuiMapBind();
+    ret = ret && InitGuiImageBind();
     ret = ret && InitMsFovBind();
     ret = ret && InitRoofBind();
     ret = ret && InitWallBind();
@@ -303,9 +303,9 @@ bool InitCarTrackerBeepBind()
     return TryAddBind(s, bnd);
 }
 
-bool InitGuiMapBind() {
-    string@    s = GetConfigValue(CONFIG_FILE, CONFIG_BINDINGS, "ToggleGuiMap");
-    GuiMapBind bnd;
+bool InitGuiImageBind() {
+    string@    s = GetConfigValue(CONFIG_FILE, CONFIG_BINDINGS, "ToggleGuiImage");
+    GuiImageBind bnd;
     return TryAddBind(s, bnd);
 }
 

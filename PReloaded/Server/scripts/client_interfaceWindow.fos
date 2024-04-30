@@ -21,6 +21,9 @@ class CInterfaceWindow {
     private uint topLeftCornerImageV, leftElementImage, bottomLeftCornerImageV;
     private uint bottomLeftCornerImageH, bottomElementImage, bottomRightCornerImageH;
     private uint topLeftCornerResize, topRightCornerResize, bottomRightCornerResize, bottomLeftCornerResize;
+    private int drawInfoOffsetX, drawInfoOffsetY, drawInfoFont, drawInfoFlags;
+    private uint drawInfoColor;
+
 
     //  move, resize
     private bool moveWithMouse;
@@ -66,6 +69,12 @@ class CInterfaceWindow {
         locked = false;
         hasBackground = true;
         backgroundColor = COLOR_RGBA(0, 0, 0, 150);
+        drawInfoColor = COLOR_RGBA(0, 255, 0, 255);
+        drawInfoOffsetX = 7;
+        drawInfoOffsetY = -12;
+        drawInfoFont = FONT_TYPE_DEFAULT;
+        drawInfoFlags = FONT_FLAG_BORDERED;
+        infoText = "";
         Init();
     }
 
@@ -109,24 +118,6 @@ class CInterfaceWindow {
         //Message("Max width " + maxWidth + ", max height: " + maxHeight);
     }
 
-    void DrawWindow() {
-        drawBackground();
-        drawChildControls();
-        drawTopBorder();
-        drawRightBorder();
-        drawLeftBorder();
-        drawBottomBorder();
-        drawResizeBorders();
-    }
-
-    private void drawChildControls() {
-        for (uint i = 0; i < childControls.length(); i++) {
-            //Log("drawChildControls: " + i);
-            //Message("drawChildControls: " + i);
-            childControls[i].Draw(posX, posY, totalWidth, totalHeight);
-        }
-    }
-
     void enableMove() {
         if (!locked) {
             moveWithMouse = true;
@@ -163,43 +154,42 @@ class CInterfaceWindow {
 			if(valid(chosen)) {
                 if (isOnTopLeftCornerDrawArea(__MouseX, __MouseY)) {
                     resizeWithMouseTopLeftCorner = true;
-                    Message("Resize top left corner: " + resizeWithMouseTopLeftCorner);
+                    //Message("Resize top left corner: " + resizeWithMouseTopLeftCorner);
                     return true;
                 }
                 if (isOnTopRightCornerDrawArea(__MouseX, __MouseY)) {
                     resizeWithMouseTopRightCorner = true;
-                    Message("Resize top right corner: " + resizeWithMouseTopRightCorner);
+                    //Message("Resize top right corner: " + resizeWithMouseTopRightCorner);
                     return true;
                 }
                 if (isOnBottomRightCornerDrawArea(__MouseX, __MouseY)) {
                     resizeWithMouseBottomRightCorner = true;
-                    Message("Resize bottom right corner: " + resizeWithMouseBottomRightCorner);
+                    //Message("Resize bottom right corner: " + resizeWithMouseBottomRightCorner);
                     return true;
                 }
                 if (isOnBottomLeftCornerDrawArea(__MouseX, __MouseY)) {
                     resizeWithMouseBottomLeftCorner = true;
-                    Message("Resize bottom left corner: " + resizeWithMouseBottomLeftCorner);
+                    //Message("Resize bottom left corner: " + resizeWithMouseBottomLeftCorner);
                     return true;
                 }
                 if (isOnTopBorderDrawArea(__MouseX, __MouseY)) {
                     resizeWithMouseTop = true;
-                    Message("Resize top: " + resizeWithMouseTop);
+                    //Message("Resize top: " + resizeWithMouseTop);
                     return true;
                 }
                 if (isOnRightBorderDrawArea(__MouseX, __MouseY)) {
                     resizeWithMouseRight = true;
-                    Message("Resize right: " + resizeWithMouseRight);
+                    //Message("Resize right: " + resizeWithMouseRight);
                     return true;
                 }
                 if (isOnLeftBorderDrawArea(__MouseX, __MouseY)) {
                     resizeWithMouseLeft = true;
-                    Message("Resize left: " + resizeWithMouseLeft);
+                    //Message("Resize left: " + resizeWithMouseLeft);
                     return true;
                 }
                 if (isOnBottomBorderDrawArea(__MouseX, __MouseY)) {
                     resizeWithMouseBottom = true;
-                    Message("Resize bottom: " + resizeWithMouseBottom);
-                    //Message("Min width: " + minWidth + ", min height: " + minHeight + ", max width: " + maxWidth + ", maxHeight: " + maxHeight + ", totalWidth: " + totalWidth + ", totalHeight: " + totalHeight);
+                    //Message("Resize bottom: " + resizeWithMouseBottom);
                     return true;
                 }
                 if (isWithinDrawArea(__MouseX, __MouseY)) {
@@ -217,6 +207,7 @@ class CInterfaceWindow {
 	}
 
 	bool CatchMouseRelease() {
+	    infoText = "";
 	    moveWithMouse = false;
         resizeWithMouseTopLeftCorner = false;
         resizeWithMouseTopRightCorner = false;
@@ -233,42 +224,52 @@ class CInterfaceWindow {
         if (!locked) {
             if (moveWithMouse) {
                 move(x, y);
+                infoText = "Pos (" + posX + ", " + posY + ")";
+                //Message(infoText);
                 return true;
             } else {
                 if (resizeWithMouseTopLeftCorner) {
                     resizeTop(y);
                     resizeLeft(x);
+                    infoText = "Size (" + totalWidth + ", " + totalHeight + ")";
                     return true;
                 }
                 if (resizeWithMouseTopRightCorner) {
                     resizeTop(y);
                     resizeRight(x);
+                    infoText = "Size (" + totalWidth + ", " + totalHeight + ")";
                     return true;
                 }
                 if (resizeWithMouseBottomRightCorner) {
                     resizeBottom(y);
                     resizeRight(x);
+                    infoText = "Size (" + totalWidth + ", " + totalHeight + ")";
                     return true;
                 }
                 if (resizeWithMouseBottomLeftCorner) {
                     resizeBottom(y);
                     resizeLeft(x);
+                    infoText = "Size (" + totalWidth + ", " + totalHeight + ")";
                     return true;
                 }
                 if (resizeWithMouseTop) {
                     resizeTop(y);
+                    infoText = "Size (" + totalWidth + ", " + totalHeight + ")";
                     return true;
                 }
                 if (resizeWithMouseRight) {
                     resizeRight(x);
+                    infoText = "Size (" + totalWidth + ", " + totalHeight + ")";
                     return true;
                 }
                 if (resizeWithMouseLeft) {
                     resizeLeft(x);
+                    infoText = "Size (" + totalWidth + ", " + totalHeight + ")";
                     return true;
                 }
                 if (resizeWithMouseBottom) {
                     resizeBottom(y);
+                    infoText = "Size (" + totalWidth + ", " + totalHeight + ")";
                     return true;
                 }
                 return false;
@@ -288,8 +289,8 @@ class CInterfaceWindow {
 	}
 
 	private bool isOnTopLeftCornerDrawArea(int x, int y) {
-		if (x >= posX && x <= posX + borderSizeLeft &&
-			y >= posY && y <= posY + borderSizeTop) {
+		if (x >= posX && x <= posX + borderSizeLeft * 2 &&
+			y >= posY && y <= posY + borderSizeTop * 2) {
 			return true;
 		} else {
 			return false;
@@ -297,8 +298,8 @@ class CInterfaceWindow {
 	}
 
 	private bool isOnTopRightCornerDrawArea(int x, int y) {
-		if (x >= posX + totalWidth - borderSizeRight && x <= posX + totalWidth &&
-			y >= posY && y <= posY + borderSizeTop) {
+		if (x >= posX + totalWidth - borderSizeRight * 2 && x <= posX + totalWidth &&
+			y >= posY && y <= posY + borderSizeTop * 2) {
 			return true;
 		} else {
 			return false;
@@ -306,8 +307,8 @@ class CInterfaceWindow {
 	}
 
 	private bool isOnBottomRightCornerDrawArea(int x, int y) {
-		if (x >= posX + totalWidth - borderSizeRight && x <= posX + totalWidth &&
-			y >= posY + totalHeight - borderSizeBottom && y <= posY + totalHeight) {
+		if (x >= posX + totalWidth - borderSizeRight * 2 && x <= posX + totalWidth &&
+			y >= posY + totalHeight - borderSizeBottom * 2 && y <= posY + totalHeight) {
 			return true;
 		} else {
 			return false;
@@ -315,8 +316,8 @@ class CInterfaceWindow {
 	}
 
 	private bool isOnBottomLeftCornerDrawArea(int x, int y) {
-		if (x >= posX && x <= posX + borderSizeLeft &&
-			y >= posY + totalHeight - borderSizeBottom && y <= posY + totalHeight) {
+		if (x >= posX && x <= posX + borderSizeLeft * 2 &&
+			y >= posY + totalHeight - borderSizeBottom * 2 && y <= posY + totalHeight) {
 			return true;
 		} else {
 			return false;
@@ -372,6 +373,30 @@ class CInterfaceWindow {
             Log("Failed to log sprite:" + iniKey);
         }
         return id;
+    }
+
+    void DrawWindow() {
+        drawBackground();
+        drawChildControls();
+        drawTopBorder();
+        drawRightBorder();
+        drawLeftBorder();
+        drawBottomBorder();
+        drawResizeBorders();
+        drawInfoText();
+    }
+
+    void drawInfoText() {
+        //Message("DrawInfoText = " + infoText);
+        DrawText(infoText, __MouseX + this.drawInfoOffsetX, __MouseY + this.drawInfoOffsetY, 0, 0, this.drawInfoColor, this.drawInfoFont, this.drawInfoFlags );
+    }
+
+    private void drawChildControls() {
+        for (uint i = 0; i < childControls.length(); i++) {
+            //Log("drawChildControls: " + i);
+            //Message("drawChildControls: " + i);
+            childControls[i].Draw(posX, posY, totalWidth, totalHeight);
+        }
     }
 
     private void drawTopBorder() {
