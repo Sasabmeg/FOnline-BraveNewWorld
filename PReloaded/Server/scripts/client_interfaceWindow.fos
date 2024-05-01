@@ -149,6 +149,12 @@ class CInterfaceWindow {
                 return true;
             }
         }
+        if (GetCurrentCursor() == CURSOR_DEFAULT && click == MOUSE_CLICK_MIDDLE) {
+            if (isWithinDrawArea(__MouseX, __MouseY)) {
+                locked = !locked;
+                return true;
+            }
+        }
 		if (GetCurrentCursor() == CURSOR_DEFAULT && click == MOUSE_CLICK_LEFT) {
 			CritterCl@ chosen = GetChosen();
 			if(valid(chosen)) {
@@ -279,7 +285,7 @@ class CInterfaceWindow {
         }
 	}
 
-	private bool isWithinDrawArea(int x, int y) {
+	bool isWithinDrawArea(int x, int y) {
 		if (x >= posX && x <= posX + totalWidth &&
 			y >= posY && y <= posY + totalHeight) {
 			return true;
