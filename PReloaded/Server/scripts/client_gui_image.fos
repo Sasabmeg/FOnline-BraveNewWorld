@@ -38,7 +38,7 @@ bool IsGuiImageEnabled() {
 //  Exported - client_main
 void InitGuiImage() {
     Log("InitGuiImage()");
-    Message("InitGuiImage()");
+    //Message("InitGuiImage()");
     guiImage = CGuiImage();
     interfaceWindow = CInterfaceWindow(0, 0, 700, 405);
     interfaceWindow.maxWidth = __ScreenWidth * 4 / 5;
@@ -61,11 +61,13 @@ void InitGuiImage() {
 bool SetImage(string& imageFile, bool limitWindowSizeMaxToImageSize, bool resizeEnabled, bool moveEnabled) {
     if (interfaceImage.SetImage(imageFile)) {
         Log("Setting image: " + imageFile);
-        Message("Setting image: " + imageFile);
+        //Message("Setting image: " + imageFile);
         interfaceWindow.allowResize = resizeEnabled;
         interfaceWindow.allowMove = moveEnabled;
         interfaceWindow.totalWidth = interfaceImage.spriteWidth + interfaceWindow.borderSizeLeft + interfaceWindow.borderSizeRight;
         interfaceWindow.totalHeight = interfaceImage.spriteHeight + interfaceWindow.borderSizeTop + interfaceWindow.borderSizeBottom;
+        interfaceWindow.posX = (__ScreenWidth - interfaceWindow.totalWidth) / 2;
+        interfaceWindow.posY = 10;
         if (limitWindowSizeMaxToImageSize) {
             interfaceWindow.maxWidth = interfaceImage.spriteWidth + interfaceWindow.borderSizeLeft + interfaceWindow.borderSizeRight;
             interfaceWindow.maxHeight = interfaceImage.spriteHeight + interfaceWindow.borderSizeTop + interfaceWindow.borderSizeBottom;

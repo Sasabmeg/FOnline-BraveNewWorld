@@ -12,7 +12,7 @@ class CInterfaceWindow {
 
     //  draw
     bool allowResize, allowMove;
-    private int posX, posY;
+    int posX, posY;
     int totalWidth, totalHeight;    //  current width, height
     int borderSizeLeft, borderSizeRight, borderSizeTop, borderSizeBottom;
     int minWidth, maxWidth, minHeight, maxHeight;

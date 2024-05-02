@@ -1840,6 +1840,6 @@ void InsertCarsIntoDataArray(array<int>@ data, Item@ car) {
 }
 
 void ViewImageClient(Critter& player, string& imageFile, bool limitWindowSizeMaxToImageSize, bool resizeEnabled, bool moveEnabled) {
-    Log("ViewImageClient - " + imageFile);
+    //Log("ViewImageClient - " + imageFile);
     player.RunClientScript("client_main@_ViewImage", limitWindowSizeMaxToImageSize ? 1 : 0, resizeEnabled ? 1 : 0, moveEnabled ? 1 : 0, imageFile, null);
 }
