@@ -1231,7 +1231,17 @@
 #define PID_PILE_CHEMICALS2                 (22007)
 
 /******************************************************************
-***************            Fishing module (22)      ***************
+***************         Transfer Objects (23)       ***************
+******************************************************************/
+
+
+/******************************************************************
+***************              Triggers (24)          ***************
+******************************************************************/
+
+
+/******************************************************************
+***************            Fishing module (25)      ***************
 ******************************************************************/
 //  inventory items
 #define PID_MESSAGE_IN_A_BOTTLE             (26750)
@@ -1255,13 +1265,24 @@
 #define PID_ITEM_FISH_CIRCLING_SPEARED      (26790)     //  not used feature, supposed to play when player catches a jumping fish mid air
 
 /******************************************************************
-***************         Transfer Objects (23)       ***************
+***************            Sierra Caves (26)        ***************
 ******************************************************************/
-
+#define PID_MAP_SIERRA_LVL1                 (26800)
 
 /******************************************************************
-***************              Triggers (24)          ***************
+***************       Tragic the Garnering (27)     ***************
 ******************************************************************/
+#define PID_TRAGIC_CARDDECK                 (27000)
+#define PID_TRAGIC_NEU_ACTIONBOY            (27001)
+#define PID_TRAGIC_NEU_HITTHEGAPS           (27002)
+#define PID_TRAGIC_NEU_LONER                (27003)
+#define PID_TRAGIC_NEU_KLAMATHTAMER         (27004)
+#define PID_TRAGIC_NEU_VAULTOFFICER         (27005)
+#define PID_TRAGIC_NEU_WILDBRAHMIN          (27006)
+#define PID_TRAGIC_STE_BACKSTAB             (27100)
+#define PID_TRAGIC_STE_SILENTDEATH          (27101)
+#define PID_TRAGIC_STE_SILENTRUNNING        (27102)
+
 
 
 

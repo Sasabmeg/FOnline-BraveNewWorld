@@ -1838,3 +1838,8 @@ void InsertCarsIntoDataArray(array<int>@ data, Item@ car) {
     data.insertLast(int(_CarGetMaxDeterioration(car)));
     data.insertLast(int(car.Proto.ProtoId));
 }
+
+void ViewImageClient(Critter& player, string& imageFile, bool limitWindowSizeMaxToImageSize, bool resizeEnabled, bool moveEnabled) {
+    Log("ViewImageClient - " + imageFile);
+    player.RunClientScript("client_main@_ViewImage", limitWindowSizeMaxToImageSize ? 1 : 0, resizeEnabled ? 1 : 0, moveEnabled ? 1 : 0, imageFile, null);
+}
