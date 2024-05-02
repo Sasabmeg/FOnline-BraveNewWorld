@@ -11,9 +11,10 @@
 class CInterfaceWindow {
 
     //  draw
+    bool allowResize, allowMove;
     private int posX, posY;
-    private int totalWidth, totalHeight;
-    private int borderSizeLeft, borderSizeRight, borderSizeTop, borderSizeBottom;
+    int totalWidth, totalHeight;    //  current width, height
+    int borderSizeLeft, borderSizeRight, borderSizeTop, borderSizeBottom;
     int minWidth, maxWidth, minHeight, maxHeight;
     private int minPosX, maxPosX, minPosY, maxPosY;
     private uint topLeftCornerImageH, topElementImage, topRightCornerImageH;
@@ -75,6 +76,8 @@ class CInterfaceWindow {
         drawInfoFont = FONT_TYPE_DEFAULT;
         drawInfoFlags = FONT_FLAG_BORDERED;
         infoText = "";
+        allowResize = true;
+        allowMove = true;
         Init();
     }
 
@@ -158,42 +161,42 @@ class CInterfaceWindow {
 		if (GetCurrentCursor() == CURSOR_DEFAULT && click == MOUSE_CLICK_LEFT) {
 			CritterCl@ chosen = GetChosen();
 			if(valid(chosen)) {
-                if (isOnTopLeftCornerDrawArea(__MouseX, __MouseY)) {
+                if (isOnTopLeftCornerDrawArea(__MouseX, __MouseY) && allowResize) {
                     resizeWithMouseTopLeftCorner = true;
                     //Message("Resize top left corner: " + resizeWithMouseTopLeftCorner);
                     return true;
                 }
-                if (isOnTopRightCornerDrawArea(__MouseX, __MouseY)) {
+                if (isOnTopRightCornerDrawArea(__MouseX, __MouseY) && allowResize) {
                     resizeWithMouseTopRightCorner = true;
                     //Message("Resize top right corner: " + resizeWithMouseTopRightCorner);
                     return true;
                 }
-                if (isOnBottomRightCornerDrawArea(__MouseX, __MouseY)) {
+                if (isOnBottomRightCornerDrawArea(__MouseX, __MouseY) && allowResize) {
                     resizeWithMouseBottomRightCorner = true;
                     //Message("Resize bottom right corner: " + resizeWithMouseBottomRightCorner);
                     return true;
                 }
-                if (isOnBottomLeftCornerDrawArea(__MouseX, __MouseY)) {
+                if (isOnBottomLeftCornerDrawArea(__MouseX, __MouseY) && allowResize) {
                     resizeWithMouseBottomLeftCorner = true;
                     //Message("Resize bottom left corner: " + resizeWithMouseBottomLeftCorner);
                     return true;
                 }
-                if (isOnTopBorderDrawArea(__MouseX, __MouseY)) {
+                if (isOnTopBorderDrawArea(__MouseX, __MouseY) && allowResize) {
                     resizeWithMouseTop = true;
                     //Message("Resize top: " + resizeWithMouseTop);
                     return true;
                 }
-                if (isOnRightBorderDrawArea(__MouseX, __MouseY)) {
+                if (isOnRightBorderDrawArea(__MouseX, __MouseY) && allowResize) {
                     resizeWithMouseRight = true;
                     //Message("Resize right: " + resizeWithMouseRight);
                     return true;
                 }
-                if (isOnLeftBorderDrawArea(__MouseX, __MouseY)) {
+                if (isOnLeftBorderDrawArea(__MouseX, __MouseY) && allowResize) {
                     resizeWithMouseLeft = true;
                     //Message("Resize left: " + resizeWithMouseLeft);
                     return true;
                 }
-                if (isOnBottomBorderDrawArea(__MouseX, __MouseY)) {
+                if (isOnBottomBorderDrawArea(__MouseX, __MouseY) && allowResize) {
                     resizeWithMouseBottom = true;
                     //Message("Resize bottom: " + resizeWithMouseBottom);
                     return true;

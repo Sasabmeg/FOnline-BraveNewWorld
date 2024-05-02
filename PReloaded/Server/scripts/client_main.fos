@@ -84,6 +84,8 @@ import IClientAccessLevelOpt@ InitAccessControl() from "client_access";
 import void InitSmartCursor() from "client/smart_cursor";
 
 import uint BonusNumber(Item@ item) from "item_bonus";
+import bool SetImage(string& imageFile, bool limitWindowSizeMaxToImageSize, bool resizeEnabled, bool moveEnabled) from "client_gui_image";
+
 
 #pragma bindfunc "void OpenURL(string@+) -> client_utils.dll OnlineStats_URL"
 
@@ -1225,4 +1227,14 @@ void _OpenURL(int, int, int, string@ url, array<int>@)
 void _ShowCarOwnerIndicator(int param1, int param2, int param3, string@ param4, array<int>@ data) {
     //Message("_ShowCarOwnerIndicator called");
     RefreshCars(data, param4);
+}
+
+void _ViewImage(int param1, int param2, int param3, string@ param4, array<int>@ data) {
+    //Message("_ViewImage called");
+    //Message("Setting image file: " + param4);
+    if (SetImage(param4, param1 > 0, param2 > 0, param3 > 0)) {
+        //Message("Setting image file: " + param4 + " success.");
+    } else {
+        //Message("Setting image file: " + param4 + " failed.");
+    }
 }

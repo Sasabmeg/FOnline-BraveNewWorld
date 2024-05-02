@@ -40,11 +40,12 @@ void InitGuiImage() {
     Log("InitGuiImage()");
     Message("InitGuiImage()");
     guiImage = CGuiImage();
-    interfaceWindow = CInterfaceWindow(0, 0, 1000, 500);
+    interfaceWindow = CInterfaceWindow(0, 0, 700, 405);
     interfaceWindow.maxWidth = __ScreenWidth * 4 / 5;
     interfaceWindow.maxHeight = __ScreenHeight * 4 / 5;
     interfaceImage = CInterfaceImage(0, 0, 1400, 810);
     interfaceImage.hasBackground = false;
+    /*
     if (interfaceImage.SetImage("sierra_caves_lvl1_map1.png")) {
         Log("Setting image: sierra_caves_lvl1_map1.png");
         Message("Setting image: sierra_caves_lvl1_map1.png");
@@ -52,7 +53,30 @@ void InitGuiImage() {
         Log("Failed setting image: sierra_caves_lvl1_map1.png");
         Message("Failed setting image: sierra_caves_lvl1_map1.png");
     }
+    */
     interfaceWindow.childControls.insertLast(interfaceImage);
+}
+
+//  Exported - client_main
+bool SetImage(string& imageFile, bool limitWindowSizeMaxToImageSize, bool resizeEnabled, bool moveEnabled) {
+    if (interfaceImage.SetImage(imageFile)) {
+        Log("Setting image: " + imageFile);
+        Message("Setting image: " + imageFile);
+        interfaceWindow.allowResize = resizeEnabled;
+        interfaceWindow.allowMove = moveEnabled;
+        interfaceWindow.totalWidth = interfaceImage.spriteWidth + interfaceWindow.borderSizeLeft + interfaceWindow.borderSizeRight;
+        interfaceWindow.totalHeight = interfaceImage.spriteHeight + interfaceWindow.borderSizeTop + interfaceWindow.borderSizeBottom;
+        if (limitWindowSizeMaxToImageSize) {
+            interfaceWindow.maxWidth = interfaceImage.spriteWidth + interfaceWindow.borderSizeLeft + interfaceWindow.borderSizeRight;
+            interfaceWindow.maxHeight = interfaceImage.spriteHeight + interfaceWindow.borderSizeTop + interfaceWindow.borderSizeBottom;
+        }
+        guiImage.enabled = true;
+        return true;
+    } else {
+        Log("Failed setting image: " + imageFile);
+        Message("Failed setting image: " + imageFile);
+        return false;
+    }
 }
 
 //  Exported
@@ -68,7 +92,17 @@ bool GuiImageCatchMouseClick(int click) {
     CritterCl@ chosen = GetChosen();
     if(valid(chosen)) {
         //Message("Gui Image CatchMouseClick Button: " + click);
-        return interfaceWindow.CatchMouseClick(click);
+        if (GetCurrentCursor() == CURSOR_DEFAULT && click == MOUSE_CLICK_RIGHT) {
+            if (interfaceWindow.isWithinDrawArea(__MouseX, __MouseY)) {
+                //textBox.MouseWheelDown();
+                guiImage.enabled = false;
+                return true;
+            } else {
+                return false;
+            }
+        } else {
+            return interfaceWindow.CatchMouseClick(click);
+        }
     } else {
         return false;
     }
@@ -82,17 +116,7 @@ bool GuiImageCatchMouseRelease(int click) {
     CritterCl@ chosen = GetChosen();
     if (valid(chosen)) {
         //Message("Gui Image CatchMouseRelease Button: " + click);
-        if (GetCurrentCursor() == CURSOR_DEFAULT && click == MOUSE_CLICK_RIGHT) {
-            if (interfaceWindow.isWithinDrawArea(__MouseX, __MouseY)) {
-                //textBox.MouseWheelDown();
-                guiImage.enabled = false;
-                return true;
-            } else {
-                return false;
-            }
-        } else {
-            return interfaceWindow.CatchMouseRelease();
-        }
+        return interfaceWindow.CatchMouseRelease();
     } else {
         return false;
     }
@@ -112,7 +136,7 @@ class CGuiImage {
     bool enabled;                           //  use this to toggle on/off
 
     CGuiImage() {
-        enabled = true;
+        enabled = false;
     }
 
     void Draw() {

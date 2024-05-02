@@ -144,6 +144,8 @@ import string GetTimeString(uint fullsecond) from "time";
 import void SendCarInfoToPlayer(Critter& player) from "unsafe_client";
 import void SendCarInfoToPlayersOnMap(Map& map) from "unsafe_client";
 import void _PlayerEnterParkinglot(Map& map, Critter& player) from "map_hub";
+import void ViewImageClient(Critter& player, string& imageFile, bool limitWindowSizeMaxToImageSize, bool resizeEnabled, bool moveEnabled) from "unsafe_client";
+
 
 dictionary    ItemPids;
 dictionary    VarIds;
@@ -1113,6 +1115,20 @@ bool critter_use_item(Critter& cr, Item& item, Critter@ targetCr, Item@ targetIt
     if (pid == PID_FISH_CATFISH) {
         UseDrug(cr, item);
         return true;
+    }
+
+    //  image view items, sierra map, tragic the garnering cards, etc.
+    if (isPlayer) {
+        if (pid == PID_MAP_SIERRA_LVL1) {
+            string imageFile = "maps\\sierra_caves_lvl1_map1.png";
+            ViewImageClient(cr, imageFile, true, true, true);
+            return true;
+        }
+        if (pid == PID_TRAGIC_CARDDECK) {
+            string imageFile = "cards\\stealth\\card_perk_silentDeath.png";
+            ViewImageClient(cr, imageFile, true, false, true);
+            return true;
+        }
     }
 
     // Drugs

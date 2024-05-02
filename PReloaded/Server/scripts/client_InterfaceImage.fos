@@ -11,7 +11,10 @@ class CInterfaceImage : CInterfaceControl {
 
     bool hasBackground;
     uint backgroundColor;
-    uint imageSprite;
+    uint imageSprite = 0;
+    int spriteWidth;
+    int spriteHeight;
+    float ratio;
     bool canResize;
 
 
@@ -31,6 +34,9 @@ class CInterfaceImage : CInterfaceControl {
     bool SetImage(string& imageName) {
         imageSprite = LoadSprite(imageName, PATH_ART_INTRFACE);
         if (imageSprite > 0) {
+            spriteWidth = GetSpriteWidth(imageSprite, -1);
+            spriteHeight = GetSpriteHeight(imageSprite, -1);
+            ratio =  float(spriteWidth) / spriteHeight;
             return true;
         } else {
             return false;
@@ -38,46 +44,44 @@ class CInterfaceImage : CInterfaceControl {
     }
 
     void Draw(int offsetX, int offsetY, int maxW, int maxH) {
-        int x = posX + offsetX;
-        int y = posY + offsetY;
-        /*
-        if (maxWidth > maxW - posX) {
-            maxWidth = maxW - posX;
-        }
-        if (maxHeight > maxH - posY) {
-            maxHeight = maxW - posY;
-        }*/
-        //int drawWidth = maxW - posX < width ? maxW - posX : width;
-        //int drawHeight = maxH - posY < height ? maxH - posY : height;
+        if (imageSprite > 0) {
+            int x = posX + offsetX;
+            int y = posY + offsetY;
+            /*
+            if (maxWidth > maxW - posX) {
+                maxWidth = maxW - posX;
+            }
+            if (maxHeight > maxH - posY) {
+                maxHeight = maxW - posY;
+            }*/
+            //int drawWidth = maxW - posX < width ? maxW - posX : width;
+            //int drawHeight = maxH - posY < height ? maxH - posY : height;
 
-        int drawWidth = maxW - posX;
-        int drawHeight = maxH - posY;
+            int drawWidth = maxW - posX;
+            int drawHeight = maxH - posY;
 
+            int drawWidthAligned= drawWidth;
+            int drawHeightAligned = drawHeight;
 
-        int drawWidthAligned= drawWidth;
-        int drawHeightAligned = drawHeight;
-
-        int spriteWidth = GetSpriteWidth(imageSprite, -1);
-        int spriteHeight = GetSpriteHeight(imageSprite, -1);
-        float ratio =  float(spriteWidth) / spriteHeight;
-        //Message("Sprite ratio = " + ratio + ", w = " + spriteWidth + ", h = " + spriteHeight + ", w = " + int(float(drawWidth)) + ", h = " + int(float(drawWidth) / ratio));
-        if (drawWidth > int(drawHeight * ratio)) {
-            drawWidthAligned = int(drawHeight * ratio);
-        } else if (drawHeight > int(float(drawWidth) / ratio)) {
-            drawHeightAligned = int(float(drawWidth) / ratio);
+            //Message("Sprite ratio = " + ratio + ", w = " + spriteWidth + ", h = " + spriteHeight + ", w = " + int(float(drawWidth)) + ", h = " + int(float(drawWidth) / ratio));
+            if (drawWidth > int(drawHeight * ratio)) {
+                drawWidthAligned = int(drawHeight * ratio);
+            } else if (drawHeight > int(float(drawWidth) / ratio)) {
+                drawHeightAligned = int(float(drawWidth) / ratio);
+            }
+            if (drawWidth > drawWidthAligned) {
+                x += (drawWidth - drawWidthAligned) / 2;
+            }
+            if (drawHeight > drawHeightAligned) {
+                y += (drawHeight - drawHeightAligned) / 2;
+            }
+            //Message("drawBackground: " + x + ", " + y);
+            drawBackground(x, y);
+            //Message("drawSprite: " + x + ", " + y);
+            DrawSprite(imageSprite, -1, x, y, drawWidthAligned, drawHeightAligned, false, false, 0);
+            //  int(GetSpriteWidth(imageSprite, -1) / 1)
+            //  int(GetSpriteHeight(imageSprite, -1) / 1)
         }
-        if (drawWidth > drawWidthAligned) {
-            x += (drawWidth - drawWidthAligned) / 2;
-        }
-        if (drawHeight > drawHeightAligned) {
-            y += (drawHeight - drawHeightAligned) / 2;
-        }
-        //Message("drawBackground: " + x + ", " + y);
-        drawBackground(x, y);
-        //Message("drawSprite: " + x + ", " + y);
-        DrawSprite(imageSprite, -1, x, y, drawWidthAligned, drawHeightAligned, false, false, 0);
-        //  int(GetSpriteWidth(imageSprite, -1) / 1)
-        //  int(GetSpriteHeight(imageSprite, -1) / 1)
     }
 
     void drawBackground(int offsetX, int offsetY) {
