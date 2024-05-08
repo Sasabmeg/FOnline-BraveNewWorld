@@ -1,0 +1,121 @@
+//
+//  FOClassic: Brave New World
+//  Sasabmeg
+//
+//  ttg.fos
+//
+//  Tragic: The Garnering - Collectible edition
+//  Card generation, some rare cards, NPC scripts to buy them, etc
+//
+
+#ifndef __TTG__
+#define __TTG__
+
+#include "ttg_h.fos"
+#include "_macros.fos"
+
+import void ViewImageClient(Critter& player, string& imageFile, bool limitWindowSizeMaxToImageSize, bool resizeEnabled, bool moveEnabled) from "unsafe_client";
+import void MessageGotTragicCard(Critter& player, uint16 cardProto) from "unsafe_client";
+
+array<uint16> neutralCardPids = {   PID_TRAGIC_NEU_ACTIONBOY,
+                                    PID_TRAGIC_NEU_LITTLE_GECKO, PID_TRAGIC_NEU_MUTATED_ANT,
+                                    PID_TRAGIC_NEU_SMALL_RADSCOPION, PID_TRAGIC_NEU_MUTATED_PIGRAT, PID_TRAGIC_NEU_MUTATED_MANTIS, PID_TRAGIC_NEU_SPOREPLANT, PID_TRAGIC_NEU_STRAY_DOG,
+                                    PID_TRAGIC_NEU_GOLDEN_GECKO, PID_TRAGIC_NEU_KLAMATH_TRAPPER,
+                                    PID_TRAGIC_NEU_MUTATED_MOLERAT, PID_TRAGIC_NEU_HUGE_RADSCORPION,
+                                    PID_TRAGIC_NEU_FIRE_GECKO
+                                    };
+
+bool UseTragicCardOrDeck(Critter& player, Item& item) {
+    uint16 pid = item.GetProtoId();
+    if (pid == PID_TRAGIC_CARD_DECK) {
+        //Log("Tragic Card Deck");
+        Item@ card;
+        int roll = Random(0, neutralCardPids.length() - 1);
+        @card = player.AddItem(neutralCardPids[roll], 1);
+        if (valid(card)) {
+            player.DeleteItem(PID_TRAGIC_CARD_DECK, 1);
+            //player.Say(SAY_NETMSG, "Opening the tragic deck you found a card in good condition.");
+            MessageGotTragicCard(player, card.Proto.ProtoId);
+            ShowTragicCard(player, card);
+        } else {
+            Log("Card is invalid. Proto: " + neutralCardPids[roll]);
+            player.Say(SAY_NETMSG, "You failed to open the tragic deck. Either you are too clumsy or serboi is tired :(");
+            return false;
+        }
+    } else {
+        //Log("Show Card");
+        ShowTragicCard(player, item);
+    }
+    return true;
+}
+
+bool ShowTragicCard(Critter& cr, Item& item) {
+    uint16 pid = item.GetProtoId();
+    string imageFile;
+    switch (pid) {
+        //  neutral cost 0
+        case PID_TRAGIC_NEU_ACTIONBOY:
+            imageFile = "cards\\neutral\\card_perk_actionBoy.png";
+            ViewImageClient(cr, imageFile, true, false, true);
+            return true;
+        //  neutral cost 1
+        case PID_TRAGIC_NEU_LITTLE_GECKO:
+            imageFile = "cards\\neutral\\card_unit_littleGecko.png";
+            ViewImageClient(cr, imageFile, true, false, true);
+            return true;
+        case PID_TRAGIC_NEU_MUTATED_ANT:
+            imageFile = "cards\\neutral\\card_unit_mutatedAnt.png";
+            ViewImageClient(cr, imageFile, true, false, true);
+            return true;
+        //  neutral cost 2
+        case PID_TRAGIC_NEU_SMALL_RADSCOPION:
+            imageFile = "cards\\neutral\\card_unit_smallRadscorpion.png";
+            ViewImageClient(cr, imageFile, true, false, true);
+            return true;
+        case PID_TRAGIC_NEU_MUTATED_PIGRAT:
+            imageFile = "cards\\neutral\\card_unit_mutatedPigrat.png";
+            ViewImageClient(cr, imageFile, true, false, true);
+            return true;
+        case PID_TRAGIC_NEU_MUTATED_MANTIS:
+            imageFile = "cards\\neutral\\card_unit_mutatedMantis.png";
+            ViewImageClient(cr, imageFile, true, false, true);
+            return true;
+        case PID_TRAGIC_NEU_SPOREPLANT:
+            imageFile = "cards\\neutral\\card_unit_sporePlant.png";
+            ViewImageClient(cr, imageFile, true, false, true);
+            return true;
+        case PID_TRAGIC_NEU_STRAY_DOG:
+            imageFile = "cards\\neutral\\card_unit_strayDog.png";
+            ViewImageClient(cr, imageFile, true, false, true);
+            return true;
+        //  neutral cost 3
+        case PID_TRAGIC_NEU_GOLDEN_GECKO:
+            imageFile = "cards\\neutral\\card_unit_goldenGecko.png";
+            ViewImageClient(cr, imageFile, true, false, true);
+            return true;
+        case PID_TRAGIC_NEU_KLAMATH_TRAPPER:
+            imageFile = "cards\\neutral\\card_unit_klamathTrapper.png";
+            ViewImageClient(cr, imageFile, true, false, true);
+            return true;
+        //  neutral cost 4
+        case PID_TRAGIC_NEU_MUTATED_MOLERAT:
+            imageFile = "cards\\neutral\\card_unit_mutatedMolerat.png";
+            ViewImageClient(cr, imageFile, true, false, true);
+            return true;
+        case PID_TRAGIC_NEU_HUGE_RADSCORPION:
+            imageFile = "cards\\neutral\\card_unit_hugeRadscorpion.png";
+            ViewImageClient(cr, imageFile, true, false, true);
+            return true;
+        //  neutral cost 5
+        case PID_TRAGIC_NEU_FIRE_GECKO:
+            imageFile = "cards\\neutral\\card_unit_fireGecko.png";
+            ViewImageClient(cr, imageFile, true, false, true);
+            return true;
+    default:
+        return false;
+    }
+    return false;
+}
+
+
+#endif	//	__TTG__

@@ -1272,16 +1272,35 @@
 /******************************************************************
 ***************       Tragic the Garnering (27)     ***************
 ******************************************************************/
-#define PID_TRAGIC_CARDDECK                 (27000)
+//  DECK - use to randomize and give 1 card
+#define PID_TRAGIC_CARD_DECK                (27000)
+//  Neutral Cost 0
 #define PID_TRAGIC_NEU_ACTIONBOY            (27001)
-#define PID_TRAGIC_NEU_HITTHEGAPS           (27002)
-#define PID_TRAGIC_NEU_LONER                (27003)
-#define PID_TRAGIC_NEU_KLAMATHTAMER         (27004)
-#define PID_TRAGIC_NEU_VAULTOFFICER         (27005)
-#define PID_TRAGIC_NEU_WILDBRAHMIN          (27006)
-#define PID_TRAGIC_STE_BACKSTAB             (27100)
-#define PID_TRAGIC_STE_SILENTDEATH          (27101)
-#define PID_TRAGIC_STE_SILENTRUNNING        (27102)
+//  Neutral Cost 1
+#define PID_TRAGIC_NEU_LITTLE_GECKO         (27010)
+#define PID_TRAGIC_NEU_MUTATED_ANT          (27011)
+//  Neutral Cost 2
+#define PID_TRAGIC_NEU_SMALL_RADSCOPION     (27020)
+#define PID_TRAGIC_NEU_MUTATED_PIGRAT       (27021)
+#define PID_TRAGIC_NEU_MUTATED_MANTIS       (27022)
+#define PID_TRAGIC_NEU_SPOREPLANT           (27023)
+#define PID_TRAGIC_NEU_STRAY_DOG            (27024)
+//  Neutral Cost 3
+#define PID_TRAGIC_NEU_GOLDEN_GECKO         (27030)
+#define PID_TRAGIC_NEU_KLAMATH_TRAPPER      (27031)
+#define PID_TRAGIC_NEU_WILD_BRAHMIN         (27032)
+//  Neutral Cost 4
+#define PID_TRAGIC_NEU_MUTATED_MOLERAT      (27040)
+#define PID_TRAGIC_NEU_HUGE_RADSCORPION     (27041)
+//  Neutral Cost 5
+#define PID_TRAGIC_NEU_FIRE_GECKO           (27050)
+//  Neutral Cost 6
+//  Neutral Cost 7
+//  Neutral Cost 8
+//  Neutral Cost 9
+//  Neutral Cost 10
+
+#define PID_TRAGIC_END                      (27499)
 
 
 
