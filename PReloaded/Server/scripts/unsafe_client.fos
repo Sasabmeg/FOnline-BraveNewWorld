@@ -1843,3 +1843,7 @@ void ViewImageClient(Critter& player, string& imageFile, bool limitWindowSizeMax
     //Log("ViewImageClient - " + imageFile);
     player.RunClientScript("client_main@_ViewImage", limitWindowSizeMaxToImageSize ? 1 : 0, resizeEnabled ? 1 : 0, moveEnabled ? 1 : 0, imageFile, null);
 }
+
+void MessageGotTragicCard(Critter& player, uint16 cardProto) {
+    player.RunClientScript("client_main@_OpenTragicDeck", int(cardProto), 0, 0, null, null);
+}

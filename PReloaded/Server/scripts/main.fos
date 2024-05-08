@@ -45,6 +45,7 @@
 #include "reinforcements_h.fos"
 #include "reputations_h.fos"
 #include "town_h.fos"
+#include "ttg_h.fos"
 #include "utils_h.fos"
 //#include "weather_h.fos"
 #include "world_common_h.fos"
@@ -1124,10 +1125,8 @@ bool critter_use_item(Critter& cr, Item& item, Critter@ targetCr, Item@ targetIt
             ViewImageClient(cr, imageFile, true, true, true);
             return true;
         }
-        if (pid == PID_TRAGIC_CARDDECK) {
-            string imageFile = "cards\\stealth\\card_perk_silentDeath.png";
-            ViewImageClient(cr, imageFile, true, false, true);
-            return true;
+        if (pid >= PID_TRAGIC_CARD_DECK && pid < PID_TRAGIC_END) {
+            return UseTragicCardOrDeck(cr, item);
         }
     }
 

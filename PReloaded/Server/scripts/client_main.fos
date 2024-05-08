@@ -1238,3 +1238,7 @@ void _ViewImage(int param1, int param2, int param3, string@ param4, array<int>@ 
         //Message("Setting image file: " + param4 + " failed.");
     }
 }
+void _OpenTragicDeck(int param1, int param2, int param3, string@ param4, array<int>@ data) {
+    string cardName = GetMsgStr(TEXTMSG_ITEM, param1 * 100);
+    Message("Opening the tragic deck you found a card in good condition: " + cardName);
+}
