@@ -12,7 +12,8 @@ lang=engl
 3 2010 #
 4 2020 D _var p q_hub_iguana_pete_message = 10 D or D _var p q_hub_iguana_pete_message { 5 #
 5 2030 D _var p q_hub_wasteland_band { 6 D or D _var p q_hub_wasteland_band = 10 #
-0 2040 @
+6 2040 #
+0 2050 @
 3 3000 None 0 #
 2 3010 #
 0 3020 @
@@ -23,7 +24,11 @@ lang=engl
 5 5000 None 0 #
 2 5010 D _var p q_hub_wasteland_band = 0 R _var p q_hub_wasteland_band = 10 #
 2 5020 D _var p q_hub_wasteland_band > 0 #
-0 5030 &
+0 5030 @
+6 6000 None 0 #
+2 6010 D _var p q_tragic_deck = 0 R _var p q_tragic_deck = 1 #
+2 6020 D _var p q_tragic_deck > 0 #
+0 6030 &
 
 [engl]
 {100}{}{Caravan Packer}
@@ -35,7 +40,8 @@ lang=engl
 {2010}{}{Unloading the caravan cart }
 {2020}{}{Help find my son. Pete.}
 {2030}{}{Talent required! Mick!}
-{2040}{}{Leave.}
+{2040}{}{Tragic Cards}
+{2050}{}{Leave.}
 {3000}{}{Unload the caravan cart. Don't drop boxes! Northern entrance! Good pay!}
 {3010}{}{Yeah, same jobs everywhere....}
 {3020}{}{Leave.}
@@ -48,4 +54,8 @@ I'm standing at my iguanna table south side, Iguanna Pete.}
 {5010}{}{Hm, this one's new... maybe I should check this out.}
 {5020}{}{Yeah, I already know about this one.}
 {5030}{}{Leave.}
+{6000}{}{Buying Tragic cards. Maltese Falcon. Sandro.}
+{6010}{}{Hm, this one's new... maybe I should check this out.}
+{6020}{}{Yeah, I already know about this one.}
+{6030}{}{Leave.}
 

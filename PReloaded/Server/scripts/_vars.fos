@@ -385,6 +385,10 @@
 #define LVAR_greet_train2                       (18019)
 #define LVAR_greet_train3                       (18020)
 #define LVAR_greet_train4                       (18021)
+#define LVAR_q_tragic_deck	                    (18050)
+#define LVAR_q_tragic_fetch_pid_1               (18051)
+#define LVAR_q_tragic_fetch_pid_2          		(18052)
+#define LVAR_q_tragic_fetch_pid_3              	(18053)
 
 
 //	GENERAL										#19000
@@ -2310,6 +2314,31 @@ Landers Point caravan packer quest variable.
    $	18021	1	greet_train4	0	0	1	0
 **********
 
+**********
+
+   $	18050	1	q_tragic_deck		0	0	99	1
+**********
+	0	- player doesnt know about the quest
+	1 	- player got info about the collectibe quest from a billboard
+	10 	- no deck, no quest started
+	11 	- no deck, quest to fetch Tragic cards started
+	99 	- got starting deck from Sandro, quest is finished - not repeatable
+**********
+
+   $	18051	1	q_tragic_fetch_pid_1	0	0	0	4
+**********
+	0 	- no deck, no quest started
+	pid - pid of tragic card requested
+**********
+   $	18052	1	q_tragic_fetch_pid_2	0	0	0	4
+**********
+	0 	- no deck, no quest started
+	pid - pid of tragic card requested
+**********
+   $	18053	1	q_tragic_fetch_pid_3	0	0	0	4
+**********
+	0 	- no deck, no quest started
+	pid - pid of tragic card requested
 **********
 
 

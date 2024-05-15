@@ -13,6 +13,7 @@
 
 #include "ttg_h.fos"
 #include "_macros.fos"
+#include "utils_h.fos"
 
 import void ViewImageClient(Critter& player, string& imageFile, bool limitWindowSizeMaxToImageSize, bool resizeEnabled, bool moveEnabled) from "unsafe_client";
 import void MessageGotTragicCard(Critter& player, uint16 cardProto) from "unsafe_client";
@@ -39,7 +40,7 @@ bool UseTragicCardOrDeck(Critter& player, Item& item) {
             ShowTragicCard(player, card);
         } else {
             Log("Card is invalid. Proto: " + neutralCardPids[roll]);
-            player.Say(SAY_NETMSG, "You failed to open the tragic deck. Either you are too clumsy or serboi is tired :(");
+            player.Say(SAY_NETMSG, "You failed to open the tragic deck. Either you were too clumsy or serboi was tired :(");
             return false;
         }
     } else {
@@ -116,6 +117,120 @@ bool ShowTragicCard(Critter& cr, Item& item) {
     }
     return false;
 }
+
+//  We need this, because server AS is not able to access Info Text for item proto.
+string getCardName(uint pid) {
+    switch(pid) {
+        case PID_TRAGIC_CARD_DECK:
+            return "Tragic Deck";
+        //  Neutral 0
+        case PID_TRAGIC_NEU_ACTIONBOY:
+            return "Action Boy";
+        //  Neutral 1
+        case PID_TRAGIC_NEU_LITTLE_GECKO:
+            return "Little Gecko";
+        case PID_TRAGIC_NEU_MUTATED_ANT:
+            return "Mutated Ant";
+        //  Neutral 2
+        case PID_TRAGIC_NEU_SMALL_RADSCOPION:
+            return "Small Radscorpion";
+        case PID_TRAGIC_NEU_MUTATED_PIGRAT:
+            return "Small Radscorpion";
+        case PID_TRAGIC_NEU_MUTATED_MANTIS:
+            return "Mutated Mantis";
+        case PID_TRAGIC_NEU_SPOREPLANT:
+            return "Sporeplant";
+        case PID_TRAGIC_NEU_STRAY_DOG:
+            return "Stray Dog";
+        //  Neutral 3
+        case PID_TRAGIC_NEU_GOLDEN_GECKO:
+            return "Golden Gecko";
+        case PID_TRAGIC_NEU_KLAMATH_TRAPPER:
+            return "Klamath Trapper";
+        //  Neutral 4
+        case PID_TRAGIC_NEU_MUTATED_MOLERAT:
+            return "Mutated Molerat";
+        case PID_TRAGIC_NEU_HUGE_RADSCORPION:
+            return "Huge Radscorpion";
+        //  Neutral 5
+        case PID_TRAGIC_NEU_FIRE_GECKO:
+            return "Fire Gecko";
+    }
+    return "Unknown Tragic Card";
+}
+
+//  Dialog with Sandro, the ghoulin Hub Maltesse Falcon collecting Tragic the Garnering cards.
+
+/**
+ * Show how which cards are required for first deck quest. @lex cards@ is used.
+ */
+void dlg_ShowCardsForFirstDeck(Critter& player, Critter@ npc, string@ text) {
+    if(!IS_DIALOG_GENERATED(text))
+        return;
+
+    //  randomize three cards from collectible
+    string str = "\r\n";
+    array<uint> cardPids;
+    for (uint i = 0; i < 3; i++) {
+        str += " - ";
+        if (GetLvar(player, LVAR_q_tragic_fetch_pid_1 + i) == 0) {
+            uint roll = Random(0, neutralCardPids.length() - 1);
+            while (cardPids.find(neutralCardPids[roll]) >= 0) {
+                roll = Random(0, neutralCardPids.length() - 1);
+            }
+            SetLvar(player, LVAR_q_tragic_fetch_pid_1 + i, neutralCardPids[roll]);
+            cardPids.insertLast(neutralCardPids[roll]);
+            str += getCardName(neutralCardPids[roll]);
+        } else {
+            str += getCardName(GetLvar(player, LVAR_q_tragic_fetch_pid_1 + i));
+        }
+        if (i < 2) {
+            str += "\n";
+        }
+    }
+    text = "$cards" + str + "\n";
+}
+
+/**
+ * Check if player has the cards in inventory that were requested by Sandro to get their starting deck
+ */
+bool d_HasRequestedCards(Critter& player, Critter@ npc) {
+    //  not at proper quest progress
+    if (GetLvar(player, LVAR_q_tragic_deck) != 11 ) {
+        Log("Wrong quest variable value for dialog with Sandro when checking if player has the requested cards.");
+        return false;
+    }
+    for (uint i = 0; i < 3; i++) {
+        uint cardPid = GetLvar(player, LVAR_q_tragic_fetch_pid_1 + i);
+        if (cardPid > 0) {
+            Item@ card = player.GetItem(cardPid, -1);
+            if (!valid(card)) {
+                //Log("Missing card: " + cardPid);
+                return false;
+            }
+        } else {
+            //Log("A card had a wrong pid at Tragic starter deck quest when checking for requested cards.");
+            return false;
+        }
+    }
+    return true;
+}
+
+/**
+ * Removes the requested cards from inventory that were requested by Sandro to get their starting deck.
+ */
+void r_RemoveRequestedCards(Critter& player, Critter@ npc) {
+    for (uint i = 0; i < 3; i++) {
+        uint cardPid = GetLvar(player, LVAR_q_tragic_fetch_pid_1 + i);
+        SetLvar(player, LVAR_q_tragic_fetch_pid_1 + i, 0);
+        if (cardPid > 0) {
+            player.DeleteItem(cardPid, 1);
+        } else {
+            Log("A card had a wrong pid at Tragic starter deck quest when trying to remove requested cards.");
+        }
+    }
+}
+
 
 
 #endif	//	__TTG__

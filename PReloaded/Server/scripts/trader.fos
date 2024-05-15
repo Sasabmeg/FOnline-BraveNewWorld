@@ -148,7 +148,7 @@ uint e_Update(array<uint>@ values)
         npcItemsPidsAll.insertLast(npcItems[i].GetProtoId());
     }
     npcItemsPidsAll.sortAsc();
-    
+
     uint lastPid = 0;
     for(uint i=0, j=npcItemsPidsAll.length(), k=0; i < j; ++i)
     {
@@ -936,6 +936,15 @@ void _GasStationGordon(Critter& npc, bool firstTime)   // in the general store
     DefaultTraderInit(npc, firstTime);
 }
 
+void _TtgSandro(Critter& npc, bool firstTime) {
+    //                             1  2  3  4  5  6  A  D  A  G  M  C
+    /* TtgSandro */ uint[] levels = {0, 0, 0, 0, 0, 0, 3};
+    SetTraderLevels(npc, levels);
+    npc.SkillBase[SK_BARTER] = 100;
+    DefaultTraderInit(npc, firstTime);
+}
+
+
 void DefaultTraderInit(Critter& npc, bool firstTime)
 {
     _CritSetMode(npc, MODE_NO_STEAL);
@@ -1056,8 +1065,8 @@ void AddItems(Critter@ npc, array<int>@ tvalues, array<Item@>@ items)
 	  Item@ it = npc.AddItem(PID_BOTTLE_CAPS, Random(5000,10000));
       if (valid(items) && valid(it)) items.insertLast(it);
 	}
-	
-	
+
+
     // Log(""+npc.Id+" SI end with "+TraderMoneyCapacity(npc)+" caps, barter "+npc.Skill[SK_BARTER]);
     // uint __endZZZ=GetTick(); Log("I am being executed for a very long time! ("+(__endZZZ-__nowZZZ)+" ms)");
 }
@@ -1118,6 +1127,6 @@ uint[][] med3;
 uint[][] misc1 = { { PID_KNIFE, 1 }, { PID_SPEAR, 1 }, { PID_THROWING_KNIFE, 2 }, { PID_SLEDGEHAMMER, 1 }, { PID_ROPE, 1 }, { PID_GECKO_PELT, 1 }, { PID_GOLDEN_GECKO_PELT, 1 }, { PID_BRAHMIN_HIDE, 1 }, { PID_MOLOTOV_COCKTAIL, 2 },
                    { PID_AXE, 1 }, { PID_WATERBAG_EMPTY, 1 }, { PID_LOCKPICKS, 1 }, { PID_LOCK, 1 }, { PID_HOLODISK, 1 } };
 uint[][] misc2 = { { PID_SUPER_SLEDGE, 1 }, { PID_GECKO_PELT, 1 }, { PID_GOLDEN_GECKO_PELT, 1 }, { PID_BRAHMIN_HIDE, 1 }, { PID_FRAG_GRENADE, 2 } };
-uint[][] misc3;
+uint[][] misc3 = { { PID_TRAGIC_NEU_ACTIONBOY, 1 } };
 
 uint[][] @[] lists = { sg1, sg2, sg3, bg1, bg2, bg3, en1, en2, en3, arm1, arm2, arm3, drug1, drug2, drug3, med1, med2, med3, misc1, misc2, misc3 };

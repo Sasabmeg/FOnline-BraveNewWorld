@@ -131,7 +131,7 @@ string[] commandlist =
     "factioninfo", "factionnews", "factiononline", "findchars", "finditems",
     "findnpc", "flash", /*"foart",*/
     "gaintowncontrol", "gameinfo", "getclaim", "getclaimtime", "getcolor",
-    "getitems", "getleader", "getleadertime", "getuvar", "getvar", "give",
+    "getitems", "getleader", "getleadertime", "getuvar", "getvar", "gettime", "give",
     "givekey", "goto", "gototeam",
     "heal", "healall", "help", "hideloc", "hidemap",
     "id2name", "iddqd", "idkfa", "inspect", "irradiate", "itemflags", "itemlight",
@@ -8229,6 +8229,9 @@ void ExecGetRequestsCommand(array<string@>@ command, Critter@ player)
     Broadcast_DumpRequestHelpBuffer(player);
 }
 
+void ExecGetTimeCommand(array<string@>@ command, Critter@ player) {
+    player.Say(SAY_NETMSG, "Elapsed time ticks: " + ELAPSED_TIME);
+}
 /*
  * Client commands replacement - remember to disable original ones in client
  */
@@ -9871,6 +9874,10 @@ bool ExecCommand(Critter& player, string@ commandString)
     else if(command[1] == "getrequests")
     {
         ExecGetRequestsCommand(command, player);
+    }
+    else if(command[1] == "gettime")
+    {
+        ExecGetTimeCommand(command, player);
     }
     else if(command[1] == "getuvar")
     {
