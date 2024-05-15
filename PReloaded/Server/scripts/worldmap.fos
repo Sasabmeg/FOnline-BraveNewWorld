@@ -1952,7 +1952,7 @@ Map@ GenerateEncounter(CFoundedEncounter@ fe, array<Critter@>@ critters)
     {
         if(fe.Encounter.Groups[i] < GROUP_MAX && crittersGroups[i].length() > 2)
         {
-            idx_npc = Random(0, 20);
+            idx_npc = Random(0, 5);
             if(idx_npc < crittersGroups[i].length())
                 MakeEncounterBoss(crittersGroups[i][idx_npc].Id, fe.Encounter.Groups[i]);
         }
@@ -2932,6 +2932,8 @@ void loadzones(Critter& cr, int, int, int)
     LoadGroupsQuantities();
 }
 
+#include "lexems_h.fos"
+
 void MakeEncounterBoss(uint npcId, uint groupNum)
 {
     Critter@ npc = GetCritter(npcId);
@@ -2939,7 +2941,9 @@ void MakeEncounterBoss(uint npcId, uint groupNum)
     if(!valid(npc))
         return;
 
-    //SetLexem(npc, LEXEM_CRITTER_HEAD, "Boss");
+    //Log("Boss encounter! - boss body type: " + npc.Stat[ST_BODY_TYPE]);
+
+    //SetLexem(npc, LEXEM_CRITTER_HEAD, "Leader");
 
     Item@ armor = npc.GetItem(0, SLOT_ARMOR);
     if(valid(armor))
@@ -3060,4 +3064,25 @@ void MakeEncounterBoss(uint npcId, uint groupNum)
 
     if(pid!=0)
         npc.AddItem(pid, 1);
+    int chanceToHaveTragicDeck = 0;
+    switch(npc.Stat[ST_BODY_TYPE]) {
+        case BT_GHOUL:
+            chanceToHaveTragicDeck = 33;
+            break;
+        case BT_MEN:
+        case BT_WOMEN:
+            chanceToHaveTragicDeck = 25;
+            break;
+        case BT_SUPER_MUTANT:
+            chanceToHaveTragicDeck = 50;
+            break;
+        default:
+            chanceToHaveTragicDeck = 0;
+            break;
+    }
+    int roll = Random(0, 100);
+    //Log("Chance: " + chanceToHaveTragicDeck + ", Roll = " + roll);
+    if (roll < chanceToHaveTragicDeck) {
+        npc.AddItem(PID_TRAGIC_CARD_DECK, 1);
+    }
 }

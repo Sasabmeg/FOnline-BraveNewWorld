@@ -1,0 +1,179 @@
+[comment]
+
+
+[data]
+lang=engl
+
+[dialog]
+&
+1 1000 None 0 #
+2 1010 D _var p name_mem_npc_player = 0 D _script dialog@d_QuestTimeoutReady 0  R _var p name_mem_npc_player = 1 #
+4 1020 D _var p name_mem_npc_player = 1 D _script dialog@d_QuestTimeoutReady 0  #
+34 1030 D _param p ST_INTELLECT < 4 D _script dialog@d_QuestTimeoutReady 0  #
+35 1040 D _script dialog@d_QuestTimeoutNotReady 0  @
+2 2000 None 0 #
+5 2010 D _var p q_tragic_deck { 9 #
+3 2020 #
+6 2030 #
+65506 2040 #
+0 2050 @
+3 3000 None 0 #
+9 3010 #
+4 3020 #
+0 3030 @
+4 4000 None 0 #
+5 4010 D _var p q_tragic_deck { 9 #
+17 4020 D _var p q_tragic_deck = 11 #
+3 4030 #
+10 4040 D _var p q_tragic_deck < 11 #
+40 4050 D _var p q_tragic_deck } 11 #
+5 4060 #
+6 4070 #
+0 4080 @
+5 5000 None 0 #
+9 5010 #
+65506 5020 #
+4 5030 #
+0 5040 @
+6 6000 None 0 #
+4 6010 #
+0 6020 @
+9 7000 None 0 #
+13 7010 D _var p q_tragic_deck > 10 #
+13 7020 D _var p q_tragic_deck { 10 #
+17 7030 D _var p q_tragic_deck { 10 R _var p q_tragic_deck = 11 #
+14 7040 #
+0 7050 @
+10 8000 None 0 #
+11 8010 #
+0 8020 @
+11 9000 None 0 #
+4 9010 #
+12 9020 R _script dialog@r_QuestTimeoutRealMinutes 1 1 @
+12 10000 None 0 #
+4 10010 #
+0 10020 R _script dialog@r_QuestTimeoutRealMinutes 1 5 @
+13 11000 None 0 #
+15 11010 #
+4 11020 #
+0 11030 @
+14 12000 None 0 #
+13 12010 @
+15 13000 None 0 #
+16 13010 #
+0 13020 @
+16 14000 None 0 #
+17 14010 D _var p q_tragic_deck { 10 R _var p q_tragic_deck = 11 #
+4 14020 #
+0 14030 D _var p q_tragic_deck } 90 #
+0 14040 @
+17 15000 ttg@dlg_ShowCardsForFirstDeck 0 #
+18 15010 D _script ttg@d_HasRequestedCards 0  R _script ttg@r_RemoveRequestedCards 0  R _var p q_tragic_deck = 99 #
+4 15020 #
+0 15030 @
+18 16000 None 0 @
+19 17000 None 0 #
+0 17010 #
+0 17020 @
+34 18000 None 0 @
+35 19000 None 0 @
+36 20000 None 0 @
+40 21000 None 0 #
+41 21010 #
+43 21020 @
+41 22000 None 0 #
+42 22010 R _script dialog@r_QuestTimeoutRealMinutes 1 100 @
+42 23000 None 0 #
+36 23010 R _script dialog@r_QuestTimeout 1 10 #
+36 23020 R _script dialog@r_QuestTimeoutRealMinutes 1 10 @
+43 24000 None 0 #
+42 24010 &
+
+[engl]
+{100}{}{Sandro}
+{200}{}{You see a tall ghoul with short hair.}
+{210}{}{You see Sandro.}
+{210}{}{You see an extremely tall and lanky ghoul with long hair.}
+{1000}{}{Predialogue installations}
+{1010}{}{Unknown}
+{1020}{}{Known}
+{1030}{}{Dumb}
+{1040}{}{Timeout}
+{2000}{}{I am Sandro. What do you want?}
+{2010}{}{Are you the one looking for some strange cards?}
+{2020}{}{What do you do here?}
+{2030}{}{Tell me about this place.}
+{2040}{}{I want to trade.}
+{2050}{}{I don�t want anything from you. Goodbye.}
+{3000}{}{I am a gambling, drinking, and ... occasionally playing Tragic. }
+{3010}{}{Tragic? What the hell are you talking about?}
+{3020}{}{Right, let me ask you something else.}
+{3030}{}{Gotta go, bye.}
+{4000}{}{What do you want now?}
+{4010}{}{Are you the one looking for some strange cards?}
+{4020}{}{So, about the Tragic card deck we talked before...}
+{4030}{}{What do you do here?}
+{4040}{}{Tell stories?}
+{4050}{}{Tell stories?}
+{4060}{}{I want to trade.}
+{4070}{}{Tell me about this place.}
+{4080}{}{I guess I don�t need anything right now. Goodbye.}
+{5000}{}{Trade? I�m always ready to trade Tragic cards. I�ve got a couple of old Vox Mubies, a Black Dahlia, and some Rare Earths.}
+{5010}{}{What the hell are you talking about?}
+{5020}{}{Uh, I don�t know what you�re on, but I hope you have some in inventory to trade.}
+{5030}{}{Hmm... let me ask you about something else, first.}
+{5040}{}{I don�t need to trade right now. Goodbye.}
+{6000}{}{Not much to tell, really. It's a trading town, but I'm here for the gambling. Not as dangerous for us ghouls as Reno or Redding.}
+{6010}{}{Right, let me ask you something else.}
+{6020}{}{Well, that describes a lot of people. Nothing new in that. I wanted to know something else.}
+{7000}{}{Are you dumb? Tragic the Garnering is the most addictive thing since Jet. But I mostly play the simplified version. It's just to hard to find original players, most of the smoothskin can only handle the simplified version.}
+{7010}{}{Tell me more about Tragic the Garnering again please.}
+{7020}{}{Tell me more about this Tragic the Garnering.}
+{7030}{}{Tell me about the simplified version.}
+{7040}{}{What�s Jet?}
+{7050}{}{I guess I�ll take your word for that. Goodbye.}
+{8000}{}{Hmm, sorry. I only know a sad stories. By the way, have you seen an apple, lately?}
+{8010}{}{An apple?}
+{8020}{}{I�m too disappointed to talk right now. Goodbye.}
+{9000}{}{I just love apples, but there aren�t many left anywhere. I hardly ever see them.}
+{9010}{}{I didn�t know you were such a fruit fetishist. Tell me something else.}
+{9020}{}{I�ve heard that you could really savor an apple because they were so slow to eat.}
+{10000}{}{Slow?!? You are dumb. Fuck you! Apples are just as fast to eat as any other fruit. Apples rule. If it weren�t for a conspiracy on the part of fruit manufacturers we�d all have apples.}
+{10010}{}{You�re crazed, aren�t you? I think you�ve been sampling too much of your own brew here. Tell me about something else.}
+{10020}{}{Oh, yes... apples really are wonderful. (you back away slowly) Yes, that�s right. Good Sandro, easy there. Goodbye.}
+{11000}{}{Well, as the saying goes, Tragic the Garnering isn�t just a game -- it�s an obsession. Not a cologne, either. Some think that the way it changes a person�s life is tragic, but they just don�t understand.}
+{11010}{}{Uh huh.}
+{11020}{}{Oh, THAT Tragic. Let me ask you something else, Sandro.}
+{11030}{}{I can't see why anyone would think that. Goodbye.}
+{12000}{}{Jet�s a drug that comes from New Reno. Were you born yesterday, or are you just dumb?}
+{12010}{}{Oh, that Jet. Well, sure I knew about that. Tell me more about this Tragic the Garnering.}
+{13000}{}{No, really. It�s wonderful. You should play. The only problem  besides getting someone intelligent enough to play with, was getting a proper deck. }
+{13010}{}{Was?}
+{13020}{}{I just say �No� to Tragic. Goodbye.}
+{14000}{}{It's not an issue anymore. I started assembling new decks. Let me know if you are interested. }
+{14010}{}{Sure, I would like a deck to try out the game.}
+{14020}{}{I don�t think I really have time for that right now. Let me ask you something, though.}
+{14030}{}{I tried it out already, thanks.}
+{14040}{}{I�d love to stay and trade Tragic cards with you, but I�ve got things to do. You know, in real life? Goodbye.}
+{15000}{}{First things first! I need you to collect a few cards from old worn decks. Currently I need a few cards to complement the new deck I want to make. Bring me one of each of these cards: @lex cards@ and we'll talk about that starting deck. I would also buy any doubles you have.}
+{15010}{}{Right, here are the cards you asked for.}
+{15020}{}{I don't have those cards, let me ask you something else.}
+{15030}{}{Maybe I�ll play later. Thanks for telling me how, though. Goodbye.}
+{16000}{}{Wonderful. Let me give you your starting deck. Once you look at the cards, the game rules are self explanatory. It's called simplified for a reason. Good luck!}
+{17000}{}{I won! Fuck you! You are dumb. I have crushed you. Now I can build an even better deck with your cards.}
+{17010}{}{Uh, yeah. You won. Goodbye.}
+{17020}{}{What a surprise. Well, at least I didn�t have to listen to one of your stories. Goodbye.}
+{18000}{}{You fell out of the stupid tree and hit every damn branch on the way down, didn�t you?@@Can't play Tragic with vegetation!@@ Cannot lobotomize this gem further!@@The simplified version is simple enough!@@No.. Card.. For.. Dum-dums!@@Tragic? You know what's tragic? Your mental capacity!@@Might as well teach a Radscorpion to play it!}
+{19000}{}{...and if I play this card...@@No cards no game.@@Need apples.@@Mark loved this move.}
+{20000}{}{...why Mark? ...why?@@Apples?@@..no..}
+{21000}{}{Mark used to climb the skytower. This was his favourite card.}
+{21010}{}{Who is Mark?}
+{21020}{}{Skytower?}
+{22000}{}{He left us.}
+{22010}{}{What happened?}
+{23000}{}{A fast fall with a sudden stop at the end.}
+{23010}{}{Uh, oh. Can I ask you something else?}
+{23020}{}{That's sad.}
+{24000}{}{Yes. A high building to the north, inhabited by ex-military goons. Not the safest place to fool around.}
+{24010}{}{Who is Mark?}
+
