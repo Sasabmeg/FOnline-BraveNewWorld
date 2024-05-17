@@ -24,12 +24,14 @@ lang=engl
 4 4000 None 0 #
 5 4010 D _var p q_tragic_deck { 9 #
 17 4020 D _var p q_tragic_deck = 11 #
-3 4030 #
-10 4040 D _var p q_tragic_deck < 11 #
-40 4050 D _var p q_tragic_deck } 11 #
-5 4060 #
-6 4070 #
-0 4080 @
+50 4030 D _var p q_tragic_deck > 90 D _var p q_tragic_deck_repeatable ! 11 #
+51 4040 D _var p q_tragic_deck_repeatable = 11 #
+3 4050 #
+10 4060 D _var p q_tragic_deck < 11 #
+40 4070 D _var p q_tragic_deck } 11 #
+5 4080 #
+6 4090 #
+0 4100 @
 5 5000 None 0 #
 9 5010 #
 65506 5020 #
@@ -68,26 +70,59 @@ lang=engl
 0 14030 D _var p q_tragic_deck } 90 #
 0 14040 @
 17 15000 ttg@dlg_ShowCardsForFirstDeck 0 #
-18 15010 D _script ttg@d_HasRequestedCards 0  R _script ttg@r_RemoveRequestedCards 0  R _var p q_tragic_deck = 99 #
-4 15020 #
-0 15030 @
+18 15010 D _script ttg@d_HasRequestedCards 0  R _script ttg@r_RemoveRequestedCards 0  R _var p q_tragic_deck = 99 R _script dialog@r_AddExperience 1 3000 R _script dialog@r_AddMoney 1 3000 #
+30 15020 #
+4 15030 #
+0 15040 @
 18 16000 None 0 @
 19 17000 None 0 #
 0 17010 #
 0 17020 @
-34 18000 None 0 @
-35 19000 None 0 @
-36 20000 None 0 @
-40 21000 None 0 #
-41 21010 #
-43 21020 @
-41 22000 None 0 #
-42 22010 R _script dialog@r_QuestTimeoutRealMinutes 1 100 @
-42 23000 None 0 #
-36 23010 R _script dialog@r_QuestTimeout 1 10 #
-36 23020 R _script dialog@r_QuestTimeoutRealMinutes 1 10 @
-43 24000 None 0 #
-42 24010 &
+30 18000 None 0 #
+31 18010 R _script dialog@r_ShowLocation 1 24 #
+32 18020 R _script dialog@r_ShowLocation 1 17 #
+33 18030 R _script dialog@r_ShowLocation 1 6 #
+4 18040 #
+0 18050 @
+31 19000 None 0 #
+32 19010 R _script dialog@r_ShowLocation 1 17 #
+33 19020 R _script dialog@r_ShowLocation 1 6 #
+4 19030 #
+0 19040 @
+32 20000 None 0 #
+31 20010 R _script dialog@r_ShowLocation 1 24 #
+33 20020 R _script dialog@r_ShowLocation 1 6 #
+4 20030 #
+0 20040 @
+33 21000 None 0 #
+31 21010 R _script dialog@r_ShowLocation 1 24 #
+32 21020 R _script dialog@r_ShowLocation 1 17 #
+4 21030 #
+0 21040 @
+34 22000 None 0 @
+35 23000 None 0 @
+36 24000 None 0 @
+40 25000 None 0 #
+41 25010 #
+43 25020 @
+41 26000 None 0 #
+42 26010 R _script dialog@r_QuestTimeoutRealMinutes 1 100 @
+42 27000 None 0 #
+36 27010 R _script dialog@r_QuestTimeout 1 10 #
+36 27020 R _script dialog@r_QuestTimeoutRealMinutes 1 10 @
+43 28000 None 0 #
+42 28010 @
+50 29000 None 0 #
+51 29010 D _var p q_tragic_deck_repeatable ! 11 R _var p q_tragic_deck_repeatable = 11 #
+65506 29020 #
+0 29030 @
+51 30000 ttg@dlg_ShowCardsForFirstDeck 0 #
+53 30010 D _script ttg@d_HasRequestedCards 0  R _script ttg@r_RemoveRequestedCards 0  R _script dialog@r_AddMoney 1 3000 R _script dialog@r_AddExperience 1 3000 R _var p q_tragic_deck_repeatable = 99 R _script dialog@r_QuestTimeoutRealMinutes 1 5 #
+30 30020 #
+52 30030 #
+0 30040 @
+52 31000 None 0 @
+53 32000 None 0 &
 
 [engl]
 {100}{}{Sandro}
@@ -112,12 +147,14 @@ lang=engl
 {4000}{}{What do you want now?}
 {4010}{}{Are you the one looking for some strange cards?}
 {4020}{}{So, about the Tragic card deck we talked before...}
-{4030}{}{What do you do here?}
-{4040}{}{Tell stories?}
-{4050}{}{Tell stories?}
-{4060}{}{I want to trade.}
-{4070}{}{Tell me about this place.}
-{4080}{}{I guess I don�t need anything right now. Goodbye.}
+{4030}{}{I got some doubles, are you interested?}
+{4040}{}{So, about the missing cards for your deck we talked before...}
+{4050}{}{What do you do here?}
+{4060}{}{Tell stories?}
+{4070}{}{Tell stories?}
+{4080}{}{I want to trade.}
+{4090}{}{Tell me about this place.}
+{4100}{}{I guess I don�t need anything right now. Goodbye.}
 {5000}{}{Trade? I�m always ready to trade Tragic cards. I�ve got a couple of old Vox Mubies, a Black Dahlia, and some Rare Earths.}
 {5010}{}{What the hell are you talking about?}
 {5020}{}{Uh, I don�t know what you�re on, but I hope you have some in inventory to trade.}
@@ -157,23 +194,56 @@ lang=engl
 {14040}{}{I�d love to stay and trade Tragic cards with you, but I�ve got things to do. You know, in real life? Goodbye.}
 {15000}{}{First things first! I need you to collect a few cards from old worn decks. Currently I need a few cards to complement the new deck I want to make. Bring me one of each of these cards: @lex cards@ and we'll talk about that starting deck. I would also buy any doubles you have.}
 {15010}{}{Right, here are the cards you asked for.}
-{15020}{}{I don't have those cards, let me ask you something else.}
-{15030}{}{Maybe I�ll play later. Thanks for telling me how, though. Goodbye.}
+{15020}{}{Do you know where I could find some of these cards?}
+{15030}{}{I don't have those cards, let me ask you something else.}
+{15040}{}{Maybe I�ll play later. Thanks for telling me how, though. Goodbye.}
 {16000}{}{Wonderful. Let me give you your starting deck. Once you look at the cards, the game rules are self explanatory. It's called simplified for a reason. Good luck!}
 {17000}{}{I won! Fuck you! You are dumb. I have crushed you. Now I can build an even better deck with your cards.}
 {17010}{}{Uh, yeah. You won. Goodbye.}
 {17020}{}{What a surprise. Well, at least I didn�t have to listen to one of your stories. Goodbye.}
-{18000}{}{You fell out of the stupid tree and hit every damn branch on the way down, didn�t you?@@Can't play Tragic with vegetation!@@ Cannot lobotomize this gem further!@@The simplified version is simple enough!@@No.. Card.. For.. Dum-dums!@@Tragic? You know what's tragic? Your mental capacity!@@Might as well teach a Radscorpion to play it!}
-{19000}{}{...and if I play this card...@@No cards no game.@@Need apples.@@Mark loved this move.}
-{20000}{}{...why Mark? ...why?@@Apples?@@..no..}
-{21000}{}{Mark used to climb the skytower. This was his favourite card.}
-{21010}{}{Who is Mark?}
-{21020}{}{Skytower?}
-{22000}{}{He left us.}
-{22010}{}{What happened?}
-{23000}{}{A fast fall with a sudden stop at the end.}
-{23010}{}{Uh, oh. Can I ask you something else?}
-{23020}{}{That's sad.}
-{24000}{}{Yes. A high building to the north, inhabited by ex-military goons. Not the safest place to fool around.}
-{24010}{}{Who is Mark?}
+{18000}{}{Maybe other Tragic players? I know of a group of ghouls who used to play around Bakersfield. Rumors have it that raiders and even Super Mutants tried it out, but I doubt it. Those muties got the higher end of the radioation deal on the physical side if you know what I mean, he, he...}
+{18010}{}{Where is Bakersfield?}
+{18020}{}{Where can I find those raiders?}
+{18030}{}{Super Mutants?}
+{18040}{}{Thanks. I got another question.}
+{18050}{}{Thanks, I'll look into it.}
+{19000}{}{It's called Necropolis nowadays and it's to the east from here. I'm sure some of us have these, but not sure if the others will trade with a smoothskin, so good luck.}
+{19010}{}{Where can I find those raiders?}
+{19020}{}{How about the Super Mutants?}
+{19030}{}{Thanks. I got another question.}
+{19040}{}{Thanks, I'll check there.}
+{20000}{}{Raiders are everywhere. I heared Junktown has a problem with them that is the closest up north from here.}
+{20010}{}{Where is Bakersfield?}
+{20020}{}{How about the Super Mutants?}
+{20030}{}{Thanks. I got another question.}
+{20040}{}{Thanks, I'll check there.}
+{21000}{}{You can find Super Mutants mostly around Broken Hills. That town welcomes every race, I heared that even the town sheriff leader is a Super Mutant.}
+{21010}{}{Where is Bakersfield?}
+{21020}{}{Where can I find those raiders?}
+{21030}{}{Thanks. I got another question.}
+{21040}{}{Thanks, I'll check there I'll be back soon.}
+{22000}{}{You fell out of the stupid tree and hit every damn branch on the way down, didn�t you?@@Can't play Tragic with vegetation!@@ Cannot lobotomize this gem further!@@The simplified version is simple enough!@@No.. Card.. For.. Dum-dums!@@Tragic? You know what's tragic? Your mental capacity!@@Might as well teach a Radscorpion to play it!}
+{23000}{}{...and if I play this card...@@No cards no game.@@Need apples.@@Mark loved this move.}
+{24000}{}{...why Mark? ...why?@@Apples?@@..no..}
+{25000}{}{Mark used to climb the skytower. This was his favourite card.}
+{25010}{}{Who is Mark?}
+{25020}{}{Skytower?}
+{26000}{}{He left us.}
+{26010}{}{What happened?}
+{27000}{}{A fast fall with a sudden stop at the end.}
+{27010}{}{Uh, oh. Can I ask you something else?}
+{27020}{}{That's sad.}
+{28000}{}{Yes. A high building to the north, inhabited by ex-military goons. Not the safest place to fool around.}
+{28010}{}{Who is Mark?}
+{29000}{}{Perfect. I can pay you my standard fee for a single card, but I tell you what, if you get me a bundle of three that really need right now, toss in some extra caps. Interested?}
+{29010}{}{Sure. Which cards do you need this time?}
+{29020}{}{Let's just trade cards I have right now.}
+{29030}{}{Maybe next time. See ya.}
+{30000}{}{At the moment I'm missing these cards to complete my deck: @lex cards@ Hurry up smoothskin, I'm playing Wooz next Sunday.}
+{30010}{}{Right, here are the cards you asked for.}
+{30020}{}{Do you know where I could find some of these cards?}
+{30030}{}{What happens if you can't get them until Sunday?}
+{30040}{}{Bye.}
+{31000}{}{What do you think? I'll have to use another deck and drop this one! ...where are my apples...}
+{32000}{}{Thansk for the cards.@@Take these caps.@@Allright,  Wooz about to be in for a surprise this time!}
 

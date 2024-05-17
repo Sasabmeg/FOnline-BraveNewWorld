@@ -86,7 +86,7 @@ bool d_IsBusy(Critter& player, Critter@ npc)
 
 /**
  * Add some experience to the player.
- * This is the prefered method to add experience, instead of doing it manually in dialog editor.
+ * This is the preferred method to add experience, instead of doing it manually in dialog editor.
  * @param val Amount of experience to add
  */
 void r_AddExperience(Critter& player, Critter@ npc, int val)
@@ -114,7 +114,7 @@ void r_AddExperience(Critter& player, Critter@ npc, int val)
 
 /**
  * Add some caps to the player.
- * This is the prefered method to add caps, instead of doing it manually in dialog editor.
+ * This is the preferred method to add caps, instead of doing it manually in dialog editor.
  * @param val Amount of money to add
  */
 void r_AddMoney(Critter& player, Critter@ npc, int val)
@@ -151,7 +151,7 @@ void r_FlushScreen(Critter& cr, Critter@ tray)
 
 /**
  * Remove some caps from the player.
- * This is the prefered method to remove caps, instead of doing it manually in dialog editor.
+ * This is the preferred method to remove caps, instead of doing it manually in dialog editor.
  * @param val Amount of money to subtract
  */
 void r_RemoveMoney(Critter& player, Critter@ npc, int val)
