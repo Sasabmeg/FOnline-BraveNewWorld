@@ -135,7 +135,7 @@ string getCardName(uint pid) {
         case PID_TRAGIC_NEU_SMALL_RADSCOPION:
             return "Small Radscorpion";
         case PID_TRAGIC_NEU_MUTATED_PIGRAT:
-            return "Small Radscorpion";
+            return "Mutated Pigrat";
         case PID_TRAGIC_NEU_MUTATED_MANTIS:
             return "Mutated Mantis";
         case PID_TRAGIC_NEU_SPOREPLANT:
@@ -195,11 +195,6 @@ void dlg_ShowCardsForFirstDeck(Critter& player, Critter@ npc, string@ text) {
  * Check if player has the cards in inventory that were requested by Sandro to get their starting deck
  */
 bool d_HasRequestedCards(Critter& player, Critter@ npc) {
-    //  not at proper quest progress
-    if (GetLvar(player, LVAR_q_tragic_deck) != 11 ) {
-        Log("Wrong quest variable value for dialog with Sandro when checking if player has the requested cards.");
-        return false;
-    }
     for (uint i = 0; i < 3; i++) {
         uint cardPid = GetLvar(player, LVAR_q_tragic_fetch_pid_1 + i);
         if (cardPid > 0) {
@@ -231,6 +226,26 @@ void r_RemoveRequestedCards(Critter& player, Critter@ npc) {
     }
 }
 
+/*
+void r_SetQuestVar(Critter& player, Critter@ npc, int variable, int time, int value) {
+    //  must pass player id too...
+    uint[] values = { 0, 0, 0 };
+    values[0] = variable;
+    values[1] = time;
+    values[2] = value;
+    if (values[0] <= 0 || values[1] <= 0) {}
+        Log("Invalid values for r_SetQuestVar(" + variable + ", " + time + ", " + value + ") - variable and time must be > 0");
+    }
+    if (values[2] < 0 || values[2] >= 100) {
+        Log("Invalid values for r_SetQuestVar(" + variable + ", " + time + ", " + value + ") - value must be in quest range (0 - 99).");
+    }
+    CreateTimeEvent(AFTER(REAL_MS(time + animationDuration)), "e_SetQuestVar", values, false);
+}
+
+uint e_SetQuestVar(array<uint>@ values) {
+}
+
+*/
 
 
 #endif	//	__TTG__

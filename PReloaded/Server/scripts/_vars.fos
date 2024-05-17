@@ -389,6 +389,7 @@
 #define LVAR_q_tragic_fetch_pid_1               (18051)
 #define LVAR_q_tragic_fetch_pid_2          		(18052)
 #define LVAR_q_tragic_fetch_pid_3              	(18053)
+#define LVAR_q_tragic_deck_repeatable	       	(18054)
 
 
 //	GENERAL										#19000
@@ -2330,15 +2331,25 @@ Landers Point caravan packer quest variable.
 	0 	- no deck, no quest started
 	pid - pid of tragic card requested
 **********
+
    $	18052	1	q_tragic_fetch_pid_2	0	0	0	4
 **********
 	0 	- no deck, no quest started
 	pid - pid of tragic card requested
 **********
+
    $	18053	1	q_tragic_fetch_pid_3	0	0	0	4
 **********
 	0 	- no deck, no quest started
 	pid - pid of tragic card requested
+**********
+
+   $	18054	1	q_tragic_deck_repeatable	0	0	99	1
+**********
+	0	- must finish first quest before
+	1 	- able to start repeatable quest
+	11 	- repeatable to fetch 3 cards started
+	90 	- soft completed repeatable quest, small CD
 **********
 
 
