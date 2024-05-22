@@ -25,10 +25,9 @@ Since I only work from time to time on this project, not sure if anyone would su
 
 Well, in case you are new to git and have trouble getting all parts together, here are some snapshots:
 
-2023-06-01 Spearfishing test: use latest below
-2024-03-25 Car Tracker and Hub Parkinglot test: use laterst below
+2023-06-01 Spearfishing test: use latest below<br>
+2024-03-25 Car Tracker and Hub Parkinglot test: use laterst below<br>
 2024-05-22 Tragic the Garnering Collectible test: https://www.dropbox.com/scl/fi/7mp20mp4ot31mm9cqo7y0/FOClassic_BNW_Tragic1_2024_05_22.zip?rlkey=l13wby6hn01jf824fx4o819ex&st=inyf1izs&dl=0
 
-You can use Username: qwer3 Password: asdf to test Tragic. Admin access is as usual: ~getaccess admin admin
-
-Working versions or ones that need testing may be added later, periodaically, but should not count on them.
+You can use Username: qwer3 Password: asdf to test Tragic. Admin access is as usual: ~getaccess admin admin<br>
+Working versions or ones that need testing may be added later, periodaically, but should not count on them.<br>
