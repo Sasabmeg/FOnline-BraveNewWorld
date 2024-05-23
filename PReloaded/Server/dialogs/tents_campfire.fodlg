@@ -21,9 +21,10 @@ lang=engl
 10 4000 None 1 #
 10 4010 D _script map_tent@d_IsTentOwner 0  R _script map_tent@r_TentName 0  #
 10 4020 D _script map_tent@d_IsTentOwner 0  R _script map_tent@r_CreateMap 0  #
-11 4030 D _script map_tent@d_IsUpgradeAvailable 1 571 #
-0 4040 D _script map_tent@d_IsTentOwner 0  R _script map_tent@r_AbandonTent 0  #
-0 4050 @
+10 4030 D _script map_tent@d_IsTentOwner 0  R _script map_tent@r_AltName 0  #
+11 4040 D _script map_tent@d_IsUpgradeAvailable 1 571 #
+0 4050 D _script map_tent@d_IsTentOwner 0  R _script map_tent@r_AbandonTent 0  #
+0 4060 @
 11 5000 None 0 #
 110 5010 D _script map_tent@d_IsTentOwner 0  D _script map_tent@d_IsUpgradeAvailable 1 571 #
 10 5020 @
@@ -101,9 +102,10 @@ lang=engl
 {4000}{}{[You sit by the fire and decide what to do next with the place]}
 {4010}{}{[Change the name of the tent]}
 {4020}{}{[Create a map to this location]}
-{4030}{}{[Upgrades]}
-{4040}{}{[Abandon tent]}
-{4050}{}{[Exit]}
+{4030}{}{[Use your Pip-boy to invite one of your siblings - by name -  to this tent]}
+{4040}{}{[Upgrades]}
+{4050}{}{[Abandon tent]}
+{4060}{}{[Exit]}
 {5000}{}{[You look around, seaching for any idea as to how to make this place more fitting towards your needs]}
 {5010}{}{[Build a Workbench]}
 {5020}{}{[Back]}

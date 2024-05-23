@@ -645,7 +645,7 @@ void RemoveAllTents(Critter& cr, bool recycle)
 
     for(uint t=0; t<tLen; t++)
     {
-        RemoveTent(cr, tents[t], recycle); 
+        RemoveTent(cr, tents[t], recycle);
     }
 }
 
@@ -963,7 +963,7 @@ void answer_ThrowSomething(Critter& cr, uint itemId, string&)
 					{
 						uint min = REAL_SECOND( Random(3,5));
 						uint max = REAL_SECOND( Random(7,10) + s);
-	
+
 						const uint8 LKval = 3;
 
 						if( cr.Stat[ST_LUCK] <= LKval && Random(0, 100) <= ABS((cr.Stat[ST_LUCK]*10)-(LKval*10)))
@@ -1079,6 +1079,49 @@ void answer_TentName(Critter& player, uint, string& name)
     else
         player.Say(SAY_NETMSG, "ERR: Couldn't change tent name.");
 }
+
+uint r_AltName(Critter& player, Critter@) {
+    player.ShowScreen(SHOW_SCREEN_SAY, 0, "answer_InviteAlt");
+	return(DIALOG_END);
+}
+
+void answer_InviteAlt(Critter& player, uint, string& name)
+{
+    Map@ map = player.GetMap();
+    if(!valid(map)) {
+        player.Say(SAY_NETMSG, "Invalid map.");
+        return;
+    }
+
+    if(!IsTentOwner(map, player)) {
+        player.Say(SAY_NETMSG, "It's not your tent.");
+        return;
+    }
+
+    Location@ location = map.GetLocation();
+    if(!valid(location)) {
+        player.Say(SAY_NETMSG, "Invalid location.");
+        return;
+    }
+
+    Critter@ target = GetPlayer(name);
+    if (valid(target)) {
+        if (target.GetIp() == player.GetIp()) {
+            if(target.IsKnownLoc(true, location.Id)) {
+                player.Say(SAY_NETMSG, "Your sibling " + name + " already has this tent location marked in their Pip-boy.");
+            } else {
+                target.SetKnownLoc(true, location.Id);
+                player.Say(SAY_NETMSG, "Your sibling " + name + " marked this location in their Pip-boy.");
+            }
+        } else {
+            player.Say(SAY_NETMSG, "Your invite didn't reach any destination that accepted and replied to your Pip-boy signature.");
+        }
+    } else {
+        player.Say(SAY_NETMSG, "Your invite didn't reach any destination that accepted and replied your Pip-boy signature.");
+    }
+}
+
+
 
 uint r_CreateMap(Critter& player, Critter@)
 {

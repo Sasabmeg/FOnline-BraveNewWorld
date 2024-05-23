@@ -154,7 +154,7 @@ string[] commandlist =
     "setuvar", "setvar", "setlocvisibility", "setrain", "shift", "shiftteam", "shout",
     "shouth", "showhands", "showloc", "showvars", "slap", "spawncar", "spawnitem",
     "spawnpoint", "stoptrackplayer", "suicide", "summon", "summonteam",
-    "team", "tentinfo", "tp", "teleport", "teleporter", "teleportteam", "toglobal", "trackplayer",
+    "team", "tentinfo", "test", "tp", "teleport", "teleporter", "teleportteam", "toglobal", "trackplayer",
     "usedammo", "unlockcar",
     "whisper", "whisperh",
     "virtualmoney",
@@ -4729,6 +4729,19 @@ void ExecConditionCommand(array<string@>@ command, Critter& player, Critter@ tar
             player.Say(SAY_NETMSG, "" + GetConditionOfCritter(target));
             player.Say(SAY_NETMSG, "" + GetExtConditionOfCritter(target));
         }
+    }
+}
+
+void ExecTestCommand(array<string@>@ command, Critter& player) {
+    if (command.length() < 2) {
+        player.Say(SAY_NETMSG, "Wrong number of parameters");
+        return;
+    }
+    Critter@ target = GetPlayer(command[2]);
+    if (!valid(target)) {
+        player.Say(SAY_NETMSG, "Invalid player");
+    } else {
+        player.Say(SAY_NETMSG, "Found player '" + command[2] + "' with ID = " + target.Id + " and IP = " + target.GetIp());
     }
 }
 
@@ -10307,6 +10320,10 @@ bool ExecCommand(Critter& player, string@ commandString)
     else if(command[1] == "tentinfo")
     {
         ExecTentInfoCommand(command, player, target);
+    }
+    else if(command[1] == "test")
+    {
+        ExecTestCommand(command, player);
     }
     else if(command[1] == "toglobal")
     {
