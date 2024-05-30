@@ -32,6 +32,6 @@ Well, in case you are new to git and have trouble getting all parts together, he
 You can use Username: qwer3 Password: asdf to test Tragic. Admin access is as usual: ~getaccess admin admin<br>
 Working versions or ones that need testing may be added later, periodaically, but should not count on them.<br>
 
-Jinexd Jack interface: (download from Dropbox if there is fresh version, so my LFS quota doesn't drop)
+Jinexd Jack interface: (download from Dropbox if there is fresh version, so my LFS quota doesn't drop) <br>
 2024-05-30 Jinxed Jack interface, added pickup/container filter buttons: https://www.dropbox.com/scl/fi/y9khvvrfkskn1hu4ly868/JinxedJack.zip?rlkey=hzuq2ezgsl2utc63ue0bhnff2&st=wkoymh2q&dl=0
 
