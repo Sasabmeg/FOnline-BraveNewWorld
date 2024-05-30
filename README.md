@@ -29,6 +29,9 @@ Well, in case you are new to git and have trouble getting all parts together, he
 2024-03-25 Car Tracker and Hub Parkinglot test: use laterst below<br>
 2024-05-22 Tragic the Garnering Collectible test: https://www.dropbox.com/scl/fi/7mp20mp4ot31mm9cqo7y0/FOClassic_BNW_Tragic1_2024_05_22.zip?rlkey=l13wby6hn01jf824fx4o819ex&st=inyf1izs&dl=0
 
-2024-05-30 Jinxed Jack interface, added pickup/container filter buttons: https://www.dropbox.com/scl/fi/y9khvvrfkskn1hu4ly868/JinxedJack.zip?rlkey=hzuq2ezgsl2utc63ue0bhnff2&st=wkoymh2q&dl=0
 You can use Username: qwer3 Password: asdf to test Tragic. Admin access is as usual: ~getaccess admin admin<br>
 Working versions or ones that need testing may be added later, periodaically, but should not count on them.<br>
+
+Jinexd Jack interface: (download from Dropbox if there is fresh version, so my LFS quota doesn't drop)
+2024-05-30 Jinxed Jack interface, added pickup/container filter buttons: https://www.dropbox.com/scl/fi/y9khvvrfkskn1hu4ly868/JinxedJack.zip?rlkey=hzuq2ezgsl2utc63ue0bhnff2&st=wkoymh2q&dl=0
+
