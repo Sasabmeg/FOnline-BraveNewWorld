@@ -78,7 +78,8 @@
 #define FLOAT_ENFORCED                           (0) // always shown
 #define FLOAT_VERBOSE_ACTION                     (1) // (client configuration)
 #define FLOAT_EXPERIENCE                         (2) // (client configuration)
-#define FLOAT_MAX                                (3)
+#define FLOAT_SERVER_ENFORCED                    (3)
+#define FLOAT_MAX                                (4)
 
 // MapMessageEx() mode
 #define FLOAT_MODE_SINGLE                        (1) // only target; if target is follower, only master
@@ -217,6 +218,7 @@
 #define CTE_SCHEDULE                             (10)
 #define CTE_SCHEDULE_FIND_NEXT                   (11)
 // Drugs time events                40 (PID_STIMPAK) .. 1000
+#define CTE_ALLOW_RUN                            (1335)
 #define CTE_FISHING_ANIM                         (1336)
 #define CTE_CHEAT_AURA                           (1337)
 
@@ -795,6 +797,12 @@
 #define FV_FLAG_MASTER_SPEAKER                   (0x1)
 #define FV_FLAG_FLED_BATTLE                      (0x2) // Has fled battle and is waiting on worldmap.
 
+#define ST_EX_BURNT                              (943)  //  fire damage, increases fire damage, stacks up as percentage
+#define TO_EX_BURNT                              (944)  //  timeout refreshed with each fire damage taken
+#define ST_EX_IRREMEDIABLE                       (945)  //  plasma damage, reduces healing as percentage, does not stack, highest value is used
+#define TO_EX_IRREMEDIABLE                       (946)  //  timeout refreshed with each plasma damage taken
+#define ST_EX_SHOCKED                            (947)  //  electrical damage, reduces AP and forces critter to walk for 3 seconds
+#define TO_EX_SHOCKED                            (948)  //  can only occur once in a while, every 4 seconds
 //
 // 943..999
 //

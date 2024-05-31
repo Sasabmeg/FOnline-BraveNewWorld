@@ -57,10 +57,29 @@ class CMessagesConfig
     string  HealOverHeadStimpak = "";
     string  HealOverHeadSuperStimpak = "";
     string  HealOverHeadHypo = "";
+
+    string  StatusOverHeadShocked = "";
+
+    string  MiscOverHeadExperience = "";
+
     int     FloatTextFromX = MESSAGES_FLOAT_TEXT_INVALID;
     int     FloatTextFromY = MESSAGES_FLOAT_TEXT_INVALID;
     int     FloatTextToX = MESSAGES_FLOAT_TEXT_INVALID;
     int     FloatTextToY = MESSAGES_FLOAT_TEXT_INVALID;
+
+    int     StatusOverHeadEnabled = 1;
+    int     StatusOverHeadHorizontalShift = MESSAGES_FLOAT_TEXT_INVALID;
+    int     FloatStatusTextFromX = MESSAGES_FLOAT_TEXT_INVALID;
+    int     FloatStatusTextToX = MESSAGES_FLOAT_TEXT_INVALID;
+    int     FloatStatusTextFromY = MESSAGES_FLOAT_TEXT_INVALID;
+    int     FloatStatusTextToY = MESSAGES_FLOAT_TEXT_INVALID;
+
+    int     MiscOverHeadEnabled = 1;
+    int     MiscOverHeadHorizontalShift = MESSAGES_FLOAT_TEXT_INVALID;
+    int     FloatMiscTextFromX = MESSAGES_FLOAT_TEXT_INVALID;
+    int     FloatMiscTextToX = MESSAGES_FLOAT_TEXT_INVALID;
+    int     FloatMiscTextFromY = MESSAGES_FLOAT_TEXT_INVALID;
+    int     FloatMiscTextToY = MESSAGES_FLOAT_TEXT_INVALID;
 
     CMessagesConfig()
     {
@@ -117,6 +136,14 @@ void ClientMessagesConfig(string& customConfig) {
                 MessagesConfig.HealOverHeadHypo = var.GetValue();
                 Log("ClientMessagesConfig() - HealOverHeadHypo = " + MessagesConfig.HealOverHeadHypo);
             }
+            if(var.GetName() == "StatusOverHeadShocked") {
+                MessagesConfig.StatusOverHeadShocked = var.GetValue();
+                Log("ClientMessagesConfig() - StatusOverHeadShocked = " + MessagesConfig.StatusOverHeadShocked);
+            }
+            if(var.GetName() == "MiscOverHeadExperience") {
+                MessagesConfig.MiscOverHeadExperience = var.GetValue();
+                Log("ClientMessagesConfig() - MiscOverHeadExperience = " + MessagesConfig.MiscOverHeadExperience);
+            }
             if(var.GetName() == "FloatTextFromX") {
                 MessagesConfig.FloatTextFromX = string2int(var.GetValue());
                 Log("ClientMessagesConfig() - FloatTextFromX = " + MessagesConfig.FloatTextFromX);
@@ -132,6 +159,54 @@ void ClientMessagesConfig(string& customConfig) {
             if(var.GetName() == "FloatTextToY") {
                 MessagesConfig.FloatTextToY = string2int(var.GetValue());
                 Log("ClientMessagesConfig() - FloatTextToY = " + MessagesConfig.FloatTextToY);
+            }
+            if(var.GetName() == "StatusOverHeadEnabled") {
+                MessagesConfig.StatusOverHeadEnabled = string2int(var.GetValue());
+                Log("ClientMessagesConfig() - StatusOverHeadEnabled = " + MessagesConfig.StatusOverHeadEnabled);
+            }
+            if(var.GetName() == "StatusOverHeadHorizontalShift") {
+                MessagesConfig.StatusOverHeadHorizontalShift = string2int(var.GetValue());
+                Log("ClientMessagesConfig() - StatusOverHeadHorizontalShift = " + MessagesConfig.StatusOverHeadHorizontalShift);
+            }
+            if(var.GetName() == "FloatStatusTextFromX") {
+                MessagesConfig.FloatStatusTextFromX = string2int(var.GetValue());
+                Log("ClientMessagesConfig() - FloatStatusTextFromX = " + MessagesConfig.FloatStatusTextFromX);
+            }
+            if(var.GetName() == "FloatStatusTextToX") {
+                MessagesConfig.FloatStatusTextToX = string2int(var.GetValue());
+                Log("ClientMessagesConfig() - FloatStatusTextToX = " + MessagesConfig.FloatStatusTextToX);
+            }
+            if(var.GetName() == "FloatStatusTextFromY") {
+                MessagesConfig.FloatStatusTextFromY = string2int(var.GetValue());
+                Log("ClientMessagesConfig() - FloatStatusTextFromY = " + MessagesConfig.FloatStatusTextFromY);
+            }
+            if(var.GetName() == "FloatStatusTextToY") {
+                MessagesConfig.FloatStatusTextToY = string2int(var.GetValue());
+                Log("ClientMessagesConfig() - FloatStatusTextToY = " + MessagesConfig.FloatStatusTextToY);
+            }
+            if(var.GetName() == "MiscOverHeadEnabled") {
+                MessagesConfig.MiscOverHeadEnabled = string2int(var.GetValue());
+                Log("ClientMessagesConfig() - MiscOverHeadEnabled = " + MessagesConfig.MiscOverHeadEnabled);
+            }
+            if(var.GetName() == "MiscOverHeadHorizontalShift") {
+                MessagesConfig.MiscOverHeadHorizontalShift = string2int(var.GetValue());
+                Log("ClientMessagesConfig() - MiscOverHeadHorizontalShift = " + MessagesConfig.MiscOverHeadHorizontalShift);
+            }
+            if(var.GetName() == "FloatMiscTextFromX") {
+                MessagesConfig.FloatMiscTextFromX = string2int(var.GetValue());
+                Log("ClientMessagesConfig() - FloatMiscTextFromX = " + MessagesConfig.FloatMiscTextFromX);
+            }
+            if(var.GetName() == "FloatMiscTextToX") {
+                MessagesConfig.FloatMiscTextToX = string2int(var.GetValue());
+                Log("ClientMessagesConfig() - FloatMiscTextToX = " + MessagesConfig.FloatMiscTextToX);
+            }
+            if(var.GetName() == "FloatMiscTextFromY") {
+                MessagesConfig.FloatMiscTextFromY = string2int(var.GetValue());
+                Log("ClientMessagesConfig() - FloatMiscTextFromY = " + MessagesConfig.FloatMiscTextFromY);
+            }
+            if(var.GetName() == "FloatMiscTextToY") {
+                MessagesConfig.FloatMiscTextToY = string2int(var.GetValue());
+                Log("ClientMessagesConfig() - FloatMiscTextToY = " + MessagesConfig.FloatMiscTextToY);
             }
         }
     }
@@ -986,7 +1061,9 @@ void sayEx(int type, int crId, int, string@ text, array<int>@)
 }
 
 //  Floating Heal Text related, should be same as in utils_h.fos
-    //  Heal floating text reason definitions
+//  I forgot why I made double definitions here, it's a bad practice in general, but whatever works keep going YOLO ;)
+
+//  Heal floating text reason definitions
 #define HEAL_TEXT_REASON_NOREASON           (0)
 #define HEAL_TEXT_REASON_FIRSTAID           (1)
 #define HEAL_TEXT_REASON_WEAKHEALINGPOWDER  (2)
@@ -994,6 +1071,8 @@ void sayEx(int type, int crId, int, string@ text, array<int>@)
 #define HEAL_TEXT_REASON_STIMPAK            (4)
 #define HEAL_TEXT_REASON_SUPERSTIMPAK       (5)
 #define HEAL_TEXT_REASON_HYPO               (6)
+#define STATUS_TEXT_REASON_SHOCKED          (10)
+#define MISC_TEXT_REASON_XP                 (20)
 
 void mapMessage(int type, int hx, int hy, string@ text, array<int>@ data)
 {
@@ -1001,6 +1080,9 @@ void mapMessage(int type, int hx, int hy, string@ text, array<int>@ data)
        !valid(text) || text.length() == 0 ||
        !valid(data) || data.length() == 0)
         return;
+    uint16 hexX = uint16(hx);
+    uint16 hexY = uint16(hy);
+    int horizontalShift = 0;
 
     text = FormatTags(text, "");
 
@@ -1015,8 +1097,10 @@ void mapMessage(int type, int hx, int hy, string@ text, array<int>@ data)
     array<string@>@ vals = split(text, " ");
     string reasonText = "";
     string formattedText;
+    int reason = 0;
     if (vals.length() == 3 && (vals[0] == "+" || vals[0] == "-")) {
-        int reason = string2int(vals[2]);
+        reason = string2int(vals[2]);
+        int durationInMiliseconds = string2int(vals[1]);
         formattedText = vals[0] + " " + vals[1];
         if (reason != HEAL_TEXT_REASON_NOREASON) {
             //  brief healing reason
@@ -1075,8 +1159,28 @@ void mapMessage(int type, int hx, int hy, string@ text, array<int>@ data)
                         reasonText = "Hypo";
                     }
                     break;
+                case STATUS_TEXT_REASON_SHOCKED:
+                    if (MessagesConfig.StatusOverHeadShocked.length() > 0) {
+                        reasonText = MessagesConfig.StatusOverHeadShocked;
+                    } else if (MessagesConfig.HealOverHeadVerbosity == 1){
+                        reasonText = "SH";
+                    } else if (MessagesConfig.HealOverHeadVerbosity == 2) {
+                        reasonText = "Shocked";
+                    }
+                    formattedText = durationInMiliseconds / 1000 + "." + ((durationInMiliseconds / 100) % 10);
+                    break;
+                case MISC_TEXT_REASON_XP:
+                    if (MessagesConfig.MiscOverHeadExperience.length() > 0) {
+                        reasonText = MessagesConfig.MiscOverHeadExperience;
+                    } else if (MessagesConfig.HealOverHeadVerbosity == 1){
+                        reasonText = "XP";
+                    } else if (MessagesConfig.HealOverHeadVerbosity == 2) {
+                        reasonText = "Experience";
+                    }
+                    formattedText = vals[0] + "" + vals[1];
+                    break;
             }
-            formattedText += "  " + reasonText;
+            formattedText = reasonText + "  " + formattedText;
         }
     } else {
         //  not float over head text, because it doesn't start with +/- and it cannot be split into 3 parts with space as separator
@@ -1088,6 +1192,7 @@ void mapMessage(int type, int hx, int hy, string@ text, array<int>@ data)
     switch(type)
     {
         case FLOAT_ENFORCED:
+            //  general config, mostly used for healing indicators
             if (MessagesConfig.FloatTextFromX != MESSAGES_FLOAT_TEXT_INVALID)
                 fromX = MessagesConfig.FloatTextFromX;
             if (MessagesConfig.FloatTextToX != MESSAGES_FLOAT_TEXT_INVALID)
@@ -1096,6 +1201,46 @@ void mapMessage(int type, int hx, int hy, string@ text, array<int>@ data)
                 fromY = MessagesConfig.FloatTextFromY;
             if (MessagesConfig.FloatTextToY != MESSAGES_FLOAT_TEXT_INVALID)
                 toY   = MessagesConfig.FloatTextToY;
+            //  status effects like shocked by electric dmg or burnt, etc
+            if (reason >= STATUS_TEXT_REASON_SHOCKED && reason < MISC_TEXT_REASON_XP) {
+                if (MessagesConfig.StatusOverHeadEnabled == 0)
+                    return;
+                if (MessagesConfig.StatusOverHeadHorizontalShift != MESSAGES_FLOAT_TEXT_INVALID)
+                    horizontalShift = MessagesConfig.StatusOverHeadHorizontalShift;
+                if (horizontalShift < 0) {
+                    MoveHexByDir(hexX, hexY, 4, uint(horizontalShift * -1));
+                } else if (horizontalShift > 0) {
+                    MoveHexByDir(hexX, hexY, 1, uint(horizontalShift));
+                }
+                if (MessagesConfig.FloatStatusTextFromX != MESSAGES_FLOAT_TEXT_INVALID)
+                    fromX = MessagesConfig.FloatStatusTextFromX;
+                if (MessagesConfig.FloatStatusTextToX != MESSAGES_FLOAT_TEXT_INVALID)
+                    toX   = MessagesConfig.FloatStatusTextToX;
+                if (MessagesConfig.FloatStatusTextFromY != MESSAGES_FLOAT_TEXT_INVALID)
+                    fromY = MessagesConfig.FloatStatusTextFromY;
+                if (MessagesConfig.FloatStatusTextToY != MESSAGES_FLOAT_TEXT_INVALID)
+                    toY   = MessagesConfig.FloatStatusTextToY;
+            }
+            //  Xp, reputation? and such
+            if (reason >= MISC_TEXT_REASON_XP) {
+                if (MessagesConfig.MiscOverHeadEnabled == 0)
+                    return;
+                if (MessagesConfig.MiscOverHeadHorizontalShift != MESSAGES_FLOAT_TEXT_INVALID)
+                    horizontalShift = MessagesConfig.MiscOverHeadHorizontalShift;
+                if (horizontalShift < 0) {
+                    MoveHexByDir(hexX, hexY, 4, uint(horizontalShift * -1));
+                } else if (horizontalShift > 0) {
+                    MoveHexByDir(hexX, hexY, 1, uint(horizontalShift));
+                }
+                if (MessagesConfig.FloatMiscTextFromX != MESSAGES_FLOAT_TEXT_INVALID)
+                    fromX = MessagesConfig.FloatMiscTextFromX;
+                if (MessagesConfig.FloatMiscTextToX != MESSAGES_FLOAT_TEXT_INVALID)
+                    toX   = MessagesConfig.FloatMiscTextToX;
+                if (MessagesConfig.FloatMiscTextFromY != MESSAGES_FLOAT_TEXT_INVALID)
+                    fromY = MessagesConfig.FloatMiscTextFromY;
+                if (MessagesConfig.FloatMiscTextToY != MESSAGES_FLOAT_TEXT_INVALID)
+                    toY   = MessagesConfig.FloatMiscTextToY;
+            }
             break;
 
         case FLOAT_VERBOSE_ACTION:
@@ -1113,10 +1258,14 @@ void mapMessage(int type, int hx, int hy, string@ text, array<int>@ data)
                 return;
             break;
 
+        case FLOAT_SERVER_ENFORCED:
+            break;
+
+
         default:
             return;
     }
     //Log("client_messages@map :: delay = " + delay + ", color = " + color + ", fade = " + fade + ", fromX = " + fromX + ", toX = " + toX + ", fromY = " + fromY + ", toY = " + toY);
-    MapMessage(formattedText, hx, hy, __TextDelay + formattedText.length() * delay, color, fade, Random(fromX, toX), Random(fromY, toY));
+    MapMessage(formattedText, hexX, hexY, __TextDelay + formattedText.length() * delay, color, fade, Random(fromX, toX), Random(fromY, toY));
 }
 

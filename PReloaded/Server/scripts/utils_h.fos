@@ -40,8 +40,8 @@
 // reputation group indices
 #define _ValidReputationIndex            # (index)  (index >= 2 && index <= 99)
 
-//  Floating Heal Text related
-    //  Heal floating text reason definitions
+//  Floating Heal/Status Text related
+    //  Heal/status floating text reason definitions
 #define HEAL_TEXT_REASON_NOREASON           (0)
 #define HEAL_TEXT_REASON_FIRSTAID           (1)
 #define HEAL_TEXT_REASON_WEAKHEALINGPOWDER  (2)
@@ -49,6 +49,8 @@
 #define HEAL_TEXT_REASON_STIMPAK            (4)
 #define HEAL_TEXT_REASON_SUPERSTIMPAK       (5)
 #define HEAL_TEXT_REASON_HYPO               (6)
+#define STATUS_TEXT_REASON_SHOCKED          (10)
+#define MISC_TEXT_REASON_XP                 (20)
 
 // output info about critter, for log or SayMsg
 
@@ -58,6 +60,8 @@
 
 import void       FloatingHealText(Critter& cr, int healAmount, int reason, int successType = SKILL_CHECK_SUCCESS) from "utils";
 import void       FloatingHealTextByDrugPid(Critter& cr, int healAmount, uint16 drugPid) from "utils";
+import void       FloatingStatusChangeText(Critter& cr, int durationInMiliSeconds, int reason) from "utils";
+import void       FloatingMiscText(Critter& cr, int value, int reason) from "utils";
 import Location@  GetLocationOf(Critter& critter) from "utils";
 import string     GetLocationName(uint locId) from "utils";
 import string     GetLocationName(Location@ loc) from "utils";

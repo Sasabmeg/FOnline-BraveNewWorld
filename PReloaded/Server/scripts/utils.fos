@@ -91,6 +91,59 @@ void FloatingHealText(Critter& cr, int healAmount, int reason, int successType =
     //SayEx(SAYEX_VERBOSE_ACTION, cr, text);
 }
 
+void FloatingStatusChangeText(Critter& cr, int durationInMiliSeconds, int reason) {
+    string text;
+    uint color = 0;
+    Map@   map = cr.GetMap();
+    if (!valid(map)) {
+        Log("FloatingStatusChangeText() - Invalid Map");
+        return;
+    }
+    if(durationInMiliSeconds >= 0)
+        text = "+ " + durationInMiliSeconds + " " + reason;
+    else
+        text = "- " + durationInMiliSeconds + " " + reason;
+    switch (reason) {
+        case STATUS_TEXT_REASON_SHOCKED:
+            color = COLOR_STATUS_TEXT_SHOCKED;
+            break;
+    }
+    uint16 destX = cr.HexX;
+    uint16 destY = cr.HexY;
+    map.MoveHexByDir(destX, destY, 0, 3);
+    map.MoveHexByDir(destX, destY, 5, 3);
+
+    MapMessageEx(FLOAT_ENFORCED, FLOAT_MODE_ALL, cr, text, destX, destY, 150, color, true, -50, 50, -40, -70);
+    //SayEx(SAYEX_VERBOSE_ACTION, cr, text);
+}
+
+void FloatingMiscText(Critter& cr, int value, int reason) {
+    string text;
+    uint color = 0;
+    Map@   map = cr.GetMap();
+    if (!valid(map)) {
+        Log("FloatingMiscText() - Invalid Map");
+        return;
+    }
+    if(value >= 0)
+        text = "+ " + value + " " + reason;
+    else
+        text = "- " + value + " " + reason;
+    switch (reason) {
+        case MISC_TEXT_REASON_XP:
+            color = COLOR_MISC_TEXT_EXPERIENCE;
+            break;
+    }
+    uint16 destX = cr.HexX;
+    uint16 destY = cr.HexY;
+    map.MoveHexByDir(destX, destY, 0, 3);
+    map.MoveHexByDir(destX, destY, 5, 3);
+
+    MapMessageEx(FLOAT_ENFORCED, FLOAT_MODE_SINGLE, cr, text, destX, destY, 150, color, true, -50, 50, -40, -70);
+    //SayEx(SAYEX_VERBOSE_ACTION, cr, text);
+}
+
+
 void FloatingHealTextByDrugPid(Critter& cr, int healAmount, uint16 drugPid)
 {
     int reason = -1;
