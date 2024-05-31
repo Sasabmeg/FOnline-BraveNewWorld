@@ -10949,8 +10949,8 @@ void FOClient::SScriptFunc::Global_MapMessage( ScriptString& text, uint16 hx, ui
     t.Pos = Self->HexMngr.GetRectForText( hx, hy );
     t.EndPos = Rect( t.Pos, ox, oy );
     auto it = std::find( Self->GameMapTexts.begin(), Self->GameMapTexts.end(), t );
-    if( it != Self->GameMapTexts.end() )
-        Self->GameMapTexts.erase( it );
+    //if( it != Self->GameMapTexts.end() )
+    //    Self->GameMapTexts.erase( it );
     Self->GameMapTexts.push_back( t );
 }
 
