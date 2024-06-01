@@ -405,15 +405,16 @@ uint ProcessDrug(Critter& cr, uint16 drugPid, uint& rate)
                         amount = (amount*2)/3;
 
                     //  BNW MECHANICS CHANGE: see issue #110 https://github.com/Sasabmeg/FOnline-BraveNewWorld/issues/110
-                    //  Plasma damage will reduce healing for a short period of time
-                    int plasmaLinger = 10000;
-                    if (cr.ParamBase[TO_EX_IRREMEDIABLE] + plasmaLinger > int(GetTick())) {
+                    //  Plasma damage will reduce healing for a short period of time, chem reliant ignores effect
+                    if (cr.ParamBase[TO_EX_IRREMEDIABLE] + PLASMA_EFFECT_LINGER_TIME > int(GetTick())) {
                         if (cr.ParamBase[ST_EX_IRREMEDIABLE] > 0) {
-                            float healFactor = float(CLAMP(100 - cr.ParamBase[ST_EX_IRREMEDIABLE], 33, 100)) / 100;
-                            int oldAmount = amount;
-                            amount = amount * healFactor;
-                            cr.Say(SAY_NETMSG, "Heal factor = " + healFactor + ", irremediable% = " + cr.ParamBase[ST_EX_IRREMEDIABLE] + ", oldAmount = " + oldAmount + ", newAmount = " + amount);
-                            Log("Heal factor = " + healFactor + ", irremediable% = " + cr.ParamBase[ST_EX_IRREMEDIABLE] + ", oldAmount = " + oldAmount + ", newAmount = " + amount);
+                            if (cr.Trait[TRAIT_CHEM_RELIANT] == 0) {
+                                float healFactor = float(CLAMP(100 - cr.ParamBase[ST_EX_IRREMEDIABLE], 33, 100)) / 100;
+                                int oldAmount = amount;
+                                amount = amount * healFactor;
+                                //cr.Say(SAY_NETMSG, "Heal factor = " + healFactor + ", irremediable% = " + cr.ParamBase[ST_EX_IRREMEDIABLE] + ", oldAmount = " + oldAmount + ", newAmount = " + amount);
+                                //Log("Heal factor = " + healFactor + ", irremediable% = " + cr.ParamBase[ST_EX_IRREMEDIABLE] + ", oldAmount = " + oldAmount + ", newAmount = " + amount);
+                            }
                         }
                     }
                     //  BNW MECHANICS CHANGE END

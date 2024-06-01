@@ -1761,6 +1761,7 @@ void ApplyDamage(AttackStruct& attack, Critter& target, uint rounds, bool isCrit
 	//### IMPLEMENTACJA melee attack swing i thrust ###
 	//#################################################
 	uint8 use=_WeaponModeUse(attack.weaponMode);
+
 	bool isSwing=false;
 	bool isThrust=false;
 	//if(attackerIsPlayer)
@@ -2516,11 +2517,12 @@ void ApplyDamage(AttackStruct& attack, Critter& target, uint rounds, bool isCrit
     //  BNW MECHANICS CHANGE: see issue #110 https://github.com/Sasabmeg/FOnline-BraveNewWorld/issues/110
     if(target.Mode[MODE_INVULNERABLE] == 0) {
         //  Add extra fire damage based on BURNT status
-        int burntLinger = 10000;
-        int plasmaLinger = 10000;
-        int shockedLinger = 4000;
         int oldDmg = totalDmg;
         if (dmgType == DAMAGE_TYPE_FIRE) {
+            //  make sure no immunity/vulnerability bug due to server crash
+            if (target.ParamBase[TO_EX_BURNT] > int(GetTick())) {
+                target.ParamBase[TO_EX_BURNT] = GetTick();
+            }
             uint16 stepX = target.HexX;
             uint16 stepY = target.HexY;
             map.MoveHexByDir(stepX, stepY, 0, 1);
@@ -2530,51 +2532,53 @@ void ApplyDamage(AttackStruct& attack, Critter& target, uint rounds, bool isCrit
             } else if (oldDmg > 35) {
                 map.RunEffect(PID_EXPLODE_FIRE_SMALL, stepX, stepY, 0);
             }
-            if (target.ParamBase[TO_EX_BURNT] + burntLinger > int(GetTick())) {
+            if (target.ParamBase[TO_EX_BURNT] + BURN_EFFECT_LINGER_TIME > int(GetTick())) {
 
                 float burntFactor = float(100 + CLAMP(target.ParamBase[ST_EX_BURNT], 0, 100)) / 100;
                 totalDmg = int(totalDmg * burntFactor);
-                attack.Attacker.Say(SAY_NETMSG, "Burnt factor = " + burntFactor + ", currentBurnt% = " + target.ParamBase[ST_EX_BURNT] + ", oldDamage = " + oldDmg + ", newDamage = " + totalDmg);
-                Log("Burnt factor = " + burntFactor + ", currentBurnt = " + target.ParamBase[ST_EX_BURNT] + ", oldDamage = " + oldDmg + ", newDamage = " + totalDmg);
+                //attack.Attacker.Say(SAY_NETMSG, "Burnt factor = " + burntFactor + ", currentBurnt% = " + target.ParamBase[ST_EX_BURNT] + ", oldDamage = " + oldDmg + ", newDamage = " + totalDmg);
+                //Log("Burnt factor = " + burntFactor + ", currentBurnt = " + target.ParamBase[ST_EX_BURNT] + ", oldDamage = " + oldDmg + ", newDamage = " + totalDmg);
 
                 target.ParamBase[ST_EX_BURNT] = CLAMP(target.ParamBase[ST_EX_BURNT] + oldDmg / 4, 0, 100);
-                attack.Attacker.Say(SAY_NETMSG, "Current Burnt = " + target.ParamBase[ST_EX_BURNT]);
-                Log("Current Burnt = " + target.ParamBase[ST_EX_BURNT]);
+                //attack.Attacker.Say(SAY_NETMSG, "Current Burnt = " + target.ParamBase[ST_EX_BURNT]);
+                //Log("Current Burnt = " + target.ParamBase[ST_EX_BURNT]);
                 target.ParamBase[TO_EX_BURNT] = GetTick();
             } else {
-                attack.Attacker.Say(SAY_NETMSG, "First fire damage");
-                Log("First fire damage");
+                //attack.Attacker.Say(SAY_NETMSG, "First fire damage");
+                //Log("First fire damage");
                 target.ParamBase[ST_EX_BURNT] = CLAMP(oldDmg / 4, 0, 100);
                 target.ParamBase[TO_EX_BURNT] = GetTick();
             }
         }
         if (dmgType == DAMAGE_TYPE_PLASMA) {
-            if (target.ParamBase[TO_EX_IRREMEDIABLE] + plasmaLinger > int(GetTick())) {
+            //  make sure no immunity/vulnerability bug due to server crash
+            if (target.ParamBase[TO_EX_IRREMEDIABLE] > int(GetTick())) {
+                target.ParamBase[TO_EX_IRREMEDIABLE] = GetTick();
+            }
+            if (target.ParamBase[TO_EX_IRREMEDIABLE] + PLASMA_EFFECT_LINGER_TIME > int(GetTick())) {
                 if (totalDmg > target.ParamBase[ST_EX_IRREMEDIABLE]) {
                     target.ParamBase[ST_EX_IRREMEDIABLE] = CLAMP(totalDmg, 0, 100);
                     target.ParamBase[TO_EX_IRREMEDIABLE] = GetTick();
-                    attack.Attacker.Say(SAY_NETMSG, "Current Irremediable% = " + target.ParamBase[ST_EX_IRREMEDIABLE]);
-                    Log("Current Irremediable% = " + target.ParamBase[ST_EX_IRREMEDIABLE]);
+                    //attack.Attacker.Say(SAY_NETMSG, "Current Irremediable% = " + target.ParamBase[ST_EX_IRREMEDIABLE]);
+                    //Log("Current Irremediable% = " + target.ParamBase[ST_EX_IRREMEDIABLE]);
                 } else {
                     target.ParamBase[TO_EX_IRREMEDIABLE] = GetTick();
-                    attack.Attacker.Say(SAY_NETMSG, "Current Irremediable% = " + target.ParamBase[ST_EX_IRREMEDIABLE]);
-                    Log("Current Irremediable% = " + target.ParamBase[ST_EX_IRREMEDIABLE]);
+                    //attack.Attacker.Say(SAY_NETMSG, "Current Irremediable% = " + target.ParamBase[ST_EX_IRREMEDIABLE]);
+                    //Log("Current Irremediable% = " + target.ParamBase[ST_EX_IRREMEDIABLE]);
                 }
             } else {
                 target.ParamBase[ST_EX_IRREMEDIABLE] = CLAMP(totalDmg, 0, 100);
                 target.ParamBase[TO_EX_IRREMEDIABLE] = GetTick();
-                attack.Attacker.Say(SAY_NETMSG, "Current Irremediable% = " + target.ParamBase[ST_EX_IRREMEDIABLE]);
-                Log("Current Irremediable% = " + target.ParamBase[ST_EX_IRREMEDIABLE]);
+                //attack.Attacker.Say(SAY_NETMSG, "Current Irremediable% = " + target.ParamBase[ST_EX_IRREMEDIABLE]);
+                //Log("Current Irremediable% = " + target.ParamBase[ST_EX_IRREMEDIABLE]);
             }
         }
         if (dmgType == DAMAGE_TYPE_ELECTR || dmgType == DAMAGE_TYPE_EMP) {
-            //attack.Attacker.Say(SAY_NETMSG, "TO_EX_SHOCKED = " + target.ParamBase[TO_EX_SHOCKED] + ", Tick = " + GetTick());
-            //Log("TO_EX_SHOCKED = " + target.ParamBase[TO_EX_SHOCKED] + ", Tick = " + GetTick());
-            /*
+            //  make sure no immunity/vulnerability bug due to server crash
             if (target.ParamBase[TO_EX_SHOCKED] > int(GetTick())) {
                 target.ParamBase[TO_EX_SHOCKED] = GetTick();
-            }*/
-            if (target.ParamBase[TO_EX_SHOCKED] + shockedLinger < int(GetTick())) {
+            }
+            if (target.ParamBase[TO_EX_SHOCKED] + SHOCK_EFFECT_LINGER_TIME < int(GetTick())) {
                 uint16 stepX = target.HexX;
                 uint16 stepY = target.HexY;
                 map.MoveHexByDir(stepX, stepY, 0, 1);
@@ -2614,11 +2618,25 @@ void ApplyDamage(AttackStruct& attack, Critter& target, uint rounds, bool isCrit
                 //Log("Target AP loss = " + apLoss + ", new AP = " + target.StatBase[ST_CURRENT_AP] + ", timer = " + target.ParamBase[TO_EX_SHOCKED]);
                 if (target.ParamBase[MODE_NO_RUN] == 0 && target.GetTimeEvents(CTE_ALLOW_RUN, null, null, null) == 0) {
                     target.ParamBase[MODE_NO_RUN] = 1;
-                    int duration = Random(850, 1150) + CLAMP((10 - target.StatBase[ST_STRENGTH]) * 250, 0, 2500);
+                    //  EMP grenade
+                    int duration = Random(950, 1250);
+                    bool isGrenade = false;
+                    int skillNum = 0;
+                    if (valid(realWeapon)) {
+                        skillNum = _WeaponSkill(realWeapon.Proto, use);
+                        isGrenade = (skillNum == SK_THROWING);
+                    }
+                    if (isGrenade) {
+                        duration -= 500;
+                    }
+                    duration += CLAMP((10 - target.StatBase[ST_STRENGTH]) * 250, 0, 2500);
+                    //  increase duration for PVE for fun mechanics/tactics, no need to balance that much here
+                    if (!targetIsPlayer) {
+                        duration = 3 + duration * 5;
+                    }
                     target.AddTimeEvent("cte_AllowRunAgain", REAL_MS(duration), CTE_ALLOW_RUN);
                     //attack.Attacker.Say(SAY_NETMSG, "Target run disabled, reset in 3 seconds.");
                     //Log("Target run disabled, reset in 3 seconds.");
-                    FloatingMiscText(target, 900, MISC_TEXT_REASON_XP);
                     FloatingStatusChangeText(target, duration, STATUS_TEXT_REASON_SHOCKED);
                 } else {
                     //  this probably never happens
@@ -2631,7 +2649,6 @@ void ApplyDamage(AttackStruct& attack, Critter& target, uint rounds, bool isCrit
                 map.MoveHexByDir(stepX, stepY, 0, 1);
                 map.MoveHexByDir(stepX, stepY, 5, 1);
                 map.RunEffect(PID_EXPLODE_EMP, stepX, stepY, 0);
-                FloatingMiscText(target, 900, MISC_TEXT_REASON_XP);
                 //attack.Attacker.Say(SAY_NETMSG, "Target was already shocked recently");
                 //Log("Target was already shocked recently");
             }
