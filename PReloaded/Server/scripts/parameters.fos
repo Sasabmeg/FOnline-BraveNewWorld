@@ -20,6 +20,9 @@ import int    GUI_GetActiveScreen() from "client_gui";
 
 #ifdef __SERVER
 # include "logging_h.fos"
+//#include "utils_h.fos"
+#define MISC_TEXT_REASON_XP                 (20)
+
 
 import Critter@ GetMaster(Critter& follower) from "follower";
 import void     PerkUp(Critter& cr, uint perk, int from) from "perks";
@@ -27,6 +30,8 @@ import void     PerkDown(Critter& cr, uint perk, int tolevel) from "perks";
 import bool     IsHumanoid(Critter@ cr) from "utils";
 import void     VerboseExperience(Critter& cr, int xpDiff, int levelDiff) from "utils";
 import void 	AddScore(Critter@ cr, uint score, uint points) from "utils";
+import void     FloatingMiscText(Critter& cr, int value, int reason) from "utils";
+
 
 int getParamDialog_Reputation(Critter@ master, Critter@ slave, uint index)
 {
@@ -78,9 +83,11 @@ void changedParam_Experience(Critter& cr, uint, int oldValue)   // server
     int exp = cr.StatBase[ST_EXPERIENCE] - oldValue;
     int levelDiff = 0;
 
-    if(exp < 0)
+    if(exp < 0) {
         cr.Say(SAY_NETMSG, "|0xFFFFFF You have lost " + (exp*(-1)) + " experience points.");
-    
+        FloatingMiscText(cr, exp, MISC_TEXT_REASON_XP);
+    }
+
     if(exp > 0)
     {
         exp *= __ExperienceMod;
@@ -90,13 +97,14 @@ void changedParam_Experience(Critter& cr, uint, int oldValue)   // server
         //   return;
 
         cr.StatBase[ST_EXPERIENCE] = oldValue + exp;
+        FloatingMiscText(cr, exp, MISC_TEXT_REASON_XP);
 
         if(level >= __LevelCap)
         {
             if(_IsFollower(cr))
 			{
                 VerboseExperience(cr, exp, 0);
-            return;
+                return;
 			}
         }
 
@@ -119,7 +127,7 @@ void changedParam_Experience(Critter& cr, uint, int oldValue)   // server
                 cr.StatBase[ST_UNSPENT_SKILL_POINTS] += cr.Perk[PE_EDUCATED] * 2;          // Educated perk
                 if(cr.StatBase[ST_UNSPENT_SKILL_POINTS] > 99)
                     cr.StatBase[ST_UNSPENT_SKILL_POINTS] = 99;                             // Clamp skill points
-					
+
 				if(level <= __LevelCap)
 				{
                 cr.StatBase[ST_MAX_LIFE] += cr.StatBase[ST_ENDURANCE] / 2;                 // Add max hp
@@ -129,9 +137,9 @@ void changedParam_Experience(Critter& cr, uint, int oldValue)   // server
                 {
                     cr.StatBase[ST_UNSPENT_PERKS] = 1;
                 }
-				
+
 				}
-				if((level > 24) && (level < 30) && cr.StatBase[ST_UNSPENT_PERKS]!=0) 
+				if((level > 24) && (level < 30) && cr.StatBase[ST_UNSPENT_PERKS]!=0)
                     cr.Say(SAY_NETMSG, "|0xCC0000 Remember to choose your Perk! If you don't do that until level 30, it will be lost!");
 				if(level==30) cr.StatBase[ST_UNSPENT_PERKS]=0;
             }
@@ -213,7 +221,7 @@ int NextLevelNeedExp(Critter& cr)   // Export
 #ifdef __CLIENT
 void changedParam_Alpha( CritterCl& cr, uint, int ) // client
 {
-	cr.Alpha = CLAMP( cr.Stat[ST_ALPHA], 0, 255 ); 
+	cr.Alpha = CLAMP( cr.Stat[ST_ALPHA], 0, 255 );
 }
 
 void changedParam_Level(CritterCl& cr, uint, int oldValue)   // client
@@ -245,7 +253,7 @@ void changedParam_UnspentPerks(CritterCl& cr, uint, int oldValue)   // client
 
 void changedParam_UnspentTag(CritterCl& cr, uint, int oldValue)   // client
 {
-    
+
 }
 
 void changedParam_Hide(CritterCl& cr, uint, int oldValue)   // client
@@ -398,7 +406,7 @@ bool CritterGenerateCheck(array<int>& data)     // Export to client_main@player_
 			Message("Incorrect SPECIAL data.");
 			return false;
 		}
-	
+
     if(special != __StartSpecialPoints)
     {
         Message(GetMsgStr(TEXTMSG_GAME, STR_NET_WRONG_SPECIAL));
