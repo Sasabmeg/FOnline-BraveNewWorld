@@ -16,6 +16,11 @@
 #include "_colors.fos"
 #include "strtoint_h.fos"
 
+#define MISC_TEXT_REASON_XP                 (20)
+
+import void mapMessage(int type, int hx, int hy, string@ text, array<int>@ data) from "client_messages";
+
+
 uint COLOR_RGB_STRING(string& r, string& g, string& b)
 {
     return COLOR_RGBA_STRING(r, g, b, "255");
@@ -391,4 +396,41 @@ array<string@> splitDrawText(string& input, string& split, uint maxWidth, int fo
 
     return(result);
 }
+
+void FloatingMiscText(int value, int reason) {
+    string text;
+    uint color = 0;
+    if(value >= 0)
+        text = "+ " + value + " " + reason;
+    else
+        text = "- " + value + " " + reason;
+    switch (reason) {
+        case MISC_TEXT_REASON_XP:
+            color = COLOR_MISC_TEXT_EXPERIENCE;
+            break;
+    }
+
+    CritterCl@ chosen = GetChosen();
+    if(!valid(chosen))
+        return;
+
+    uint16 destX = chosen.HexX;
+    uint16 destY = chosen.HexY;
+    MoveHexByDir(destX, destY, 0, 3);
+    MoveHexByDir(destX, destY, 5, 3);
+
+    int delay = 0;
+    bool fade = true;
+    array<int> data = {0, 0, 0, 0, 0, 0, 0, 0};
+    data[0] = delay;
+    data[1] = color;
+    data[2] = fade ? 1 : 0;
+    data[3] = 25;
+    data[4] = 50;
+    data[5] = -50;
+    data[6] = -70;
+
+    mapMessage(FLOAT_ENFORCED, destX, destY, text, data);
+}
+
 #endif /* __CLIENT_UTILS__ */
