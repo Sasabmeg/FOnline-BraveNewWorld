@@ -21,7 +21,7 @@
 #include "client_utils_h.fos"
 #include "client_access_h.fos"
 
-import void InitCritterOnHead() from "client_critter_onhead";
+import void InitCritterOnHead(bool showNpcNames, uint color) from "client_critter_onhead";
 
 // import void ActionUpdate(CritterCl& cr) from "client_anti_cheat";
 
@@ -95,6 +95,8 @@ int        item_prices_buy_modifier;    // Cached item prices from server
 int        item_prices_sell_modifier;   // Cached item prices from server
 
 bool       isGMT = false;
+bool showNpcNames = true;
+uint npcNamesColor = COLOR_DGREEN;
 
 IClientAccessLevelOpt@ accessControll;
 
@@ -166,7 +168,7 @@ bool start()
     InitBagCallbacks();
 	InitSmartCursor();
 
-    InitCritterOnHead();
+    InitCritterOnHead(showNpcNames, npcNamesColor);
     InitDrawEncounters();
 
     return true;
@@ -873,6 +875,9 @@ void InitConfig()
     __ConfigFogColor                = COLOR_RGBA(0, 0, 0, 160);
     __ConfigCustomBorderColor       = COLOR_RGB(30, 30, 90);
 
+    npcNamesColor = COLOR_DGREEN;
+    showNpcNames = true;
+
     TimeoutsConfig("");
     ClientMessagesConfig("");
     CombatLogConfig();
@@ -1027,6 +1032,20 @@ void InitConfig()
         {
             __ConfigGameInfo = CLAMP(string2uint(val), 0, 3);
         }
+
+        // ShowNpcNames
+        @val = GetConfigValue(CONFIG_FILE, CONFIG_RELOADED, "ShowNpcNames");
+        if(valid(val) && val.length() > 0) {
+            showNpcNames = CLAMP(string2uint(val), 0, 1) == 1;
+        }
+
+        //  NpcNamesColor
+        @val = GetConfigValue(CONFIG_FILE, CONFIG_RELOADED, "NpcNamesColor");
+        if(valid(val) && val.length() > 0) {
+            npcNamesColor = rgb_string2uint(val);
+        }
+
+
     }
 
     // [Messages]

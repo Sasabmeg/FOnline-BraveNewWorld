@@ -6,6 +6,8 @@
 #include "MsgStr.h"
 #include "_basetypes.fos"
 #include "sprite.fos"
+#include "config_h.fos"
+
 
 import bool GMToolsAccess() from "client_gmtools";
 import bool IsGMTEnabled() from "client_main";
@@ -20,8 +22,10 @@ array<uint> crits;
 array<Sprite> factionIcons;
 uint factionCount = 0;
 uint mapPid = 0;
+bool doNotHideNpcNames;
+uint npcNamesColor;
 
-void InitCritterOnHead()	//export
+void InitCritterOnHead(bool showNpcNames, uint color)	//export
 {
 	__ShowNpcNames = __ConfigShowNpcAwareness;
 	crs.resize(0);
@@ -30,6 +34,8 @@ void InitCritterOnHead()	//export
 	//factionIcons
 	if(__ConfigShowFactionEmblems)
 		factionIcons.resize(factionCount);
+    doNotHideNpcNames = showNpcNames;
+    npcNamesColor = color;
 }
 
 void InitFactionIcons()
@@ -44,7 +50,7 @@ void _SetFactionCount(int fc, int, int, string@, array<int>@ list)
 
 	for (int i = 0; i < fc; ++i)
 		factionIcons[i].Load("factionIcons\\" + (i + 200) + ".png", PATH_ART_INTRFACE);
-	factionCount = fc;		
+	factionCount = fc;
 }
 
 void AddCritter(uint id, uint pid)
@@ -70,7 +76,7 @@ void RemoveCritter(uint id)
         {
             crits.removeAt(c);
             return;
-        }            
+        }
     }
 }
 
@@ -109,14 +115,17 @@ void DrawCritterOnHead()	//export
 		//OnHeadAwareness
 		uint   dialog = cr.Stat[ST_DIALOG_ID];
         uint16 pid = cr.Pid;
-        string head = (cr.IsPlayer() ? cr.Name : " ");
+        string head = cr.IsPlayer() ? cr.Name : cr.Name;
+        if (!cr.IsPlayer() && !doNotHideNpcNames) {
+            head = " ";
+        }
 
         if(IsLexem(cr, "$@"))
         {
             head = GetLexem(cr, "$@");
             if(head.length() == 0)
                 head = " ";
-			
+
 			stringReplaceText(head, "|", "");
             head = FormatTags(head, "");
         }
@@ -155,9 +164,12 @@ void DrawCritterOnHead()	//export
 		{
 			name = "|" + cr.NameColor + " " + head;
 			cr.ContourColor = cr.ContourColor;
+			if (!cr.IsPlayer()) {
+                name = "|" + npcNamesColor + " " + head;
+			}
 
 		}
-		else 
+		else
 			name = " ";
 
 		if(cr.IsPlayer())
@@ -172,13 +184,13 @@ void DrawCritterOnHead()	//export
 				int x = 0, y = 0, w = 0, h = 0, lines = 0;
 
 				cr.GetNameTextInfo(nameVisible, x, y, w, h, lines);
-				
+
 				if(nameVisible)
 					factionIcons[tId-200].Draw(x-25, y-5);
 			}
 
 			if(!__ConfigShowPlayerAwareness)
-				continue;	
+				continue;
 		}
 		if(cr.IsNpc() && !__ConfigShowNpcAwareness)
 		{
@@ -196,7 +208,7 @@ void DrawCritterOnHead()	//export
 				if(color_g < 0)
 					color_g = 0;
 				color_r = 255 - color_g;
-				
+
 				hp = "|" + COLOR_RGB(color_r, color_g, color_b) + " " + cr.Param[ST_CURRENT_HP] + "/" + cr.Param[ST_MAX_LIFE];
 			}
 			else
@@ -209,10 +221,10 @@ void DrawCritterOnHead()	//export
 					case 2: lifeRes = "**"; break;
 					case 1: lifeRes = "*"; break;
 				}
-				
+
 				hp = "|" + (cr.Stat[ST_HEALTH_LEVEL] < 1 ? COLOR_LGRAY : COLOR_RGB(0xff - (0xff * cr.Stat[ST_HEALTH_LEVEL]) / 5, (0xff * cr.Stat[ST_HEALTH_LEVEL]) / 5, 0)) + " " + lifeRes;
 			}
-		
+
 			if(valid(chosen) && _CritIsInjured(cr))
 			{
 				crInjures = " ";
@@ -221,15 +233,15 @@ void DrawCritterOnHead()	//export
                 crInjures += _CritDamaged(cr, DAMAGE_LEFT_ARM) ? "LA " : "";
                 crInjures += _CritDamaged(cr, DAMAGE_RIGHT_LEG) ? "RL " : "";
                 crInjures += _CritDamaged(cr, DAMAGE_LEFT_LEG) ? "LL " : "";
-				inj = "|" + COLOR_RGB(200, 0, 0) + crInjures + "\n"; 
+				inj = "|" + COLOR_RGB(200, 0, 0) + crInjures + "\n";
 			}
 			else
 				inj = "";
 		}
-		else 
+		else
 		{
 			cr.NameOnHead = name;
-			continue;	
+			continue;
 		}
 
 		cr.NameOnHead = (name == " ") ? (inj + hp) : (inj + hp + "\n" + name);
