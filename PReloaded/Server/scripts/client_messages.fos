@@ -38,6 +38,7 @@ import bool    IsRecording() from "client_recording";
 import bool TimeoutsCommand(string& message) from "client_timeouts";
 
 import void InitNameColorizing() from "name_colorizing";
+import void SetNameSearch(string& searchValue) from "client_critter_onhead";
 
 #pragma bindfunc "void OnlineStats_URL(string@+) -> client_utils.dll OnlineStats_URL"
 
@@ -570,6 +571,22 @@ bool out_message(string& message, int& sayType)
         {
             Message("Nice try, but no banana.");
             return(false);
+        }
+
+        if(words.length() >= 1 && words[0] == "~find")
+        {
+            if (words.length() >= 2) {
+                string findTarget = words[1];
+                if (words.length() >= 3) {
+                    findTarget = words[1] + " " + words[2];
+                }
+                SetNameSearch(findTarget);
+                Message("Pip-boy :: Actively searching for known entities starting with '" + findTarget + "'.");
+                return(false);
+            } else {
+                Message("Pip-boy :: Search disabled.");
+                SetNameSearch("");
+            }
         }
 
         if(words.length() >= 2 && words[0] == "~gameinfo" && words[1] == "1")

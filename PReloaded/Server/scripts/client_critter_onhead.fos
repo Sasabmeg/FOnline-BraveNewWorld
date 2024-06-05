@@ -23,9 +23,16 @@ array<Sprite> factionIcons;
 uint factionCount = 0;
 uint mapPid = 0;
 bool doNotHideNpcNames;
-uint npcNamesColor;
+uint npcNamesColor = COLOR_DGREEN;
+uint npcNamesQuestRegularColor = COLOR_GREEN;
+uint npcNamesQuestStoryColor = COLOR_GOLDEN_YELLOW;
+uint npcNamesQuestJobColor = COLOR_TEAL;
+uint npcNamesSearchColor = COLOR_SAND;
+string nameSearch = "";
+bool npcNameSearchBlink = true;
 
-void InitCritterOnHead(bool showNpcNames, uint color)	//export
+
+void InitCritterOnHead(bool showNpcNames, uint namesColor, uint questRegularColor, uint questStoryColor, uint questJobColor, uint namesSearchColor, bool searchBlink)	//export
 {
 	__ShowNpcNames = __ConfigShowNpcAwareness;
 	crs.resize(0);
@@ -35,13 +42,22 @@ void InitCritterOnHead(bool showNpcNames, uint color)	//export
 	if(__ConfigShowFactionEmblems)
 		factionIcons.resize(factionCount);
     doNotHideNpcNames = showNpcNames;
-    npcNamesColor = color;
+    npcNamesColor = namesColor;
+    npcNamesQuestRegularColor = questRegularColor;
+    npcNamesQuestStoryColor = questStoryColor;
+    npcNamesQuestJobColor = questJobColor;
+    npcNamesSearchColor = namesSearchColor;
+    npcNameSearchBlink = searchBlink;
 }
 
 void InitFactionIcons()
 {
 	if(factionCount == 0)
 		RunServerScriptUnsafe("unsafe_client@unsafe_GetFactionCount", 0, 0, 0, "", null);
+}
+
+void SetNameSearch(string& searchValue) {
+    nameSearch = strlwr("" + searchValue);
 }
 
 void _SetFactionCount(int fc, int, int, string@, array<int>@ list)
@@ -165,7 +181,21 @@ void DrawCritterOnHead()	//export
 			name = "|" + cr.NameColor + " " + head;
 			cr.ContourColor = cr.ContourColor;
 			if (!cr.IsPlayer()) {
-                name = "|" + npcNamesColor + " " + head;
+                if (nameSearch.length() > 0 && substring(strlwr(head), 0, nameSearch.length()) == strlwr(nameSearch)) {
+                    if (npcNameSearchBlink) {
+                        name = "|" + (npcNamesSearchColor + ((GetTick()/2%1000) > 125 ? 0 : 256*256*256*2)) + " " + head;
+                    } else {
+                        name = "|" + npcNamesSearchColor + " " + head;
+                    }
+                } else if (cr.StatBase[ST_DIALOG_ID] < 20000 || cr.StatBase[ST_DIALOG_ID] > 50000) {
+                    name = "|" + npcNamesColor + " " + head;
+                } else if (cr.StatBase[ST_DIALOG_ID] >= 40000) {
+                    name = "|" + npcNamesQuestJobColor + " " + head;
+                } else if (cr.StatBase[ST_DIALOG_ID] >= 30000) {
+                    name = "|" + npcNamesQuestStoryColor + " " + head;
+                } else if (cr.StatBase[ST_DIALOG_ID] >= 20000) {
+                    name = "|" + npcNamesQuestRegularColor + " " + head;
+                }
 			}
 
 		}

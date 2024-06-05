@@ -21,7 +21,7 @@
 #include "client_utils_h.fos"
 #include "client_access_h.fos"
 
-import void InitCritterOnHead(bool showNpcNames, uint color) from "client_critter_onhead";
+import void InitCritterOnHead(bool showNpcNames, uint namesColor, uint questRegularColor, uint questStoryColor, uint questJobColor, uint namesSearchColor, bool searchBlink) from "client_critter_onhead";
 
 // import void ActionUpdate(CritterCl& cr) from "client_anti_cheat";
 
@@ -97,6 +97,12 @@ int        item_prices_sell_modifier;   // Cached item prices from server
 bool       isGMT = false;
 bool showNpcNames = true;
 uint npcNamesColor = COLOR_DGREEN;
+uint npcNamesQuestRegularColor = COLOR_GREEN;
+uint npcNamesQuestStoryColor = COLOR_GOLDEN_YELLOW;
+uint npcNamesQuestJobColor = COLOR_TEAL;
+uint npcNamesSearchColor = COLOR_SAND;
+bool npcNamesSearchBlink = false;
+
 
 IClientAccessLevelOpt@ accessControll;
 
@@ -168,7 +174,7 @@ bool start()
     InitBagCallbacks();
 	InitSmartCursor();
 
-    InitCritterOnHead(showNpcNames, npcNamesColor);
+    InitCritterOnHead(showNpcNames, npcNamesColor, npcNamesQuestRegularColor, npcNamesQuestStoryColor, npcNamesQuestJobColor, npcNamesSearchColor, npcNamesSearchBlink);
     InitDrawEncounters();
 
     return true;
@@ -876,7 +882,12 @@ void InitConfig()
     __ConfigCustomBorderColor       = COLOR_RGB(30, 30, 90);
 
     npcNamesColor = COLOR_DGREEN;
+    npcNamesQuestRegularColor = COLOR_GREEN;
+    npcNamesQuestStoryColor = COLOR_GOLDEN_YELLOW;
+    npcNamesQuestJobColor = COLOR_TEAL;
+    npcNamesSearchColor = COLOR_SAND;
     showNpcNames = true;
+    npcNamesSearchBlink = false;
 
     TimeoutsConfig("");
     ClientMessagesConfig("");
@@ -1045,6 +1056,35 @@ void InitConfig()
             npcNamesColor = rgb_string2uint(val);
         }
 
+        //  NpcNamesQuestRegularColor
+        @val = GetConfigValue(CONFIG_FILE, CONFIG_RELOADED, "NpcNamesQuestRegularColor");
+        if(valid(val) && val.length() > 0) {
+            npcNamesQuestRegularColor = rgb_string2uint(val);
+        }
+
+        //  NpcNamesQuestStoryColor
+        @val = GetConfigValue(CONFIG_FILE, CONFIG_RELOADED, "NpcNamesQuestStoryColor");
+        if(valid(val) && val.length() > 0) {
+            npcNamesQuestStoryColor = rgb_string2uint(val);
+        }
+
+        //  NpcNamesQuestJobColor
+        @val = GetConfigValue(CONFIG_FILE, CONFIG_RELOADED, "NpcNamesQuestJobColor");
+        if(valid(val) && val.length() > 0) {
+            npcNamesQuestJobColor = rgb_string2uint(val);
+        }
+
+        //  NpcNamesSearchColor
+        @val = GetConfigValue(CONFIG_FILE, CONFIG_RELOADED, "NpcNamesSearchColor");
+        if(valid(val) && val.length() > 0) {
+            npcNamesSearchColor = rgb_string2uint(val);
+        }
+
+        //  NpcNamesSearchBlink
+        @val = GetConfigValue(CONFIG_FILE, CONFIG_RELOADED, "NpcNamesSearchBlink");
+        if(valid(val) && val.length() > 0) {
+            npcNamesSearchBlink = CLAMP(string2uint(val), 0, 1) == 1;
+        }
 
     }
 
