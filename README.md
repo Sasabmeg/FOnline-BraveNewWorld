@@ -32,7 +32,7 @@ Well, in case you are new to git and have trouble getting all parts together, he
 You can use Username: qwer3 Password: asdf to test Tragic. Admin access is as usual: ~getaccess admin admin<br>
 Working versions or ones that need testing may be added later, periodaically, but should not count on them.<br>
 <br>
-2024-06-03 NPC names, Status and Misc text (XP, Shocked), plasma/fire/electric damage effects - https://www.dropbox.com/scl/fi/6v1oo9wmxqkmkwiv9uv4u/FOClassic-BNW-2024-06-02.zip?rlkey=qapp4t69vrexxa00z91h58huw&st=sb0uslcg&dl=0
+2024-06-03 NPC names and quest colors, ~find command, Status and Misc text (XP, Shocked), plasma/fire/electric damage effects - https://www.dropbox.com/scl/fi/58gozkvzgq9hjwlz232mu/FOClassic_BNW_QuestColorNpcNames.zip?rlkey=9r0k9ihbtsic03jlmkh9lonzk&st=hs63uhex&dl=0
 <br>
 
 Jinexd Jack interface: (download from Dropbox if there is fresh version, so my LFS quota doesn't drop) <br>
