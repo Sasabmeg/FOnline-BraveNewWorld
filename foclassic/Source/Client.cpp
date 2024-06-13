@@ -1407,8 +1407,13 @@ void FOClient::ParseKeyboard()
                         }
                         break;
 					case DIK_W:
-						HexMngr.ItemHighlightActive = !HexMngr.ItemHighlightActive;
-						HexMngr.RefreshMap();
+						if (GetActiveScreen() == CLIENT_SCREEN_INVENTORY || GetActiveScreen() == CLIENT_SCREEN_BARTER
+							|| GetActiveScreen() == CLIENT_SCREEN_PICKUP || GetActiveScreen() == CLIENT_SCREEN_USE) {
+							HexMngr.ShowItemDurability = !HexMngr.ShowItemDurability;
+						} else {
+							HexMngr.ItemHighlightActive = !HexMngr.ItemHighlightActive;
+							HexMngr.RefreshMap();
+						}
 						break;
                     case DIK_LBRACKET:
                         if( IsMainScreen( CLIENT_MAIN_SCREEN_GAME ) && GetActiveScreen() == CLIENT_SCREEN_NONE )
@@ -3224,6 +3229,7 @@ void FOClient::NetProcess()
 				//	SASA: TODO - put script callback here for event then client logs in
                 Net_OnLoginSuccess();
 				HexMngr.ItemHighlightActive = false;
+				HexMngr.ShowItemDurability = false;
                 break;
             case NETMSG_REGISTER_SUCCESS:
                 if( !Singleplayer )

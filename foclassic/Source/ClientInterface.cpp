@@ -1446,14 +1446,13 @@ void FOClient::ContainerDraw( const Rect& pos, int height, int scroll, ItemVec& 
         {
 			if (item.GetCount() > 1)
 				SprMngr.DrawStr(Rect(pos.L, pos.T + (i2 * height), pos.R, pos.T + (i2 * height) + height), Str::FormatBuf("x%u", item.GetCount()), 0, COLOR_TEXT_WHITE);
-			/*
+			
 			//	enable this to show deterioration in client inventory
 			int brokenCount = 100 - item.Data.BrokenCount;
 			int currentDura = 100 - item.Data.Deterioration / 100;
-			uint color = (currentDura > 66 ? COLOR_TEXT_DDGREEN : (currentDura > 33 ? COLOR_TEXT_SAND : (currentDura > 0 ? COLOR_TEXT_DDRED : COLOR_TEXT_DARK)));
-			if (item.Data.Deterioration > 1)
-				SprMngr.DrawStr(Rect(pos.L + 28, pos.T + (i2 * height) + height - 8, pos.R, pos.T + (i2 * height) + height), Str::FormatBuf("%u/%u", currentDura, brokenCount), 0, color);
-			*/
+			uint color = (currentDura > 66 ? COLOR_TEXT_DDGREEN : (currentDura > 33 ? COLOR_TEXT_SAND : (currentDura > 0 ? COLOR_TEXT_DDRED : COLOR_XRGB(90, 90, 90))));
+			if (item.Data.Deterioration > 1 && HexMngr.ShowItemDurability)
+				SprMngr.DrawStr(Rect(pos.L + 28, pos.T + (i2 * height) + height - 8, pos.R, pos.T + (i2 * height) + height), (color != COLOR_XRGB(90, 90, 90) ? Str::FormatBuf("%u/%u", currentDura, brokenCount) : Str::FormatBuf("Broken")), FONT_FLAG_BORDERED, color);
             i2++;
         }
         i++;

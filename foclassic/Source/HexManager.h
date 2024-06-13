@@ -280,6 +280,7 @@ private:
 
 public:
 	bool		ItemHighlightActive;
+	bool		ShowItemDurability;
 	uint16      MouseXLastHexMoveClick;
 	uint16      MouseYLastHexMoveClick;
 	bool        AddItem( uint id, uint16 pid, uint16 hx, uint16 hy, bool is_added, Item::ItemData* data );
