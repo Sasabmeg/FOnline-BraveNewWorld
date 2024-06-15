@@ -1451,7 +1451,7 @@ void FOClient::ContainerDraw( const Rect& pos, int height, int scroll, ItemVec& 
 			int brokenCount = 100 - item.Data.BrokenCount;
 			int currentDura = 100 - item.Data.Deterioration / 100;
 			uint color = (currentDura > 66 ? COLOR_TEXT_DDGREEN : (currentDura > 33 ? COLOR_TEXT_SAND : (currentDura > 0 ? COLOR_TEXT_DDRED : COLOR_XRGB(90, 90, 90))));
-			if (item.Data.Deterioration > 1 && HexMngr.ShowItemDurability)
+			if (currentDura < 100 && HexMngr.ShowItemDurability)
 				SprMngr.DrawStr(Rect(pos.L + 28, pos.T + (i2 * height) + height - 8, pos.R, pos.T + (i2 * height) + height), (color != COLOR_XRGB(90, 90, 90) ? Str::FormatBuf("%u/%u", currentDura, brokenCount) : Str::FormatBuf("Broken")), FONT_FLAG_BORDERED, color);
             i2++;
         }
