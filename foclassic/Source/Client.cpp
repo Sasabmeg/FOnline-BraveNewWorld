@@ -5212,7 +5212,8 @@ void FOClient::Net_OnChosenParam()
         case ST_CURRENT_AP:
         {
             Chosen->ApRegenerationTick = 0;
-            break;
+			WriteLog("FOClient::Net_OnChosenParam - ST_CURRENT_AP param called, it will set regenTick to 0. apRegenTick = %u\n", Chosen->ApRegenerationTick);
+			break;
         }
         case TO_BATTLE:
         {
@@ -7730,9 +7731,39 @@ void FOClient::CrittersProcess()
             Chosen->Alpha = 0xFF;
     }
 
-    // Actions
-    if( !Chosen->IsFree() )
-        return;
+	if (Chosen->IsWalkAnim()) {
+		WriteLog("FOClient::CrittersProcess - ap<%u.%u> - gameTick = %u, apRegenTick = %u, gameOpt.ApRegen = %u\n", Chosen->Params[ST_CURRENT_AP] / AP_DIVIDER, Chosen->Params[ST_CURRENT_AP] % AP_DIVIDER, Timer::GameTick(), Chosen->ApRegenerationTick, GameOpt.ApRegeneration);
+		// Ap regeneration while running or walking
+		if (Chosen->GetParam(ST_CURRENT_AP) < Chosen->GetParam(ST_ACTION_POINTS) && !IsTurnBased)
+		{
+			uint tick = Timer::GameTick();
+			if (!Chosen->ApRegenerationTick)
+				Chosen->ApRegenerationTick = tick;
+			else
+			{
+				uint delta = tick - Chosen->ApRegenerationTick;
+				if (delta >= 200)
+				{
+					int max_ap = Chosen->GetParam(ST_ACTION_POINTS) * AP_DIVIDER;
+					Chosen->Params[ST_CURRENT_AP] += (Chosen->IsRunning ? 0.33 : 0.66) * max_ap * delta / GameOpt.ApRegeneration;
+					if (Chosen->Params[ST_CURRENT_AP] > max_ap)
+						Chosen->Params[ST_CURRENT_AP] = max_ap;
+					Chosen->ApRegenerationTick = tick;
+				}
+			}
+		}
+		if (Chosen->GetParam(ST_CURRENT_AP) > Chosen->GetParam(ST_ACTION_POINTS))
+			Chosen->Params[ST_CURRENT_AP] = Chosen->GetParam(ST_ACTION_POINTS) * AP_DIVIDER;
+	}
+
+	// Actions
+	if (!Chosen->IsFree()) {
+		return;
+	}
+
+	if (Chosen->IsWalkAnim()) {
+		WriteLog("FOClient::CrittersProcess - NEVER HAPPENS");
+	}
 
     // Game pause
     if( Timer::IsGamePaused() )
@@ -7958,7 +7989,10 @@ label_EndMove:
                 {
                     Chosen->Params[ST_CURRENT_AP] -= ap_cost_real;
                 }
-                Chosen->ApRegenerationTick = 0;
+				if (!Chosen->IsWalkAnim()) {
+					WriteLog("FOClient::CrittersProcess - Not walk or run action, okay to set to 0\n");
+					Chosen->ApRegenerationTick = 0;
+				}
 				//    To check if smart cursor is activated, if so, may not redraw to keep move-hex outline on clicked position.
 				if (!LegacyMouseCursor && !SmartMouseLastClick)
 					HexMngr.SetCursorPos(GameOpt.MouseX, GameOpt.MouseY, Keyb::CtrlDwn, true);

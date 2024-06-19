@@ -158,15 +158,23 @@ bool Critter::IsBusy()
     return !IsFree();
 }
 
-void Critter::SetBreakTime( uint ms )
+void Critter::SetBreakTime(uint ms, bool continousBreak)
 {
-    breakTime = ms;
+	breakTime = ms;
     startBreakTime = Timer::GameTick();
-    ApRegenerationTick = 0;
+	if (!continousBreak) {
+		ApRegenerationTick = 0;
+		Data.Params[EVENT_CRITTER_ACTION_IS_MOVING] = 0;
+	}
+	if (IsPlayer()) {
+		//WriteLog("Critter::SetBreakTime - BREAK TIME\tap<%u.%u> - startBreakTime = %u, gameTick = %u, breakTime = %u, continousBreak = %u, IsRunning = %u, Data.Params[EVENT_CRITTER_ACTION_IS_MOVING] = %u\n", Data.Params[ST_CURRENT_AP] / AP_DIVIDER, Data.Params[ST_CURRENT_AP] % AP_DIVIDER, startBreakTime, Timer::GameTick(), breakTime, continousBreak ? 1 : 0, IsRuning ? 1 : 0, Data.Params[EVENT_CRITTER_ACTION_IS_MOVING]);
+	}
 }
 
 void Critter::SetBreakTimeDelta( uint ms )
 {
+	//	we need this fix for AP regen while running, else it decreases constantly and one 'free' regen will tick at some point
+	ms += 10;
     uint dt = (Timer::GameTick() - startBreakTime);
     if( dt > breakTime )
         dt -= breakTime;
@@ -174,7 +182,7 @@ void Critter::SetBreakTimeDelta( uint ms )
         dt = 0;
     if( dt > ms )
         dt = 0;
-    SetBreakTime( ms - dt );
+    SetBreakTime( ms - dt, true );
 }
 
 void Critter::SetWait( uint ms )

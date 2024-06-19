@@ -39,21 +39,58 @@ void FOServer::ProcessCritter( Critter* cr )
 
     // Ap regeneration
     int max_ap = cr->GetParam( ST_ACTION_POINTS ) * AP_DIVIDER;
-    if( cr->IsFree() && cr->GetRealAp() < max_ap && !cr->IsTurnBased() )
+    if( cr->GetRealAp() < max_ap && !cr->IsTurnBased() )
     {
         if( !cr->ApRegenerationTick )
             cr->ApRegenerationTick = tick;
         else
         {
-            uint delta = tick - cr->ApRegenerationTick;
-            if( delta >= 500 )
-            {
-                cr->Data.Params[ST_CURRENT_AP] += max_ap * delta / GameOpt.ApRegeneration;
-                if( cr->Data.Params[ST_CURRENT_AP] > max_ap )
-                    cr->Data.Params[ST_CURRENT_AP] = max_ap;
-                cr->ApRegenerationTick = tick;
-                // if(cr->IsPlayer()) WriteLog("ap<%u.%u>\n",cr->Data.St[ST_CURRENT_AP]/AP_DIVIDER,cr->Data.St[ST_CURRENT_AP]%AP_DIVIDER);
-            }
+			//	standing idle
+			if (cr->IsFree()) {
+				uint delta = tick - cr->ApRegenerationTick;
+				//	cap delta vs regen bug when standing still and getting AP drained by emp/shock
+				if (delta > 600) {
+					WriteLog("FOServer::ProcessCritter - DELTA_BUG_FIX oldDelta = %u, newDelta = %u\n", delta, 600);
+					delta = 600;
+				}
+				if (delta >= 500)
+				{
+					uint startBreak = cr->startBreakTime;
+					uint breakT = cr->breakTime;
+					int dt = (Timer::GameTick() - startBreak);
+					if (dt > breakT) {
+						if (delta > (dt - breakT)) {
+							delta = delta - (dt - breakT);
+							WriteLog("FOServer::ProcessCritter - NEW delta = %u, dt = %d, breakT = %u\n", delta, dt, breakT);
+						}
+						else {
+							WriteLog("FOServer::ProcessCritter - OLD delta = %u, dt = %d, breakT = %u\n", delta, dt, breakT);
+						}
+					}
+					cr->Data.Params[ST_CURRENT_AP] += max_ap * delta / GameOpt.ApRegeneration;
+					if (cr->Data.Params[ST_CURRENT_AP] > max_ap)
+						cr->Data.Params[ST_CURRENT_AP] = max_ap;
+					cr->ApRegenerationTick = tick;
+					WriteLog("FOServer::ProcessCritter - FREEE\tap<%u.%u> - startBreakTime = %u, gameTick = %u, breakTime = %u, Data.Params[EVENT_CRITTER_ACTION_IS_MOVING] = %u\n", cr->Data.Params[ST_CURRENT_AP] / AP_DIVIDER, cr->Data.Params[ST_CURRENT_AP] % AP_DIVIDER, cr->startBreakTime, Timer::GameTick(), cr->breakTime, cr->Data.Params[EVENT_CRITTER_ACTION_IS_MOVING]);
+				}
+			}
+			else if (cr->IsPlayer()) {
+				uint delta = tick - cr->ApRegenerationTick;
+				if (delta >= 100)
+				{
+					if (cr->Data.Params[EVENT_CRITTER_ACTION_IS_MOVING] > 0) {
+						cr->Data.Params[ST_CURRENT_AP] += max_ap * delta / GameOpt.ApRegeneration * (cr->IsRuning ? 0.33 : 0.66);
+						if (cr->Data.Params[ST_CURRENT_AP] > max_ap)
+							cr->Data.Params[ST_CURRENT_AP] = max_ap;
+						cr->ApRegenerationTick = tick;
+						WriteLog("FOServer::ProcessCritter - BUSY\tap<%u.%u> - startBreakTime = %u, gameTick = %u, breakTime = %u, Data.Params[EVENT_CRITTER_ACTION_IS_MOVING] = %u\n", cr->Data.Params[ST_CURRENT_AP] / AP_DIVIDER, cr->Data.Params[ST_CURRENT_AP] % AP_DIVIDER, cr->startBreakTime, Timer::GameTick(), cr->breakTime, cr->Data.Params[EVENT_CRITTER_ACTION_IS_MOVING]);
+					}
+					else {
+						cr->ApRegenerationTick = tick;
+						WriteLog("FOServer::ProcessCritter - NOT MOVING ACTION = \tap<%u.%u> - startBreakTime = %u, gameTick = %u, breakTime = %u, Data.Params[EVENT_CRITTER_ACTION_IS_MOVING] = %u\n", cr->Data.Params[ST_CURRENT_AP] / AP_DIVIDER, cr->Data.Params[ST_CURRENT_AP] % AP_DIVIDER, cr->startBreakTime, Timer::GameTick(), cr->breakTime, cr->Data.Params[EVENT_CRITTER_ACTION_IS_MOVING]);
+					}
+				}
+			}
         }
     }
     if( cr->Data.Params[ST_CURRENT_AP] > max_ap )
@@ -435,12 +472,14 @@ bool FOServer::Act_Move( Critter* cr, uint16 hx, uint16 hy, uint move_params )
             cr->ChangeParam( MODE_HIDE );
             cr->Data.Params[MODE_HIDE] = 0;
         }
-        cr->SetBreakTimeDelta( cr->GetTimeRun() );
+		cr->Data.Params[EVENT_CRITTER_ACTION_IS_MOVING] = 2;
+		cr->SetBreakTimeDelta( cr->GetTimeRun() );
     }
     else
     {
-        cr->SetBreakTimeDelta( cr->GetTimeWalk() );
-    }
+		cr->Data.Params[EVENT_CRITTER_ACTION_IS_MOVING] = 1;
+		cr->SetBreakTimeDelta( cr->GetTimeWalk() );
+	}
 
     cr->SendA_Move( move_params );
     cr->ProcessVisibleCritters();

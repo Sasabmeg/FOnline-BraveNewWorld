@@ -263,14 +263,14 @@ public:
 
     // Break time
 private:
-    uint startBreakTime;
-    uint breakTime;
-    uint waitEndTick;
 
 public:
-    bool IsFree();
+	uint startBreakTime;
+	uint breakTime;
+	uint waitEndTick;
+	bool IsFree();
     bool IsBusy();
-    void SetBreakTime( uint ms );
+    void SetBreakTime( uint ms, bool continousBreak = false);
     void SetBreakTimeDelta( uint ms );
 
     void SetWait( uint ms );

@@ -1568,6 +1568,9 @@
 # define MODE_NO_RUN                                      (540)
 # define MODE_NO_TALK                                     (541)
 
+//	Added in BNW, to allow AP regen while running
+#define EVENT_CRITTER_ACTION_IS_MOVING				      (949)
+
 #endif   // !FOCLASSIC_SKIP_PARAMS
 
 // Cleanup
