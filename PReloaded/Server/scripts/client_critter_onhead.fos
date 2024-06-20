@@ -24,6 +24,7 @@ uint factionCount = 0;
 uint mapPid = 0;
 bool doNotHideNpcNames;
 uint npcNamesColor = COLOR_DGREEN;
+uint npcNamesDeadColor = COLOR_DARK;
 uint npcNamesQuestRegularColor = COLOR_GREEN;
 uint npcNamesQuestStoryColor = COLOR_GOLDEN_YELLOW;
 uint npcNamesQuestJobColor = COLOR_TEAL;
@@ -181,7 +182,9 @@ void DrawCritterOnHead()	//export
 			name = "|" + cr.NameColor + " " + head;
 			cr.ContourColor = cr.ContourColor;
 			if (!cr.IsPlayer()) {
-                if (nameSearch.length() > 0 && substring(strlwr(head), 0, nameSearch.length()) == strlwr(nameSearch)) {
+                if (cr.IsDead()) {
+                    name = "|" + npcNamesDeadColor + " " + head;
+                } else if (nameSearch.length() > 0 && substring(strlwr(head), 0, nameSearch.length()) == strlwr(nameSearch)) {
                     if (npcNameSearchBlink) {
                         name = "|" + (npcNamesSearchColor + ((GetTick()/2%1000) > 125 ? 0 : 256*256*256*2)) + " " + head;
                     } else {
