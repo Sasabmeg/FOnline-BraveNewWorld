@@ -164,10 +164,10 @@ void Critter::SetBreakTime(uint ms, bool continousBreak)
     startBreakTime = Timer::GameTick();
 	if (!continousBreak) {
 		ApRegenerationTick = 0;
-		Data.Params[EVENT_CRITTER_ACTION_IS_MOVING] = 0;
+		currentAction = -1;
 	}
 	if (IsPlayer()) {
-		//WriteLog("Critter::SetBreakTime - BREAK TIME\tap<%u.%u> - startBreakTime = %u, gameTick = %u, breakTime = %u, continousBreak = %u, IsRunning = %u, Data.Params[EVENT_CRITTER_ACTION_IS_MOVING] = %u\n", Data.Params[ST_CURRENT_AP] / AP_DIVIDER, Data.Params[ST_CURRENT_AP] % AP_DIVIDER, startBreakTime, Timer::GameTick(), breakTime, continousBreak ? 1 : 0, IsRuning ? 1 : 0, Data.Params[EVENT_CRITTER_ACTION_IS_MOVING]);
+		//WriteLog("Critter::SetBreakTime - BREAK TIME\tap<%u.%u> - startBreakTime = %u, gameTick = %u, breakTime = %u, continousBreak = %u, IsRunning = %u, cr->currentAction = %d\n", Data.Params[ST_CURRENT_AP] / AP_DIVIDER, Data.Params[ST_CURRENT_AP] % AP_DIVIDER, startBreakTime, Timer::GameTick(), breakTime, continousBreak ? 1 : 0, IsRuning ? 1 : 0, cr->currentAction);
 	}
 }
 

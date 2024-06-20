@@ -71,23 +71,23 @@ void FOServer::ProcessCritter( Critter* cr )
 					if (cr->Data.Params[ST_CURRENT_AP] > max_ap)
 						cr->Data.Params[ST_CURRENT_AP] = max_ap;
 					cr->ApRegenerationTick = tick;
-					WriteLog("FOServer::ProcessCritter - FREEE\tap<%u.%u> - startBreakTime = %u, gameTick = %u, breakTime = %u, Data.Params[EVENT_CRITTER_ACTION_IS_MOVING] = %u\n", cr->Data.Params[ST_CURRENT_AP] / AP_DIVIDER, cr->Data.Params[ST_CURRENT_AP] % AP_DIVIDER, cr->startBreakTime, Timer::GameTick(), cr->breakTime, cr->Data.Params[EVENT_CRITTER_ACTION_IS_MOVING]);
+					WriteLog("FOServer::ProcessCritter - FREEE\tap<%u.%u> - startBreakTime = %u, gameTick = %u, breakTime = %u, cr->currentAction = %d\n", cr->Data.Params[ST_CURRENT_AP] / AP_DIVIDER, cr->Data.Params[ST_CURRENT_AP] % AP_DIVIDER, cr->startBreakTime, Timer::GameTick(), cr->breakTime, cr->currentAction);
 				}
 			}
 			else if (cr->IsPlayer()) {
 				uint delta = tick - cr->ApRegenerationTick;
 				if (delta >= 100)
 				{
-					if (cr->Data.Params[EVENT_CRITTER_ACTION_IS_MOVING] > 0) {
+					if (cr->currentAction == CRITTER_ACTION_MOVE || cr->currentAction == CRITTER_ACTION_RUN) {
 						cr->Data.Params[ST_CURRENT_AP] += max_ap * delta / GameOpt.ApRegeneration * (cr->IsRuning ? 0.33 : 0.66);
 						if (cr->Data.Params[ST_CURRENT_AP] > max_ap)
 							cr->Data.Params[ST_CURRENT_AP] = max_ap;
 						cr->ApRegenerationTick = tick;
-						WriteLog("FOServer::ProcessCritter - BUSY\tap<%u.%u> - startBreakTime = %u, gameTick = %u, breakTime = %u, Data.Params[EVENT_CRITTER_ACTION_IS_MOVING] = %u\n", cr->Data.Params[ST_CURRENT_AP] / AP_DIVIDER, cr->Data.Params[ST_CURRENT_AP] % AP_DIVIDER, cr->startBreakTime, Timer::GameTick(), cr->breakTime, cr->Data.Params[EVENT_CRITTER_ACTION_IS_MOVING]);
+						WriteLog("FOServer::ProcessCritter - BUSY\tap<%u.%u> - startBreakTime = %u, gameTick = %u, breakTime = %u, cr->currentAction = %d\n", cr->Data.Params[ST_CURRENT_AP] / AP_DIVIDER, cr->Data.Params[ST_CURRENT_AP] % AP_DIVIDER, cr->startBreakTime, Timer::GameTick(), cr->breakTime, cr->currentAction);
 					}
 					else {
 						cr->ApRegenerationTick = tick;
-						WriteLog("FOServer::ProcessCritter - NOT MOVING ACTION = \tap<%u.%u> - startBreakTime = %u, gameTick = %u, breakTime = %u, Data.Params[EVENT_CRITTER_ACTION_IS_MOVING] = %u\n", cr->Data.Params[ST_CURRENT_AP] / AP_DIVIDER, cr->Data.Params[ST_CURRENT_AP] % AP_DIVIDER, cr->startBreakTime, Timer::GameTick(), cr->breakTime, cr->Data.Params[EVENT_CRITTER_ACTION_IS_MOVING]);
+						WriteLog("FOServer::ProcessCritter - NOT MOVING ACTION = \tap<%u.%u> - startBreakTime = %u, gameTick = %u, breakTime = %u, cr->currentAction = %d\n", cr->Data.Params[ST_CURRENT_AP] / AP_DIVIDER, cr->Data.Params[ST_CURRENT_AP] % AP_DIVIDER, cr->startBreakTime, Timer::GameTick(), cr->breakTime, cr->currentAction);
 					}
 				}
 			}
@@ -472,13 +472,13 @@ bool FOServer::Act_Move( Critter* cr, uint16 hx, uint16 hy, uint move_params )
             cr->ChangeParam( MODE_HIDE );
             cr->Data.Params[MODE_HIDE] = 0;
         }
-		cr->Data.Params[EVENT_CRITTER_ACTION_IS_MOVING] = 2;
 		cr->SetBreakTimeDelta( cr->GetTimeRun() );
-    }
+		cr->currentAction = CRITTER_ACTION_RUN;
+	}
     else
     {
-		cr->Data.Params[EVENT_CRITTER_ACTION_IS_MOVING] = 1;
 		cr->SetBreakTimeDelta( cr->GetTimeWalk() );
+		cr->currentAction = CRITTER_ACTION_MOVE;
 	}
 
     cr->SendA_Move( move_params );
@@ -521,6 +521,7 @@ bool FOServer::Act_Attack( Critter* cr, uint8 rate_weap, uint target_id )
 /* Check & Prepare                                                      */
 /************************************************************************/
     cr->SetBreakTime( GameOpt.Breaktime );
+	cr->currentAction = CRITTER_ACTION_USE_WEAPON;
 
     if( cr->GetId() == target_id )
     {
@@ -743,6 +744,7 @@ bool FOServer::Act_Attack( Critter* cr, uint8 rate_weap, uint target_id )
 bool FOServer::Act_Reload( Critter* cr, uint weap_id, uint ammo_id )
 {
     cr->SetBreakTime( GameOpt.Breaktime );
+	cr->currentAction = CRITTER_ACTION_RELOAD_WEAPON;
 
     if( !cr->CheckMyTurn( NULL ) )
     {
@@ -817,6 +819,7 @@ bool FOServer::Act_Reload( Critter* cr, uint weap_id, uint ammo_id )
 bool FOServer::Act_Use( Critter* cr, uint item_id, int skill, int target_type, uint target_id, uint16 target_pid, uint param )
 {
     cr->SetBreakTime( GameOpt.Breaktime );
+	cr->currentAction = CRITTER_ACTION_USE_SKILL;
 
     Map* map = MapMngr.GetMap( cr->GetMap() );
     if( map && !cr->CheckMyTurn( map ) )
@@ -835,6 +838,7 @@ bool FOServer::Act_Use( Critter* cr, uint item_id, int skill, int target_type, u
             WriteLogF( _FUNC_, " - Item not found, id<%u>, critter<%s>.\n", item_id, cr->GetInfo() );
             return false;
         }
+		cr->currentAction = CRITTER_ACTION_USE_ITEM;
     }
 
     int ap_cost = (item_id ? (GameOpt.GetUseApCost ? GameOpt.GetUseApCost( cr, item, USE_USE ) : 1) : cr->GetApCostUseSkill() );
@@ -1102,6 +1106,7 @@ bool FOServer::Act_Use( Critter* cr, uint item_id, int skill, int target_type, u
 bool FOServer::Act_PickItem( Critter* cr, uint16 hx, uint16 hy, uint16 pid )
 {
     cr->SetBreakTime( GameOpt.Breaktime );
+	cr->currentAction = CRITTER_ACTION_PICK_ITEM;
 
     Map* map = MapMngr.GetMap( cr->GetMap() );
     if( !map )

@@ -268,6 +268,7 @@ public:
 	uint startBreakTime;
 	uint breakTime;
 	uint waitEndTick;
+	int currentAction;
 	bool IsFree();
     bool IsBusy();
     void SetBreakTime( uint ms, bool continousBreak = false);
