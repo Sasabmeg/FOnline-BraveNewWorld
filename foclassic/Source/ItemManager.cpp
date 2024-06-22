@@ -1476,7 +1476,7 @@ void ItemManager::RadioSendText( Critter* cr, const char* text, uint16 text_len,
 		RadioSendTextEx(channels[i],
 			radios[i]->Data.RadioBroadcastSend, cr->GetMap(), cr->Data.WorldX, cr->Data.WorldY,
 			text2, text_len, cr->IntellectCacheValue, unsafe_text, text_msg, num_str, NULL);
-		WriteLog("Radios[%u] channel = %d, broadcastRange = %d, sending text = %s\n", i, channels[i], radios[i]->Data.RadioBroadcastSend, text2);
+		//WriteLog("Radios[%u] channel = %d, broadcastRange = %d, sending text = %s\n", i, channels[i], radios[i]->Data.RadioBroadcastSend, text2);
 	}
 }
 
@@ -1574,7 +1574,6 @@ void ItemManager::RadioSendTextEx( uint16 channel, int broadcast_type, uint from
                     }
 					if (channel == 0) {
 						playerIdsHavingChannel0.push_back(radio->AccCritter.Id);
-						WriteLog("pushback chan 0 critter ID = %u\n", radio->AccCritter.Id);
 					}
 					if( text )
                         cl->Send_TextEx( radio->GetId(), text, text_len, SAY_RADIO, intellect, unsafe_text );
@@ -1625,24 +1624,19 @@ void ItemManager::RadioSendTextEx( uint16 channel, int broadcast_type, uint from
 
 	//	channel 0 on radio is free receive for all players, for lore integrated into pip boy
 	if (channel == 0) {
-		WriteLog("1\n");
 		ClVec players_;
 		CrMngr.GetCopyPlayers(players_, true);
 		for (auto it = players_.begin(), end = players_.end(); it != end; ++it)
 		{
-			WriteLog("2\n");
 			Critter* player_ = *it;
 			if (!player_->IsNotValid && player_->IsPlayer()) {
-				WriteLog("3\n");
 				bool found = false;
 				for (auto it2 = playerIdsHavingChannel0.begin(), end = playerIdsHavingChannel0.end(); it2 != end; ++it2) {
 					if (player_->GetId() == *it2) {
-						WriteLog("4\n");
 						found = true;
 					}
 				}
 				if (!found) {
-					WriteLog("5\n");
 					uint   from_id = player_->GetId();
 					player_->Send_TextEx(from_id, text, text_len, SAY_RADIO, 10, unsafe_text);
 				}

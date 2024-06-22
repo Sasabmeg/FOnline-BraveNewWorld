@@ -4423,7 +4423,15 @@ void FOClient::OnText( const char* str, uint crid, int how_say, uint16 intellect
                 if( radio )
                     channel = radio->Data.RadioChannel;
             }
-            AddMess(MSGBOX_RADIO, FmtGameText( fstr_mb, channel, fstr ) );
+			if (channel % 2 == 0) {
+				string str = fstr;
+				std::size_t pos = str.find(":");
+				string nameStr = str.substr(0, pos);
+				string messageStr = str.substr(pos + 1);
+				AddMess(MSGBOX_RADIO, FmtGameText(fstr_mb + 1, channel, nameStr.c_str(), messageStr.c_str()));
+			} else {
+				AddMess(MSGBOX_RADIO, FmtGameText(fstr_mb, channel, fstr));
+			}
         }
         else
         {
