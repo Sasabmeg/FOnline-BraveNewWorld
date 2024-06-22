@@ -53,8 +53,7 @@ void FOServer::ProcessCritter( Critter* cr )
 					WriteLog("FOServer::ProcessCritter - DELTA_BUG_FIX oldDelta = %u, newDelta = %u\n", delta, 600);
 					delta = 600;
 				}
-				if (delta >= 500)
-				{
+				if (delta >= 500) {
 					uint startBreak = cr->startBreakTime;
 					uint breakT = cr->breakTime;
 					int dt = (Timer::GameTick() - startBreak);
@@ -76,19 +75,50 @@ void FOServer::ProcessCritter( Critter* cr )
 			}
 			else if (cr->IsPlayer()) {
 				uint delta = tick - cr->ApRegenerationTick;
-				if (delta >= 100)
-				{
+				if (delta >= 100) {
 					if (cr->currentAction == CRITTER_ACTION_MOVE || cr->currentAction == CRITTER_ACTION_RUN) {
-						cr->Data.Params[ST_CURRENT_AP] += max_ap * delta / GameOpt.ApRegeneration * (cr->IsRuning ? 0.33 : 0.66);
-						if (cr->Data.Params[ST_CURRENT_AP] > max_ap)
-							cr->Data.Params[ST_CURRENT_AP] = max_ap;
+						int regenFactor = 0;
+						if (cr->IsRuning) {
+							regenFactor = CLAMP((cr->Data.Params[ST_AP_REGEN_RATE] / 100) % 100, 0, 100);
+						} else {
+							regenFactor = CLAMP(cr->Data.Params[ST_AP_REGEN_RATE] % 100, 0, 100);
+						}
+						if (regenFactor > 1) {
+							cr->Data.Params[ST_CURRENT_AP] += max_ap * delta / GameOpt.ApRegeneration * regenFactor / 100;
+							if (cr->Data.Params[ST_CURRENT_AP] > max_ap)
+								cr->Data.Params[ST_CURRENT_AP] = max_ap;
+							cr->ApRegenerationTick = tick;
+							if (cr->IsRuning) {
+								WriteLog("FOServer::ProcessCritter - RUNNING ACTION\tap<%u.%u> - startBreakTime = %u, gameTick = %u, breakTime = %u, cr->currentAction = %d, regenFactor = %d\n", cr->Data.Params[ST_CURRENT_AP] / AP_DIVIDER, cr->Data.Params[ST_CURRENT_AP] % AP_DIVIDER, cr->startBreakTime, Timer::GameTick(), cr->breakTime, cr->currentAction, regenFactor);
+							}
+							else {
+								WriteLog("FOServer::ProcessCritter - MOVING ACTION\tap<%u.%u> - startBreakTime = %u, gameTick = %u, breakTime = %u, cr->currentAction = %d, regenFactor = %d\n", cr->Data.Params[ST_CURRENT_AP] / AP_DIVIDER, cr->Data.Params[ST_CURRENT_AP] % AP_DIVIDER, cr->startBreakTime, Timer::GameTick(), cr->breakTime, cr->currentAction, regenFactor);
+							}
+						} else {
+							cr->ApRegenerationTick = tick;
+							WriteLog("FOServer::ProcessCritter - MOVING ACTION but regenfactor <= 1\tap<%u.%u> - startBreakTime = %u, gameTick = %u, breakTime = %u, cr->currentAction = %d, regenFactor = %d\n", cr->Data.Params[ST_CURRENT_AP] / AP_DIVIDER, cr->Data.Params[ST_CURRENT_AP] % AP_DIVIDER, cr->startBreakTime, Timer::GameTick(), cr->breakTime, cr->currentAction, regenFactor);
+						}
+					}/* else if (cr->currentAction == CRITTER_ACTION_USE_ITEM || cr->currentAction == CRITTER_ACTION_USE_SKILL) {
+						int regenFactor = CLAMP((cr->Data.Params[ST_AP_REGEN_RATE] / 10000) % 100, 0, 100);
+						if (regenFactor > 1) {
+							cr->Data.Params[ST_CURRENT_AP] += max_ap * delta / GameOpt.ApRegeneration * regenFactor / 100;
+							if (cr->Data.Params[ST_CURRENT_AP] > max_ap)
+								cr->Data.Params[ST_CURRENT_AP] = max_ap;
+							cr->ApRegenerationTick = tick;
+							if (cr->currentAction == CRITTER_ACTION_USE_ITEM) {
+								WriteLog("FOServer::ProcessCritter - USE ITEM ACTION\tap<%u.%u> - startBreakTime = %u, gameTick = %u, breakTime = %u, cr->currentAction = %d\n", cr->Data.Params[ST_CURRENT_AP] / AP_DIVIDER, cr->Data.Params[ST_CURRENT_AP] % AP_DIVIDER, cr->startBreakTime, Timer::GameTick(), cr->breakTime, cr->currentAction);
+							}
+							else {
+								WriteLog("FOServer::ProcessCritter - USE SKILL ACTION\tap<%u.%u> - startBreakTime = %u, gameTick = %u, breakTime = %u, cr->currentAction = %d\n", cr->Data.Params[ST_CURRENT_AP] / AP_DIVIDER, cr->Data.Params[ST_CURRENT_AP] % AP_DIVIDER, cr->startBreakTime, Timer::GameTick(), cr->breakTime, cr->currentAction);
+							}
+						}
+						else {
+							WriteLog("FOServer::ProcessCritter - MOVING ACTION but regenfactor <= 1\tap<%u.%u> - startBreakTime = %u, gameTick = %u, breakTime = %u, cr->currentAction = %d, regenFactor = %d\n", cr->Data.Params[ST_CURRENT_AP] / AP_DIVIDER, cr->Data.Params[ST_CURRENT_AP] % AP_DIVIDER, cr->startBreakTime, Timer::GameTick(), cr->breakTime, cr->currentAction, regenFactor);
+						}
+					} else {
 						cr->ApRegenerationTick = tick;
-						WriteLog("FOServer::ProcessCritter - BUSY\tap<%u.%u> - startBreakTime = %u, gameTick = %u, breakTime = %u, cr->currentAction = %d\n", cr->Data.Params[ST_CURRENT_AP] / AP_DIVIDER, cr->Data.Params[ST_CURRENT_AP] % AP_DIVIDER, cr->startBreakTime, Timer::GameTick(), cr->breakTime, cr->currentAction);
-					}
-					else {
-						cr->ApRegenerationTick = tick;
-						WriteLog("FOServer::ProcessCritter - NOT MOVING ACTION = \tap<%u.%u> - startBreakTime = %u, gameTick = %u, breakTime = %u, cr->currentAction = %d\n", cr->Data.Params[ST_CURRENT_AP] / AP_DIVIDER, cr->Data.Params[ST_CURRENT_AP] % AP_DIVIDER, cr->startBreakTime, Timer::GameTick(), cr->breakTime, cr->currentAction);
-					}
+						WriteLog("FOServer::ProcessCritter - NON-AP-REGEN ACTION = \tap<%u.%u> - startBreakTime = %u, gameTick = %u, breakTime = %u, cr->currentAction = %d\n", cr->Data.Params[ST_CURRENT_AP] / AP_DIVIDER, cr->Data.Params[ST_CURRENT_AP] % AP_DIVIDER, cr->startBreakTime, Timer::GameTick(), cr->breakTime, cr->currentAction);
+					}*/
 				}
 			}
         }

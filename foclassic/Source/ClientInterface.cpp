@@ -338,8 +338,8 @@ int FOClient::InitIface()
     IfaceLoadRect2( LogBCreditsText, "LogCreditsText", LogX, LogY );
     IfaceLoadRect2( LogBExit, "LogExit", LogX, LogY );
     IfaceLoadRect2( LogBExitText, "LogExitText", LogX, LogY );
-    IfaceLoadRect( LogWChat, "LogMessageBox" );
-    IfaceLoadRect( LogWVersion, "LogVersion" );
+    IfaceLoadRect2( LogWChat, "LogMessageBox", LogX, LogY );
+    IfaceLoadRect2( LogWVersion, "LogVersion", LogX, LogY );
 
     // Dialog
     DlgCurAnswPage = 0;

@@ -2033,7 +2033,8 @@ void FOServer::Process_Text( Client* cl )
                 cl->SendAA_Text( cl->VisCr, str, SAY_WHISP, true );
             else
                 cl->Send_TextEx( cl->GetId(), str, len, SAY_WHISP, cl->IntellectCacheValue, true );
-
+			str[399] = 0;
+			WriteLog("FOServer::Process_Text - %s\n", str);
             ItemMngr.RadioSendText( cl, str, len, true, 0, 0, channels );
             if( channels.empty() )
             {

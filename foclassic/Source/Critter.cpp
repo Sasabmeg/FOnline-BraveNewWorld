@@ -160,21 +160,21 @@ bool Critter::IsBusy()
 
 void Critter::SetBreakTime(uint ms, bool continousBreak)
 {
+	ms += 10;
 	breakTime = ms;
     startBreakTime = Timer::GameTick();
 	if (!continousBreak) {
 		ApRegenerationTick = 0;
 		currentAction = -1;
 	}
+	
 	if (IsPlayer()) {
-		//WriteLog("Critter::SetBreakTime - BREAK TIME\tap<%u.%u> - startBreakTime = %u, gameTick = %u, breakTime = %u, continousBreak = %u, IsRunning = %u, cr->currentAction = %d\n", Data.Params[ST_CURRENT_AP] / AP_DIVIDER, Data.Params[ST_CURRENT_AP] % AP_DIVIDER, startBreakTime, Timer::GameTick(), breakTime, continousBreak ? 1 : 0, IsRuning ? 1 : 0, cr->currentAction);
+		WriteLog("Critter::SetBreakTime - BREAK TIME\tap<%u.%u> - startBreakTime = %u, gameTick = %u, breakTime = %u, continousBreak = %u, IsRunning = %u, currentAction = %d\n", Data.Params[ST_CURRENT_AP] / AP_DIVIDER, Data.Params[ST_CURRENT_AP] % AP_DIVIDER, startBreakTime, Timer::GameTick(), breakTime, continousBreak ? 1 : 0, IsRuning ? 1 : 0, currentAction);
 	}
 }
 
 void Critter::SetBreakTimeDelta( uint ms )
 {
-	//	we need this fix for AP regen while running, else it decreases constantly and one 'free' regen will tick at some point
-	ms += 10;
     uint dt = (Timer::GameTick() - startBreakTime);
     if( dt > breakTime )
         dt -= breakTime;
