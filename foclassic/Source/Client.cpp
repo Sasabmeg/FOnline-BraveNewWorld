@@ -4382,7 +4382,10 @@ void FOClient::OnText( const char* str, uint crid, int how_say, uint16 intellect
 		case SAY_RADIO:
             fstr_mb = STR_MBRADIO;
             break;
-        case SAY_NETMSG:
+		case SAY_RADIO_0:
+			fstr_mb = STR_MBRADIO + 1;
+			break;
+		case SAY_NETMSG:
             mess_type = MSGBOX_GAME;
             fstr_mb = STR_MBNET;
             break;
@@ -4426,13 +4429,29 @@ void FOClient::OnText( const char* str, uint crid, int how_say, uint16 intellect
 			if (channel % 2 == 0) {
 				string str = fstr;
 				std::size_t pos = str.find(":");
-				string nameStr = str.substr(0, pos);
-				string messageStr = str.substr(pos + 1);
-				AddMess(MSGBOX_RADIO, FmtGameText(fstr_mb + 1, channel, nameStr.c_str(), messageStr.c_str()));
+				if (pos > 0) {
+					string nameStr = str.substr(0, pos);
+					string messageStr = str.substr(pos + 1);
+					AddMess(MSGBOX_RADIO, FmtGameText(fstr_mb + 1, channel, nameStr.c_str(), messageStr.c_str()));
+				}
+				else {
+					WriteLog("Radio 0 bad format, missing name or separator ':'\n");
+				}
 			} else {
 				AddMess(MSGBOX_RADIO, FmtGameText(fstr_mb, channel, fstr));
 			}
-        }
+		}
+		else if ( how_say == SAY_RADIO_0) {
+			string str = fstr;
+			std::size_t pos = str.find(":");
+			if (pos > 0) {
+				string nameStr = str.substr(0, pos);
+				string messageStr = str.substr(pos + 1);
+				AddMess(MSGBOX_RADIO, FmtGameText(STR_MBRADIO + 1, 0, nameStr.c_str(), messageStr.c_str()));
+			} else {
+				WriteLog("Radio 0 bad format, missing name or separator ':'\n");
+			}
+		}
         else
         {
             AddMess(mess_type, FmtGameText( fstr_mb, crit_name.c_str(), fstr ) );

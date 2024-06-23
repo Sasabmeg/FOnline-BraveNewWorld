@@ -2041,6 +2041,32 @@ void FOServer::Process_Text( Client* cl )
             }
             break;
         }
+		case SAY_RADIO_0:
+		{
+			if (cl->GetMap())
+				cl->SendAA_Text(cl->VisCr, str, SAY_WHISP, true);
+			else
+				cl->Send_TextEx(cl->GetId(), str, len, SAY_WHISP, cl->IntellectCacheValue, true);
+
+			ClVec players_;
+			CrMngr.GetCopyPlayers(players_, true);
+			for (auto it = players_.begin(), end = players_.end(); it != end; ++it)
+			{
+				Critter* player_ = *it;
+				if (!player_->IsNotValid && player_->IsPlayer()) {
+					const char* text2;
+					std::string textStr;
+					textStr.append(cl->GetName());
+					textStr.append(": ");
+					textStr.append(str);
+					text2 = textStr.c_str();
+					uint len = textStr.length();
+					uint   from_id = player_->GetId();
+					player_->Send_TextEx(from_id, text2, len, SAY_RADIO_0, 10, true);
+				}
+			}
+			break;
+		}
         default:
             return;
     }

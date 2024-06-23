@@ -1468,7 +1468,7 @@ void ItemManager::RadioSendText( Critter* cr, const char* text, uint16 text_len,
 			textStr.append(text);
 			text2 = textStr.c_str();
 			text_len = textStr.size();
-		//	WriteLog("Radios[%u] channel = %d, broadcastRange = %d, sending text = %s\n", i, channels[i], radios[i]->Data.RadioBroadcastSend, textStr.c_str());
+			//WriteLog("Radios[%u] channel = %d, from = %s, broadcastRange = %d, sending text = %s\n", i, channels[i], cr->GetName(), radios[i]->Data.RadioBroadcastSend, textStr.c_str());
 		}
 		else {
 			text2 = text;
@@ -1482,7 +1482,7 @@ void ItemManager::RadioSendText( Critter* cr, const char* text, uint16 text_len,
 
 void ItemManager::RadioSendTextEx( uint16 channel, int broadcast_type, uint from_map_id, uint16 from_wx, uint16 from_wy,
                                    const char* text, uint16 text_len, uint16 intellect, bool unsafe_text,
-                                   uint16 text_msg, uint num_str, const char* lexems )
+                                   uint16 text_msg, uint num_str, const char* lexems)
 {
     // Broadcast
     if( broadcast_type != RADIO_BROADCAST_FORCE_ALL && broadcast_type != RADIO_BROADCAST_WORLD &&
@@ -1623,9 +1623,11 @@ void ItemManager::RadioSendTextEx( uint16 channel, int broadcast_type, uint from
     }
 
 	//	channel 0 on radio is free receive for all players, for lore integrated into pip boy
+	//	here we send to any player, who does not have radio set to channel 0
 	if (channel == 0) {
 		ClVec players_;
 		CrMngr.GetCopyPlayers(players_, true);
+		//WriteLog("Radio 0> players: %d\n", players_.size());
 		for (auto it = players_.begin(), end = players_.end(); it != end; ++it)
 		{
 			Critter* player_ = *it;
@@ -1637,7 +1639,8 @@ void ItemManager::RadioSendTextEx( uint16 channel, int broadcast_type, uint from
 					}
 				}
 				if (!found) {
-					uint   from_id = player_->GetId();
+					//WriteLog("Radio 0> player without radio 0: %s text to send = %s\n", (player_->GetName()), text);
+					uint from_id = player_->GetId();
 					player_->Send_TextEx(from_id, text, text_len, SAY_RADIO, 10, unsafe_text);
 				}
 			}

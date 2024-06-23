@@ -99,7 +99,7 @@ private:
 public:
     void RadioRegister( Item* radio, bool add );
     void RadioSendText( Critter* cr, const char* text, uint16 text_len, bool unsafe_text, uint16 text_msg, uint num_str, UInt16Vec& channels );
-    void RadioSendTextEx( uint16 channel, int broadcast_type, uint from_map_id, uint16 from_wx, uint16 from_wy, const char* text, uint16 text_len, uint16 intellect, bool unsafe_text, uint16 text_msg, uint num_str, const char* lexems );
+    void RadioSendTextEx( uint16 channel, int broadcast_type, uint from_map_id, uint16 from_wx, uint16 from_wy, const char* text, uint16 text_len, uint16 intellect, bool unsafe_text, uint16 text_msg, uint num_str, const char* lexems);
     #endif // FOCLASSIC_SERVER
 
     // Items statistics
