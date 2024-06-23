@@ -340,6 +340,51 @@ bool map_message(string& message, uint16& hexX, uint16& hexY, uint& color, uint&
 // By default delay == [TextDelay + message length * 100] ms
 bool in_message(string& message, int& sayType, uint& critterId, uint& delay)
 {
+    //  radio 0 and other even channel number radio parsing, sender id is sent so it can filter based on friend/foe list
+    if (sayType == SAY_RADIO_0 || sayType == SAY_RADIO) {
+        //Message("in_message::sayType " + sayType + ", message = " + message);
+        //array<string@>@ split = split(message, ":");
+        int pos1 = findFirst(message, ":", 0);
+        if (pos1 > 0) {
+            string id = substring(message, 0, pos1);
+            int fromId = 0;
+            bool isGood = false;
+            StrToInt(id, fromId);
+            CritterCl@ chosen = GetChosen();
+            if (valid(chosen)) {
+                for (uint i = GOOD_EVIL_LIST_BEGIN; i <= GOOD_EVIL_LIST_END; i += 1) {
+                    int listId = chosen.GoodEvilList[i];
+                    bool isEvil = FLAG(listId, 0x80000000);
+                    if (isEvil) {
+                        listId ^= 0x80000000;
+                        if (listId == fromId) {
+                            return false;
+                        }
+                    } else {
+                        if (listId == fromId) {
+                            isGood = true;
+                        }
+                    }
+                }
+            } else {
+                return false;
+            }
+            int pos2 = findFirst(message, ":", pos1 + 1);
+            if (pos2 > pos1 + 1) {
+                string name = substring(message, pos1 + 1, pos2 - pos1 - 1);
+                if (isGood) {
+                    name = "|0xFFA500 " + name;
+                }
+                int pos3 = message.length();
+                string msg = substring(message, pos2 + 1, pos3 - pos2);
+                message = name + ":" + msg;
+            } else {
+                //message = "Script error: pos1";
+            }
+        } else {
+            //message = "Script error: pos1";
+        }
+    }
     CritterCl@ critter = GetCritter(critterId);
 
 	// @msg@ parser
@@ -908,7 +953,8 @@ bool out_message(string& message, int& sayType)
 				sayType=SAY_FACTION;
             else if(ch == "g" || ch== "G")
 				sayType=SAY_FACTION;
-
+            else if (ch == "0")
+                sayType=SAY_RADIO_0;
             //  party chat
             else if(ch == "q" || ch== "Q")
 				sayType=SAY_SQUAD;

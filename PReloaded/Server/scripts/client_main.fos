@@ -321,7 +321,7 @@ uint item_cost(ItemCl& item, CritterCl& chosen, CritterCl& npc, bool sell)
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-// Call to determine perk aviability.
+// Call to determine perk availability.
 bool check_perk(CritterCl& cr, uint perk)
 {
     return PerkCheck(cr, perk, false);
