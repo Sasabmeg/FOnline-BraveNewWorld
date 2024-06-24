@@ -56,6 +56,10 @@ void InitNameColorizing() // Export
 {
     Records.resize(0);
 
+    CritterCl@ chosen = GetChosen();
+    if(!valid(chosen))       // ?!
+        return;
+
     file f;
     if((f.open(CUSTOM_NAMES_FILE_NAME, "r") == 0) || (f.open(PUBLIC_NAMES_FILE_NAME, "r") == 0))
     {
@@ -201,7 +205,7 @@ void ColorizeCritterPreview(CritterCl& cr)   // Export
         {
             Record@ r = Records[i];
             if(CompareName(factionId, r.NameStr))
-            {   
+            {
                 cr.NameColor = r.NameColor;
                 cr.ContourColor = r.ContourColor;
                 return;
@@ -308,10 +312,10 @@ bool ColorizeMinigame(CritterCl& chosen, CritterCl& cr, int chosenMgData, int cr
 bool ColorizeFromFile(CritterCl& chosen, CritterCl& cr)
 {
 	for(uint i = 0, j = Records.length(); i < j; i++)
-    {	
+    {
 	Record@ r = Records[i];
 		if(r.NameStr=="myself") chosen.NameColor = r.NameColor;
-    }	
+    }
 
 	string@ factionId=""+cr.Stat[ST_TEAM_ID];
 	if(cr.IsNpc())
@@ -326,7 +330,7 @@ bool ColorizeFromFile(CritterCl& chosen, CritterCl& cr)
 		{
             cr.ContourColor = COLOR_CONTOUR_GREEN;
             cr.NameColor = COLOR_CONTOUR_GREEN;
-            return true;		
+            return true;
 		}
         return false;
     }
@@ -338,7 +342,7 @@ bool ColorizeFromFile(CritterCl& chosen, CritterCl& cr)
 	if(!valid(chosen))
         return false;
 
-		
+
     string@ crName = strlwr(cr.Name);;
 	for(uint i = 0, j = Records.length(); i < j; i++)
     {
@@ -356,7 +360,7 @@ bool ColorizeFromFile(CritterCl& chosen, CritterCl& cr)
     {
         Record@ r = Records[i];
         if(CompareName(factionId, r.NameStr))
-        {	
+        {
             cr.NameColor = r.NameColor;
             cr.ContourColor = r.ContourColor;
             return true;
@@ -364,12 +368,10 @@ bool ColorizeFromFile(CritterCl& chosen, CritterCl& cr)
     }
 	}
 
-	
+
 
     return false;
 }
-
-
 
 bool ColorizeGoodEvil(CritterCl& chosen, CritterCl& cr)
 {
@@ -384,7 +386,7 @@ bool ColorizeGoodEvil(CritterCl& chosen, CritterCl& cr)
                 id ^= 0x80000000;
             if(id == crId)
             {
-                cr.NameColor = (isEvil ? COLOR_RED : COLOR_GREEN);
+                cr.NameColor = (isEvil ? COLOR_RED : COLOR_ORANGE);
                 cr.ContourColor = (isEvil ? COLOR_CONTOUR_RED : COLOR_CONTOUR_GREEN);
                 return true;
             }
@@ -393,11 +395,19 @@ bool ColorizeGoodEvil(CritterCl& chosen, CritterCl& cr)
     return false;
 }
 
-
+bool ForceColorizeGoodEvil(uint crId, int direction)
+{
+    CritterCl@ cr = GetCritter(crId);
+    if (valid(cr)) {
+        cr.NameColor = (direction < 0 ? COLOR_RED : (direction > 0 ? COLOR_ORANGE : COLOR_WHITE));
+        cr.ContourColor = (direction < 0 ? COLOR_CONTOUR_RED : direction > 0 ? COLOR_CONTOUR_GREEN : COLOR_YELLOW);
+        return true;
+    }
+    return false;
+}
 
 
 // Force recolorizing from server scripts
-
 void _RefreshColorizing(int, int, int, string@, array<int>@ data)
 {
     CritterCl@ chosen = GetChosen();
@@ -416,6 +426,13 @@ void _RefreshColorizing(int, int, int, string@, array<int>@ data)
         ColorizeCritter(chosen, cr, chosenMinigameData, crMinigameData);
     }
 }
+
+void _ForceColorizingGoodEvil(int, int, int, string@, array<int>@ data)
+{
+    ForceColorizeGoodEvil(data[0], data[1]);
+}
+
+
 #endif // __CLIENT
 #ifdef __SERVER
 
@@ -453,6 +470,16 @@ void RefreshColorizingOthers(Critter@ chosen)
     }
     chosen.RunClientScript("name_colorizing@_RefreshColorizing", 0, 0, 0, null, data);
 }
+
+void ForceColorizingGoodEvil(Critter@ chosen, Critter@ crTarget, int direction) {
+    array<int> data;
+    data.insertLast(crTarget.Id);
+    data.insertLast(direction);
+    chosen.RunClientScript("name_colorizing@_ForceColorizingGoodEvil", 0, 0, 0, null, data);
+}
+
+
+
 
 // Tells other players to recolorize chosen
 void RefreshColorizingMe(Critter@ chosen)

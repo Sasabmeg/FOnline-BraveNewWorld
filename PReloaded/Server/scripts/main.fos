@@ -147,6 +147,7 @@ import void SendCarInfoToPlayersOnMap(Map& map) from "unsafe_client";
 import void _PlayerEnterParkinglot(Map& map, Critter& player) from "map_hub";
 import void ViewImageClient(Critter& player, string& imageFile, bool limitWindowSizeMaxToImageSize, bool resizeEnabled, bool moveEnabled) from "unsafe_client";
 
+import void ForceColorizingGoodEvil(Critter@ chosen, Critter@ crTarget, int direction) from "name_colorizing";
 
 dictionary    ItemPids;
 dictionary    VarIds;
@@ -3182,7 +3183,7 @@ void karma_voting(Critter& crFrom, Critter& crTo, bool valUp)
     // Good / Evil system
     _SetTimeout(crFrom, TO_KARMA_VOTING, REAL_SECOND(3));     // Some small time to prevent bruteforce
     int crId = int(crTo.Id);
-    // Find alredy added
+    // Find already added
     for(uint i = GOOD_EVIL_LIST_BEGIN; i <= GOOD_EVIL_LIST_END; i++)
     {
         int id = crFrom.GoodEvilList[i];
@@ -3194,9 +3195,13 @@ void karma_voting(Critter& crFrom, Critter& crTo, bool valUp)
 
             if(id == crId)
             {
-                if((valUp && !isEvil) || (!valUp && isEvil))
+                if((valUp && !isEvil) || (!valUp && isEvil)) {
+                    crFrom.Say(SAY_NETMSG, "Pip-boy:: " + crTo.Name + " is already marked as " + (valUp ? "friend." :"foe."));
                     return;                                   // Already added
+                }
                 crFrom.GoodEvilListBase[i] = 0;               // Erase from list
+                crFrom.Say(SAY_NETMSG, "Pip-boy:: " + crTo.Name + " unmarked as " + (!valUp ? "friend." :"foe."));
+                ForceColorizingGoodEvil(crFrom, crTo, 0);
                 return;
             }
         }
@@ -3210,6 +3215,8 @@ void karma_voting(Critter& crFrom, Critter& crTo, bool valUp)
         if(id == 0)
         {
             crFrom.GoodEvilListBase[i] = crId;
+            crFrom.Say(SAY_NETMSG, "Pip-boy:: " + crTo.Name + " marked as " + (valUp ? "friend." :"foe."));
+            ForceColorizingGoodEvil(crFrom, crTo, valUp ? 1 : -1);
             return;
         }
     }
@@ -3219,6 +3226,8 @@ void karma_voting(Critter& crFrom, Critter& crTo, bool valUp)
     for(uint i = GOOD_EVIL_LIST_END - 9; i <= GOOD_EVIL_LIST_END; i++)
         crFrom.GoodEvilListBase[i] = 0;
     crFrom.GoodEvilListBase[GOOD_EVIL_LIST_END - 10] = crId;
+    crFrom.Say(SAY_NETMSG, "Pip-boy:: Reached internal storage capacity, removing 10 oldest entry.... Done. " + crTo.Name + " marked as " + (valUp ? "friend." :"foe."));
+    ForceColorizingGoodEvil(crFrom, crTo, valUp ? 1 : -1);
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
