@@ -803,9 +803,56 @@ bool out_message(string& message, int& sayType)
             RunServerScriptUnsafe("unsafe_client@unsafe_FactionInfo", full, 0, 0, " ", null);
             return(false);
         }
-        if(words.length() > 0 && words[0] == "~car")
-        {
+        if(words.length() > 0 && words[0] == "~car") {
             RunServerScriptUnsafe("unsafe_client@unsafe_ShowCarInfo", 0, 0, 0, message, null);
+            return(false);
+        }
+        if (words.length() > 0 && (words[0] == "~foe" || words[0] == "~foes")) {
+            if (words.length() == 1  || (words.length() > 1 && (words[1] == "ls" || words[1] == "-l"))) {
+                RunServerScriptUnsafe("unsafe_client@unsafe_ListFriendFoeNames", -1, 0, 0, "", null);
+            } else if (words.length() > 2 && (words[1] == "add" || words[1] == "-a")) {
+                if (words.length() > 3 && (words[2] == "-i" || words[2] == "-id")) {
+                    RunServerScriptUnsafe("unsafe_client@unsafe_AddRemoveFriendFoeName", -1, 1, 1, words[3], null);
+                } else {
+                    RunServerScriptUnsafe("unsafe_client@unsafe_AddRemoveFriendFoeName", -1, 1, 0, words[2], null);
+                }
+            } else if (words.length() > 2 && (words[1] == "remove" || words[1] == "rm" || words[1] == "-r")) {
+                if (words.length() > 3 && (words[2] == "-i" || words[2] == "-id")) {
+                    RunServerScriptUnsafe("unsafe_client@unsafe_AddRemoveFriendFoeName", -1, -1, 1, words[3], null);
+                } else {
+                    RunServerScriptUnsafe("unsafe_client@unsafe_AddRemoveFriendFoeName", -1, -1, 0, words[2], null);
+                }
+            } else if (words.length() > 1 && (words[1] == "clean" || words[1] == "cl" || words[1] == "-c")) {
+                RunServerScriptUnsafe("unsafe_client@unsafe_AddRemoveFriendFoeName", -1, -1, 2, "", null);
+            } else if (words.length() > 1 && (words[1] == "reset" || words[1] == "res" || words[1] == "-r")) {
+                RunServerScriptUnsafe("unsafe_client@unsafe_AddRemoveFriendFoeName", -1, -1, 3, "", null);
+            } else {
+                Message("::Pip-boy:: Invalid Parameters, try w/o braces:\n  ~foe -l\n  ~foe add [Name]\n  ~foe remove -i [ID]\n  ~foe clean\n  ~foes reset");
+            }
+            return(false);
+        }
+        if (words.length() > 0 && (words[0] == "~friend" || words[0] == "~friends")) {
+            if (words.length() == 1  || (words.length() > 1 && (words[1] == "ls" || words[1] == "-l"))) {
+                RunServerScriptUnsafe("unsafe_client@unsafe_ListFriendFoeNames", 1, 0, 0, "", null);
+            } else if (words.length() > 2 && (words[1] == "add" || words[1] == "-a")) {
+                if (words.length() > 3 && (words[2] == "-i" || words[2] == "-id")) {
+                    RunServerScriptUnsafe("unsafe_client@unsafe_AddRemoveFriendFoeName", 1, 1, 1, words[3], null);
+                } else {
+                    RunServerScriptUnsafe("unsafe_client@unsafe_AddRemoveFriendFoeName", 1, 1, 0, words[2], null);
+                }
+            } else if (words.length() > 2 && (words[1] == "remove" || words[1] == "rm" || words[1] == "-r")) {
+                if (words.length() > 3 && (words[2] == "-i" || words[2] == "-id")) {
+                    RunServerScriptUnsafe("unsafe_client@unsafe_AddRemoveFriendFoeName", 1, -1, 1, words[3], null);
+                } else {
+                    RunServerScriptUnsafe("unsafe_client@unsafe_AddRemoveFriendFoeName", 1, -1, 0, words[2], null);
+                }
+            } else if (words.length() > 1 && (words[1] == "clean" || words[1] == "cl" || words[1] == "-c")) {
+                RunServerScriptUnsafe("unsafe_client@unsafe_AddRemoveFriendFoeName", 1, -1, 2, "", null);
+            } else if (words.length() > 1 && (words[1] == "reset" || words[1] == "res" || words[1] == "-r")) {
+                RunServerScriptUnsafe("unsafe_client@unsafe_AddRemoveFriendFoeName", 1, -1, 3, "", null);
+            } else {
+                Message("::Pip-boy:: Invalid Parameters, try w/o braces:\n  ~friend -l\n  ~friend add [Name]\n  ~friend remove -i [ID]\n  ~friend clean\n  ~friend reset");
+            }
             return(false);
         }
 

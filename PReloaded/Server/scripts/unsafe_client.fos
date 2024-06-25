@@ -49,6 +49,8 @@ import bool ReadMapToLocationSilently(Item& item, Critter& cr) from "item_misc";
 import void WearHandsOnDeath(Critter& cr) from "repair";
 import string GetCarTypeName(uint protoId) from "car";
 
+import void ForceColorizingGoodEvil(Critter@ chosen, Critter@ crTarget, int direction) from "name_colorizing";
+
 void unsafe_GetTimer(Critter& player, int p0, int p1, int p2, string@ commandString, array<int>@ param4)     // anti-bot
 {
     p0 ^= 0x56F32A4D;
@@ -1846,4 +1848,216 @@ void ViewImageClient(Critter& player, string& imageFile, bool limitWindowSizeMax
 
 void MessageGotTragicCard(Critter& player, uint16 cardProto) {
     player.RunClientScript("client_main@_OpenTragicDeck", int(cardProto), 0, 0, null, null);
+}
+
+void unsafe_ListFriendFoeNames(Critter& player, int p0, int p1, int p2, string@ message, array<int>@ param4) {
+    array<string@> names;
+    array<uint> ids;
+    uint regCount = GetRegisteredPlayers(ids, names);
+    array<string@> foes;
+    array<string@> friends;
+    for (uint i = GOOD_EVIL_LIST_BEGIN; i <= GOOD_EVIL_LIST_END; i += 1) {
+        int listId = player.GoodEvilList[i];
+        if (listId != 0) {
+            bool isEvil = FLAG(listId, 0x80000000);
+            if (isEvil) {
+                listId ^= 0x80000000;
+            }
+            int index = ids.find(listId);
+            string row;
+            if (index >= 0) {
+                row = names[index] + " (" + listId + ")";
+            } else {
+                row = "N/A [deceased] (" + listId + ")";
+            }
+            if (isEvil) {
+                foes.insertLast(row);
+            } else {
+                friends.insertLast(row);
+            }
+        }
+    }
+    if (p0 > 0) {
+        player.Say(SAY_NETMSG, "Pip-boy::You have " + friends.length() + " friends: ");
+        for (uint i = 0; i < friends.length(); i++) {
+            player.Say(SAY_NETMSG, "" + i + ": " + friends[i]);
+        }
+    } else {
+        player.Say(SAY_NETMSG, "Pip-boy::You have " + foes.length() + " foes: ");
+        for (uint i = 0; i < foes.length(); i++) {
+            player.Say(SAY_NETMSG, "" + i + ": " + foes[i]);
+        }
+    }
+}
+
+//  p0 - negative or 0 = foe, positive = friend
+//  p1 - negative or 0 = remove, positive = add
+//  p2 - (anything other then 1 or 2) = by name, 1 = by ID, 2 = clear friend/foe list
+void unsafe_AddRemoveFriendFoeName(Critter& player, int p0, int p1, int p2, string@ message, array<int>@ param4) {
+    _SetTimeout(player, TO_KARMA_VOTING, REAL_SECOND(1));     // Some small time to prevent bruteforce
+    bool foe = p0 <= 0;
+    bool add = p1 > 0;
+    bool byId = p2 == 1;
+    //  reset either friends or foe list
+    if (p2 == 3) {
+        int cnt = 0;
+        for (uint i = GOOD_EVIL_LIST_BEGIN; i <= GOOD_EVIL_LIST_END; i++) {
+            int id = player.GoodEvilList[i];
+            if(id != 0) {
+                bool isEvil = FLAG(id, 0x80000000);
+                if (isEvil) {
+                    id ^= 0x80000000;
+                }
+                if (isEvil == foe) {
+                    Critter@ crTo = GetCritter(id);
+                    if (valid(crTo)) {
+                        ForceColorizingGoodEvil(player, crTo, 0);
+                    }
+                    player.GoodEvilListBase[i] = 0;
+                    cnt++;
+                }
+            }
+        }
+        if (cnt > 0) {
+            player.Say(SAY_NETMSG, "::Pip-boy:: Cleared all " + cnt + " entries from " + (foe ? "foe" : "friend") + " list.");
+        } else {
+            player.Say(SAY_NETMSG, "::Pip-boy:: " + (foe ? "Foe" : "Friend") + " list was already empty.");
+        }
+        return;
+    }
+
+    array<string@> names;
+    array<uint> ids;
+    uint regCount = GetRegisteredPlayers(ids, names);
+
+    //  clean list from deleted players
+    if (p2 == 2) {
+        int cnt = 0;
+        for (uint i = GOOD_EVIL_LIST_BEGIN; i <= GOOD_EVIL_LIST_END; i++) {
+            int id = player.GoodEvilList[i];
+            if(id != 0) {
+                bool isEvil = FLAG(id, 0x80000000);
+                if (isEvil) {
+                    id ^= 0x80000000;
+                }
+                int index = ids.find(id);
+                if (index < 0) {
+                    player.GoodEvilListBase[i] = 0;
+                    cnt++;
+                }
+            }
+        }
+        if (cnt > 0) {
+            player.Say(SAY_NETMSG, "::Pip-boy:: Cleaned " + cnt + " invalid entries from Friend/Foe list.");
+        } else {
+            player.Say(SAY_NETMSG, "::Pip-boy:: Friend/Foe list was already clean.");
+        }
+        return;
+    }
+    int index = 0;
+    int crId = 0;
+    string name = "N/A";
+    if (byId) {
+        if (!StrToInt(message, crId)) {
+            player.Say(SAY_NETMSG, "::Pip-boy:: Invalid ID format.");
+            return;
+        }
+        index = ids.find(crId);
+        if (index < 0) {
+            player.Say(SAY_NETMSG, "::Pip-boy:: Unknown ID.");
+            return;
+        }
+        crId = ids[index];
+        name = names[index];
+    } else {
+        index = names.find(message);
+        if (index < 0) {
+            player.Say(SAY_NETMSG, "::Pip-boy:: Unknown name.");
+            return;
+        }
+        crId = ids[index];
+        name = names[index];
+    }
+    //player.Say(SAY_NETMSG, "[foe = " + foe + ", add = " + add + ", byId = " + byId + "] " + name + " (" + crId + ")");
+    for (uint i = GOOD_EVIL_LIST_BEGIN; i <= GOOD_EVIL_LIST_END; i++) {
+        int id = player.GoodEvilList[i];
+        if(id != 0) {
+            bool isEvil = FLAG(id, 0x80000000);
+            if(isEvil)
+                id ^= 0x80000000;
+            if(id == crId) {
+                if (foe) {
+                    if (add) {
+                        player.Say(SAY_NETMSG, "::Pip-boy:: " + name + " (" + crId + ") is already marked as " + (isEvil ? "foe." : "friend."));
+                        return;
+                    } else {
+                        player.GoodEvilListBase[i] = 0;
+                        player.Say(SAY_NETMSG, "::Pip-boy:: " + name + " (" + crId + ") unmarked as " + (isEvil ? "foe." : "friend."));
+                        Critter@ crTo = GetCritter(crId);
+                        if (valid(crTo)) {
+                            ForceColorizingGoodEvil(player, crTo, 0);
+                        }
+                        return;
+                    }
+                } else {
+                    if (add) {
+                        player.Say(SAY_NETMSG, "::Pip-boy:: " + name + " (" + crId + ") is already marked as " + (isEvil ? "foe." : "friend."));
+                        return;
+                    } else {
+                        player.GoodEvilListBase[i] = 0;
+                        player.Say(SAY_NETMSG, "::Pip-boy:: " + name + " (" + crId + ") unmarked as " + (isEvil ? "foe." : "friend."));
+                        Critter@ crTo = GetCritter(crId);
+                        if (valid(crTo)) {
+                            ForceColorizingGoodEvil(player, crTo, 0);
+                        }
+                        return;
+                    }
+                }
+            }
+        }
+    }
+
+    //  remove failed
+    if (!add) {
+        player.Say(SAY_NETMSG, "::Pip-boy:: Failed to unmark " + name + " (" + crId + ") as " + (foe ? "foe." : "friend."));
+        return;
+    }
+
+    // Add new record
+    for(uint i = GOOD_EVIL_LIST_BEGIN; i <= GOOD_EVIL_LIST_END; i++) {
+        int id = player.GoodEvilList[i];
+        if(id == 0) {
+            if (foe) {
+                player.GoodEvilListBase[i] = crId | 0x80000000;
+                player.Say(SAY_NETMSG, "::Pip-boy:: " + name + " (" + crId + ") marked as foe.");
+                Critter@ crTo = GetCritter(crId);
+                if (valid(crTo)) {
+                    ForceColorizingGoodEvil(player, crTo, -1);
+                }
+                return;
+            } else {
+                player.GoodEvilListBase[i] = crId;
+                player.Say(SAY_NETMSG, "::Pip-boy:: " + name + " (" + crId + ") marked as friend.");
+                Critter@ crTo = GetCritter(crId);
+                if (valid(crTo)) {
+                    ForceColorizingGoodEvil(player, crTo, 1);
+                }
+                return;
+            }
+        }
+    }
+
+    // All places busy, erase first 10
+    for (uint i = GOOD_EVIL_LIST_BEGIN; i <= GOOD_EVIL_LIST_END - 10; i++) {
+        player.GoodEvilListBase[i] = player.GoodEvilListBase[i + 10];
+    }
+    for (uint i = GOOD_EVIL_LIST_END - 9; i <= GOOD_EVIL_LIST_END; i++) {
+        player.GoodEvilListBase[i] = 0;
+    }
+    player.GoodEvilListBase[GOOD_EVIL_LIST_END - 10] = foe ? (crId | 0x80000000) : crId;
+    player.Say(SAY_NETMSG, "::Pip-boy:: Reached internal storage capacity, removing 10 oldest entry.... Done. " + name + " (" + crId + ") marked as " + (foe ? "foe." : "friend."));
+    Critter@ crTo = GetCritter(crId);
+    if (valid(crTo)) {
+        ForceColorizingGoodEvil(player, crTo, foe ? -1 : 1);
+    }
 }
