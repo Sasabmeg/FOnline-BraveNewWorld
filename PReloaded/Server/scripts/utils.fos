@@ -3107,3 +3107,18 @@ void MapRefreshVisible(Map@ map, uint hexX, uint hexY, uint radius)
     for(uint i = 0; i < playersCnt; ++i)
         players[i].RefreshVisible();
 }
+
+bool isOnFriendList(Critter@ crFrom, Critter@ crTo) {
+    for (uint i = GOOD_EVIL_LIST_BEGIN; i <= GOOD_EVIL_LIST_END; i++) {
+        int id = crFrom.GoodEvilList[i];
+        if (id != 0) {
+            bool isEvil = FLAG(id, 0x80000000);
+            if (!isEvil) {
+                if ( uint(id) == crTo.Id) {
+                    return true;
+                }
+            }
+        }
+    }
+    return false;
+}

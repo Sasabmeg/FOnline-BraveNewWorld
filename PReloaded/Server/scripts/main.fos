@@ -1887,6 +1887,10 @@ void critter_init(Critter& cr, bool firstTime)
 			cr.ModeBase[MODE_DEFAULT_COMBAT] = COMBAT_MODE_REAL_TIME;
 
         UpdateFactionsInfo(cr);
+
+        //  send log in info for friends
+        uint[] values = { cr.Id };
+        CreateTimeEvent(AFTER(REAL_MS(500)), "e_ListOnlineFriends", values, false);
     }
 
     //  send Car Tracker info to client, this is needed because when fast relog, then critter in map will not trigger.
@@ -2259,6 +2263,25 @@ void critter_finish(Critter& cr, bool toDelete)
     if(!(FLAG(_getMinigameFlags(cr.Param[ST_MINIGAME_DATA]), MINIGAME_PERSISTENT)))
         UnsetMinigame(cr, false);     // Minigames end along with gaming session IF the minigame team isn't persistent
 
+    //  send log off notification to friends
+    if (cr.IsPlayer()) {
+        for (uint i = GOOD_EVIL_LIST_BEGIN; i <= GOOD_EVIL_LIST_END; i++) {
+            int id = cr.GoodEvilList[i];
+            if (id != 0) {
+                bool isEvil = FLAG(id, 0x80000000);
+                if (!isEvil) {
+                    Critter@ crFriend = GetCritter(id);
+                    if (valid(crFriend)) {
+                        if (isOnFriendList(crFriend, cr)) {
+                            crFriend.Say(SAY_NETMSG, "::Pip-boy:: Friendly pip-boy signal from |0xaa3300 " + cr.Name + " |0x00c800 was lost.");
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+
     if(cr.IsPlayer())
     {
         if(_IsRealPlayer(cr))
@@ -2269,6 +2292,7 @@ void critter_finish(Critter& cr, bool toDelete)
         RemoveAuthed(cr.Id);
         GMTrack(cr.Id, "TARGET logged out.");
     }
+
     if(toDelete && cr.Stat[ST_DEAD_BLOCKER_ID] != 0)
     {
         Item@ block = ::GetItem(cr.Stat[ST_DEAD_BLOCKER_ID]);
@@ -3181,7 +3205,7 @@ void karma_voting(Critter& crFrom, Critter& crTo, bool valUp)
 //	crFrom.TimeoutBase[TO_KARMA_VOTING]=__FullMinute+__TimeMultiplier*4*60; // 4 hours
 
     // Good / Evil system
-    _SetTimeout(crFrom, TO_KARMA_VOTING, REAL_SECOND(3));     // Some small time to prevent bruteforce
+    _SetTimeout(crFrom, TO_KARMA_VOTING, REAL_SECOND(1));     // Some small time to prevent bruteforce
     int crId = int(crTo.Id);
     // Find already added
     for(uint i = GOOD_EVIL_LIST_BEGIN; i <= GOOD_EVIL_LIST_END; i++)
@@ -3201,6 +3225,7 @@ void karma_voting(Critter& crFrom, Critter& crTo, bool valUp)
                 }
                 crFrom.GoodEvilListBase[i] = 0;               // Erase from list
                 crFrom.Say(SAY_NETMSG, "Pip-boy:: " + crTo.Name + " unmarked as " + (!valUp ? "friend." :"foe."));
+                Critter@ crit = GetCritter(crTo.Id);
                 ForceColorizingGoodEvil(crFrom, crTo, 0);
                 return;
             }
@@ -4093,3 +4118,28 @@ void spawnjunk(Critter& cr, int, int, int)
     Item@ junk = cr.GetMap().AddItem(cr.HexX, cr.HexY, PID_PUMP_PARTS, 1);
     junk.SetScript("prod_barrel_junk@_Junk");
 }
+
+uint e_ListOnlineFriends(array<uint>@ values) {
+    if (values.length() > 0) {
+        Critter@ cr = GetCritter(values[0]);
+        if (valid(cr)) {
+            for (uint i = GOOD_EVIL_LIST_BEGIN; i <= GOOD_EVIL_LIST_END; i++) {
+                int id = cr.GoodEvilList[i];
+                if (id != 0 && id != int(values[0])) {
+                    bool isEvil = FLAG(id, 0x80000000);
+                    if (!isEvil) {
+                        Critter@ crFriend = GetCritter(id);
+                        if (valid(crFriend)) {
+                            if (isOnFriendList(crFriend, cr)) {
+                                crFriend.Say(SAY_NETMSG, "::Pip-boy:: Friendly pip-boy signature detected from |0xffa500 " + cr.Name + "|0x00c800 .");
+                                cr.Say(SAY_NETMSG, "::Pip-boy:: Friendly pip-boy signature detected from |0xffa500 " + crFriend.Name + "|0x00c800 .");
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    return 0;
+}
+

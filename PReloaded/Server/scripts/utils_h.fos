@@ -236,6 +236,8 @@ import uint LocationGetItems(Location& loc, uint16 protoId, array<Item@>@ items)
 import void LocationDeleteItems(Location& loc, uint16 protoId) from "utils";
 
 import bool IsDisposableEncounter(Location@ loc) from "utils";
+
+import bool isOnFriendList(Critter@ crFrom, Critter@ crTo) from "utils";
 #endif
 
 shared class CPosition
