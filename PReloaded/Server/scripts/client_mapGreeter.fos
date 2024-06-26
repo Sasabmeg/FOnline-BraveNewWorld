@@ -1,0 +1,128 @@
+/**
+*   FO version:     FOClassic: Brave New World
+*   Contributor:    Sasabmeg
+*   File:           client_mapGreeter.fos
+*
+*   Description:    It's just a pop-up text when player enters a map.
+*                   Aim is to provide 21st century look and feel and QoL modules for FOClassic.
+*/
+
+#ifndef __MAP_GREETER__
+#define __MAP_GREETER__
+
+#include "sprite.fos"
+#include "_defines.fos"
+#include "_client_defines.fos"
+#include "_macros.fos"
+#include "_colors.fos"
+#include "client_gui_h.fos"
+
+CMapGreeter mapGreeter;
+
+#define MAP_GREETER_COLOR_NEUTRAL   (COLOR_WHITE)
+#define MAP_GREETER_COLOR_FRIENDLY  (COLOR_GREEN)
+#define MAP_GREETER_COLOR_HOSTILE   (COLOR_ORANGE)
+
+//  called from server
+void _GreetMapName(int p0, int p1, int p2, string@ message, array<int>@ data) {
+    Message("_GreetMapName called.");
+    mapGreeter.message = message;
+    if (p0 > 0) {
+        mapGreeter.textColor = MAP_GREETER_COLOR_FRIENDLY;
+    } else if (p0 < 0) {
+        mapGreeter.textColor = MAP_GREETER_COLOR_HOSTILE;
+    } else {
+        mapGreeter.textColor = MAP_GREETER_COLOR_NEUTRAL;
+    }
+    mapGreeter.Activate();
+}
+
+//  exported
+void InitMapGreeter() {
+    mapGreeter = CMapGreeter();
+}
+
+//  Exported
+void DrawMapGreeterMessage() {
+    if (mapGreeter.enabled) {
+        mapGreeter.Draw();
+    }
+}
+
+
+class CMapGreeter {
+    bool enabled;                           //  use this to toggle on/off
+    bool active;
+    uint activationTime;                    //  last activation time stamp
+    uint activeDuration;                    //  time in milis to remain visible after quest update shown
+    uint fadeInDuration, fadeOutDuration;   //  fade durations
+    uint textColor;
+    uint currentTextColor;
+    string message;
+    int posX, posY, width, height;
+
+    CMapGreeter() {
+        enabled = true;
+        active = false;
+        activeDuration = 12000;              //  let's tart at 7 seconds, might be overridden later
+        fadeInDuration = 2500;
+        fadeOutDuration = 4500;
+    }
+
+    void Draw() {
+        if (!enabled)
+            return;
+
+        if (GUI_GetActiveMainScreen() != CLIENT_MAIN_SCREEN_GAME)
+            return;
+
+        CritterCl@ chosen = GetChosen();
+        if (!valid(chosen))
+            return;
+
+        SelfDisableAfterDurationExpired();
+
+        currentTextColor = textColor;
+        if (active) {
+            uint currentTime = GetTick();
+            if (currentTime < activationTime + fadeInDuration) {
+                FadeIn(currentTime);
+            }
+            if (currentTime > activationTime + activeDuration - fadeOutDuration) {
+                FadeOut(currentTime);
+            }
+            DrawText(message, __ScreenWidth - (__ScreenWidth * 0.8), __ScreenHeight * 0.05, __ScreenWidth * 0.6, __ScreenHeight * 0.5, currentTextColor, FONT_TYPE_FAT, FONT_FLAG_BORDERED | FONT_FLAG_CENTERX);
+        }
+    }
+
+    void SelfDisableAfterDurationExpired() {
+        if (active && (GetTick() + 10 > activationTime + activeDuration)) {
+            active = false;
+        }
+    }
+
+    void FadeIn(uint time) {
+        uint relativeTime = time - activationTime;
+        float percentage = (0.0f + relativeTime) / (0.0f + fadeInDuration) ;
+        SetAlphaOfColors(percentage);
+    }
+
+    void FadeOut(uint time) {
+        uint relativeTime = activationTime + activeDuration - time;
+        float percentage = (0.0f + relativeTime) / fadeOutDuration;
+        SetAlphaOfColors(percentage);
+    }
+
+    void SetAlphaOfColors(float ratio) {
+        uint8 headerAlpha = currentTextColor >> 24;
+        currentTextColor = COLOR_CHANGE_ALPHA(currentTextColor, headerAlpha * ratio);
+    }
+
+    void Activate() {
+        activationTime = GetTick();
+        active = true;
+    }
+}
+
+#endif 	//	__MAP_GREETER__
+

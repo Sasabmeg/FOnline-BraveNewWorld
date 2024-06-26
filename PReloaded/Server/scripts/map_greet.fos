@@ -1,8 +1,9 @@
 //
-// FOnline: 2238
-// Rotators
+//  FOnline: 2238
+//  Rotators
+//  BNW improvements by Sasabmeg
 //
-// map_greet.fos
+//  map_greet.fos
 //
 
 #ifndef __MAP_GREET__
@@ -14,85 +15,484 @@
 
 #include "utils_h.fos"
 
-class CGreet
-{
+#define TEST_SERVER_XP_MODIFIER (20)
+
+class CGreet {
     uint   map_pid;
     uint   lvar;
+    string mapName;
     string message;
 
-    CGreet(uint map, uint var, string & message)
-    {
-        this.map_pid    = map;
-        this.lvar               = var;
-        this.message    = message;
+    CGreet(uint mapPid, uint var, string& mapName, string & message) {
+        this.map_pid = mapPid;
+        this.lvar = var;
+        this.mapName = mapName;
+        this.message = message;
     }
 };
 array<CGreet> Greet;
 
 
 bool GreetInitialized = false;
+int locationFoundBaseXp = 100;
 
-void AddGreet(uint map, uint var, string& message)
-{
-    Greet.insertLast(CGreet(map, var, message));
+void AddGreet(uint mapPid, uint var, string& mapName, string& message) {
+    Greet.insertLast(CGreet(mapPid, var, mapName, message));
 };
 
-void InitGreet()
-{
-    // Main city locations
-    AddGreet(MAP_NCR, LVAR_greet_ncr, "You have entered Shady Sands, the capital of the New California Republic. Its streets are busy and filled with traders and travelers of various kind.");
-    AddGreet(MAP_Redding, LVAR_greet_redding, "You have entered the mining community of Redding. A glimmer of western city-feeling wafts into your face with the hot desert wind.");
-    AddGreet(MAP_HubDowntown, LVAR_greet_hub, "You have entered the dusty streets of the Hub, the main stopoff point for every caravan that is on its way to the north or the south.");
-    AddGreet(MAP_Gunrunner, LVAR_greet_gunrunner, "You have entered the territory of the Gun Runners. A strange feeling of peace by oversized weapons is surrounding you...");
-    AddGreet(MAP_Library, LVAR_greet_library, "From the distance you can see the old public library that serves as the headquarter of the Follower of the Apocalypse. In the west of it, a small settlement build from self made tents adorns the skyline.");
-    AddGreet(MAP_Adytum, LVAR_greet_adytum, "You have entered the small town of New Adytum. It is surrounded by walls of fences, which provides protection from outside threats.");
+void AddGreet(uint mapPid, string& mapName) {
+    Greet.insertLast(CGreet(mapPid, 0, mapName, ""));
+};
+
+void InitGreet() {
+
+    //  Starter zone
+    AddGreet(MAP_StartLocation, "GM TEST CAMP - KEEP OUT OR GET BANNED");
+    AddGreet(MAP_StartVault, "Vault 24 Entrance");
+    AddGreet(MAP_StartCaravan, "A Cave and an Oasis");
+
+    //  Tutorial zone
+    AddGreet(MAP_LandersPoint_Gate, "Landers Point - Gate");
+    AddGreet(MAP_LandersPoint_Geckofields, "Landers Point - Gecko Fields");
+    AddGreet(MAP_LandersPoint_Scorpioncave, "Landers Point - Scorpion Cave");
+
+    //  Khans
+    AddGreet(MAP_DesertEncounterKhans1, "Khans in the Desert");
+    AddGreet(MAP_MountainsEncounterKhans2, "Khans in the Mountains");
+    AddGreet(MAP_MountainsEncounterKhans3, "Khans in the Mountains");
+    AddGreet(MAP_KhansCaveEntrance, "Khans - Cave Entrance");
+    AddGreet(MAP_KhansCave, "Khans - Cave Inside");
+    AddGreet(MAP_KhansHQ, "Khans - Headquarters");
+
+    //  Klamath
+    AddGreet(MAP_KlamathDowntown, "Klamath - Downtown");
+    AddGreet(MAP_KlamathCanyon, "Klamath - Canyon");
+    AddGreet(MAP_KlamathToxicCaves1, "Klamath: Toxic Caves - Inside");
+    AddGreet(MAP_KlamathToxicCaves2, "Klamath: Toxic Caves - Further Down");
+    AddGreet(MAP_KlamathToxicCaves3, "Klamath: Toxic Caves - Deep Under");
+    AddGreet(MAP_KlamathMiningSite, "Klamath - Mining Site Outside");
+    AddGreet(MAP_KlamathMiningSiteInside, "Klamath - Mining Site Inside");
+    AddGreet(MAP_KlamathRat1, "Klamath - Rat Caves Level 1");
+    AddGreet(MAP_KlamathRat2, "Klamath - Rat Caves Level 2");
+    AddGreet(MAP_KlamathRat3, "Klamath - Rat Caves Level 3");
+
+    //  Vault City
+    AddGreet(MAP_VaultCityHQ, "Vault City - Outer");
+    AddGreet(MAP_VaultCityDowntown, "Vault City - Inner");
+    AddGreet(MAP_VaultCityVaultLevel1, "Vault City - Vault Level 1");
+    AddGreet(MAP_VaultCityVaultLevel2, "Vault City - Vault Level 2");
+    AddGreet(MAP_VaultCityVaultLevel3, "Vault City - Vault Level 3");
+    AddGreet(MAP_VaultCityMiningSite, "Vault City - Mining Site Outside");
+    AddGreet(MAP_VaultCityMineInside, "Vault City - Mining Site Inside");
+
+    //  LA
+    AddGreet(MAP_LAWarehouse, "Los Angeles - Warehouse");
+    AddGreet(MAP_Gunrunner, LVAR_greet_gunrunner, "Los Angeles - Gun Runners", "You have entered the territory of the Gun Runners. A strange feeling of peace by oversized weapons is surrounding you...");
+    AddGreet(MAP_Library, LVAR_greet_library, "Los Angeles - Library", "From the distance you can see the old public library that serves as the headquarter of the Follower of the Apocalypse. In the west of it, a small settlement build from self made tents adorns the skyline.");
+    AddGreet(MAP_Adytum, LVAR_greet_adytum, "Los Angeles - Adytum", "You have entered the small town of New Adytum. It is surrounded by walls of fences, which provides protection from outside threats.");
+    AddGreet(MAP_Adytum, "Los Angeles - Adytum");
+    AddGreet(MAP_AdytumSub, "Los Angeles - Adytum Basement");
+    AddGreet(MAP_Blade, "Los Angeles - Salvagers");
+    AddGreet(MAP_LibraryLevel1, "Los Angeles - Library Basement");
+    AddGreet(MAP_Ripper, "Los Angeles - Ripper");
+    AddGreet(MAP_RipperSub, "Los Angeles - Ripper Basement");
+
+    //  Sierra Army Depot
+    AddGreet(MAP_SierraArmyDepot_TheBattlefield, "Sierra Army Depot - Outside");
+    AddGreet(MAP_SierraArmyDepot_Powersub, "Sierra Army Depot - Inside");
+    AddGreet(MAP_SierraArmyDepot_Level1, "Sierra Army Depot - Level 1");
+    AddGreet(MAP_SierraArmyDepot_Level2, "Sierra Army Depot - Level 2");
+    AddGreet(MAP_SierraArmyDepot_Level3, "Sierra Army Depot - Level 3");
+    AddGreet(MAP_SierraArmyDepot_Level4, "Sierra Army Depot - Level 4");
+
+    //  Gecko
+    AddGreet(MAP_GeckoSettlement, "Gecko Settlement");
+    AddGreet(MAP_GeckoPowerPlant, "Gecko - Power Plant");
+
+    //  Vault15
+    AddGreet(MAP_Vault15Surface, "Vault 15 - Surface");
+    AddGreet(MAP_Vault15Level1, "Vault 15 - Level 1");
+    AddGreet(MAP_Vault15Level2, "Vault 15 - Level 2");
+    AddGreet(MAP_Vault15Level3, "Vault 15 - Level 3");
+
+    //  NCR
+    AddGreet(MAP_NCR, LVAR_greet_ncr, "New California Republic - Bazaar", "You have entered Shady Sands, the capital of the New California Republic. Its streets are busy and filled with traders and travelers of various kind.");
+    AddGreet(MAP_NCRResidentalArea, "New California Republic - Residential Area");
+    AddGreet(MAP_NCRMiningSite, "New California Republic - Public Mining Site");
+    AddGreet(MAP_Rails, "New California Republic - Rails");
+    AddGreet(MAP_NCRCF, "New California Republic - Prison");
+    AddGreet(MAP_NCRBoS, "New California Republic - BoS Outpost");
+    AddGreet(MAP_MilitaryCamp, "New California Republic Military Camp");
+
+    //  Hub
+    AddGreet(MAP_HubDowntown, LVAR_greet_hub, "Hub Downtown", "You have entered the dusty streets of the Hub, the main stop-off point for every caravan that is on its way to the north or the south.");
+    AddGreet(MAP_HubOldtown, "Hub - Oldtown");
+    AddGreet(MAP_HubHeights, "Hub - Heights");
+    AddGreet(MAP_HubWatermerchants, "Hub - Water Merchants");
+    AddGreet(MAP_HubUnderground, "Hub - Underground");
+    AddGreet(MAP_HubUndergroundthief, "Hub - Underground Thief Den");
+    AddGreet(MAP_HubArena, "Hub - Arena");
+    AddGreet(MAP_HubParkingLot, "Hub - Parking lot");
+
+    //  Junktown
+    AddGreet(MAP_Junktown, "Junktown");
+    AddGreet(MAP_JunktownSub, "Junktown - Basement");
+    AddGreet(MAP_JunktownMiningSite, "Junktown - Mining Site");
+
+    //  Den
+    AddGreet(MAP_DenBusiness, "Den - Business Area");
+    AddGreet(MAP_DenBoS, "Den - BoS Outpost");
+
+    //  Mariposa Military Base
+    AddGreet(MAP_MilitaryBaseEntrance, "Mariposa Military Base - Entrance");
+    AddGreet(MAP_MilitaryBaseLevel1, "Mariposa Military Base - Level 1");
+    AddGreet(MAP_MilitaryBaseLevel2, "Mariposa Military Base - Level 2");
+    AddGreet(MAP_MilitaryBaseLevel3, "Mariposa Military Base - Level 3");
+    AddGreet(MAP_MilitaryBaseLevel4, "Mariposa Military Base - Level 4");
+
+    //  New Reno
+    AddGreet(MAP_NewReno1, "New Reno - 1");
+    AddGreet(MAP_NewReno2, "New Reno - 2");
+    AddGreet(MAP_NewReno3, "New Reno - 3");
+    AddGreet(MAP_NewReno4, "New Reno - 4");
+    AddGreet(MAP_NewRenoChopShop, "New Reno - Chop Shop");
+    AddGreet(MAP_NewRenoSewers, "New Reno - Sewers");
+    AddGreet(MAP_NewReno_Golgotha, "New Reno - Golgotha");
+    AddGreet(MAP_NewReno_Basement, "New Reno - Basement");
+    AddGreet(MAP_NewReno_BishopFloor1, "New Reno - Bishop Floor 1");
+    AddGreet(MAP_NewReno_BishopFloor2, "New Reno - Bishop Floor 2");
+    AddGreet(MAP_NewReno_MordinoHQ, "New Reno - Mordino");
+    AddGreet(MAP_NewReno_Arms, "New Reno - Arms");
+    AddGreet(MAP_NewReno_SharkBoxing, "New Reno - Shark Boxing");
+    AddGreet(MAP_NewReno_Wright, "New Reno - Wright");
+    AddGreet(MAP_NewReno_Stables, "New Reno - Stables");
+    AddGreet(MAP_NewReno_Stables2, "New Reno - Another Stables");
+
+    AddGreet(MAP_TobaccoFarm, "Tobacco Farm");
+
+    //  Redding
+    AddGreet(MAP_Redding, LVAR_greet_redding, "Redding", "You have entered the mining community of Redding. A glimmer of western city-feeling wafts into your face with the hot desert wind.");
+    AddGreet(MAP_ReddingMine, "Redding - Mine");
+    AddGreet(MAP_WanamingoMineEntrance, "Redding - Wanamingo Mine Entrance");
+
+    //  Cathedral
+    AddGreet(MAP_Cathedral_Enter, "Cathedral - Outside");
+    AddGreet(MAP_Cathedral_Main, "Cathedral - Inside");
+    AddGreet(MAP_Cathedral_Level1, "Cathedral - Level 1");
+    AddGreet(MAP_Cathedral_Level2, "Cathedral - Level 2");
+    AddGreet(MAP_Cathedral_Level3, "Cathedral - Level 3");
+    AddGreet(MAP_Cathedral_CellarLevel1, "Cathedral - Cellar Level 1");
+    AddGreet(MAP_Cathedral_CellarLevel2, "Cathedral - Cellar Level 2");
+    AddGreet(MAP_Cathedral_CellarLevel3, "Cathedral - Cellar Level 3");
+    AddGreet(MAP_Cathedral_CellarLevel4, "Cathedral - Cellar Level 4");
+    AddGreet(MAP_Crater, "Cathedral - Crater");
+
+    //  Brotherhood of Steel
+    AddGreet(MAP_LostHills_Entrance, "Brotherhood of Steel: Lost Hills - Entrance");
+    AddGreet(MAP_LostHills_Level1, "Brotherhood of Steel: Lost Hills - Level 1");
+    AddGreet(MAP_LostHills_Level2, "Brotherhood of Steel: Lost Hills - Level 2");
+    AddGreet(MAP_LostHills_Level3, "Brotherhood of Steel: Lost Hills - Level 3");
+    AddGreet(MAP_LostHills_Level4, "Brotherhood of Steel: Lost Hills - Level 4");
+
+    //  Vault 13
+    AddGreet(MAP_Vault13Level1, "Vault 13: Level 1");
+    AddGreet(MAP_Vault13Level2, "Vault 13: Level 2");
+    AddGreet(MAP_Vault13Level3, "Vault 13: Level 3");
+    AddGreet(MAP_Vault13Level4, "Vault 13: Level 4");
+
+    //  Ares Military Base
+    AddGreet(MAP_AresMilitaryBase_Entrance, "Ares Rocket Silo - Entrance");
+    AddGreet(MAP_AresMilitaryBase_Level1, "Ares Rocket Silo - Level 1");
+    AddGreet(MAP_AresMilitaryBase_Level2, "Ares Rocket Silo - Level 2");
+    AddGreet(MAP_Areslevel3, "Ares Rocket Silo - Level 3");
+    AddGreet(MAP_Areslevel4, "Ares Rocket Silo - Level 4");
+
+    //  Navarro
+    AddGreet(MAP_Navarro, "Enclave: Navarro Military Base");
+    AddGreet(MAP_Navarro, "Enclave: Navarro Military Base - Basement");
+
+    //  Broken Hills
+    AddGreet(MAP_BrokenHills, "Broken Hills");
+    AddGreet(MAP_BrokenHillsBasement, "Broken Hills - Basement");
+    AddGreet(MAP_BrokenHillsMine, "Broken Hills - Mine");
+    AddGreet(MAP_BrokenHillsDungeon, "Broken Hills - Dungeon");
+
+    //  San Francisco
+    AddGreet(MAP_SanFranTanker, "San Francisco - Tanker");
+    AddGreet(MAP_SanFranChina, "San Francisco - Chinatown");
+    AddGreet(MAP_ShiTemple, "San Francisco - Shi Temple");
+    AddGreet(MAP_SanFranBoS, "San Francisco - Brother of Steel Outpost");
+    AddGreet(MAP_SanFranciscoMiningSite, "San Francisco - Mining Site Outside");
+    AddGreet(MAP_SanFranciscoMiningSiteInside, "San Francisco - Mining Site Inside");
+
+    //  Necropolis
+    AddGreet(MAP_NecropolisHotel, "Necropolis - Hotel");
+    AddGreet(MAP_NecropolisSeth, "Necropolis - Seth's ");
+    AddGreet(MAP_NecropolisPump, "Necropolis - Pump");
+    AddGreet(MAP_NecropolisSewer, "Necropolis - Sewer");
+    AddGreet(MAP_NecropolisVaultLevel1, "Necropolis - Vault Level 1");
+    AddGreet(MAP_NecropolisVaultLevel2, "Necropolis - Vault Level 2");
+    AddGreet(MAP_NecropolisVaultLevel3, "Necropolis - Vault Level 3");
+
+    //  Glow
+    AddGreet(MAP_Glow_Entrance, "Glow - Entrance");
+    AddGreet(MAP_Glow_Floor1, "Glow - Floor 1");
+    AddGreet(MAP_Glow_Floor2, "Glow - Floor 2");
+    AddGreet(MAP_Glow_Floor3, "Glow - Floor 3");
+    AddGreet(MAP_Glow_Floor4, "Glow - Floor 4");
+    AddGreet(MAP_Glow_Floor5, "Glow - Floor 5");
+    AddGreet(MAP_Glow_Floor6, "Glow - Floor 6");
+
+    //  Modoc
+    AddGreet(MAP_Modoc_Ghostcave, "Modoc - Ghost Cave");
+    AddGreet(MAP_Modoc_Ghostfarm, "Modoc - Ghost Farm");
+
+    //  Stranded Tanker
+    AddGreet(MAP_StrandedTanker_Outside, "Stranded Tanker - Outside");
+    AddGreet(MAP_StrandedTanker_Level1, "Stranded Tanker - Level 1");
+    AddGreet(MAP_StrandedTanker_Level2, "Stranded Tanker - Level 2");
+    AddGreet(MAP_StrandedTanker_Level3, "Stranded Tanker - Level 3");
+
+    //  Jail
+    AddGreet(MAP_Jail, "Jail");
+    AddGreet(MAP_Jail2, "Another Jail");
+
+    //  Junkyard
+    AddGreet(MAP_Junkyard, "Junkyard");
+    AddGreet(MAP_AntPit1, "Ant Pit");
+    AddGreet(MAP_Themepark, "Theme Park");
+    AddGreet(MAP_Waterworks, "Waterworks");
+    AddGreet(MAP_GordonsGasStation, "Gordon's Gas Station");
+    AddGreet(MAP_SlaverCamp, "Slaver Camp");
+    AddGreet(MAP_MilitaryCamp, "New California Republic - Forth Seth");
+    AddGreet(MAP_BarterGround, "Barter Ground");
+
+    //  Talchem
+    AddGreet(MAP_TalchemSurface, "Talchem - Surface");
+    AddGreet(MAP_Talchemlevel1, "Talchem - Level 1");
+    AddGreet(MAP_Talchemlevel2, "Talchem - Level 2");
+
+    AddGreet(MAP_FishingZone, "Fishing Zone");
+    AddGreet(MAP_ArroyoTemple, "Arroyo Temple");
+    AddGreet(MAP_TeslaTower, "Tesla Tower");
+
+    //  Sierra Caves
+    AddGreet(MAP_SierraCavesLevel1Corner1SW, "Sierra Caves: Outer Caverns - South West Corner");
+    AddGreet(MAP_SierraCavesLevel1West1, "Sierra Caves: Outer Caverns - West Side");
+    AddGreet(MAP_SierraCavesLevel1South1, "Sierra Caves: Outer Caverns - South Side");
+    AddGreet(MAP_SierraCavesLevel1West2, "Sierra Caves: Outer Caverns - Another West Side");
+    AddGreet(MAP_SierraCavesLevel1Filler1, "Sierra Caves: Outer Caverns - Middle");
+    AddGreet(MAP_SierraCavesLevel1South2, "Sierra Caves: Outer Caverns - Another South Side");
+    AddGreet(MAP_SierraCavesLevel1Corner2NW, "Sierra Caves: Outer Caverns - North West Corner");
+    AddGreet(MAP_SierraCavesLevel1Filler2, "Sierra Caves: Outer Caverns - Another Middle");
+    AddGreet(MAP_SierraCavesLevel1Filler3, "Sierra Caves: Outer Caverns - Yet Another Middle");
+    AddGreet(MAP_SierraCavesLevel1Corner3SE, "Sierra Caves: Outer Caverns - South East Corner");
+    AddGreet(MAP_SierraCavesLevel1North1, "Sierra Caves: Outer Caverns - North Side");
+    AddGreet(MAP_SierraCavesLevel1Filler4, "Sierra Caves: Outer Caverns - Not Another Middle");
+    AddGreet(MAP_SierraCavesLevel1East1, "Sierra Caves: Outer Caverns - East Side");
+    AddGreet(MAP_SierraCavesLevel1North2, "Sierra Caves: Outer Caverns - Another North Side");
+    AddGreet(MAP_SierraCavesLevel1East2, "Sierra Caves: Outer Caverns - Another East Side");
+    AddGreet(MAP_SierraCavesLevel1Corner4NE, "Sierra Caves: Outer Caverns - North East Corner");
+    AddGreet(MAP_SierraCavesLevel1Scene1, "Sierra Caves: Outer Caverns - Slime Dump");
+    AddGreet(MAP_SierraCavesLevel1Scene2, "Sierra Caves: Outer Caverns - Fountain");
+    AddGreet(MAP_SierraCavesLevel1Scene3, "Sierra Caves: Outer Caverns - Fences");
+    AddGreet(MAP_SierraCavesLevel1Scene4, "Sierra Caves: Outer Caverns - Scout Encampment");
+    AddGreet(MAP_SierraCavesLevel1Scene5, "Sierra Caves: Outer Caverns - Generators");
+    AddGreet(MAP_SierraCavesLevel1Scene6, "Sierra Caves: Outer Caverns - Wanamingo Gate");
+    AddGreet(MAP_SierraCavesLevel1Scene7, "Sierra Caves: Outer Caverns - Wanamingo Lair");
+    AddGreet(MAP_SierraCavesLevel1Pitfall, "Sierra Caves: Outer Caverns - Pitfall");
+    AddGreet(MAP_SierraCavesLevel1Gauntlet, "Sierra Caves: Outer Caverns - Gauntlet");
+    AddGreet(MAP_SierraCavesLevel1Exit1, "Sierra Caves: Outer Caverns - Exit");
+    AddGreet(MAP_SierraCavesLevel1Exit2, "Sierra Caves: Outer Caverns - Another Exit");
+    AddGreet(MAP_SierraCavesLevel1Vault2, "Sierra Caves: Outer Caverns - Vault 2");
+    AddGreet(MAP_SierraCavesLevel1Vault3, "Sierra Caves: Outer Caverns - Vault 3");
+    AddGreet(MAP_SierraCavesLevel1Vault4, "Sierra Caves: Outer Caverns - Vault 4");
+    AddGreet(MAP_SierraCavesLevel1Vault5, "Sierra Caves: Outer Caverns - Vault 5");
+    AddGreet(MAP_SierraCavesLevel1Vault6, "Sierra Caves: Outer Caverns - Vault 6");
+    AddGreet(MAP_SierraCavesLevel1Vault7, "Sierra Caves: Outer Caverns - Vault 7");
+
+
+
+    //  Replication
+    for (int i = MAP_Replication1; i <= MAP_Replication4; i++) {
+        AddGreet(i, "Replication Point");
+    }
+    for (int i = MAP_Replication5; i <= MAP_Replication7; i++) {
+        AddGreet(i, "Replication Point");
+    }
+    AddGreet(MAP_SalvagerCamp, "Replication Point");
+
+    //  Random Encounters
+
+    //  ocean?
+    AddGreet(MAP_Ocean, "Ocean");
+
+    //  caves
+    for (int i = MAP_CaveEncounterOut1; i <= MAP_CaveEncounterOut5; i++) {
+        AddGreet(i, "Outside a Cave");
+    }
+    AddGreet(MAP_CaveEncounterOut6, "Outside a Cave");
+    AddGreet(MAP_CaveEncounterOut6_2, "Outside a Cave");
+    AddGreet(MAP_CaveEncounterOut7, "Outside a Cave");
+    for (int i = MAP_CaveEncounterIn1; i <= MAP_CaveEncounterIn5; i++) {
+        AddGreet(i, "Inside a Cave");
+    }
+    AddGreet(MAP_CaveEncounterIn6, "Inside a Cave");
+    AddGreet(MAP_CaveEncounterIn7, "Inside a Cave");
+
+    //  desert
+    for (int i = MAP_DesertEncounter1; i <= MAP_DesertEncounter6; i++) {
+        AddGreet(i, "Desert");
+    }
+    for (int i = MAP_DesertEncounter7; i <= MAP_DesertEncounter11; i++) {
+        AddGreet(i, "Desert");
+    }
+    AddGreet(MAP_DesertEncounter12, "Desert");
+    for (int i = MAP_DesertTreeEncounter1; i <= MAP_DesertTreeEncounter4; i++) {
+        AddGreet(i, "Trees in the Desert");
+    }
+    AddGreet(MAP_DesertEncounter5345, "Trees in the Desert");
+    AddGreet(MAP_DesertEncounter6346, "Trees in the Desert");
+    for (int i = MAP_DesertEncounterNecropolis1; i <= MAP_DesertEncounterNecropolis4; i++) {
+        AddGreet(i, "Desert around Necropolis");
+    }
+    for (int i = MAP_DesertEncounterWater1; i <= MAP_DesertEncounterWater3; i++) {
+        AddGreet(i, "Water in the Desert");
+    }
+    AddGreet(MAP_DesertEncounterRails1, "Rails in the Desert");
+
+    //  shoreline, coast and city
+    for (int i = MAP_ShorelineEncounter1; i <= MAP_ShorelineEncounter5; i++) {
+        AddGreet(i, "Shoreline");
+    }
+    for (int i = MAP_SkyscraperEncounter1; i <= MAP_SkyscraperEncounter5; i++) {
+        AddGreet(i, "Skyscraper");
+    }
+    for (int i = MAP_CityCoastEncounter1; i <= MAP_CityCoastEncounter3; i++) {
+        AddGreet(i, "City coast");
+    }
+    for (int i = MAP_SkyscraperEncounter1; i <= MAP_SkyscraperEncounter5; i++) {
+        AddGreet(i, "Shoreline");
+    }
+    for (int i = MAP_CityEncounter1; i <= MAP_CityEncounter10; i++) {
+        AddGreet(i, "City ruins");
+    }
+    AddGreet(MAP_CityEncounter11, "City Ruins");
+    AddGreet(MAP_CityEncounter12, "City Ruins");
+
+    //  mountain, highway
+    for (int i = MAP_MountainEncounter1; i <= MAP_MountainEncounter9; i++) {
+        AddGreet(i, "Mountains");
+    }
+    for (int i = MAP_Highway1; i <= MAP_Highway2; i++) {
+        AddGreet(i, "Highway");
+    }
+
+    AddGreet(MAP_ProspectTrees, "Woods");
+    AddGreet(MAP_Caravans, "Caravans");
+
+    //  Special Encounters
+    AddGreet(MAP_QRuinedMilitaryBunker, "Dead Body");
+    AddGreet(MAP_OldWarehouse, "Old Warehouse");
+    AddGreet(MAP_OldWarehouseBasemenet, "Old Warehouse - Basement");
+    AddGreet(MAP_OldWarehouseCave, "Old Warehouse - Cave");
+    AddGreet(MAP_Hospital, "Hospital");
+    AddGreet(MAP_OldFactory, "Old Factory");
+    AddGreet(MAP_BusStop, "Bus Stop");
+    AddGreet(MAP_SecretShelterOut, "Secret Shelter - Outside");
+    AddGreet(MAP_SecretShelterIn, "Secret Shelter - Inside");
+    AddGreet(MAP_Treasure, "Treasure");
+    AddGreet(MAP_AbandonedHowitzer, "Abandoned Howitzer");
 
     // Train stations
-    AddGreet(MAP_SanFransiscoTrainStation, LVAR_greet_train1, "You have encountered the San Francisco train station.");
-    AddGreet(MAP_BoneyardTrainStation, LVAR_greet_train2, "You have encountered the Angel's Boneyard train station.");
-    AddGreet(MAP_NCRTrainStation, LVAR_greet_train3, "You have encountered the New California Republic train station.");
-    AddGreet(MAP_VaultCityTrainStation, LVAR_greet_train4, "You have encountered the Vault City train station.");
-
-    // Mining locations
+    AddGreet(MAP_SanFransiscoTrainStation, LVAR_greet_train1, "San Francisco - Train Station", "You have encountered the San Francisco train station.");
+    AddGreet(MAP_BoneyardTrainStation, LVAR_greet_train2, "L.A.: Boneyard - Train Station", "You have encountered the Angel's Boneyard train station.");
+    AddGreet(MAP_NCRTrainStation, LVAR_greet_train3, "New California Republic - Train Station", "You have encountered the New California Republic train station.");
+    AddGreet(MAP_VaultCityTrainStation, LVAR_greet_train4, "Vault City - Train Station", "You have encountered the Vault City train station.");
 
     // Quest locations
-    AddGreet(MAP_QBrahminWillow, LVAR_greet_q_ncr_brahmin, "You have entered the wide brahmin willow close to the Westin Ranch. It for sure is a peaceful place.");
+    AddGreet(MAP_QBrahminWillow, LVAR_greet_q_ncr_brahmin, "Brahmin Willow near Westin Ranch", "You have entered the wide brahmin willow close to the Westin Ranch. It for sure is a peaceful place.");
+    AddGreet(MAP_QCathedralBasement1, "Cathedral Basement 1");
+    AddGreet(MAP_QCathedralBasement2, "Cathedral Basement 2");
+    AddGreet(MAP_QCathedralBasement3, "Cathedral Basement 3");
+    AddGreet(MAP_QGunRunnersCaravan1, "Super Mutant Hideout - Outside");
+    AddGreet(MAP_QGunRunnersCaravan2, "Super Mutant Hideout - Inside");
+    AddGreet(MAP_Q_SanFranSubway, "San Francisco - Subway");
+    AddGreet(MAP_QRadscorpionCave, "Radscorpion Cave - Outside");
+    AddGreet(MAP_QRadscorpionCaveInterior, "Radscorpion Cave - Inside");
+    AddGreet(MAP_BrahminRanch, "Brahmin Ranch");
+    AddGreet(MAP_QFirstTent1, "Tent in the desert");
+    AddGreet(MAP_QFirstTent2, "Abandoned farm in the desert");
+    AddGreet(MAP_QFirstTent3, "Tent in the desert");
+    AddGreet(MAP_RailroadGang, "Railroad");
+    AddGreet(MAP_Outpost, "Outpost");
+    AddGreet(MAP_Hideout, "Hideout in the Mountains");
+    AddGreet(MAP_Ambush, "Train Ambush");
+    AddGreet(MAP_CrashedHummer, "Crashed Hummer");
+    AddGreet(MAP_Battleground, "Battleground");
+    AddGreet(MAP_BoSbunkerlevel1, "Brotherhood of Steel Bunker - Level 1");
+    AddGreet(MAP_BoSbunkerlevel2, "Brotherhood of Steel Bunker - Level 2");
+    AddGreet(MAP_BoSbunkerlevel3, "Brotherhood of Steel Bunker - Level 3");
+    for (int i = MAP_Slaverun1; i <= MAP_Slaverun6; i++) {
+        AddGreet(i, "Slaverun");
+    }
+    AddGreet(MAP_Warzone, "War Zone 2");
+    AddGreet(MAP_Warzone2, "Another War Zone");
 
-    // Other locations
+    //  Tents
+    AddGreet(MAP_Safehouseinthecity, "Safehouse in the City");
+    AddGreet(MAP_Safehouseonthecoast, "Safehouse on the Coast");
+    AddGreet(MAP_Safehouseinthedesert, "Safehouse in the Desert");
+    AddGreet(MAP_Safehouseinthemountains, "Safehouse in the Mountains");
+    AddGreet(MAP_Tentinthedesert, "Tent in the Desert");
+    AddGreet(MAP_Tentinthemountains, "Tent in the Mountains");
+    AddGreet(MAP_Tentonthecoast, "Tent in the Coast");
+    AddGreet(MAP_Tentinthecity, "Tent in the City");
+
+    //  Bases
+    for (int i = MAP_HQ_Camp; i <= MAP_HQ_Gasstation; i++) {
+        AddGreet(i, "Base");
+    }
+    for (int i = MAP_HQ_Tents; i <= MAP_HQ_Cave2Outside; i++) {
+        AddGreet(i, "Base");
+    }
+    for (int i = MAP_BountyHuntersHQEntrance; i <= MAP_bountyHuntersHQCaveoutside_; i++) {
+        AddGreet(i, "Base");
+    }
+
+    //  Mining site (player mine)
+    AddGreet(MAP_MiningSite, "Mining Site - Outside");
+    AddGreet(MAP_MiningSiteInside, "Mining Site - Inside");
+
 
     Log("Greetings: " + Greet.length());
     GreetInitialized = true;
 };
 
-void GreetPlayer(Critter@ player, Map@ map)
-{
+void GreetPlayer(Critter@ player, Map@ map) {
     if(!GreetInitialized)
         InitGreet();
 
     if(!valid(player) || !player.IsPlayer() || !valid(map))
         return;
 
-    for(uint g = 0; g < Greet.length(); g++)
-    {
-        if(Greet[g].map_pid == map.GetProtoId())
-        {
-            if(GetLvar(player, Greet[g].lvar) == 0)
-            {
-                #ifdef __DEBUG__
-                player.Say(SAY_NETMSG, "Greet: first time");
-                #endif
+    for (uint g = 0; g < Greet.length(); g++) {
+        if (Greet[g].map_pid == map.GetProtoId()) {
+            if (Greet[g].lvar > 0) {
+                if (GetLvar(player, Greet[g].lvar) == 0) {
+                    player.Say(SAY_NETMSG, "Greet: first time");
 
-                player.Say(SAY_NETMSG, Greet[g].message);
-                SetLvar(player, Greet[g].lvar, 1);
-				player.StatBase[ST_EXPERIENCE] += 150;
-                player.Say(SAY_NETMSG, "|0xFFFFFF You have gained 150 experience points.");
+                    player.Say(SAY_NETMSG, Greet[g].message);
+                    SetLvar(player, Greet[g].lvar, 1);
+                    int xpReward = locationFoundBaseXp * TEST_SERVER_XP_MODIFIER;
+                    player.StatBase[ST_EXPERIENCE] += xpReward;
+                    //player.Say(SAY_NETMSG, "|0xFFFFFF You have gained " + xpReward + " experience points.");
+                } else {
+                    player.Say(SAY_NETMSG, "Greet: not a first time");
+                }
             }
-            else
-            {
-                #ifdef __DEBUG__
-                player.Say(SAY_NETMSG, "Greet: not a first time");
-                #endif
-            }
+            array<int> data;
+            player.RunClientScript("client_mapGreeter@_GreetMapName", 0, 0, 0, Greet[g].mapName, data);
             return;
         }
     }

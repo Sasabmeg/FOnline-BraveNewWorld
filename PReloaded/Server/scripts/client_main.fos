@@ -30,6 +30,8 @@ import void InitQuestTracker() from "client_QuestTracker";
 import void InitInventoryTracker() from "client_InventoryTracker";
 import void InitCarTracker() from "client_CarTracker";
 import void InitGuiImage() from "client_gui_image";
+import void InitMapGreeter() from "client_mapGreeter";
+
 import void RefreshCars(array<int>@ data, string@ ownerList) from "client_CarTracker";
 
 import void BroadcastProcess() from "client_broadcast";
@@ -163,6 +165,7 @@ bool start()
     InitInventoryTracker();
     InitCarTracker();
     InitGuiImage();
+    InitMapGreeter();
 
     InitBarterFilters();
     InitFixboyAddons();

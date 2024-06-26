@@ -44,6 +44,7 @@ import void DrawQuestTracker() from "client_QuestTracker";
 import void DrawInventoryTracker() from "client_InventoryTracker";
 import void DrawCarTracker() from "client_CarTracker";
 import void DrawGuiImage() from "client_gui_image";
+import void DrawMapGreeterMessage() from "client_mapGreeter";
 
 import bool IsPossessMode() from "client_dev_menu";
 import bool IsAuthorized() from "client_dev_menu";
@@ -738,6 +739,7 @@ void render_iface(uint layer)
         DrawChosenTabs();
 		DrawQuestTracker();
         DrawInventoryTracker();
+        DrawMapGreeterMessage();
     }
 
     if((layer == 100 || layer == 101) && __WorldmapActive)

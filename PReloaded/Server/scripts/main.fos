@@ -148,6 +148,7 @@ import void _PlayerEnterParkinglot(Map& map, Critter& player) from "map_hub";
 import void ViewImageClient(Critter& player, string& imageFile, bool limitWindowSizeMaxToImageSize, bool resizeEnabled, bool moveEnabled) from "unsafe_client";
 
 import void ForceColorizingGoodEvil(Critter@ chosen, Critter@ crTarget, int direction) from "name_colorizing";
+import void GreetPlayer(Critter@ player, Map@ map) from "map_greet";
 
 dictionary    ItemPids;
 dictionary    VarIds;
@@ -3056,6 +3057,7 @@ void map_critter_in(Map& map, Critter& cr)
         //	GameVar@ lastCityVar = GetLocalVar(LVAR_last_city, cr.Id);
         //	if (lastCityVar is null) return;
         //	lastCityVar = locPid;
+        GreetPlayer(cr, map);
     }
 
     //  refresh car info for player entering the map
