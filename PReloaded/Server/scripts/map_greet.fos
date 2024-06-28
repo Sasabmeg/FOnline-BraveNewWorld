@@ -9,13 +9,21 @@
 #ifndef __MAP_GREET__
 #define __MAP_GREET__
 
+#include "map_greet_h.fos"
+
 #include "_macros.fos"
 #include "_maps.fos"
 #include "_vars.fos"
 
 #include "utils_h.fos"
+#include "reputations_h.fos"
+#include "buffer_h.fos"
+#include "pdata_h.fos"
+#include "map_tent_h.fos"
+#include "mapdata_h.fos"
+#include "factions_bases_h.fos"
+#include "factions_h.fos"
 
-#define TEST_SERVER_XP_MODIFIER (20)
 
 class CGreet {
     uint   map_pid;
@@ -86,7 +94,6 @@ void InitGreet() {
     AddGreet(MAP_VaultCityMineInside, "Vault City - Mining Site Inside");
 
     //  LA
-    AddGreet(MAP_LAWarehouse, "Los Angeles - Warehouse");
     AddGreet(MAP_Gunrunner, LVAR_greet_gunrunner, "Los Angeles - Gun Runners", "You have entered the territory of the Gun Runners. A strange feeling of peace by oversized weapons is surrounding you...");
     AddGreet(MAP_Library, LVAR_greet_library, "Los Angeles - Library", "From the distance you can see the old public library that serves as the headquarter of the Follower of the Apocalypse. In the west of it, a small settlement build from self made tents adorns the skyline.");
     AddGreet(MAP_Adytum, LVAR_greet_adytum, "Los Angeles - Adytum", "You have entered the small town of New Adytum. It is surrounded by walls of fences, which provides protection from outside threats.");
@@ -96,6 +103,7 @@ void InitGreet() {
     AddGreet(MAP_LibraryLevel1, "Los Angeles - Library Basement");
     AddGreet(MAP_Ripper, "Los Angeles - Ripper");
     AddGreet(MAP_RipperSub, "Los Angeles - Ripper Basement");
+    AddGreet(MAP_Crater, "Los Angeles - Crater");
 
     //  Sierra Army Depot
     AddGreet(MAP_SierraArmyDepot_TheBattlefield, "Sierra Army Depot - Outside");
@@ -122,10 +130,10 @@ void InitGreet() {
     AddGreet(MAP_Rails, "New California Republic - Rails");
     AddGreet(MAP_NCRCF, "New California Republic - Prison");
     AddGreet(MAP_NCRBoS, "New California Republic - BoS Outpost");
-    AddGreet(MAP_MilitaryCamp, "New California Republic Military Camp");
+    AddGreet(MAP_MilitaryCamp, "New California Republic - Fort Seth Military Camp");
 
     //  Hub
-    AddGreet(MAP_HubDowntown, LVAR_greet_hub, "Hub Downtown", "You have entered the dusty streets of the Hub, the main stop-off point for every caravan that is on its way to the north or the south.");
+    AddGreet(MAP_HubDowntown, LVAR_greet_hub, "Hub - Downtown", "You have entered the dusty streets of the Hub, the main stop-off point for every caravan that is on its way to the north or the south.");
     AddGreet(MAP_HubOldtown, "Hub - Oldtown");
     AddGreet(MAP_HubHeights, "Hub - Heights");
     AddGreet(MAP_HubWatermerchants, "Hub - Water Merchants");
@@ -151,11 +159,11 @@ void InitGreet() {
     AddGreet(MAP_MilitaryBaseLevel4, "Mariposa Military Base - Level 4");
 
     //  New Reno
-    AddGreet(MAP_NewReno1, "New Reno - 1");
-    AddGreet(MAP_NewReno2, "New Reno - 2");
-    AddGreet(MAP_NewReno3, "New Reno - 3");
-    AddGreet(MAP_NewReno4, "New Reno - 4");
-    AddGreet(MAP_NewRenoChopShop, "New Reno - Chop Shop");
+    AddGreet(MAP_NewReno1, "New Reno - Virgin Street");
+    AddGreet(MAP_NewReno2, "New Reno - 2nd Street");
+    AddGreet(MAP_NewReno3, "New Reno - Commercial Row");
+    AddGreet(MAP_NewReno4, "New Reno - East Side");
+    AddGreet(MAP_NewRenoChopShop, "New Reno - Car Shop");
     AddGreet(MAP_NewRenoSewers, "New Reno - Sewers");
     AddGreet(MAP_NewReno_Golgotha, "New Reno - Golgotha");
     AddGreet(MAP_NewReno_Basement, "New Reno - Basement");
@@ -185,7 +193,6 @@ void InitGreet() {
     AddGreet(MAP_Cathedral_CellarLevel2, "Cathedral - Cellar Level 2");
     AddGreet(MAP_Cathedral_CellarLevel3, "Cathedral - Cellar Level 3");
     AddGreet(MAP_Cathedral_CellarLevel4, "Cathedral - Cellar Level 4");
-    AddGreet(MAP_Crater, "Cathedral - Crater");
 
     //  Brotherhood of Steel
     AddGreet(MAP_LostHills_Entrance, "Brotherhood of Steel: Lost Hills - Entrance");
@@ -264,7 +271,6 @@ void InitGreet() {
     AddGreet(MAP_Waterworks, "Waterworks");
     AddGreet(MAP_GordonsGasStation, "Gordon's Gas Station");
     AddGreet(MAP_SlaverCamp, "Slaver Camp");
-    AddGreet(MAP_MilitaryCamp, "New California Republic - Forth Seth");
     AddGreet(MAP_BarterGround, "Barter Ground");
 
     //  Talchem
@@ -438,16 +444,17 @@ void InitGreet() {
     }
     AddGreet(MAP_Warzone, "War Zone 2");
     AddGreet(MAP_Warzone2, "Another War Zone");
+    AddGreet(MAP_LAWarehouse, "Los Angeles - Warehouse");
 
     //  Tents
-    AddGreet(MAP_Safehouseinthecity, "Safehouse in the City");
-    AddGreet(MAP_Safehouseonthecoast, "Safehouse on the Coast");
-    AddGreet(MAP_Safehouseinthedesert, "Safehouse in the Desert");
-    AddGreet(MAP_Safehouseinthemountains, "Safehouse in the Mountains");
-    AddGreet(MAP_Tentinthedesert, "Tent in the Desert");
-    AddGreet(MAP_Tentinthemountains, "Tent in the Mountains");
-    AddGreet(MAP_Tentonthecoast, "Tent in the Coast");
-    AddGreet(MAP_Tentinthecity, "Tent in the City");
+    AddGreet(MAP_Safehouseinthecity, "Safehouse");
+    AddGreet(MAP_Safehouseonthecoast, "Safehouse");
+    AddGreet(MAP_Safehouseinthedesert, "Safehouse");
+    AddGreet(MAP_Safehouseinthemountains, "Safehouse");
+    AddGreet(MAP_Tentinthedesert, "Tent");
+    AddGreet(MAP_Tentinthemountains, "Tent");
+    AddGreet(MAP_Tentonthecoast, "Tent");
+    AddGreet(MAP_Tentinthecity, "Tent");
 
     //  Bases
     for (int i = MAP_HQ_Camp; i <= MAP_HQ_Gasstation; i++) {
@@ -476,23 +483,255 @@ void GreetPlayer(Critter@ player, Map@ map) {
     if(!valid(player) || !player.IsPlayer() || !valid(map))
         return;
 
+    int hostility = 0;
+    uint mapPid = map.GetProtoId();
+    Location@ location = map.GetLocation();
+    uint repIndex = ReputationIndex(map.GetLocation().GetProtoId());
+
+    //  reputation based maps, but not included in the default location or multi-faction locations, line New Reno
+    switch (mapPid) {
+        //  reputation based
+        case MAP_NCRBoS:
+        case MAP_DenBoS:
+        case MAP_SanFranBoS:
+            repIndex = FACTION_BOS;
+            break;
+        case MAP_KlamathMiningSite:
+        case MAP_KlamathMiningSiteInside:
+            repIndex = FACTION_KLAMATH;
+            break;
+        case MAP_VaultCityMiningSite:
+        case MAP_VaultCityMineInside:
+        case MAP_VaultCityTrainStation:
+            repIndex = FACTION_VAULT_CITY;
+            break;
+        case MAP_BoneyardTrainStation:
+            repIndex = FACTION_REGULATORS;
+            break;
+        case MAP_NCRTrainStation:
+            repIndex = FACTION_NCR;
+            break;
+        case MAP_SanFranciscoMiningSite:
+        case MAP_SanFranciscoMiningSiteInside:
+        case MAP_SanFransiscoTrainStation:
+            repIndex = FACTION_COMMUNISTS;
+            break;
+        case MAP_NewReno_BishopFloor1:
+        case MAP_NewReno_BishopFloor2:
+            repIndex = FACTION_BISHOPS;
+            break;
+        case MAP_NewRenoChopShop:
+        case MAP_NewReno_Arms:
+        case MAP_NewReno_SharkBoxing:
+        case MAP_NewReno_Golgotha:
+            repIndex = FACTION_NEW_RENO;
+            break;
+        case MAP_NewReno_MordinoHQ:
+        case MAP_NewReno_Stables:
+        case MAP_NewReno_Stables2:
+            repIndex = FACTION_MORDINOS;
+            break;
+        case MAP_NewReno_Wright:
+            repIndex = FACTION_WRIGHTS;
+            break;
+        case MAP_HubHeights:
+            repIndex = FACTION_HEIGHTS;
+            break;
+
+        default:
+    }
+
+    //  set by known location
+    if (repIndex > 1 && repIndex < 100) {
+        player.Say(SAY_NETMSG, "repIndex = " + repIndex + ", repuBase = " + player.ReputationBase[repIndex] + ", repu = " + player.Reputation[repIndex]);
+        if (player.Reputation[repIndex] <= -1500) {
+            hostility = MAP_GREETER_HOSTILITY_HOSTILE;
+        } else if (player.Reputation[repIndex] <= -300) {
+            hostility = MAP_GREETER_HOSTILITY_UNFRIENDLY;
+        } else if (player.Reputation[repIndex] >= 300) {
+            hostility = MAP_GREETER_HOSTILITY_FRIENDLY;
+        } else if (player.Reputation[repIndex] >= 1500) {
+            hostility = MAP_GREETER_HOSTILITY_ALLY;
+        } else {
+            hostility = MAP_GREETER_HOSTILITY_NEUTRAL;
+        }
+    }
+
+    //  non-reputation based maps, either always friendly or always hostile, like pvp dungeons
+    switch (mapPid) {
+
+        //  always friendly
+        case MAP_StartLocation:
+        case MAP_StartVault:
+        case MAP_StartCaravan:
+            hostility = MAP_GREETER_HOSTILITY_FRIENDLY;
+            break;
+
+        //  always hostile and dangerous
+        //  glow
+        case MAP_Glow_Entrance:
+        case MAP_Glow_Floor1:
+        case MAP_Glow_Floor2:
+        case MAP_Glow_Floor3:
+        case MAP_Glow_Floor4:
+        case MAP_Glow_Floor5:
+        case MAP_Glow_Floor6:
+        //  vault 13
+        case MAP_Vault13Level2:
+        case MAP_Vault13Level3:
+        case MAP_Vault13Level4:
+        //  ares
+        case MAP_AresMilitaryBase_Entrance:
+        case MAP_AresMilitaryBase_Level1:
+        case MAP_AresMilitaryBase_Level2:
+        case MAP_Areslevel3:
+        case MAP_Areslevel4:
+        //  vault 15
+        case MAP_Vault15Level1:
+        case MAP_Vault15Level2:
+        case MAP_Vault15Level3:
+        //  Mariposa militry base
+        case MAP_MilitaryBaseLevel1:
+        case MAP_MilitaryBaseLevel2:
+        case MAP_MilitaryBaseLevel3:
+        case MAP_MilitaryBaseLevel4:
+        //  stranded tanker
+        case MAP_StrandedTanker_Level1:
+        case MAP_StrandedTanker_Level2:
+        case MAP_StrandedTanker_Level3:
+        //  BH dungeon
+        case MAP_BrokenHillsDungeon:
+        //  LA warehouse
+        case MAP_Ripper:
+        case MAP_RipperSub:
+        //  talchem
+        case MAP_Talchemlevel1:
+        case MAP_Talchemlevel2:
+        //  sierra caves
+        case MAP_SierraCavesLevel1Pitfall:
+        case MAP_SierraCavesLevel1Gauntlet:
+        case MAP_SierraCavesLevel1Vault2:
+        case MAP_SierraCavesLevel1Vault3:
+        case MAP_SierraCavesLevel1Vault4:
+        case MAP_SierraCavesLevel1Vault5:
+        case MAP_SierraCavesLevel1Vault6:
+        case MAP_SierraCavesLevel1Vault7:
+            hostility = MAP_GREETER_HOSTILITY_HOSTILE;
+            break;
+
+        //  semi hostile, quest location
+        case MAP_Vault15Surface:
+        case MAP_Vault13Level1:
+        case MAP_LAWarehouse:
+        case MAP_MilitaryBaseEntrance:
+        case MAP_BrokenHillsMine:
+        case MAP_StrandedTanker_Outside:
+        case MAP_TalchemSurface:
+        case MAP_SierraCavesLevel1Scene1:
+        case MAP_SierraCavesLevel1Scene2:
+        case MAP_SierraCavesLevel1Scene3:
+        case MAP_SierraCavesLevel1Scene4:
+        case MAP_SierraCavesLevel1Scene5:
+        case MAP_SierraCavesLevel1Scene6:
+        case MAP_SierraCavesLevel1Scene7:
+        case MAP_SierraCavesLevel1Exit1:
+        case MAP_SierraCavesLevel1Exit2:
+            hostility = MAP_GREETER_HOSTILITY_UNFRIENDLY;
+            break;
+        //  jail
+        case MAP_Jail:
+        case MAP_Jail2:
+            hostility = MAP_GREETER_HOSTILITY_NEUTRAL_OLD;
+            break;
+        default:
+    }
+
     for (uint g = 0; g < Greet.length(); g++) {
-        if (Greet[g].map_pid == map.GetProtoId()) {
+        if (Greet[g].map_pid == mapPid) {
+            string lex = Greet[g].mapName;
             if (Greet[g].lvar > 0) {
                 if (GetLvar(player, Greet[g].lvar) == 0) {
-                    player.Say(SAY_NETMSG, "Greet: first time");
-
                     player.Say(SAY_NETMSG, Greet[g].message);
                     SetLvar(player, Greet[g].lvar, 1);
                     int xpReward = locationFoundBaseXp * TEST_SERVER_XP_MODIFIER;
                     player.StatBase[ST_EXPERIENCE] += xpReward;
                     //player.Say(SAY_NETMSG, "|0xFFFFFF You have gained " + xpReward + " experience points.");
+                }
+            }
+            if (Greet[g].mapName == "Safehouse" || Greet[g].mapName == "Tent") {
+                lex = "";
+                array<uint8> raw;
+                array<uint8> raw2;
+                if (IsPersonalData(location, TENT_OWNER) && GetPersonalData(location, TENT_OWNER, raw2)) {
+                    string  name = "";
+                    Buffer@ buffer = NewBuffer(raw2);
+                    buffer >> name;
+                    if (name.length() > 0) {
+                        player.Say(SAY_NETMSG, "NAME = '" + name + "'");
+                        lex = name + "'s ";
+                    } else {
+                        player.Say(SAY_NETMSG, "0 bytes in buffer for tent owner.");
+                    }
                 } else {
-                    player.Say(SAY_NETMSG, "Greet: not a first time");
+                    uint ownerId = GetTentOwnerId(map);
+                    player.Say(SAY_NETMSG, "No tent owner data in buffer for tent, but we have an ID = " + ownerId);
+                    if (ownerId > 0) {
+                        if (player.Id == ownerId) {
+                            hostility = MAP_GREETER_HOSTILITY_FRIENDLY;
+                            lex += "Your own ";
+                        } else {
+                            hostility = MAP_GREETER_HOSTILITY_UNFRIENDLY;
+                            array<string@> names;
+                            array<uint> ids;
+                            uint regCount = GetRegisteredPlayers(ids, names);
+                            int index = ids.find(ownerId);
+                            if (index >= 0) {
+                                lex += names[index] + "'s ";
+                            } else {
+                                hostility = MAP_GREETER_HOSTILITY_NEUTRAL_OLD;
+                                lex += "An abandoned (" + ownerId + ") old ";
+                            }
+                        }
+                    }
+                }
+                lex +=  Greet[g].mapName + " - ";
+                if (IsPersonalData(location, "tentName") && GetPersonalData(location, "tentName", raw)) {
+                    string  name = "";
+                    Buffer@ buffer2 = NewBuffer(raw);
+                    buffer2 >> name;
+                    if (name.length() > 0)
+                        lex += name;
+                }
+            } else if (Greet[g].mapName == "Base") {
+                uint mapFaction = map.GetData(MAP_DATA_FACTION);
+                if (mapFaction > 1) {
+                    IFactionBase@ base;
+                    @base = GetFactionBaseByLocId(location.Id);
+                    if (player.Param[ST_TEAM_ID] > 1 && uint(player.Param[ST_TEAM_ID]) == mapFaction) {
+                        hostility = MAP_GREETER_HOSTILITY_ALLY;
+                        lex = "Your faction's base - " + base.Name;
+                    } else {
+                        uint status = GetStatus(mapFaction, player.Id);
+                        if (status == STATUS_FRIEND || status == STATUS_INVITED) {
+                            hostility = MAP_GREETER_HOSTILITY_FRIENDLY;   //  for now yellow color will do, to notify you are not part of the faction yet
+                        } else if (status == STATUS_ENEMY) {
+                            hostility = MAP_GREETER_HOSTILITY_HOSTILE;
+                        } else if (status == STATUS_NEUTRAL) {
+                            hostility = MAP_GREETER_HOSTILITY_NEUTRAL;
+                        } else {
+                            hostility = MAP_GREETER_HOSTILITY_UNFRIENDLY;
+                        }
+                        string factionName;
+                        if (GetFactionNameStr(mapFaction, factionName)) {
+                            lex = factionName + " faction's base - " + base.Name;
+                        } else {
+                            lex = "A faction's base - " + base.Name;
+                        }
+                    }
                 }
             }
             array<int> data;
-            player.RunClientScript("client_mapGreeter@_GreetMapName", 0, 0, 0, Greet[g].mapName, data);
+            player.RunClientScript("client_mapGreeter@_GreetMapName", hostility, 0, 0, lex, data);
             return;
         }
     }

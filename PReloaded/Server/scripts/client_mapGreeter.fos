@@ -10,6 +10,8 @@
 #ifndef __MAP_GREETER__
 #define __MAP_GREETER__
 
+#include "map_greet_h.fos"
+
 #include "sprite.fos"
 #include "_defines.fos"
 #include "_client_defines.fos"
@@ -19,18 +21,27 @@
 
 CMapGreeter mapGreeter;
 
-#define MAP_GREETER_COLOR_NEUTRAL   (COLOR_WHITE)
-#define MAP_GREETER_COLOR_FRIENDLY  (COLOR_GREEN)
-#define MAP_GREETER_COLOR_HOSTILE   (COLOR_ORANGE)
+#define MAP_GREETER_COLOR_HOSTILE       (COLOR_RED)
+#define MAP_GREETER_COLOR_UNFRIENDLY    (COLOR_DDORANGE)
+#define MAP_GREETER_COLOR_NEUTRAL_OLD   (COLOR_RGB(0x90, 0x90, 0x90))   //  grey
+#define MAP_GREETER_COLOR_NEUTRAL       (COLOR_WHITE)
+#define MAP_GREETER_COLOR_FRIENDLY      (COLOR_RGB(0, 0x99, 0)) //  semi dark green
+#define MAP_GREETER_COLOR_ALLY          (COLOR_RGB(0, 0xDD, 0)) //  lighter green
+
 
 //  called from server
 void _GreetMapName(int p0, int p1, int p2, string@ message, array<int>@ data) {
-    Message("_GreetMapName called.");
     mapGreeter.message = message;
-    if (p0 > 0) {
+    if (p0 >= MAP_GREETER_HOSTILITY_ALLY) {
+        mapGreeter.textColor = MAP_GREETER_COLOR_ALLY;
+    } else if (p0 == MAP_GREETER_HOSTILITY_FRIENDLY) {
         mapGreeter.textColor = MAP_GREETER_COLOR_FRIENDLY;
-    } else if (p0 < 0) {
+    } else if (p0 <= MAP_GREETER_HOSTILITY_HOSTILE) {
         mapGreeter.textColor = MAP_GREETER_COLOR_HOSTILE;
+    } else if (p0 == MAP_GREETER_HOSTILITY_UNFRIENDLY) {
+        mapGreeter.textColor = MAP_GREETER_COLOR_UNFRIENDLY;
+    } else if (p0 == MAP_GREETER_HOSTILITY_NEUTRAL_OLD) {
+        mapGreeter.textColor = MAP_GREETER_COLOR_NEUTRAL_OLD;
     } else {
         mapGreeter.textColor = MAP_GREETER_COLOR_NEUTRAL;
     }

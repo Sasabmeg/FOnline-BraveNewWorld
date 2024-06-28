@@ -682,6 +682,24 @@ bool IsTentOwner(Location& tent, uint crId)
     return(uint(GetLLvar(tent, LLVAR_tent_owner)) == crId);
 }
 
+uint GetTentOwnerId(Map& tent) {
+    uint version = GetTentVersion(tent);
+
+    if(version == 0) {
+        return (uint(tent.GetData(MAP_DATA_TENT_OWNER)));
+    } else if (version == 1) {
+        Location@ location = tent.GetLocation();
+        if (valid(location)) {
+            return uint(GetLLvar(location, LLVAR_tent_owner));
+        }
+    } else {
+        //cr.Say(SAY_NETMSG, "ERR: Invalid ver<" + version + "> please report");
+        Log("ERR: Invalid ver<" + version + "> please report");
+    }
+
+    return 0;
+}
+
 bool IsTentOwner(Map& tent, Critter& cr)
 {
     uint version = GetTentVersion(tent);

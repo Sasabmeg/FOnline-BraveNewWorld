@@ -10,6 +10,8 @@
 
 #ifndef __MAP_TENT__
 
+#define TENT_OWNER                "tents:owner"		// Critter
+
 import void InitTents() from "map_tent";
 
 import uint GetAllTents(array<Location@>& locations) from "map_tent";
@@ -29,6 +31,7 @@ import bool RemoveTent(Critter& cr, uint locId, bool recycle) from "map_tent";
 import void RemoveAllTents(Critter& cr, bool recycle) from "map_tent";
 
 import bool IsTentOwner(Map& tent, Critter& cr) from "map_tent";
+import uint GetTentOwnerId(Map& tent) from "map_tent";
 
 import void myinfo_tent(Critter& cr) from "map_tent";
 

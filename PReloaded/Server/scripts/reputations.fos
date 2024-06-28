@@ -134,10 +134,17 @@ uint ReputationIndex(uint locid)
     case LOCATION_Hub:
         return FACTION_HUB;
     case LOCATION_Boneyard:
+    case LOCATION_BladesHQ:
         return FACTION_REGULATORS;
+    case LOCATION_Library:
+        return FACTION_FOLLOWERS;
+    case LOCATION_Fortress:
+        return FACTION_GUNRUNNERS;
     case LOCATION_Raiders:
     case LOCATION_RaidersSouth:
         return FACTION_RAIDERS;
+    case LOCATION_LandersPoint:
+        return FACTION_LANDERS_CAMP;
     default:
     }
     return FACTION_NONE;
