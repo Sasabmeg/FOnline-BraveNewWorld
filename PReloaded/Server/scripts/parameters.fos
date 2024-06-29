@@ -9,6 +9,7 @@
 #include "MsgStr.h"
 # include "_defines.fos"
 #include "lexems_h.fos"
+# include "_msgstr.fos"
 
 #ifdef __CLIENT
 # include "_client_defines.fos"
@@ -30,6 +31,7 @@ import void     PerkDown(Critter& cr, uint perk, int tolevel) from "perks";
 import bool     IsHumanoid(Critter@ cr) from "utils";
 import void     VerboseExperience(Critter& cr, int xpDiff, int levelDiff) from "utils";
 import void 	AddScore(Critter@ cr, uint score, uint points) from "utils";
+import void     GreetPlayer(Critter@ player, Map@ map) from "map_greet";
 //import void     FloatingMiscText(Critter& cr, int value, int reason) from "utils";
 
 
@@ -69,6 +71,22 @@ void changedParam_Hp(Critter& cr, uint, int oldValue)   // server
     else
         cr.StatBase[ST_HEALTH_LEVEL] = (3 * curHp) / maxHp + 1;
 
+}
+
+void changedParam_Reputation(Critter& cr, uint reputationParamId, int oldValue) {  // server
+    if (!cr.IsPlayer())
+        return;
+    int newValue = cr.ParamBase[reputationParamId];
+    int change = newValue - oldValue;
+    if (change == 0)
+        return;
+    //  reputation changed over threshold
+    int oldIndex = STR_TOWNREP_RATIO_NAME2(oldValue);
+    int newIndex = STR_TOWNREP_RATIO_NAME2(newValue);
+    //cr.Say(SAY_NETMSG, "SERVER ---- Reputation threshold changed for faction: (oldIndex = " + oldIndex + ", newIndex = " + newIndex + ")");
+    if (oldIndex != newIndex) {
+        GreetPlayer(cr, cr.GetMap());
+    }
 }
 
 void changedParam_Experience(Critter& cr, uint, int oldValue)   // server
@@ -238,15 +256,56 @@ void changedParam_Level(CritterCl& cr, uint, int oldValue)   // client
     }
 }
 
-void changedParam_Reputation(CritterCl& cr, uint reputationParamId, int oldValue) {  // server
-    Message("Name  = " + cr.Name + ", reputationParamId = " + reputationParamId + ", oldValue = " + oldValue + ", newValue = " + cr.ParamBase[reputationParamId]);
-    int change = cr.ParamBase[reputationParamId] - oldValue;
+void changedParam_Reputation(CritterCl& cr, uint reputationParamId, int oldValue) {  // client
+    //  Message("Name  = " + cr.Name + ", reputationParamId = " + reputationParamId + ", oldValue = " + oldValue + ", newValue = " + cr.ParamBase[reputationParamId]);
+    int newValue = cr.ParamBase[reputationParamId];
+    int change = newValue - oldValue;
     if (change == 0)
         return;
+    int factionNameMsgId = 100000 + ((reputationParamId) * 10) + 1;
+    string factionName = GetMsgStr(TEXTMSG_GAME, factionNameMsgId);
+    int oldIndex = STR_TOWNREP_RATIO_NAME2(oldValue);
+    int newIndex = STR_TOWNREP_RATIO_NAME2(newValue);
+    string newReputationValueName = GetMsgStr(TEXTMSG_GAME, newIndex);
+    string repStatus = "";
+    // repu changes from vilified to idolized (2024.06.29): -1499, -899, -299, 300, 900, 1500
+    switch (newIndex) {
+        case 6500:
+            repStatus = "|0x00EE00 " + newReputationValueName;
+            break;
+        case 6501:
+            repStatus = "|0x009900 " + newReputationValueName;
+            break;
+        case 6502:
+            repStatus = "|0x007700 " + newReputationValueName;
+            break;
+        case 6503:
+            repStatus = "|0xEEEEEE " + newReputationValueName;
+            break;
+        case 6504:
+            repStatus = "|0xAAAA00 " + newReputationValueName;
+            break;
+        case 6505:
+            repStatus = "|0xEA4600 " + newReputationValueName;
+            break;
+        case 6506:
+            repStatus = "|0xFF0000 " + newReputationValueName;
+            break;
+        default:
+            repStatus = "|0xEEEEEE N/A";
+    }
     if (change > 0) {
-        Message("|0x4DA996 You have gained " + change + " reputation points with " + "factionName?");
+        if (oldIndex == newIndex) {
+            Message("|0x4DA996 You have gained |0x00C800 " + change + " |0x4DA996 reputation points with |0xEEEEEE " + factionName + "|0x4DA996 .");
+        } else {
+            Message("|0x4DA996 You have gained |0x00C800 " + change + " |0x4DA996 reputation points with |0xEEEEEE " + factionName + "|0x4DA996  and their status towards you changed to " + repStatus + "|0x4DA996 .");
+        }
     } else {
-        Message("|0x4DA996 You have lost " + (change * -1) + " reputation points with " + "factionName?");
+        if (oldIndex == newIndex) {
+            Message("|0x4DA996 You have lost |0xEA4600 " + (change * -1) + " |0x4DA996 reputation points with |0xEEEEEE " + factionName + "|0x4DA996 .");
+        } else {
+            Message("|0x4DA996 You have lost |0xEA4600 " + (change * -1) + " |0x4DA996 reputation points with |0xEEEEEE " + factionName + "|0x4DA996  and their status towards you changed to " + repStatus + "|0x4DA996 .");
+        }
     }
 }
 

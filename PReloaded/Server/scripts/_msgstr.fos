@@ -492,6 +492,9 @@
 #define STR_TOWNREP_RATIO_NAME #(val)   (6500+((val)>=GameOpt.ReputationLoved?0:((val)>=GameOpt.ReputationLiked?1:((val)>=GameOpt.ReputationAccepted?2:((val)>=GameOpt.ReputationNeutral?3:((val)>=GameOpt.ReputationAntipathy?4:((val)>=GameOpt.ReputationHated?5:6)))))))
 #define STR_TOWNREP_RATIO_DESC #(val)   (6550+((val)>=GameOpt.ReputationLoved?0:((val)>=GameOpt.ReputationLiked?1:((val)>=GameOpt.ReputationAccepted?2:((val)>=GameOpt.ReputationNeutral?3:((val)>=GameOpt.ReputationAntipathy?4:((val)>=GameOpt.ReputationHated?5:6)))))))
 
+#define STR_TOWNREP_RATIO_NAME2 #(val)  (6500+((val)>=__ReputationLoved?0:((val)>=__ReputationLiked?1:((val)>=__ReputationAccepted?2:((val)>=__ReputationNeutral?3:((val)>=__ReputationAntipathy?4:((val)>=__ReputationHated?5:6)))))))
+#define STR_TOWNREP_RATIO_DESC2 #(val)  (6550+((val)>=__ReputationLoved?0:((val)>=__ReputationLiked?1:((val)>=__ReputationAccepted?2:((val)>=__ReputationNeutral?3:((val)>=__ReputationAntipathy?4:((val)>=__ReputationHated?5:6)))))))
+
 #define STR_ADDICT_TITLE_NAME           (6900)
 #define STR_ADDICT_TITLE_DESC           (6901)
 
@@ -639,8 +642,8 @@
 //Timeouts
 #define STR_GAME_TO_SK_FIRST_AID             (102301)
 #define STR_GAME_TO_SK_DOCTOR                (102311)
-#define STR_GAME_TO_SK_REPAIR                (102321) 
-#define STR_GAME_TO_SK_SCIENCE               (102331) 
+#define STR_GAME_TO_SK_REPAIR                (102321)
+#define STR_GAME_TO_SK_SCIENCE               (102331)
 #define STR_GAME_TO_SK_LOCKPICK              (102341)
 #define STR_GAME_TO_SK_STEAL                 (102351)
 #define STR_GAME_TO_BATTLE                   (102381)
@@ -681,7 +684,7 @@
 #define STR_NPC_PROTO_NAME #(pid)                  ((pid)*10)
 #define STR_NPC_PROTO_DESC #(pid)                  ((pid)*10+1)
 #define STR_NPC_NAME                    #(dlg,pid) ((dlg)!=0?100000+(dlg)*1000+100:STR_NPC_PROTO_NAME(pid))
-#define STR_NPC_NAME_DLG                #(dlg)     ( 100000 + ( dlg ) * 1000 + 100 )   
+#define STR_NPC_NAME_DLG                #(dlg)     ( 100000 + ( dlg ) * 1000 + 100 )
 #define STR_NPC_AVATAR                  #(dlg)     ((dlg)!=0?100000+(dlg)*1000+110:0)
 #define STR_NPC_INFO_LIFE               #(dlg,pid) ((dlg)!=0?100000+(dlg)*1000+200:STR_NPC_PROTO_NAME(pid))
 #define STR_NPC_FULL_INFO_LIFE          #(dlg,pid) ((dlg)!=0?100000+(dlg)*1000+210:STR_NPC_PROTO_DESC(pid))
@@ -865,7 +868,7 @@
 #define NEXT						(70634)
 #define PREVIOUS					(70635)
 #define START						(70636)
-#define ENTERACCESSCODE				(70637)	
+#define ENTERACCESSCODE				(70637)
 
 //***************************************************************************************
 //******  FOTEXT.MSG	/Random Encounter messges/  Cubik	*****************************

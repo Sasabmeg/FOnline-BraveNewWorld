@@ -543,7 +543,7 @@ void GreetPlayer(Critter@ player, Map@ map) {
 
     //  set by known location
     if (repIndex > 1 && repIndex < 100) {
-        player.Say(SAY_NETMSG, "repIndex = " + repIndex + ", repuBase = " + player.ReputationBase[repIndex] + ", repu = " + player.Reputation[repIndex]);
+        //player.Say(SAY_NETMSG, "repIndex = " + repIndex + ", repuBase = " + player.ReputationBase[repIndex] + ", repu = " + player.Reputation[repIndex]);
         if (player.Reputation[repIndex] <= -1500) {
             hostility = MAP_GREETER_HOSTILITY_HOSTILE;
         } else if (player.Reputation[repIndex] <= -300) {
