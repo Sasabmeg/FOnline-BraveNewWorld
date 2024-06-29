@@ -239,8 +239,10 @@ void InitializeGame()                  // Export
         SetParameterChangeBehaviour(i, "parameters@changedParam_Perks");
     SetParameterChangeBehaviour(MODE_HIDE, "parameters@changedParam_Hide");
     SetParameterChangeBehaviour(TRAIT_FAST_SHOT, "parameters@changedParam_FastShot");
-    for(uint i = REPUTATION_BEGIN; i <= REPUTATION_END; i++)
+    for(uint i = REPUTATION_BEGIN; i <= REPUTATION_END; i++) {
         SetParameterDialogGetBehaviour(i, "parameters@getParamDialog_Reputation");
+        SetParameterChangeBehaviour(i, "parameters@changedParam_Reputation");
+    }
     # endif    // !__CLIENT
 
     # ifdef __CLIENT
@@ -251,6 +253,9 @@ void InitializeGame()                  // Export
 	SetParameterChangeBehaviour(ST_UNSPENT_TAG, "parameters@changedParam_UnspentTag");
     SetParameterChangeBehaviour(MODE_HIDE, "parameters@changedParam_Hide");
 	SetParameterChangeBehaviour(ST_ALPHA, fosName + "changedParam_Alpha" );
+    for(uint i = REPUTATION_BEGIN; i <= REPUTATION_END; i++) {
+        SetParameterChangeBehaviour(i, "parameters@changedParam_Reputation");
+    }
     # endif    // __CLIENT
 
     /// Registration parameters

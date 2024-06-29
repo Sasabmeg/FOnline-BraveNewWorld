@@ -8,13 +8,13 @@
 import bool GUI_IsKeyPressed(uint8 key) from "client_gui";
 import void SetLastMode(uint8 mode) from "client_mapper_animation";
 import bool ToggleWallRoofTransparency() from "client_interface";
-import void ToggleInventoryTracker() from "client_InventoryTracker";
-import bool IsInventoryTrackerEnabled() from "client_InventoryTracker";
-import void ToggleCarTracker() from "client_CarTracker";
-import bool IsCarTrackerEnabled() from "client_CarTracker";
-import void BeepCarTracker() from "client_CarTracker";
-import void ToggleGuiImage() from "client_gui_image";
-import bool IsGuiImageEnabled() from "client_gui_image";
+import void ToggleInventoryTracker() from "client/client_InventoryTracker";
+import bool IsInventoryTrackerEnabled() from "client/client_InventoryTracker";
+import void ToggleCarTracker() from "client/client_CarTracker";
+import bool IsCarTrackerEnabled() from "client/client_CarTracker";
+import void BeepCarTracker() from "client/client_CarTracker";
+import void ToggleGuiImage() from "client/client_GuiImage";
+import bool IsGuiImageEnabled() from "client/client_GuiImage";
 
 shared interface IBind
 {

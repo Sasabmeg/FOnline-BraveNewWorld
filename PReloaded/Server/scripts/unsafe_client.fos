@@ -1868,7 +1868,7 @@ void unsafe_ListFriendFoeNames(Critter& player, int p0, int p1, int p2, string@ 
             if (index >= 0) {
                 row = names[index] + " (" + listId + ")";
             } else {
-                row = "N/A [deceased] (" + listId + ")";
+                row = "R.I.P. (" + listId + ")";
             }
             if (isEvil) {
                 foes.insertLast(row);

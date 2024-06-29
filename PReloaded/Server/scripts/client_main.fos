@@ -26,13 +26,13 @@ import void InitCritterOnHead(bool showNpcNames, uint namesColor, uint questRegu
 // import void ActionUpdate(CritterCl& cr) from "client_anti_cheat";
 
 import void InitChosenTabs() from "chosen_tabs";
-import void InitQuestTracker() from "client_QuestTracker";
-import void InitInventoryTracker() from "client_InventoryTracker";
-import void InitCarTracker() from "client_CarTracker";
-import void InitGuiImage() from "client_gui_image";
-import void InitMapGreeter() from "client_mapGreeter";
+import void InitQuestTracker() from "client/client_QuestTracker";
+import void InitInventoryTracker() from "client/client_InventoryTracker";
+import void InitCarTracker() from "client/client_CarTracker";
+import void InitGuiImage() from "client/client_GuiImage";
+import void InitMapGreeter() from "client/client_MapGreeter";
 
-import void RefreshCars(array<int>@ data, string@ ownerList) from "client_CarTracker";
+import void RefreshCars(array<int>@ data, string@ ownerList) from "client/client_CarTracker";
 
 import void BroadcastProcess() from "client_broadcast";
 
@@ -86,7 +86,7 @@ import IClientAccessLevelOpt@ InitAccessControl() from "client_access";
 import void InitSmartCursor() from "client/smart_cursor";
 
 import uint BonusNumber(Item@ item) from "item_bonus";
-import bool SetImage(string& imageFile, bool limitWindowSizeMaxToImageSize, bool resizeEnabled, bool moveEnabled) from "client_gui_image";
+import bool SetImage(string& imageFile, bool limitWindowSizeMaxToImageSize, bool resizeEnabled, bool moveEnabled) from "client/client_GuiImage";
 
 
 #pragma bindfunc "void OpenURL(string@+) -> client_utils.dll OnlineStats_URL"

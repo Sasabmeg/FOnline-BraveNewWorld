@@ -50,9 +50,9 @@ import bool SmartCursorClick( int click ) from "client/smart_cursor";
 
 // import void ShowAimScreen( CritterCl@ target ) from "client_gui_screens";
 
-import bool GuiImageCatchMouseClick(int click) from "client_gui_image";
-import bool GuiImageCatchMouseRelease(int click) from "client_gui_image";
-import bool GuiImageUpdateMousePositionChange(int x, int y) from "client_gui_image";
+import bool GuiImageCatchMouseClick(int click) from "client/client_GuiImage";
+import bool GuiImageCatchMouseRelease(int click) from "client/client_GuiImage";
+import bool GuiImageUpdateMousePositionChange(int x, int y) from "client/client_GuiImage";
 
 #define LeftCtrl        GUI_IsKeyPressed(DIK_LCONTROL)
 #define RightCtrl       GUI_IsKeyPressed(DIK_RCONTROL)

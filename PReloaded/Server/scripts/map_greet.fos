@@ -731,7 +731,7 @@ void GreetPlayer(Critter@ player, Map@ map) {
                 }
             }
             array<int> data;
-            player.RunClientScript("client_mapGreeter@_GreetMapName", hostility, 0, 0, lex, data);
+            player.RunClientScript("client/client_MapGreeter@_GreetMapName", hostility, 0, 0, lex, data);
             return;
         }
     }

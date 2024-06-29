@@ -1,7 +1,7 @@
 /**
 *   FO version:     FOClassic: Brave New World
 *   Contributor:    Sasabmeg
-*   File:           client_mapGreeter.fos
+*   File:           mapGreeter.fos
 *
 *   Description:    It's just a pop-up text when player enters a map.
 *                   Aim is to provide 21st century look and feel and QoL modules for FOClassic.
@@ -10,14 +10,13 @@
 #ifndef __MAP_GREETER__
 #define __MAP_GREETER__
 
-#include "map_greet_h.fos"
-
-#include "sprite.fos"
-#include "_defines.fos"
-#include "_client_defines.fos"
-#include "_macros.fos"
-#include "_colors.fos"
-#include "client_gui_h.fos"
+#include "../map_greet_h.fos"
+#include "../sprite.fos"
+#include "../_defines.fos"
+#include "../_client_defines.fos"
+#include "../_macros.fos"
+#include "../_colors.fos"
+#include "../client_gui_h.fos"
 
 CMapGreeter mapGreeter;
 

@@ -238,6 +238,18 @@ void changedParam_Level(CritterCl& cr, uint, int oldValue)   // client
     }
 }
 
+void changedParam_Reputation(CritterCl& cr, uint reputationParamId, int oldValue) {  // server
+    Message("Name  = " + cr.Name + ", reputationParamId = " + reputationParamId + ", oldValue = " + oldValue + ", newValue = " + cr.ParamBase[reputationParamId]);
+    int change = cr.ParamBase[reputationParamId] - oldValue;
+    if (change == 0)
+        return;
+    if (change > 0) {
+        Message("|0x4DA996 You have gained " + change + " reputation points with " + "factionName?");
+    } else {
+        Message("|0x4DA996 You have lost " + (change * -1) + " reputation points with " + "factionName?");
+    }
+}
+
 void changedParam_Experience(CritterCl& cr, uint, int oldValue)   // client
 {
     int curValue = cr.ParamBase[ST_EXPERIENCE];
