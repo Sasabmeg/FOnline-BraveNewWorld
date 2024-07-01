@@ -341,7 +341,7 @@ bool map_message(string& message, uint16& hexX, uint16& hexY, uint& color, uint&
 bool in_message(string& message, int& sayType, uint& critterId, uint& delay)
 {
     //  radio 0 and other even channel number radio parsing, sender id is sent so it can filter based on friend/foe list
-    if (sayType == SAY_RADIO_0 || sayType == SAY_RADIO) {
+    if (sayType == SAY_RADIO_0 || sayType == SAY_RADIO_2 || sayType == SAY_RADIO) {
         //Message("in_message::sayType " + sayType + ", message = " + message);
         //array<string@>@ split = split(message, ":");
         int pos1 = findFirst(message, ":", 0);
@@ -1002,6 +1002,8 @@ bool out_message(string& message, int& sayType)
 				sayType=SAY_FACTION;
             else if (ch == "0")
                 sayType=SAY_RADIO_0;
+            else if (ch == "2")
+                sayType=SAY_RADIO_2;
             //  party chat
             else if(ch == "q" || ch== "Q")
 				sayType=SAY_SQUAD;

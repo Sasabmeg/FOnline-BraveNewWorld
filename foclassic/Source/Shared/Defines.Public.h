@@ -1061,6 +1061,7 @@
 #define MSGBOX_VIEW                                       (3)
 #define MSGBOX_RADIO									  (4)
 #define MSGBOX_SOCIAL									  (5)
+#define MSGBOX_RADIO_HIDDEN								  (6)
 
 // Client and mapper paths
 #define PATH_ROOT                                         (0)
@@ -1178,6 +1179,7 @@
 #define SAY_FACTION										  (50)
 #define SAY_SQUAD										  (51)
 #define SAY_RADIO_0										  (52)
+#define SAY_RADIO_2										  (53)
 
 
 // Max 20 buttons (0..19)

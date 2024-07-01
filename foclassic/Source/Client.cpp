@@ -4385,6 +4385,9 @@ void FOClient::OnText( const char* str, uint crid, int how_say, uint16 intellect
 		case SAY_RADIO_0:
 			fstr_mb = STR_MBRADIO + 1;
 			break;
+		case SAY_RADIO_2:
+			fstr_mb = STR_MBRADIO + 1;
+			break;
 		case SAY_NETMSG:
             mess_type = MSGBOX_GAME;
             fstr_mb = STR_MBNET;
@@ -4441,18 +4444,33 @@ void FOClient::OnText( const char* str, uint crid, int how_say, uint16 intellect
 				AddMess(MSGBOX_RADIO, FmtGameText(fstr_mb, channel, fstr));
 			}
 		}
-		else if ( how_say == SAY_RADIO_0) {
+		else if (how_say == SAY_RADIO_0) {
 			string str = fstr;
 			std::size_t pos = str.find(":");
 			if (pos > 0) {
 				string nameStr = str.substr(0, pos);
 				string messageStr = str.substr(pos + 1);
-				AddMess(MSGBOX_RADIO, FmtGameText(STR_MBRADIO + 1, 0, nameStr.c_str(), messageStr.c_str()));
-			} else {
+				int radioChannel = 0;
+				AddMess(MSGBOX_RADIO, FmtGameText(STR_MBRADIO + 1, radioChannel, nameStr.c_str(), messageStr.c_str()));
+			}
+			else {
 				WriteLog("Radio 0 bad format, missing name or separator ':'\n");
 			}
 		}
-        else
+		else if (how_say == SAY_RADIO_2) {
+			string str = fstr;
+			std::size_t pos = str.find(":");
+			if (pos > 0) {
+				string nameStr = str.substr(0, pos);
+				string messageStr = str.substr(pos + 1);
+				int radioChannel = 2;
+				AddMess(MSGBOX_RADIO_HIDDEN, FmtGameText(STR_MBRADIO + 1, radioChannel, nameStr.c_str(), messageStr.c_str()));
+			}
+			else {
+				WriteLog("Radio 2 bad format, missing name or separator ':'\n");
+			}
+		}
+		else
         {
             AddMess(mess_type, FmtGameText( fstr_mb, crit_name.c_str(), fstr ) );
         }
@@ -10998,7 +11016,7 @@ void FOClient::SScriptFunc::Global_Message( ScriptString& msg )
 
 void FOClient::SScriptFunc::Global_MessageType( ScriptString& msg, int type )
 {
-    if( type < MSGBOX_GAME || type > MSGBOX_RADIO )
+    if( type < MSGBOX_GAME || type > MSGBOX_RADIO_HIDDEN)
         type = MSGBOX_GAME;
     Self->AddMess( type, msg.c_str() );
 }
@@ -11014,7 +11032,7 @@ void FOClient::SScriptFunc::Global_MessageMsgType( int text_msg, uint str_num, i
 {
     if( text_msg >= TEXTMSG_MAX )
         SCRIPT_ERROR_R( "Invalid text msg arg." );
-    if( type < MSGBOX_GAME || type > MSGBOX_RADIO )
+    if( type < MSGBOX_GAME || type > MSGBOX_RADIO_HIDDEN)
         type = MSGBOX_GAME;
     Self->AddMess( type, Self->CurLang.Msg[text_msg].GetStr( str_num ) );
 }

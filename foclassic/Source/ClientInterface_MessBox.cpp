@@ -75,7 +75,7 @@ std::string FOClient::FormatMessBoxMessage(MessBoxMessage& msg) {
 	char strBuff[MAX_FOTEXT];
 	memset(strBuff, 0, MAX_FOTEXT);
 
-	if (msg.Type < 0 || msg.Type > MSGBOX_SOCIAL) {
+	if (msg.Type < 0 || msg.Type > MSGBOX_RADIO_HIDDEN) {
 		//Str::Format(strBuff, "%s\n", msg.Mess);
 		sprintf(strBuff, "%s\n", msg.Mess.c_str());
 	}
@@ -114,6 +114,7 @@ void FOClient::MessBoxGenerate()
 	for (; cur_mess >= 0; cur_mess--)
 	{
 		MessBoxMessage& m = MessBox[cur_mess];
+		//WriteLog("Message debug: tab = %d, type = %d, msg = %s\n", IntMessBoxActiveTab, m.Type, m.Mess.c_str());
 
 		// Filters
 		if (check_filters && std::find(MessBoxFilters.begin(), MessBoxFilters.end(), m.Type) != MessBoxFilters.end())
@@ -125,9 +126,14 @@ void FOClient::MessBoxGenerate()
 		}
 
 		if (IsMainScreen(CLIENT_MAIN_SCREEN_GAME) && IntMessBoxActiveTab == 3	//	Radio
-			&& m.Type != MSGBOX_RADIO) {
+			&& (m.Type != MSGBOX_RADIO && m.Type != MSGBOX_RADIO_HIDDEN)) {
 			continue;
 		}
+		
+		//	Radio hidden/trade spam channel (curently radio chan 2) shall not pop up in the 'all' chat tab
+		if (IsMainScreen(CLIENT_MAIN_SCREEN_GAME) && IntMessBoxActiveTab != 3 && m.Type == MSGBOX_RADIO_HIDDEN) {
+			continue;
+		}		
 		
 		if (IsMainScreen(CLIENT_MAIN_SCREEN_GAME) && IntMessBoxActiveTab == 4	//	Social
 			&& (m.Type != MSGBOX_SOCIAL)) {

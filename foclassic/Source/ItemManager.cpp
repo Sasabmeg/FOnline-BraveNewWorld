@@ -1624,9 +1624,9 @@ void ItemManager::RadioSendTextEx( uint16 channel, int broadcast_type, uint from
         }
     }
 
-	//	channel 0 on radio is free receive for all players, for lore integrated into pip boy
-	//	here we send to any player, who does not have radio set to channel 0
-	if (channel == 0) {
+	//	channel 0 and 2 on radio is free receive for all players, for lore integrated into pip boy
+	//	here we send to any player, who does not have radio set to channel 0 or 2
+	if (channel == 0 || channel == 2) {
 		ClVec players_;
 		CrMngr.GetCopyPlayers(players_, true);
 		//WriteLog("Radio 0> players: %d\n", players_.size());
