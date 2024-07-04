@@ -18,6 +18,9 @@
 
 # include "broadcast_h.fos"
 # include "client_utils_h.fos"
+#include "client/client_broadcast_h.fos"
+#include "FOClassic.fos"
+
 
 # define BROADCAST_START           (50)
 # define BROADCAST_LINE            (12)
@@ -47,7 +50,7 @@ class CBroadcast
 
         BroadcastDebugMessage("New: type<" + type + "> time<" + time + "> message<" + message + "> extra<" + extra + ">");
     }
-	
+
 	CBroadcast(int type, int time, string message, uint extra, uint kind)
     {
         this.type                       = type;
@@ -59,7 +62,35 @@ class CBroadcast
         BroadcastDebugMessage("New: type<" + type + "> time<" + time + "> message<" + message + "> extra<" + extra + "> kind<" + kind + ">");
     }
 };
+
 array<CBroadcast> Broadcast;
+
+//  broadcast options/commands
+bool broadcastHudEnabled = true;
+uint8 broadcastHudType = CLIENT_BROADCAST_ALL;
+
+bool IsBroadcastHudEnabled() {
+    return broadcastHudEnabled;
+}
+
+void SetBroadcastHudEnabled(bool value) {
+    broadcastHudEnabled = value;
+}
+
+bool IsBroadcastHudFlag(uint8 flag) {
+    return FLAG(broadcastHudType, flag);
+}
+
+void SetBroadcastHudFlag(uint8 flag) {
+    SETFLAG(broadcastHudType, flag);
+    Message("broadcastHudType = " + broadcastHudType);
+}
+
+void UnsetBroadcastHudFlag(uint8 flag) {
+    UNSETFLAG(broadcastHudType, flag);
+    Message("broadcastHudType = " + broadcastHudType);
+}
+
 
 int TimeToSeconds(uint& time)
 {
@@ -175,7 +206,8 @@ void BroadcastDraw()
 
 	for(uint b = 0; b < Broadcast.length(); b++)
     {
-        if(Broadcast[b].type == BROADCAST_SERVER_EVENT_MSG)
+        if (Broadcast[b].type == BROADCAST_SERVER_EVENT_MSG && broadcastHudEnabled &&
+           (IsBroadcastHudFlag(CLIENT_BROADCAST_FLAG_SERVER_EVENT_MSG)))
         {
             array<string@>@ msg = split(Broadcast[b].message, "\n");
             int    seconds = TimeToSeconds(Broadcast[b].time);
@@ -235,7 +267,8 @@ void BroadcastDraw()
     }
 	for(uint b = 0; b < Broadcast.length(); b++)
     {
-        if(Broadcast[b].type == BROADCAST_SERVER_EVENT_COUNTDOWN)
+        if (Broadcast[b].type == BROADCAST_SERVER_EVENT_COUNTDOWN && broadcastHudEnabled &&
+            (IsBroadcastHudFlag(CLIENT_BROADCAST_FLAG_SERVER_EVENT_COUNTDOWN)))
         {
             int    seconds = TimeToSeconds(Broadcast[b].time);
             int    minutes = seconds / 60;
@@ -270,7 +303,8 @@ void BroadcastDraw()
     {
         for(uint b = 0; b < Broadcast.length(); b++)
         {
-            if(Broadcast[b].type == BROADCAST_TC)
+            if (Broadcast[b].type == BROADCAST_TC && broadcastHudEnabled &&
+                (IsBroadcastHudFlag(CLIENT_BROADCAST_FLAG_TOWN_CONTROL)))
             {
                 int    seconds = TimeToSeconds(Broadcast[b].time);
                 int    minutes = seconds / 60;
@@ -285,7 +319,8 @@ void BroadcastDraw()
                          , 0, BROADCAST_START + (lines * BROADCAST_LINE), __ScreenWidth, BROADCAST_LINE, 0, FONT_TYPE_DEFAULT, FONT_FLAG_CENTERX | FONT_FLAG_BORDERED);
                 lines++;
             }
-            else if(Broadcast[b].type == BROADCAST_INFLUENCE)
+            else if (Broadcast[b].type == BROADCAST_INFLUENCE && broadcastHudEnabled &&
+                (IsBroadcastHudFlag(CLIENT_BROADCAST_FLAG_TOWN_CONTROL)))
             {
                 DrawText(Broadcast[b].message
                          # ifdef __DEBUG__
@@ -476,7 +511,7 @@ void _Receive(int type, int time, int setup, string@ message, array<int>@ data)
             // string faction = GetMsgStr(TEXTMSG_TEXT, data[1]);  // faction, maybe later
 			uint kind = data[1];
 			string description;
-			
+
 			switch(kind)
 			{
 				case EVENT_TYPE_TOWN_REINFORCEMENTS_1: description = "1st wave of reinforcements is comming to location";break;

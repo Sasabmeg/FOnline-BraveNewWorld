@@ -1,0 +1,19 @@
+#ifndef __CLIENT_BROADCAST_H__
+#define __CLIENT_BROADCAST_H__
+
+#define CLIENT_BROADCAST_NONE                          (0)
+#define CLIENT_BROADCAST_ALL                           (0x07)
+#define CLIENT_BROADCAST_FLAG_TOWN_CONTROL             (0x01)
+#define CLIENT_BROADCAST_FLAG_SERVER_EVENT_MSG         (0x02)
+#define CLIENT_BROADCAST_FLAG_SERVER_EVENT_COUNTDOWN   (0x04)
+
+
+#ifndef __CLIENT_BROADCAST__
+import bool IsBroadcastHudEnabled() from "client_broadcast";
+import void SetBroadcastHudEnabled(bool value) from "client_broadcast";
+import bool IsBroadcastHudFlag(uint8 flag) from "client_broadcast";
+import void SetBroadcastHudFlag(uint8 flag) from "client_broadcast";
+import void UnsetBroadcastHudFlag(uint8 flag) from "client_broadcast";
+#endif 	//	__CLIENT_BROADCAST__
+
+#endif 	//	__CLIENT_BROADCAST_H__

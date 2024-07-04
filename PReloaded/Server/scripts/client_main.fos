@@ -20,6 +20,7 @@
 #include "config_h.fos"
 #include "client_utils_h.fos"
 #include "client_access_h.fos"
+#include "client/client_broadcast_h.fos"
 
 import void InitCritterOnHead(bool showNpcNames, uint namesColor, uint questRegularColor, uint questStoryColor, uint questJobColor, uint namesSearchColor, bool searchBlink) from "client_critter_onhead";
 
@@ -104,6 +105,8 @@ uint npcNamesQuestStoryColor = COLOR_GOLDEN_YELLOW;
 uint npcNamesQuestJobColor = COLOR_TEAL;
 uint npcNamesSearchColor = COLOR_SAND;
 bool npcNamesSearchBlink = false;
+bool broadcastEnabled = false;
+uint8 broadcastFilter = 7;
 
 
 IClientAccessLevelOpt@ accessControll;
@@ -126,7 +129,7 @@ void init(int p0, int p1, int p2, string@ + p3, array<int>@ + p4)
 // Call on client loaded or new client_main.fos script received.
 bool start()
 {
-    if(__ScreenWidth < 800 || __ScreenWidth > 1280 || __ScreenHeight < 600 || __ScreenHeight > 1024)
+    if(__ScreenWidth < 800 || __ScreenWidth > 1920 || __ScreenHeight < 600 || __ScreenHeight > 1080)
     {
         // Recomendation message
         Message(GetMsgStr(TEXTMSG_GAME, STR_INVALID_RESOLUTION));
@@ -179,6 +182,9 @@ bool start()
 
     InitCritterOnHead(showNpcNames, npcNamesColor, npcNamesQuestRegularColor, npcNamesQuestStoryColor, npcNamesQuestJobColor, npcNamesSearchColor, npcNamesSearchBlink);
     InitDrawEncounters();
+    SetBroadcastHudEnabled(broadcastEnabled);
+    UnsetBroadcastHudFlag(CLIENT_BROADCAST_ALL);
+    SetBroadcastHudFlag(broadcastFilter);
 
     return true;
 }
@@ -891,6 +897,8 @@ void InitConfig()
     npcNamesSearchColor = COLOR_SAND;
     showNpcNames = true;
     npcNamesSearchBlink = false;
+    broadcastEnabled = true;
+    broadcastFilter = 7;
 
     TimeoutsConfig("");
     ClientMessagesConfig("");
@@ -1088,6 +1096,18 @@ void InitConfig()
         if(valid(val) && val.length() > 0) {
             npcNamesSearchBlink = CLAMP(string2uint(val), 0, 1) == 1;
         }
+        //  BroadcastEnabled
+        @val = GetConfigValue(CONFIG_FILE, CONFIG_RELOADED, "BroadcastEnabled");
+        if(valid(val) && val.length() > 0) {
+            broadcastEnabled = CLAMP(string2uint(val), 0, 1) == 1;
+        }
+        //  BroadcastFilter
+        @val = GetConfigValue(CONFIG_FILE, CONFIG_RELOADED, "BroadcastFilter");
+        if(valid(val) && val.length() > 0) {
+            broadcastFilter = CLAMP(string2uint(val), 0, 7);
+        }
+
+
 
     }
 

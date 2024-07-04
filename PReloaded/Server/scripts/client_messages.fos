@@ -16,6 +16,9 @@
 #include "client_utils_h.fos"
 #include "lexems_h.fos"
 
+#include "client/client_broadcast_h.fos"
+
+
 import bool IsGMTEnabled() from "client_main";
 
 import uint GetPossessedCritterId() from "client_dev_menu";
@@ -618,8 +621,88 @@ bool out_message(string& message, int& sayType)
             return(false);
         }
 
-        if(words.length() >= 1 && words[0] == "~find")
+        if (words.length() >= 1 && (words[0] == "~bc" || words[0] == "~broadcast"))
         {
+            if (words.length() >= 2 && words[1] == "on") {
+                SetBroadcastHudEnabled(true);
+                Message("Pip-boy :: Enabling broadcast messages HUD.");
+                return false;
+            } else if (words.length() >= 2 && words[1] == "off") {
+                SetBroadcastHudEnabled(false);
+                Message("Pip-boy :: Disabling broadcast messages HUD.");
+                return false;
+            } else if (words.length() >= 2 && (words[1] == "all" || words[1] == "-a")) {
+                SetBroadcastHudFlag(CLIENT_BROADCAST_ALL);
+                Message("Pip-boy :: Setting broadcast messages HUD to show all broadcasts.");
+                return false;
+            } else if (words.length() >= 2 && (words[1] == "none" || words[1] == "-n")) {
+                UnsetBroadcastHudFlag(CLIENT_BROADCAST_ALL);
+                Message("Pip-boy :: Setting broadcast messages HUD to not show any broadcasts.");
+                return false;
+            } else if (words.length() >= 2 && (words[1] == "tc" || words[1] == "TC" || words[1] == "-t")) {
+                if (IsBroadcastHudFlag(CLIENT_BROADCAST_FLAG_TOWN_CONTROL)) {
+                    UnsetBroadcastHudFlag(CLIENT_BROADCAST_FLAG_TOWN_CONTROL);
+                    Message("Pip-boy :: Prohibiting broadcast messages HUD to show Town Control broadcasts.");
+                    return false;
+                } else {
+                    SetBroadcastHudFlag(CLIENT_BROADCAST_FLAG_TOWN_CONTROL);
+                    Message("Pip-boy :: Allowing broadcast messages HUD to show Town Control broadcasts.");
+                    return false;
+                }
+            } else if (words.length() >= 2 && (words[1] == "event" || words[1] == "-e")) {
+                if (IsBroadcastHudFlag(CLIENT_BROADCAST_FLAG_SERVER_EVENT_MSG)) {
+                    UnsetBroadcastHudFlag(CLIENT_BROADCAST_FLAG_SERVER_EVENT_MSG);
+                    Message("Pip-boy :: Prohibiting broadcast messages HUD to show Event broadcasts.");
+                    return false;
+                } else {
+                    SetBroadcastHudFlag(CLIENT_BROADCAST_FLAG_SERVER_EVENT_MSG);
+                    Message("Pip-boy :: Allowing broadcast messages HUD to show Event broadcasts.");
+                    return false;
+                }
+            } else if (words.length() >= 2 && (words[1] == "countdown" || words[1] == "-c")) {
+                if (IsBroadcastHudFlag(CLIENT_BROADCAST_FLAG_SERVER_EVENT_COUNTDOWN)) {
+                    UnsetBroadcastHudFlag(CLIENT_BROADCAST_FLAG_SERVER_EVENT_COUNTDOWN);
+                    Message("Pip-boy :: Prohibiting broadcast messages HUD to show Countdown Event broadcasts.");
+                    return false;
+                } else {
+                    SetBroadcastHudFlag(CLIENT_BROADCAST_FLAG_SERVER_EVENT_COUNTDOWN);
+                    Message("Pip-boy :: Allowing broadcast messages HUD to show Countdown Event broadcasts.");
+                    return false;
+                }
+            } else if (words.length() == 1) {
+                if (IsBroadcastHudEnabled()) {
+                    string msg = "Pip-boy :: Broadcast messages HUD is enabled. Active filters: ";
+                    string msgHint = "To reset filters, type command: ~bc -a";
+                    string filters = "";
+                    if (IsBroadcastHudFlag(CLIENT_BROADCAST_FLAG_TOWN_CONTROL) && IsBroadcastHudFlag(CLIENT_BROADCAST_FLAG_SERVER_EVENT_MSG) && IsBroadcastHudFlag(CLIENT_BROADCAST_FLAG_SERVER_EVENT_COUNTDOWN)) {
+                        filters = "All";
+                    } else {
+                        if (IsBroadcastHudFlag(CLIENT_BROADCAST_FLAG_TOWN_CONTROL)) {
+                            filters += "Town Control, ";
+                        }
+                        if (IsBroadcastHudFlag(CLIENT_BROADCAST_FLAG_SERVER_EVENT_MSG)) {
+                            filters += "Event, ";
+                        }
+                        if (IsBroadcastHudFlag(CLIENT_BROADCAST_FLAG_SERVER_EVENT_COUNTDOWN)) {
+                            filters += "Countdown, ";
+                        }
+                        if (filters.length() > 2) {
+                            filters.rawResize(filters.length() - 2);
+                        } else {
+                            filters = "None";
+                        }
+                    }
+                    msg += filters + "\n" + msgHint;
+                    Message(msg);
+                } else {
+                    Message("Pip-boy :: Broadcast messages HUD is disabled. To enable type: ~bc on");
+                }
+            } else {
+                Message("Pip-boy :: Invalid broadcast command syntax. Valid candidates are: (short)\n  ~bc\n  ~bc on\n  ~bc off\n  ~bc all\t\t\t\t(-a)\n  ~bc tc\t\t\t\t(-t)\n  ~bc event\t\t\t(-e)\n  ~bc countdown\t\t(-c)");
+                return(false);
+            }
+        }
+        if(words.length() >= 1 && words[0] == "~find") {
             if (words.length() >= 2) {
                 string findTarget = words[1];
                 if (words.length() >= 3) {
