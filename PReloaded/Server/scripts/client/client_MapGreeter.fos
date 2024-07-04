@@ -101,7 +101,7 @@ class CMapGreeter {
             if (currentTime > activationTime + activeDuration - fadeOutDuration) {
                 FadeOut(currentTime);
             }
-            DrawText(message, __ScreenWidth - (__ScreenWidth * 0.8), __ScreenHeight * 0.05, __ScreenWidth * 0.6, __ScreenHeight * 0.5, currentTextColor, FONT_TYPE_FAT, FONT_FLAG_BORDERED | FONT_FLAG_CENTERX);
+            DrawText(message, __ScreenWidth - (__ScreenWidth * 0.8), __ScreenHeight * 0.02, __ScreenWidth * 0.6, __ScreenHeight * 0.5, currentTextColor, FONT_TYPE_FAT, FONT_FLAG_BORDERED | FONT_FLAG_CENTERX);
         }
     }
 
