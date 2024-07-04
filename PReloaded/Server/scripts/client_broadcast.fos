@@ -83,12 +83,10 @@ bool IsBroadcastHudFlag(uint8 flag) {
 
 void SetBroadcastHudFlag(uint8 flag) {
     SETFLAG(broadcastHudType, flag);
-    Message("broadcastHudType = " + broadcastHudType);
 }
 
 void UnsetBroadcastHudFlag(uint8 flag) {
     UNSETFLAG(broadcastHudType, flag);
-    Message("broadcastHudType = " + broadcastHudType);
 }
 
 
