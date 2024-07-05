@@ -26,14 +26,13 @@ Since I only work from time to time on this project, not sure if anyone would su
 Well, in case you are new to git and have trouble getting all parts together, here are some snapshots:
 
 2023-06-01 Spearfishing test: use latest below<br>
-2024-03-25 Car Tracker and Hub Parkinglot test: use laterst below<br>
-2024-05-22 Tragic the Garnering Collectible test: https://www.dropbox.com/scl/fi/7mp20mp4ot31mm9cqo7y0/FOClassic_BNW_Tragic1_2024_05_22.zip?rlkey=l13wby6hn01jf824fx4o819ex&st=inyf1izs&dl=0
+2024-03-25 Car Tracker and Hub Parkinglot<br>
+2024-05-22 Tragic the Garnering Collectible<br>
+2024-06-03 NPC names and quest colors, ~find command, Status and Misc text (XP, Shocked), plasma/fire/electric damage effects<br>
+2024-0705 Global Radio, Broadcast filter - https://www.dropbox.com/scl/fi/84e8kz405wu3s81n1yttf/FOCLASSIC-BNW_2024-07-05_broadcastfix.zip?rlkey=a78pzsyzpaj3mzuuqi0xdmscr&st=p4wrt29t&dl=0<br>
+<br>
 
-You can use Username: qwer3 Password: asdf to test Tragic. Admin access is as usual: ~getaccess admin admin<br>
 Working versions or ones that need testing may be added later, periodaically, but should not count on them.<br>
-<br>
-2024-06-03 NPC names and quest colors, ~find command, Status and Misc text (XP, Shocked), plasma/fire/electric damage effects - https://www.dropbox.com/scl/fi/58gozkvzgq9hjwlz232mu/FOClassic_BNW_QuestColorNpcNames.zip?rlkey=9r0k9ihbtsic03jlmkh9lonzk&st=hs63uhex&dl=0
-<br>
 
 Jinexd Jack interface: (download from Dropbox if there is fresh version, so my LFS quota doesn't drop) <br>
 2024-05-30 Jinxed Jack interface, added pickup/container filter buttons: https://www.dropbox.com/scl/fi/y9khvvrfkskn1hu4ly868/JinxedJack.zip?rlkey=hzuq2ezgsl2utc63ue0bhnff2&st=wkoymh2q&dl=0
