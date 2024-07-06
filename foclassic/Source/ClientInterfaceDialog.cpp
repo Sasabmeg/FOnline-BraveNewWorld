@@ -152,10 +152,14 @@ void FOClient::DlgDraw(bool is_dialog)
 		for (uint i = 0; i < DlgAnswers.size(); i++)
 		{
 			Answer& a = DlgAnswers[i];
-			if (i == (uint)DlgCurAnsw)
-				SprMngr.DrawStr(Rect(a.Position, DlgX, DlgY), DlgAnswers[i].Text.c_str(), a.AnswerNum < 0 ? FONT_FLAG_CENTERX : 0, IfaceHold == IFACE_DLG_ANSWER && DlgCurAnsw == DlgHoldAnsw ? COLOR_TEXT_DDGREEN : (IfaceHold != IFACE_DLG_ANSWER ? COLOR_TEXT_DGREEN : COLOR_TEXT), dialogFont);
+			if (i == (uint)DlgCurAnsw) {
+				uint color = (IfaceHold == IFACE_DLG_ANSWER && DlgCurAnsw == DlgHoldAnsw) ? COLOR_TEXT_DDGREEN : (IfaceHold != IFACE_DLG_ANSWER ? COLOR_TEXT_DGREEN : COLOR_TEXT);
+				if (IsCurInRect(DlgAnswText, DlgX, DlgY) && IfaceHold != IFACE_DLG_ANSWER)
+					color = COLOR_TEXT_WHITE;
+				SprMngr.DrawStr(Rect(a.Position, DlgX, DlgY), (" " + to_string((unsigned long long)i + 1) + "." + DlgAnswers[i].Text).c_str(), a.AnswerNum < 0 ? FONT_FLAG_CENTERX : 0, color, dialogFont);
+			}
 			else
-				SprMngr.DrawStr(Rect(a.Position, DlgX, DlgY), DlgAnswers[i].Text.c_str(), a.AnswerNum < 0 ? FONT_FLAG_CENTERX : 0, COLOR_TEXT, dialogFont);
+				SprMngr.DrawStr(Rect(a.Position, DlgX, DlgY), (" " + to_string((unsigned long long)i + 1) + "." + DlgAnswers[i].Text).c_str(), a.AnswerNum < 0 ? FONT_FLAG_CENTERX : 0, COLOR_TEXT, dialogFont);
 		}
 
 		// Chosen money
