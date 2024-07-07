@@ -3058,6 +3058,13 @@ void map_critter_in(Map& map, Critter& cr)
         //	if (lastCityVar is null) return;
         //	lastCityVar = locPid;
         GreetPlayer(cr, map);
+        if (cr.IsDead() && cr.Param[TO_REPLICATION] > REAL_MINUTE(1)) {
+            cr.Say(SAY_NETMSG, "Server :: Fixing replication timeout minute after server restart.");
+            cr.ParamBase[TO_REPLICATION] = AFTER(REAL_MINUTE(1));
+        } else if (!cr.IsDead() && cr.Param[TO_REPLICATION] > 0) {
+            cr.Say(SAY_NETMSG, "Server :: Fixing replication timeout after server restart.");
+            cr.ParamBase[TO_REPLICATION] = 0;
+        }
     }
 
     //  refresh car info for player entering the map
