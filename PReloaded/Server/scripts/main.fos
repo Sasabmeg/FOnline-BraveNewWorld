@@ -3057,7 +3057,11 @@ void map_critter_in(Map& map, Critter& cr)
         //	GameVar@ lastCityVar = GetLocalVar(LVAR_last_city, cr.Id);
         //	if (lastCityVar is null) return;
         //	lastCityVar = locPid;
+
+        //  show the map name to the player and color based on hostility towards the player
         GreetPlayer(cr, map);
+
+        //  secure timeouts, in case of server crash or deleted/corrupted save games
         if (cr.IsDead() && cr.Param[TO_REPLICATION] > REAL_MINUTE(1)) {
             cr.Say(SAY_NETMSG, "Server :: Fixing replication timeout minute after server restart.");
             cr.ParamBase[TO_REPLICATION] = AFTER(REAL_MINUTE(1));
@@ -3065,6 +3069,35 @@ void map_critter_in(Map& map, Critter& cr)
             cr.Say(SAY_NETMSG, "Server :: Fixing replication timeout after server restart.");
             cr.ParamBase[TO_REPLICATION] = 0;
         }
+        //  timeouts with max possible value 3 minutes
+        for (uint i = TO_SK_FIRST_AID; i <= TO_SK_DOCTOR; i++) {
+            if (cr.ParamBase[i] > AFTER(REAL_MINUTE(3))) {
+                cr.ParamBase[i] = AFTER(REAL_MINUTE(3));
+            }
+        }
+        //  timeouts with max possible value 30 seconds
+        for (uint i = TO_SK_LOCKPICK; i <= TO_SK_STEAL; i++) {
+            if (cr.ParamBase[i] > AFTER(REAL_SECOND(30))) {
+                cr.ParamBase[i] = AFTER(REAL_SECOND(30));
+            }
+        }
+        for (uint i = TO_SNEAK; i <= TO_HEALING; i++) {
+            if (cr.ParamBase[i] > AFTER(REAL_SECOND(30))) {
+                cr.ParamBase[i] = AFTER(REAL_SECOND(30));
+            }
+        }
+        if (cr.ParamBase[TO_BATTLE] > AFTER(REAL_SECOND(7))) {
+            cr.ParamBase[TO_BATTLE] = 0;
+        }
+        /*
+        //  TODO: refactor this to be better before uncomment
+        //  drug timeouts, max 1 hours, if any drugs would last longer, reset everything
+        for (uint i = TO_CIGARETTES; i <= TO_RAD_X; i++) {
+            if (cr.ParamBase[i] > AFTER(REAL_HOUR(1))) {
+                DropDrugEffects(cr);
+            }
+        }
+        */
     }
 
     //  refresh car info for player entering the map
