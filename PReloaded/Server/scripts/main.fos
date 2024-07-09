@@ -3062,7 +3062,7 @@ void map_critter_in(Map& map, Critter& cr)
         GreetPlayer(cr, map);
 
         //  secure timeouts, in case of server crash or deleted/corrupted save games
-        if (cr.IsDead() && cr.Param[TO_REPLICATION] > REAL_MINUTE(1)) {
+        if (cr.IsDead() && cr.Param[TO_REPLICATION] > int(REAL_MINUTE(1))) {
             cr.Say(SAY_NETMSG, "Server :: Fixing replication timeout minute after server restart.");
             cr.ParamBase[TO_REPLICATION] = AFTER(REAL_MINUTE(1));
         } else if (!cr.IsDead() && cr.Param[TO_REPLICATION] > 0) {
@@ -3071,22 +3071,22 @@ void map_critter_in(Map& map, Critter& cr)
         }
         //  timeouts with max possible value 3 minutes
         for (uint i = TO_SK_FIRST_AID; i <= TO_SK_DOCTOR; i++) {
-            if (cr.ParamBase[i] > AFTER(REAL_MINUTE(3))) {
-                cr.ParamBase[i] = AFTER(REAL_MINUTE(3));
+            if (cr.ParamBase[i] > int(AFTER(REAL_MINUTE(3)))) {
+                cr.ParamBase[i] = int(AFTER(REAL_MINUTE(3)));
             }
         }
         //  timeouts with max possible value 30 seconds
         for (uint i = TO_SK_LOCKPICK; i <= TO_SK_STEAL; i++) {
-            if (cr.ParamBase[i] > AFTER(REAL_SECOND(30))) {
-                cr.ParamBase[i] = AFTER(REAL_SECOND(30));
+            if (cr.ParamBase[i] > int(AFTER(REAL_SECOND(30)))) {
+                cr.ParamBase[i] = int(AFTER(REAL_SECOND(30)));
             }
         }
         for (uint i = TO_SNEAK; i <= TO_HEALING; i++) {
-            if (cr.ParamBase[i] > AFTER(REAL_SECOND(30))) {
+            if (cr.ParamBase[i] > int(AFTER(REAL_SECOND(30)))) {
                 cr.ParamBase[i] = AFTER(REAL_SECOND(30));
             }
         }
-        if (cr.ParamBase[TO_BATTLE] > AFTER(REAL_SECOND(7))) {
+        if (cr.ParamBase[TO_BATTLE] > int(AFTER(REAL_SECOND(7)))) {
             cr.ParamBase[TO_BATTLE] = 0;
         }
         /*
