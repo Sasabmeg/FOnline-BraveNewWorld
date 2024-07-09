@@ -667,14 +667,14 @@ void GreetPlayer(Critter@ player, Map@ map) {
                     Buffer@ buffer = NewBuffer(raw2);
                     buffer >> name;
                     if (name.length() > 0) {
-                        player.Say(SAY_NETMSG, "NAME = '" + name + "'");
+                        //player.Say(SAY_NETMSG, "NAME = '" + name + "'");
                         lex = name + "'s ";
                     } else {
-                        player.Say(SAY_NETMSG, "0 bytes in buffer for tent owner.");
+                        //player.Say(SAY_NETMSG, "0 bytes in buffer for tent owner.");
                     }
                 } else {
                     uint ownerId = GetTentOwnerId(map);
-                    player.Say(SAY_NETMSG, "No tent owner data in buffer for tent, but we have an ID = " + ownerId);
+                    //player.Say(SAY_NETMSG, "No tent owner data in buffer for tent, but we have an ID = " + ownerId);
                     if (ownerId > 0) {
                         if (player.Id == ownerId) {
                             hostility = MAP_GREETER_HOSTILITY_FRIENDLY;
