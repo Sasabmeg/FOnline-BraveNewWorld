@@ -1,0 +1,201 @@
+[comment]
+
+
+[data]
+lang=engl
+
+[dialog]
+&
+1 1000 None 0 #
+2 1010 @
+2 2000 None 0 #
+30 2010 #
+3 2020 #
+4 2030 #
+5 2040 #
+0 2050 @
+3 3000 None 0 #
+11 3010 D _param n PE_TOUGHNESS = 0 #
+12 3020 D _param n PE_EVEN_TOUGHER = 0 #
+13 3030 D _param n PE_IN_YOUR_FACE = 0 #
+14 3040 D _param n PE_STONEWALL = 0 #
+15 3050 D _param n PE_MAN_OF_STEEL = 0 #
+16 3060 D _param n PE_IRON_LIMBS = 0 #
+2 3070 #
+0 3080 @
+4 4000 None 0 #
+21 4010 D _param n PE_TOUGHNESS > 0 #
+22 4020 D _param n PE_EVEN_TOUGHER > 0 #
+23 4030 D _param n PE_IN_YOUR_FACE > 0 #
+24 4040 D _param n PE_STONEWALL > 0 #
+25 4050 D _param n PE_MAN_OF_STEEL > 0 #
+26 4060 D _param n PE_IRON_LIMBS > 0 #
+2 4070 #
+0 4080 @
+5 5000 None 0 #
+2 5010 #
+0 5020 @
+11 6000 None 0 #
+2 6010 D _script trainingDummy@d_hasMatsToughness 0  R _param n PE_TOUGHNESS = 1 R _script trainingDummy@r_takeMatsToughness 0  #
+3 6020 #
+0 6030 @
+12 7000 None 0 #
+2 7010 D _script trainingDummy@d_hasMatsEvenTougher 0  R _param n PE_EVEN_TOUGHER = 1 R _script trainingDummy@r_takeMatsEvenTougher 0  #
+3 7020 #
+0 7030 @
+13 8000 None 0 #
+2 8010 D _script trainingDummy@d_hasMatsInYourFace 0  R _param n PE_IN_YOUR_FACE = 1 R _script trainingDummy@r_takeMatsInYourFace 0  #
+3 8020 #
+0 8030 @
+14 9000 None 0 #
+2 9010 D _script trainingDummy@d_hasMatsStonewall 0  R _param n PE_STONEWALL = 1 R _script trainingDummy@r_takeMatsStonewall 0  #
+0 9020 #
+3 9030 @
+15 10000 None 0 #
+2 10010 D _script trainingDummy@d_hasMatsManOfSteel 0  R _param n PE_MAN_OF_STEEL = 1 R _script trainingDummy@r_takeMatsManOfSteel 0  #
+3 10020 #
+0 10030 @
+16 11000 None 0 #
+2 11010 D _script trainingDummy@d_hasMatsIronLimbs 0  R _param n PE_IRON_LIMBS = 1 R _script trainingDummy@r_takeMatsIronLimbs 0  #
+3 11020 #
+0 11030 @
+21 12000 None 0 #
+2 12010 R _param n PE_TOUGHNESS = 0 #
+4 12020 #
+0 12030 @
+22 13000 None 0 #
+2 13010 R _param n PE_EVEN_TOUGHER = 0 #
+4 13020 #
+0 13030 @
+23 14000 None 0 #
+2 14010 R _param n PE_IN_YOUR_FACE = 0 #
+4 14020 #
+0 14030 @
+24 15000 None 0 #
+2 15010 R _param n PE_STONEWALL = 0 #
+4 15020 #
+0 15030 @
+25 16000 None 0 #
+2 16010 R _param n PE_MAN_OF_STEEL = 0 #
+4 16020 #
+0 16030 @
+26 17000 None 0 #
+2 17010 R _param n PE_IRON_LIMBS = 0 #
+4 17020 #
+0 17030 @
+30 18000 trainingDummy@dlg_ShowDummyStats 0 #
+2 18010 #
+0 18020 &
+
+[engl]
+{100}{}{Training Dummy}
+{200}{}{You see an training dummy.}
+{210}{}{You see a wooden stall with an armor strapped on it. Doesn't even compare to the Vault-Tec robot simulations.}
+{220}{}{Knocked out.}
+{230}{}{Knocked out but still on the stand.}
+{240}{}{Broken.}
+{250}{}{Beyond repair, this dummy needs to be removed up.}
+{260}{}{Needs replacement.}
+{270}{}{Needs replacement.}
+{1000}{}{Preddialogue settings}
+{1010}{}{ }
+{2000}{}{A combat armor strapped on two poles.}
+{2010}{}{[Check stats]}
+{2020}{}{Upgrades.}
+{2030}{}{Downgrades.}
+{2040}{}{Repair.}
+{2050}{}{[Leave]}
+{3000}{}{You can add some extra protection layers to this dummy, to strenghten it's construction.
+Available upgrades are:}
+{3010}{}{Toughness.}
+{3020}{}{Even Tougher.}
+{3030}{}{In Your Face.}
+{3040}{}{Stonewall.}
+{3050}{}{Man of Steel}
+{3060}{}{Iron Limbs.}
+{3070}{}{[Back]}
+{3080}{}{[Leave]}
+{4000}{}{You could remove some parts of the dummy to weaken it's contruct.
+Available downgrades are:}
+{4010}{}{Toughness.}
+{4020}{}{Even Tougher.}
+{4030}{}{In Your Face.}
+{4040}{}{Stonewall.}
+{4050}{}{Man of Steel.}
+{4060}{}{Iron Limbs.}
+{4070}{}{[Back]}
+{4080}{}{[Leave]}
+{5000}{}{Repair?}
+{5010}{}{[Back]}
+{5020}{}{[Leave]}
+{6000}{}{To to make this dummy tougher, you will need a tool and the following materials:
+- 1 x Junk
+- 2 x Fibers
+- 2 x Golden Gecko Pelts
+}
+{6010}{}{Upgrade Toughness.}
+{6020}{}{[Back]}
+{6030}{}{[Leave]}
+{7000}{}{To make the dummy even tougher, you would need a tool and some materials:
+- 1 x Junk
+- 3 x Metal Pieces}
+{7010}{}{Upgrade Even Tougher.}
+{7020}{}{[Back]}
+{7030}{}{[Leave]}
+{8000}{}{To make the dummy more flexible at close range you will need a tool and some materials:
+- 1 x Junk
+- 2 x Fibers
+- 2 x Gecko Pelt
+}
+{8010}{}{Upgrade In Your Face.}
+{8020}{}{[Back]}
+{8030}{}{[Leave]}
+{9000}{}{To make the dummy more knock resistant, you will need a tools and some materials:
+- 1 x Junk
+- 1 x Wood
+- 1 x Good Metal Parts}
+{9010}{}{Upgrade Stonewall.
+}
+{9020}{}{[Leave]}
+{9030}{}{[Back]}
+{10000}{}{To protect the dummies critical parts, you will need some tools and:
+- 1 x Junk
+- 1 x Good Metal Parts}
+{10010}{}{Upgrade Man of Steel.}
+{10020}{}{[Back]}
+{10030}{}{[Leave]}
+{11000}{}{To protect the dummies loose parts more, you will need some tools and:
+- 1 x Junk
+- 2 x Fibers
+- 2 x Golden Gecko Pelts}
+{11010}{}{Upgrade Iron Limbs.}
+{11020}{}{[Back]}
+{11030}{}{[Leave]}
+{12000}{}{To to make this dummy les tough, you will need some tools to rip off the protection layers.}
+{12010}{}{Downgrade Toughness.}
+{12020}{}{[Back]}
+{12030}{}{[Leave]}
+{13000}{}{To make the dummy even less tough, you would need some tools to rip off the protection layers.}
+{13010}{}{Downgrade Even Tougher.}
+{13020}{}{[Back]}
+{13030}{}{[Leave]}
+{14000}{}{To make this dummy less flexible, you will need some tools to rip off the pelt and fibers.}
+{14010}{}{Downgrade In Your Face.}
+{14020}{}{[Back]}
+{14030}{}{[Leave]}
+{15000}{}{To make this dummy less knock resistant, you will need some tools to rip off the protection layers.}
+{15010}{}{Downgrade Stonewall.}
+{15020}{}{[Back]}
+{15030}{}{[Leave]}
+{16000}{}{To take off some of the dummy's critical protection layers, you will need some tools.}
+{16010}{}{Downgrade Man of Steel.}
+{16020}{}{[Back]}
+{16030}{}{[Leave]}
+{17000}{}{To remove some of the protections of the dummy's loose parts, you will need some tools.}
+{17010}{}{Downgrade Iron Limbs.}
+{17020}{}{[Back]}
+{17030}{}{[Leave]}
+{18000}{}{@lex dummyStats@}
+{18010}{}{[Back]}
+{18020}{}{[Leave]}
+
