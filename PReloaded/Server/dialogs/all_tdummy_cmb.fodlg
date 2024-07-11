@@ -21,8 +21,9 @@ lang=engl
 14 3040 D _param n PE_STONEWALL = 0 #
 15 3050 D _param n PE_MAN_OF_STEEL = 0 #
 16 3060 D _param n PE_IRON_LIMBS = 0 #
-2 3070 #
-0 3080 @
+17 3070 D _param n PE_JINXED_II = 0 #
+2 3080 #
+0 3090 @
 4 4000 None 0 #
 21 4010 D _param n PE_TOUGHNESS > 0 #
 22 4020 D _param n PE_EVEN_TOUGHER > 0 #
@@ -30,8 +31,9 @@ lang=engl
 24 4040 D _param n PE_STONEWALL > 0 #
 25 4050 D _param n PE_MAN_OF_STEEL > 0 #
 26 4060 D _param n PE_IRON_LIMBS > 0 #
-2 4070 #
-0 4080 @
+27 4070 D _param n PE_JINXED_II > 0 #
+2 4080 #
+0 4090 @
 5 5000 None 0 #
 2 5010 #
 0 5020 @
@@ -59,33 +61,41 @@ lang=engl
 2 11010 D _script trainingDummy@d_hasMatsIronLimbs 0  R _param n PE_IRON_LIMBS = 1 R _script trainingDummy@r_takeMatsIronLimbs 0  #
 3 11020 #
 0 11030 @
-21 12000 None 0 #
-2 12010 R _param n PE_TOUGHNESS = 0 #
-4 12020 #
+17 12000 None 0 #
+2 12010 D _script trainingDummy@d_hasMatsJinxed 0  R _param n PE_JINXED_II = 1 R _script trainingDummy@r_takeMatsJinxed 0  #
+3 12020 #
 0 12030 @
-22 13000 None 0 #
-2 13010 R _param n PE_EVEN_TOUGHER = 0 #
+21 13000 None 0 #
+2 13010 R _param n PE_TOUGHNESS = 0 #
 4 13020 #
 0 13030 @
-23 14000 None 0 #
-2 14010 R _param n PE_IN_YOUR_FACE = 0 #
+22 14000 None 0 #
+2 14010 R _param n PE_EVEN_TOUGHER = 0 #
 4 14020 #
 0 14030 @
-24 15000 None 0 #
-2 15010 R _param n PE_STONEWALL = 0 #
+23 15000 None 0 #
+2 15010 R _param n PE_IN_YOUR_FACE = 0 #
 4 15020 #
 0 15030 @
-25 16000 None 0 #
-2 16010 R _param n PE_MAN_OF_STEEL = 0 #
+24 16000 None 0 #
+2 16010 R _param n PE_STONEWALL = 0 #
 4 16020 #
 0 16030 @
-26 17000 None 0 #
-2 17010 R _param n PE_IRON_LIMBS = 0 #
+25 17000 None 0 #
+2 17010 R _param n PE_MAN_OF_STEEL = 0 #
 4 17020 #
 0 17030 @
-30 18000 trainingDummy@dlg_ShowDummyStats 0 #
-2 18010 #
-0 18020 &
+26 18000 None 0 #
+2 18010 R _param n PE_IRON_LIMBS = 0 #
+4 18020 #
+0 18030 @
+27 19000 None 0 #
+2 19010 R _param n PE_JINXED_II = 0 #
+4 19020 #
+0 19030 @
+30 20000 trainingDummy@dlg_ShowDummyStats 0 #
+2 20010 #
+0 20020 &
 
 [engl]
 {100}{}{Training Dummy}
@@ -113,8 +123,9 @@ Available upgrades are:}
 {3040}{}{Stonewall.}
 {3050}{}{Man of Steel}
 {3060}{}{Iron Limbs.}
-{3070}{}{[Back]}
-{3080}{}{[Leave]}
+{3070}{}{Jinxed.}
+{3080}{}{[Back]}
+{3090}{}{[Leave]}
 {4000}{}{You could remove some parts of the dummy to weaken it's contruct.
 Available downgrades are:}
 {4010}{}{Toughness.}
@@ -123,9 +134,10 @@ Available downgrades are:}
 {4040}{}{Stonewall.}
 {4050}{}{Man of Steel.}
 {4060}{}{Iron Limbs.}
-{4070}{}{[Back]}
-{4080}{}{[Leave]}
-{5000}{}{Repair?}
+{4070}{}{Jinxed.}
+{4080}{}{[Back]}
+{4090}{}{[Leave]}
+{5000}{}{Repair? Get some tools and go to the dummy you dummy.}
 {5010}{}{[Back]}
 {5020}{}{[Leave]}
 {6000}{}{To to make this dummy tougher, you will need a tool and the following materials:
@@ -171,31 +183,44 @@ Available downgrades are:}
 {11010}{}{Upgrade Iron Limbs.}
 {11020}{}{[Back]}
 {11030}{}{[Leave]}
-{12000}{}{To to make this dummy les tough, you will need some tools to rip off the protection layers.}
-{12010}{}{Downgrade Toughness.}
+{12000}{}{To curse this dummy to be most distracting, you will need some tools and:
+- 1 x Fibers
+- 1 x Cosmetic Case
+- 1 x Golden Locket
+- 1 x Gold Tooth
+*** The key ingredient is of course, believeing in it! ***}
+{12010}{}{Upgrade Jinxed.}
 {12020}{}{[Back]}
 {12030}{}{[Leave]}
-{13000}{}{To make the dummy even less tough, you would need some tools to rip off the protection layers.}
-{13010}{}{Downgrade Even Tougher.}
+{13000}{}{To to make this dummy les tough, you will need some tools to rip off the protection layers.}
+{13010}{}{Downgrade Toughness.}
 {13020}{}{[Back]}
 {13030}{}{[Leave]}
-{14000}{}{To make this dummy less flexible, you will need some tools to rip off the pelt and fibers.}
-{14010}{}{Downgrade In Your Face.}
+{14000}{}{To make the dummy even less tough, you would need some tools to rip off the protection layers.}
+{14010}{}{Downgrade Even Tougher.}
 {14020}{}{[Back]}
 {14030}{}{[Leave]}
-{15000}{}{To make this dummy less knock resistant, you will need some tools to rip off the protection layers.}
-{15010}{}{Downgrade Stonewall.}
+{15000}{}{To make this dummy less flexible, you will need some tools to rip off the pelt and fibers.}
+{15010}{}{Downgrade In Your Face.}
 {15020}{}{[Back]}
 {15030}{}{[Leave]}
-{16000}{}{To take off some of the dummy's critical protection layers, you will need some tools.}
-{16010}{}{Downgrade Man of Steel.}
+{16000}{}{To make this dummy less knock resistant, you will need some tools to rip off the protection layers.}
+{16010}{}{Downgrade Stonewall.}
 {16020}{}{[Back]}
 {16030}{}{[Leave]}
-{17000}{}{To remove some of the protections of the dummy's loose parts, you will need some tools.}
-{17010}{}{Downgrade Iron Limbs.}
+{17000}{}{To take off some of the dummy's critical protection layers, you will need some tools.}
+{17010}{}{Downgrade Man of Steel.}
 {17020}{}{[Back]}
 {17030}{}{[Leave]}
-{18000}{}{@lex dummyStats@}
-{18010}{}{[Back]}
-{18020}{}{[Leave]}
+{18000}{}{To remove some of the protections of the dummy's loose parts, you will need some tools.}
+{18010}{}{Downgrade Iron Limbs.}
+{18020}{}{[Back]}
+{18030}{}{[Leave]}
+{19000}{}{To clean up the dummy to be less distracting, you will need some tools.}
+{19010}{}{Downgrade Jinxed.}
+{19020}{}{[Back]}
+{19030}{}{[Leave]}
+{20000}{}{@lex dummyStats@}
+{20010}{}{[Back]}
+{20020}{}{[Leave]}
 

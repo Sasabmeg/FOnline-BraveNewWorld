@@ -155,6 +155,7 @@ void spawnTrainingDummy(Critter& player, Map& map, uint16 hexX, uint16 hexY, int
         Log("TRAINING DUMMY :: Spawned dummy at (" +hexX + ", " + hexY + ")");
         player.Say(SAY_NETMSG, "A new training dummy is set up for some practice!");
         newDummy.SpawnedBy = player.Id;
+        newDummy.StatBase[ST_HEALING_RATE] = 0;
         newDummy.StatBase[ST_NORMAL_ABSORB] = armor.Armor_DTNormal;
         newDummy.StatBase[ST_NORMAL_RESIST] = armor.Armor_DRNormal;
         newDummy.StatBase[ST_LASER_ABSORB] = armor.Armor_DTLaser;
@@ -169,6 +170,8 @@ void spawnTrainingDummy(Critter& player, Map& map, uint16 hexX, uint16 hexY, int
         newDummy.StatBase[ST_EMP_RESIST] = armor.Armor_DREmp;
         newDummy.StatBase[ST_EXPLODE_ABSORB] = armor.Armor_DTExplode;
         newDummy.StatBase[ST_EXPLODE_RESIST] = armor.Armor_DRExplode;
+        newDummy.SetEvent(CRITTER_EVENT_USE_SKILL_ON_ME, "_DummySkillOnMe");
+
     } else {
         Log("TRAINING DUMMY :: Spawning dummy at (" + hexX + ", " + hexY + ") failed.");
         player.Say(SAY_NETMSG, "Setting up the new dummy failed.");
@@ -190,7 +193,7 @@ uint[] powerArmorMats =             {PID_POWERED_ARMOR, 1,          PID_FIREWOOD
 
 
 //  Generic
-bool hasMats(Critter& player, Critter@ npc, uint[] @ values) {
+bool hasMats(Critter& player, uint[] @ values) {
     for (uint i = 0; i < values.length() / 2; i++) {
         if (player.CountItem(values[2 * i]) < values[2 * i + 1]) {
             return false;
@@ -199,54 +202,59 @@ bool hasMats(Critter& player, Critter@ npc, uint[] @ values) {
     return true;
 }
 
-void takeMats(Critter& player, Critter@ npc, uint[] @ values) {
-    if (hasMats(player, npc, values)) {
+bool takeMats(Critter& player, uint[] @ values) {
+    if (hasMats(player, values)) {
         for (uint i = 0; i < values.length() / 2; i++) {
             player.DeleteItem(values[2 * i], values[2 * i + 1]);
         }
+        return true;
     } else {
-        Log("TRAINING DUMMY :: Dialog desync when trying to create Training Dummy for player = " + player.Name);
+        return false;
     }
 }
 
 bool d_hasMatsForDummy(Critter& player, Critter@ npc, int armorType) {
     switch (armorType) {
-        case 1: return hasMats(player, npc, leatherJacketMats);
-        case 2: return hasMats(player, npc, thermalLeatherArmorMats);
-        case 3: return hasMats(player, npc, leatherArmorMats);
-        case 4: return hasMats(player, npc, leatherArmor2Mats);
-        case 5: return hasMats(player, npc, combatArmorMats);
-        case 6: return hasMats(player, npc, combatArmor2Mats);
-        case 7: return hasMats(player, npc, metalArmorMats);
-        case 8: return hasMats(player, npc, metalArmor2Mats);
-        case 9: return hasMats(player, npc, teslaArmorMats);
-        case 10: return hasMats(player, npc, powerArmorMats);
+        case 1: return hasMats(player, leatherJacketMats);
+        case 2: return hasMats(player, thermalLeatherArmorMats);
+        case 3: return hasMats(player, leatherArmorMats);
+        case 4: return hasMats(player, leatherArmor2Mats);
+        case 5: return hasMats(player, combatArmorMats);
+        case 6: return hasMats(player, combatArmor2Mats);
+        case 7: return hasMats(player, metalArmorMats);
+        case 8: return hasMats(player, metalArmor2Mats);
+        case 9: return hasMats(player, teslaArmorMats);
+        case 10: return hasMats(player, powerArmorMats);
     }
     return false;
 }
 
 void r_takeMatsForDummy(Critter& player, Critter@ npc, int armorType) {
+    bool noDesyncIssue = true;
     switch (armorType) {
-        case 1: takeMats(player, npc, leatherJacketMats);
+        case 1: noDesyncIssue = takeMats(player, leatherJacketMats);
             break;
-        case 2: takeMats(player, npc, thermalLeatherArmorMats);
+        case 2: noDesyncIssue = takeMats(player, thermalLeatherArmorMats);
             break;
-        case 3: takeMats(player, npc, leatherArmorMats);
+        case 3: noDesyncIssue = takeMats(player, leatherArmorMats);
             break;
-        case 4: takeMats(player, npc, leatherArmor2Mats);
+        case 4: noDesyncIssue = takeMats(player, leatherArmor2Mats);
             break;
-        case 5: takeMats(player, npc, combatArmorMats);
+        case 5: noDesyncIssue = takeMats(player, combatArmorMats);
             break;
-        case 6: takeMats(player, npc, combatArmor2Mats);
+        case 6: noDesyncIssue = takeMats(player, combatArmor2Mats);
             break;
-        case 7: takeMats(player, npc, metalArmorMats);
+        case 7: noDesyncIssue = takeMats(player, metalArmorMats);
             break;
-        case 8: takeMats(player, npc, metalArmor2Mats);
+        case 8: noDesyncIssue = takeMats(player, metalArmor2Mats);
             break;
-        case 9: takeMats(player, npc, teslaArmorMats);
+        case 9: noDesyncIssue = takeMats(player, teslaArmorMats);
             break;
-        case 10: takeMats(player, npc, powerArmorMats);
+        case 10: noDesyncIssue = takeMats(player, powerArmorMats);
             break;
+    }
+    if (!noDesyncIssue) {
+        Log("TRANING DUMMY :: Dialog desync issue when trying to take mats for creating or upgrading dummy for player = " + player.Name);
     }
 }
 
@@ -257,87 +265,63 @@ void r_takeMatsForDummy(Critter& player, Critter@ npc, int armorType) {
 uint[] toughnessMats = {PID_JUNK, 1, PID_FIBER, 2, PID_GOLDEN_GECKO_PELT, 2};
 
 bool d_hasMatsToughness(Critter& player, Critter@ npc) {
-    return hasMats(player, npc, toughnessMats);
+    return hasMats(player, toughnessMats);
 }
 
 void r_takeMatsToughness(Critter& player, Critter@ npc) {
-    if (d_hasMatsToughness(player, npc)) {
-        for (uint i = 0; i < toughnessMats.length() / 2; i++) {
-            player.DeleteItem(toughnessMats[2 * i], toughnessMats[2 * i + 1]);
-        }
-    } else {
+    if (!takeMats(player, toughnessMats)) {
         Log("TRAINING DUMMY :: Dialog desync when trying to upgrade Toughness to dummy. Player = " + player.Name);
     }
 }
-
 
 //  Even Tougher upgrade
 uint[] evenTougherMats = {PID_JUNK, 1, PID_METAL_PARTS, 3};
 
 bool d_hasMatsEvenTougher(Critter& player, Critter@ npc) {
-    return hasMats(player, npc, evenTougherMats);
+    return hasMats(player, evenTougherMats);
 }
 
 void r_takeMatsEvenTougher(Critter& player, Critter@ npc) {
-    if (d_hasMatsEvenTougher(player, npc)) {
-        for (uint i = 0; i < evenTougherMats.length() / 2; i++) {
-            player.DeleteItem(evenTougherMats[2 * i], evenTougherMats[2 * i + 1]);
-        }
-    } else {
+    if (!takeMats(player, evenTougherMats)) {
         Log("TRAINING DUMMY :: Dialog desync when trying to upgrade Even tougher to dummy. Player = " + player.Name);
     }
 }
-
 
 //  In Your Face upgrade
 uint[] inYourFaceMats = {PID_JUNK, 1, PID_FIBER, 2, PID_GECKO_PELT, 2};
 
 bool d_hasMatsInYourFace(Critter& player, Critter@ npc) {
-    return hasMats(player, npc, inYourFaceMats);
+    return hasMats(player, inYourFaceMats);
 }
 
 void r_takeMatsInYourFace(Critter& player, Critter@ npc) {
-    if (d_hasMatsInYourFace(player, npc)) {
-        for (uint i = 0; i < inYourFaceMats.length() / 2; i++) {
-            player.DeleteItem(inYourFaceMats[i], inYourFaceMats[i + 1]);
-        }
-    } else {
+    if (!takeMats(player, inYourFaceMats)) {
         Log("TRAINING DUMMY :: Dialog desync when trying to upgrade In Your Face to dummy. Player = " + player.Name);
     }
 }
-
 
 //  Stonewall upgrade
 uint[] stonewallMats = {PID_JUNK, 1, PID_FIREWOOD, 1, PID_METAL_PARTS2, 1};
 
 bool d_hasMatsStonewall(Critter& player, Critter@ npc) {
-    return hasMats(player, npc, stonewallMats);
+    return hasMats(player, stonewallMats);
 }
 
 void r_takeMatsStonewall(Critter& player, Critter@ npc) {
-    if (d_hasMatsStonewall(player, npc)) {
-        for (uint i = 0; i < stonewallMats.length() / 2; i++) {
-            player.DeleteItem(stonewallMats[i], stonewallMats[i + 1]);
-        }
-    } else {
+    if (!takeMats(player, stonewallMats)) {
         Log("TRAINING DUMMY :: Dialog desync when trying to upgrade Stonewall to dummy. Player = " + player.Name);
     }
 }
-
 
 //  Man of Steel upgrade
 uint[] manOfSteelMats = {PID_JUNK, 1, PID_METAL_PARTS2, 1};
 
 bool d_hasMatsManOfSteel(Critter& player, Critter@ npc) {
-    return hasMats(player, npc, manOfSteelMats);
+    return hasMats(player, manOfSteelMats);
 }
 
 void r_takeMatsManOfSteel(Critter& player, Critter@ npc) {
-    if (d_hasMatsManOfSteel(player, npc)) {
-        for (uint i = 0; i < manOfSteelMats.length() / 2; i++) {
-            player.DeleteItem(manOfSteelMats[i], manOfSteelMats[i + 1]);
-        }
-    } else {
+    if (!takeMats(player, manOfSteelMats)) {
         Log("TRAINING DUMMY :: Dialog desync when trying to upgrade Man of Steep to dummy. Player = " + player.Name);
     }
 }
@@ -347,16 +331,25 @@ void r_takeMatsManOfSteel(Critter& player, Critter@ npc) {
 uint[] ironLimbsMats = {PID_JUNK, 1, PID_FIBER, 2, PID_GOLDEN_GECKO_PELT, 2};
 
 bool d_hasMatsIronLimbs(Critter& player, Critter@ npc) {
-    return hasMats(player, npc, ironLimbsMats);
+    return hasMats(player, ironLimbsMats);
 }
 
 void r_takeMatsIronLimbs(Critter& player, Critter@ npc) {
-    if (d_hasMatsIronLimbs(player, npc)) {
-        for (uint i = 0; i < ironLimbsMats.length() / 2; i++) {
-            player.DeleteItem(ironLimbsMats[i], ironLimbsMats[i + 1]);
-        }
-    } else {
+    if (!takeMats(player, ironLimbsMats)) {
         Log("TRAINING DUMMY :: Dialog desync when trying to upgrade Iron Limbs to dummy. Player = " + player.Name);
+    }
+}
+
+//  Jinxed upgrade
+uint[] jinxedMats = {PID_FIBER, 1, PID_COSMETIC_CASE, 1, PID_GOLD_LOCKET, 1, PID_GOLD_TOOTH, 1};
+
+bool d_hasMatsJinxed(Critter& player, Critter@ npc) {
+    return hasMats(player, jinxedMats);
+}
+
+void r_takeMatsJinxed(Critter& player, Critter@ npc) {
+    if (!takeMats(player, jinxedMats)) {
+        Log("TRAINING DUMMY :: Dialog desync when trying to upgrade Jinxed to dummy. Player = " + player.Name);
     }
 }
 
@@ -398,6 +391,10 @@ void dlg_ShowDummyStats(Critter& player, Critter@ npc, string@ text) {
     }
     if (npc.Perk[PE_IRON_LIMBS] > 0) {
         str += "Iron Limbs, ";
+        perkFound = true;
+    }
+    if (npc.Perk[PE_JINXED_II] > 0) {
+        str += "Jinxed, ";
         perkFound = true;
     }
     if (perkFound) {
@@ -458,6 +455,54 @@ bool isTrainingDummy(Critter& cr) {
         return true;
     }
     return false;
+}
+
+uint[] dummyRepairMats = {PID_JUNK, 1, PID_FIBER, 1};
+
+bool _DummySkillOnMe(Critter& cr, Critter& who, int skill) {
+    if (skill == SK_REPAIR) {
+        if (hasTool(who)) {
+            if (hasMats(who, dummyRepairMats)) {
+                takeMats(who, dummyRepairMats);
+                int repairAmount = cr.StatBase[ST_MAX_LIFE] * Random(who.Skill[SK_REPAIR] / 2, who.Skill[SK_REPAIR]) / 200;
+                cr.StatBase[ST_CURRENT_HP] += repairAmount;
+                if (cr.StatBase[ST_CURRENT_HP] > cr.StatBase[ST_MAX_LIFE]) {
+                    cr.StatBase[ST_CURRENT_HP] = cr.StatBase[ST_MAX_LIFE];
+                    who.Say(SAY_NETMSG, "You managed to fully repair the dummy.");
+                } else {
+                    who.Say(SAY_NETMSG, "You managed to repair " + repairAmount + " durability of the dummy.");
+                }
+            } else {
+                who.Say(SAY_NETMSG, "You need the following materials to repair this dummy: 1 x Junk, 1 x Fiber.");
+            }
+        } else {
+            who.Say(SAY_NETMSG, "You won't manage without some tools.");
+        }
+        return true;
+    }
+    if (skill == SK_SCIENCE) {
+        if (cr.IsDead()) {
+            int woodSalvaged = Random(0, 3);
+            who.Say(SAY_NETMSG, "You managed to clean up this broken dummy stand and salvaged some wood.");
+            who.AddItem(PID_FIREWOOD, woodSalvaged);
+            DeleteNpc(cr);
+        } else {
+            who.Say(SAY_NETMSG, "You managed to clean up this dummy and salvage some materials from it.");
+            int woodSalvaged = Random(0, 5);
+            int fiberSalvaged = Random(0, 2);
+            int junkSalvaged = Random(0, 2);
+            who.AddItem(PID_FIREWOOD, woodSalvaged);
+            who.AddItem(PID_PUMP_PARTS, junkSalvaged);
+            who.AddItem(PID_FIBER, fiberSalvaged);
+            DeleteNpc(cr);
+        }
+        return true;
+    }
+    return false;
+}
+
+bool hasTool(Critter& player) {
+    return player.CountItem(PID_MULTI_TOOL) > 0 || player.CountItem(PID_SUPER_TOOL_KIT) > 0;
 }
 
 #endif 	//	__TRAINING_DUMMY__
