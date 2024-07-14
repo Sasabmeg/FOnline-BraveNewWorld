@@ -499,10 +499,6 @@ void CombatAttack(Critter& cr, Critter& target, ProtoItem& weapon, uint8 weaponM
             dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , Multihex bonus = |" + COLOR_DTEXT_BONUS + " 15";
         }
     }
-    toHit = CLAMP(toHit, 5, 95);
-    if (isDummyTraining && (toHit < 5 || toHit > 95)) {
-        dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , CLAMP(5, 95) = |" + COLOR_DTEXT_BONUS + " " + toHit;
-    }
 
 //Log("Combat attack, toHit1 = "+toHit);
     if(target.Perk[PE_DODGER] > 0)
@@ -524,28 +520,29 @@ void CombatAttack(Critter& cr, Critter& target, ProtoItem& weapon, uint8 weaponM
             }
         }
     }
-    toHit = CLAMP(toHit, 5, 95);
+    int hitRoll = Random(1, 100);
+    int sniperMargin = CLAMP(toHit - hitRoll, 0, 100);
+
+    if (isDummyTraining) {
+        dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , To Hit = |" + COLOR_DTEXT_BONUS + " " + toHit;
+    }
     if (isDummyTraining && (toHit < 5 || toHit > 95)) {
         dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , CLAMP(5, 95) = |" + COLOR_DTEXT_BONUS + " " + toHit;
     }
-//Log("Combat attack, toHit2 = "+toHit);
-    if(target.Perk[PE_IN_YOUR_FACE] > 0 && dist < 3)
-    {
+    toHit = CLAMP(toHit, 5, 95);
+
+    if (target.Perk[PE_IN_YOUR_FACE] > 0 && dist < 3) {
         Item@ targetWeapon = _CritGetItemHand(target);
-        if( (!valid(targetWeapon) && dist == 1) || (valid(targetWeapon) && targetWeapon.GetType() == ITEM_TYPE_WEAPON &&
+        if ((!valid(targetWeapon) && dist == 1) || (valid(targetWeapon) && targetWeapon.GetType() == ITEM_TYPE_WEAPON &&
             (targetWeapon.Proto.Weapon_Skill_0 == SK_UNARMED) && _WeaponMaxDist(targetWeapon.Proto, 0) >= uint(dist)) )
         {
-            //Log("in your face!");
             toHit = MIN(toHit, 50);
             if (isDummyTraining) {
                 dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , after In Your Face = |" + COLOR_DTEXT_BONUS + " " + toHit;
             }
         }
     }
-//Log("Combat attack, toHit3 = "+toHit);
-//cr.Say(SAY_NORM_ON_HEAD, ""+toHit);
     // Main hit roll
-    int hitRoll = Random(1, 100);
     int margin = toHit - hitRoll;
     if (isDummyTraining) {
         dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , FINAL To Hit = |" + COLOR_DTEXT_BONUS + " " + toHit + "|" + COLOR_DTEXT_REGULAR + "  vs Roll = |" + COLOR_DTEXT_ROLL + " " + hitRoll;
@@ -555,10 +552,6 @@ void CombatAttack(Critter& cr, Critter& target, ProtoItem& weapon, uint8 weaponM
             dummyInfo += "|" + COLOR_DTEXT_MALUS + "  :: Miss";
         }
     }
-
-    if (isDummyTraining) {
-    }
-
     // If missed
     if (margin < 0) {
         // Not setting isHit, we try a critical failure
@@ -683,8 +676,7 @@ void CombatAttack(Critter& cr, Critter& target, ProtoItem& weapon, uint8 weaponM
             }
 
             Item@ usedArmor = _GetCritterArmor(target, attack.AimHead);
-            if(valid(usedArmor))
-            {
+            if (valid(usedArmor)) {
                 int addchance = usedArmor.Proto.Armor_CMCritChance;
 				// 03-08-2013 cubik: wywalony perk spray
                 //if(cr.Perk[PE_SPRAY_AND_PRAY] != 0 && (attack.Aim == HIT_LOCATION_UNCALLED || attack.Aim == HIT_LOCATION_NONE))
@@ -693,16 +685,20 @@ void CombatAttack(Critter& cr, Critter& target, ProtoItem& weapon, uint8 weaponM
                 if (isDummyTraining) {
                     dummyText += "|" + COLOR_DTEXT_REGULAR + " , Target Armor modifier = |" + COLOR_DTEXT_MALUS + " " + usedArmor.Proto.Armor_CMCritChance;
                 }
-                if(cr.Trait[TRAIT_FINESSE] != 0) {
+
+                //  TODO: BNW: fixed a bug? (to be tested) this line was missing???
+                addchance += usedArmor.Proto.Armor_CMCritChance;
+
+                if (cr.Trait[TRAIT_FINESSE] != 0) {
                     addchance -= usedArmor.Proto.Armor_CMCritChance / 4;
                     if (isDummyTraining) {
-                        dummyText += "|" + COLOR_DTEXT_REGULAR + " , Finesse factor = |" + COLOR_DTEXT_BONUS + " " + 0.75;
+                        dummyText += "|" + COLOR_DTEXT_REGULAR + " , Finesse factor (25% ignore) = |" + COLOR_DTEXT_BONUS + " " + usedArmor.Proto.Armor_CMCritChance / 4;
                     }
                 }
-                if((aim != HIT_LOCATION_NONE) && (aim != HIT_LOCATION_UNCALLED) && cr.Perk[PE_SHARPSHOOTER] != 0) {
+                if ((aim != HIT_LOCATION_NONE) && (aim != HIT_LOCATION_UNCALLED) && cr.Perk[PE_SHARPSHOOTER] != 0) {
                     addchance -= usedArmor.Proto.Armor_CMCritChance / 2;
                     if (isDummyTraining) {
-                        dummyText += "|" + COLOR_DTEXT_REGULAR + " , Sharpshooter factor = |" + COLOR_DTEXT_BONUS + " " + 0.5;
+                        dummyText += "|" + COLOR_DTEXT_REGULAR + " , Sharpshooter factor (50% ignore) = |" + COLOR_DTEXT_BONUS + " " + usedArmor.Proto.Armor_CMCritChance / 2;
                     }
                 }
                 chance += addchance;
@@ -711,20 +707,28 @@ void CombatAttack(Critter& cr, Critter& target, ProtoItem& weapon, uint8 weaponM
                     dummyText += "|" + COLOR_DTEXT_REGULAR + " , Armor craft modifier = |" + COLOR_DTEXT_MALUS + " " + SelectArmorBonus(usedArmor, BONUS_ARMOR_CRIT_CHANCE);
                 }
             }
+
+            if (isDummyTraining) {
+                dummyText += "|" + COLOR_DTEXT_REGULAR + " , Hit Location = |" + COLOR_DTEXT_BONUS + " " + aim;
+            }
+            //  BNW: reworked sniper perk, now it will give bonus crit chance if toHit above hitRoll, only for aimed hits, no fast shot trait
+            if (!isCritical && weaponSubtype == WS_GUN && cr.Perk[PE_SNIPER] != 0 && aim != HIT_LOCATION_UNCALLED && aim != HIT_LOCATION_NONE && cr.Trait[TRAIT_FAST_SHOT] == 0) {
+                int sniperCritChanceBonus = CLAMP((cr.Stat[ST_INTELLECT] * 5 - target.Stat[ST_LUCK] * 2) * sniperMargin / 100, 0, 50);
+                if (isDummyTraining) {
+                    dummyText += "|" + COLOR_DTEXT_REGULAR + " , Sniper Perk: Margin = |" + COLOR_DTEXT_BONUS + " " + sniperMargin;
+                    dummyText += "|" + COLOR_DTEXT_REGULAR + " / 100 * (Attacker IN = |" + COLOR_DTEXT_BONUS + " " + cr.Stat[ST_INTELLECT];
+                    dummyText += "|" + COLOR_DTEXT_REGULAR + "  * 5) - (Target LK = |" + COLOR_DTEXT_BONUS + " " + target.Stat[ST_LUCK];
+                    dummyText += "|" + COLOR_DTEXT_REGULAR + "  * 2), Sniper crit. bonus = |" + COLOR_DTEXT_BONUS + " " + sniperCritChanceBonus;
+                }
+                chance += sniperCritChanceBonus;
+            }
+
             if (isDummyTraining) {
                 dummyText += "|" + COLOR_DTEXT_REGULAR + " , Final chance = |" + COLOR_DTEXT_BONUS + " " + chance;
                 dummyText += "|" + COLOR_DTEXT_REGULAR + "  vs Roll = |" + COLOR_DTEXT_ROLL + " " + isCriticalRoll;
             }
             isCritical = (isCriticalRoll <= chance);
 			CriticalChance = chance;
-        }
-        if (!isCritical && weaponSubtype == WS_GUN && cr.Perk[PE_SNIPER] != 0) {
-            int criticalSniperRoll = Random(1, 10);
-            isCritical = (criticalSniperRoll <= cr.Stat[ST_LUCK]);
-            if (isDummyTraining) {
-                dummyText += "|" + COLOR_DTEXT_REGULAR + " , Sniper crit. upgrade LK = |" + COLOR_DTEXT_BONUS + " " + cr.Stat[ST_LUCK];
-                dummyText += "|" + COLOR_DTEXT_REGULAR + " vs Roll = |" + COLOR_DTEXT_ROLL + " " + criticalSniperRoll;
-            }
         }
         if (!isCritical && isUnarmed) {
             int criticalUnarmedWeaponRoll = Random(1, 100);
@@ -2713,7 +2717,10 @@ void ApplyDamage(AttackStruct& attack, Critter& target, uint rounds, bool isCrit
     int partialBypassDT = targetDT - armorDT + (armorDT / 4);
 
     if (isDummyTraining) {
-        dummyInfo += "|" + COLOR_DTEXT_CAPTION + " \nDamage Calculations :: ";
+        if (isCritical) {
+            dummyInfo += "\n";
+        }
+        dummyInfo += "|" + COLOR_DTEXT_CAPTION + " Damage Calculations :: ";
         dummyInfo += "|" + COLOR_DTEXT_REGULAR + " Weap Damage Range (|" + COLOR_DTEXT_BONUS + " " + attack.DmgMin + " - " + attack.DmgMax + ")";
         dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , Target DT = |" + COLOR_DTEXT_BONUS + " " + targetDT;
         dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , DR = |" + COLOR_DTEXT_BONUS + " " + targetDR;

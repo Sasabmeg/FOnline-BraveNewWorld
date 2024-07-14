@@ -12,7 +12,7 @@ int[][] PerksData =
 {
     { 300, 2, 1 }, // Bookworm, Disabled, 1 ranks
     array<int>(0),              // level 1 requirements
-    
+
     #ifdef __SERVER
     array<int>(0),               // level 1 perk up effects
     {              // level 1 perk down effects
@@ -184,7 +184,7 @@ int[][] PerksData =
         26, 1, 5,  // Plasma Damage Resistance increased by 5
         27, 1, 5,  // Electric Damage Resistance increased by 5
         28, 1, 5,  // EMP Damage Resistance increased by 5
-        29, 1, 5,  // Explode Damage Resistance increased by 5        
+        29, 1, 5,  // Explode Damage Resistance increased by 5
     },
     {              // level 1 perk down effects
         -1         // Just revert
@@ -317,8 +317,11 @@ int[][] PerksData =
     },
     #endif
 
-    { 325, 2, 1 }, // Sniper, Disabled, 1 ranks
-    array<int>(0),              // level 1 requirements
+	{ 325, 0, 1 }, // Sniper, Leveling, 1 ranks
+	{ // level 1 requirements
+		4, 1, 5, // Intelligence at least 5
+		77, 1, 12, // Level at least 12
+	},
     #ifdef __SERVER
     array<int>(0),               // level 1 perk up effects
     {              // level 1 perk down effects
@@ -1766,7 +1769,7 @@ int[][] PerksData =
         -1         // Just revert
     },
     #endif
-	
+
     { 463, 1, 1 }, // Strength Implant, Implant, 1 ranks
     array<int>(0),              // level 1 requirements
     #ifdef __SERVER
@@ -1776,8 +1779,8 @@ int[][] PerksData =
     {              // level 1 perk down effects
         -1         // Just revert
     },
-    #endif	
-	
+    #endif
+
     { 464, 1, 1 }, // Perception Implant, Implant, 1 ranks
     array<int>(0),              // level 1 requirements
     #ifdef __SERVER
@@ -1788,7 +1791,7 @@ int[][] PerksData =
         -1         // Just revert
     },
     #endif
-	
+
 	{ 465, 1, 1 }, // Endurance Implant, Implant, 1 ranks
     array<int>(0),              // level 1 requirements
     #ifdef __SERVER
@@ -1799,7 +1802,7 @@ int[][] PerksData =
         -1         // Just revert
     },
     #endif
-	
+
 	{ 466, 1, 1 }, // Charisma Implant, Implant, 1 ranks
     array<int>(0),              // level 1 requirements
     #ifdef __SERVER
@@ -1810,7 +1813,7 @@ int[][] PerksData =
         -1         // Just revert
     },
     #endif
-	
+
 	{ 467, 1, 1 }, // Intelligence Implant, Implant, 1 ranks
     array<int>(0),              // level 1 requirements
     #ifdef __SERVER
@@ -1821,7 +1824,7 @@ int[][] PerksData =
         -1         // Just revert
     },
     #endif
-	
+
 	{ 468, 1, 1 }, // Agility Implant, Implant, 1 ranks
     array<int>(0),              // level 1 requirements
     #ifdef __SERVER
@@ -1832,7 +1835,7 @@ int[][] PerksData =
         -1         // Just revert
     },
     #endif
-	
+
 	{ 469, 1, 1 }, // Luck Implant, Implant, 1 ranks
     array<int>(0),              // level 1 requirements
     #ifdef __SERVER
@@ -1843,6 +1846,6 @@ int[][] PerksData =
         -1         // Just revert
     },
     #endif
-	
+
     { -1, -1, -1 }
 };
