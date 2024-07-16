@@ -659,7 +659,8 @@ void CombatAttack(Critter& cr, Critter& target, ProtoItem& weapon, uint8 weaponM
         } else {
             int chance = cr.Stat[ST_CRITICAL_CHANCE] + margin / 10 + (GetHitAim(aim) * (60 + 4 * cr.Stat[ST_LUCK])) / 100 + attack.SelectWeaponBonus(BONUS_WEAPON_CRITICAL_CHANCE);
             if (isDummyTraining) {
-                dummyText += "|" + COLOR_DTEXT_REGULAR + " Margin/10 = |" + COLOR_DTEXT_BONUS + " " + margin / 10;
+                dummyText += "|" + COLOR_DTEXT_REGULAR + " Base Crit Chance = |" + COLOR_DTEXT_BONUS + " " + cr.Stat[ST_CRITICAL_CHANCE];
+                dummyText += "|" + COLOR_DTEXT_REGULAR + " , Margin/10 = |" + COLOR_DTEXT_BONUS + " " + margin / 10;
                 dummyText += "|" + COLOR_DTEXT_REGULAR + " , Aim bonus = |" + COLOR_DTEXT_BONUS + " " + ((GetHitAim(aim) * (60 + 4 * cr.Stat[ST_LUCK])) / 100);
                 if (GetHitAim(aim) > 0) {
                     dummyText += "|" + COLOR_DTEXT_REGULAR + "  ( Aim(|" + COLOR_DTEXT_BONUS + " " + GetHitAim(aim);
@@ -687,18 +688,18 @@ void CombatAttack(Critter& cr, Critter& target, ProtoItem& weapon, uint8 weaponM
                 }
 
                 //  TODO: BNW: fixed a bug? (to be tested) this line was missing???
-                addchance += usedArmor.Proto.Armor_CMCritChance;
+                //addchance += usedArmor.Proto.Armor_CMCritChance;
 
                 if (cr.Trait[TRAIT_FINESSE] != 0) {
                     addchance -= usedArmor.Proto.Armor_CMCritChance / 4;
                     if (isDummyTraining) {
-                        dummyText += "|" + COLOR_DTEXT_REGULAR + " , Finesse factor (25% ignore) = |" + COLOR_DTEXT_BONUS + " " + usedArmor.Proto.Armor_CMCritChance / 4;
+                        dummyText += "|" + COLOR_DTEXT_REGULAR + " , Finesse factor (25% ignore) = |" + COLOR_DTEXT_BONUS + " " + (-usedArmor.Proto.Armor_CMCritChance / 4);
                     }
                 }
                 if ((aim != HIT_LOCATION_NONE) && (aim != HIT_LOCATION_UNCALLED) && cr.Perk[PE_SHARPSHOOTER] != 0) {
                     addchance -= usedArmor.Proto.Armor_CMCritChance / 2;
                     if (isDummyTraining) {
-                        dummyText += "|" + COLOR_DTEXT_REGULAR + " , Sharpshooter factor (50% ignore) = |" + COLOR_DTEXT_BONUS + " " + usedArmor.Proto.Armor_CMCritChance / 2;
+                        dummyText += "|" + COLOR_DTEXT_REGULAR + " , Sharpshooter factor (50% ignore) = |" + COLOR_DTEXT_BONUS + " " + (-usedArmor.Proto.Armor_CMCritChance / 2);
                     }
                 }
                 chance += addchance;
@@ -706,11 +707,12 @@ void CombatAttack(Critter& cr, Critter& target, ProtoItem& weapon, uint8 weaponM
                 if (isDummyTraining && SelectArmorBonus(usedArmor, BONUS_ARMOR_CRIT_CHANCE) > 0) {
                     dummyText += "|" + COLOR_DTEXT_REGULAR + " , Armor craft modifier = |" + COLOR_DTEXT_MALUS + " " + SelectArmorBonus(usedArmor, BONUS_ARMOR_CRIT_CHANCE);
                 }
+            } else {
+                if (isDummyTraining) {
+                    dummyText += "|" + COLOR_DTEXT_REGULAR + " , Target has no armor or broken.";
+                }
             }
 
-            if (isDummyTraining) {
-                dummyText += "|" + COLOR_DTEXT_REGULAR + " , Hit Location = |" + COLOR_DTEXT_BONUS + " " + aim;
-            }
             //  BNW: reworked sniper perk, now it will give bonus crit chance if toHit above hitRoll, only for aimed hits, no fast shot trait
             if (!isCritical && weaponSubtype == WS_GUN && cr.Perk[PE_SNIPER] != 0 && aim != HIT_LOCATION_UNCALLED && aim != HIT_LOCATION_NONE && cr.Trait[TRAIT_FAST_SHOT] == 0) {
                 int sniperCritChanceBonus = CLAMP((cr.Stat[ST_INTELLECT] * 5 - target.Stat[ST_LUCK] * 2) * sniperMargin / 100, 0, 50);
