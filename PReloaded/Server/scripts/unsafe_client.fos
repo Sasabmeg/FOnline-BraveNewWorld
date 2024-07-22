@@ -1700,7 +1700,7 @@ void unsafe_ScienceAtHex(Critter& player, int mode, int, int, string@, array<int
         {
             if(valid(allItems[i]) && ReversableItem(allItems[i]))
             {
-                if(_IsNotLegit(allItems[i].Val9))
+                if(_IsNotLegit(allItems[i].Val9) && player.GetAccess() != ACCESS_ADMIN)
                 {
                     //player.Say(SAY_NETMSG, "You can't disassemble not legit items.");
                     continue;

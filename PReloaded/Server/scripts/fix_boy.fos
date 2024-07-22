@@ -58,7 +58,7 @@ void AddCraftingExperience(Critter& player, uint exp, int mult)
 {
 	exp /= __ExperienceMod;
 	player.StatBase[ST_EXPERIENCE] += (exp * mult) - (exp * __ExperienceMod);
-	
+
 	TC_CraftExpReward(player, (exp*mult));
 }
 
@@ -273,7 +273,7 @@ int TimeoutCheck(Critter& player)
 }
 
 
-uint GetItemType(uint pid) 
+uint GetItemType(uint pid)
 {
     ProtoItem@ proto = GetProtoItem(pid);
     switch(proto.Type)
@@ -287,7 +287,7 @@ uint GetItemType(uint pid)
     return FIX_FILTER_MISC;
 }
 
-bool FilterItems(Critter& player, uint pid) 
+bool FilterItems(Critter& player, uint pid)
 {
     uint filter = player.ParamBase[ST_FIXBOY_FILTER];
 
@@ -316,14 +316,14 @@ bool CheckMultiplierResources(Critter& player, CraftItem& craft)
         multiplier = CLAMP(multiplier, 1, 99);
         player.ParamBase[ST_FIXBOY_COUNTER] = multiplier;
     }
-    
+
     array<uint16> resources;
     array<uint> r_cnt;
     for(uint i = 0, j = craft.GetNeedItems(resources, r_cnt, null); i < j; i++)
     {
         Item@ res = player.GetItem(resources[i], -1);
         if(valid(res))
-        {   
+        {
             if(isFixAll)
             {
                 if(res.IsStackable())
@@ -335,7 +335,7 @@ bool CheckMultiplierResources(Critter& player, CraftItem& craft)
                     fixall = MIN(fixall, (player.CountItem(resources[i]) / r_cnt[i]));
                 }
             }
-            else 
+            else
             {
                 if(res.IsStackable())
                 {
@@ -361,7 +361,7 @@ bool CheckMultiplierResources(Critter& player, CraftItem& craft)
             case 1: player.Say(SAY_NETMSG, "Crafted "+fixall+" item."); break;
             default: player.Say(SAY_NETMSG, "Crafted "+fixall+" items."); break;
         }
-            
+
         player.ParamBase[ST_FIXBOY_FIXALL] = fixall;
 		AddCraftingExperience(player, craft.Experience, player.StatBase[ST_FIXBOY_FIXALL]);
     }
@@ -473,7 +473,7 @@ int fix_Lock(Critter& player, int stage, CraftItem& craft)
         {
             if(!CheckMultiplierResources(player, craft))
                 return FIX_FAIL;
-                           
+
             Item@ lock = player.AddItem(PID_LOCK, 1);
 
             // complexity based on crafter's lockpick skill
@@ -602,7 +602,7 @@ bool ReverseAllItems(Critter& cr, array<Item@>& items, uint cnt, uint max)   //e
     return true;
 }
 
-bool ReverseItem(Critter& cr, Item& item, bool isMassScience) 
+bool ReverseItem(Critter& cr, Item& item, bool isMassScience)
 {
     int itemType = item.GetType();
     if(ReverseItemCustom(cr, item, isMassScience))
@@ -653,31 +653,42 @@ bool ReverseItemCrafted(Critter& cr, Item& item, bool isMassScience)
         if(ammoBatch > item.GetCount())
             return false;
 
-        scienceTimes = item.GetCount()/ammoBatch;   
+        scienceTimes = item.GetCount()/ammoBatch;
     }
 
-    for(uint i = 0, j = craft.GetNeedItems(items, counts, ors); i < j; i++)
-    {
+    bool receipContainMetalAlloyOrTwoJunks = false;
+    bool addedJunk = false;
+    int receipJunkCount = 0;
+
+    for (uint i = 0, j = craft.GetNeedItems(items, counts, ors); i < j; i++) {
         ProtoItem@ proto = GetProtoItem(items[i]);
-        bool       force = proto.Type == ITEM_TYPE_WEAPON || proto.Type == ITEM_TYPE_ARMOR;
-        for(uint j = 0; j < counts[i]*scienceTimes; j++)
-        {
-            if(force || Random(1, 1000) < factor)
-            {
+        if (proto.ProtoId == PID_JUNK) {
+            receipJunkCount = counts[i];
+        }
+        if (proto.ProtoId == PID_METAL_PARTS || proto.ProtoId == PID_METAL_PARTS2 || proto.ProtoId == PID_ALLOYS || proto.ProtoId == PID_ALLOYS2 || receipJunkCount > 1) {
+            receipContainMetalAlloyOrTwoJunks = true;
+        }
+        bool force = proto.Type == ITEM_TYPE_WEAPON || proto.Type == ITEM_TYPE_ARMOR;
+        for (uint j = 0; j < counts[i] * scienceTimes; j++) {
+            if (force || Random(1, 1000) < factor) {
                 Item@ addedItem = cr.AddItem(items[i], 1);
-                if(deteriorate && addedItem.IsDeteriorable())
-                {
+                if (deteriorate && addedItem.IsDeteriorable()) {
                     CloneWear(addedItem, item);
-                    if(proto.Type == ITEM_TYPE_WEAPON && addedItem.AmmoPid != 0)
+                    if (proto.Type == ITEM_TYPE_WEAPON && addedItem.AmmoPid != 0) {
                         addedItem.AmmoCount = 0;
+                    }
                     addedItem.Update();
                 }
                 added = true;
             }
         }
-
-        if(i + 1 == j || ors[i])
+        if (i + 1 == j || ors[i]) {
             break;
+        }
+    }
+    if (!added && receipContainMetalAlloyOrTwoJunks) {
+        cr.AddItem(PID_JUNK, 1);
+        addedJunk = true;
     }
 
     string type = "something";
@@ -691,18 +702,21 @@ bool ReverseItemCrafted(Critter& cr, Item& item, bool isMassScience)
     if(item.GetProtoId() == PID_RADIO)
         type = "the Radio";
 
-    if(item.GetType() == ITEM_TYPE_AMMO && item.GetCount() > ammoBatch*scienceTimes)
+    if (item.GetType() == ITEM_TYPE_AMMO && item.GetCount() > ammoBatch*scienceTimes) {
         item.SetCount(item.GetCount() - (ammoBatch*scienceTimes));
-    else
+    } else {
         DeleteItem(item);
+    }
 
-    if(!isMassScience)
-    {
-        if(added)
+    if (!isMassScience) {
+        if (added) {
             cr.Say(SAY_NETMSG, "You've disassembled " + type + ".");
-        else
+        } else if (addedJunk) {
+            cr.Say(SAY_NETMSG, "You've disassembled " + type + ", but were only able to obtain some junk.");
+        } else {
             cr.Say(SAY_NETMSG, "You've disassembled " + type + ", but were unable to obtain anything.");
-	}	
+        }
+	}
     uint expAmount = 25+protoItemCost/100;
     if(item.GetType() == ITEM_TYPE_AMMO)
         expAmount *= scienceTimes;

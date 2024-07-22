@@ -1458,7 +1458,7 @@ bool critter_use_skill(Critter& cr, int skill, Critter@ targetCr, Item@ targetIt
 
         if(valid(targetItem) && ReversableItem(targetItem))
         {
-            if(_IsNotLegit(targetItem.Val9))
+            if(_IsNotLegit(targetItem.Val9) && cr.GetAccess() != ACCESS_ADMIN)
             {
                 cr.Say(SAY_NETMSG, "You can't disassemble not legit items.");
                 return true;
