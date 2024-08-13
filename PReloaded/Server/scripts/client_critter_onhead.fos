@@ -22,7 +22,8 @@ array<uint> crits;
 array<Sprite> factionIcons;
 uint factionCount = 0;
 uint mapPid = 0;
-bool doNotHideNpcNames;
+bool doNotHideNpcNames = true;
+bool doNotHideDeadNpcNames = true;
 uint npcNamesColor = COLOR_DGREEN;
 uint npcNamesDeadColor = COLOR_DARK;
 uint npcNamesQuestRegularColor = COLOR_GREEN;
@@ -33,7 +34,7 @@ string nameSearch = "";
 bool npcNameSearchBlink = true;
 
 
-void InitCritterOnHead(bool showNpcNames, uint namesColor, uint questRegularColor, uint questStoryColor, uint questJobColor, uint namesSearchColor, bool searchBlink)	//export
+void InitCritterOnHead(bool showNpcNames, bool showDeadNpcNames, uint namesColor, uint questRegularColor, uint questStoryColor, uint questJobColor, uint namesSearchColor, bool searchBlink)	//export
 {
 	__ShowNpcNames = __ConfigShowNpcAwareness;
 	crs.resize(0);
@@ -43,6 +44,7 @@ void InitCritterOnHead(bool showNpcNames, uint namesColor, uint questRegularColo
 	if(__ConfigShowFactionEmblems)
 		factionIcons.resize(factionCount);
     doNotHideNpcNames = showNpcNames;
+	doNotHideDeadNpcNames = showDeadNpcNames;
     npcNamesColor = namesColor;
     npcNamesQuestRegularColor = questRegularColor;
     npcNamesQuestStoryColor = questStoryColor;
@@ -132,10 +134,17 @@ void DrawCritterOnHead()	//export
 		//OnHeadAwareness
 		uint   dialog = cr.Stat[ST_DIALOG_ID];
         uint16 pid = cr.Pid;
-        string head = cr.IsPlayer() ? cr.Name : cr.Name;
-        if (!cr.IsPlayer() && !doNotHideNpcNames) {
-            head = " ";
+
+   		string head = cr.Name;
+
+        if (cr.IsNpc() && !cr.IsDead())
+		{
+			head = doNotHideNpcNames ? head : " ";
         }
+		else if (cr.IsNpc() && cr.IsDead())
+		{
+			head = doNotHideDeadNpcNames ? head : " ";
+		}
 
         if(IsLexem(cr, "$@"))
         {
