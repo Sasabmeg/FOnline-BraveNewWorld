@@ -8,9 +8,10 @@
 #include "sprite.fos"
 #include "config_h.fos"
 
+
 import bool GMToolsAccess() from "client_gmtools";
 import bool IsGMTEnabled() from "client_main";
-#define IsGM IsGMTEnabled() && GMToolsAccess
+#define IsGM    IsGMTEnabled() && GMToolsAccess
 
 import int stringReplaceText(string& s, string@ f, string@ t) from "config_file";
 import int GUI_GetActiveMainScreen() from "client_gui";
@@ -21,8 +22,7 @@ array<uint> crits;
 array<Sprite> factionIcons;
 uint factionCount = 0;
 uint mapPid = 0;
-bool doNotHideNpcNames = true;
-bool doNotHideDeadNpcNames = true;
+bool doNotHideNpcNames;
 uint npcNamesColor = COLOR_DGREEN;
 uint npcNamesDeadColor = COLOR_DARK;
 uint npcNamesQuestRegularColor = COLOR_GREEN;
@@ -32,29 +32,17 @@ uint npcNamesSearchColor = COLOR_SAND;
 string nameSearch = "";
 bool npcNameSearchBlink = true;
 
-void InitCritterOnHead(
-	bool showNpcNames,
-	bool showDeadNpcNames,
-	uint namesColor,
-	uint questRegularColor,
-	uint questStoryColor,
-	uint questJobColor,
-	uint namesSearchColor,
-	bool searchBlink
-) // export
+
+void InitCritterOnHead(bool showNpcNames, uint namesColor, uint questRegularColor, uint questStoryColor, uint questJobColor, uint namesSearchColor, bool searchBlink)	//export
 {
 	__ShowNpcNames = __ConfigShowNpcAwareness;
 	crs.resize(0);
 	crits.resize(0);
 
-	// factionIcons
-	if (__ConfigShowFactionEmblems)
-	{
+	//factionIcons
+	if(__ConfigShowFactionEmblems)
 		factionIcons.resize(factionCount);
-	}
-
     doNotHideNpcNames = showNpcNames;
-	doNotHideDeadNpcNames = showDeadNpcNames;
     npcNamesColor = namesColor;
     npcNamesQuestRegularColor = questRegularColor;
     npcNamesQuestStoryColor = questStoryColor;
@@ -65,14 +53,11 @@ void InitCritterOnHead(
 
 void InitFactionIcons()
 {
-	if (factionCount == 0)
-	{
+	if(factionCount == 0)
 		RunServerScriptUnsafe("unsafe_client@unsafe_GetFactionCount", 0, 0, 0, "", null);
-	}
 }
 
-void SetNameSearch(string& searchValue)
-{
+void SetNameSearch(string& searchValue) {
     nameSearch = strlwr("" + searchValue);
 }
 
@@ -81,10 +66,7 @@ void _SetFactionCount(int fc, int, int, string@, array<int>@ list)
 	factionIcons.resize(fc);
 
 	for (int i = 0; i < fc; ++i)
-	{
 		factionIcons[i].Load("factionIcons\\" + (i + 200) + ".png", PATH_ART_INTRFACE);
-	}
-
 	factionCount = fc;
 }
 
@@ -125,12 +107,10 @@ array<CritterCl@> GetCrittersCache()
 	return( crs );
 }
 
-void DrawCritterOnHead() // export
+void DrawCritterOnHead()	//export
 {
-	if (GUI_GetActiveMainScreen() != CLIENT_MAIN_SCREEN_GAME)
-	{
+	if(GUI_GetActiveMainScreen() != CLIENT_MAIN_SCREEN_GAME)
 		return;
-	}
 
 	int color_b = 0;
 	int color_g = 0;
@@ -143,43 +123,31 @@ void DrawCritterOnHead() // export
 
 	CritterCl@ chosen = GetChosen();
 
-	for (uint i = 0, iLen = crits.length(); i < iLen; ++i)
+	for(uint i = 0, iLen = crits.length(); i < iLen; ++i)
 	{
 		CritterCl@ cr = GetCritter(crits[i]);
-
-		if (!valid(cr))
-		{
+		if(!valid(cr))
 			continue;
-		}
-			
-		// OnHeadAwareness
-		uint dialog = cr.Stat[ST_DIALOG_ID];
+
+		//OnHeadAwareness
+		uint   dialog = cr.Stat[ST_DIALOG_ID];
         uint16 pid = cr.Pid;
-        string head = cr.Name;
-
-        if (cr.IsNpc() && !cr.IsDead())
-		{
-			head = doNotHideNpcNames ? head : " ";
+        string head = cr.IsPlayer() ? cr.Name : cr.Name;
+        if (!cr.IsPlayer() && !doNotHideNpcNames) {
+            head = " ";
         }
-		else if (cr.IsNpc() && cr.IsDead())
-		{
-			head = doNotHideDeadNpcNames ? head : " ";
-		}
 
-        if (IsLexem(cr, "$@"))
+        if(IsLexem(cr, "$@"))
         {
             head = GetLexem(cr, "$@");
-
-            if (head.length() == 0)
-			{
-				head = " ";
-			}
+            if(head.length() == 0)
+                head = " ";
 
 			stringReplaceText(head, "|", "");
             head = FormatTags(head, "");
         }
 
-        if (IsGM())
+        if(IsGM())
         {
             array<string> gm;
 
@@ -209,52 +177,35 @@ void DrawCritterOnHead() // export
             }
         }
 
-		if (head != " ")
+		if(head != " ")
 		{
 			name = "|" + cr.NameColor + " " + head;
 			cr.ContourColor = cr.ContourColor;
-
-			if (!cr.IsPlayer())
-			{
-                if (cr.IsDead())
-				{
-					name = "|" + npcNamesDeadColor + " " + head;
-                }
-				else if (nameSearch.length() > 0 && substring(strlwr(head), 0, nameSearch.length()) == strlwr(nameSearch))
-				{
-                    if (npcNameSearchBlink)
-					{
+			if (!cr.IsPlayer()) {
+                if (cr.IsDead()) {
+                    name = "|" + npcNamesDeadColor + " " + head;
+                } else if (nameSearch.length() > 0 && substring(strlwr(head), 0, nameSearch.length()) == strlwr(nameSearch)) {
+                    if (npcNameSearchBlink) {
                         name = "|" + (npcNamesSearchColor + ((GetTick()/2%1000) > 125 ? 0 : 256*256*256*2)) + " " + head;
-                    }
-					else
-					{
+                    } else {
                         name = "|" + npcNamesSearchColor + " " + head;
                     }
-                }
-				else if (cr.StatBase[ST_DIALOG_ID] < 20000 || cr.StatBase[ST_DIALOG_ID] > 50000)
-				{
+                } else if (cr.StatBase[ST_DIALOG_ID] < 20000 || cr.StatBase[ST_DIALOG_ID] > 50000) {
                     name = "|" + npcNamesColor + " " + head;
-                }
-				else if (cr.StatBase[ST_DIALOG_ID] >= 40000)
-				{
+                } else if (cr.StatBase[ST_DIALOG_ID] >= 40000) {
                     name = "|" + npcNamesQuestJobColor + " " + head;
-                }
-				else if (cr.StatBase[ST_DIALOG_ID] >= 30000)
-				{
+                } else if (cr.StatBase[ST_DIALOG_ID] >= 30000) {
                     name = "|" + npcNamesQuestStoryColor + " " + head;
-                }
-				else if (cr.StatBase[ST_DIALOG_ID] >= 20000)
-				{
+                } else if (cr.StatBase[ST_DIALOG_ID] >= 20000) {
                     name = "|" + npcNamesQuestRegularColor + " " + head;
                 }
 			}
+
 		}
 		else
-		{
 			name = " ";
-		}
 
-		if (cr.IsPlayer())
+		if(cr.IsPlayer())
 		{
 			cr.NameOnHead = name;
 
@@ -274,25 +225,21 @@ void DrawCritterOnHead() // export
 			if(!__ConfigShowPlayerAwareness)
 				continue;
 		}
-
-		if (cr.IsNpc() && !__ConfigShowNpcAwareness)
+		if(cr.IsNpc() && !__ConfigShowNpcAwareness)
 		{
 			cr.NameOnHead = name;
 			continue;
 		}
 
-		if (cr.IsDead() == false)
+		if(cr.IsDead() == false)
 		{
-			if (valid(chosen) && __ConfigOnHeadAwareness == 1)
+			if(valid(chosen) && __ConfigOnHeadAwareness == 1)
 			{
 				color_g = (255*cr.Param[ST_CURRENT_HP])/cr.Param[ST_MAX_LIFE];
 				hp_proc = cr.Param[ST_CURRENT_HP] * 100 / cr.Param[ST_MAX_LIFE];
 
-				if (color_g < 0)
-				{
+				if(color_g < 0)
 					color_g = 0;
-				}
-
 				color_r = 255 - color_g;
 
 				hp = "|" + COLOR_RGB(color_r, color_g, color_b) + " " + cr.Param[ST_CURRENT_HP] + "/" + cr.Param[ST_MAX_LIFE];
@@ -300,7 +247,7 @@ void DrawCritterOnHead() // export
 			else
 			{
 				string lifeRes = "";
-				switch (cr.Stat[ST_HEALTH_LEVEL])
+				switch(cr.Stat[ST_HEALTH_LEVEL])
 				{
 					case 4: lifeRes = "****"; break;
 					case 3: lifeRes = "***"; break;
@@ -308,12 +255,10 @@ void DrawCritterOnHead() // export
 					case 1: lifeRes = "*"; break;
 				}
 
-				hp = "|" + (cr.Stat[ST_HEALTH_LEVEL] < 1
-					? COLOR_LGRAY
-					: COLOR_RGB(0xff - (0xff * cr.Stat[ST_HEALTH_LEVEL]) / 5, (0xff * cr.Stat[ST_HEALTH_LEVEL]) / 5, 0)) + " " + lifeRes;
+				hp = "|" + (cr.Stat[ST_HEALTH_LEVEL] < 1 ? COLOR_LGRAY : COLOR_RGB(0xff - (0xff * cr.Stat[ST_HEALTH_LEVEL]) / 5, (0xff * cr.Stat[ST_HEALTH_LEVEL]) / 5, 0)) + " " + lifeRes;
 			}
 
-			if (valid(chosen) && _CritIsInjured(cr))
+			if(valid(chosen) && _CritIsInjured(cr))
 			{
 				crInjures = " ";
 				crInjures += _CritDamaged(cr, DAMAGE_EYE) ? "E " : "";
@@ -324,9 +269,7 @@ void DrawCritterOnHead() // export
 				inj = "|" + COLOR_RGB(200, 0, 0) + crInjures + "\n";
 			}
 			else
-			{
 				inj = "";
-			}
 		}
 		else
 		{
@@ -338,12 +281,12 @@ void DrawCritterOnHead() // export
 	}
 }
 
-void ChangeOnHeadAwarenessPlayer() // export
+void ChangeOnHeadAwarenessPlayer()	//export
 {
 	__ConfigShowPlayerAwareness = !__ConfigShowPlayerAwareness;
 }
 
-void ChangeOnHeadAwarenessNPC() // export
+void ChangeOnHeadAwarenessNPC()	//export
 {
 	__ConfigShowNpcAwareness = !__ConfigShowNpcAwareness;
 	__ShowNpcNames =  __ConfigShowNpcAwareness;

@@ -22,16 +22,7 @@
 #include "client_access_h.fos"
 #include "client/client_broadcast_h.fos"
 
-import void InitCritterOnHead(
-    bool showNpcNames,
-    bool showDeadNpcNames,
-    uint namesColor,
-    uint questRegularColor,
-    uint questStoryColor,
-    uint questJobColor,
-    uint namesSearchColor,
-    bool searchBlink)
-from "client_critter_onhead";
+import void InitCritterOnHead(bool showNpcNames, uint namesColor, uint questRegularColor, uint questStoryColor, uint questJobColor, uint namesSearchColor, bool searchBlink) from "client_critter_onhead";
 
 // import void ActionUpdate(CritterCl& cr) from "client_anti_cheat";
 
@@ -108,7 +99,6 @@ int        item_prices_sell_modifier;   // Cached item prices from server
 
 bool       isGMT = false;
 bool showNpcNames = true;
-bool showDeadNpcNames = true;
 uint npcNamesColor = COLOR_DGREEN;
 uint npcNamesQuestRegularColor = COLOR_GREEN;
 uint npcNamesQuestStoryColor = COLOR_GOLDEN_YELLOW;
@@ -190,16 +180,7 @@ bool start()
     InitBagCallbacks();
 	InitSmartCursor();
 
-    InitCritterOnHead(
-        showNpcNames,
-        showDeadNpcNames,
-        npcNamesColor,
-        npcNamesQuestRegularColor,
-        npcNamesQuestStoryColor,
-        npcNamesQuestJobColor,
-        npcNamesSearchColor,
-        npcNamesSearchBlink
-    );
+    InitCritterOnHead(showNpcNames, npcNamesColor, npcNamesQuestRegularColor, npcNamesQuestStoryColor, npcNamesQuestJobColor, npcNamesSearchColor, npcNamesSearchBlink);
     InitDrawEncounters();
     SetBroadcastHudEnabled(broadcastEnabled);
     UnsetBroadcastHudFlag(CLIENT_BROADCAST_ALL);
@@ -915,7 +896,6 @@ void InitConfig()
     npcNamesQuestJobColor = COLOR_TEAL;
     npcNamesSearchColor = COLOR_SAND;
     showNpcNames = true;
-    showDeadNpcNames = true;
     npcNamesSearchBlink = false;
     broadcastEnabled = true;
     broadcastFilter = 7;
@@ -1079,12 +1059,6 @@ void InitConfig()
         @val = GetConfigValue(CONFIG_FILE, CONFIG_RELOADED, "ShowNpcNames");
         if(valid(val) && val.length() > 0) {
             showNpcNames = CLAMP(string2uint(val), 0, 1) == 1;
-        }
-
-        // ShowDeadNpcNames
-        @val = GetConfigValue(CONFIG_FILE, CONFIG_RELOADED, "ShowDeadNpcNames");
-        if(valid(val) && val.length() > 0) {
-            showDeadNpcNames = CLAMP(string2uint(val), 0, 1) == 1;
         }
 
         //  NpcNamesColor
