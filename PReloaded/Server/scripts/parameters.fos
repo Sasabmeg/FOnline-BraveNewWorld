@@ -136,13 +136,20 @@ void changedParam_Experience(Critter& cr, uint, int oldValue)   // server
 				AddScore(cr, SCORE_RITCH, 1);
 
                  // Czwarty tag skill
-				     if(cr.Stat[ST_LEVEL]==12) cr.StatBase[ST_UNSPENT_TAG]=1;
+                //  if(cr.Stat[ST_LEVEL]==12) cr.StatBase[ST_UNSPENT_TAG]=1;    BNW 2024.08.27 - I don't know why was this even here, it doesn't work anymore?
 
-                cr.StatBase[ST_UNSPENT_SKILL_POINTS] += 5 + cr.StatBase[ST_INTELLECT] * 2; // Skill points
-                if(cr.Trait[TRAIT_SKILLED] != 0)
-                    cr.StatBase[ST_UNSPENT_SKILL_POINTS] += 5;                             // Skilled trait
+                //  cr.StatBase[ST_UNSPENT_SKILL_POINTS] += 5 + cr.StatBase[ST_INTELLECT] * 2; // Skill points, changed to static in BNW to allow mutation
+                if (level < 31) {
+                    cr.StatBase[ST_UNSPENT_SKILL_POINTS] += 17;
+                } else {
+                    cr.StatBase[ST_UNSPENT_SKILL_POINTS] += 9;
+                }
+
+                //  BNW: removed skilled trait, it is being never use, noone takes skill points over perks and would messes with mutation feature later.
+                //if(cr.Trait[TRAIT_SKILLED] != 0)
+                //    cr.StatBase[ST_UNSPENT_SKILL_POINTS] += 5;                             // Skilled trait
                 // if(cr.Trait[TRAIT_GIFTED]!=0) cr.StatBase[ST_UNSPENT_SKILL_POINTS]-=5; // Gifted trait
-                cr.StatBase[ST_UNSPENT_SKILL_POINTS] += cr.Perk[PE_EDUCATED] * 2;          // Educated perk
+                //  cr.StatBase[ST_UNSPENT_SKILL_POINTS] += cr.Perk[PE_EDUCATED] * 2;          // Educated perk, effect removed in BNW to allow Mutation
                 if(cr.StatBase[ST_UNSPENT_SKILL_POINTS] > 99)
                     cr.StatBase[ST_UNSPENT_SKILL_POINTS] = 99;                             // Clamp skill points
 
