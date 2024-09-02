@@ -3139,9 +3139,13 @@ void ApplyDamage(AttackStruct& attack, Critter& target, uint rounds, bool isCrit
                 dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , " + COLOR_DTEXT_BONUS + " Irremediable Mechanic";
                 dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , Old Irremediable = |" + COLOR_DTEXT_BONUS + " " + target.ParamBase[ST_EX_IRREMEDIABLE] + "%";
             }
+            int burstTotalDamageEffect = totalDmg;
+            if (rounds > 1) {
+                burstTotalDamageEffect /= rounds;
+            }
             if (target.ParamBase[TO_EX_IRREMEDIABLE] + PLASMA_EFFECT_LINGER_TIME > int(GetTick())) {
-                if (totalDmg > target.ParamBase[ST_EX_IRREMEDIABLE]) {
-                    target.ParamBase[ST_EX_IRREMEDIABLE] = CLAMP(totalDmg, 0, 100);
+                if (burstTotalDamageEffect > target.ParamBase[ST_EX_IRREMEDIABLE]) {
+                    target.ParamBase[ST_EX_IRREMEDIABLE] = CLAMP(burstTotalDamageEffect, 0, 100);
                     target.ParamBase[TO_EX_IRREMEDIABLE] = GetTick();
                     //attack.Attacker.Say(SAY_NETMSG, "Current Irremediable% = " + target.ParamBase[ST_EX_IRREMEDIABLE]);
                     //Log("Current Irremediable% = " + target.ParamBase[ST_EX_IRREMEDIABLE]);
@@ -3151,7 +3155,7 @@ void ApplyDamage(AttackStruct& attack, Critter& target, uint rounds, bool isCrit
                     //Log("Current Irremediable% = " + target.ParamBase[ST_EX_IRREMEDIABLE]);
                 }
             } else {
-                target.ParamBase[ST_EX_IRREMEDIABLE] = CLAMP(totalDmg, 0, 100);
+                target.ParamBase[ST_EX_IRREMEDIABLE] = CLAMP(burstTotalDamageEffect, 0, 100);
                 target.ParamBase[TO_EX_IRREMEDIABLE] = GetTick();
                 //attack.Attacker.Say(SAY_NETMSG, "Current Irremediable% = " + target.ParamBase[ST_EX_IRREMEDIABLE]);
                 //Log("Current Irremediable% = " + target.ParamBase[ST_EX_IRREMEDIABLE]);
