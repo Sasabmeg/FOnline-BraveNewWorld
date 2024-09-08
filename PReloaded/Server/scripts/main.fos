@@ -3535,21 +3535,20 @@ bool FovCheck(Critter& cr, Critter& opponent)
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Levelup callback.
-void player_levelup(Critter& player, uint skillIndex, uint skillUp, uint perkIndex)
-{
-    if(skillIndex >= SKILL_BEGIN && skillIndex <= SKILL_END)
-    {
-        for( ; skillUp != 0; skillUp--)
-        {
+void player_levelup(Critter& player, uint skillIndex, uint skillUp, uint perkIndex) {
+    if (skillIndex >= SKILL_BEGIN && skillIndex <= SKILL_END) {
+        for ( ; skillUp != 0; skillUp--) {
             int skillVal = player.SkillBase[skillIndex];
-            if(skillVal >= MAX_SKILL_VAL)
+            if (skillVal >= MAX_SKILL_VAL)
                 break;
 
-			bool skillCap=((skillIndex==SK_FIRST_AID || skillIndex==SK_DOCTOR) && skillVal>=200) || (skillIndex==SK_OUTDOORSMAN && skillVal>=175) ||
-						  ((skillIndex==SK_LOCKPICK || skillIndex==SK_TRAPS || skillIndex==SK_STEAL || skillIndex==SK_BARTER || skillIndex==SK_GAMBLING)&& skillVal>=150) ||
-						  ((skillIndex==SK_SCIENCE || skillIndex==SK_REPAIR) && skillVal>=125) || (skillIndex==SK_SNEAK && skillVal >=270) || skillIndex==SK_SCAVENGING;
+			bool skillCap = (skillIndex == SK_FIRST_AID && skillVal >= 200)
+                            || (skillIndex == SK_OUTDOORSMAN || skillIndex == SK_LOCKPICK  || skillIndex == SK_STEAL
+                                || skillIndex == SK_BARTER || skillIndex == SK_GAMBLING || skillIndex == SK_SCIENCE
+                                || skillIndex == SK_REPAIR || skillIndex == SK_SPEECH || skillIndex == SK_SCAVENGING)
+                            || (skillIndex == SK_SNEAK && skillVal >= 270);
 
-			if(skillCap) break;
+			if (skillCap) break;
 
             int needPoints = 1;
             if(skillVal > __SkillModAdd6)
@@ -3563,25 +3562,20 @@ void player_levelup(Critter& player, uint skillIndex, uint skillUp, uint perkInd
             else if(skillVal > __SkillModAdd2)
                 needPoints = 2;
 
-            if(player.StatBase[ST_UNSPENT_SKILL_POINTS] < needPoints)
+            if (player.StatBase[ST_UNSPENT_SKILL_POINTS] < needPoints)
                 break;
 
             skillVal++;
 
-			skillCap=((skillIndex==SK_FIRST_AID || skillIndex==SK_DOCTOR) && skillVal>=200) || (skillIndex==SK_OUTDOORSMAN && skillVal>=175) ||
-				     ((skillIndex==SK_LOCKPICK || skillIndex==SK_TRAPS || skillIndex==SK_STEAL || skillIndex==SK_BARTER || skillIndex==SK_GAMBLING)&& skillVal>=150) ||
-					 ((skillIndex==SK_SCIENCE || skillIndex==SK_REPAIR) && skillVal>=125) || (skillIndex==SK_SNEAK && skillVal >=270);
+			skillCap = (skillIndex == SK_FIRST_AID && skillVal >= 200) || (skillIndex == SK_SNEAK && skillVal >= 270);
 
-            if(_CritIsTagSkill(player, skillIndex) && skillVal < MAX_SKILL_VAL && !skillCap)
+            if (_CritIsTagSkill(player, skillIndex) && skillVal < MAX_SKILL_VAL && !skillCap)
                 skillVal++;
             player.SkillBase[skillIndex] = skillVal;
             player.StatBase[ST_UNSPENT_SKILL_POINTS] -= needPoints;
         }
-    }
-    else if(perkIndex >= PERK_BEGIN && perkIndex <= PERK_END)
-    {
-        if(PerkCheck(player, perkIndex, false))
-        {
+    } else if (perkIndex >= PERK_BEGIN && perkIndex <= PERK_END) {
+        if (PerkCheck(player, perkIndex, false)) {
             if(player.IsPlayer())
                 FLog(LOG_PERKS_PICKED, player.Name+"("+player.Id+") perk: "+perkIndex+" at level "+player.Stat[ST_LEVEL]);
             player.PerkBase[perkIndex]++;
