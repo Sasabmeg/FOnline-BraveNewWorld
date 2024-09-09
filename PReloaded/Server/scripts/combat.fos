@@ -360,8 +360,13 @@ void CombatAttack(Critter& cr, Critter& target, ProtoItem& weapon, uint8 weaponM
 		attack.DmgMax += cr.Stat[ST_MELEE_DAMAGE];
 	}
 
-    if(weaponSubtype == WS_GUN)
-        attack.BonusDmg += cr.Perk[PE_BONUS_RANGED_DAMAGE] * 3 + cr.Perk[PE_MORE_RANGED_DAMAGE] * 4;
+    if (weaponSubtype == WS_GUN) {
+        //  BNW change, bonus ranged damage and more ranged damage depend on CH
+        //  Maybe merge into one perk later named Burst With Confidence? idk
+        //  formula is: CLAMP(CH1 - CH2/2, 0, 3) where CH1 is attacker's Charisma and CH2 is target's Charisma
+        int bonusFromCh = CLAMP(cr.Stat[ST_CHARISMA_EXT] - (((target.Stat[ST_CHARISMA_EXT] + 1) * 2) / 3), 0, 3);
+        attack.BonusDmg += cr.Perk[PE_BONUS_RANGED_DAMAGE] * bonusFromCh + cr.Perk[PE_MORE_RANGED_DAMAGE] * bonusFromCh;
+    }
     attack.DmgMul = 2;
 
     // Ammo
@@ -526,10 +531,10 @@ void CombatAttack(Critter& cr, Critter& target, ProtoItem& weapon, uint8 weaponM
     if (isDummyTraining) {
         dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , To Hit = |" + COLOR_DTEXT_BONUS + " " + toHit;
     }
-    if (isDummyTraining && (toHit < 5 || toHit > 95)) {
-        dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , CLAMP(5, 95) = |" + COLOR_DTEXT_BONUS + " " + toHit;
+    toHit = CLAMP(toHit, 5, _MaxToHit(cr));
+    if (isDummyTraining && (toHit < 5 || toHit > _MaxToHit(cr))) {
+        dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , CLAMP(5, 89 + CH) = |" + COLOR_DTEXT_BONUS + " " + toHit;
     }
-    toHit = CLAMP(toHit, 5, 95);
 
     if (target.Perk[PE_IN_YOUR_FACE] > 0 && dist < 3) {
         Item@ targetWeapon = _CritGetItemHand(target);
@@ -860,7 +865,7 @@ void CombatAttack(Critter& cr, Critter& target, ProtoItem& weapon, uint8 weaponM
                     bl++;
                 if(critsLine[i].GetMultihex() > 0)
                     toHit += 15;
-                toHit = CLAMP(toHit, 5, 95);
+                toHit = CLAMP(toHit, 5, _MaxToHit(cr));
             //Log("Combat attack, toHit1 = "+toHit);
                 if(critsLine[i].Perk[PE_DODGER] > 0)
                 {
@@ -878,7 +883,7 @@ void CombatAttack(Critter& cr, Critter& target, ProtoItem& weapon, uint8 weaponM
                         toHit -= critsLine[i].Perk[PE_DODGER]*5;
                     }
                 }
-                toHit = CLAMP(toHit, 5, 95);
+                toHit = CLAMP(toHit, 5, _MaxToHit(cr));
             //Log("Combat attack, toHit2 = "+toHit);
                 toHit /= 3;               // after clamp
                 if(Random(1, 100) <= toHit)
@@ -926,7 +931,7 @@ void CombatAttack(Critter& cr, Critter& target, ProtoItem& weapon, uint8 weaponM
             if(!realTarget.IsKnockout())
                 blockers--;
             toHit -= 10 * blockers;
-            toHit = CLAMP(toHit, 5, 95);
+            toHit = CLAMP(toHit, 5, _MaxToHit(cr));
         //Log("Combat attack, toHit1 = "+toHit);
             if(realTarget.Perk[PE_DODGER] > 0)
             {
@@ -944,7 +949,7 @@ void CombatAttack(Critter& cr, Critter& target, ProtoItem& weapon, uint8 weaponM
                     toHit -= realTarget.Perk[PE_DODGER]*5;
                 }
             }
-            toHit = CLAMP(toHit, 5, 95);
+            toHit = CLAMP(toHit, 5, _MaxToHit(cr));
         //Log("Combat attack, toHit2 = "+toHit);
 
         }
@@ -1005,7 +1010,7 @@ void CombatAttack(Critter& cr, Critter& target, ProtoItem& weapon, uint8 weaponM
                     bl++;
                 if(lineCentral[i].GetMultihex() > 0)
                     toHit += 15;
-                toHit = CLAMP(toHit, 5, 95);
+                toHit = CLAMP(toHit, 5, _MaxToHit(cr));
             //Log("Combat attack, toHit1 = "+toHit);
                 if(lineCentral[i].Perk[PE_DODGER] > 0)
                 {
@@ -1023,7 +1028,7 @@ void CombatAttack(Critter& cr, Critter& target, ProtoItem& weapon, uint8 weaponM
                         toHit -= lineCentral[i].Perk[PE_DODGER]*5;
                     }
                 }
-                toHit = CLAMP(toHit, 5, 95);
+                toHit = CLAMP(toHit, 5, _MaxToHit(cr));
             //Log("Combat attack, toHit2 = "+toHit);
 
                 if(Random(1, 100) <= toHit)
@@ -1088,7 +1093,7 @@ void CombatAttack(Critter& cr, Critter& target, ProtoItem& weapon, uint8 weaponM
                     toHit += 40;
                 if(lineLeft[i].GetMultihex() > 0)
                     toHit += 15;
-                toHit = CLAMP(toHit, 5, 95);
+                toHit = CLAMP(toHit, 5, _MaxToHit(cr));
             //Log("Combat attack, toHit1 = "+toHit);
                 if(lineLeft[i].Perk[PE_DODGER] > 0)
                 {
@@ -1106,7 +1111,7 @@ void CombatAttack(Critter& cr, Critter& target, ProtoItem& weapon, uint8 weaponM
                         toHit -= lineLeft[i].Perk[PE_DODGER]*5;
                     }
                 }
-                toHit = CLAMP(toHit, 5, 95);
+                toHit = CLAMP(toHit, 5, _MaxToHit(cr));
             //Log("Combat attack, toHit2 = "+toHit);
 
                 if(Random(1, 100) <= toHit)
@@ -1166,7 +1171,7 @@ void CombatAttack(Critter& cr, Critter& target, ProtoItem& weapon, uint8 weaponM
                     toHit += 40;
                 if(lineRight[i].GetMultihex() > 0)
                     toHit += 15;
-                toHit = CLAMP(toHit, 5, 95);
+                toHit = CLAMP(toHit, 5, _MaxToHit(cr));
             //Log("Combat attack, toHit1 = "+toHit);
                 if(lineRight[i].Perk[PE_DODGER] > 0)
                 {
@@ -1184,7 +1189,7 @@ void CombatAttack(Critter& cr, Critter& target, ProtoItem& weapon, uint8 weaponM
                         toHit -= lineRight[i].Perk[PE_DODGER]*5;
                     }
                 }
-                toHit = CLAMP(toHit, 5, 95);
+                toHit = CLAMP(toHit, 5, _MaxToHit(cr));
             //Log("Combat attack, toHit2 = "+toHit);
 
                 if(Random(1, 100) <= toHit)
@@ -1243,7 +1248,7 @@ void CombatAttack(Critter& cr, Critter& target, ProtoItem& weapon, uint8 weaponM
             if(!realTarget.IsKnockout())
                 blockers--;
             toHit -= 10 * blockers;
-            toHit = CLAMP(toHit, 5, 95);
+            toHit = CLAMP(toHit, 5, _MaxToHit(cr));
         //Log("Combat attack, toHit1 = "+toHit);
             if(realTarget.Perk[PE_DODGER] > 0)
             {
@@ -1261,7 +1266,7 @@ void CombatAttack(Critter& cr, Critter& target, ProtoItem& weapon, uint8 weaponM
                     toHit -= realTarget.Perk[PE_DODGER]*5;
                 }
             }
-            toHit = CLAMP(toHit, 5, 95);
+            toHit = CLAMP(toHit, 5, _MaxToHit(cr));
         //Log("Combat attack, toHit2 = "+toHit);
             if(realTarget.Perk[PE_IN_YOUR_FACE] > 0 && dist < 3)
             {
@@ -1355,7 +1360,7 @@ void CombatAttack(Critter& cr, Critter& target, ProtoItem& weapon, uint8 weaponM
                 bl++;
             if(lineCentral[i].GetMultihex() > 0)
                 toHit += 15;
-            toHit = CLAMP(toHit, 5, 95);
+            toHit = CLAMP(toHit, 5, _MaxToHit(cr));
         //Log("Combat attack, toHit1 = "+toHit);
             if(lineCentral[i].Perk[PE_DODGER] > 0)
             {
@@ -1373,7 +1378,7 @@ void CombatAttack(Critter& cr, Critter& target, ProtoItem& weapon, uint8 weaponM
                     toHit -= lineCentral[i].Perk[PE_DODGER]*5;
                 }
             }
-            toHit = CLAMP(toHit, 5, 95);
+            toHit = CLAMP(toHit, 5, _MaxToHit(cr));
         //Log("Combat attack, toHit2 = "+toHit);
             if(lineCentral[i].Perk[PE_IN_YOUR_FACE] > 0 && dist < 3)
             {
@@ -1482,7 +1487,7 @@ void CombatAttack(Critter& cr, Critter& target, ProtoItem& weapon, uint8 weaponM
                     toHit += 40;
                 if(lineCentral[i].GetMultihex() > 0)
                     toHit += 15;
-                toHit = CLAMP(toHit, 5, 95);
+                toHit = CLAMP(toHit, 5, _MaxToHit(cr));
             //Log("Combat attack, toHit1 = "+toHit);
                 if(lineCentral[i].Perk[PE_DODGER] > 0)
                 {
@@ -1500,7 +1505,7 @@ void CombatAttack(Critter& cr, Critter& target, ProtoItem& weapon, uint8 weaponM
                         toHit -= lineCentral[i].Perk[PE_DODGER]*5;
                     }
                 }
-                toHit = CLAMP(toHit, 5, 95);
+                toHit = CLAMP(toHit, 5, _MaxToHit(cr));
             //Log("Combat attack, toHit2 = "+toHit);
                 if(lineCentral[i].Perk[PE_IN_YOUR_FACE] > 0 && dist < 3)
                 {
@@ -1593,7 +1598,7 @@ void CombatAttack(Critter& cr, Critter& target, ProtoItem& weapon, uint8 weaponM
                         toHit += 40;
                     if(lineLeft[i].GetMultihex() > 0)
                         toHit += 15;
-                    toHit = CLAMP(toHit, 5, 95);
+                    toHit = CLAMP(toHit, 5, _MaxToHit(cr));
                 //Log("Combat attack, toHit1 = "+toHit);
                     if(lineLeft[i].Perk[PE_DODGER] > 0)
                     {
@@ -1611,7 +1616,7 @@ void CombatAttack(Critter& cr, Critter& target, ProtoItem& weapon, uint8 weaponM
                             toHit -= lineLeft[i].Perk[PE_DODGER]*5;
                         }
                     }
-                    toHit = CLAMP(toHit, 5, 95);
+                    toHit = CLAMP(toHit, 5, _MaxToHit(cr));
                 //Log("Combat attack, toHit2 = "+toHit);
                     if(lineLeft[i].Perk[PE_IN_YOUR_FACE] > 0 && dist < 3)
                     {
@@ -1699,7 +1704,7 @@ void CombatAttack(Critter& cr, Critter& target, ProtoItem& weapon, uint8 weaponM
                         toHit += 40;
                     if(lineRight[i].GetMultihex() > 0)
                         toHit += 15;
-                    toHit = CLAMP(toHit, 5, 95);
+                    toHit = CLAMP(toHit, 5, _MaxToHit(cr));
                 //Log("Combat attack, toHit1 = "+toHit);
                     if(lineRight[i].Perk[PE_DODGER] > 0)
                     {
@@ -1717,7 +1722,7 @@ void CombatAttack(Critter& cr, Critter& target, ProtoItem& weapon, uint8 weaponM
                             toHit -= lineRight[i].Perk[PE_DODGER]*5;
                         }
                     }
-                    toHit = CLAMP(toHit, 5, 95);
+                    toHit = CLAMP(toHit, 5, _MaxToHit(cr));
                 //Log("Combat attack, toHit2 = "+toHit);
                     if(lineRight[i].Perk[PE_IN_YOUR_FACE] > 0 && dist < 3)
                     {
@@ -1829,7 +1834,7 @@ void CombatAttack(Critter& cr, Critter& target, ProtoItem& weapon, uint8 weaponM
                     bl++;
                 if(critsLine[i].GetMultihex() > 0)
                     toHit += 15;
-                toHit = CLAMP(toHit, 5, 95);
+                toHit = CLAMP(toHit, 5, _MaxToHit(cr));
             //Log("Combat attack, toHit1 = "+toHit);
                 if(critsLine[i].Perk[PE_DODGER] > 0)
                 {
@@ -1847,7 +1852,7 @@ void CombatAttack(Critter& cr, Critter& target, ProtoItem& weapon, uint8 weaponM
                         toHit -= critsLine[i].Perk[PE_DODGER]*5;
                     }
                 }
-                toHit = CLAMP(toHit, 5, 95);
+                toHit = CLAMP(toHit, 5, _MaxToHit(cr));
             //Log("Combat attack, toHit2 = "+toHit);
 
                 toHit /= 3;               // After clamp
@@ -4237,7 +4242,8 @@ void CriticalFailure(Critter& cr, ProtoItem& weapon, uint8 weaponUse, ProtoItem@
         int dmgMax = _WeaponDmgMax(weapon, weaponUse) + _WeaponDmgMax(weapon, weaponUse) * attack.SelectWeaponBonus(BONUS_WEAPON_MAX_DMG)/100;
         int dmgMul = validAmmo ? ammo.Ammo_DmgMult : 1;   // Technically, should be *2
         int dmgDiv = validAmmo ? ammo.Ammo_DmgDiv : 1;    // Technically, should be *2
-        totalDmg = Random(dmgMin, dmgMax) + 3 * cr.Perk[PE_BONUS_RANGED_DAMAGE] + cr.Perk[PE_MORE_RANGED_DAMAGE] * 4;
+        int bonusFromLuck = CLAMP((8 - cr.Stat[ST_LUCK_EXT]) / 3, 0, 3);
+        totalDmg = Random(dmgMin, dmgMax) + cr.Perk[PE_BONUS_RANGED_DAMAGE] * bonusFromLuck + cr.Perk[PE_MORE_RANGED_DAMAGE] * bonusFromLuck;
         totalDmg *= dmgMul;
         totalDmg /= dmgDiv;
 

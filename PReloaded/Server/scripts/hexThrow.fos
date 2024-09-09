@@ -115,7 +115,7 @@ int HexThrowingToHit(CritterMutual& cr, uint16 tx, uint16 ty, ProtoItem& weapon)
 
     if(cr.Damage[DAMAGE_EYE] != 0)
         toHit -= 25;
-    toHit = CLAMP(toHit, 5, 95);
+    toHit = CLAMP(toHit, 5, _MaxToHit(cr));
 
     return toHit;
 }
@@ -165,7 +165,7 @@ bool IsHexThrowableThere(CritterMutual& cr, ItemMutual@ item, uint16 tx, uint16 
     if(bx != tx || by != ty)
         return false;
 
-    
+
     return HexThrowGetMaxRange(cr, item) >= GetDistantion(cr.HexX, cr.HexY, tx, ty);
     // todo: wall tracing on the client side
 }
@@ -248,7 +248,7 @@ void unsafe_HexThrow(Critter& player, int px, int py, int p2, string@ param3, ar
 }
 
 void CommenceHexThrowing(Critter& cr, Map& map, Item& item, uint16 tx, uint16 ty)
-{    
+{
     uint16 pid = item.GetProtoId();
     if(IsGrenade(item))
     {
@@ -264,15 +264,15 @@ void CommenceHexThrowing(Critter& cr, Map& map, Item& item, uint16 tx, uint16 ty
         cr.StatBase[ST_CURRENT_AP] -= 100 * HexThrowActionPointsCost(item, cr);
 
         map.RunFlyEffect(item.GetProtoId(), cr, null, cr.HexX, cr.HexY, tx, ty);
-    
+
         if(cr.Timeout[TO_BATTLE] < int(__TimeoutBattle))
             _SetTimeout(cr, TO_BATTLE, __TimeoutBattle);
         if(!map.IsTurnBased() && map.IsTurnBasedAvailability())
             map.BeginTurnBased(cr);
-        
+
         uint[] values = { map.Id, tx, ty, pid, cr.Id };
         CreateTimeEvent(AFTER(REAL_SECOND(0)), "e_HexThrowExplode", values, false);
-        
+
         cr.DeleteItem(item.GetProtoId(), 1);
     }
     else
@@ -310,7 +310,7 @@ array<ItemCl@> availableItems;
 bool isPlasma, isFrag, isDynacord, isMolotov, isPulse, isFire;
 uint16 lastH = 0, lastM = 0, lastS = 0, lastMS = 0;
 
-void _UpdateWeapons(int param1, int param2, int param3, string@ param4, array<int>@ param5) 
+void _UpdateWeapons(int param1, int param2, int param3, string@ param4, array<int>@ param5)
 {
     if(Active)
         Active = FindAvailableWeapons();
@@ -404,12 +404,12 @@ bool FindAvailableWeapons()
             break;
             case 5:
                 next = isFire;
-            break; 
+            break;
             }
             if(!next)
                 itemPos = (itemPos+1)%6;
         }while(!next);
-        return true;    
+        return true;
     }
     else
         return false;
@@ -446,7 +446,7 @@ bool HexThrowingMouseDown(int click)
                     break;
                     case 5:
                         next = isFire;
-                    break;   
+                    break;
                 }
             }while(!next);
         }
@@ -511,7 +511,7 @@ void SetHexThrowing(bool enabled)
             else
                 Active = false;
         }
-        
+
         //ChangeCursor(1);         // todo
     }
     else
@@ -567,7 +567,7 @@ void RenderHexThrowing() // export
     //splash indicator
     uint splashRadius = 2;
     if(item.GetProtoId() == PID_FIRE_GRENADE || item.GetProtoId() == PID_FAKE_FIRE_GRENADE)
-        splashRadius = 3; 
+        splashRadius = 3;
     else if(item.GetProtoId() == PID_DYNACORD)
         splashRadius = 4;
 
@@ -606,7 +606,7 @@ void RenderHexThrowing() // export
     DrawText(tohit + "%", x + 20, y - 10, 40, 20, hasAp ? COLOR_GREEN : COLOR_RED, FONT_TYPE_DEFAULT, FONT_FLAG_BORDERED);
     DrawText(ap + " AP", x + 20, y, 40, 20, hasAp ? COLOR_LGRAY : COLOR_RED, FONT_TYPE_DEFAULT, FONT_FLAG_BORDERED);
     DrawText(item.GetCount()+"", x - 30, y-10, 40, 20, hasAp ? COLOR_LGRAY : COLOR_RED, FONT_TYPE_DEFAULT, FONT_FLAG_BORDERED);
-       
+
 }
 
 void TryHexThrow()

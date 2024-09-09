@@ -30,7 +30,7 @@ int SelectWeaponBonus(ItemMutual@ RealWeapon, int Int_Val_WeaponBonus)
         return 0;
     }
     else return 0;
-}   
+}
 
 bool IsHexShotWeapon(ItemMutual@ item)
 {
@@ -78,10 +78,10 @@ int HexShotingToHit(CritterMutual& cr, uint16 tx, uint16 ty, ProtoItem& weapon, 
     int weaponPerk = weapon.Weapon_Perk;
     int skillNum = _WeaponSkill(weapon, 0);
     int toHit = int(cr.Skill[skillNum]);
-    
+
     if(cr.Damage[DAMAGE_EYE] != 0)
         toHit -= 25;
-    
+
     //weapon handling modifiers
     if(cr.Trait[TRAIT_ONE_HANDER] != 0)
         toHit += (FLAG(weapon.Flags, ITEM_FLAG_TWO_HANDS) ? -40 : 20);
@@ -111,7 +111,7 @@ int HexShotingToHit(CritterMutual& cr, uint16 tx, uint16 ty, ProtoItem& weapon, 
     if(dist < distmod2)
         acc += distmod2;
     else
-        acc -= (perception - 2) * distmod1; 
+        acc -= (perception - 2) * distmod1;
 
     if(-2 * perception > acc)
         acc = -2 * perception;
@@ -122,7 +122,7 @@ int HexShotingToHit(CritterMutual& cr, uint16 tx, uint16 ty, ProtoItem& weapon, 
         acc *= -12;
     else
         acc *= -4;
-    
+
     toHit += acc;
 
     int blockers = 0;
@@ -137,7 +137,7 @@ int HexShotingToHit(CritterMutual& cr, uint16 tx, uint16 ty, ProtoItem& weapon, 
 
     toHit -= 10 * blockers;
 
-    toHit = CLAMP(toHit, 5, 95);
+    toHit = CLAMP(toHit, 5, _MaxToHit(cr));
 
     return toHit;
 }
@@ -265,7 +265,7 @@ void CommenceHexShoting(Critter& cr, Map& map, Item& item, uint16 tx, uint16 ty)
     cr.StatBase[ST_CURRENT_AP] -= 100 * HexShotActionPointsCost(item, cr);
 
     map.RunFlyEffect(_WeaponEffect(item.Proto, item.Mode), cr, null, cr.HexX, cr.HexY, tx, ty);
-    
+
     uint16 pid = item.GetProtoId();
 
     if(cr.Timeout[TO_BATTLE] < int(__TimeoutBattle))
@@ -370,7 +370,7 @@ void SetHexShoting(bool enabled)
         LastCursor = ::GetCurrentCursor();
         if(LastCursor == CURSOR_USE_WEAPON)
             Active = true;
-        //ChangeCursor(CURSOR_USE_WEAPON);      
+        //ChangeCursor(CURSOR_USE_WEAPON);
     }
     else
     {
@@ -400,7 +400,7 @@ void RenderHexShoting() // export
     if(!GetHexPos(hx, hy, x, y))
         return;                           // should not happen
 
-    int radius = (item.AmmoPid == PID_ROCKET_AP)?3:4; 
+    int radius = (item.AmmoPid == PID_ROCKET_AP)?3:4;
 
     uint tohit = ::HexShotingToHit(chosen, hx, hy, item.Proto, item);
     int  ap = ::HexShotActionPointsCost(item, chosen);
@@ -436,7 +436,7 @@ void RenderHexShoting() // export
         else
             DrawText("Reload", x + 20, y - 10, 40, 20, COLOR_RED, FONT_TYPE_DEFAULT, FONT_FLAG_BORDERED);
     }
-    
+
 }
 
 void TryHexShot()

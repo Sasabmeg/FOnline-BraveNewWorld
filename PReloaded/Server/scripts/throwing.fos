@@ -124,7 +124,7 @@ int ThrowingToHit(CritterMutual& cr, uint16 tx, uint16 ty, ProtoItem& weapon)
 
     if(cr.Damage[DAMAGE_EYE] != 0)
         toHit -= 25;
-    toHit = CLAMP(toHit, 5, 95);
+    toHit = CLAMP(toHit, 5, _MaxToHit(cr));
 
     return toHit;
 }
