@@ -526,7 +526,7 @@ void CombatAttack(Critter& cr, Critter& target, ProtoItem& weapon, uint8 weaponM
         }
     }
     int hitRoll = Random(1, 100);
-    int sniperMargin = CLAMP(toHit - hitRoll, 0, 100);
+    int sniperMargin = CLAMP(toHit - hitRoll, 0, 150);
 
     if (isDummyTraining) {
         dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , To Hit = |" + COLOR_DTEXT_BONUS + " " + toHit;
@@ -662,14 +662,14 @@ void CombatAttack(Critter& cr, Critter& target, ProtoItem& weapon, uint8 weaponM
                 dummyText += "|" + COLOR_DTEXT_BONUS + " Silent Death perk auto crit. ";
             }
         } else {
-            int chance = cr.Stat[ST_CRITICAL_CHANCE] + margin / 10 + (GetHitAim(aim) * (60 + 4 * cr.Stat[ST_INTELLECT])) / 100 + attack.SelectWeaponBonus(BONUS_WEAPON_CRITICAL_CHANCE);
+            int chance = cr.Stat[ST_CRITICAL_CHANCE] + margin / 10 + (GetHitAim(aim) * (35 + 4 * cr.Stat[ST_INTELLECT])) / 100 + attack.SelectWeaponBonus(BONUS_WEAPON_CRITICAL_CHANCE);
             if (isDummyTraining) {
                 dummyText += "|" + COLOR_DTEXT_REGULAR + " Base Crit Chance = |" + COLOR_DTEXT_BONUS + " " + cr.Stat[ST_CRITICAL_CHANCE];
                 dummyText += "|" + COLOR_DTEXT_REGULAR + " , Margin/10 = |" + COLOR_DTEXT_BONUS + " " + margin / 10;
-                dummyText += "|" + COLOR_DTEXT_REGULAR + " , Aim bonus = |" + COLOR_DTEXT_BONUS + " " + ((GetHitAim(aim) * (60 + 4 * cr.Stat[ST_INTELLECT])) / 100);
+                dummyText += "|" + COLOR_DTEXT_REGULAR + " , Aim bonus = |" + COLOR_DTEXT_BONUS + " " + ((GetHitAim(aim) * (35 + 4 * cr.Stat[ST_INTELLECT])) / 100);
                 if (GetHitAim(aim) > 0) {
                     dummyText += "|" + COLOR_DTEXT_REGULAR + "  ( Aim(|" + COLOR_DTEXT_BONUS + " " + GetHitAim(aim);
-                    dummyText += "|" + COLOR_DTEXT_REGULAR + " ) * (60 + 4 * IN(|" + COLOR_DTEXT_BONUS + " " + cr.Stat[ST_INTELLECT];
+                    dummyText += "|" + COLOR_DTEXT_REGULAR + " ) * (35 + 4 * IN(|" + COLOR_DTEXT_BONUS + " " + cr.Stat[ST_INTELLECT];
                     dummyText += "|" + COLOR_DTEXT_REGULAR + " ) / 100 )";
                 }
                 dummyText += "|" + COLOR_DTEXT_REGULAR + " , Weap bonus = |" + COLOR_DTEXT_BONUS + " " + attack.SelectWeaponBonus(BONUS_WEAPON_CRITICAL_CHANCE);
@@ -720,10 +720,10 @@ void CombatAttack(Critter& cr, Critter& target, ProtoItem& weapon, uint8 weaponM
 
             //  BNW: reworked sniper perk, now it will give bonus crit chance if toHit above hitRoll, only for aimed hits, no fast shot trait
             if (!isCritical && weaponSubtype == WS_GUN && cr.Perk[PE_SNIPER] != 0 && aim != HIT_LOCATION_UNCALLED && aim != HIT_LOCATION_NONE && cr.Trait[TRAIT_FAST_SHOT] == 0) {
-                int sniperCritChanceBonus = CLAMP((cr.Stat[ST_INTELLECT] * 5 - target.Stat[ST_LUCK] * 2) * sniperMargin / 100, 0, 50);
+                int sniperCritChanceBonus = CLAMP((cr.Stat[ST_INTELLECT] * 5 - target.Stat[ST_LUCK] * 2) * sniperMargin / 150, 0, 50);
                 if (isDummyTraining) {
                     dummyText += "|" + COLOR_DTEXT_REGULAR + " , Sniper Perk: Margin = |" + COLOR_DTEXT_BONUS + " " + sniperMargin;
-                    dummyText += "|" + COLOR_DTEXT_REGULAR + " / 100 * (Attacker IN = |" + COLOR_DTEXT_BONUS + " " + cr.Stat[ST_INTELLECT];
+                    dummyText += "|" + COLOR_DTEXT_REGULAR + " / 150 * (Attacker IN = |" + COLOR_DTEXT_BONUS + " " + cr.Stat[ST_INTELLECT];
                     dummyText += "|" + COLOR_DTEXT_REGULAR + "  * 5) - (Target LK = |" + COLOR_DTEXT_BONUS + " " + target.Stat[ST_LUCK];
                     dummyText += "|" + COLOR_DTEXT_REGULAR + "  * 2), Sniper crit. bonus = |" + COLOR_DTEXT_BONUS + " " + sniperCritChanceBonus;
                 }
@@ -2173,6 +2173,16 @@ void ApplyDamage(AttackStruct& attack, Critter& target, uint rounds, bool isCrit
                     roll += 25;
                     if (isDummyTraining) {
                         dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , Better Criticals perk = |" + COLOR_DTEXT_BONUS + " 25";
+                    }
+                }
+            }
+            if (attacker.Perk[PE_SNIPER] > 0) {
+                if (attack.WeaponSubtype == WS_GUN) {
+                    int distance = GetDistantion(attacker.HexX, attacker.HexY, target.HexX, target.HexY);
+                    int bonus = CLAMP(distance < 25 ? (distance - 25) : (distance > 30 ? (distance - 30) : 0), -25, +25);
+                    roll += bonus;
+                    if (isDummyTraining) {
+                        dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , Sniper Critical Power bonus = |" + (bonus >= 0 ? COLOR_DTEXT_BONUS : COLOR_DTEXT_MALUS) + " " + bonus;
                     }
                 }
             }
