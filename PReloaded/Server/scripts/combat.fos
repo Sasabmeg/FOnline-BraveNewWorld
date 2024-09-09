@@ -3565,17 +3565,19 @@ void ApplyDamage(AttackStruct& attack, Critter& target, uint rounds, bool isCrit
         int  currentAp = target.Stat[ST_CURRENT_AP];
         int  targetAp = currentAp;
         bool quick = target.Perk[PE_QUICK_RECOVERY] > 0;
-        if(loseTurn)
-        {
-            targetAp = quick ? -maxAp / 3 : -maxAp;
+        float intellectFactor = ((1.0 / 3.0) + (2.0 * (10.0 - target.Stat[ST_INTELLECT]) / 9.0));
+        if (loseTurn) {
+            targetAp = quick ? (-maxAp / 3) : (-maxAp * intellectFactor);
             target.StatBase[ST_MOVE_AP] = 0;
         }
 
-        if(knockOut)
-            targetAp = quick ? -Random(maxAp, 3 * maxAp) / 3 : -Random(maxAp, 3 * maxAp);
+        if (knockOut) {
+            targetAp = quick ? -Random(maxAp, 3 * maxAp) / 3 : -Random(maxAp, 3 * maxAp) * intellectFactor;
+        }
 
-		if(knockDown && !(target.IsKnockout() && map.IsTurnBased()))
-            targetAp -= quick ? 1 : 3;
+		if (knockDown && !(target.IsKnockout() && map.IsTurnBased())) {
+            targetAp -= quick ? 1 : (3 * intellectFactor);
+		}
 
 		if((isBelow || knockOut || knockDown || dmgType == DAMAGE_TYPE_EXPLODE || isShotgun ) && !target.IsKnockout() && target.Mode[MODE_NO_KNOCK] == 0)
         {
