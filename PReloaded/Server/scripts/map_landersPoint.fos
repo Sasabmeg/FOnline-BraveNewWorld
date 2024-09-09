@@ -32,6 +32,14 @@ void map_init(Map& map, bool firstTime)
         Log("Setting NO PVP for location Landers Point, map ID: " + proto);
         _MapSetMode(map, MAP_MODE_NO_PVP);
 	}
+
+
+	Location@ loc;
+    @loc = map.GetLocation();
+	if (valid(loc)) {
+        loc.Color = 0xffffa500;
+	}
+	//map.GetLocation().GetProtoId() == uint(locpid);
 }
 
 
