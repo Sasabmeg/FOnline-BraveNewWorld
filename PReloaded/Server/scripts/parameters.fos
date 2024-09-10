@@ -441,8 +441,8 @@ void CritterGenerate(array<int>& data)     // Export to client_main@player_data_
     #ifdef __CLIENT
     // Runtime calculations, only for client registration
     _param_[ST_ARMOR_CLASS] += 3 * _param_[ST_AGILITY];
-    _param_[ST_MAX_LIFE] += _param_[ST_STRENGTH] + _param_[ST_ENDURANCE] * 2 + 40;
-    _param_[ST_ACTION_POINTS] += _param_[ST_AGILITY] / 2;
+    _param_[ST_MAX_LIFE] += _param_[ST_STRENGTH] * 2 + _param_[ST_ENDURANCE] + 40;
+    _param_[ST_ACTION_POINTS] += (13 + _param_[ST_AGILITY]) / 4;
     _param_[ST_CARRY_WEIGHT] += LBS_TO_GRAMM(25 + _param_[ST_STRENGTH] * 25)+20000;
     _param_[ST_MELEE_DAMAGE] += (_param_[ST_STRENGTH] > 6 ? (_param_[TRAIT_BRUISER] > 0 ? 2 * (_param_[ST_STRENGTH] - 5) : (_param_[ST_STRENGTH] - 5)) : 1);
     _param_[ST_POISON_RESISTANCE] += _param_[ST_ENDURANCE] * 3;

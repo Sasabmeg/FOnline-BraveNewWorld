@@ -260,19 +260,19 @@ EXPORT int getParam_Hp(CritterMutual& cr, uint)
 
 EXPORT int getParam_MaxLife(CritterMutual& cr, uint)
 {
-	int val = cr.Params[ST_MAX_LIFE] + cr.Params[ST_MAX_LIFE_EXT] + cr.Params[ST_STRENGTH] + cr.Params[ST_ENDURANCE] * 2;
+	int val = cr.Params[ST_MAX_LIFE] + cr.Params[ST_MAX_LIFE_EXT] + cr.Params[ST_STRENGTH] * 2 + cr.Params[ST_ENDURANCE];
 	return CLAMP(val, 1, 9999);
 }
 
 EXPORT int getParam_MaxAp(CritterMutual& cr, uint)
 {
-	int val = cr.Params[ST_ACTION_POINTS] + cr.Params[ST_ACTION_POINTS_EXT] + getParam_Agility(cr, 0) / 2;
+	int val = cr.Params[ST_ACTION_POINTS] + cr.Params[ST_ACTION_POINTS_EXT] + (13 + getParam_Agility(cr, 0)) / 4;
 	
 	const Item* armor=cr.ItemSlotArmor;
-	if(checkBonus(armor, BONUS_ARMOR_MAX_AP)!=0) val++;
+	if (checkBonus(armor, BONUS_ARMOR_MAX_AP) != 0) val++;
 
 	const Item* weapon = cr.ItemSlotMain;
-	if (checkBonus(weapon, BONUS_WEAPON_MAX_AP)!=0) val++;
+	if (checkBonus(weapon, BONUS_WEAPON_MAX_AP) != 0) val++;
 
 	return CLAMP(val, 1, 9999);
 }
@@ -287,7 +287,7 @@ EXPORT int getParam_Ap(CritterMutual& cr, uint)
 EXPORT int getParam_MaxMoveAp(CritterMutual& cr, uint)
 {
 	int val = cr.Params[ST_MAX_MOVE_AP];
-	if(getParam_Agility(cr, 0) % 2 == 1)
+	if ((getParam_Agility(cr, 0) + 1) % 4 > 1)
 		val++;
 	return CLAMP(val, 0, 9999);
 }
