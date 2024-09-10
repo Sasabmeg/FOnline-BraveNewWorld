@@ -662,7 +662,7 @@ void CombatAttack(Critter& cr, Critter& target, ProtoItem& weapon, uint8 weaponM
                 dummyText += "|" + COLOR_DTEXT_BONUS + " Silent Death perk auto crit. ";
             }
         } else {
-            int chance = cr.Stat[ST_CRITICAL_CHANCE] + margin / 10 + (GetHitAim(aim) * (35 + 4 * cr.Stat[ST_INTELLECT])) / 100 + attack.SelectWeaponBonus(BONUS_WEAPON_CRITICAL_CHANCE);
+            int chance = cr.Stat[ST_CRITICAL_CHANCE] + margin / 10 + (GetHitAim(aim) * (35 + 4 * cr.Stat[ST_INTELLECT])) / 100 + attack.SelectWeaponBonus(BONUS_WEAPON_CRITICAL_CHANCE) - (target.Stat[ST_LUCK] / 2);
             if (isDummyTraining) {
                 dummyText += "|" + COLOR_DTEXT_REGULAR + " Base Crit Chance = |" + COLOR_DTEXT_BONUS + " " + cr.Stat[ST_CRITICAL_CHANCE];
                 dummyText += "|" + COLOR_DTEXT_REGULAR + " , Margin/10 = |" + COLOR_DTEXT_BONUS + " " + margin / 10;
@@ -673,6 +673,7 @@ void CombatAttack(Critter& cr, Critter& target, ProtoItem& weapon, uint8 weaponM
                     dummyText += "|" + COLOR_DTEXT_REGULAR + " ) / 100 )";
                 }
                 dummyText += "|" + COLOR_DTEXT_REGULAR + " , Weap bonus = |" + COLOR_DTEXT_BONUS + " " + attack.SelectWeaponBonus(BONUS_WEAPON_CRITICAL_CHANCE);
+                dummyText += "|" + COLOR_DTEXT_REGULAR + " , Target LK/2 = |" + COLOR_DTEXT_MALUS + " -" + target.Stat[ST_LUCK] / 2;
             }
             if(isHthAttack && cr.Perk[PE_CLOSE_COMBAT_MASTER] > 0) {
                 chance += 15;
@@ -2133,6 +2134,11 @@ void ApplyDamage(AttackStruct& attack, Critter& target, uint rounds, bool isCrit
         //05-03-2014 Cubil: bonus bazowy do broni do crit rolla
 		//roll +=AddCritRollWeapon(realWeapon); //disabled with new bypass
 
+		roll -= target.Stat[ST_LUCK];
+        if (isDummyTraining) {
+            dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , Target LK = |" + COLOR_DTEXT_MALUS + " -" + target.Stat[ST_LUCK];
+        }
+
         if (target.Perk[PE_MAN_OF_STEEL] > 0) {
             roll -= 10;
             if (isDummyTraining) {
@@ -2176,7 +2182,7 @@ void ApplyDamage(AttackStruct& attack, Critter& target, uint rounds, bool isCrit
                     }
                 }
             }
-            if (attacker.Perk[PE_SNIPER] > 0) {
+            if (attacker.Perk[PE_SNIPER] > 0 && aim != HIT_LOCATION_NONE && aim != HIT_LOCATION_UNCALLED && validAttacker && attacker.Trait[TRAIT_FAST_SHOT] == 0) {
                 if (attack.WeaponSubtype == WS_GUN) {
                     int distance = GetDistantion(attacker.HexX, attacker.HexY, target.HexX, target.HexY);
                     int bonus = CLAMP(distance < 25 ? (distance - 25) : (distance > 30 ? (distance - 30) : 0), -25, +25);
@@ -2189,7 +2195,7 @@ void ApplyDamage(AttackStruct& attack, Critter& target, uint rounds, bool isCrit
             if (attack.SilentDeathEffect) {
                 roll += 10;
                 if (isDummyTraining) {
-                    dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , Better Criticals perk = |" + COLOR_DTEXT_BONUS + " 10";
+                    dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , Silent Death perk = |" + COLOR_DTEXT_BONUS + " 10";
                 }
             }
         }
@@ -4254,7 +4260,7 @@ void CriticalFailure(Critter& cr, ProtoItem& weapon, uint8 weaponUse, ProtoItem@
         int dmgMax = _WeaponDmgMax(weapon, weaponUse) + _WeaponDmgMax(weapon, weaponUse) * attack.SelectWeaponBonus(BONUS_WEAPON_MAX_DMG)/100;
         int dmgMul = validAmmo ? ammo.Ammo_DmgMult : 1;   // Technically, should be *2
         int dmgDiv = validAmmo ? ammo.Ammo_DmgDiv : 1;    // Technically, should be *2
-        int bonusFromLuck = CLAMP((8 - cr.Stat[ST_LUCK_EXT]) / 3, 0, 3);
+        int bonusFromLuck = CLAMP((8 - cr.Stat[ST_LUCK]) / 3, 0, 3);
         totalDmg = Random(dmgMin, dmgMax) + cr.Perk[PE_BONUS_RANGED_DAMAGE] * bonusFromLuck + cr.Perk[PE_MORE_RANGED_DAMAGE] * bonusFromLuck;
         totalDmg *= dmgMul;
         totalDmg /= dmgDiv;
