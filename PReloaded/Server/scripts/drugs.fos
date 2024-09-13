@@ -415,7 +415,7 @@ uint ProcessDrug(Critter& cr, uint16 drugPid, uint& rate)
 
                     }
                     if (amount == 0 && cr.Trait[TRAIT_CHEM_RELIANT] != 0) {
-                        if ((drugPid == PID_STIMPAK || drugPid == PID_SUPER_STIMPAK || drugPid == PID_HYPO) && (stage == 1 || stage == 2)) {
+                        if ((drugPid == PID_SUPER_STIMPAK || drugPid == PID_HYPO) && (stage == 1 || stage == 2)) {
                             amount = (DrugEffects[index + TABLE_AMOUNT(i, 0)] * 3) / 8;
                         }
                     }
