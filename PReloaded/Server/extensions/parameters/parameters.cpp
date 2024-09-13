@@ -559,6 +559,14 @@ EXPORT void Item_Weapon_SetMode(Item& item, uint8 mode)
 /************************************************************************/
 /* Callbacks                                                            */
 /************************************************************************/
+#define PID_SUPER_STIMPAK                   (144)
+#define PID_STIMPAK                         (40)
+#define PID_ANTIDOTE                        (49)
+#define PID_SUPER_STIMPAK                   (144)
+#define PID_HEALING_POWDER                  (273)
+#define PID_HYPO                            (525)
+#define PID_WEAK_HEALING_POWDER             (9655)
+#define PID_BLOODPACK                       (25592)	//	used in Parareal Cannibal feature
 
 uint GetUseApCost(CritterMutual& cr, Item& item, uint8 mode)
 {
@@ -568,10 +576,22 @@ uint GetUseApCost(CritterMutual& cr, Item& item, uint8 mode)
 
 	if(use == USE_USE)
 	{
-		if(TB_BATTLE_TIMEOUT_CHECK(getParam_Timeout(cr, TO_BATTLE)))
+		if (TB_BATTLE_TIMEOUT_CHECK(getParam_Timeout(cr, TO_BATTLE))) {
 			apCost = FOClassic->TbApCostUseItem;
-		else
+		} else {
 			apCost = FOClassic->RtApCostUseItem;
+		}
+		if (item.GetProtoId() == PID_SUPER_STIMPAK) {
+			apCost = 5;
+		}
+		if (cr.Params[PE_QUICK_POCKETS] && apCost > 2) {
+			//	TODO: this is not the best solution, but I do not have ITEMPID.H for now...
+			uint proto = item.GetProtoId();
+			if (proto == PID_SUPER_STIMPAK || proto == PID_STIMPAK || proto == PID_ANTIDOTE || proto == PID_WEAK_HEALING_POWDER
+				|| proto == PID_HEALING_POWDER || proto == PID_HYPO || proto == PID_BLOODPACK) {
+				apCost--;
+			}
+		}
 	}
 	else if(use == USE_RELOAD)
 	{
@@ -605,7 +625,6 @@ uint GetUseApCost(CritterMutual& cr, Item& item, uint8 mode)
 	}
 
 	if(apCost < 1) apCost = 1;
-	if(item.GetProtoId()==144) apCost=5;
 	return apCost;
 }
 
