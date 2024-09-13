@@ -172,7 +172,7 @@ bool OnUseExplode(Critter& cr, Item& explode, Critter@ targetCr, Item@ targetIte
             EraseTimeEvent(_ExplodeGetNumEvent(explode));
 
         int chance = MIN(cr.Skill[SK_TRAPS]*2,300) - (cr.Id == _ExplodeGetOwner(explode) ? _Complexity(explode) : (_Complexity(explode) / 2));
-        chance = CLAMP(chance, 5, 95);
+        chance = CLAMP(chance, 5, _MaxToHit(cr));
 
         // Success
         if(chance > Random(1, 100))

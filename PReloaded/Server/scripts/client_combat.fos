@@ -129,12 +129,12 @@ int to_hit(CritterCl& chosen, CritterCl& target, ProtoItem& weapon, uint8 weapon
         return 0;
 
     int toHit = int(chosen.Skill[skillNum]);
-	
+
 	if(valid(realWeapon) && (realWeapon.Proto.ProtoId == PID_NEEDLER_PISTOL)) toHit = int(MAX(chosen.Skill[SK_SMALL_GUNS], chosen.Skill[SK_DOCTOR])); // 25-07-2013 Cubik: przy uzywaniu Needlera do celnosci brany jest max(sg,doc)
-	
+
 	if(valid(realWeapon))
 		toHit+= checkBonus(realWeapon, BONUS_WEAPON_ACCURACY);
-		
+
     int weaponPerk = weapon.Weapon_Perk;
     int blockers = 0;
 
@@ -228,14 +228,14 @@ int to_hit(CritterCl& chosen, CritterCl& target, ProtoItem& weapon, uint8 weapon
     if(skillNum == SK_UNARMED)
         hitMod /= 2;
     toHit -= hitMod;
-    toHit = CLAMP(toHit, 5, 95);
+    toHit = CLAMP(toHit, 5, _MaxToHit(chosen));
 
     if(target.Perk[PE_DODGER] > 0)
     {
         ItemCl@ targetWeapon = _CritGetItemHand(target);
         ItemCl@ targetWeapon2 = _CritGetItemHandExt(target);
 
-        if( (valid(targetWeapon) && targetWeapon.GetType() == ITEM_TYPE_WEAPON && (targetWeapon.Proto.Weapon_Skill_0 != SK_UNARMED && targetWeapon.Proto.Weapon_Skill_0 != SK_THROWING)) || 
+        if( (valid(targetWeapon) && targetWeapon.GetType() == ITEM_TYPE_WEAPON && (targetWeapon.Proto.Weapon_Skill_0 != SK_UNARMED && targetWeapon.Proto.Weapon_Skill_0 != SK_THROWING)) ||
             (valid(targetWeapon2) && targetWeapon2.GetType() == ITEM_TYPE_WEAPON && (targetWeapon2.Proto.Weapon_Skill_0 != SK_UNARMED && targetWeapon2.Proto.Weapon_Skill_0 != SK_THROWING)) )
         {
             //Message("Dodger: bad weapon");
@@ -246,8 +246,8 @@ int to_hit(CritterCl& chosen, CritterCl& target, ProtoItem& weapon, uint8 weapon
             toHit -= target.Perk[PE_DODGER]*5;
         }
     }
-    toHit = CLAMP(toHit, 5, 95);
-    
+    toHit = CLAMP(toHit, 5, _MaxToHit(chosen));
+
     if(target.Perk[PE_IN_YOUR_FACE] > 0 && dist < 3)
     {
         ItemCl@ targetWeapon = _CritGetItemHand(target);
@@ -262,7 +262,7 @@ int to_hit(CritterCl& chosen, CritterCl& target, ProtoItem& weapon, uint8 weapon
     }
 
 
-    toHit = CLAMP(toHit, 5, 95);
+    toHit = CLAMP(toHit, 5, _MaxToHit(chosen));
 
     return toHit;
 }
@@ -436,7 +436,7 @@ void combat_result(array<uint>& data)
             result = ReplaceText(result, "%s", name);
             if(damage > 1)
                 result = ReplaceText(result, "%d", damage);
-            if(self) 
+            if(self)
                 result = CombatLog.MsgDefNormColor + result;
             break;
         case CMSG_HIT:
@@ -446,7 +446,7 @@ void combat_result(array<uint>& data)
             result = ReplaceText(result, "%s", name);
             if(damage > 1)
                 result = ReplaceText(result, "%d", damage);
-            if(self) 
+            if(self)
             {
                 if(mode == CMSG_HIT_DEAD)
                     result = CombatLog.MsgDefKillColor + result;
@@ -478,7 +478,7 @@ void combat_result(array<uint>& data)
             result = ReplaceText(result, "%s", GetMsgStr(TEXTMSG_COMBAT, 1000 + crTarget.CrTypeAlias * 10 + loc - 1));
             if(damage > 1)
                 result = ReplaceText(result, "%d", damage);
-            if(self) 
+            if(self)
             {
                 if(mode == CMSG_AIMED_HIT_DEAD)
                     result = CombatLog.MsgDefKillColor + result;
@@ -507,7 +507,7 @@ void combat_result(array<uint>& data)
             result = ReplaceText(result, "%s", name);
             if(damage > 1)
                 result = ReplaceText(result, "%d", damage);
-            if(self) 
+            if(self)
             {
                 result = CombatLog.MsgDefCritColor + result;
                 if(isPvP && whoTarget != whoAttacker)
@@ -532,7 +532,7 @@ void combat_result(array<uint>& data)
             result = ReplaceText(result, "%s", GetMsgStr(TEXTMSG_COMBAT, 1000 + crTarget.CrTypeAlias * 10 + loc - 1));
             if(damage > 1)
                 result = ReplaceText(result, "%d", damage);
-            if(self) 
+            if(self)
             {
                 result = CombatLog.MsgDefCritColor + result;
                 if(isPvP && whoTarget != whoAttacker)
@@ -554,7 +554,7 @@ void combat_result(array<uint>& data)
             result = ReplaceText(result, "%s", name);
             if(damage > 1)
                 result = ReplaceText(result, "%d", damage);
-            if(self) 
+            if(self)
             {
                 result = CombatLog.MsgDefKillColor + result;
                 if(isPvP && whoTarget != whoAttacker)
@@ -581,7 +581,7 @@ void combat_result(array<uint>& data)
             result = ReplaceText(result, "%s", GetMsgStr(TEXTMSG_COMBAT, 1000 + crTarget.CrTypeAlias * 10 + loc - 1));
             if(damage > 1)
                 result = ReplaceText(result, "%d", damage);
-            if(self) 
+            if(self)
             {
                 result = CombatLog.MsgDefKillColor + result;
                 if(isPvP && whoTarget != whoAttacker)

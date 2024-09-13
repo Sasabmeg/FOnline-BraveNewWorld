@@ -42,7 +42,7 @@ array<CGreet> Greet;
 
 
 bool GreetInitialized = false;
-int locationFoundBaseXp = 100;
+int locationFoundBaseXp = 100;  //  will result later in 10% current level xp, cap of 3000 xp
 
 void AddGreet(uint mapPid, uint var, string& mapName, string& message) {
     Greet.insertLast(CGreet(mapPid, var, mapName, message));
@@ -653,9 +653,10 @@ void GreetPlayer(Critter@ player, Map@ map) {
                 if (GetLvar(player, Greet[g].lvar) == 0) {
                     player.Say(SAY_NETMSG, Greet[g].message);
                     SetLvar(player, Greet[g].lvar, 1);
-                    int xpReward = locationFoundBaseXp * TEST_SERVER_XP_MODIFIER;
+                    int levelFactor = CLAMP(player.StatBase[ST_LEVEL], 1, 24);
+                    int xpReward = CLAMP(locationFoundBaseXp * levelFactor * TEST_SERVER_XP_MODIFIER, 0, 3000);
                     player.StatBase[ST_EXPERIENCE] += xpReward;
-                    //player.Say(SAY_NETMSG, "|0xFFFFFF You have gained " + xpReward + " experience points.");
+                    player.Say(SAY_NETMSG, "|0xFFFFFF You have gained " + xpReward + " experience points discovering this location.");
                 }
             }
             if (Greet[g].mapName == "Safehouse" || Greet[g].mapName == "Tent") {

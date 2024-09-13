@@ -136,26 +136,34 @@ void changedParam_Experience(Critter& cr, uint, int oldValue)   // server
 				AddScore(cr, SCORE_RITCH, 1);
 
                  // Czwarty tag skill
-				     if(cr.Stat[ST_LEVEL]==12) cr.StatBase[ST_UNSPENT_TAG]=1;
+                //  if(cr.Stat[ST_LEVEL]==12) cr.StatBase[ST_UNSPENT_TAG]=1;    BNW 2024.08.27 - I don't know why was this even here, it doesn't work anymore?
 
-                cr.StatBase[ST_UNSPENT_SKILL_POINTS] += 5 + cr.StatBase[ST_INTELLECT] * 2; // Skill points
-                if(cr.Trait[TRAIT_SKILLED] != 0)
-                    cr.StatBase[ST_UNSPENT_SKILL_POINTS] += 5;                             // Skilled trait
+                //  cr.StatBase[ST_UNSPENT_SKILL_POINTS] += 5 + cr.StatBase[ST_INTELLECT] * 2; // Skill points, changed to static in BNW to allow mutation
+                if (level < 31) {
+                    cr.StatBase[ST_UNSPENT_SKILL_POINTS] += 17;
+                } else {
+                    cr.StatBase[ST_UNSPENT_SKILL_POINTS] += 9;
+                }
+
+                //  BNW: removed skilled trait, it is being never use, noone takes skill points over perks and would messes with mutation feature later.
+                //if(cr.Trait[TRAIT_SKILLED] != 0)
+                //    cr.StatBase[ST_UNSPENT_SKILL_POINTS] += 5;                             // Skilled trait
                 // if(cr.Trait[TRAIT_GIFTED]!=0) cr.StatBase[ST_UNSPENT_SKILL_POINTS]-=5; // Gifted trait
-                cr.StatBase[ST_UNSPENT_SKILL_POINTS] += cr.Perk[PE_EDUCATED] * 2;          // Educated perk
+                //  cr.StatBase[ST_UNSPENT_SKILL_POINTS] += cr.Perk[PE_EDUCATED] * 2;          // Educated perk, effect removed in BNW to allow Mutation
                 if(cr.StatBase[ST_UNSPENT_SKILL_POINTS] > 99)
                     cr.StatBase[ST_UNSPENT_SKILL_POINTS] = 99;                             // Clamp skill points
 
-				if(level <= __LevelCap)
-				{
-                cr.StatBase[ST_MAX_LIFE] += cr.StatBase[ST_ENDURANCE] / 2;                 // Add max hp
-				if((cr.StatBase[ST_ENDURANCE]%2==1) && cr.StatBase[ST_LEVEL]%2==0) cr.StatBase[ST_MAX_LIFE]+=1;  // Add additional 1 HP when odd EN numbers
+				if (level <= __LevelCap) {
+                    int enduranceBonus = 30 + cr.StatBase[ST_ENDURANCE];
+                    cr.StatBase[ST_MAX_LIFE] += enduranceBonus / 8;                 // Add max hp
 
-                if((level % perkUp) == 0)
-                {
-                    cr.StatBase[ST_UNSPENT_PERKS] = 1;
-                }
+                    if ((level % 8 != 0) && (level % 8 <= enduranceBonus % 8)) {
+                        cr.StatBase[ST_MAX_LIFE] += 1;  // Add additional 1 HP when odd EN numbers, so minimal max HP difference between EN 9 and EN 10
+                    }
 
+                    if((level % perkUp) == 0) {
+                        cr.StatBase[ST_UNSPENT_PERKS] = 1;
+                    }
 				}
 				if((level > 24) && (level < 30) && cr.StatBase[ST_UNSPENT_PERKS]!=0)
                     cr.Say(SAY_NETMSG, "|0xCC0000 Remember to choose your Perk! If you don't do that until level 30, it will be lost!");
@@ -350,7 +358,7 @@ int GetMaxLife(Critter& cr)
 // Input for player: 7 special, 3 tag skills, 2 traits, age, gender
 // Imput for npc: data from prototype
 
-const int[] PassiveSkills = { SK_SCAVENGING };
+const int[] PassiveSkills = { SK_SCAVENGING, SK_REPAIR, SK_SCIENCE, SK_LOCKPICK, SK_STEAL, SK_OUTDOORSMAN, SK_SPEECH, SK_BARTER, SK_GAMBLING };
 
 bool IsPassiveSkill( int skill )
 {
@@ -402,8 +410,8 @@ void CritterGenerate(array<int>& data)     // Export to client_main@player_data_
     _param_[SK_LOCKPICK] += 10 + _param_[ST_PERCEPTION] + _param_[ST_AGILITY];
     _param_[SK_STEAL] += 0 + 3 * _param_[ST_AGILITY];
     _param_[SK_TRAPS] += 10 + _param_[ST_PERCEPTION] + _param_[ST_AGILITY];
-    _param_[SK_SCIENCE] += 0 + 4 * _param_[ST_INTELLECT];
-    _param_[SK_REPAIR] += 0 + 3 * _param_[ST_INTELLECT];
+    _param_[SK_SCIENCE] += 0 + 3 * _param_[ST_INTELLECT];
+    _param_[SK_REPAIR] += 0 + 2 * _param_[ST_INTELLECT];
     _param_[SK_SPEECH] += 0 + 5 * _param_[ST_CHARISMA];
     _param_[SK_BARTER] += 0 + 4 * _param_[ST_CHARISMA];
     _param_[SK_GAMBLING] += 0 + 5 * _param_[ST_LUCK];
@@ -433,8 +441,8 @@ void CritterGenerate(array<int>& data)     // Export to client_main@player_data_
     #ifdef __CLIENT
     // Runtime calculations, only for client registration
     _param_[ST_ARMOR_CLASS] += 3 * _param_[ST_AGILITY];
-    _param_[ST_MAX_LIFE] += _param_[ST_STRENGTH] + _param_[ST_ENDURANCE] * 2 + 40;
-    _param_[ST_ACTION_POINTS] += _param_[ST_AGILITY] / 2;
+    _param_[ST_MAX_LIFE] += _param_[ST_STRENGTH] * 2 + _param_[ST_ENDURANCE] + 40;
+    _param_[ST_ACTION_POINTS] += (13 + _param_[ST_AGILITY]) / 4;
     _param_[ST_CARRY_WEIGHT] += LBS_TO_GRAMM(25 + _param_[ST_STRENGTH] * 25)+20000;
     _param_[ST_MELEE_DAMAGE] += (_param_[ST_STRENGTH] > 6 ? (_param_[TRAIT_BRUISER] > 0 ? 2 * (_param_[ST_STRENGTH] - 5) : (_param_[ST_STRENGTH] - 5)) : 1);
     _param_[ST_POISON_RESISTANCE] += _param_[ST_ENDURANCE] * 3;
@@ -474,12 +482,22 @@ bool CritterGenerateCheck(array<int>& data)     // Export to client_main@player_
         }
         special += data[i];
     }
-	if((data[ST_STRENGTH]>6 && data[TRAIT_BRUISER]!=0) ||
-	(data[ST_INTELLECT]==1 && data[TRAIT_BONEHEAD]!=0))
+	if ((data[ST_STRENGTH]>6 && data[TRAIT_BRUISER]!=0) ||
+        (data[ST_INTELLECT]==1 && data[TRAIT_BONEHEAD]!=0))
 		{
-			Message("Incorrect SPECIAL data.");
+			Message("|0xC85050 Incorrect SPECIAL data.");
 			return false;
 		}
+    /*
+    if (data[TRAIT_GIFTED] != 0) {
+        for (int i = TRAIT_BEGIN; i <= TRAIT_END; i++)
+            if (TRAIT_GIFTED != i && data[i] != 0) {
+                Message("|0xC85050 Incorrect TRAIT selection. Gifted trait cannot be selected with other Traits.");
+                return false;
+            }
+        }
+    }
+    */
 
     if(special != __StartSpecialPoints)
     {
@@ -488,8 +506,7 @@ bool CritterGenerateCheck(array<int>& data)     // Export to client_main@player_
     }
     // Check choosed tag skills
     if((data[TAG_SKILL1] < int(SKILL_BEGIN) || data[TAG_SKILL1] > int(SKILL_END)) ||
-       (data[TAG_SKILL2] < int(SKILL_BEGIN) || data[TAG_SKILL2] > int(SKILL_END)) ||
-       (data[TAG_SKILL3] < int(SKILL_BEGIN) || data[TAG_SKILL3] > int(SKILL_END)))
+       (data[TAG_SKILL2] < int(SKILL_BEGIN) || data[TAG_SKILL2] > int(SKILL_END)))
     {
         Message(GetMsgStr(TEXTMSG_GAME, STR_NET_WRONG_TAGSKILL));
         return false;
@@ -499,7 +516,7 @@ bool CritterGenerateCheck(array<int>& data)     // Export to client_main@player_
 	{
 		if( IsPassiveSkill( _param_[t] ))
 		{
-			Message( "Incorrect tag skill: "+GetMsgStr( TEXTMSG_GAME, STR_PARAM_NAME( _param_[t] )) );
+			Message( "|0xC85050 Incorrect tag skill: |0xFF0000 " + GetMsgStr( TEXTMSG_GAME, STR_PARAM_NAME( _param_[t] )) + ". |0xC85050 Passive skills cannot be tagged and they will level up by related books or activities." );
 			return( false );
 		}
 	}

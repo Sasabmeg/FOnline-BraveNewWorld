@@ -196,6 +196,9 @@
 #define _EnableSneak                 # (cr)  cr.ModeBase[MODE_HIDE] = 1
 #define _DisableSneak                # (cr) cr.ModeBase[MODE_HIDE] = 0
 
+//  Combat
+#define _MaxToHit                    # (cr) (89 + cr.Stat[ST_CHARISMA])
+
 // Dice throw macros
 #define _D6                          # (chance)       ((chance) <= uint(Random(1, 6)))
 #define _D10                         # (chance)      ((chance) <= uint(Random(1, 10)))

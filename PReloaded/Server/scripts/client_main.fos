@@ -1019,6 +1019,18 @@ void InitConfig()
             __ConfigShowFactionEmblems = string2bool(val);
         }
 
+        // WindowNotifyBlink
+        @val = GetConfigValue(CONFIG_FILE, CONFIG_RELOADED, "WindowNotifyBlink");
+        if(valid(val) && val.length() > 0) {
+            __MessNotify = string2bool(val);
+        }
+
+        // WindowNotifySound
+        @val = GetConfigValue(CONFIG_FILE, CONFIG_RELOADED, "WindowNotifySound");
+        if(valid(val) && val.length() > 0) {
+            __SoundNotify = string2bool(val);
+        }
+
         // CustomBorder
         @val = GetConfigValue(CONFIG_FILE, CONFIG_RELOADED, "CustomBorder");
         if(valid(val) && val.length() > 0)

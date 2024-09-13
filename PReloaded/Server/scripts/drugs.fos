@@ -304,7 +304,7 @@ void SetDrug(Critter& cr, uint16 drugPid)
     DrugsLog("GetDrugTableIndex() = " + index + " index / 36 = " + (index / 36));
 
     // Check
-    if(DrugEffects[index + TABLE_DRUG_ADDICT] >= 0 || drugPid == PID_RAD_X)     // Addiction perk aviability
+    if(DrugEffects[index + TABLE_DRUG_ADDICT] >= 0 || drugPid == PID_RAD_X)     // Addiction perk availability
     {
 
         bool isBlocked = false;
@@ -376,6 +376,7 @@ uint ProcessDrug(Critter& cr, uint16 drugPid, uint& rate)
 
     int  index = GetDrugTableIndex(drugPid);
     uint duration = 0;
+    uint healDrugDuration = 0;
 
     if(stage == 0 ||  // Instant effect
        stage == 1 ||  // Withdrawal
@@ -401,19 +402,39 @@ uint ProcessDrug(Critter& cr, uint16 drugPid, uint& rate)
                 {
                     if(drugPid == PID_MUTATED_FRUIT && cr.Perk[PE_WAY_OF_THE_FRUIT] != 0)
                         amount = 16;
-                    if(amount > 0 && cr.Trait[TRAIT_CHEM_RELIANT] != 0)
-                        amount = (amount*2)/3;
+                    if (amount > 0 && cr.Trait[TRAIT_CHEM_RELIANT] != 0) {
+                        if (drugPid == PID_STIMPAK || drugPid == PID_HEALING_POWDER) {
+                            if (stage == 0) {
+                                amount = (amount * 3) / 4;
+                            } else {
+                                amount = (amount * 5) / 4;
+                            }
+                        } else {
+                            amount = (amount * 3) / 4;
+                        }
+
+                    }
+                    if (amount == 0 && cr.Trait[TRAIT_CHEM_RELIANT] != 0) {
+                        if ((drugPid == PID_SUPER_STIMPAK || drugPid == PID_HYPO) && (stage == 1 || stage == 2)) {
+                            amount = (DrugEffects[index + TABLE_AMOUNT(i, 0)] * 3) / 8;
+                        }
+                    }
+
 
                     //  BNW MECHANICS CHANGE: see issue #110 https://github.com/Sasabmeg/FOnline-BraveNewWorld/issues/110
                     //  Plasma damage will reduce healing for a short period of time, chem reliant ignores effect
                     if (cr.ParamBase[TO_EX_IRREMEDIABLE] + PLASMA_EFFECT_LINGER_TIME > int(GetTick())) {
                         if (cr.ParamBase[ST_EX_IRREMEDIABLE] > 0) {
                             if (cr.Trait[TRAIT_CHEM_RELIANT] == 0) {
-                                float healFactor = float(CLAMP(100 - cr.ParamBase[ST_EX_IRREMEDIABLE], 33, 100)) / 100;
+                                float healFactor = float(CLAMP(100 - cr.ParamBase[ST_EX_IRREMEDIABLE], 50, 100)) / 100;
                                 int oldAmount = amount;
                                 amount = amount * healFactor;
                                 //cr.Say(SAY_NETMSG, "Heal factor = " + healFactor + ", irremediable% = " + cr.ParamBase[ST_EX_IRREMEDIABLE] + ", oldAmount = " + oldAmount + ", newAmount = " + amount);
                                 //Log("Heal factor = " + healFactor + ", irremediable% = " + cr.ParamBase[ST_EX_IRREMEDIABLE] + ", oldAmount = " + oldAmount + ", newAmount = " + amount);
+                            } else {
+                                float healFactor = float(CLAMP(100 - (cr.ParamBase[ST_EX_IRREMEDIABLE] / 3), 50, 100)) / 100;
+                                int oldAmount = amount;
+                                amount = amount * healFactor;
                             }
                         }
                     }
@@ -446,6 +467,10 @@ uint ProcessDrug(Critter& cr, uint16 drugPid, uint& rate)
 //addiction only for chem reliant
         int addict = DrugEffects[index + TABLE_DRUG_ADDICT];
 
+        if (drugPid == PID_STIMPAK || drugPid == PID_SUPER_STIMPAK || drugPid == PID_HYPO || drugPid == PID_HEALING_POWDER) {
+            healDrugDuration = DrugEffects[index + TABLE_DURATION(stage)];
+        }
+
         if(stage == 0)         // To withdrawal
         {
             duration = DrugEffects[index + TABLE_DURATION(stage)];
@@ -468,6 +493,9 @@ uint ProcessDrug(Critter& cr, uint16 drugPid, uint& rate)
 
     stage++;
     rate = FORM_RATE(stage, flags);
+        if (drugPid == PID_STIMPAK || drugPid == PID_SUPER_STIMPAK || drugPid == PID_HYPO || drugPid == PID_HEALING_POWDER) {
+        return REAL_SECOND(healDrugDuration);
+    }
     return GAME_MINUTE(duration);
 }
 

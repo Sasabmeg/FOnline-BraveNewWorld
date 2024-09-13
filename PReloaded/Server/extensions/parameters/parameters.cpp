@@ -260,19 +260,19 @@ EXPORT int getParam_Hp(CritterMutual& cr, uint)
 
 EXPORT int getParam_MaxLife(CritterMutual& cr, uint)
 {
-	int val = cr.Params[ST_MAX_LIFE] + cr.Params[ST_MAX_LIFE_EXT] + cr.Params[ST_STRENGTH] + cr.Params[ST_ENDURANCE] * 2;
+	int val = cr.Params[ST_MAX_LIFE] + cr.Params[ST_MAX_LIFE_EXT] + cr.Params[ST_STRENGTH] * 2 + cr.Params[ST_ENDURANCE];
 	return CLAMP(val, 1, 9999);
 }
 
 EXPORT int getParam_MaxAp(CritterMutual& cr, uint)
 {
-	int val = cr.Params[ST_ACTION_POINTS] + cr.Params[ST_ACTION_POINTS_EXT] + getParam_Agility(cr, 0) / 2;
+	int val = cr.Params[ST_ACTION_POINTS] + cr.Params[ST_ACTION_POINTS_EXT] + (13 + getParam_Agility(cr, 0)) / 4;
 	
 	const Item* armor=cr.ItemSlotArmor;
-	if(checkBonus(armor, BONUS_ARMOR_MAX_AP)!=0) val++;
+	if (checkBonus(armor, BONUS_ARMOR_MAX_AP) != 0) val++;
 
 	const Item* weapon = cr.ItemSlotMain;
-	if (checkBonus(weapon, BONUS_WEAPON_MAX_AP)!=0) val++;
+	if (checkBonus(weapon, BONUS_WEAPON_MAX_AP) != 0) val++;
 
 	return CLAMP(val, 1, 9999);
 }
@@ -287,7 +287,7 @@ EXPORT int getParam_Ap(CritterMutual& cr, uint)
 EXPORT int getParam_MaxMoveAp(CritterMutual& cr, uint)
 {
 	int val = cr.Params[ST_MAX_MOVE_AP];
-	if(getParam_Agility(cr, 0) % 2 == 1)
+	if ((getParam_Agility(cr, 0) + 1) % 4 > 1)
 		val++;
 	return CLAMP(val, 0, 9999);
 }
@@ -559,6 +559,14 @@ EXPORT void Item_Weapon_SetMode(Item& item, uint8 mode)
 /************************************************************************/
 /* Callbacks                                                            */
 /************************************************************************/
+#define PID_SUPER_STIMPAK                   (144)
+#define PID_STIMPAK                         (40)
+#define PID_ANTIDOTE                        (49)
+#define PID_SUPER_STIMPAK                   (144)
+#define PID_HEALING_POWDER                  (273)
+#define PID_HYPO                            (525)
+#define PID_WEAK_HEALING_POWDER             (9655)
+#define PID_BLOODPACK                       (25592)	//	used in Parareal Cannibal feature
 
 uint GetUseApCost(CritterMutual& cr, Item& item, uint8 mode)
 {
@@ -568,10 +576,22 @@ uint GetUseApCost(CritterMutual& cr, Item& item, uint8 mode)
 
 	if(use == USE_USE)
 	{
-		if(TB_BATTLE_TIMEOUT_CHECK(getParam_Timeout(cr, TO_BATTLE)))
+		if (TB_BATTLE_TIMEOUT_CHECK(getParam_Timeout(cr, TO_BATTLE))) {
 			apCost = FOClassic->TbApCostUseItem;
-		else
+		} else {
 			apCost = FOClassic->RtApCostUseItem;
+		}
+		if (item.GetProtoId() == PID_SUPER_STIMPAK) {
+			apCost = 5;
+		}
+		if (cr.Params[PE_QUICK_POCKETS] && apCost > 2) {
+			//	TODO: this is not the best solution, but I do not have ITEMPID.H for now...
+			uint proto = item.GetProtoId();
+			if (proto == PID_SUPER_STIMPAK || proto == PID_STIMPAK || proto == PID_ANTIDOTE || proto == PID_WEAK_HEALING_POWDER
+				|| proto == PID_HEALING_POWDER || proto == PID_HYPO || proto == PID_BLOODPACK) {
+				apCost--;
+			}
+		}
 	}
 	else if(use == USE_RELOAD)
 	{
@@ -605,7 +625,6 @@ uint GetUseApCost(CritterMutual& cr, Item& item, uint8 mode)
 	}
 
 	if(apCost < 1) apCost = 1;
-	if(item.GetProtoId()==144) apCost=5;
 	return apCost;
 }
 
