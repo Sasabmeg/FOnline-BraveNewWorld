@@ -107,6 +107,7 @@ array<int> eventItems;
 array<int> eventCritters;
 
 array<string> itemList;
+array<string> paramList;
 array<string> mapList;
 array<string> questVarList;
 
@@ -142,7 +143,7 @@ string[] commandlist =
     "listtracked", "lock", "lockcar", "log",  "lootdrop", "lp", "lt",
     "makeencounter", "maps", "mapinfo", "maplist", "masssetanim", "massslap", "massspawn", "modchar", "move",
     "name2id", "netmsg", "normaldeadly", "numplayers",
-    "param", "perkadjust", "pickitems", "phase", "phaseteam", "playerkarma",
+    "param", "params", "perkadjust", "pickitems", "phase", "phaseteam", "playerkarma",
     "playmusic", "playsound", "playspeech", "poison", "profadjust",
     "questVars", "qvars",
     "registerfaction", "removebankmoney", "removefaction", "removeitems",
@@ -4111,6 +4112,29 @@ void ExecItemListCommand(array<string@>@ command, Critter& player) {
     }
 }
 
+void ExecParamListCommand(array<string@>@ command, Critter& player) {
+    if (paramList.isEmpty()) {
+        player.Say(SAY_NETMSG, "Initializing Param list.");
+        InitParamList();
+    }
+    if(command.length() > 2)
+    {
+        player.Say(SAY_NETMSG, "\nListing Param ID's with filter '" + command[2] + "':");
+        for (uint i = 0; i < paramList.length(); i++) {
+            if (findFirst(paramList[i], upperCase(command[2]), 3) > -1) {
+                player.Say(SAY_NETMSG, paramList[i]);
+            }
+        }
+    } else {
+        player.Say(SAY_NETMSG, "\nListing Param ID's without filter (top 30):");
+        for (uint i = 0; i < paramList.length(); i++) {
+            if (i < 30) {
+                player.Say(SAY_NETMSG, paramList[i]);
+            }
+        }
+    }
+}
+
 //  piece of shit AS code... getting a char and removing 32 from it to make it uppercase didnt work out.
 string@ upperCase(const string& str) {
     string ret = str;
@@ -4186,6 +4210,39 @@ void InitItemList() {
                 } else {
                     line = substring(line, 8, line.length() - 9);
                     itemList.insertLast(line);
+                }
+            }
+        }
+    }
+    f.close();
+}
+
+void InitParamList() {
+    string filename = "scripts\\_defines.fos";
+    string line = "";
+    file f;
+    if (f.open(filename, "r") == 0)
+    {
+        while (!f.isEndOfFile())
+        {
+            f.readLine(line);
+            if (substring(line, 0, 8) == "#define ") {
+                int commentIndex = findFirst(line, "//");
+                if (commentIndex > -1) {
+                    line = substring(line, 8, commentIndex - 8);
+                    paramList.insertLast(line);
+                } else {
+                    line = substring(line, 8, line.length() - 9);
+                    paramList.insertLast(line);
+                }
+            } else if (substring(line, 0, 24) == "//FOClassic.fos #define ") {
+                int commentIndex = findFirst(line, "//");
+                if (commentIndex > -1) {
+                    line = substring(line, 24, commentIndex - 24);
+                    paramList.insertLast(line);
+                } else {
+                    line = substring(line, 24, line.length() - 25);
+                    paramList.insertLast(line);
                 }
             }
         }
@@ -9823,6 +9880,10 @@ bool ExecCommand(Critter& player, string@ commandString)
     else if(command[1] == "items" || command[1] == "itemlist")
     {
         ExecItemListCommand(command, player);
+    }
+    else if(command[1] == "params" || command[1] == "paramlist")
+    {
+        ExecParamListCommand(command, player);
     }
     else if(command[1] == "maps" || command[1] == "maplist")
     {
