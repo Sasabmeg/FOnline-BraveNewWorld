@@ -2047,6 +2047,9 @@ void ApplyDamage(AttackStruct& attack, Critter& target, uint rounds, bool isCrit
     if (validAttacker && !attacker.IsPlayer()) {
         isDummyTraining = false;
     }
+    if (validAttacker && attacker.IsPlayer() && target.IsPlayer() && target.GetAccess() >= ACCESS_TESTER) {
+        isDummyTraining = true;
+    }
     string dummyInfo;
 
 	if (isThrustThrowWeapon)  // bronie, ktore maja zamienione primary_attack mode swing na thrust
@@ -2814,7 +2817,7 @@ void ApplyDamage(AttackStruct& attack, Critter& target, uint rounds, bool isCrit
     int rawDmg;
     int totalDmg = 0;
     //dmgMul *= attack.DMMod;
-    int dmgDiv = 2 * attack.DDMod;
+    int dmgDiv = 4 * attack.DDMod;
 
     for (uint i = 0; i < rounds; i++) {
 		rawDmg = Random(dmgMin, dmgMax);
