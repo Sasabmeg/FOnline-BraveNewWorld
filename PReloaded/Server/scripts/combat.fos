@@ -197,6 +197,10 @@ void CombatAttack(Critter& cr, Critter& target, ProtoItem& weapon, uint8 weaponM
     if (!cr.IsPlayer()) {
         isDummyTraining = false;
     }
+    if (valid(cr) && cr.IsPlayer() && target.IsPlayer() && target.GetAccess() >= ACCESS_TESTER) {
+        isDummyTraining = true;
+    }
+
     string dummyInfo;
     string dummyCaption;
     string dummyText;
@@ -367,7 +371,7 @@ void CombatAttack(Critter& cr, Critter& target, ProtoItem& weapon, uint8 weaponM
         int bonusFromCh = CLAMP(cr.Stat[ST_CHARISMA_EXT] - (((target.Stat[ST_CHARISMA_EXT] + 1) * 2) / 3), 0, 3);
         attack.BonusDmg += cr.Perk[PE_BONUS_RANGED_DAMAGE] * bonusFromCh + cr.Perk[PE_MORE_RANGED_DAMAGE] * bonusFromCh;
     }
-    attack.DmgMul = 2;
+    attack.DmgMul = 4;
 
     // Ammo
     if(valid(ammo))
@@ -2279,7 +2283,10 @@ void ApplyDamage(AttackStruct& attack, Critter& target, uint rounds, bool isCrit
 				for(uint i = 0; i < maxCriticalQuantity; i++) {
 					if (Random(1,100) <= CriticalChance) {
 						_dmgMul[i] *= CriticalTable[offset];
-						_dmgMul[i] >>= 1;
+						_dmgMul[i] >>= 2;
+						if (!targetIsPlayer) {
+                            _dmgMul[i] = (_dmgMul[i] * 3) / 3;
+						}
 					}
 				}
 			} else if (isCritical) {
@@ -2290,19 +2297,31 @@ void ApplyDamage(AttackStruct& attack, Critter& target, uint rounds, bool isCrit
 
 				for (uint i = 0; i < minCriticalQuantity; i++) {
 					_dmgMul[i] *= CriticalTable[offset];
-					_dmgMul[i] >>= 1;
+					_dmgMul[i] >>= 2;
+                    if (!targetIsPlayer) {
+                        _dmgMul[i] = (_dmgMul[i] * 3) / 3;
+                    }
 				}
 
 				for (uint i = minCriticalQuantity; i < rounds; i++) {
 					if (Random(1,100) <= CriticalChance) {
 						_dmgMul[i] *= CriticalTable[offset];
-						_dmgMul[i] >>= 1;
+						_dmgMul[i] >>= 2;
+						if (!targetIsPlayer) {
+                            _dmgMul[i] = (_dmgMul[i] * 3) / 3;
+						}
 					}
 				}
 			}
 		} else {// jezeli pojedynczy strzal to warunek ze krytyczny wczesniej spelniony i zawsze obliczaj tego krytyka
+            //Log("Critical table offset = " + offset + ", CriticalTable[offset] = " + CriticalTable[offset] + ", _dmgMul[0] = " + _dmgMul[0]);
 			_dmgMul[0] *= CriticalTable[offset];
-			_dmgMul[0] >>= 1;
+            //Log("Critical table offset = " + offset + ", CriticalTable[offset] = " + CriticalTable[offset] + ", _dmgMul[0] = " + _dmgMul[0]);
+			_dmgMul[0] >>= 2;
+            //Log("Critical table offset = " + offset + ", CriticalTable[offset] = " + CriticalTable[offset] + ", _dmgMul[0] = " + _dmgMul[0]);
+            if (!targetIsPlayer) {
+                _dmgMul[0] = (_dmgMul[0] * 4) / 3;
+            }
 		}
 
 		if(isCritical) {
@@ -2817,7 +2836,7 @@ void ApplyDamage(AttackStruct& attack, Critter& target, uint rounds, bool isCrit
     int rawDmg;
     int totalDmg = 0;
     //dmgMul *= attack.DMMod;
-    int dmgDiv = 4 * attack.DDMod;
+    int dmgDiv = attack.DDMod * 4;
 
     for (uint i = 0; i < rounds; i++) {
 		rawDmg = Random(dmgMin, dmgMax);
