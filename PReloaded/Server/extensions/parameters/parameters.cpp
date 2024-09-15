@@ -559,6 +559,8 @@ EXPORT void Item_Weapon_SetMode(Item& item, uint8 mode)
 /************************************************************************/
 /* Callbacks                                                            */
 /************************************************************************/
+
+//	TODO: this is not the best solution, but I do not have ITEMPID.H for now...
 #define PID_SUPER_STIMPAK                   (144)
 #define PID_STIMPAK                         (40)
 #define PID_ANTIDOTE                        (49)
@@ -585,10 +587,15 @@ uint GetUseApCost(CritterMutual& cr, Item& item, uint8 mode)
 			apCost = 5;
 		}
 		if (cr.Params[PE_QUICK_POCKETS] && apCost > 2) {
-			//	TODO: this is not the best solution, but I do not have ITEMPID.H for now...
 			uint proto = item.GetProtoId();
 			if (proto == PID_SUPER_STIMPAK || proto == PID_STIMPAK || proto == PID_ANTIDOTE || proto == PID_WEAK_HEALING_POWDER
 				|| proto == PID_HEALING_POWDER || proto == PID_HYPO || proto == PID_BLOODPACK) {
+				apCost--;
+			}
+		}
+		if (cr.Params[PE_FIELD_MEDIC] && apCost > 3) {
+			uint proto = item.GetProtoId();
+			if (proto == PID_SUPER_STIMPAK) {
 				apCost--;
 			}
 		}
