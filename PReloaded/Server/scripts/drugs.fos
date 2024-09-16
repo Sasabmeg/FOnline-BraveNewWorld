@@ -288,7 +288,7 @@ void SetDrug(Critter& cr, uint16 drugPid)
         array<uint> rates;
         uint        count = cr.GetTimeEvents(DrugsIdentifiers, identifiers, null, null, rates);
         for (uint i = 0; i < count; i++) {
-            if (identifiers[i] == drugPid) {
+            if (identifiers[i] == int(drugPid)) {
                 //cr.Say(SAY_NETMSG, "Reseting drug with PID: " + drugPid);
                 DropDrug(cr, identifiers[i], RATE_TO_STAGE(rates[i]));
                 cr.EraseTimeEvents(drugPid);
