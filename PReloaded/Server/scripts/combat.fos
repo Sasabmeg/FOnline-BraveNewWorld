@@ -200,6 +200,10 @@ void CombatAttack(Critter& cr, Critter& target, ProtoItem& weapon, uint8 weaponM
     if (valid(cr) && cr.IsPlayer() && target.IsPlayer() && target.GetAccess() >= ACCESS_TESTER) {
         isDummyTraining = true;
     }
+    //  this will allow players to use their alts as training dummy, only allow in test season
+    if (valid(cr) && cr.IsPlayer() && target.IsPlayer() && cr.GetIp() == target.GetIp()) {
+        isDummyTraining = true;
+    }
 
     string dummyInfo;
     string dummyCaption;
@@ -2054,6 +2058,11 @@ void ApplyDamage(AttackStruct& attack, Critter& target, uint rounds, bool isCrit
     if (validAttacker && attacker.IsPlayer() && target.IsPlayer() && target.GetAccess() >= ACCESS_TESTER) {
         isDummyTraining = true;
     }
+    //  this will allow players to use their alts as training dummy, only allow in test season
+    if (validAttacker && attacker.IsPlayer() && target.IsPlayer() && attacker.GetIp() == target.GetIp()) {
+        isDummyTraining = true;
+    }
+
     string dummyInfo;
 
 	if (isThrustThrowWeapon)  // bronie, ktore maja zamienione primary_attack mode swing na thrust
@@ -2762,9 +2771,7 @@ void ApplyDamage(AttackStruct& attack, Critter& target, uint rounds, bool isCrit
     int partialBypassDT = targetDT - armorDT + (armorDT / 4);
 
     if (isDummyTraining) {
-        if (isCritical) {
-            dummyInfo += "\n";
-        }
+        dummyInfo += "\n";
         dummyInfo += "|" + COLOR_DTEXT_CAPTION + " Damage Calculations :: ";
         dummyInfo += "|" + COLOR_DTEXT_REGULAR + " Weap Damage Range (|" + COLOR_DTEXT_BONUS + " " + attack.DmgMin + " - " + attack.DmgMax + ")";
         dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , Target DT = |" + COLOR_DTEXT_BONUS + " " + targetDT;
