@@ -2848,6 +2848,10 @@ void ApplyDamage(AttackStruct& attack, Critter& target, uint rounds, bool isCrit
     for (uint i = 0; i < rounds; i++) {
 		rawDmg = Random(dmgMin, dmgMax);
         if (isDummyTraining) {
+            if (i > 0 && (i % 10 == 0)) {
+                attacker.Say(SAY_NETMSG, dummyInfo);
+                dummyInfo = "";
+            }
             dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , |" + COLOR_DTEXT_ROLL + " \nRound " + (i + 1);
             dummyInfo += "|" + COLOR_DTEXT_REGULAR + " : Raw Dmg |" + COLOR_DTEXT_BONUS + " " + rawDmg;
         }
