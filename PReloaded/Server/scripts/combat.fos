@@ -368,13 +368,6 @@ void CombatAttack(Critter& cr, Critter& target, ProtoItem& weapon, uint8 weaponM
 		attack.DmgMax += cr.Stat[ST_MELEE_DAMAGE];
 	}
 
-    if (weaponSubtype == WS_GUN) {
-        //  BNW change, bonus ranged damage and more ranged damage depend on CH
-        //  Maybe merge into one perk later named Burst With Confidence? idk
-        //  formula is: CLAMP(CH1 - CH2/2, 0, 3) where CH1 is attacker's Charisma and CH2 is target's Charisma
-        int bonusFromCh = CLAMP(cr.Stat[ST_CHARISMA] - (((target.Stat[ST_CHARISMA] + 1) * 2) / 3), 0, 3);
-        attack.BonusDmg += cr.Perk[PE_BONUS_RANGED_DAMAGE] * bonusFromCh + cr.Perk[PE_MORE_RANGED_DAMAGE] * bonusFromCh;
-    }
     attack.DmgMul = 4;
 
     // Ammo
@@ -2919,6 +2912,29 @@ void ApplyDamage(AttackStruct& attack, Critter& target, uint rounds, bool isCrit
     partialBypassDR = CLAMP(partialBypassDR, 0, 100);
     partialBypassDT = MIN(partialBypassDT, targetDT);
 
+    if (attack.WeaponSubtype == WS_GUN) {
+        //  BNW change, bonus ranged damage and more ranged damage depend on CH
+        //  Maybe merge into one perk later named Burst With Confidence? idk
+        //  formula is: CLAMP(CH1 - CH2/2, 0, 3) where CH1 is attacker's Charisma and CH2 is target's Charisma
+        int bonusFromCh = CLAMP(attacker.Stat[ST_CHARISMA] - (((target.Stat[ST_CHARISMA] + 1) * 2) / 3), 0, 3);
+        int brdBonus = attacker.Perk[PE_BONUS_RANGED_DAMAGE] * (1 + CLAMP(bonusFromCh, 0, 2));
+        attack.BonusDmg += brdBonus;
+        if (isDummyTraining && attacker.Perk[PE_BONUS_RANGED_DAMAGE] != 0) {
+            dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , BDR bonus damage = |" + COLOR_DTEXT_BONUS + " " + brdBonus;
+            dummyInfo += "|" + COLOR_DTEXT_REGULAR + "  ( Attacker CH  = |" + COLOR_DTEXT_BONUS + " " + attacker.Stat[ST_CHARISMA];
+            dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , Target CH = |" + COLOR_DTEXT_MALUS + " " + target.Stat[ST_CHARISMA] + ", ";
+            dummyInfo += "|" + COLOR_DTEXT_BONUS + " Formula: CLAMP(CH1 - (CH2+1)*2/3, 0, 3) )";
+        }
+        int mrdBonus = attacker.Perk[PE_MORE_RANGED_DAMAGE] * (1 + bonusFromCh);
+        attack.BonusDmg += mrdBonus;
+        if (isDummyTraining && attacker.Perk[PE_MORE_RANGED_DAMAGE] != 0) {
+            dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , MRD bonus = |" + COLOR_DTEXT_BONUS + " " + mrdBonus;
+            dummyInfo += "|" + COLOR_DTEXT_REGULAR + "  ( Attacker CH  = |" + COLOR_DTEXT_BONUS + " " + attacker.Stat[ST_CHARISMA];
+            dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , Target CH = |" + COLOR_DTEXT_MALUS + " " + target.Stat[ST_CHARISMA] + ", ";
+            dummyInfo += "|" + COLOR_DTEXT_BONUS + " Formula: 1 + CLAMP(CH1 - (CH2+1)*2/3, 0, 3) )";
+        }
+    }
+
     int dmgMin = attack.DmgMin + attack.BonusDmg + attack.DmgMin * attack.SelectWeaponBonus(BONUS_WEAPON_MIN_DMG)/100;
     int dmgMax = attack.DmgMax + attack.BonusDmg + attack.DmgMax * attack.SelectWeaponBonus(BONUS_WEAPON_MAX_DMG)/100;
     if (isDummyTraining) {
@@ -4390,7 +4406,7 @@ void CriticalFailure(Critter& cr, ProtoItem& weapon, uint8 weaponUse, ProtoItem@
         int dmgMax = _WeaponDmgMax(weapon, weaponUse) + _WeaponDmgMax(weapon, weaponUse) * attack.SelectWeaponBonus(BONUS_WEAPON_MAX_DMG)/100;
         int dmgMul = validAmmo ? ammo.Ammo_DmgMult : 1;   // Technically, should be *2
         int dmgDiv = validAmmo ? ammo.Ammo_DmgDiv : 1;    // Technically, should be *2
-        int bonusFromLuck = CLAMP((8 - cr.Stat[ST_LUCK]) / 3, 0, 3);
+        int bonusFromLuck = CLAMP((10 - cr.Stat[ST_LUCK]) / 3, 0, 3);
         totalDmg = Random(dmgMin, dmgMax) + cr.Perk[PE_BONUS_RANGED_DAMAGE] * bonusFromLuck + cr.Perk[PE_MORE_RANGED_DAMAGE] * bonusFromLuck;
         totalDmg *= dmgMul;
         totalDmg /= dmgDiv;
