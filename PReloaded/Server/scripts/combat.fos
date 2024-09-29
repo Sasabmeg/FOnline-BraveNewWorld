@@ -2029,7 +2029,29 @@ void ApplyDamage(AttackStruct& attack, Critter& target, uint rounds, bool isCrit
 		_dmgMul[i] = dmgMul;
 	}
 
+    //  BNW STONEWALL REWORKS - HEAVY ARMOR GIVES STONEWALL OR IMPROVES PERK IF TAKEN
+    uint stonewallRank = 0;
+    if (target.PerkBase[PE_STONEWALL] > 0) {
+        stonewallRank++;
+    }
+    if (valid(usedArmor)) {
+        uint armorPerk = usedArmor.Proto.Armor_Perk;
+        if (armorPerk < 10 || (armorPerk >= ARMOR_PERK_METAL  && armorPerk < ARMOR_PERK_METAL + 10) || armorPerk == ARMOR_PERK_HEAVY) {
+            stonewallRank++;
+        }
+    }
 
+    //  BNW IRON LIMBS REWORKS - MEDIUM ARMOR (COMBAT ARMORS) GIVES IRON LIMBS OR IMPROVES PERK IF TAKEN
+    uint ironLimbsRank = 0;
+    if (target.PerkBase[PE_IRON_LIMBS] > 0) {
+        ironLimbsRank++;
+    }
+    if (valid(usedArmor)) {
+        uint armorPerk = usedArmor.Proto.Armor_Perk;
+        if ((armorPerk >= ARMOR_PERK_COMBAT  && armorPerk < ARMOR_PERK_COMBAT + 10) || armorPerk == ARMOR_PERK_MEDIUM) {
+            ironLimbsRank++;
+        }
+    }
 
 	//#################################################
 	//### IMPLEMENTACJA melee attack swing i thrust ###
@@ -2487,12 +2509,12 @@ void ApplyDamage(AttackStruct& attack, Critter& target, uint rounds, bool isCrit
                 if (isDummyTraining) {
                     dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , Target is already KO";
                 }
-			} else if (FLAG(eff, HF_KNOCKDOWN) && target.Perk[PE_STONEWALL] != 0) {
+			} else if (FLAG(eff, HF_KNOCKDOWN) && stonewallRank > 0) {
 			    if (aim != HIT_LOCATION_EYES && aim != HIT_LOCATION_HEAD) {
                     int stonewallRoll = Random(1, 100);
                     int resistFactor = ((CLAMP(target.Stat[ST_STRENGTH], 1, 4 + target.Stat[ST_CHARISMA])
                                         + CLAMP(target.Stat[ST_ENDURANCE], 1, 6 + target.Stat[ST_CHARISMA]))
-                                         * 4) + 5;
+                                         * 4) + 5 * stonewallRank;
                     if (resistFactor > stonewallRoll) {
                         UNSETFLAG(eff, HF_KNOCKDOWN);
                         if (isDummyTraining) {
@@ -2500,7 +2522,8 @@ void ApplyDamage(AttackStruct& attack, Critter& target, uint rounds, bool isCrit
                             dummyInfo += "|" + COLOR_DTEXT_REGULAR + "  ( ST = |" + COLOR_DTEXT_BONUS + " " + target.Stat[ST_STRENGTH];
                             dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , EN = |" + COLOR_DTEXT_BONUS + " " + target.Stat[ST_ENDURANCE];
                             dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , CH = |" + COLOR_DTEXT_BONUS + " " + target.Stat[ST_CHARISMA];
-                            dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , Formula = |" + COLOR_DTEXT_BONUS + " 4 * (CLAMP(ST, 1, CH+4) + CLAMP(EN, 1, CH+6)) + 5";
+                            dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , StonewallRank (armor + perk) = |" + COLOR_DTEXT_BONUS + " " + stonewallRank;
+                            dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , Formula = |" + COLOR_DTEXT_BONUS + " 4 * (CLAMP(ST, 1, CH+4) + CLAMP(EN, 1, CH+6)) + 5*StonewallRank";
                             dummyInfo += "|" + COLOR_DTEXT_REGULAR + "  ) Resist Factor = |" + COLOR_DTEXT_BONUS + " " + resistFactor;
                             dummyInfo += "|" + COLOR_DTEXT_REGULAR + "  vs Roll = |" + COLOR_DTEXT_ROLL + " " + stonewallRoll;
                         }
@@ -2528,12 +2551,12 @@ void ApplyDamage(AttackStruct& attack, Critter& target, uint rounds, bool isCrit
                 if (isDummyTraining) {
                     dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , Target is already KO";
                 }
-            } else if (FLAG(eff, HF_KNOCKOUT) && target.Perk[PE_STONEWALL] != 0) {
+            } else if (FLAG(eff, HF_KNOCKOUT) && stonewallRank > 0) {
 			    if (aim != HIT_LOCATION_EYES && aim != HIT_LOCATION_HEAD) {
                     int stonewallRoll = Random(1, 100);
                     int resistFactor = ((CLAMP(target.Stat[ST_STRENGTH], 1, 4 + target.Stat[ST_CHARISMA])
                                         + CLAMP(target.Stat[ST_ENDURANCE], 1, 6 + target.Stat[ST_CHARISMA]))
-                                         * 4) + 5;
+                                         * 4) + 5 * stonewallRank;
                     if (resistFactor > stonewallRoll) {
                         UNSETFLAG(eff, HF_KNOCKOUT);
                         SETFLAG(eff, HF_KNOCKDOWN);
@@ -2542,7 +2565,8 @@ void ApplyDamage(AttackStruct& attack, Critter& target, uint rounds, bool isCrit
                             dummyInfo += "|" + COLOR_DTEXT_REGULAR + "  ( ST = |" + COLOR_DTEXT_BONUS + " " + target.Stat[ST_STRENGTH];
                             dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , EN = |" + COLOR_DTEXT_BONUS + " " + target.Stat[ST_ENDURANCE];
                             dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , CH = |" + COLOR_DTEXT_BONUS + " " + target.Stat[ST_CHARISMA];
-                            dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , Formula = |" + COLOR_DTEXT_BONUS + " 4 * (CLAMP(ST, 1, CH+4) + CLAMP(EN, 1, CH+6)) + 5";
+                            dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , StonewallRank (armor + perk) = |" + COLOR_DTEXT_BONUS + " " + stonewallRank;
+                            dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , Formula = |" + COLOR_DTEXT_BONUS + " 4 * (CLAMP(ST, 1, CH+4) + CLAMP(EN, 1, CH+6)) + 5*StonewallRank";
                             dummyInfo += "|" + COLOR_DTEXT_REGULAR + "  ) Resist Factor = |" + COLOR_DTEXT_BONUS + " " + resistFactor;
                             dummyInfo += "|" + COLOR_DTEXT_REGULAR + "  vs Roll = |" + COLOR_DTEXT_ROLL + " " + stonewallRoll;
                         }
@@ -2588,76 +2612,84 @@ void ApplyDamage(AttackStruct& attack, Critter& target, uint rounds, bool isCrit
                 }
             }
 
-			if (target.Perk[PE_IRON_LIMBS] != 0) {
+			if (ironLimbsRank > 0) {
                 int ironLimbsRoll = Random(1, 10);
 				if (FLAG(eff, HF_CRIPPLED_LEFT_LEG)) {
-                    if (ironLimbsRoll <= (target.Stat[ST_ENDURANCE] - 3)) {
+                    if (ironLimbsRoll <= (target.Stat[ST_ENDURANCE] - 7 + 2 * ironLimbsRank)) {
                         UNSETFLAG(eff, HF_CRIPPLED_LEFT_LEG);
                         if (isDummyTraining) {
                             dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , Cripple Left Leg avert by Iron Limbs |" + COLOR_DTEXT_BONUS + " SUCCESS";
                             dummyInfo += "|" + COLOR_DTEXT_REGULAR + " ( EN = |" + COLOR_DTEXT_BONUS + " " + target.Stat[ST_ENDURANCE];
-                            dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , Modifier = |" + COLOR_DTEXT_MALUS + " -3";
+                            dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , Modifier = |" + COLOR_DTEXT_MALUS + " -7";
+                            dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , IronLimbsRank = |" + COLOR_DTEXT_MALUS + " " + ironLimbsRank + " * 2";
                             dummyInfo += "|" + COLOR_DTEXT_REGULAR + "  vs Roll = |" + COLOR_DTEXT_ROLL + " " + ironLimbsRoll;
                         }
                     } else {
                         if (isDummyTraining) {
                             dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , Cripple Left Leg avert by Iron Limbs |" + COLOR_DTEXT_MALUS + " FAIL";
                             dummyInfo += "|" + COLOR_DTEXT_REGULAR + " ( EN = |" + COLOR_DTEXT_BONUS + " " + target.Stat[ST_ENDURANCE];
-                            dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , Modifier = |" + COLOR_DTEXT_MALUS + " -3";
+                            dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , Modifier = |" + COLOR_DTEXT_MALUS + " -7";
+                            dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , IronLimbsRank = |" + COLOR_DTEXT_MALUS + " " + ironLimbsRank + " * 2";
                             dummyInfo += "|" + COLOR_DTEXT_REGULAR + "  vs Roll = |" + COLOR_DTEXT_ROLL + " " + ironLimbsRoll;
                         }
                     }
 				}
 				if (FLAG(eff, HF_CRIPPLED_RIGHT_LEG)) {
-                    if (ironLimbsRoll <= (target.Stat[ST_ENDURANCE] - 3)) {
+                    if (ironLimbsRoll <= (target.Stat[ST_ENDURANCE] - 7 + 2 * ironLimbsRank)) {
                         UNSETFLAG(eff, HF_CRIPPLED_RIGHT_LEG);
                         if (isDummyTraining) {
                             dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , Cripple Right Leg avert by Iron Limbs |" + COLOR_DTEXT_BONUS + " SUCCESS";
                             dummyInfo += "|" + COLOR_DTEXT_REGULAR + " ( EN = |" + COLOR_DTEXT_BONUS + " " + target.Stat[ST_ENDURANCE];
-                            dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , Modifier = |" + COLOR_DTEXT_MALUS + " -3";
+                            dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , Modifier = |" + COLOR_DTEXT_MALUS + " -7";
+                            dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , IronLimbsRank = |" + COLOR_DTEXT_MALUS + " " + ironLimbsRank + " * 2";
                             dummyInfo += "|" + COLOR_DTEXT_REGULAR + "  vs Roll = |" + COLOR_DTEXT_ROLL + " " + ironLimbsRoll;
                         }
                     } else {
                         if (isDummyTraining) {
                             dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , Cripple Right Leg avert by Iron Limbs |" + COLOR_DTEXT_MALUS + " FAIL";
                             dummyInfo += "|" + COLOR_DTEXT_REGULAR + " ( EN = |" + COLOR_DTEXT_BONUS + " " + target.Stat[ST_ENDURANCE];
-                            dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , Modifier = |" + COLOR_DTEXT_MALUS + " -3";
+                            dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , Modifier = |" + COLOR_DTEXT_MALUS + " -7";
+                            dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , IronLimbsRank = |" + COLOR_DTEXT_MALUS + " " + ironLimbsRank + " * 2";
                             dummyInfo += "|" + COLOR_DTEXT_REGULAR + "  vs Roll = |" + COLOR_DTEXT_ROLL + " " + ironLimbsRoll;
                         }
                     }
 				}
 				if (FLAG(eff, HF_CRIPPLED_LEFT_ARM)) {
-                    if (ironLimbsRoll <= (target.Stat[ST_ENDURANCE] - 3)) {
+                    if (ironLimbsRoll <= (target.Stat[ST_ENDURANCE] - 7 + 2 * ironLimbsRank)) {
                         UNSETFLAG(eff, HF_CRIPPLED_LEFT_ARM);
                         if (isDummyTraining) {
                             dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , Cripple Left Arm avert by Iron Limbs |" + COLOR_DTEXT_BONUS + " SUCCESS";
                             dummyInfo += "|" + COLOR_DTEXT_REGULAR + " ( EN = |" + COLOR_DTEXT_BONUS + " " + target.Stat[ST_ENDURANCE];
-                            dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , Modifier = |" + COLOR_DTEXT_MALUS + " -3";
+                            dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , Modifier = |" + COLOR_DTEXT_MALUS + " -7";
+                            dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , IronLimbsRank = |" + COLOR_DTEXT_MALUS + " " + ironLimbsRank + " * 2";
                             dummyInfo += "|" + COLOR_DTEXT_REGULAR + "  vs Roll = |" + COLOR_DTEXT_ROLL + " " + ironLimbsRoll;
                         }
                     } else {
                         if (isDummyTraining) {
                             dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , Cripple Left Arm avert by Iron Limbs |" + COLOR_DTEXT_MALUS + " FAIL";
                             dummyInfo += "|" + COLOR_DTEXT_REGULAR + " ( EN = |" + COLOR_DTEXT_BONUS + " " + target.Stat[ST_ENDURANCE];
-                            dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , Modifier = |" + COLOR_DTEXT_MALUS + " -3";
+                            dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , Modifier = |" + COLOR_DTEXT_MALUS + " -7";
+                            dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , IronLimbsRank = |" + COLOR_DTEXT_MALUS + " " + ironLimbsRank + " * 2";
                             dummyInfo += "|" + COLOR_DTEXT_REGULAR + "  vs Roll = |" + COLOR_DTEXT_ROLL + " " + ironLimbsRoll;
                         }
                     }
 				}
 				if (FLAG(eff, HF_CRIPPLED_RIGHT_ARM)) {
-                    if (ironLimbsRoll <= (target.Stat[ST_ENDURANCE] - 3)) {
+                    if (ironLimbsRoll <= (target.Stat[ST_ENDURANCE] - 7 + 2 * ironLimbsRank)) {
                         UNSETFLAG(eff, HF_CRIPPLED_RIGHT_ARM);
                         if (isDummyTraining) {
                             dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , Cripple Right Arm avert by Iron Limbs |" + COLOR_DTEXT_BONUS + " SUCCESS";
                             dummyInfo += "|" + COLOR_DTEXT_REGULAR + " ( EN = |" + COLOR_DTEXT_BONUS + " " + target.Stat[ST_ENDURANCE];
-                            dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , Modifier = |" + COLOR_DTEXT_MALUS + " -3";
+                            dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , Modifier = |" + COLOR_DTEXT_MALUS + " -7";
+                            dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , IronLimbsRank = |" + COLOR_DTEXT_MALUS + " " + ironLimbsRank + " * 2";
                             dummyInfo += "|" + COLOR_DTEXT_REGULAR + "  vs Roll = |" + COLOR_DTEXT_ROLL + " " + ironLimbsRoll;
                         }
                     } else {
                         if (isDummyTraining) {
                             dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , Cripple Right Arm avert by Iron Limbs |" + COLOR_DTEXT_MALUS + " FAIL";
                             dummyInfo += "|" + COLOR_DTEXT_REGULAR + " ( EN = |" + COLOR_DTEXT_BONUS + " " + target.Stat[ST_ENDURANCE];
-                            dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , Modifier = |" + COLOR_DTEXT_MALUS + " -3";
+                            dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , Modifier = |" + COLOR_DTEXT_MALUS + " -7";
+                            dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , IronLimbsRank = |" + COLOR_DTEXT_MALUS + " " + ironLimbsRank + " * 2";
                             dummyInfo += "|" + COLOR_DTEXT_REGULAR + "  vs Roll = |" + COLOR_DTEXT_ROLL + " " + ironLimbsRoll;
                         }
                     }
@@ -2673,22 +2705,24 @@ void ApplyDamage(AttackStruct& attack, Critter& target, uint rounds, bool isCrit
                 }
 			}
 
-			if (target.Perk[PE_IRON_LIMBS] > 0) {
+			if (ironLimbsRank > 0) {
                 int ironLimbsRoll = Random(1, 10);
-			    if (ironLimbsRoll <= target.Stat[ST_STRENGTH] - 4) {
+			    if (ironLimbsRoll <= target.Stat[ST_STRENGTH] - 5 + 2 * ironLimbsRank) {
                     UNSETFLAG(eff, HF_DROPPED_WEAPON);
                     UNSETFLAG(msgEff, HF_DROPPED_WEAPON);
                     if (isDummyTraining) {
                         dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , Weap Drop avert by Iron Limbs |" + COLOR_DTEXT_BONUS + " SUCCESS";
                         dummyInfo += "|" + COLOR_DTEXT_REGULAR + " ( ST = |" + COLOR_DTEXT_BONUS + " " + target.Stat[ST_STRENGTH];
-                        dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , Modifier = |" + COLOR_DTEXT_MALUS + " -4";
+                        dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , Modifier = |" + COLOR_DTEXT_MALUS + " -5";
+                        dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , IronLimbsRank = |" + COLOR_DTEXT_MALUS + " " + ironLimbsRank + " * 2";
                         dummyInfo += "|" + COLOR_DTEXT_REGULAR + "  vs Roll = |" + COLOR_DTEXT_ROLL + " " + ironLimbsRoll;
                     }
                 } else {
                     if (isDummyTraining) {
                         dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , Weap Drop avert by Iron Limbs |" + COLOR_DTEXT_MALUS + " FAIL";
                         dummyInfo += "|" + COLOR_DTEXT_REGULAR + " ( ST = |" + COLOR_DTEXT_BONUS + " " + target.Stat[ST_STRENGTH];
-                        dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , Modifier = |" + COLOR_DTEXT_MALUS + " -4";
+                        dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , Modifier = |" + COLOR_DTEXT_MALUS + " -5";
+                        dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , IronLimbsRank = |" + COLOR_DTEXT_MALUS + " " + ironLimbsRank + " * 2";
                         dummyInfo += "|" + COLOR_DTEXT_REGULAR + "  vs Roll = |" + COLOR_DTEXT_ROLL + " " + ironLimbsRoll;
                     }
                 }
@@ -2724,34 +2758,37 @@ void ApplyDamage(AttackStruct& attack, Critter& target, uint rounds, bool isCrit
                 dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , Weap Perk Enhanced Knockout |" + COLOR_DTEXT_BONUS + " SUCCESS";
                 dummyInfo += "|" + COLOR_DTEXT_REGULAR + " ( Attacker ST = |" + COLOR_DTEXT_BONUS + " " + attacker.Stat[ST_STRENGTH];
                 dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , Modifier = |" + COLOR_DTEXT_MALUS + " -8";
-                dummyInfo += "|" + COLOR_DTEXT_REGULAR + "  vs Roll = |" + COLOR_DTEXT_ROLL + " " + enhancedKnockoutRoll;
+                dummyInfo += "|" + COLOR_DTEXT_REGULAR + "  vs Roll = |" + COLOR_DTEXT_ROLL + " " + enhancedKnockoutRoll + " )";
             }
 		} else {
             if (isDummyTraining) {
                 dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , Weap Perk Enhanced Knockout |" + COLOR_DTEXT_MALUS + " FAIL";
                 dummyInfo += "|" + COLOR_DTEXT_REGULAR + " ( Attacker ST = |" + COLOR_DTEXT_BONUS + " " + attacker.Stat[ST_STRENGTH];
                 dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , Modifier = |" + COLOR_DTEXT_MALUS + " -8";
-                dummyInfo += "|" + COLOR_DTEXT_REGULAR + "  vs Roll = |" + COLOR_DTEXT_ROLL + " " + enhancedKnockoutRoll;
+                dummyInfo += "|" + COLOR_DTEXT_REGULAR + "  vs Roll = |" + COLOR_DTEXT_ROLL + " " + enhancedKnockoutRoll + " )";
             }
 		}
 	}
 
     if (validAttacker && (weaponPerk == WEAPON_PERK_KNOCKBACK)) {
-        int knockbackRoll = Random(1, 10);
-		if (knockbackRoll <= attacker.Stat[ST_STRENGTH] - 8) {
+        int knockbackRoll = Random(1, 100);
+        int knockbackMagnitude = 20 + attacker.Stat[ST_STRENGTH] * 5 - attacker.Stat[ST_STRENGTH] * 3;
+		if (knockbackRoll <= knockbackMagnitude) {
             SETFLAG(eff, HF_KNOCKDOWN);
             if (isDummyTraining) {
                 dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , Weap Perk Enhanced Knockout |" + COLOR_DTEXT_BONUS + " SUCCESS";
                 dummyInfo += "|" + COLOR_DTEXT_REGULAR + " ( Attacker ST = |" + COLOR_DTEXT_BONUS + " " + attacker.Stat[ST_STRENGTH];
-                dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , Modifier = |" + COLOR_DTEXT_MALUS + " -8";
-                dummyInfo += "|" + COLOR_DTEXT_REGULAR + "  vs Roll = |" + COLOR_DTEXT_ROLL + " " + knockbackRoll;
+                dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , Defender ST = |" + COLOR_DTEXT_MALUS + " " + target.Stat[ST_STRENGTH];
+                dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , Formula: 20 + ST_1 * 5 - ST_2 * 3 ) = |" + COLOR_DTEXT_BONUS + " " + knockbackMagnitude;
+                dummyInfo += "|" + COLOR_DTEXT_REGULAR + "  vs Roll = |" + COLOR_DTEXT_ROLL + " " + knockbackRoll + " )";
             }
 		} else {
             if (isDummyTraining) {
                 dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , Weap Perk Enhanced Knockout |" + COLOR_DTEXT_MALUS + " FAIL";
                 dummyInfo += "|" + COLOR_DTEXT_REGULAR + " ( Attacker ST = |" + COLOR_DTEXT_BONUS + " " + attacker.Stat[ST_STRENGTH];
-                dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , Modifier = |" + COLOR_DTEXT_MALUS + " -8";
-                dummyInfo += "|" + COLOR_DTEXT_REGULAR + "  vs Roll = |" + COLOR_DTEXT_ROLL + " " + knockbackRoll;
+                dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , Defender ST = |" + COLOR_DTEXT_MALUS + " " + target.Stat[ST_STRENGTH];
+                dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , Formula: 20 + ST_1 * 5 - ST_2 * 3 ) = |" + COLOR_DTEXT_BONUS + " " + knockbackMagnitude;
+                dummyInfo += "|" + COLOR_DTEXT_REGULAR + "  vs Roll = |" + COLOR_DTEXT_ROLL + " " + knockbackRoll + " )";
             }
 		}
 	}
@@ -2808,7 +2845,7 @@ void ApplyDamage(AttackStruct& attack, Critter& target, uint rounds, bool isCrit
             dmgType = DAMAGE_TYPE_EMP; // if you are using EMP ammo, change the weapon's dmtype
 		}
 		if (ammoPid == PID_SHOTGUN_DRAGON_BREATH_SHELLS) {
-            dmgType=DAMAGE_TYPE_FIRE; // if you are using FIRE ammo, change the weapon's dmtype
+            dmgType = DAMAGE_TYPE_FIRE; // if you are using FIRE ammo, change the weapon's dmtype
 		}
 	}
 
@@ -3140,13 +3177,13 @@ void ApplyDamage(AttackStruct& attack, Critter& target, uint rounds, bool isCrit
 		isKo = true;
         knockDown = true;
     } else if ((dmgType == DAMAGE_TYPE_EXPLODE) && (totalDmg > 9) && valid(realWeapon) && realWeapon.Proto.ProtoId!=PID_DYNACORD) {//25-07-2013 Cubik: dynacord nie bedzie przewracal, miny, plastiki i dynamit beda wywracac
-		if (target.Perk[PE_STONEWALL] != 0) {
+		if (stonewallRank > 0) {
             //  ST-5 *20 > random(1, 105) vs explosion/shotgun KD roll changed to ST-2 *10 > random(1, 100) roll
             //  meaning chance to avoid such KD changed for chars with 10 -> 6 ST from 95%, 76%, 57%, 38%, 19% into 80%, 70%, 60%, 50%, 40%
             int stonewallRoll = Random(1, 100);
             int resistFactor = ((CLAMP(target.Stat[ST_STRENGTH], 1, 4 + target.Stat[ST_CHARISMA])
                                 + CLAMP(target.Stat[ST_ENDURANCE], 1, 6 + target.Stat[ST_CHARISMA]))
-                                 * 4) + 5;
+                                 * 4) + 5 * stonewallRank;
 			if (resistFactor > stonewallRoll) {
 			    isKo = false;
                 if (isDummyTraining) {
@@ -3184,14 +3221,15 @@ void ApplyDamage(AttackStruct& attack, Critter& target, uint rounds, bool isCrit
                 dummyInfo += "|" + COLOR_DTEXT_REGULAR + " ( Rounds = |" + COLOR_DTEXT_BONUS + " " + rounds;
                 dummyInfo += "|" + COLOR_DTEXT_REGULAR + "  vs Roll = |" + COLOR_DTEXT_ROLL + " " + shotgunKnockdownRoll + "|" + COLOR_DTEXT_REGULAR + "  )";
             }
-            if (target.Perk[PE_STONEWALL] != 0) {
+            if (stonewallRank > 0) {
                 int stonewallRoll = Random(1, 100);
-                if ((target.Stat[ST_STRENGTH] - 2) * 10 > stonewallRoll) {
+                if ((target.Stat[ST_STRENGTH] - 3 + stonewallRank) * 10 > stonewallRoll) {
                     isKo = false;
                     if (isDummyTraining) {
                         dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , Shotgun KD avert by Stonewall: |" + COLOR_DTEXT_BONUS + " SUCCESS";
                         dummyInfo += "|" + COLOR_DTEXT_REGULAR + " ( ST = |" + COLOR_DTEXT_BONUS + " " + target.Stat[ST_STRENGTH];
-                        dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , Modifier = |" + COLOR_DTEXT_MALUS + " -2";
+                        dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , Modifier = |" + COLOR_DTEXT_MALUS + " -3";
+                        dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , StonewallRank (armor + perk) = |" + COLOR_DTEXT_BONUS + " " + stonewallRank;
                         dummyInfo += "|" + COLOR_DTEXT_REGULAR + "  vs Roll = |" + COLOR_DTEXT_ROLL + " " + stonewallRoll + "|" + COLOR_DTEXT_REGULAR + "  )";
                     }
                 } else {
@@ -3199,7 +3237,8 @@ void ApplyDamage(AttackStruct& attack, Critter& target, uint rounds, bool isCrit
                     if (isDummyTraining) {
                         dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , Shotgun KD avert by Stonewall: |" + COLOR_DTEXT_MALUS + " FAIL";
                         dummyInfo += "|" + COLOR_DTEXT_REGULAR + " ( ST = |" + COLOR_DTEXT_BONUS + " " + target.Stat[ST_STRENGTH];
-                        dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , Modifier = |" + COLOR_DTEXT_MALUS + " -2";
+                        dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , Modifier = |" + COLOR_DTEXT_MALUS + " -3";
+                        dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , StonewallRank (armor + perk) = |" + COLOR_DTEXT_BONUS + " " + stonewallRank;
                         dummyInfo += "|" + COLOR_DTEXT_REGULAR + "  vs Roll = |" + COLOR_DTEXT_ROLL + " " + stonewallRoll + "|" + COLOR_DTEXT_REGULAR + "  )";
                     }
                 }
@@ -3752,8 +3791,8 @@ void ApplyDamage(AttackStruct& attack, Critter& target, uint rounds, bool isCrit
                     knockDist /= 5;
                 else
                     knockDist /= 10;
-                if(target.Perk[PE_STONEWALL] != 0)
-                    knockDist /= 2;
+                if( stonewallRank > 0)
+                    knockDist /= stonewallRank + 1;
                 knockDist--;
 //Log("knockDist = " + knockDist);
                 if(knockDist > 10)

@@ -177,10 +177,27 @@
 #define WEAPON_PERK_FLAMEBOY                     (8)
 #define WEAPON_PERK_ENHANCED_KNOCKOUT            (9)
 
-#define ARMOR_PERK_POWERED                       (1)    // +3 strength, +30 radiation resist
-#define ARMOR_PERK_COMBAT                        (2)    // +20 radiation resist
-#define ARMOR_PERK_ADVANCED_I                    (3)    // +4 strength, +60 radiation resist
-#define ARMOR_PERK_ADVANCED_II                   (4)    // +4 strength, +75 radiation resist
+#define ARMOR_PERK_POWERED                       (1)    // Heavy and +3 strength, +30 radiation resist
+#define ARMOR_PERK_ADVANCED_I                    (3)    // Heavy and +4 strength, +60 radiation resist
+#define ARMOR_PERK_ADVANCED_II                   (4)    // Heavy and +4 strength, +75 radiation resist
+#define ARMOR_PERK_LEATHER_JACKET               (10)    // Light and +1 CH, +10 red resist
+#define ARMOR_PERK_LEATHER_ARMOR                (11)    // Light and +10 rad resist
+#define ARMOR_PERK_THERMAL_LEATHER              (12)    // Light and +30 rad resist
+#define ARMOR_PERK_COMBAT                       (20)    // Medium and +25 radiation resist
+#define ARMOR_PERK_METAL                        (30)    // Heavy and +15 rad resist
+#define ARMOR_PERK_LIGHT                       (101)    // +1 AG
+#define ARMOR_PERK_MEDIUM                      (102)    // -1 AG
+#define ARMOR_PERK_HEAVY                       (103)    // -3 AG
+
+#define ARMOR_AP_REGEN_NAKED_WALK               (50)
+#define ARMOR_AP_REGEN_NAKED_RUN                (25)
+#define ARMOR_AP_REGEN_LIGHT_WALK               (40)
+#define ARMOR_AP_REGEN_LIGHT_RUN                (20)
+#define ARMOR_AP_REGEN_MEDIUM_WALK              (30)
+#define ARMOR_AP_REGEN_MEDIUM_RUN               (15)
+#define ARMOR_AP_REGEN_HEAVY_WALK               (20)
+#define ARMOR_AP_REGEN_HEAVY_RUN                (10)
+
 
 #define HELMET_PERK_CHARISMA                     (1)    // +1 charisma
 #define HELMET_PERK_PERCEPTION_GLASSES           (2)    // PE1:+3, PE2:+2, PE3:+1, PE4+:0

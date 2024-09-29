@@ -64,56 +64,99 @@ void EnableItemPerk(Critter& cr, Item& item, uint8 type)
         cr.StatBase[param] = item.Proto.Item_Perk;
 }
 
-void ApplyItemPerk(Critter& cr, uint8 type, uint perk, bool enable)
-{
+void ApplyItemPerk(Critter& cr, uint8 type, uint perk, bool enable) {
     int sign = (enable ? int(1) : -1);
+    uint8 genericPerk = perk;
+    //Log("ApplyItemPerk :: type = " + type + ", perk = " + perk + ", sign = " + sign);
+    switch (type) {
+        case ITEM_PERK_ARMOR: {
+            switch (perk) {
+                case ARMOR_PERK_POWERED:
+                    genericPerk = ARMOR_PERK_HEAVY;
+                    cr.StatBase[ST_STRENGTH_EXT] += 3 * sign;
+                    cr.StatBase[ST_RADIATION_RESISTANCE_EXT] += 30 * sign;
+                    break;
+                case ARMOR_PERK_ADVANCED_I:
+                    genericPerk = ARMOR_PERK_HEAVY;
+                    cr.StatBase[ST_STRENGTH_EXT] += 4 * sign;
+                    cr.StatBase[ST_RADIATION_RESISTANCE_EXT] += 60 * sign;
+                    break;
+                case ARMOR_PERK_ADVANCED_II:
+                    genericPerk = ARMOR_PERK_HEAVY;
+                    cr.StatBase[ST_STRENGTH_EXT] += 4 * sign;
+                    cr.StatBase[ST_RADIATION_RESISTANCE_EXT] += 75 * sign;
+                    break;
+                case ARMOR_PERK_LEATHER_JACKET:
+                    genericPerk = ARMOR_PERK_LIGHT;
+                    cr.StatBase[ST_CHARISMA_EXT] += 1 * sign;
+                    break;
+                case ARMOR_PERK_LEATHER_ARMOR:
+                    genericPerk = ARMOR_PERK_LIGHT;
+                    cr.StatBase[ST_RADIATION_RESISTANCE_EXT] += 10 * sign;
+                    break;
+                case ARMOR_PERK_THERMAL_LEATHER:
+                    genericPerk = ARMOR_PERK_LIGHT;
+                    cr.StatBase[ST_RADIATION_RESISTANCE_EXT] += 30 * sign;
+                    break;
+                case ARMOR_PERK_COMBAT:
+                    genericPerk = ARMOR_PERK_MEDIUM;
+                    cr.StatBase[ST_RADIATION_RESISTANCE_EXT] += 25 * sign;
+                    break;
+                case ARMOR_PERK_METAL:
+                    genericPerk = ARMOR_PERK_HEAVY;
+                    cr.StatBase[ST_RADIATION_RESISTANCE_EXT] += 15 * sign;
+                    break;
 
-    switch(type)
-    {
-    case ITEM_PERK_ARMOR:
-    {
-        switch(perk)
-        {
-        case ARMOR_PERK_POWERED:
-            cr.StatBase[ST_STRENGTH_EXT] += 3 * sign;
-            cr.StatBase[ST_RADIATION_RESISTANCE_EXT] += 30 * sign;
-            break;
-        case ARMOR_PERK_COMBAT:
-            cr.StatBase[ST_RADIATION_RESISTANCE_EXT] += 20 * sign;
-            break;
-        case ARMOR_PERK_ADVANCED_I:
-            cr.StatBase[ST_STRENGTH_EXT] += 4 * sign;
-            cr.StatBase[ST_RADIATION_RESISTANCE_EXT] += 60 * sign;
-            break;
-        case ARMOR_PERK_ADVANCED_II:
-            cr.StatBase[ST_STRENGTH_EXT] += 4 * sign;
-            cr.StatBase[ST_RADIATION_RESISTANCE_EXT] += 75 * sign;
-            break;
-        default:
+                default:
+                    break;
+            };
             break;
         }
-        ;
-        break;
-    }
 
-    case ITEM_PERK_HELMET:
-    {
-        switch(perk)
-        {
-        case HELMET_PERK_CHARISMA:
-            cr.StatBase[ST_CHARISMA_EXT] += 1 * sign;
-            break;
-        case HELMET_PERK_PERCEPTION_GLASSES:
-            cr.StatBase[ST_PERCEPTION_EXT] += (cr.StatBase[ST_PERCEPTION] >= 4 ? 0 : 4 - CLAMP(cr.StatBase[ST_PERCEPTION], 1, 3)) * sign;
-            break;
-        // HELMET_PERK_PROTECT_EYES -> combat.fos, "now we change aim"
+        case ITEM_PERK_HELMET: {
+            switch (perk) {
+                case HELMET_PERK_CHARISMA:
+                    cr.StatBase[ST_CHARISMA_EXT] += 1 * sign;
+                    break;
+                case HELMET_PERK_PERCEPTION_GLASSES:
+                    cr.StatBase[ST_PERCEPTION_EXT] += (cr.StatBase[ST_PERCEPTION] >= 4 ? 0 : 4 - CLAMP(cr.StatBase[ST_PERCEPTION], 1, 3)) * sign;
+                    break;
+                // HELMET_PERK_PROTECT_EYES -> combat.fos, "now we change aim"
 
-        default:
+                default:
+                    break;
+            };
             break;
         }
-        ;
-        break;
     }
+    //  BNW update, light armor gives AG, Medium armor takes some, and Heavy armor takes a lot of AG when used
+    if (type == ITEM_PERK_ARMOR) {
+        //Log("ApplyItemPerk :: type = " + type + ", genericPerk = " + genericPerk + ", sign = " + sign);
+        switch (genericPerk) {
+            case ARMOR_PERK_LIGHT:
+                cr.StatBase[ST_AGILITY_EXT] += 1 * sign;
+                SetApRegenRate(cr, ARMOR_AP_REGEN_LIGHT_RUN, ARMOR_AP_REGEN_LIGHT_WALK, enable);
+                break;
+            case ARMOR_PERK_MEDIUM:
+                cr.StatBase[ST_AGILITY_EXT] += -1 * sign;
+                SetApRegenRate(cr, ARMOR_AP_REGEN_MEDIUM_RUN, ARMOR_AP_REGEN_MEDIUM_WALK, enable);
+                break;
+            case ARMOR_PERK_HEAVY:
+                cr.StatBase[ST_AGILITY_EXT] += -3 * sign;
+                SetApRegenRate(cr, ARMOR_AP_REGEN_HEAVY_RUN, ARMOR_AP_REGEN_HEAVY_WALK, enable);
+                break;
+            default:
+                SetApRegenRate(cr, ARMOR_AP_REGEN_HEAVY_RUN, ARMOR_AP_REGEN_HEAVY_WALK, enable);
+                break;
+        };
+    }
+}
+
+void SetApRegenRate(Critter& cr, int run, int walk, bool enable) {
+    if (enable) {
+        cr.ParamBase[ST_AP_REGEN_RATE] = run * 100 + walk;
+    } else {
+        cr.ParamBase[ST_AP_REGEN_RATE] = ARMOR_AP_REGEN_NAKED_RUN * 100 + ARMOR_AP_REGEN_NAKED_WALK;
     }
 }
 #endif // __ITEM_PERKS__ //

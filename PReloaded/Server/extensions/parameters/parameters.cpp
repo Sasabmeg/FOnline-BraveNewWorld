@@ -188,6 +188,15 @@ EXPORT int getParam_Strength(CritterMutual& cr, uint)
 	const Item* armor=cr.ItemSlotArmor;
 	if(checkBonus(armor, BONUS_ARMOR_STRENGTH)!=0) val++;
 
+	//	BNW change, if crippled leg ST will be reduced
+	if (cr.Params[DAMAGE_LEFT_LEG] > 0 || cr.Params[DAMAGE_RIGHT_LEG] > 0) {
+		if (cr.Params[DAMAGE_LEFT_LEG] > 0 && cr.Params[DAMAGE_RIGHT_LEG] > 0) {
+			val -= 3;
+		} else {
+			val -= 1;
+		}
+	}
+
 	return CLAMP(val, 1, 10);
 }
 
@@ -208,6 +217,8 @@ EXPORT int getParam_Endurance(CritterMutual& cr, uint)
 
 	const Item* armor=cr.ItemSlotArmor;
 	if(checkBonus(armor, BONUS_ARMOR_ENDURANCE)!=0) val++;
+	
+	val -= CLAMP(cr.Params[ST_POISONING_LEVEL] / 15, 0, 6);
 
 	return CLAMP(val, 1, 10);
 }
@@ -238,7 +249,17 @@ EXPORT int getParam_Agility(CritterMutual& cr, uint)
 	int val = cr.Params[ST_AGILITY] + cr.Params[ST_AGILITY_EXT];
 
 	const Item* armor=cr.ItemSlotArmor;
-	if(checkBonus(armor, BONUS_ARMOR_AGILITY)!=0) val++;
+	if (checkBonus(armor, BONUS_ARMOR_AGILITY) != 0) 
+		val++;
+
+	//	BNW change, if crippled arm AG will be reduced
+	if (cr.Params[DAMAGE_RIGHT_ARM] > 0 || cr.Params[DAMAGE_LEFT_ARM] > 0) {
+		if (cr.Params[DAMAGE_RIGHT_ARM] > 0 && cr.Params[DAMAGE_LEFT_ARM] > 0) {
+			val = 1;
+		} else {
+			val -= 3;
+		}
+	}
 
 	return CLAMP(val,1,10);
 }
@@ -569,6 +590,9 @@ EXPORT void Item_Weapon_SetMode(Item& item, uint8 mode)
 #define PID_HYPO                            (525)
 #define PID_WEAK_HEALING_POWDER             (9655)
 #define PID_BLOODPACK                       (25592)	//	used in Parareal Cannibal feature
+#define ARMOR_PERK_LIGHT_START				(10)
+#define ARMOR_PERK_LIGHT_END				(19)
+#define ARMOR_PERK_LIGHT					(101)
 
 uint GetUseApCost(CritterMutual& cr, Item& item, uint8 mode)
 {
@@ -592,6 +616,17 @@ uint GetUseApCost(CritterMutual& cr, Item& item, uint8 mode)
 				|| proto == PID_HEALING_POWDER || proto == PID_HYPO || proto == PID_BLOODPACK) {
 				apCost--;
 			}
+		} else if (cr.ItemSlotArmor != NULL && apCost > 2) {
+			//Log("ARMOR SLOT EXISTS\n");
+			if ((cr.ItemSlotArmor->Proto->Armor_Perk >= ARMOR_PERK_LIGHT_START && cr.ItemSlotArmor->Proto->Armor_Perk <= ARMOR_PERK_LIGHT_END)
+					|| cr.ItemSlotArmor->Proto->Armor_Perk == ARMOR_PERK_LIGHT) {
+				uint proto = item.GetProtoId();
+				if (proto == PID_SUPER_STIMPAK || proto == PID_STIMPAK || proto == PID_ANTIDOTE || proto == PID_WEAK_HEALING_POWDER
+					|| proto == PID_HEALING_POWDER || proto == PID_HYPO || proto == PID_BLOODPACK) {
+					apCost--;
+					//Log("ARMOR SLOT LIGHT AND HEALING DRUG\n");
+				}
+			}
 		}
 		if (cr.Params[PE_FIELD_MEDIC] && apCost > 3) {
 			uint proto = item.GetProtoId();
@@ -603,6 +638,18 @@ uint GetUseApCost(CritterMutual& cr, Item& item, uint8 mode)
 	else if(use == USE_RELOAD)
 	{
 		if(cr.Params[PE_QUICK_POCKETS]) return 1;
+		if (cr.ItemSlotArmor != NULL && apCost > 2) {
+			//Log("ARMOR SLOT EXISTS\n");
+			if ((cr.ItemSlotArmor->Proto->Armor_Perk >= ARMOR_PERK_LIGHT_START && cr.ItemSlotArmor->Proto->Armor_Perk <= ARMOR_PERK_LIGHT_END)
+				|| cr.ItemSlotArmor->Proto->Armor_Perk == ARMOR_PERK_LIGHT) {
+				uint proto = item.GetProtoId();
+				if (proto == PID_SUPER_STIMPAK || proto == PID_STIMPAK || proto == PID_ANTIDOTE || proto == PID_WEAK_HEALING_POWDER
+					|| proto == PID_HEALING_POWDER || proto == PID_HYPO || proto == PID_BLOODPACK) {
+					return 1;
+					//Log("ARMOR SLOT LIGHT AND HEALING DRUG\n");
+				}
+			}
+		}
 		if(TB_BATTLE_TIMEOUT_CHECK(getParam_Timeout(cr, TO_BATTLE)))
 			apCost = FOClassic->TbApCostReloadWeapon;
 		else

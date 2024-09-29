@@ -5,17 +5,14 @@
 ***************       Armor                         ***************
 ******************************************************************/
 
-//Light
+//  Light
 #define PID_LEATHER_JACKET                  (74)
 #define PID_LEATHER_ARMOR                   (1)
 #define PID_LEATHER_ARMOR_MK_II             (379)
 #define PID_CURED_LEATHER_ARMOR             (265)
 #define PID_THERMAL_LEATHER_ARMOR           (779)
 
-//Medium
-#define PID_METAL_ARMOR                     (2)
-#define PID_METAL_ARMOR_MK_II               (380)
-#define PID_TESLA_ARMOR                     (240)
+//  Medium
 #define PID_COMBAT_ARMOR                    (17)
 #define PID_COMBAT_ARMOR_MK_II              (381)
 #define PID_BROTHERHOOD_COMBAT_ARMOR        (239)
@@ -23,6 +20,15 @@
 #define PID_ENVIROMENTAL_ARMOR              (751) // Test
 #define PID_ENCLAVE_COMBAT_ARMOR            (752)
 #define PID_DESERT_COMBAT_ARMOR             (778)
+
+//  Heavy
+#define PID_METAL_ARMOR                     (2)
+#define PID_METAL_ARMOR_MK_II               (380)
+#define PID_TESLA_ARMOR                     (240)
+#define PID_POWERED_ARMOR                   (3)
+#define PID_HARDENED_POWER_ARMOR            (232)
+#define PID_ADVANCED_POWER_ARMOR            (348)
+#define PID_ADVANCED_POWER_ARMOR_MK2        (349)
 
 //Clothes
 #define PID_VAULT_13_SUIT                   (753)
@@ -52,12 +58,6 @@
 #define PID_MORDINO_METAL_JACKET            (776)
 #define PID_CLOTHES_GENERIC3                (777)
 #define PID_NPC_SKIN                        (799)
-
-//Heavy
-#define PID_POWERED_ARMOR                   (3)
-#define PID_HARDENED_POWER_ARMOR            (232)
-#define PID_ADVANCED_POWER_ARMOR            (348)
-#define PID_ADVANCED_POWER_ARMOR_MK2        (349)
 
 //Robes
 #define PID_PURPLE_ROBE                     (113)
