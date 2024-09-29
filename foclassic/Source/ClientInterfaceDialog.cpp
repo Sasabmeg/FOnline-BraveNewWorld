@@ -758,7 +758,7 @@ void FOClient::BarterTryOffer()
 			return;
 		if (c1 < c2 && BarterK)
 			BarterText = MsgGame->GetStr(STR_BARTER_BAD_OFFER);
-		else if (Chosen->GetFreeWeight() + w1 < w2)
+		else if (Chosen->GetFreeWeightDoubled() + w1 < w2)
 			BarterText = MsgGame->GetStr(STR_BARTER_OVERWEIGHT);
 		else if (Chosen->GetFreeVolume() + v1 < v2)
 			BarterText = MsgGame->GetStr(STR_BARTER_OVERSIZE);

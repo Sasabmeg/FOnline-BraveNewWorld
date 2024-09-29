@@ -374,6 +374,7 @@ public:
     uint        GetItemsVolume();
     bool        IsOverweight() { return (int)GetItemsWeight() > GetParam( ST_CARRY_WEIGHT ); }
     int         GetFreeWeight();
+	int			GetFreeWeightDoubled();
     int         GetFreeVolume();
     int         GetParam( uint index );
     void        ChangeParam( uint index );

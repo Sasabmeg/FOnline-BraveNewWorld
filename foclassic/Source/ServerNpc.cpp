@@ -2102,7 +2102,7 @@ void FOServer::Process_Barter( Client* cl )
     }
 
     // Check weight
-    if( cl->GetFreeWeight() + (int)sale_weight < (int)buy_weight )
+    if( cl->GetFreeWeightDoubled() + (int)sale_weight < (int)buy_weight )
     {
         WriteLogF( _FUNC_, " - Overweight - ignore barter, client<%s>, npc<%s>.\n", cl->GetInfo(), npc->GetInfo() );
         cl->Send_TextMsg( cl, STR_BARTER_OVERWEIGHT, SAY_DIALOG, TEXTMSG_GAME );

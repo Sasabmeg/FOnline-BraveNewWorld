@@ -165,6 +165,7 @@ public:
     uint        GetItemsWeightKg();
     uint        GetItemsVolume();
     int         GetFreeWeight();
+	int			GetFreeWeightDoubled();
     int         GetFreeVolume();
     bool        IsHaveLightSources();
     Item*       GetSlotUse( uint8 num_slot, uint8& use );

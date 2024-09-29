@@ -3345,6 +3345,12 @@ int Critter::GetFreeWeight()
     return max_weight - cur_weight;
 }
 
+int Critter::GetFreeWeightDoubled() {
+	int cur_weight = GetItemsWeight();
+	int max_weight = GetParam(ST_CARRY_WEIGHT);
+	return (2 * max_weight) - cur_weight;
+}
+
 int Critter::GetFreeVolume()
 {
     int cur_volume = GetItemsVolume();
