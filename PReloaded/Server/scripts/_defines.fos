@@ -235,6 +235,7 @@
 #define CTE_SCHEDULE                             (10)
 #define CTE_SCHEDULE_FIND_NEXT                   (11)
 // Drugs time events                40 (PID_STIMPAK) .. 1000
+#define CTE_FIRST_AID                            (1001)
 #define CTE_ALLOW_RUN                            (1335)
 #define CTE_FISHING_ANIM                         (1336)
 #define CTE_CHEAT_AURA                           (1337)
@@ -863,8 +864,8 @@
 #define TIMER_MAX_VALUE                          (599)
 
 // Timeouts in real seconds, generic values
-#define FIRST_AID_TIMEOUT                        # (cr)     ( REAL_SECOND( (((cr.Skill[SK_FIRST_AID] > 50 ? cr.Skill[SK_FIRST_AID] : 50) * -6 / 10) + 210) / (cr.Perk[PE_MEDIC] > 0 ? 2 : 1)) )           // cd = (-6 * skill)/10 - 210 -> from 180s @sk<=50 to 90s @sk==200 (max)
-#define DOCTOR_TIMEOUT                           # (cr)     ( REAL_SECOND( (((cr.Skill[SK_DOCTOR] > 50 ? cr.Skill[SK_DOCTOR] : 50) * -6 / 10) + 210) / (cr.Perk[PE_MEDIC] > 0 ? 2 : 1)) )           // cd = (-6 * skill)/10 - 210 -> from 180s @sk<=50 to 90s @sk==200 (max)
+#define FIRST_AID_TIMEOUT                        # (cr)     ( REAL_SECOND( 90 - (cr.Skill[SK_FIRST_AID] / 4) - (cr.Perk[PE_MEDIC] > 0 ? 20 : 0) - (cr.Perk[PE_FIELD_MEDIC] > 0 ? 10 : 0)) )
+#define DOCTOR_TIMEOUT                           # (cr)     ( REAL_SECOND( 90 - (cr.Skill[SK_DOCTOR] / 4) - (cr.Perk[PE_MEDIC] > 0 ? 20 : 0) - (cr.Perk[PE_FIELD_MEDIC] > 0 ? 10 : 0)) )
 
 #define REPAIR_TIMEOUT                           # (cr)        (REAL_MINUTE(1))                                                                                                                                    // Orig 4 time on day, 1 min
 #define SCIENCE_TIMEOUT                          # (cr)       (REAL_MINUTE(1))                                                                                                                                     // Orig 6 time on day, 1 min
