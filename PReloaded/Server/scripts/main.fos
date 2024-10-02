@@ -2360,16 +2360,24 @@ void critter_finish(Critter& cr, bool toDelete)
 void critter_idle(Critter& cr)
 {
     // Healing
-    if(cr.Timeout[TO_HEALING] == 0)
-    {
-        if(!cr.IsDead() && cr.Mode[MODE_NO_HEAL] == 0 && cr.Timeout[TO_BATTLE] == 0 && cr.Stat[ST_CURRENT_HP] < cr.Stat[ST_MAX_LIFE] && cr.Stat[ST_POISONING_LEVEL] == 0)
-        {
-            if(cr.Stat[ST_HEALING_RATE] > 0)
-                cr.StatBase[ST_CURRENT_HP] += MAX(cr.Stat[ST_HEALING_RATE] * cr.Stat[ST_MAX_LIFE] / 100, 3);
-            else
+    if(cr.Timeout[TO_HEALING] == 0) {
+        if(!cr.IsDead() && cr.Mode[MODE_NO_HEAL] == 0 && cr.Timeout[TO_BATTLE] == 0 && cr.Stat[ST_CURRENT_HP] < cr.Stat[ST_MAX_LIFE] && cr.Stat[ST_POISONING_LEVEL] == 0) {
+            int heal = 0;
+            if (cr.Stat[ST_HEALING_RATE] > 0) {
+                heal = CLAMP(MAX(cr.Stat[ST_HEALING_RATE] * cr.Stat[ST_MAX_LIFE] / 100, 3), 0, cr.Stat[ST_MAX_LIFE] - cr.StatBase[ST_CURRENT_HP]);
+                heal = CLAMP(heal, 0, cr.Stat[ST_MAX_LIFE] * 0.1);
+                cr.StatBase[ST_CURRENT_HP] += heal;
+            } else {
                 cr.StatBase[ST_CURRENT_HP] += cr.Stat[ST_HEALING_RATE];
-            if(cr.StatBase[ST_CURRENT_HP] > cr.Stat[ST_MAX_LIFE])
+                heal = cr.Stat[ST_HEALING_RATE];
+            }
+            if (heal > 0) {
+                cr.Say(SAY_NETMSG, "Regeneration: +" + heal);
+                FloatingHealText(cr, heal, HEAL_TEXT_REASON_NOREASON, SKILL_CHECK_SUCCESS);
+            }
+            if (cr.StatBase[ST_CURRENT_HP] > cr.Stat[ST_MAX_LIFE]) {
                 cr.StatBase[ST_CURRENT_HP] = cr.Stat[ST_MAX_LIFE];
+            }
         }
 
         _SetTimeout(cr, TO_HEALING, HEALING_TIMEOUT(cr));
