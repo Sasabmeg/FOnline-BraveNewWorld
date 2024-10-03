@@ -11,6 +11,7 @@
 #include "MsgStr.h"
 #include "utils_h.fos"
 #include "reputations_h.fos"
+#include "_colors.fos"
 
 Item@ SelectSkillItem(Critter& cr, Item@ item, uint16 skill)
 {
@@ -283,7 +284,7 @@ bool UseDoctorOnCritter(Critter& cr, Critter& targetCr, Item@ item)
         int hurt = curHp * Random(3, 7 * injured) / 100;
         targetCr.StatBase[ST_CURRENT_HP] -= hurt;
         targetCr.Action(CRITTER_ACTION_DAMAGE_FORCE, 1, null);
-        targetCr.Say(SAY_NETMSG, "|" + COLOR_TEXT_WHITE + " While trying to heal your injuries you hurt yourself for |" + COLOR_TEXT_SAND + " " + hurt + "|" + COLOR_TEXT_WHITE + "  damage.");
+        targetCr.Say(SAY_NETMSG, "|" + COLOR_DORANGE + " While trying to heal your injuries you hurt yourself for |" + COLOR_ORANGE + " " + hurt + "|" + COLOR_DORANGE + "  damage.");
     }
 
     if (isKo) { //heals KO
