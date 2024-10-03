@@ -80,7 +80,7 @@ bool UseFirstAidOnCritter(Critter& cr, Critter& targetCr, Item@ item)
         //Log("FA ITEM DELETE ROLL = " + roll);
         if (roll == 1) {
             cr.DeleteItem(item.GetProtoId(), 1);
-            cr.Say(SAY_NETMSG, "You emptied and used up your First Aid kit.");
+            cr.Say(SAY_NETMSG, "You emptied and used up your medical tools.");
         }
         itemFactor = 10;
     }
@@ -202,113 +202,119 @@ bool UseDoctorOnCritter(Critter& cr, Critter& targetCr, Item@ item)
     }
 */
 
-    bool is_self = (targetCr.Id == cr.Id);
-    bool is_ko = targetCr.IsKnockout() && targetCr.Stat[ST_CURRENT_HP] > 0;
-    bool is_injured = _CritNeedDoctor(targetCr);
-    bool is_field_medic = cr.Perk[PE_FIELD_MEDIC] != 0 && !is_self && targetCr.IsPlayer();
+    bool isSelf = (targetCr.Id == cr.Id);
+    bool isKo = targetCr.IsKnockout() && targetCr.Stat[ST_CURRENT_HP] > 0;
+    bool isInjured = _CritNeedDoctor(targetCr);
+    bool isMedic = cr.Perk[PE_MEDIC] > 0;
+    bool isFieldMedic = cr.Perk[PE_FIELD_MEDIC] > 0;
 
-    if(targetCr.IsDead())
-    {
+    if(targetCr.IsDead()) {
         cr.SayMsg(SAY_NETMSG, TEXTMSG_GAME, STR_SKILL_NORESSURECT);
         return true;
     }
 
-    if(!is_injured && !is_ko)
-    {
+    if (!isInjured && !isKo) {
         if(_CritNeedFirstAid(targetCr))
             cr.SayMsg(SAY_NETMSG, TEXTMSG_GAME, STR_SKILL_NODOCTOR_NEEDFIRSTAID);
-        else if(is_self)
+        else if(isSelf)
             cr.SayMsg(SAY_NETMSG, TEXTMSG_GAME, STR_SKILL_NONEED_DOCTOR);
         return true;
     }
 
-    if((cr.Timeout[TO_SK_DOCTOR] > 0 && !is_field_medic) || (is_field_medic && targetCr.Timeout[TO_SK_DOCTOR] > 0))
-    {
-        if(is_ko && cr.Perk[PE_MEDIC] != 0 )      //can heal KO even with cooldown with Medic perk
-        {
+    if (targetCr.Timeout[TO_SK_DOCTOR] > 0) {
+        if (isKo && isMedic ) {     //can heal KO even with cooldown with Medic perk
             targetCr.StatBase[ST_CURRENT_AP] = 0;
 
-            if(!is_self && cr.Param[MODE_HIDE] != 0 && cr.GetAccess() < ACCESS_TESTER)
+            if (!isSelf && cr.Param[MODE_HIDE] != 0 && cr.GetAccess() < ACCESS_TESTER)
                 cr.ParamBase[MODE_HIDE] = 0;
         }
 
-        if(cr.IsPlayer() && is_injured)
+        if (cr.IsPlayer() && isInjured)
             cr.SayMsg(SAY_NETMSG, TEXTMSG_GAME, STR_SKILL_WEARINESS);
         return true;
     }
 
-    if(!is_self && cr.Param[MODE_HIDE] != 0 && cr.GetAccess() < ACCESS_TESTER)
+    if (!isSelf && cr.Param[MODE_HIDE] != 0 && cr.GetAccess() < ACCESS_TESTER)
         cr.ParamBase[MODE_HIDE] = 0;
 
-    int sk = cr.Skill[SK_DOCTOR];
+    int doctorSkill = cr.Skill[SK_DOCTOR];
 
     @item = SelectSkillItem(cr, item, SK_DOCTOR);
-    if(valid(item))
-    {
-        sk += item.Proto.Misc_ToolSkillBonus;
-        if(Random(0, 30) == 0)
+    if (!valid(item)) {
+        @item = SelectSkillItemExt(cr, item, SK_DOCTOR);
+    }
+
+    int itemFactor = 1;
+    if (valid(item)) {
+        doctorSkill += item.Proto.Misc_ToolSkillBonus;
+        int roll = Random(1, 10 + (doctorSkill / 20) + cr.PerkBase[PE_MEDIC] * 5 + cr.PerkBase[PE_FIELD_MEDIC] * 5);
+        //Log("FA ITEM DELETE ROLL = " + roll);
+        if (roll == 1) {
             cr.DeleteItem(item.GetProtoId(), 1);
+            cr.Say(SAY_NETMSG, "You emptied and used up your medical tools.");
+        }
+        itemFactor = 3;
     }
 
     int uninjured = 0;
     int injured = 0;
+    int difficulty = 1;
+    difficulty += _CritHasInjureBody(cr, DAMAGE_LEFT_ARM) ? 1 : 0;
+    difficulty += _CritHasInjureBody(cr, DAMAGE_RIGHT_LEG) ? 1 : 0;
+    difficulty += _CritHasInjureBody(cr, DAMAGE_EYE) ? 1 : 0;
 
-    for(int i = DAMAGE_EYE; i <= DAMAGE_LEFT_LEG; ++i)
-    {
-        if(!_CritHasInjureBody(targetCr, i))
+    for (int i = DAMAGE_EYE; i <= DAMAGE_LEFT_LEG; ++i) {
+        if (!_CritHasInjureBody(targetCr, i))
             continue;
         injured++;
-        if(sk > Random(5, 95))
-        {
+        int roll = Random(5, 95) * ((isSelf && !isMedic) ? 2 : 1) * difficulty / 2 / itemFactor;
+        if(doctorSkill > roll) {
             _CritUninjureBody(targetCr, i);
             cr.SayMsg(SAY_NETMSG, TEXTMSG_GAME, STR_SKILL_HEAL_DMG(i - DAMAGE_POISONED));
             uninjured++;
-        }
-        else
-        {
+        } else {
             cr.SayMsg(SAY_NETMSG, TEXTMSG_GAME, STR_SKILL_NOHEAL_DMG(i - DAMAGE_POISONED));
         }
-        sk -= 35;
+        doctorSkill -= 20 + (isFieldMedic ? 0 : (isMedic ? 15 : 30));
     }
 
-    if(is_ko) //heals KO
-    {
-        targetCr.StatBase[ST_CURRENT_AP] = 0;
+    if (uninjured == 0 && injured > 0 && isSelf && !isMedic) {
+        int curHp = targetCr.Stat[ST_CURRENT_HP];
+        int hurt = curHp * Random(3, 7 * injured) / 100;
+        targetCr.StatBase[ST_CURRENT_HP] -= hurt;
+        targetCr.Action(CRITTER_ACTION_DAMAGE_FORCE, 1, null);
+        targetCr.Say(SAY_NETMSG, "|" + COLOR_TEXT_WHITE + " While trying to heal your injuries you hurt yourself for |" + COLOR_TEXT_SAND + " " + hurt + "|" + COLOR_TEXT_WHITE + "  damage.");
     }
 
-    if(is_injured || (is_ko && cr.Perk[PE_MEDIC] == 0))
-    {
-        if(is_field_medic)
-            _SetTimeout(targetCr, TO_SK_DOCTOR, DOCTOR_TIMEOUT(cr));
-        else
-            _SetTimeout(cr, TO_SK_DOCTOR, DOCTOR_TIMEOUT(cr));
+    if (isKo) { //heals KO
+        targetCr.StatBase[ST_CURRENT_AP] = (isFieldMedic ? 5 : (isMedic ? 3 : 0));
     }
 
-    if(uninjured > 0)
+    if (isInjured || (isKo && isMedic)) {
+        _SetTimeout(targetCr, TO_SK_DOCTOR, DOCTOR_TIMEOUT(cr));
+    }
+
+    if (uninjured > 0)
     {
-        if(is_self)
+        if (isSelf)
             VerboseAction(cr, "applies wound dressing" + (uninjured > 1 ? "s" : ""));
         else
             VerboseAction(cr, targetCr, "treats injur" + (uninjured > 1 ? "ies" : "y") + " of TARGET");
-        cr.StatBase[ST_EXPERIENCE] += uninjured * 50;
-        if(_IsTrueNpc(targetCr) && !is_self && IsHumanoid(targetCr) && !IsCurrentEnemy(targetCr, cr.Id))
-        {
-            if(_ValidReputationIndex(targetCr.Stat[ST_TEAM_ID]))
+        cr.StatBase[ST_EXPERIENCE] += uninjured * 100 * (isFieldMedic ? 5 : (isMedic ? 3 : 1));
+        if (_IsTrueNpc(targetCr) && !isSelf && IsHumanoid(targetCr) && !IsCurrentEnemy(targetCr, cr.Id)) {
+            if (_ValidReputationIndex(targetCr.Stat[ST_TEAM_ID]))
                 AddReputation(cr, targetCr.Stat[ST_TEAM_ID], uninjured * 8, REP_DOCTOR_CAP);
-            if(cr.IsSeenBy(targetCr))
+            if (cr.IsSeenBy(targetCr))
                 targetCr.Say(SAY_NORM_ON_HEAD, "Thank you.");
         }
-    }
-    else
-    {
-        /*if( is_self )
-                VerboseAction( cr, "TODO uninjured=0 is_self" );
+    } else {
+        /*if( isSelf )
+                VerboseAction( cr, "TODO uninjured=0 isSelf" );
            else
                 VerboseAction( cr, targetCr, "TODO uninjured=0 TARGET" );*/
     }
 
-    if(cr.IsPlayer() && is_injured)
-    {
+    if (cr.IsPlayer() && isInjured) {
         AddScore(cr, SCORE_DOCTOR, uninjured);
     }
     return true;
