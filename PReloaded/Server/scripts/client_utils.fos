@@ -433,4 +433,9 @@ void FloatingMiscText(int value, int reason) {
     mapMessage(FLOAT_ENFORCED, destX, destY, text, data);
 }
 
+void _playSound_unsafe(int, int, int, string@ name, array<int>@) {
+    PlaySound(name);
+    return;
+};
+
 #endif /* __CLIENT_UTILS__ */

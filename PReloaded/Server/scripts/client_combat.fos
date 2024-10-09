@@ -129,6 +129,11 @@ int to_hit(CritterCl& chosen, CritterCl& target, ProtoItem& weapon, uint8 weapon
         return 0;
 
     int toHit = int(chosen.Skill[skillNum]);
+    if (skillNum == SK_SMALL_GUNS || skillNum == SK_BIG_GUNS || skillNum == SK_ENERGY_WEAPONS || skillNum == SK_THROWING) {
+        if (chosen.ParamBase[ST_EX_RANGE_PENALTY] > 0) {
+            toHit -= chosen.ParamBase[ST_EX_RANGE_PENALTY];
+        }
+    }
 
 	if(valid(realWeapon) && (realWeapon.Proto.ProtoId == PID_NEEDLER_PISTOL)) toHit = int(MAX(chosen.Skill[SK_SMALL_GUNS], chosen.Skill[SK_DOCTOR])); // 25-07-2013 Cubik: przy uzywaniu Needlera do celnosci brany jest max(sg,doc)
 

@@ -1,0 +1,22 @@
+#ifndef __DRUGS_H__
+# define __DRUGS_H__
+
+
+#define PSYCHO_DIVISOR          (100)
+#define PSYCHO_STAGE                      # (val)          ((val) % PSYCHO_DIVISOR)
+#define PSYCHO_DAMAGE                     # (val)          ((val) / PSYCHO_DIVISOR)
+#define PSYCHO_FROM_STAGE_DAMAGE          # (stage, damage) ((damage * PSYCHO_DIVISOR) + stage)
+#define PSYCHO_CHANGE_STAGE               # (old, stage)   (((old / PSYCHO_DIVISOR) * PSYCHO_DIVISOR) + stage)
+#define PSYCHO_CHANGE_DAMAGE              # (old, damage)  ((damage * PSYCHO_DIVISOR) + (old % PSYCHO_DIVISOR))
+
+#define TIMER_PSYCHO_STAGE_1            (30)
+#define TIMER_PSYCHO_STAGE_2            (90)
+#define TIMER_PSYCHO_STAGE_1_CHEM_REL   (20)
+#define TIMER_PSYCHO_STAGE_2_CHEM_REL   (40)
+#define PSYCHO_STAGE_0          (0)       //  Psycho not active
+#define PSYCHO_STAGE_1          (1)       //  Psycho soaking damage
+#define PSYCHO_STAGE_2_START    (2)       //  Psycho inflicting back the soaked damage
+#define PSYCHO_STAGE_2_END      (11)       //  Psycho inflicting back the soaked damage
+
+
+#endif //   __DRUGS_H__

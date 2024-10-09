@@ -28,6 +28,7 @@
 #include "combat_h.fos"
 #include "_npc_pids.fos"
 #include "_colors.fos"
+#include "drugs_h.fos"
 
 #define COLOR_DTEXT_BONUS       (COLOR_LGREEN)
 #define COLOR_DTEXT_MALUS       (COLOR_WRED)
@@ -45,7 +46,7 @@ import void WearItem(Critter& cr, Item& item, int wearCount) from "repair";
 import void WearHandsOnDeath(Critter& cr) from "repair";
 import void SetMinWear(Item& item, int wearProcent) from "repair";
 
-
+/*
 class AttackStruct
 {
     Critter@   Attacker = null;
@@ -102,7 +103,7 @@ class AttackStruct
 		else return 0;
 	}
 
-}
+}*/
 
 int SelectArmorBonus(Item@ armor, int Int_Val_ArmorBonus)
 {
@@ -307,10 +308,11 @@ void CombatAttack(Critter& cr, Critter& target, ProtoItem& weapon, uint8 weaponM
 
 
     // baseToHit used for all targets, adjusted for distance and other target-dependent qualities every time it is necessary
-    int baseToHit = skillVal;
+    int baseToHit = skillVal - CLAMP(cr.ParamBase[ST_EX_RANGE_PENALTY], 0, 250);
     if (isDummyTraining) {
         dummyInfo += "|" + COLOR_DTEXT_CAPTION + " Chance to Hit :: ";
-        dummyInfo += "|" + COLOR_DTEXT_REGULAR + " Base To Hit = |"  + COLOR_DTEXT_BONUS + " " + baseToHit;
+        dummyInfo += "|" + COLOR_DTEXT_REGULAR + " Base To Hit = |"  + COLOR_DTEXT_BONUS + " " + skillVal;
+        dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , Alcohol Range Penalty = |"  + COLOR_DTEXT_MALUS + " " + CLAMP(cr.ParamBase[ST_EX_RANGE_PENALTY], 0, 250);
     }
     if (eyeDamage) {
         baseToHit -= 25;
@@ -1977,10 +1979,6 @@ void CombatAttack(Critter& cr, Critter& target, ProtoItem& weapon, uint8 weaponM
     }
 }
 
-
-
-
-
 void ApplyDamage(AttackStruct& attack, Critter& target, uint rounds, bool isCritical, bool intentionally, array<CombatRes>& results, int CriticalChance)
 {
 	Item@ usedArmor = _GetCritterArmor(target, attack.AimHead);
@@ -2024,8 +2022,7 @@ void ApplyDamage(AttackStruct& attack, Critter& target, uint rounds, bool isCrit
 
 	array<int>	_dmgMul;
 	_dmgMul.resize(rounds);
-	for(uint i = 0; i < rounds; i++)
-	{
+	for (uint i = 0; i < rounds; i++) {
 		_dmgMul[i] = dmgMul;
 	}
 
@@ -2995,7 +2992,7 @@ void ApplyDamage(AttackStruct& attack, Critter& target, uint rounds, bool isCrit
 
 
         if (isDummyTraining && _dmgMul[i] != 1) {
-            dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , Crit Mult = |" + COLOR_DTEXT_BONUS + " " + _dmgMul[i];
+            dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , Damage Mult = |" + COLOR_DTEXT_BONUS + " " + _dmgMul[i];
         }
         _dmgMul[i] *= attack.DMMod;
         if (isDummyTraining && attack.DMMod != 1) {
@@ -3476,6 +3473,17 @@ void ApplyDamage(AttackStruct& attack, Critter& target, uint rounds, bool isCrit
             }
             //END
 
+            //  BNW: PSYCHO rework, reduce incoming damage at phase1 and re-apply it over time in phase2
+            int psychoValue = target.ParamBase[ST_EX_PSYCHO_STAGE_DAMAGE];
+            if ( psychoValue > 0) {
+                if (PSYCHO_STAGE(psychoValue) == PSYCHO_STAGE_1) {
+                    int psychoReduced = totalDmg * 0.5;
+                    //Log("Reduced by psycho: Total = " + totalDmg + ", Reduced = " + psychoReduced);
+                    totalDmg -= psychoReduced;
+                    target.ParamBase[ST_EX_PSYCHO_STAGE_DAMAGE] = (PSYCHO_DAMAGE(psychoValue) + psychoReduced) * PSYCHO_DIVISOR + PSYCHO_STAGE(psychoValue);
+                }
+            }
+
             target.StatBase[ST_CURRENT_HP] -= totalDmg;
             if(target.Stat[ST_CURRENT_HP] < 1)
             {
@@ -3764,16 +3772,16 @@ void ApplyDamage(AttackStruct& attack, Critter& target, uint rounds, bool isCrit
         bool quick = target.Perk[PE_QUICK_RECOVERY] > 0;
         //float intellectFactor = (0.33 + (2.0 * (10.0 - target.Stat[ST_INTELLECT]) / 27.0));
         float intellectFactor = (0.33 + (10.0 - target.Stat[ST_INTELLECT]) / 9.0);
-        Log("KNOCKOUT - IN = " + target.Stat[ST_INTELLECT] + ", FACTOR = " + intellectFactor);
+        //Log("KNOCKOUT - IN = " + target.Stat[ST_INTELLECT] + ", FACTOR = " + intellectFactor);
         if (loseTurn) {
             targetAp = quick ? (-maxAp / 3) : (-maxAp * intellectFactor);
-            Log("KNOCKOUT - maxAP = " + maxAp + ", targetAp = " + targetAp);
+            //Log("KNOCKOUT - maxAP = " + maxAp + ", targetAp = " + targetAp);
             target.StatBase[ST_MOVE_AP] = 0;
         }
 
         if (knockOut) {
             targetAp = quick ? -Random(maxAp, 3 * maxAp) / 3 : -Random(maxAp, 3 * maxAp) * intellectFactor;
-            Log("KNOCKOUT - maxAP = " + maxAp + ", targetAp = " + targetAp);
+            //Log("KNOCKOUT - maxAP = " + maxAp + ", targetAp = " + targetAp);
         }
 
 		if (knockDown && !(target.IsKnockout() && map.IsTurnBased())) {
@@ -4707,7 +4715,7 @@ void InjureCritter(Critter& cr, uint dmg, uint dmgType, uint8 dir, uint attacker
     attack.DmgMax = dmg;
     attack.DmgType = dmgType;
     attack.BonusDmg = 0;
-    attack.DmgMul = 2;
+    attack.DmgMul = 4;
     attack.DRMod = 0;
     attack.DMMod = 1;
     attack.DDMod = 1;

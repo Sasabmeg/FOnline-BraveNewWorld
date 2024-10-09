@@ -55,4 +55,64 @@
 #define MODE_PRIMARY_ATTACK                 (0)
 #define MODE_SECONDARY_ATTACK               (1)
 
+#ifdef __SERVER
+shared class AttackStruct
+{
+    Critter@   Attacker = null;
+    Item@      RealWeapon = null;
+    uint16     Hx = 0;
+    uint16     Hy = 0;
+    uint8      Aim = HIT_LOCATION_UNCALLED;
+    bool       AimHead = false;
+    bool       IsBurst = false;
+    bool       BloodyMess = false;
+    bool       CombatMessage = false;
+    bool       IsUnarmed = false;
+    int        WeaponPerk = -1;
+    uint8      WeaponSubtype = 0;
+    int        DmgMin = 0;
+    int        DmgMax = 0;
+    int        DmgType = 0;
+    int        BonusDmg = 0;
+    int        DmgMul = 4;
+    int        DRMod = 0;
+    int        DMMod = 1;
+    int        DDMod = 1;
+    uint       TargetId = 0;
+    bool       TargetHit = false;
+    bool       ShowHitAnimForce = false;
+    ProtoItem@ Ammo = null;
+    bool       SilentDeathEffect = false;
+	uint16     ammoPid;
+	uint16     weaponPid;
+	int8       weaponMode; // for swing/thrust melee weapons
+
+    void set_Aim(uint8 aim)
+    {
+        Aim = aim;
+        AimHead = aim == HIT_LOCATION_HEAD || aim == HIT_LOCATION_EYES;
+    }
+
+    uint8 get_Aim()
+    {
+        return Aim;
+    }
+
+	int SelectWeaponBonus(int Int_Val_WeaponBonus)
+	{
+		if(valid(RealWeapon))
+		{
+			if(RealWeapon.Val0 == Int_Val_WeaponBonus) return  RealWeapon.Val5;
+			if(RealWeapon.Val1 == Int_Val_WeaponBonus) return  RealWeapon.Val6;
+			if(RealWeapon.Val2 == Int_Val_WeaponBonus) return  RealWeapon.Val7;
+			if(RealWeapon.Val3 == Int_Val_WeaponBonus) return  RealWeapon.Val8;
+			if(RealWeapon.Val4 == Int_Val_WeaponBonus) return  RealWeapon.Val9;
+			return 0;
+		}
+		else return 0;
+	}
+
+};
+#endif
+
 #endif // _COMBAT_H_

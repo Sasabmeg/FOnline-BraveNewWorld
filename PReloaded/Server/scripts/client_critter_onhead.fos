@@ -7,6 +7,7 @@
 #include "_basetypes.fos"
 #include "sprite.fos"
 #include "config_h.fos"
+#include "drugs_h.fos"
 
 
 import bool GMToolsAccess() from "client_gmtools";
@@ -123,6 +124,8 @@ void DrawCritterOnHead()	//export
 
 	CritterCl@ chosen = GetChosen();
 
+	bool isPsycho = PSYCHO_STAGE(chosen.ParamBase[ST_EX_PSYCHO_STAGE_DAMAGE]) == 1;
+
 	for(uint i = 0, iLen = crits.length(); i < iLen; ++i)
 	{
 		CritterCl@ cr = GetCritter(crits[i]);
@@ -179,9 +182,9 @@ void DrawCritterOnHead()	//export
 
 		if(head != " ")
 		{
-			name = "|" + cr.NameColor + " " + head;
-			cr.ContourColor = cr.ContourColor;
-			if (!cr.IsPlayer()) {
+            name = "|" + cr.NameColor + " " + head;
+            cr.ContourColor = cr.ContourColor;
+            if (!cr.IsPlayer()) {
                 if (cr.IsDead()) {
                     name = "|" + npcNamesDeadColor + " " + head;
                 } else if (nameSearch.length() > 0 && substring(strlwr(head), 0, nameSearch.length()) == strlwr(nameSearch)) {
@@ -199,13 +202,17 @@ void DrawCritterOnHead()	//export
                 } else if (cr.StatBase[ST_DIALOG_ID] >= 20000) {
                     name = "|" + npcNamesQuestRegularColor + " " + head;
                 }
-			}
+            }
+            //  comment this if you don't want red colored names when psycho phase 1
+		    if (isPsycho) {
+                name = "|" + COLOR_RED + " " + head;
+		    }
 
 		}
 		else
 			name = " ";
 
-		if(cr.IsPlayer())
+		if(cr.IsPlayer() && !isPsycho)
 		{
 			cr.NameOnHead = name;
 
@@ -235,14 +242,18 @@ void DrawCritterOnHead()	//export
 		{
 			if(valid(chosen) && __ConfigOnHeadAwareness == 1)
 			{
-				color_g = (255*cr.Param[ST_CURRENT_HP])/cr.Param[ST_MAX_LIFE];
-				hp_proc = cr.Param[ST_CURRENT_HP] * 100 / cr.Param[ST_MAX_LIFE];
+                color_g = (255*cr.Param[ST_CURRENT_HP])/cr.Param[ST_MAX_LIFE];
+                hp_proc = cr.Param[ST_CURRENT_HP] * 100 / cr.Param[ST_MAX_LIFE];
 
-				if(color_g < 0)
-					color_g = 0;
-				color_r = 255 - color_g;
+                if(color_g < 0)
+                    color_g = 0;
+                color_r = 255 - color_g;
 
-				hp = "|" + COLOR_RGB(color_r, color_g, color_b) + " " + cr.Param[ST_CURRENT_HP] + "/" + cr.Param[ST_MAX_LIFE];
+                hp = "|" + COLOR_RGB(color_r, color_g, color_b) + " " + cr.Param[ST_CURRENT_HP] + "/" + cr.Param[ST_MAX_LIFE];
+                //  comment this if you don't want red colors in HP when psycho phase 1, regardless of health level
+			    /*if (isPsycho) {
+                    hp = "|" + COLOR_RED + " " + cr.Param[ST_CURRENT_HP] + "/" + cr.Param[ST_MAX_LIFE];
+			    }*/
 			}
 			else
 			{
