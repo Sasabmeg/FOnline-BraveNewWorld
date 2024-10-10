@@ -137,12 +137,28 @@ void UseDrug(Critter& cr, Item& drug)   // Export
 
     SetDrug(cr, pid);
     if (pid == PID_PSYCHO) {
-        int roll = Random(1, 10);
-        if (roll == 10) {
-            cr.Say(SAY_NETMSG, "You used up all the dosage left in that Psycho.");
-            _SubItem(drug, 1);
-        } else {
-            cr.Say(SAY_NETMSG, "You used up one Psycho dosage.");
+        GameVar@ psychoDoseVar = GetLocalVar(LVAR_psycho_dose, cr.Id);
+        if (valid(psychoDoseVar)) {
+            psychoDoseVar = psychoDoseVar + 1;
+            int psychoFullDosage = 10;
+            if (cr.ParamBase[TRAIT_CHEM_RELIANT] > 0) {
+                psychoFullDosage = 20;
+            }
+            if (psychoDoseVar >= psychoFullDosage) {
+                psychoDoseVar = 0;
+                cr.Say(SAY_NETMSG, "You used up all the dosage left in that Psycho.");
+                _SubItem(drug, 1);
+            } else {
+                if (psychoDoseVar.GetValue() < psychoFullDosage / 4) {
+                    cr.Say(SAY_NETMSG, "You used up some doses of Psycho.");
+                } else if (psychoDoseVar.GetValue() < psychoFullDosage / 2) {
+                    cr.Say(SAY_NETMSG, "You used up almost half of the Psycho's doses.");
+                } else if (psychoDoseVar.GetValue() < psychoFullDosage * 3 / 4) {
+                    cr.Say(SAY_NETMSG, "You used up more than half of the Psycho doses.");
+                } else {
+                    cr.Say(SAY_NETMSG, "You used up most of the Psycho's doses.");
+                }
+            }
         }
     } else {
         _SubItem(drug, 1);
@@ -485,6 +501,12 @@ void SetDrug(Critter& cr, uint16 drugPid) {
             isBlocked = positive >= 2 - negative / 2;
         }
 
+        /*
+        if (drugPid == PID_BEER || drugPid == PID_GAMMA_GULP_BEER || drugPid == PID_BOOZE || drugPid == PID_BEER || drugPid == PID_BEER) {
+            RefreshDrug(cr, drugPid, FORM_RATE(0, flags));
+            isBlocked = true;
+        }*/
+
         if(isBlocked)
         {
             if(drugPid != PID_RADAWAY)
@@ -544,7 +566,7 @@ uint ProcessDrug(Critter& cr, uint16 drugPid, uint& rate)
                 if(stat < 0)
                     continue;
 
-                int statVal = cr.Stat[stat];
+                int statVal = cr.Param[stat];
                 if(stat < STAT_EXT_BEGIN)
                     cr.StatBase[STAT_EXT_BEGIN + stat] += amount;
                 else if(stat == ST_CURRENT_HP)
@@ -599,18 +621,17 @@ uint ProcessDrug(Critter& cr, uint16 drugPid, uint& rate)
                     }
                 } else if (stat == ST_EX_RANGE_PENALTY) {
                     cr.ParamBase[stat] += amount;
-                    if(amount > 0)
-                        cr.Say(SAY_NETMSG, "Gained Range penalty: " + amount);
-                    else if(amount < 0)
-                        cr.Say(SAY_NETMSG, "Lost Range penalty: " + amount);
                 } else if(stat == ST_POISONING_LEVEL)
                     AffectPoison(cr, amount);                                                         // cr.SetStat(ST_POISONING_LEVEL,CLAMP(statVal+amount,0,2000));
                 else if(stat == ST_RADIATION_LEVEL && (drugPid != PID_MUTATED_FRUIT || cr.Perk[PE_WAY_OF_THE_FRUIT] == 0))
                         AffectRadiation(cr, amount);                                                      // cr.SetStat(ST_RADIATION_LEVEL,CLAMP(statVal+amount,0,2000));
+                /*else if (stat == ST_EX_RANGE_PENALTY) {
+                    DrugsLog("ProcessDrugs :: StatValue = " + statVal);
+                }*/
                 else
                     continue;
 
-                statVal = cr.Stat[stat] - statVal;
+                statVal = cr.Param[stat] - statVal;
                 DrugsLog("ProcessDrugs :: StatValue = " + statVal);
                 if(statVal > 0)
                     cr.SayMsg(SAY_NETMSG, TEXTMSG_GAME, STR_DRUG_STAT_GAIN, "$name @msg game " + STR_PARAM_NAME(stat) + "@$value" + statVal);
@@ -698,7 +719,7 @@ void DropDrug(Critter& cr, uint16 drugPid, uint stage)
             if (stat < STAT_EXT_BEGIN) {
                 cr.StatBase[STAT_EXT_BEGIN + stat] += amount;
             } else if (stat == ST_EX_RANGE_PENALTY) {
-                cr.Say(SAY_NETMSG, "Lost Range penalty: " + amount);
+                //cr.Say(SAY_NETMSG, "Lost Range penalty: " + amount);
                 cr.ParamBase[stat] += amount;
             }
         }

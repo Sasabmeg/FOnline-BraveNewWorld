@@ -221,6 +221,7 @@
 #define LVAR_q_hub_risto_cave_item              (6821)
 #define LVAR_q_hub_risto_cave_node              (6822)
 #define LVAR_q_hub_risto_cave_loc               (6823)
+#define LVAR_q_hub_jkelly_rats                  (6824)
 
 
 
@@ -434,6 +435,11 @@
 #define LVAR_npc_name_nicktype                  (20009)
 #define LVAR_npc_name_surname                   (20010)
 
+//  PLAYER COUNTERS ON STACKING ITEMS
+#define LVAR_psycho_dose                        (20200)
+#define LVAR_jet_dose                           (20201)
+#define LVAR_first_aid_use                      (20202)
+#define LVAR_doctor_use                         (20203)
 
 //	FEATURES									#21000
 #define LVAR_Book_Barter	                    (21001)
@@ -1532,6 +1538,10 @@
 
 **********
 
+   $	6824	1	q_hub_jkelly_rats	    0	0	99	1
+**********
+
+**********
 
 
 //
@@ -2552,6 +2562,30 @@ Landers Point caravan packer quest variable.
 **********
 
 **********
+
+//
+//  PLAYER UTILITIES (USAGE COUNTERS, ETC)
+//
+
+$	20200	1	LVAR_psycho_dose            0	0   100     0
+************
+
+************
+
+$	20201	1	LVAR_jet_dose            0	0   100     0
+************
+
+************
+
+$	20202	1	LVAR_first_aid_use            0	0   100     0
+************
+
+************
+
+$	20203	1	LVAR_doctor_use            0	0   100     0
+************
+
+************
 
 
 //

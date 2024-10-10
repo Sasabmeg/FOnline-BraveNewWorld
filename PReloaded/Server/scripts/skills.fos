@@ -68,7 +68,7 @@ bool UseFirstAidOnCritter(Critter& cr, Critter& targetCr, Item@ item)
         cr.ParamBase[MODE_HIDE] = 0;
     }
 
-    int sk = cr.Skill[SK_FIRST_AID];
+    int firstAidSkill = cr.Skill[SK_FIRST_AID];
     int itemFactor = 0;
 
     @item = SelectSkillItem(cr, item, SK_FIRST_AID);
@@ -76,12 +76,27 @@ bool UseFirstAidOnCritter(Critter& cr, Critter& targetCr, Item@ item)
         @item = SelectSkillItemExt(cr, item, SK_FIRST_AID);
     }
     if (valid(item)) {
-        sk += item.Proto.Misc_ToolSkillBonus;
-        int roll = Random(1, 10 + (cr.SkillBase[SK_FIRST_AID] / 20) + cr.PerkBase[PE_MEDIC] * 5 + cr.PerkBase[PE_FIELD_MEDIC] * 5);
-        //Log("FA ITEM DELETE ROLL = " + roll);
-        if (roll == 1) {
-            cr.DeleteItem(item.GetProtoId(), 1);
-            cr.Say(SAY_NETMSG, "You emptied and used up your medical tools.");
+        firstAidSkill += item.Proto.Misc_ToolSkillBonus;
+
+        GameVar@ firstAidToolUseVar = GetLocalVar(LVAR_doctor_use, cr.Id);
+        if (valid(firstAidToolUseVar)) {
+            firstAidToolUseVar = firstAidToolUseVar + 1;
+            int firstAidToolMaxUse = 5 + (firstAidSkill / 20) + cr.PerkBase[PE_MEDIC] * 5 + cr.PerkBase[PE_FIELD_MEDIC] * 5;
+            if (firstAidToolUseVar >= firstAidToolMaxUse) {
+                firstAidToolUseVar = 0;
+                cr.DeleteItem(item.GetProtoId(), 1);
+                cr.Say(SAY_NETMSG, "You emptied and used up all the resources in your medical tool.");
+            } else {
+                if (firstAidToolUseVar.GetValue() < firstAidToolMaxUse / 4) {
+                    cr.Say(SAY_NETMSG, "You used up some of your medical supplies.");
+                } else if (firstAidToolUseVar.GetValue() < firstAidToolMaxUse / 2) {
+                    cr.Say(SAY_NETMSG, "You used up almost half of your medical supplies.");
+                } else if (firstAidToolUseVar.GetValue() < firstAidToolMaxUse * 3 / 4) {
+                    cr.Say(SAY_NETMSG, "You used up more than half of your medical supplies.");
+                } else {
+                    cr.Say(SAY_NETMSG, "You used up most of your medical supplies.");
+                }
+            }
         }
         itemFactor = 10;
     }
@@ -248,11 +263,26 @@ bool UseDoctorOnCritter(Critter& cr, Critter& targetCr, Item@ item)
     int itemFactor = 1;
     if (valid(item)) {
         doctorSkill += item.Proto.Misc_ToolSkillBonus;
-        int roll = Random(1, 10 + (doctorSkill / 20) + cr.PerkBase[PE_MEDIC] * 5 + cr.PerkBase[PE_FIELD_MEDIC] * 5);
-        //Log("FA ITEM DELETE ROLL = " + roll);
-        if (roll == 1) {
-            cr.DeleteItem(item.GetProtoId(), 1);
-            cr.Say(SAY_NETMSG, "You emptied and used up your medical tools.");
+        GameVar@ doctorToolUseVar = GetLocalVar(LVAR_doctor_use, cr.Id);
+        if (valid(doctorToolUseVar)) {
+            doctorToolUseVar = doctorToolUseVar + 1;
+            int doctorToolMaxUse = 5 + (doctorSkill / 20) + cr.PerkBase[PE_MEDIC] * 5 + cr.PerkBase[PE_FIELD_MEDIC] * 5;
+            if (doctorToolUseVar >= doctorToolMaxUse) {
+                doctorToolUseVar = 0;
+                cr.DeleteItem(item.GetProtoId(), 1);
+                cr.Say(SAY_NETMSG, "You emptied and used up all the resources in your medical tool.");
+            } else {
+                if (doctorToolUseVar.GetValue() < doctorToolMaxUse / 4) {
+                    cr.Say(SAY_NETMSG, "You used up some of your medical supplies.");
+                } else if (doctorToolUseVar.GetValue() < doctorToolMaxUse / 2) {
+                    cr.Say(SAY_NETMSG, "You used up almost half of your medical supplies.");
+                } else if (doctorToolUseVar.GetValue() < doctorToolMaxUse * 3 / 4) {
+                    cr.Say(SAY_NETMSG, "You used up more than half of your medical supplies.");
+                } else {
+                    cr.Say(SAY_NETMSG, "You used up most of your medical supplies.");
+                }
+            }
+
         }
         itemFactor = 3;
     }

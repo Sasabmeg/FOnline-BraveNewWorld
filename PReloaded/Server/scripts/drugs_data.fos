@@ -103,14 +103,14 @@ const int[] DrugEffects =
     ST_PERCEPTION,             -2,      2,      0,      0,      0,
     ST_ACTION_POINTS,           0,      0,      0,     -1,      1,
     // (11) PID_BEER, special
-    -1,                         0,    600,      0,      0,      0,
+    ADDICTION_BEER,             0,    600,      0,      0,      0,
     ST_NORMAL_RESIST,           4,     -4,      0,      0,      0,
     ST_PERCEPTION,             -1,      1,      0,      0,      0,
     ST_STRENGTH,                1,     -1,      0,      0,      0,
     ST_EX_RANGE_PENALTY,       50,    -50,      0,      0,      0,
     -1,                         0,      0,      0,      0,      0,
     // (12) PID_BOOZE
-    -1,                         0,    600,      0,      0,      0,
+    ADDICTION_BEER,             0,    600,      0,      0,      0,
     ST_NORMAL_RESIST,           3,     -3,      0,      0,      0,
     ST_PERCEPTION,             -1,      1,      0,      0,      0,
     ST_CHARISMA,                1,     -1,      0,      0,      0,
@@ -145,14 +145,14 @@ const int[] DrugEffects =
     -1,                         0,      0,      0,      0,      0,
     -1,                         0,      0,      0,      0,      0,
     // (17) PID_GAMMA_GULP_BEER
-    -1,                         0,    600,      0,      0,      0,
+    ADDICTION_BEER,             0,    600,      0,      0,      0,
     ST_NORMAL_RESIST,           3,     -3,      0,      0,      0,
     ST_PERCEPTION,             -1,      1,      0,      0,      0,
     ST_RADIATION_RESISTANCE,   10,    -10,      1,      0,      0,
     ST_RADIATION_LEVEL,        10,      0,      0,      0,      0,
     ST_EX_RANGE_PENALTY,       50,    -50,      0,      0,      0,
     // (18) PID_ROENTGEN_RUM
-    -1,                         0,    600,      0,      0,      0,
+    ADDICTION_BEER,             0,    600,      0,      0,      0,
     ST_NORMAL_RESIST,           2,     -2,      0,      0,      0,
     ST_PERCEPTION,             -1,      1,      0,      0,      0,
     ST_NORMAL_ABSORB,           1,     -1,      0,      0,      0,
@@ -180,7 +180,7 @@ const int[] DrugEffects =
     -1,                         0,      0,      0,      0,      0,
     -1,                         0,      0,      0,      0,      0,
     // (22) PID_ROT_GUT
-    -1,                         0,      6,      0,      0,      0,
+    ADDICTION_BEER,             0,    600,      0,      0,      0,
     ST_NORMAL_RESIST,           3,     -3,      0,      0,      0,
     ST_PERCEPTION,             -1,      1,      0,      0,      0,
     ST_FIRE_RESIST,           -10,     10,      0,      0,      0,
