@@ -31,6 +31,7 @@ import void InitQuestTracker() from "client/client_QuestTracker";
 import void InitInventoryTracker() from "client/client_InventoryTracker";
 import void InitCarTracker() from "client/client_CarTracker";
 import void InitGuiImage() from "client/client_GuiImage";
+import void InitPsychoFx() from "client/client_psychoFx";
 import void InitMapGreeter() from "client/client_MapGreeter";
 
 import void RefreshCars(array<int>@ data, string@ ownerList) from "client/client_CarTracker";
@@ -168,6 +169,7 @@ bool start()
     InitInventoryTracker();
     InitCarTracker();
     InitGuiImage();
+    InitPsychoFx();
     InitMapGreeter();
 
     InitBarterFilters();

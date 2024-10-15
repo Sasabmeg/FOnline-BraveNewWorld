@@ -1,0 +1,190 @@
+/**
+*   FO version:     FOClassic: Brave New World
+*   Contributor:    Sasabazmeg
+*   File:           client_psychoFx.fos
+*
+*   Description:    Pop-up an overlay image when the Psycho drug is used.
+*/
+
+#ifndef __PSYCHOFX__
+#define __PSYCHOFX__
+
+#include "../sprite.fos"
+#include "../_defines.fos"
+#include "../_client_defines.fos"
+#include "../_macros.fos"
+#include "../_colors.fos"
+#include "../client_gui_h.fos"
+#include "client_InterfaceControl.fos"
+#include "client_InterfaceTextbox.fos"
+#include "client_InterfaceWindow.fos"
+#include "client_InterfaceImage.fos"
+
+
+CPsychoFx psychoFx;
+CInterfaceImage interfaceImage;
+
+void _psychoActivate_unsafe(int, int, int, string@ name, array<int>@) {
+    psychoFx.Activate();
+    CritterCl@ chosen = GetChosen();
+    if (!valid(chosen)) {
+        //Message("Chosen is fake!");
+        return;
+    }
+    return;
+};
+
+//  Exported
+void TogglePsychoFx() {
+    psychoFx.enabled = !psychoFx.enabled;
+}
+
+// Exported
+bool IsPsychoFxEnabled() {
+    return psychoFx.enabled;
+}
+
+//  Exported - client_main
+void InitPsychoFx() {
+    Log("InitPsychoFx()");
+    psychoFx = CPsychoFx();
+    psychoFx.enabled = true;
+    interfaceImage = CInterfaceImage(0, 0, __ScreenWidth, __ScreenHeight);
+    interfaceImage.hasBackground = false;
+    psychoFx.imageSprite[0] = LoadSprite("psycho\\1.png", PATH_ART_INTRFACE);
+    psychoFx.imageSprite[1] = LoadSprite("psycho\\2.png", PATH_ART_INTRFACE);
+    psychoFx.imageSprite[2] = LoadSprite("psycho\\3.png", PATH_ART_INTRFACE);
+    psychoFx.imageSprite[3] = LoadSprite("psycho\\4.png", PATH_ART_INTRFACE);
+    psychoFx.imageSprite[4] = LoadSprite("psycho\\5.png", PATH_ART_INTRFACE);
+    psychoFx.spriteWidth = GetSpriteWidth(psychoFx.imageSprite[0], -1);
+    psychoFx.spriteHeight = GetSpriteHeight(psychoFx.imageSprite[0], -1);
+    psychoFx.spriteRatio = float(psychoFx.spriteWidth) / psychoFx.spriteHeight;
+
+
+    /*
+    if (interfaceImage.SetImage("psycho\\1.png")) {
+        Log("Setting image: psycho\\1.png");
+        Message("Setting image: psycho\\1.png");
+    } else {
+        Log("Failed setting image: psycho\\1.png");
+        Message("Failed setting image: psycho\\1.png");
+    }*/
+}
+
+//  Exported
+void DrawPsychoImage() {
+    psychoFx.Draw();
+}
+
+class CPsychoFx {
+    bool enabled;                           //  use this to toggle on/off
+    bool active = false;
+    uint activationTime = 0;
+    uint activeDuration = 5000;
+    uint frameStep = 200;
+    uint imageCount = 5;
+    uint index = 0;
+    int spriteWidth, spriteHeight, borderWidth, borderHeight;
+    float spriteRatio = 1;
+    float screenRatio = float(__ScreenWidth) / __ScreenHeight;
+    uint[] imageSprite = {0, 0, 0, 0, 0};
+
+    CPsychoFx() {
+        enabled = false;
+    }
+
+    void ProgressImage() {
+        //Message("Progress Image");
+        if (active && (GetTick() > activationTime + activeDuration)) {
+            active = false;
+            index = 0;
+            return;
+        }
+        if (GetTick() > activationTime + (index + 1) * frameStep) {
+            index++;
+        }
+    }
+
+    void Activate() {
+        activationTime = GetTick();
+        active = true;
+        index = 0;
+        Message("Psycho activated!!!");
+    }
+
+    void Draw() {
+        if (!enabled) {
+            //Message("GuiImage disabled.");
+            return;
+        }
+
+        /*
+        if (GUI_GetActiveMainScreen() != CLIENT_MAIN_SCREEN_GAME) {
+            //Message("GuiImage not on main screen.");
+            return;
+        }*/
+
+        CritterCl@ chosen = GetChosen();
+        if (!valid(chosen)) {
+            //Message("Chosen is fake!");
+            return;
+        }
+        ProgressImage();
+        if (active) {
+            if (imageSprite[index%5] > 0) {
+                //Message("draw called");
+                int x = 0;
+                int y = 0;
+                if (float(__ScreenWidth) / __ScreenHeight < spriteRatio) {
+                    float wr = float(__ScreenWidth) / spriteWidth;
+                    borderWidth = __ScreenWidth;
+                    borderHeight = (__ScreenHeight - (float(spriteHeight) * wr)) / 2;
+                    drawRectangle(0, 0, borderWidth, borderHeight);
+                    drawRectangle(0, __ScreenHeight - borderHeight - 2, borderWidth, borderHeight + 2);
+                } else if (float(__ScreenWidth) / __ScreenHeight > spriteRatio) {
+                    float hr = float(__ScreenHeight) / spriteHeight;
+                    borderWidth = (__ScreenWidth - (float(spriteWidth) * hr)) / 2;
+                    borderHeight = __ScreenHeight;
+                    drawRectangle(0, 0, borderWidth, borderHeight);
+                    drawRectangle(__ScreenWidth - borderWidth - 1, 0, borderWidth + 1, borderHeight);
+                } else {
+                    //Message(" == ");
+                }
+                DrawSprite(imageSprite[index%5], -1, 0, 0, __ScreenWidth, __ScreenHeight, false, true, 0);
+            } else {
+                //Message("image not loaded");
+            }
+        }
+    }
+
+    void drawRectangle(int x, int y, int width, int height) {
+        array<int> background;
+        int bcolor = int(COLOR_ARGB(245, 106, 19, 2));
+        //Message("drawBackground: " + x + ", " + y);
+        //  top left
+        background.insertLast(x);
+        background.insertLast(y);
+        background.insertLast(bcolor);
+
+        //  top right
+        background.insertLast(x + width);
+        background.insertLast(y);
+        background.insertLast(bcolor);
+
+        //  bottom right
+        background.insertLast(x + width);
+        background.insertLast(y + height);
+        background.insertLast(bcolor);
+
+        //  bottom left
+        background.insertLast(x);
+        background.insertLast(y + height);
+        background.insertLast(bcolor);
+        //  draw
+        DrawPrimitive(DRAW_PRIMITIVE_TRIANGLEFAN, background);
+    }
+
+};
+
+#endif 	//	__GUI_IMAGE__
+

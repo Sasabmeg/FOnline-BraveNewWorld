@@ -44,6 +44,7 @@ import void DrawQuestTracker() from "client/client_QuestTracker";
 import void DrawInventoryTracker() from "client/client_InventoryTracker";
 import void DrawCarTracker() from "client/client_CarTracker";
 import void DrawGuiImage() from "client/client_GuiImage";
+import void DrawPsychoImage() from "client/client_psychoFx";
 import void DrawMapGreeterMessage() from "client/client_MapGreeter";
 
 import bool IsPossessMode() from "client_dev_menu";
@@ -499,6 +500,7 @@ void render_iface(uint layer)
         DrawCustomBorder();
         DrawCarTracker();
         DrawGuiImage();
+        DrawPsychoImage();
         RenderHexThrowing();
         RenderHexShoting();
 
