@@ -79,57 +79,74 @@ bool TryRepairItem(Critter& cr, Item& item)
         cr.Say(SAY_NETMSG, "This item cannot be repaired any further.");
         return true;
     }
-	
-	// Repair
-    int repair = cr.Skill[SK_REPAIR]-30;
-    repair = CLAMP(repair, 5, 95);
-	int bonus=0;
-	
-	Item@ tool = cr.GetItem(0, SLOT_HAND1);
-    if(valid(tool) && tool.GetProtoId() == PID_SUPER_TOOL_KIT) bonus=Random(10,12);
-	else if(valid(tool) && tool.GetProtoId() == PID_MULTI_TOOL) bonus=Random(5,7);
-	else if(valid(tool) && tool.GetProtoId() == PID_WRENCH) bonus=Random(8,9);
-	else 
-		{
-		bonus=Random(0,3);
-		if(valid(tool) && tool.GetProtoId()!=PID_OIL_CAN) @tool=null;
-		}
-	
-	bool cleanRepair=false;
-	if(valid(tool) && tool.GetProtoId() == PID_SUPER_TOOL_KIT && Random(0,99)<20) cleanRepair=true;
-	else if(valid(tool) && tool.GetProtoId() == PID_WRENCH && Random(0,99)<15) cleanRepair=true;
-	else if(valid(tool) && tool.GetProtoId() == PID_MULTI_TOOL && Random(0,99)<10) cleanRepair=true;
-	else if(valid(tool) && tool.GetProtoId() == PID_OIL_CAN) cleanRepair=true;
 
-	if(!cleanRepair)
-	{
-    item.BrokenCount += 15-bonus;
-    if(item.BrokenCount > 100)	item.BrokenCount = 100;	
-	if(item.Deterioration/100 < item.BrokenCount) item.Deterioration=item.BrokenCount*100;
+	// Repair
+    int repair = cr.Skill[SK_REPAIR] - 30;
+    repair = CLAMP(repair, 5, 95);
+	int bonus = 0;
+
+	Item@ tool = cr.GetItem(0, SLOT_HAND1);
+    if (valid(tool) && tool.GetProtoId() == PID_SUPER_TOOL_KIT) {
+        bonus = Random(10, 12);
+    } else if(valid(tool) && tool.GetProtoId() == PID_MULTI_TOOL) {
+        bonus = Random(5, 7);
+    } else if(valid(tool) && tool.GetProtoId() == PID_WRENCH) {
+        bonus = Random(8, 9);
+    } else {
+		bonus = Random(0, 3);
+		if (valid(tool) && tool.GetProtoId() != PID_OIL_CAN) {
+            @tool=null;
+		}
+    }
+
+	bool cleanRepair = false;
+	if (valid(tool) && tool.GetProtoId() == PID_SUPER_TOOL_KIT && Random(0, 99) < 20) {
+        cleanRepair = true;
+	} else if(valid(tool) && tool.GetProtoId() == PID_WRENCH && Random(0, 99) < 15) {
+	    cleanRepair = true;
+	} else if(valid(tool) && tool.GetProtoId() == PID_MULTI_TOOL && Random(0, 99) < 10) {
+	    cleanRepair = true;
+	} else if(valid(tool) && tool.GetProtoId() == PID_OIL_CAN) {
+	    cleanRepair = true;
 	}
-	
-	if((Random(1, 100) < repair) || cleanRepair)
-	{
-	item.Deterioration = item.BrokenCount*100;
-    cr.Say(SAY_NETMSG, "Maintenance successful.");
-	if(cleanRepair) {cr.Say(SAY_NETMSG, "It went perfectly.");cr.StatBase[ST_EXPERIENCE] += 250;}
+
+	if (!cleanRepair) {
+        item.BrokenCount += 15 - bonus;
+        if (item.BrokenCount > 100)	{
+            item.BrokenCount = 100;
+        }
+        if (item.Deterioration / 100 < item.BrokenCount) {
+            item.Deterioration = item.BrokenCount * 100;
+        }
 	}
-	else cr.Say(SAY_NETMSG, "Maintenance failed.");
-	
-	if(valid(tool) && ((Random(0, 19) == 0) || tool.GetProtoId()==PID_OIL_CAN)) cr.DeleteItem(tool.GetProtoId(), 1);
-	
-	
-	if(item.Deterioration == MAX_DETERIORATION)  SETFLAG(item.BrokenFlags, BI_BROKEN);
-	
-    item.Update();	
-	
-	
+
+	if ((Random(1, 100) < repair) || cleanRepair) {
+        item.Deterioration = item.BrokenCount * 100;
+        cr.Say(SAY_NETMSG, "Maintenance successful.");
+        if (cleanRepair) {
+            cr.Say(SAY_NETMSG, "It went perfectly.");
+            cr.StatBase[ST_EXPERIENCE] += 250;
+        }
+	} else {
+	    cr.Say(SAY_NETMSG, "Maintenance failed.");
+	}
+
+	if (valid(tool) && ((Random(0, 19) == 0) || tool.GetProtoId()==PID_OIL_CAN)) {
+        cr.DeleteItem(tool.GetProtoId(), 1);
+	}
+
+	if (item.Deterioration == MAX_DETERIORATION) {
+        SETFLAG(item.BrokenFlags, BI_BROKEN);
+	}
+
+    item.Update();
 
     //cr.RunClientScript("client_interface@_RepairSession", item.GetProtoId(), item.Id, 0, null, null);
     //cr.StatBase[ST_VAR0] = item.Id;
     //cr.ShowScreen(SHOW_SCREEN_BAG, 0, "RepairCallback");
     return true;
 }
+
 bool TryRepairItemCall(Critter& cr, Item@ item, Item@ with_item)
 {
     // Repair
