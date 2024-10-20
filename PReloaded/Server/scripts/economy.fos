@@ -111,7 +111,7 @@ int GetBaseModifier(Critter& player, Critter& trader, bool buy)   // buy means "
 {
     int traderGroup = _GroupIndex(trader);
 
-    int barter_factor = buy ? ((trader.Skill[SK_BARTER] * 25) / player.Skill[SK_BARTER]) : ((player.Skill[SK_BARTER] * 25) / trader.Skill[SK_BARTER]);
+    int barter_factor = buy ? ((trader.Skill[SK_BARTER] * 25) / CLAMP(player.Skill[SK_BARTER], 1, 300)) : ((player.Skill[SK_BARTER] * 25) / CLAMP(trader.Skill[SK_BARTER], 1, 300));
     barter_factor = CLAMP(barter_factor, 0, 25);
 
     int rep_factor = 25;   // half of maximum is default
