@@ -4,6 +4,11 @@
 #include "msgstr.h"
 #include "_vars.fos"
 
+import void GainSkillXp(Critter& cr, uint skillNum, int xp) from "skills";
+
+#define BOOK_READ_LIMIT     (20)
+#define BOOK_READ_XP        (60)
+
 bool IsReadableBook(uint16 pid) { // Export
 	switch (pid) {
         case PID_BIG_BOOK_OF_SCIENCE: // Science
@@ -34,7 +39,7 @@ void TryReadBook(Critter& cr, Item& book) { // Export
             strNum = STR_BOOK_READ_SCIENCE;
             readAlready = LVAR_Book_Science;
             break; // Science
-        case PID_DEANS_ELECTRONICS:\
+        case PID_DEANS_ELECTRONICS:
             skillNum = SK_REPAIR;
             strNum = STR_BOOK_READ_REPAIR;
             readAlready = LVAR_Book_Repair;
@@ -69,6 +74,19 @@ void TryReadBook(Critter& cr, Item& book) { // Export
 	}
 
 	GameVar@ readAlreadyVar = GetLocalVar(readAlready, cr.Id);
+
+	if (skillNum == SK_REPAIR || skillNum == SK_SCIENCE || skillNum == SK_OUTDOORSMAN || skillNum == SK_BARTER) {
+        if (valid(readAlreadyVar) && readAlreadyVar.GetValue() < BOOK_READ_LIMIT) {
+            GainSkillXp(cr, skillNum, int(BOOK_READ_XP - CLAMP(readAlreadyVar.GetValue() + ((cr.Skill[skillNum] - 100) / 2), 0, 40)));
+            cr.SayMsg(SAY_NETMSG,TEXTMSG_GAME,strNum);
+            readAlreadyVar += 1;
+            _SubItem(book, 1);
+        } else {
+            cr.SayMsg(SAY_NETMSG,TEXTMSG_GAME,STR_BOOK_READ_FAIL);
+        }
+        return;
+	}
+
 	if (valid(readAlreadyVar) && readAlreadyVar.GetValue() < 10) {
 
         //int sp=6;
@@ -139,8 +157,7 @@ void TryReadBook(Critter& cr, Item& book) { // Export
         if (cr.Skill[SK_SMALL_GUNS] > 300) {
                 cr.SkillBase[SK_SMALL_GUNS] = 300;
         }
-	}
-	else {
+	} else {
         cr.SayMsg(SAY_NETMSG,TEXTMSG_GAME,STR_BOOK_READ_FAIL);
 	}
 }

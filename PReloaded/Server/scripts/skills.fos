@@ -12,6 +12,19 @@
 #include "utils_h.fos"
 #include "reputations_h.fos"
 #include "_colors.fos"
+#include "_vars.fos"
+
+#define _XpForNextSkill              # (skill)  (skill > 175 ? 180 : (skill > 150 ? 120 : (skill > 125 ? 90 : (skill > 100 ? 60 : (skill > 75 ? 40 : (skill > 50 ? 30 : (skill > 25 ? 20 : 10)))))))
+
+
+#define SKILLS_DEBUG_LOGGING_ALLOWED     (true)
+
+void SkillsLog(string@ s) {
+    if (SKILLS_DEBUG_LOGGING_ALLOWED) {
+        Log("SKILLS: " + s);
+    }
+}
+
 
 Item@ SelectSkillItem(Critter& cr, Item@ item, uint16 skill)
 {
@@ -349,4 +362,217 @@ bool UseDoctorOnCritter(Critter& cr, Critter& targetCr, Item@ item)
         AddScore(cr, SCORE_DOCTOR, uninjured);
     }
     return true;
+}
+
+void GainSkillXp(Critter& cr, uint skillNum, int xp) {
+    SkillsLog("GainSkillXp called :: skillNum = " + skillNum + ", xp = " + xp);
+    int xpForNextSkill = 0;
+    uint xpSkillVarNum = 0;
+    int oldSkill = cr.Skill[skillNum];
+    switch (skillNum) {
+        case SK_LOCKPICK:
+            xpSkillVarNum = LVAR_skill_xp_lockpick;
+            break;
+        case SK_STEAL:
+            xpSkillVarNum = LVAR_skill_xp_steal;
+            break;
+        case SK_SCIENCE:
+            xpSkillVarNum = LVAR_skill_xp_science;
+            break;
+        case SK_REPAIR:
+            xpSkillVarNum = LVAR_skill_xp_repair;
+            break;
+        case SK_SPEECH:
+            xpSkillVarNum = LVAR_skill_xp_speech;
+            break;
+        case SK_BARTER:
+            xpSkillVarNum = LVAR_skill_xp_barter;
+            break;
+        case SK_GAMBLING:
+            xpSkillVarNum = LVAR_skill_xp_gambling;
+            break;
+        case SK_OUTDOORSMAN:
+            xpSkillVarNum = LVAR_skill_xp_outdoors;
+            break;
+        default:
+            SkillsLog("GainSkillXp :: Not valid skill.");
+            return;
+    }
+
+	GameVar@ xpVar = GetLocalVar(xpSkillVarNum, cr.Id);
+	if (!valid(xpVar)) {
+        SkillsLog("Invalid variable = " + xpSkillVarNum);
+        return;
+	}
+	if (xpVar.GetValue() > _XpForNextSkill(cr.Skill[skillNum])) {
+        xpVar = 0;
+	}
+
+    while (xp > 0 && cr.SkillBase[skillNum] < 200) {
+        xpForNextSkill = _XpForNextSkill(cr.SkillBase[skillNum]);
+        SkillsLog("GainSkillXp :: " + SkillName(skillNum) +  " currentXp = " + xpVar.GetValue() + ", gainXp = " + xp);
+        if (xpVar.GetValue() + xp < xpForNextSkill) {
+            xpVar = xpVar.GetValue() + xp;
+            xp = 0;
+            SkillsLog("GainSkillXp (" + SkillName(skillNum) + ") :: no skill gain: xp = " + xp + ", xpVar = " + xpVar.GetValue() + ", neededForNext = " + xpForNextSkill + ", skillValue = " + cr.Skill[skillNum]);
+        } else {
+            xp -= xpForNextSkill - xpVar.GetValue();
+            xpVar = 0;
+            cr.SkillBase[skillNum] += 1;
+            SkillsLog("GainSkillXp (" + SkillName(skillNum) + ") :: skill gain: xp = " + xp + ", xpVar = " + xpVar.GetValue() + ", neededForNext = " + xpForNextSkill + ", skillValue = " + cr.Skill[skillNum]);
+        }
+    }
+    if (cr.SkillBase[skillNum] > 200) {
+        cr.SkillBase[skillNum] = 200;
+    }
+    if (oldSkill < cr.Skill[skillNum]) {
+        string message = "Your " + SkillName(skillNum) + " skill has increased by " + (cr.SkillBase[skillNum] - oldSkill) + ".";
+        cr.Say(SAY_NETMSG, message);
+        cr.RunClientScript("client_utils@_playSound_unsafe", 0, 0, 0, "levelup.acm", null);
+    }
+}
+
+int GetCraftXpByPid(uint pid) {
+    switch (pid) {
+        case PID_METAL_ORE:
+        case PID_MINERAL:
+        case PID_GUNPOWDER:
+        case PID_MEAT_JERKY:
+        case PID_FLINT:
+        case PID_BRAHMINSHIT:
+            return 1;
+        case PID_ROT_GUT:
+        case PID_FIBER:
+        case PID_FIREWOOD:
+        case PID_PUMP_PARTS:
+        case PID_METAL_PARTS:
+        case PID_XANDER_ROOT:
+        case PID_BROC_FLOWER:
+        case PID_MUTATED_FRUIT:
+        case PID_MEAT:
+        case PID_ROPE:
+        case PID_GECKO_PELT:
+        case PID_TOBACCO:
+        case PID_CHEMICALS:
+        case PID_HYPODERMIC_NEEDLE:
+        case PID_MINERALS2:
+            return 2;
+        case PID_BIO_GEL:
+        case PID_BRAHMIN_HIDE:
+        case PID_GOLDEN_GECKO_PELT:
+        case PID_ALLOYS:
+        case PID_ELECTRONIC_PARTS:
+        case PID_ORE2:
+        case PID_GUNPOWDER2:
+            return 3;
+        case PID_FIBRE2:
+        case PID_CHEMICALS2:
+            return 4;
+        case PID_FIREGECKO_PELT:
+        case PID_ELECTRONIC_PARTS2:
+        case PID_METAL_PARTS2:
+        case PID_ALLOYS2:
+        case PID_URANIUM_ORE:
+            return 5;
+        default:
+            return 0;
+    }
+    return 0;
+}
+
+uint GetCraftingSkillNumByCraftPid(Item& item) {
+    const ProtoItem@ proto = item.Proto;
+    int craftSkillNum = 0;
+
+    if (proto.Type == ITEM_TYPE_WEAPON) {
+        int weaponSkillNum = proto.Weapon_Skill_0;
+        switch (weaponSkillNum) {
+            case SK_ENERGY_WEAPONS:
+                craftSkillNum = SK_SCIENCE;
+                break;
+            default:
+                craftSkillNum = SK_REPAIR;
+        }
+        switch (proto.ProtoId) {
+            case PID_CATTLE_PROD:
+            case PID_SUPER_CATTLE_PROD:
+            case PID_MEGA_POWER_FIST:
+            case PID_POWER_FIST:
+                craftSkillNum = SK_SCIENCE;
+                break;
+            case PID_SPEAR:
+            case PID_SHARPENED_POLE:
+            case PID_SHARP_SPEAR:
+            case PID_KNIFE:
+            case PID_THROWING_KNIFE:
+            case PID_MOLOTOV_COCKTAIL:
+            case PID_SLEDGEHAMMER:
+            case PID_SHOVEL:
+                craftSkillNum = SK_OUTDOORSMAN;
+                break;
+            default:
+        }
+        SkillsLog("proto weaponSkillNum = " + weaponSkillNum + ", name = " + SkillName(weaponSkillNum));
+    } else if (proto.Type == ITEM_TYPE_ARMOR) {
+        switch (proto.ProtoId) {
+            case PID_LEATHER_ARMOR:
+            case PID_LEATHER_ARMOR_HELMET:
+            case PID_LEATHER_JACKET:
+            case PID_LEATHER_JACKET_HELMET:
+                craftSkillNum = SK_OUTDOORSMAN;
+                break;
+            case PID_TESLA_ARMOR:
+            case PID_TESLA_HELMET:
+                craftSkillNum = SK_SCIENCE;
+                break;
+            default:
+                craftSkillNum = SK_REPAIR;
+        }
+        SkillsLog("proto ARMOR craftskill = " + craftSkillNum);
+    } else if (proto.Type == ITEM_TYPE_DRUG) {
+        switch (proto.ProtoId) {
+            case PID_WEAK_HEALING_POWDER:
+            case PID_HEALING_POWDER:
+            case PID_ANTIDOTE:
+                craftSkillNum = SK_OUTDOORSMAN;
+                break;
+            default:
+                craftSkillNum = SK_SCIENCE;
+        }
+        SkillsLog("proto DRUG craftskill = " + craftSkillNum);
+    } else if (proto.Type == ITEM_TYPE_AMMO) {
+        switch (proto.ProtoId) {
+            case PID_SMALL_ENERGY_CELL:
+            case PID_MICRO_FUSION_CELL:
+                craftSkillNum = SK_SCIENCE;
+                break;
+            default:
+                craftSkillNum = SK_REPAIR;
+        }
+        SkillsLog("proto AMMO craftskill = " + craftSkillNum);
+    } else {
+        switch (proto.ProtoId) {
+            case PID_LOCK:
+            case PID_LOCKPICKS:
+            case PID_EXP_LOCKPICK_SET:
+            case PID_ELECTRONIC_LOCKPICKS:
+            case PID_ELEC_LOCKPICK_MKII:
+                craftSkillNum = SK_LOCKPICK;
+                break;
+            case PID_AXE:
+            case PID_WATERBAG:
+            case PID_WATERBAG_EMPTY:
+            case PID_TENT:
+            case PID_PRIMITIVE_TOOL:
+            case PID_RADIO:
+            case PID_ROPE:
+                craftSkillNum = SK_OUTDOORSMAN;
+                break;
+            default:
+                craftSkillNum = SK_REPAIR;
+        }
+        SkillsLog("proto ELSE craftskill = " + craftSkillNum);
+    }
+
+    return craftSkillNum;
 }

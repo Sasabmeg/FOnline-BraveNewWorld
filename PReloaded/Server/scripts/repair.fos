@@ -9,6 +9,9 @@
 #include "MsgStr.h"
 #include "utils_h.fos"
 
+import void GainSkillXp(Critter& cr, uint skillNum, int xp) from "skills";
+
+
 // item.IsDeteriorable() - Can be deteriorated
 // item.Deterioration - deterioration
 // item.BrokenCount - minimum deterioration
@@ -108,10 +111,11 @@ bool TryRepairItem(Critter& cr, Item& item)
 	    cleanRepair = true;
 	} else if(valid(tool) && tool.GetProtoId() == PID_OIL_CAN) {
 	    cleanRepair = true;
+	    bonus = 50;
 	}
 
 	if (!cleanRepair) {
-        item.BrokenCount += 15 - bonus;
+        item.BrokenCount += CLAMP(15 - bonus, 0, 15);
         if (item.BrokenCount > 100)	{
             item.BrokenCount = 100;
         }
@@ -122,17 +126,28 @@ bool TryRepairItem(Critter& cr, Item& item)
 
 	if ((Random(1, 100) < repair) || cleanRepair) {
         item.Deterioration = item.BrokenCount * 100;
-        cr.Say(SAY_NETMSG, "Maintenance successful.");
         if (cleanRepair) {
-            cr.Say(SAY_NETMSG, "It went perfectly.");
+            cr.Say(SAY_NETMSG, "Maintenance went perfectly.");
             cr.StatBase[ST_EXPERIENCE] += 250;
+            if (Random(1, 175) > cr.Skill[SK_REPAIR] - bonus) {
+                GainSkillXp(cr, SK_REPAIR, Random(3, 4 + bonus));
+            }
+        } else {
+            cr.Say(SAY_NETMSG, "Maintenance successful.");
+            if (Random(1, 125) > cr.Skill[SK_REPAIR] - bonus) {
+                GainSkillXp(cr, SK_REPAIR, Random(2, 4));
+            }
         }
 	} else {
 	    cr.Say(SAY_NETMSG, "Maintenance failed.");
+	    if (Random(1, 75) > cr.Skill[SK_REPAIR] - bonus) {
+            GainSkillXp(cr, SK_REPAIR, Random(1, 2));
+	    }
 	}
 
 	if (valid(tool) && ((Random(0, 19) == 0) || tool.GetProtoId()==PID_OIL_CAN)) {
         cr.DeleteItem(tool.GetProtoId(), 1);
+	    cr.Say(SAY_NETMSG, "You have used up your tool in the repair process.");
 	}
 
 	if (item.Deterioration == MAX_DETERIORATION) {
@@ -149,6 +164,7 @@ bool TryRepairItem(Critter& cr, Item& item)
 
 bool TryRepairItemCall(Critter& cr, Item@ item, Item@ with_item)
 {
+    Log("TryRepairItemCall");
     // Repair
     int repair = cr.Skill[SK_REPAIR];
 

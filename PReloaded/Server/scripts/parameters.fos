@@ -358,11 +358,16 @@ int GetMaxLife(Critter& cr)
 // Input for player: 7 special, 3 tag skills, 2 traits, age, gender
 // Imput for npc: data from prototype
 
-const int[] PassiveSkills = { SK_SCAVENGING, SK_REPAIR, SK_SCIENCE, SK_LOCKPICK, SK_STEAL, SK_OUTDOORSMAN, SK_SPEECH, SK_BARTER, SK_GAMBLING };
+const int[] PassiveSkills = { SK_SCAVENGING, SK_REPAIR, SK_SCIENCE, SK_LOCKPICK, SK_OUTDOORSMAN, SK_BARTER, SK_GAMBLING };
+const int[] NonSpecializationSkills = { SK_FIRST_AID, SK_SPEECH, SK_STEAL };
 
 bool IsPassiveSkill( int skill )
 {
 	return( PassiveSkills.find( skill ) >= 0 );
+}
+
+bool IsNonSpecializationSkill(int skill) {
+	return (NonSpecializationSkills.find(skill) >= 0);
 }
 
 #ifndef __CLIENT
@@ -505,8 +510,7 @@ bool CritterGenerateCheck(array<int>& data)     // Export to client_main@player_
         return false;
     }
     // Check choosed tag skills
-    if((data[TAG_SKILL1] < int(SKILL_BEGIN) || data[TAG_SKILL1] > int(SKILL_END)) ||
-       (data[TAG_SKILL2] < int(SKILL_BEGIN) || data[TAG_SKILL2] > int(SKILL_END)))
+    if (data[TAG_SKILL1] < int(SKILL_BEGIN) || data[TAG_SKILL1] > int(SKILL_END))
     {
         Message(GetMsgStr(TEXTMSG_GAME, STR_NET_WRONG_TAGSKILL));
         return false;
@@ -518,6 +522,10 @@ bool CritterGenerateCheck(array<int>& data)     // Export to client_main@player_
 		{
 			Message( "|0xC85050 Incorrect tag skill: |0xFF0000 " + GetMsgStr( TEXTMSG_GAME, STR_PARAM_NAME( _param_[t] )) + ". |0xC85050 Passive skills cannot be tagged and they will level up by related books or activities." );
 			return( false );
+		}
+		if (IsNonSpecializationSkill(_param_[t])) {
+			Message("|0xC85050 Incorrect tag skill: |0xFF0000 " + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(_param_[t])) + ". |0xC85050 First Aid, Speech and Stealing skills cannot be tagged as they do not serve a specialization and will be capped at level 200.");
+			return false;
 		}
 	}
     return true;

@@ -149,6 +149,10 @@ import void ViewImageClient(Critter& player, string& imageFile, bool limitWindow
 
 import void ForceColorizingGoodEvil(Critter@ chosen, Critter@ crTarget, int direction) from "name_colorizing";
 import void GreetPlayer(Critter@ player, Map@ map) from "map_greet";
+import int GetCraftXpByPid(uint pid) from "skills";
+import void GainSkillXp(Critter& cr, uint skillNum, int xp) from "skills";
+import uint GetCraftingSkillNumByCraftPid(Item& item) from "skills";
+
 
 dictionary    ItemPids;
 dictionary    VarIds;
@@ -3340,6 +3344,7 @@ bool items_barter(array<Item@>& saleItems, array<uint>& saleItemsCount, array<It
 
     if(_IsTrader(npc))
     {
+        //Log("BARTER");
         // reputations
         int profit = 0;
         int itemCost = 0;
@@ -3349,12 +3354,26 @@ bool items_barter(array<Item@>& saleItems, array<uint>& saleItemsCount, array<It
             int itemCostOne = GetItemCost(saleItems[i], player, npc, true);
             if (itemCostOne > 1)
                 itemCost +=  itemCostOne * saleItemsCount[i];
+            //Log("\tsale item :: cost = " + GetItemCostPlain(saleItems[i], player, npc) + " x " + saleItemsCount[i]);
         }
         TC_BarterReward(player, itemCost);
         for(uint i = 0, j = buyItems.length(); i < j; i++)
         {
             profit -= GetItemCostPlain(buyItems[i], player, npc) * buyItemsCount[i];
+            //Log("\tbuy item :: cost = " + GetItemCostPlain(buyItems[i], player, npc) + " x " + buyItemsCount[i]);
         }
+        //Log("Trader Profit = " + profit);
+        int barter1 = (100 + player.Skill[SK_BARTER]);
+        int barter2 = barter1 * barter1 + profit;
+        int sq = int(sqrt(float(barter2)));
+        int xp = sq - barter1;
+
+        if (xp > 0) {
+            GainSkillXp(player, SK_BARTER, xp);
+        } else {
+            //Log("Xp <= 0");
+        }
+
         ProcessProfitReputation(player, _GroupIndex(npc), profit);
         DPlayerLog(player, "Increased reputation " + _GroupIndex(npc) + " from profit of " + profit);
     }
@@ -3364,6 +3383,7 @@ bool items_barter(array<Item@>& saleItems, array<uint>& saleItemsCount, array<It
 // Call on something player craft some items.
 void items_crafted(array<Item@>& items, array<uint>& itemsCount, array<Item@>& resources, Critter& crafter)
 {
+    //Log("CRAFTED :: itemsCount = " + items.length());
     uint8 multiplier = CLAMP(crafter.ParamBase[ST_FIXBOY_COUNTER], 1, 99);
     if(crafter.StatBase[ST_FIXBOY_FIXALL] > 0)
         multiplier = CLAMP(crafter.StatBase[ST_FIXBOY_FIXALL], 1, 100);
@@ -3371,10 +3391,33 @@ void items_crafted(array<Item@>& items, array<uint>& itemsCount, array<Item@>& r
     array<uint16> recipePids;
     array<uint> recipeCnt;
 
-    if(multiplier > 1)
-    {
-        GetItemRecipe(items[0].GetProtoId(), recipePids, recipeCnt);
+    uint craftXp = 0;
+    int craftSkillNum = 0;
+    int skill = 0;
+
+    GetItemRecipe(items[0].GetProtoId(), recipePids, recipeCnt);
+
+    craftSkillNum = GetCraftingSkillNumByCraftPid(items[0]);
+    skill = crafter.Skill[craftSkillNum];
+    int componentDiminisher = (skill > 150 ? 4 : (skill > 125 ? 3 : (skill > 75 ? 2 : (skill > 25 ? 1 : 0))));
+    int diminishingReturns;
+
+    //Log("craft XP skill number = " + craftSkillNum + ", skillvalue = " + skill + ", maxDiminisher = " + componentDiminisher);
+    for (uint i = 0; i < recipePids.length(); i++) {
+        int xp = 0;
+        for (uint k = 0; k < multiplier; k++) {
+            for (uint j = 0; j < recipeCnt[i]; j++) {
+                diminishingReturns = Random(componentDiminisher / 2, componentDiminisher);
+                xp += CLAMP(GetCraftXpByPid(recipePids[i]) - diminishingReturns, 0, 5);
+                //Log("\t\trecipePid = " + recipePids[i] + ", DR = " + diminishingReturns + ", xp = " + CLAMP(GetCraftXpByPid(recipePids[i]) - diminishingReturns, 0, 5));
+            }
+        }
+        craftXp += xp;
+        //Log("\trecipePid = " + recipePids[i] + ", total = " + recipeCnt[i] + ", totalXp = " + xp);
     }
+    //Log("Total Craft XP = " + craftXp);
+
+    GainSkillXp(crafter, craftSkillNum, craftXp);
 
 	TC_CraftCapsReward(crafter, (multiplier * items[0].Proto.Cost));
 
@@ -3541,6 +3584,14 @@ bool FovCheck(Critter& cr, Critter& opponent)
         return true;
 }
 
+
+/*
+const int[] PassiveSkills = { SK_SCAVENGING, SK_REPAIR, SK_SCIENCE, SK_LOCKPICK, SK_OUTDOORSMAN, SK_BARTER, SK_GAMBLING };
+bool IsPassiveSkill( int skill )
+{
+	return( PassiveSkills.find( skill ) >= 0 );
+}*/
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Levelup callback.
 void player_levelup(Critter& player, uint skillIndex, uint skillUp, uint perkIndex) {
@@ -3550,12 +3601,15 @@ void player_levelup(Critter& player, uint skillIndex, uint skillUp, uint perkInd
             if (skillVal >= MAX_SKILL_VAL)
                 break;
 
-			bool skillCap = (skillIndex == SK_FIRST_AID && skillVal >= 200)
-                            || (skillIndex == SK_OUTDOORSMAN || skillIndex == SK_LOCKPICK  || skillIndex == SK_STEAL
-                                || skillIndex == SK_BARTER || skillIndex == SK_GAMBLING || skillIndex == SK_SCIENCE
-                                || skillIndex == SK_REPAIR || skillIndex == SK_SPEECH || skillIndex == SK_SCAVENGING)
-                            || (skillIndex == SK_SNEAK && skillVal >= 270);
-
+            bool skillCap = false;
+            if (!_CritIsTagSkill(player, skillIndex) && skillVal >= 200) {
+                skillCap = true;
+            } else if ((_CritIsTagSkill(player, skillIndex) && skillVal >= 300) ||
+                       (_CritIsTagSkill(player, skillIndex) && skillVal >= 270 && skillIndex == SK_SNEAK)){
+                skillCap = true;
+            } else if (IsPassiveSkill(skillIndex)) {
+                skillCap = true;
+            }
 			if (skillCap) break;
 
             int needPoints = 1;
@@ -3575,10 +3629,18 @@ void player_levelup(Critter& player, uint skillIndex, uint skillUp, uint perkInd
 
             skillVal++;
 
-			skillCap = (skillIndex == SK_FIRST_AID && skillVal >= 200) || (skillIndex == SK_SNEAK && skillVal >= 270);
-
-            if (_CritIsTagSkill(player, skillIndex) && skillVal < MAX_SKILL_VAL && !skillCap)
+            if (!_CritIsTagSkill(player, skillIndex) && skillVal >= 200) {
+                skillCap = true;
+            } else if ((_CritIsTagSkill(player, skillIndex) && skillVal >= 300) ||
+                       (_CritIsTagSkill(player, skillIndex) && skillVal >= 270 && skillIndex == SK_SNEAK)){
+                skillCap = true;
+            } else {
+                skillCap = false;
+            }
+            if (_CritIsTagSkill(player, skillIndex) && skillVal < MAX_SKILL_VAL && !skillCap) {
                 skillVal++;
+            }
+
             player.SkillBase[skillIndex] = skillVal;
             player.StatBase[ST_UNSPENT_SKILL_POINTS] -= needPoints;
         }

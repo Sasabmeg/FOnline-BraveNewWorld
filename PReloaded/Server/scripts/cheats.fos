@@ -86,6 +86,8 @@ import void            SetWear(Item& item, int wearProcent) from "repair";
 import int             stringReplaceText(string& s, string@ f, string@ t) from "config_file";
 import array<Critter@> WorldmapGetPlayers(uint zx, uint zy) from "worldmap_players";
 import int             WorldmapGetTotalValue() from "worldmap";
+import void            GainSkillXp(Critter& cr, uint skillNum, int xp) from "skills";
+
 
 #define _SetSpawner                      \
     # (__item, __cr) { if(valid(__item)) \
@@ -131,7 +133,7 @@ string[] commandlist =
     "explode",
     "factioninfo", "factionnews", "factiononline", "findchars", "finditems",
     "findnpc", "flash", /*"foart",*/
-    "gaintowncontrol", "gameinfo", "getclaim", "getclaimtime", "getcolor",
+    "gainskillxp", "gaintowncontrol", "gameinfo", "getclaim", "getclaimtime", "getcolor",
     "getitems", "getleader", "getleadertime", "getuvar", "getvar", "gettime", "give",
     "givekey", "goto", "gototeam",
     "heal", "healall", "help", "hideloc", "hidemap",
@@ -177,7 +179,7 @@ string[] gmcommandlist =
     "emote", "emoteh", "enabletb", "explode",
     "factioninfo", "factionnews", "factiononline", "findchars", "finditems",
     "findnpcs", "flash", /*"foart",*/
-    "gameinfo", "getclaim", "getclaimtime", "getcolor", "getitems", "getleader",
+    "gainskillxp" , "gameinfo", "getclaim", "getclaimtime", "getcolor", "getitems", "getleader",
     "getleadertime", "getuvar", "getvar", "give", "givekey", "goto", "gototeam",
     "heal", "healall", "help", "hideloc", "hidemap",
     "id2name", "inspect", "irradiate", "itemflags", "itemlight", "itemproto",
@@ -8479,6 +8481,28 @@ string@ spaces(int num)   // helper
     return result;
 }
 
+void ExecGainSkillXpCommand(array<string@>@ command, Critter@ player) {
+    if(command.length() < 4) {
+        player.Say(SAY_NETMSG, "Invalid arguments -> to xp repair try: `gainskillxp 213 10");
+        return;
+    }
+    //player.Say(SAY_NETMSG, "0 = " + command[0] + ", 1 = " + command[1] + ", 2 = " + command[2] + ", 3 = " + command[3]);
+    int skillNum = 0;
+    int value = 0;
+    if (!StrToInt(command[2], skillNum)) {
+        player.Say(SAY_NETMSG, "Invalid arguments (param not a number) -> to xp repair try: `gainskillxp 213 10");
+        return;
+    }
+    if (!StrToInt(command[3], value)) {
+        player.Say(SAY_NETMSG, "Invalid arguments (param not a number) -> to xp repair try: `gainskillxp 213 10");
+        return;
+    }
+    player.Say(SAY_NETMSG, "Giving player " + value + " xp to " + SkillName(skillNum) + " skill.");
+
+    GainSkillXp(player, skillNum, value);
+}
+
+
 void ExecGameInfoCommand(array<string@>@ command, Critter@ player)
 {
     if(command.length() < 3)
@@ -9916,6 +9940,10 @@ bool ExecCommand(Critter& player, string@ commandString)
     else if(command[1] == "gaintowncontrol")
     {
         ExecGainTownControlCommand(command, player);
+    }
+    else if(command[1] == "gainskillxp")
+    {
+        ExecGainSkillXpCommand(command, player);
     }
     else if(command[1] == "gameinfo")
     {
