@@ -440,7 +440,6 @@ void SetDrug(Critter& cr, uint16 drugPid) {
             cr.RunClientScript("client_utils@_playSound_unsafe", 0, 0, 0, "psycho1.ogg", null);
         }
         cr.RunClientScript("client/client_psychoFx@_psychoActivate_unsafe", 0, 0, 0, "", null);
-        //cr.RunClientScript("client_psychoFx@_psychoActivate_unsafe", 0, 0, 0, "", null);
 
         return;
     }

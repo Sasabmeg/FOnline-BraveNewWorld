@@ -56,9 +56,9 @@ import void TC_CraftExpReward(Critter& player, int exp) from "town";
 
 void AddCraftingExperience(Critter& player, uint exp, int mult)
 {
+    //Log("AddCraftingExperience :: exp = " + exp + ", mult = " + mult);
 	exp /= __ExperienceMod;
 	player.StatBase[ST_EXPERIENCE] += (exp * mult) - (exp * __ExperienceMod);
-
 	TC_CraftExpReward(player, (exp*mult));
 }
 
@@ -353,10 +353,8 @@ bool CheckMultiplierResources(Critter& player, CraftItem& craft)
             return false;
     }
 
-    if(isFixAll)
-    {
-        switch(fixall)
-        {
+    if (isFixAll) {
+        switch (fixall) {
             case 0: return false;
             case 1: player.Say(SAY_NETMSG, "Crafted "+fixall+" item."); break;
             default: player.Say(SAY_NETMSG, "Crafted "+fixall+" items."); break;
@@ -364,9 +362,9 @@ bool CheckMultiplierResources(Critter& player, CraftItem& craft)
 
         player.ParamBase[ST_FIXBOY_FIXALL] = fixall;
 		AddCraftingExperience(player, craft.Experience, player.StatBase[ST_FIXBOY_FIXALL]);
-    }
-	else
+    } else {
 		AddCraftingExperience(player, craft.Experience, player.StatBase[ST_FIXBOY_COUNTER]);
+	}
 
     return true;
 }
