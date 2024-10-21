@@ -17,6 +17,8 @@
 
 import void ViewImageClient(Critter& player, string& imageFile, bool limitWindowSizeMaxToImageSize, bool resizeEnabled, bool moveEnabled) from "unsafe_client";
 import void MessageGotTragicCard(Critter& player, uint16 cardProto) from "unsafe_client";
+import void GainSkillXp(Critter& cr, uint skillNum, int xp) from "skills";
+
 
 array<uint16> neutralCardPids = {   PID_TRAGIC_NEU_ACTIONBOY,
                                     PID_TRAGIC_NEU_LITTLE_GECKO, PID_TRAGIC_NEU_MUTATED_ANT,
@@ -36,6 +38,8 @@ bool UseTragicCardOrDeck(Critter& player, Item& item) {
         if (valid(card)) {
             player.DeleteItem(PID_TRAGIC_CARD_DECK, 1);
             //player.Say(SAY_NETMSG, "Opening the tragic deck you found a card in good condition.");
+            int xp = getCardActionPoints(card.Proto.ProtoId);
+            GainSkillXp(player, SK_GAMBLING, xp);
             MessageGotTragicCard(player, card.Proto.ProtoId);
             ShowTragicCard(player, card);
         } else {
@@ -120,7 +124,7 @@ bool ShowTragicCard(Critter& cr, Item& item) {
 
 //  We need this, because server AS is not able to access Info Text for item proto.
 string getCardName(uint pid) {
-    switch(pid) {
+    switch (pid) {
         case PID_TRAGIC_CARD_DECK:
             return "Tragic Deck";
         //  Neutral 0
@@ -157,6 +161,37 @@ string getCardName(uint pid) {
             return "Fire Gecko";
     }
     return "Unknown Tragic Card";
+}
+
+int getCardActionPoints(uint pid) {
+    switch (pid) {
+        //  Neutral 0
+        case PID_TRAGIC_NEU_ACTIONBOY:
+            return 0;
+        //  Neutral 1
+        case PID_TRAGIC_NEU_LITTLE_GECKO:
+        case PID_TRAGIC_NEU_MUTATED_ANT:
+            return 1;
+        //  Neutral 2
+        case PID_TRAGIC_NEU_SMALL_RADSCOPION:
+        case PID_TRAGIC_NEU_MUTATED_PIGRAT:
+        case PID_TRAGIC_NEU_MUTATED_MANTIS:
+        case PID_TRAGIC_NEU_SPOREPLANT:
+        case PID_TRAGIC_NEU_STRAY_DOG:
+            return 2;
+        //  Neutral 3
+        case PID_TRAGIC_NEU_GOLDEN_GECKO:
+        case PID_TRAGIC_NEU_KLAMATH_TRAPPER:
+            return 3;
+        //  Neutral 4
+        case PID_TRAGIC_NEU_MUTATED_MOLERAT:
+        case PID_TRAGIC_NEU_HUGE_RADSCORPION:
+            return 4;
+        //  Neutral 5
+        case PID_TRAGIC_NEU_FIRE_GECKO:
+            return 5;
+    }
+    return 0;
 }
 
 //  Dialog with Sandro, the ghoulin Hub Maltesse Falcon collecting Tragic the Garnering cards.
