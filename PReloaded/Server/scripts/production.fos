@@ -10,6 +10,8 @@
 #include "utils_h.fos"
 
 import void InitMachines() from "prod_machine";
+import void GainSkillXp(Critter& cr, uint skillNum, int xp) from "skills";
+
 
 // cumulative timeout
 #define TIMEOUT_CUMULATIVE    (int(REAL_MINUTE(20)))
@@ -139,10 +141,25 @@ bool Gather(Item& item, Critter& cr, Item@ used_item, uint16 pid, uint batch,
     batch = MIN(batch, uint(AMOUNT(item)));
     if(batch > 0)
     {
-        if(is_container)
+        //Log("Gather !!!");
+        if(is_container) {
+            //Log("Gather :: container");
             item.AddItem(pid, batch, 0);
-        else
+        } else {
+            //Log("Gather :: not a container");
             cr.AddItem(pid, batch);
+            if (pid == PID_ELECTRONIC_PARTS) {
+                if (cr.Skill[SK_SCIENCE] < 100) {
+                    int xp = CLAMP((100 - cr.Skill[SK_SCIENCE]) / 10, 1, 3);
+                    GainSkillXp(cr, SK_SCIENCE, Random(0, xp));
+                }
+            } else if (pid == PID_ELECTRONIC_PARTS2) {
+                if (cr.Skill[SK_SCIENCE] < 150) {
+                    int xp = CLAMP((130 - cr.Skill[SK_SCIENCE]) / 10, 2, 5);
+                    GainSkillXp(cr, SK_SCIENCE, Random(1, xp));
+                }
+            }
+        }
         AMOUNT(item) -= batch;
         DPlayerLog(cr, "" + AMOUNT(item));
         if(valid(used_item))
@@ -154,6 +171,7 @@ bool Gather(Item& item, Critter& cr, Item@ used_item, uint16 pid, uint batch,
     }
     else
     {
+        //Log("Gather() empty");
         cr.SayMsg(SAY_NETMSG, TEXTMSG_TEXT, text_empty);
     }
     return !is_container;     // in case of container we return false, that allows engine to open it

@@ -102,8 +102,14 @@ void _Computer(Item& item, bool firstTime)
     StartRegeneration(item, "e_RegenComputer");
 }
 
-bool _SkillComputer(Item& item, Critter& cr, int skill)
-USE_SKILL(SK_SCIENCE, PID_ELECTRONIC_PARTS, __ElectronicPartsBatch, TEXT_COMPUTER, TEXT_COMPUTER_HINT)
+bool _SkillComputer(Item& item, Critter& cr, int skill) {
+    int roll = Random(1, 100);
+    if (roll <= CLAMP((cr.Skill[SK_SCIENCE] + cr.Skill[SK_SCAVENGING]) / 100, 1, 4)) {
+        USE_SKILL(SK_SCIENCE, PID_ELECTRONIC_PARTS2, __ElectronicParts2Batch, TEXT_COMPUTER2, TEXT_COMPUTER2_HINT)
+    } else {
+        USE_SKILL(SK_SCIENCE, PID_ELECTRONIC_PARTS, __ElectronicPartsBatch, TEXT_COMPUTER, TEXT_COMPUTER_HINT)
+    }
+}
 
 void _FinishComputer(Item& item, bool)
 {

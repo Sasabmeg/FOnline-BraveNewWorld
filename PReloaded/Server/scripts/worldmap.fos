@@ -37,6 +37,8 @@ import void AddEncounterContainers(Map@ map, array<Critter@>@ critters) from "en
 import void AddSpecialBonusEncounterBoss(Item@ it) from "item_bonus";
 import bool IsItemCraftable(uint16 pid) from "fix_boy";
 
+import void GainSkillXp(Critter& cr, uint skillNum, int xp) from "skills";
+
 #define STR_GROUP    # (g)    (20000000 + g)
 
 class CCheck
@@ -2163,6 +2165,7 @@ void FindEncounter(array<Critter@>& group, Item@ car, uint x, uint y, uint& enco
     }
 
     bool giveReward = false; // reward for averting encounter
+    bool giveSkillGain = false;
     bool caravan = false;
 	bool playerCaravan = valid(car) && _IsCaravanCar(car.GetProtoId());
 
@@ -2393,11 +2396,12 @@ void FindEncounter(array<Critter@>& group, Item@ car, uint x, uint y, uint& enco
 					//if(!fe.TurnBased)
 					//{
 						////Log("!fe.TurnBased= " + fe.TurnBased);
-						if(!IsCaravanLeader(leader) && outdoorsman >= Random(1, 100))
-						{
+						if (!IsCaravanLeader(leader) && outdoorsman >= Random(1, 100)) {
 							enc.Ask(SAY_ENCOUNTER_ANY, leader, false);
 							waitForAnswer = true;
 							giveReward = true;
+						} else {
+						    giveSkillGain = true;
 						}
 					//}
 					//else
@@ -2445,12 +2449,29 @@ void FindEncounter(array<Critter@>& group, Item@ car, uint x, uint y, uint& enco
         return;
     }
 
-    if(giveReward)       // here, because creation of encounter might fail
-    {
+    if (giveReward) {       // here, because creation of encounter might fail
+        //  give outdoorsman XP when dodge encounter option activated
+        int factor = 110 + CLAMP(zone.Difficulty, 0, 100) - guide.Skill[SK_OUTDOORSMAN];
+        factor = CLAMP(factor, 10, 100);
+        int skillXp = Random(1, factor / 10);
+        //Log("ENCOUNTER GIVE XP FOR DODGING = " + skillXp + ", zone difficulty = " + zone.Difficulty);
+        if (skillXp > 0) {
+            GainSkillXp(guide, SK_OUTDOORSMAN, skillXp);
+        }
+        //  give normal xp
         if(guide.Skill[SK_OUTDOORSMAN] <= 95)
             GuideReward(leader, guide, 100 - guide.Skill[SK_OUTDOORSMAN] + zone.Difficulty);
         else
             GuideReward(leader, guide, 5 + zone.Difficulty);
+    } else if (giveSkillGain && guide.Skill[SK_OUTDOORSMAN] < 100) {
+        //  give outdoorsman XP
+        int factor = CLAMP(zone.Difficulty, 0, 100) - guide.Skill[SK_OUTDOORSMAN] / 2;
+        //Log("factor = " + factor);
+        factor = CLAMP(factor, 5, 50);
+        //Log("factor = " + factor);
+        int skillXp = Random(1, factor / 5);
+        //Log("ENCOUNTER GIVE XP = " + skillXp + ", zone difficulty = " + zone.Difficulty);
+        GainSkillXp(guide, SK_OUTDOORSMAN, skillXp);
     }
     uint t = GetTick() - start;
     _AdminLog(leader, "FindEncounter: " + t + "ms.");

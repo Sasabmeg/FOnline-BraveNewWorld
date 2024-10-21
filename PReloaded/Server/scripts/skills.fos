@@ -373,17 +373,11 @@ void GainSkillXp(Critter& cr, uint skillNum, int xp) {
         case SK_LOCKPICK:
             xpSkillVarNum = LVAR_skill_xp_lockpick;
             break;
-        case SK_STEAL:
-            xpSkillVarNum = LVAR_skill_xp_steal;
-            break;
         case SK_SCIENCE:
             xpSkillVarNum = LVAR_skill_xp_science;
             break;
         case SK_REPAIR:
             xpSkillVarNum = LVAR_skill_xp_repair;
-            break;
-        case SK_SPEECH:
-            xpSkillVarNum = LVAR_skill_xp_speech;
             break;
         case SK_BARTER:
             xpSkillVarNum = LVAR_skill_xp_barter;
@@ -394,6 +388,14 @@ void GainSkillXp(Critter& cr, uint skillNum, int xp) {
         case SK_OUTDOORSMAN:
             xpSkillVarNum = LVAR_skill_xp_outdoors;
             break;
+        /*
+        case SK_STEAL:
+            xpSkillVarNum = LVAR_skill_xp_steal;
+            break;
+        case SK_SPEECH:
+            xpSkillVarNum = LVAR_skill_xp_speech;
+            break;
+            */
         default:
             SkillsLog("GainSkillXp :: Not valid skill.");
             return;
