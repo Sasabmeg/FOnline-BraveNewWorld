@@ -16,6 +16,11 @@
 import void TryPickupContainer(Critter& cr, Item& locker) from "movable_container";
 import void TryRotateContainer(Critter& cr, Item& locker) from "movable_container";
 
+import Item@ SelectSkillItem(Critter& cr, Item@ item, uint16 skill) from "skills";
+import Item@ SelectSkillItemExt(Critter& cr, Item@ item, uint16 skill) from "skills";
+import void GainSkillXp(Critter& cr, uint skillNum, int xp) from "skills";
+
+
 bool UseItemOnLocker(Critter& cr, Item& locker, Item& item)   // Export
 {
     return true;
@@ -24,25 +29,19 @@ bool UseItemOnLocker(Critter& cr, Item& locker, Item& item)   // Export
 bool UseSkillOnLocker(Critter& cr, Item& locker, int skill)   // Export
 {
     Map@ map = cr.GetMap();
-    if(!valid(map))
-    {
+    if (!valid(map)) {
         cr.SayMsg(SAY_NETMSG, TEXTMSG_GAME, STR_USE_NOTHING);
         return true;
     }
 
-    if(skill == SKILL_PICK_ON_GROUND)
-    {
+    if (skill == SKILL_PICK_ON_GROUND) {
         return HandleLocker(cr, map, locker, false);
-    }
-    else if(skill == SK_STEAL)
-    {
-        if(locker.GetType() == ITEM_TYPE_CONTAINER && FLAG(locker.LockerCondition, LOCKER_ISOPEN))
+    } else if (skill == SK_STEAL) {
+        if (locker.GetType() == ITEM_TYPE_CONTAINER && FLAG(locker.LockerCondition, LOCKER_ISOPEN))
             cr.ShowContainer(null, locker, locker.Proto.GroundLevel ? TRANSFER_HEX_CONT_DOWN : TRANSFER_HEX_CONT_UP);
         else
             cr.SayMsg(SAY_NETMSG, TEXTMSG_GAME, STR_USE_NOTHING);
-    }
-    else if(skill == SK_LOCKPICK)
-    {
+    } else if (skill == SK_LOCKPICK) {
         // NoOpen
         /*if(!locker.Proto.Container_Changeble)
            {
@@ -50,75 +49,86 @@ bool UseSkillOnLocker(Critter& cr, Item& locker, int skill)   // Export
                 return true;
            }*/
 		Map@ map = cr.GetMap();
-		if(map.GetLocation().GetProtoId()==LOCATION_BarterGround)
-		{
+		if (map.GetLocation().GetProtoId() == LOCATION_BarterGround) {
 			cr.Say(SAY_NETMSG, "You cannot do that here.");
 			return true;
 		}
 
-        if(cr.Timeout[TO_SK_LOCKPICK] > 0)
-        {
+        if (cr.Timeout[TO_SK_LOCKPICK] > 0) {
             cr.SayMsg(SAY_NETMSG, TEXTMSG_GAME, STR_SKILL_WEARINESS);
             return true;
         }
 
-        if(locker.LockerId == 0 || FLAG(locker.LockerCondition, LOCKER_ISOPEN))
-        {
+        if (locker.LockerId == 0 || FLAG(locker.LockerCondition, LOCKER_ISOPEN)) {
             cr.SayMsg(SAY_NETMSG, TEXTMSG_GAME, STR_USE_NOTHING);
             return true;
         }
 
         int    base = cr.Skill[SK_LOCKPICK] - locker.LockerComplexity;
         uint   exp_mod = locker.LockerComplexity / 25;
-        if(exp_mod > 7)
+        if (exp_mod > 7) {
             exp_mod = 7;
+        }
+        if (cr.GetAccess() >= ACCESS_TESTER) {
+            cr.Say(SAY_NETMSG, "Lock complexity = " + locker.LockerComplexity + ", id: " + locker.LockerId +  ", exp modifier = " + exp_mod);
+        }
         uint8  mode = 0;
         uint16 activePid = cr.GetSlotProto(SLOT_HAND1, mode).ProtoId;
-        Item@  lockpicks = _CritGetItemHand(cr);
-        if(valid(lockpicks) && lockpicks.Proto.Misc_ToolSkillNum == SK_LOCKPICK)
-        {
+        //Item@  lockpicks = _CritGetItemHand(cr);
+        Item@  lockpicks = SelectSkillItem(cr, lockpicks, SK_LOCKPICK);
+        if (!valid(lockpicks)) {
+            @lockpicks = SelectSkillItemExt(cr, lockpicks, SK_LOCKPICK);
+        }
+        if (valid(lockpicks) && lockpicks.Proto.Misc_ToolSkillNum == SK_LOCKPICK) {
+            if (cr.GetAccess() >= ACCESS_TESTER) {
+                cr.Say(SAY_NETMSG, "Lockpick tool bonus = " + lockpicks.Proto.Misc_ToolSkillBonus + ", skill = " + cr.Skill[SK_LOCKPICK]);
+            }
             base += lockpicks.Proto.Misc_ToolSkillBonus;
-            if(Random(0, 30) == 0)
+            if (Random(0, 30) == 0) {
                 cr.DeleteItem(lockpicks.GetProtoId(), 1);
+            }
         }
         // Todo: PID_ELECTRONIC_LOCKPICKS, PID_ELEC_LOCKPICK_MKII
 
         base = CLAMP(base, 0, 95);
-        if(base >= Random(1, 100))
-        {
-            if(locker.Proto.Container_Changeble && !LockerOpen(locker))
+        int roll = Random(1, 100);
+        if (base >= roll) {
+            if (locker.Proto.Container_Changeble && !LockerOpen(locker)) {
                 Log("ERR: something wrong with this locker: " + locker.MapId + "," + locker.HexX + "," + locker.HexY + " pid " + locker.GetProtoId());
+            }
             locker.LockerId = 0;
             locker.LockerComplexity = 0;
             // TODO: OnOpen ??
-            if(locker.GetType() == ITEM_TYPE_CONTAINER)
+            if (locker.GetType() == ITEM_TYPE_CONTAINER) {
                 cr.ShowContainer(null, locker, locker.Proto.GroundLevel ? TRANSFER_HEX_CONT_DOWN : TRANSFER_HEX_CONT_UP);
+            }
             cr.StatBase[ST_EXPERIENCE] += (30 + 10 * exp_mod);
+            if (cr.GetAccess() >= ACCESS_TESTER) {
+                cr.Say(SAY_NETMSG, "Lockpick SUCCESS :: base = " + base + " vs roll " + roll);
+            }
+            GainSkillXp(cr, SK_LOCKPICK, Random(1 + exp_mod / 2, 2 + exp_mod));
             AddScore(cr, SCORE_CRACKER, 1);
-        }
-        else
-        {
+        } else {
             cr.SayMsg(SAY_NETMSG, TEXTMSG_GAME, STR_SKILL_LOCKPICK_FAIL);
+            if (cr.GetAccess() >= ACCESS_TESTER) {
+                cr.Say(SAY_NETMSG, "Lockpick FAIL :: base = " + base + " vs roll " + roll);
+            }
+            if (cr.Skill[SK_LOCKPICK] < 100) {
+                GainSkillXp(cr, SK_LOCKPICK, Random(1, 1 + exp_mod / 2));
+            }
         }
         _SetTimeout(cr, TO_SK_LOCKPICK, LOCKPICK_TIMEOUT(cr));
-    }
-    else if(skill == SK_SCIENCE)
-    {
-        if(cr.IsPlayer() && cr.GetAccess() >= ACCESS_MODER)
+    } else if (skill == SK_SCIENCE) {
+        if (cr.IsPlayer() && cr.GetAccess() >= ACCESS_TESTER) {
             cr.Say(SAY_NETMSG, "Complexity: " + locker.LockerComplexity + ", id: " + locker.LockerId);
+        }
 
         TryPickupContainer(cr, locker);
-    }
-    else if(skill == SK_REPAIR)
-    {
+    } else if(skill == SK_REPAIR) {
         TryRotateContainer(cr, locker);
-    }
-    else if(skill == SKILL_TAKE_ALL_CONT)
-    {
+    } else if(skill == SKILL_TAKE_ALL_CONT) {
         return false;
-    }
-    else
-    {
+    } else {
         cr.SayMsg(SAY_NETMSG, TEXTMSG_GAME, STR_USE_NOTHING);
     }
     return true;
@@ -130,7 +140,7 @@ bool HandleLocker(Critter& cr, Map@ map, Item& locker, bool disregardKey)   // e
     {
 
         bool not_auto_door = false; // w Special Enco Ruined Military Base wyЕ‚Д…czone autozamykanie sie drzwi - zabezpiecza przed zatrzasnieciem siД™ drzwi, ktorych po ewentualnej utracie klucza, nie mozna byloby otworzyc
-    
+
         uint mapProtoId = map.GetProtoId();
 
         // NoOpen
@@ -179,7 +189,7 @@ bool HandleLocker(Critter& cr, Map@ map, Item& locker, bool disregardKey)   // e
             }
 
 
-            LockerOpen(locker);         
+            LockerOpen(locker);
             if(IsAutoDoor(locker))
                 OnOpenAutoDoor(locker, not_auto_door);
             else

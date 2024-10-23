@@ -17,7 +17,16 @@
 #define _XpForNextSkill              # (skill)  (skill > 175 ? 180 : (skill > 150 ? 120 : (skill > 125 ? 90 : (skill > 100 ? 60 : (skill > 75 ? 40 : (skill > 50 ? 30 : (skill > 25 ? 20 : 10)))))))
 
 
-#define SKILLS_DEBUG_LOGGING_ALLOWED     (true)
+#define SKILLS_DEBUG_LOGGING_ALLOWED     (false)
+
+void SkillsLog(Critter& cr, string@ s) {
+    if (SKILLS_DEBUG_LOGGING_ALLOWED) {
+        Log("SKILLS: " + s);
+    }
+    if (cr.GetAccess() >= ACCESS_TESTER) {
+        cr.Say(SAY_NETMSG, s);
+    }
+}
 
 void SkillsLog(string@ s) {
     if (SKILLS_DEBUG_LOGGING_ALLOWED) {
@@ -365,7 +374,7 @@ bool UseDoctorOnCritter(Critter& cr, Critter& targetCr, Item@ item)
 }
 
 void GainSkillXp(Critter& cr, uint skillNum, int xp) {
-    SkillsLog("GainSkillXp called :: skillNum = " + skillNum + ", xp = " + xp);
+    SkillsLog(cr, "Skill XP gained :: Skill = " + SkillName(skillNum) + ", XP = " + xp);
     int xpForNextSkill = 0;
     uint xpSkillVarNum = 0;
     int oldSkill = cr.Skill[skillNum];
@@ -397,13 +406,13 @@ void GainSkillXp(Critter& cr, uint skillNum, int xp) {
             break;
             */
         default:
-            SkillsLog("GainSkillXp :: Not valid skill.");
+            SkillsLog(cr, "GainSkillXp :: Not valid skill.");
             return;
     }
 
 	GameVar@ xpVar = GetLocalVar(xpSkillVarNum, cr.Id);
 	if (!valid(xpVar)) {
-        SkillsLog("Invalid variable = " + xpSkillVarNum);
+        SkillsLog(cr, "Invalid variable = " + xpSkillVarNum);
         return;
 	}
 	if (xpVar.GetValue() > _XpForNextSkill(cr.Skill[skillNum])) {
@@ -416,12 +425,12 @@ void GainSkillXp(Critter& cr, uint skillNum, int xp) {
         if (xpVar.GetValue() + xp < xpForNextSkill) {
             xpVar = xpVar.GetValue() + xp;
             xp = 0;
-            SkillsLog("GainSkillXp (" + SkillName(skillNum) + ") :: no skill gain: xp = " + xp + ", xpVar = " + xpVar.GetValue() + ", neededForNext = " + xpForNextSkill + ", skillValue = " + cr.Skill[skillNum]);
+            SkillsLog(cr, "" + SkillName(skillNum) + " :: No skill gain: xp = " + xp + ", xpVar = " + xpVar.GetValue() + ", neededForNext = " + xpForNextSkill + ", skillValue = " + cr.Skill[skillNum]);
         } else {
             xp -= xpForNextSkill - xpVar.GetValue();
             xpVar = 0;
             cr.SkillBase[skillNum] += 1;
-            SkillsLog("GainSkillXp (" + SkillName(skillNum) + ") :: skill gain: xp = " + xp + ", xpVar = " + xpVar.GetValue() + ", neededForNext = " + xpForNextSkill + ", skillValue = " + cr.Skill[skillNum]);
+            SkillsLog(cr, "" + SkillName(skillNum) + " :: Skill gain: xp = " + xp + ", xpVar = " + xpVar.GetValue() + ", neededForNext = " + xpForNextSkill + ", skillValue = " + cr.Skill[skillNum]);
         }
     }
     if (cr.SkillBase[skillNum] > 200) {
