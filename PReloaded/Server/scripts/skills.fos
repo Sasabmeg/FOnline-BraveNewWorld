@@ -421,7 +421,7 @@ void GainSkillXp(Critter& cr, uint skillNum, int xp) {
 
     while (xp > 0 && cr.SkillBase[skillNum] < 200) {
         xpForNextSkill = _XpForNextSkill(cr.SkillBase[skillNum]);
-        SkillsLog("GainSkillXp :: " + SkillName(skillNum) +  " currentXp = " + xpVar.GetValue() + ", gainXp = " + xp);
+        SkillsLog(cr, "" + SkillName(skillNum) +  " :: CurrentXp = " + xpVar.GetValue() + ", gainXp = " + xp);
         if (xpVar.GetValue() + xp < xpForNextSkill) {
             xpVar = xpVar.GetValue() + xp;
             xp = 0;
