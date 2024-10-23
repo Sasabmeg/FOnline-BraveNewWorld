@@ -115,7 +115,8 @@ bool UseSkillOnLocker(Critter& cr, Item& locker, int skill)   // Export
                 cr.Say(SAY_NETMSG, "Lockpick FAIL :: base = " + base + " vs roll " + roll);
             }
             if (cr.Skill[SK_LOCKPICK] < 100) {
-                GainSkillXp(cr, SK_LOCKPICK, Random(1, 1 + exp_mod / 2));
+                int xp = CLAMP((110 - cr.Skill[SK_LOCKPICK]) / 10, 1, 11) + exp_mod;
+                GainSkillXp(cr, SK_LOCKPICK, Random(1, 1 + xp / 2));
             }
         }
         _SetTimeout(cr, TO_SK_LOCKPICK, LOCKPICK_TIMEOUT(cr));
