@@ -50,7 +50,7 @@ void _Idle(Critter& guard)
 
     if(guard.Stat[ST_NPC_ROLE] == ROLE_JNK_GUARD_1)
     {
-        _GetNextNode(guard, 10)         // Route 10 as defined in patrolroutes.fos
+        _GetNextNode(guard, 17)         // Route 17 as defined in patrolroutes.fos
     }
 
     if(IsPatrolling(guard))
