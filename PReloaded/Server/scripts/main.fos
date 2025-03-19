@@ -2446,7 +2446,6 @@ void critter_idle(Critter& cr)
                 cr.StatBase[ST_CURRENT_HP] = cr.Stat[ST_MAX_LIFE];
             }
         }
-
         _SetTimeout(cr, TO_HEALING, HEALING_TIMEOUT(cr));
     }
 

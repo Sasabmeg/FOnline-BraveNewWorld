@@ -1644,7 +1644,7 @@
 {103082}{}{With this Perk, you get a +5 bonus to your Healing Rate. This is in addition to your normal healing rate, thus you heal faster.}
 # PE_MORE_CRITICALS
 {103091}{}{More Critical}
-{103092}{}{You are more likely to cause critical hits in combat if you have this Perk. You get an additional +5% chance to cause a critical hit.}
+{103092}{}{You are more likely to cause critical hits in combat if you have this Perk. You get an additional +6% chance to cause a critical hit.  This is a good thing.}
 # PE_NIGHT_VISION
 {103101}{}{Night Vision}
 {103102}{}{With the Night Vision Perk, you can see in the dark better.  This will reduce the overall darkness level by 20%.}
@@ -1710,7 +1710,7 @@
 {103302}{}{You are less likely to be hit in combat if you have this Perk. Each level of this perk will lower final chance to hit you by 5% when unarmed or equiped with melee weapons.}
 # PE_SNAKEATER
 {103311}{}{Snakeater}
-{103312}{}{Yum! Tastes like chicken. With this Perk you gain +30% to your Poison Resistance and +20% to your Radiation Resistance.}
+{103312}{}{Yum! Tastes like chicken. With this Perk you gain +10% to your Poison Resistance and +5% to your Radiation Resistance.}
 # PE_MR_FIXIT
 {103321}{}{Mr. Fixit}
 {103322}{}{Mr Fixit is able to repair items to a higher standard than his peers. }
@@ -1764,7 +1764,7 @@
 {103482}{}{Due to the extensive amount of time spend in the wilderness, you have learned to create the right items and tools necessary for survival. From now on, you will make a Safe House instead of a tent.}
 # PE_QUICK_POCKETS
 {103491}{}{Quick Pockets}
-{103492}{}{You have learned to pack your equipment better, your increased dexterity enables you to retrieve and put away items in half the time.  Reloading your weapon takes only 1 AP.}
+{103492}{}{You have learned to pack your equipment better, your increased dexterity enables you to retrieve and put away items in half the time.  Reloading your weapon takes only 1 AP and also reduces the AP cost of using healing drugs by 1.}
 # PE_SMOOTH_TALKER
 {103501}{}{Smooth Talker}
 {103502}{}{You have learned to increase your dialog options without understanding what you're talking about.  Each level of this Perk will increase your Intelligence by one, up to 10, for purposes of dialog only.}
@@ -1878,7 +1878,7 @@
 {104022}{}{You do +25% more damage with fire-based weapons, and enemies always seem to die in the most painful fiery fashion.}
 # PE_QUICK_RECOVERY
 {104031}{}{Quick Recovery}
-{104032}{}{You are quick at recovering from being knocked down.  It takes you only 1/3 of normal time to get back on your feet.}
+{104032}{}{You are quick at recovering from being knocked down.  It takes you only 1/3 of normal time to get back on your feet regardless of your Intellect.}
 # PE_SALESMAN
 {104041}{}{Salesman}
 {104042}{}{You are an adept salesperson.  With this Perk you gain +40% towards your Barter skill.}
@@ -1890,7 +1890,7 @@
 {104062}{}{The blood of a thief runs through your veins.  Luck/50 chance for no timeout when failing to steal.  A well rounded thief is alive thief.}
 # PE_WEAPON_HANDLING
 {104071}{}{Weapon Handling}
-{104072}{}{You can wield weapons much larger than normally allowed. You gain a +2 to your strength for the purposes of Strength checks when trying to wield weaponry.}
+{104072}{}{You can wield weapons much larger than normally allowed.  You gain a +2 to your strength for the purposes of Strength checks when trying to wield weaponry and when using Rocket Launcher you reload them immediately after firing.}
 # PE_VAULT_CITY_TRAINING
 {104081}{}{Vault City Training}
 {104082}{}{You have received the Vault City medical training.}
@@ -1902,7 +1902,7 @@
 {104172}{}{You can sling bull with the best of them.}
 # PE_WAY_OF_THE_FRUIT
 {104181}{}{Way of the Fruit}
-{104182}{}{Ever since you were a child you loved fruits.  Your body can digest them better, you heal for 16 Hit Points and don't suffer from radiation when eating fruits.}
+{104182}{}{Ever since you were a child you loved fruits.  Your strong belief in eating healthy boosts your body's reaction to First Aid and healing drugs by up to 15% if you have eaten mutated fruits recently.  You also heal more Hit Points and suffer less radiation from eating fruits.}
 # PE_JINXED_II
 {104191}{}{Jinxed}
 {104192}{}{The good thing is that everyone around you has more critical failures in combat. The bad thing is that you do too!}
@@ -1962,10 +1962,10 @@
 {104372}{}{You are even less likely to be hit in combat if you have this Perk. You gain a +40 to your Armor Class.}
 # PE_EVEN_TOUGHER             (438)
 {104381}{}{Even Tougher}
-{104382}{}{When you are even tougher, you take even less damage. You gain +10% to your normal Damage Resistance and +3 to your normal Damage Threshold.}
+{104382}{}{When you are even tougher, you take even less damage.  You gain +9% to your normal Damage Resistance and +3 to your normal Damage Threshold.}
 # PE_HEALER_II                (439)
 {104391}{}{Healer+}
-{104392}{}{The healing of bodies comes easier to you with this Perk. This Perk heals 20-40 additional hit points when using the First Aid}
+{104392}{}{The healing of bodies comes easier to you with this Perk.  You gain up to 10% bonus to self and up to 15% bonus when healing others with First Aid or healing drugs.}
 # PE_BLESSED_ARE_THE_WEAK     (440)
 {104401}{}{Blessed are the Weak}
 {104402}{}{You are able to bring people back from the brink of death. You can heal people even when they are Weakened.}
@@ -2173,52 +2173,49 @@
 {105502}{}{Your metabolic rate is twice as normal.  This means that effects of drugs and medicines wear off twice as fast, but your body heals faster (every 30s instead of every 60s).}
 # TRAIT_BRUISER
 {105511}{}{Bruiser}
-{105512}{}{A little slower, but a little bigger.  You may not hit as often, but they will feel it when you do!  Your total action points are lowered by 2, but your Strength is increased by 4 and you deal even more damage in melee attacks.}
+{105512}{}{A little slower, but a little bigger.  You may not hit as often, but they will feel it when you do!  Your total action points are lowered by 1, but your Strength is increased by 3 and you deal even more damage in melee attacks.}
 # TRAIT_ONE_HANDER
 {105521}{}{One Hander}
-{105522}{}{One of your hands is very dominant.  You excel with single-handed weapons (+20 chance to hit), but two-handed weapons cause a problem (-40 chance to hit). You do 5 extra damage with single-handed range weapons.}
+{105522}{}{One of your hands is very dominant.  You excel with single-handed weapons (+20 chance to hit), but two-handed weapons cause a problem (-40 chance to hit).  You do 5 extra damage with single-handed range weapons.}
 # TRAIT_FINESSE
 {105531}{}{Finesse}
-{105532}{}{Your attacks show a lot of finesse.  You don't do as much damage (+30 target's damage resistance), but you cause more critical hits (+10 critical chance).}
+{105532}{}{Your cunning attacks show a lot of finesse. You gain +1 Intellect and you don't do as much damage with non-burst attacks (+30 target's damage resistance), but you cause more critical hits (+10 critical chance).}
 # TRAIT_KAMIKAZE
 {105541}{}{Kamikaze}
-{105542}{}{By not paying attention to any threats. You do 10% more damage to enemies but your damage resistance is lowered by 10.}
+{105542}{}{You rush into the fight, without paying attention to any threats you gain +1 Agility.  You do 10% more damage to enemies but so do they on you.}
 # TRAIT_HEAVY_HANDED
 {105551}{}{Heavy Handed}
-{105552}{}{You swing harder, not better.  Your attacks are very brutal, but lack finesse.  You rarely cause a good critical (-20 critical power), but you always do more unarmed damage (+5 final damage). Additionally, all your close combat attacks knock down the opponent if a successful Strength roll was made.}
+{105552}{}{You swing harder, not better.  Your attacks are very brutal, but lack finesse.  You rarely cause a good critical (-20 critical power), but you always do more unarmed damage (+5 final damage).  Additionally, all your close combat attacks knock down the opponent if a successful Strength roll was made.}
 # TRAIT_FAST_SHOT
 {105561}{}{Fast Shot}
-{105562}{}{You don't have time to aim for a targeted attack, because you attack faster than normal people and your bullets can randomly hit different body parts.  It costs you one less action point for guns and thrown weapons, and then one less with two handed weapons.}
+{105562}{}{You don't have time to aim for a targeted attack, because you attack faster than normal people and your bullets can randomly hit different body parts. You gain +1 Agility and it costs you one less action point for single shots with guns and thrown weapons.}
+# TRAIT_DOUBLE_TAP
+{105571}{}{Double Tap}
+{105572}{}{You trained yourself in the art of using handguns and squeeze the trigger a second time before the recoil would change your aim.  You gain +1 Agility and this muscle memory will always trigger another shot but it costs an extra AP to use handguns.}
 # TRAIT_BLOODY_MESS
-{105571}{}{Bloody Mess}
-{105572}{}{By some strange twist of fate, people around you die violently.  You always see the worst way a person can die (100% chance to kill target if your damage gets him on negative HP but you can be killed like that too).}
+{105581}{}{Bloody Mess}
+{105582}{}{By some strange twist of fate, people around you die violently.  You always see the worst way a person can die (100% chance to kill target if your damage gets him on negative HP but you can be killed like that too).}
 # TRAIT_JINXED
-{105581}{}{Jinxed}
-{105582}{}{The good thing is that everyone around you has more critical failures in combat, the bad thing is so do you!}
+{105591}{}{Jinxed}
+{105592}{}{The good thing is that everyone around you has more critical failures in combat, the bad thing is so do you!  You lose +1 Luck and there is a 50% chance both you and your enemies will have combat calculations as having 1 Luck.}
 # TRAIT_GOOD_NATURED
-{105591}{}{Good Natured}
-{105592}{}{There is a positive aura about you. People are more likely to follow you (+50 party points), but you can't own any slaves.}
+{105601}{}{Good Natured}
+{105602}{}{There is a positive aura about you.  You gain +1 Charisma and People are more likely to follow you (+50 party points), but you can't own any slaves.}
 # TRAIT_CHEM_RELIANT
-{105601}{}{Chem Reliant}
-{105602}{}{The drug effects last twice as long, but you regain only 2/3 the normal hit points while using medicines.}
-# TRAIT_BONEHEAD
-{105611}{}{Bonehead}
-{105612}{}{A thicker than average cranium means you can shrug off hits to the head that would floor others.  Unfortunatly that doesn't leave much room up there.}
-# TRAIT_SKILLED
-{105621}{}{Skilled}
-{105622}{}{Since you spent more time improving your skills than a normal person, you gain 5 additional skill points per experience level. The tradeoff is that you do not gain as many extra abilities. You gain a perk every four levels.}
-# TRAIT_LONER
-{105631}{}{Loner}
-{105632}{}{You appreciate the nature more than company of others. You gain 10% more experience, but you can't have any followers.}
-# TRAIT_SMALL_FRAME
-{105641}{}{Small Frame}
-{105642}{}{You are not quite as big as the other ordinary man, but that never slowed you down.  You can't carry as much, but you are more agile.}
-# TRAIT_CHEM_RESISTANT
-{105651}{}{Chem Resistant}
-{105652}{}{You are immune to drug addiction effects, but regain only half the normal hit points while using medicines.}
+{105611}{}{Chem Reliant}
+{105612}{}{Healing medicine has less immediate effect, but more over time effects.  Some other combat drugs - like Psycho - have shorter effect duration but you can take them more often.}
+# TRAIT_BRUTISH_HULK
+{105621}{}{Brutish Hulk}
+{105622}{}{You are as big as they come but ugly as sin.  You gain + 12 hit points but you lose +1 Charisma.}
+# TRAIT_CAUTIOUS_NATURE
+{105631}{}{Cautious Nature}
+{105632}{}{You are more alert outdoors and you never fully commit to your attacks in a fight instead you look out for mitigating damage.  You gain +1 Perception and receive 10% less damage, but you also do 10% less damage.}
 # TRAIT_GIFTED
-{105661}{}{Gifted}
-{105662}{}{You have more innate abilities than most, so you have not spent as much time honing your skills.  Your primary statistics are each +1, but you lose -10% on all skills to start, and receive 5 less skill points per level.}
+{105641}{}{Gifted}
+{105642}{}{You have more innate abilities than most, so you do not pay as much attention to your skills as others.  Your primary statistics are each +1, but you use your skills at only 80% capacity at all times.}
+# TRAIT_LONER
+{105651}{}{Loner}
+{105652}{}{WARNNING: SOLO HARDCORE MODE!  You appreciate the nature more than company of others.  You gain 25% more experience, but you can't have any followers and cannot interact with others in most meaningful ways.  Going down all alone has more severe penalties for you.}
 
 
 ######################

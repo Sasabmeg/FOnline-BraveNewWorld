@@ -124,7 +124,7 @@ int[][] PerksData =
     },
     #ifdef __SERVER
     {              // level 1 perk up effects
-        14, 1, 5,  // Critical Chance increased by 5
+        14, 1, 6,  // Critical Chance increased by 6
     },
     {              // level 1 perk down effects
         -1         // Just revert
@@ -178,7 +178,7 @@ int[][] PerksData =
         20, 1, 1,  // Electric Damage Threshold increased by 1
         21, 1, 1,  // EMP Damage Threshold increased by 1
         22, 1, 1,  // Explode Damage Threshold increased by 1
-        23, 1, 5,  // Normal Damage Resistance increased by 5
+        23, 1, 6,  // Normal Damage Resistance increased by 5
         24, 1, 5,  // Laser Damage Resistance increased by 5
         25, 1, 5,  // Fire Damage Resistance increased by 5
         26, 1, 5,  // Plasma Damage Resistance increased by 5
@@ -220,7 +220,7 @@ int[][] PerksData =
     { 316, 0, 1 },   // Silent Running [PE_SILENT_RUNNING], Levelling, 1 ranks
     {                // level 1 requirements
         77, 1, 6,    // Level at least 6
-        208, 1, 100, // Sneak at least 100
+        208, 1, 75, // Sneak at least 75
     },
     #ifdef __SERVER
     array<int>(0),                 // level 1 perk up effects
@@ -1235,10 +1235,10 @@ int[][] PerksData =
     },
     #endif
 
-    { 418, 1, 1 }, // Way of the Fruit [PE_WAY_OF_THE_FRUIT], 1 ranks
+    { 418, 0, 1 }, // Way of the Fruit [PE_WAY_OF_THE_FRUIT], Level, 1 ranks
     {              // level 1 requirements
         77, 1, 3,  // Level at least 3
-        3, 1, 3,   // Charisma at least 3
+        3, 1, 4,   // Charisma at least 4
     },
     #ifdef __SERVER
     array<int>(0),              // level 1 perk up effects
@@ -1308,7 +1308,7 @@ int[][] PerksData =
     },
     #ifdef __SERVER
     {              // level 1 perk up effects
-        14, 1, 10, // Critical Chance increased by 10
+        14, 1, 9, // Critical Chance increased by 9
     },
     {              // level 1 perk down effects
         -1         // Just revert
@@ -1337,9 +1337,11 @@ int[][] PerksData =
     },
     #endif
 
-    { 427, 2, 1 }, // Spray and Pray, Disabled, 1 ranks
+    { 427, 0, 1 }, // Spray and Pray [PE_SPRAY_AND_PRAY], Level, 1 ranks
     {              // level 1 requirements
         77, 1, 6,  // Level at least 6
+        3, 1, 3,  // CH at least 3
+        6, 1, 3,  // LK at least 3
     },
     #ifdef __SERVER
     array<int>(0),              // level 1 perk up effects
@@ -1361,8 +1363,8 @@ int[][] PerksData =
 
     { 429, 0, 1 }, // Livewire [PE_LIVEWIRE], Levelling, 1 ranks
     {              // level 1 requirements
-        77, 1, 15, // Level at least 15
-        5, 1, 6,   // Agility at least 6
+        77, 1, 3, // Level at least 3
+        5, 1, 7,   // Agility at least 7
     },
     #ifdef __SERVER
     array<int>(0),              // level 1 perk up effects
@@ -1493,10 +1495,11 @@ int[][] PerksData =
     },
     #endif
 
-    { 439, 2, 1 },   // Healer+, Disabled, 1 ranks
-    {                // level 1 requirements
-        77, 1, 6,    // Level at least 6
-        206, 1, 100, // First aid at least 100
+    { 439, 0, 1 },  // Healer+ [PE_HEALER_II], Level, 1 ranks
+    {               // level 1 requirements
+        77, 1, 3,   // Level at least 3
+        206, 1, 50, // First aid at least 50
+        4, 1, 4,   // IN at least 4
     },
     #ifdef __SERVER
     array<int>(0),                // level 1 perk up effects
@@ -1555,7 +1558,7 @@ int[][] PerksData =
     { 444, 0, 1 },  // In Your Face! [PE_IN_YOUR_FACE], Levelling, 1 ranks
     {               // level 1 requirements
         77, 1, 6,   // Level at least 6
-        203, 1, 125 // Close Combat 125
+        203, 1, 75 // Close Combat 75
     },
     #ifdef __SERVER
     array<int>(0),              // level 1 perk up effects

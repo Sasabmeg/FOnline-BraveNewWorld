@@ -250,15 +250,15 @@ void InitPerks() // export
     // still some customizing, todo: make it generic
     #define SATISFIES    # (__perk, __func, __p0, __p1, __p2)Perks[__perk].CustomSatisfies(__func, __p0, __p1, __p2)
 
-    SATISFIES(PE_WEAPON_HANDLING,        @_OrRangedSkill, 0, 0, 100);
-    SATISFIES(PE_BONUS_RANGED_DAMAGE,    @_OrRangedSkill, 0, 0, 150);
-    SATISFIES(PE_MORE_RANGED_DAMAGE,     @_OrRangedSkill, 0, 0, 200);
+    SATISFIES(PE_WEAPON_HANDLING,        @_OrRangedSkill, 0, 0, 50);
+    SATISFIES(PE_BONUS_RANGED_DAMAGE,    @_OrRangedSkill, 0, 0, 100);
+    SATISFIES(PE_MORE_RANGED_DAMAGE,     @_OrRangedSkill, 0, 0, 150);
 
-    SATISFIES(PE_SHARPSHOOTER,           @_OrCombatSkill, 0, 0, 150);
-    SATISFIES(PE_BONUS_RATE_OF_ATTACK,   @_OrCombatSkill, 0, 0, 180);
-    SATISFIES(PE_MORE_CRITICALS,         @_OrCombatSkill, 0, 0, 100);
-    SATISFIES(PE_EVEN_MORE_CRITICALS,    @_OrCombatSkill, 0, 0, 125);
-    SATISFIES(PE_BETTER_CRITICALS,       @_OrCombatSkill, 0, 0, 175);
+    SATISFIES(PE_SHARPSHOOTER,           @_OrCombatSkill, 0, 0, 100);
+    SATISFIES(PE_BONUS_RATE_OF_ATTACK,   @_OrCombatSkill, 0, 0, 175);
+    SATISFIES(PE_MORE_CRITICALS,         @_OrCombatSkill, 0, 0, 50);
+    SATISFIES(PE_EVEN_MORE_CRITICALS,    @_OrCombatSkill, 0, 0, 75);
+    SATISFIES(PE_BETTER_CRITICALS,       @_OrCombatSkill, 0, 0, 125);
 
     SATISFIES(PE_PYROMANIAC,             @_OrCombatSkill, 0, 0, 100);
 
@@ -268,7 +268,7 @@ void InitPerks() // export
     SATISFIES(PE_PROFESSION_ENERGY_EXPERT,     @_ProfessionCheck, SK_SCIENCE, 50, 100);
     SATISFIES(PE_PROFESSION_DEMOLITION_EXPERT, @_ProfessionCheck, SK_TRAPS,   50, 100);
     SATISFIES(PE_PROFESSION_DOCTOR,            @_ProfessionCheck, SK_DOCTOR,  50, 100);
-    
+
     #ifdef __SERVER
     @Perks[PE_SPEAKER].ProcessUpF = _SpeakerUp;
     @Perks[PE_SPEAKER].ProcessDownF = _SpeakerDown;
@@ -332,7 +332,7 @@ bool _OrRangedGunSkill(Critter& cr, int perk, int level, int, int, int minskill)
 
 bool _BRD(Critter& cr, int perk, int level, int, int, int)
 {
-    return cr.SkillBase[SK_BIG_GUNS] >= 150 + level * 25 || cr.SkillBase[SK_SMALL_GUNS] >= 150 + level * 25;
+    return cr.SkillBase[SK_BIG_GUNS] >= 75 + level * 25 || cr.SkillBase[SK_SMALL_GUNS] >= 75 + level * 25;
 }
 
 bool _Awareness(Critter& cr, int perk, int level, int, int, int)

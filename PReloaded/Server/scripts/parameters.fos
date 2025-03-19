@@ -126,7 +126,8 @@ void changedParam_Experience(Critter& cr, uint, int oldValue)   // server
 			}
         }
 
-        int perkUp = (cr.Trait[TRAIT_SKILLED] != 0 ? 4 : 3);
+        //int perkUp = (cr.Trait[TRAIT_SKILLED] != 0 ? 4 : 3);
+        int perkUp = 3;
         while(true)
         {
             if(cr.StatBase[ST_EXPERIENCE] >= NextLevelNeedExp(cr))
@@ -379,28 +380,50 @@ void CritterGenerate(Critter& cr)   // Export to main@critter_init
 void CritterGenerate(array<int>& data)     // Export to client_main@player_data_generate
 #endif
 {
-    if(_param_[ST_LEVEL] == 0)
+    if (_param_[ST_LEVEL] == 0) {
         _param_[ST_LEVEL] = 1;
+    }
+    //  traits
+    if (_param_[TRAIT_GIFTED] != 0) {
+    	for (uint i = ST_STRENGTH; i <= ST_LUCK; i++) {
+            _param_[i]++;
+    	}
+    }
+    if (_param_[TRAIT_BRUISER] != 0) {
+        _param_[ST_STRENGTH] += 3;
+    }
+    if (_param_[TRAIT_FINESSE] != 0) {
+        _param_[ST_CRITICAL_CHANCE] += 10;
+        _param_[ST_INTELLECT]++;
+    }
+    if (_param_[TRAIT_KAMIKAZE] != 0) {
+        _param_[ST_AGILITY]++;
+    }
+    if (_param_[TRAIT_HEAVY_HANDED] != 0) {
+        _param_[ST_STRENGTH]++;
+        _param_[ST_MELEE_DAMAGE] += 5;
+    }
+    if (_param_[TRAIT_FAST_SHOT] != 0) {
+        _param_[MODE_NO_AIM] = 1;
+        _param_[ST_AGILITY]++;
+    }
+    if (_param_[TRAIT_DOUBLE_TAP] != 0) {
+        _param_[ST_AGILITY]++;
+    }
+    if (_param_[TRAIT_GOOD_NATURED] != 0) {
+        _param_[ST_CHARISMA]++;
+    }
+    if (_param_[TRAIT_BRUTISH_HULK] != 0) {
+        _param_[ST_CHARISMA]--;
+    }
+    if (_param_[TRAIT_CAUTIOUS_NATURE] != 0) {
+        _param_[ST_PERCEPTION]++;
+    }
+    if (_param_[TRAIT_JINXED] != 0) {
+        _param_[ST_LUCK]--;
+    }
 
-    if(_param_[TRAIT_BRUISER] != 0)
-        _param_[ST_STRENGTH] += 4;
-    /*if(_param_[TRAIT_GOOD_NATURED]!=0)
-       {
-            _param_[SK_FIRST_AID]+=15;
-            _param_[SK_DOCTOR]+=15;
-            _param_[SK_SPEECH]+=15;
-            _param_[SK_BARTER]+=15;
-            _param_[SK_SMALL_GUNS]-=10;
-            _param_[SK_BIG_GUNS]-=10;
-            _param_[SK_ENERGY_WEAPONS]-=10;
-            _param_[SK_UNARMED]-=10;
-            _param_[SK_THROWING]-=10;
-       }*/
-    // if(_param_[TRAIT_GIFTED]!=0)
-    // {
-    //	for(uint i=ST_STRENGTH;i<=ST_LUCK;i++) _param_[i]++;
-    //	for(uint i=SKILL_BEGIN;i<=SKILL_END;i++) _param_[i]-=10;
-    // }
+    //  skills
 
     _param_[SK_SMALL_GUNS] += 5 + 4 * _param_[ST_AGILITY];
     _param_[SK_BIG_GUNS] += 0 + 2 * _param_[ST_AGILITY];
@@ -422,26 +445,9 @@ void CritterGenerate(array<int>& data)     // Export to client_main@player_data_
     _param_[SK_GAMBLING] += 0 + 5 * _param_[ST_LUCK];
     _param_[SK_OUTDOORSMAN] += 0 + 2 * (_param_[ST_ENDURANCE] + _param_[ST_INTELLECT]);
 
-    if(_param_[TAG_SKILL1] != 0)
+    if (_param_[TAG_SKILL1] != 0) {
         _param_[_param_[TAG_SKILL1]] += 20;
-    if(_param_[TAG_SKILL2] != 0)
-        _param_[_param_[TAG_SKILL2]] += 20;
-    if(_param_[TAG_SKILL3] != 0)
-        _param_[_param_[TAG_SKILL3]] += 20;
-
-    if(_param_[TRAIT_BRUISER] != 0)
-        _param_[ST_ACTION_POINTS] -= 2;
-    if(_param_[TRAIT_KAMIKAZE] != 0)
-    {
-        for(uint i = ST_NORMAL_RESIST; i <= ST_EXPLODE_RESIST; i++)
-            _param_[i] -= 10;
     }
-    if(_param_[TRAIT_FINESSE] != 0)
-        _param_[ST_CRITICAL_CHANCE] += 10;
-    if(_param_[TRAIT_FAST_SHOT] != 0)
-        _param_[MODE_NO_AIM] = 1;
-    if(_param_[TRAIT_BONEHEAD] != 0)
-        _param_[ST_INTELLECT] -= 1;
 
     #ifdef __CLIENT
     // Runtime calculations, only for client registration
@@ -461,10 +467,18 @@ void CritterGenerate(array<int>& data)     // Export to client_main@player_data_
 
     _param_[ST_MAX_LIFE] += 15;
     _param_[ST_ACTION_POINTS] += 5;
+    if (_param_[TRAIT_BRUISER] != 0) {
+        _param_[ST_ACTION_POINTS]--;
+    }
+    if (_param_[TRAIT_BRUTISH_HULK] != 0) {
+        _param_[ST_MAX_LIFE] += 12;
+    }
     _param_[ST_CURRENT_HP] = _param_[ST_MAX_LIFE];
     _param_[ST_CURRENT_AP] = _param_[ST_ACTION_POINTS] * 100;
 
     _param_[ST_HEALTH_LEVEL] = 4;
+
+
     #ifdef __SERVER
     if(IsHumanoid(cr))
         cr.StatBase[ST_MAX_LIFE] += 40;
@@ -478,8 +492,7 @@ bool CritterGenerateCheck(array<int>& data)     // Export to client_main@player_
 {
     // Check special
     int special = 0;
-    for(uint i = ST_STRENGTH; i <= ST_LUCK; i++)
-    {
+    for (uint i = ST_STRENGTH; i <= ST_LUCK; i++) {
 		if(data[i] < 1 || data[i] > 10)
         {
             Message(GetMsgStr(TEXTMSG_GAME, STR_NET_WRONG_SPECIAL));
@@ -487,22 +500,36 @@ bool CritterGenerateCheck(array<int>& data)     // Export to client_main@player_
         }
         special += data[i];
     }
-	if ((data[ST_STRENGTH]>6 && data[TRAIT_BRUISER]!=0) ||
-        (data[ST_INTELLECT]==1 && data[TRAIT_BONEHEAD]!=0))
-		{
-			Message("|0xC85050 Incorrect SPECIAL data.");
-			return false;
-		}
-    /*
+	if ((data[ST_STRENGTH] > 7 && data[TRAIT_BRUISER] != 0 && data[TRAIT_HEAVY_HANDED] == 0) ||
+        (data[ST_STRENGTH] > 9 && data[TRAIT_HEAVY_HANDED] != 0 && data[TRAIT_BRUISER] == 0) ||
+        (data[ST_STRENGTH] > 6 && data[TRAIT_HEAVY_HANDED] != 0 && data[TRAIT_BRUISER] != 0) ||
+        (data[ST_INTELLECT] > 9 && data[TRAIT_FINESSE] != 0) ||
+        (data[ST_AGILITY] > 9 && data[TRAIT_KAMIKAZE] != 0) ||
+        (data[ST_AGILITY] > 9 && data[TRAIT_FAST_SHOT] != 0) ||
+        (data[ST_AGILITY] > 9 && data[TRAIT_DOUBLE_TAP] != 0) ||
+        (data[ST_PERCEPTION] > 9 && data[TRAIT_CAUTIOUS_NATURE] != 0) ||
+        (data[ST_LUCK] == 1 && data[TRAIT_JINXED] != 0) ||
+        (data[ST_CHARISMA] > 9 && data[TRAIT_GOOD_NATURED] != 0 && data[TRAIT_BRUTISH_HULK] == 0) ||
+        (data[ST_CHARISMA] == 1 && data[TRAIT_GOOD_NATURED] == 0 && data[TRAIT_BRUTISH_HULK] != 0))
+	{
+        Message("|0xC85050 Incorrect SPECIAL data.");
+        return false;
+	}
+
     if (data[TRAIT_GIFTED] != 0) {
-        for (int i = TRAIT_BEGIN; i <= TRAIT_END; i++)
+        for (uint i = TRAIT_BEGIN; i <= TRAIT_END; i++) {
             if (TRAIT_GIFTED != i && data[i] != 0) {
                 Message("|0xC85050 Incorrect TRAIT selection. Gifted trait cannot be selected with other Traits.");
                 return false;
             }
         }
+        for (int i = ST_STRENGTH; i <= ST_LUCK; i++) {
+            if (data[i] == 10) {
+                Message("|0xC85050 Incorrect SPECIAL data. You must not go above 10 in any of the special stats with Gifted trait.");
+                return false;
+            }
+        }
     }
-    */
 
     if(special != __StartSpecialPoints)
     {

@@ -163,6 +163,41 @@ bool UseFirstAidOnCritter(Critter& cr, Critter& targetCr, Item@ item)
     }
     //  BNW MECHANICS CHANGE END
 
+    //  Healer perk boost
+    if (isSelf && cr.Perk[PE_HEALER_II] > 0) {
+        int healerBonus = 0;
+        if (isSelf) {
+            healerBonus = CLAMP(5 + cr.Stat[ST_INTELLECT], 5, 15);
+        } else {
+            healerBonus = CLAMP(10 + cr.Stat[ST_INTELLECT], 10, 20);
+        }
+        heal += (heal * healerBonus) / 100;
+    }
+
+    //  Way of the Fruit Perk increase all healing received
+    if (targetCr.Perk[PE_WAY_OF_THE_FRUIT] > 0 && targetCr.Timeout[TO_FRUIT] > 0 && heal > 0) {
+        int fruitBonus = (heal * (5 + cr.Stat[ST_CHARISMA])) / 100;
+        heal += MAX(fruitBonus, 1 + (cr.Stat[ST_CHARISMA] + 2) / 3);
+        //cr.Say(SAY_NETMSG, "First Aid::Way of the Fruit perk bonus: " + fruitBonus);
+    }
+
+    //  Healer perk bonus
+    int healerBonusPercent = 0;
+    if (cr.Perk[PE_HEALER_II] > 0) {
+        if (isSelf) {
+            healerBonusPercent = 5 + cr.Stat[ST_INTELLECT];
+        } else {
+            healerBonusPercent = 10 + cr.Stat[ST_INTELLECT];
+        }
+        //cr.Say(SAY_NETMSG, "First Aid::Healer bonus = " + healerBonus);
+        if (healerBonusPercent > 0 && heal > 0) {
+            int healerBonus = (heal * healerBonusPercent) / 100;
+            healerBonus = MAX(healerBonus, healerBonusPercent/5);
+            heal += healerBonus;
+            //cr.Say(SAY_NETMSG, "First Aid::Healer bonus: (" + healerBonusPercent + "%, " + healerBonus + ")");
+        }
+    }
+
     if (heal < 1)
         heal = 1;
 

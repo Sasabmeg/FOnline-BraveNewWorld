@@ -446,11 +446,11 @@
 //FOClassic.fos #define TO_KARMA_VOTING                          (242) // Used in engine
 #define TO_GATHERING                             (243)          //  used when using a still, or other production scenery items?
 #define TO_SNEAK                                 (244)          //  used to disable sneak at start of caravan encounter for 15 seconds?
-#define TO_HEALING                               (245)          //  used for healing rate regeneration?
+#define TO_HEALING                               (245)          //  used for healing rate regeneration tick timer
 #define TO_CIGARETTES							 (246)
 #define TO_NUKA_COLA							 (247)
 #define TO_BEER                                  (248)
-#define TO_AGGRESSOR                             (249)          //  unused
+#define TO_FRUIT                                 (249)
 #define TO_PSYCHO							 	 (250)
 #define TO_JET								 	 (251)
 #define TO_IMMUNITY_TIME                         (252)
@@ -606,7 +606,7 @@
 #define PE_HTH_EVADE_II                          (436) // Disabled
 #define PE_DODGER_II                             (437) // Disabled
 #define PE_EVEN_TOUGHER                          (438)
-#define PE_HEALER_II                             (439) // Disabled
+#define PE_HEALER_II                             (439) // Level 3
 #define PE_BLESSED_ARE_THE_WEAK                  (440) // Disabled
 #define PE_NIGHT_PERSON                          (441) // Not implemented
 #define PE_MELT_INTO_SHADOW                      (442) // Not implemented
@@ -757,17 +757,19 @@
 #define TRAIT_FINESSE                            (553)
 #define TRAIT_KAMIKAZE                           (554)
 #define TRAIT_HEAVY_HANDED                       (555)
-#define TRAIT_FAST_SHOT                          (556) // Used in engine
-#define TRAIT_BLOODY_MESS                        (557)
-#define TRAIT_JINXED                             (558)
-#define TRAIT_GOOD_NATURED                       (559)
-#define TRAIT_CHEM_RELIANT                       (560)
-#define TRAIT_BONEHEAD                           (561)
-#define TRAIT_SKILLED                            (562)
-#define TRAIT_LONER                              (563) // Used in engine
+#define TRAIT_FAST_SHOT                          (556) // Used in engine? (to check)
+#define TRAIT_DOUBLE_TAP                         (557)
+#define TRAIT_BLOODY_MESS                        (558)
+#define TRAIT_JINXED                             (559)
+#define TRAIT_GOOD_NATURED                       (560)
+#define TRAIT_CHEM_RELIANT                       (561)
+#define TRAIT_BRUTISH_HULK                       (562)
+#define TRAIT_CAUTIOUS_NATURE                    (563)
+#define TRAIT_GIFTED                             (564)
+#define TRAIT_LONER                              (565) // Used in engine as 563? (to checked)
 // #define TRAIT_SMALL_FRAME                        (552) // Used in engine
+// #define TRAIT_BONEHEAD                           (563)
 // #define TRAIT_CHEM_RESISTANT                     (565)
-// #define TRAIT_GIFTED              (566)
 
 // 567...579
 
@@ -826,6 +828,7 @@
 #define ST_EX_PSYCHO_STAGE_DAMAGE                (951)  //  Accumulated damage from Psycho, to be spread over effect period
 #define TO_EX_ANIM_INTERRUPT                     (952)  //  Attack animation interruption time/tick (this is used if a critter had it's animation canceled by any means, example get KO/KD before attack went off)
 #define ST_EX_ATTACK_EVENT_ID                    (953)  //  Attack animation timed event ID, used to erase it in case of interrupt
+#define ST_TO_VISION_TIMER                       (954)  //
 
 
 //
@@ -879,7 +882,9 @@
 #define STEAL_TIMEOUT                            # (cr)         (cr.Perk[PE_MASTER_THIEF] != 0 ? REAL_SECOND(15) : REAL_SECOND(30))                                                                                // 30 seconds
 #define TRANSFER_TIMEOUT                         # (cr)      (REAL_SECOND(30))                                                                                                                                     // 1/2 min
 #define WEAKENED_TIMEOUT                         # (cr)          (REAL_MINUTE((16 - Random(1, cr.Stat[ST_LUCK])) / 2))
-#define HEALING_TIMEOUT                          # (cr) (cr.Trait[TRAIT_FAST_METABOLISM] > 0 ? REAL_SECOND(30) : REAL_SECOND(60))                                                                                  // 0.5 or 1 minute
+#define HEALING_TIMEOUT                          # (cr)     (cr.Trait[TRAIT_FAST_METABOLISM] > 0 ? \
+                                                                REAL_SECOND(30 - (cr.Timeout[TO_FRUIT] > 0 ? 10 : 0)) : \
+                                                                REAL_SECOND(60 - (cr.Timeout[TO_FRUIT] > 0 ? 20 : 0)))
 #define IS_TURN_BASED_TIMEOUT                    # (cr) (cr.Timeout[TO_BATTLE] > 100000)
 #define MAXIMUM_TIMEOUT                          (10000000)                                                                                                                                                        // more than most expensive items timeouts
 #define SLEEPY_DEATH_IMMUNITY                    # (cr)     (REAL_SECOND(300))

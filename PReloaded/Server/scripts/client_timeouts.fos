@@ -486,9 +486,9 @@ void TimeoutsDraw() // client_main@render_iface
         {
             y = screen_timeouts_draw(critter, TO_FIXBOY, "Crafting", x, y, z, TimeoutsCustom[z].CustomMode);
         }
-        if(z == 5 && critter.Timeout[TO_WEAKENED] > 0)
+        if(z == 5 && critter.Timeout[TO_FRUIT] > 0)
         {
-            y = screen_timeouts_draw(critter, TO_WEAKENED, "Weakened", x, y, z, TimeoutsCustom[z].CustomMode);
+            y = screen_timeouts_draw(critter, TO_FRUIT, "Fruit", x, y, z, TimeoutsCustom[z].CustomMode);
         }
         if(z == 6 && critter.Timeout[TO_SK_STEAL] > 0)
         {

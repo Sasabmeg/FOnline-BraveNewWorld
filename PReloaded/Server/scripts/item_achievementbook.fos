@@ -29,7 +29,7 @@ bool _AchievementBookUse(Item& item, Critter& cr, Critter@ onCritter, Item@ onIt
 		if((item.Val1==0) && cr.Stat[ST_LEVEL]>1)
 		{
 			cr.Say(SAY_NETMSG, "|0xFF4400 You must be level 1 to open this book.");
-			return(true);		
+			return(true);
 		}
 		else if(item.Val1==0) // No owner assigned yet, assigning the book to it's user + first time use
 		{
@@ -38,13 +38,13 @@ bool _AchievementBookUse(Item& item, Critter& cr, Critter@ onCritter, Item@ onIt
 			int nextLvl = NextLevelNeedExp(cr);
 			int expDif = nextLvl - cr.StatBase[ST_EXPERIENCE];
 			cr.StatBase[ST_EXPERIENCE] += (expDif/__ExperienceMod) + (expDif % __ExperienceMod);
-			if(item.Val0<2) 
+			if(item.Val0<2)
 				DeleteItem(item);
-			else 
-			{ 
+			else
+			{
 				item.Val0--;
 				item.Update();
-				cr.Say(SAY_NETMSG, item.Val0 + " levels remaining.");		
+				cr.Say(SAY_NETMSG, item.Val0 + " levels remaining.");
 			}
 			return(true);
 		}
@@ -57,18 +57,21 @@ bool _AchievementBookUse(Item& item, Critter& cr, Critter@ onCritter, Item@ onIt
 		{
 			int level = cr.Stat[ST_LEVEL];
 			uint skillPoints = 5 + cr.StatBase[ST_INTELLECT] * 2;
+			/*
             if(cr.Trait[TRAIT_SKILLED] != 0)
                 skillPoints += 5;
+                */
             skillPoints += cr.Perk[PE_EDUCATED] * 2;
-			
-			if(item.Val0+level!=item.Val2) 
+
+			if(item.Val0+level!=item.Val2)
 			{
 				cr.Say(SAY_NETMSG, "|0xFF4400 You cannot use this book anymore.");
 				return(true);
 			}
-			
-			int perkUp = (cr.Trait[TRAIT_SKILLED] != 0 ? 4 : 3);
-			if( (cr.Stat[ST_UNSPENT_SKILL_POINTS] + skillPoints) > 99)				// Preventing over 99 skill points 
+
+			//int perkUp = (cr.Trait[TRAIT_SKILLED] != 0 ? 4 : 3);
+			int perkUp = 3;
+			if( (cr.Stat[ST_UNSPENT_SKILL_POINTS] + skillPoints) > 99)				// Preventing over 99 skill points
 			{
 				cr.Say(SAY_NETMSG, "|0xFF4400 Spend your remaining skill points.");
 				return(true);
@@ -78,17 +81,17 @@ bool _AchievementBookUse(Item& item, Critter& cr, Critter@ onCritter, Item@ onIt
 				cr.Say(SAY_NETMSG, "|0xFF4400 Choose your perk.");
 				return(true);
 			}
-			
+
 			int nextLvl = NextLevelNeedExp(cr);
 			int expDif = nextLvl - cr.StatBase[ST_EXPERIENCE];
 			cr.StatBase[ST_EXPERIENCE] += (expDif/__ExperienceMod) + (expDif % __ExperienceMod);
-			if(item.Val0<2) 
+			if(item.Val0<2)
 				DeleteItem(item);
-			else 
-			{ 
+			else
+			{
 				item.Val0--;
 				item.Update();
-				cr.Say(SAY_NETMSG, item.Val0 + " levels remaining.");		
+				cr.Say(SAY_NETMSG, item.Val0 + " levels remaining.");
 			}
 		}
     }
