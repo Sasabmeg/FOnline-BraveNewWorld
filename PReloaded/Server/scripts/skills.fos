@@ -93,6 +93,11 @@ bool UseFirstAidOnCritter(Critter& cr, Critter& targetCr, Item@ item)
     }
 
     int firstAidSkill = cr.Skill[SK_FIRST_AID];
+	//  5% skill penalty/bonus for every IN below 5 or above 6
+	//  Gifted trait penalty 20%
+	int skillIntModPercent = skillIntModPercent = (20 + cr.Stat[ST_INTELLECT] - (_CritHasTrait(cr, TRAIT_GIFTED) ? 5 : 0 ) ) * 4;
+	firstAidSkill = (firstAidSkill * skillIntModPercent) / 100;
+
     int itemFactor = 0;
 
     @item = SelectSkillItem(cr, item, SK_FIRST_AID);
@@ -214,7 +219,7 @@ bool UseFirstAidOnCritter(Critter& cr, Critter& targetCr, Item@ item)
     if (!isSelf) {
         targetCr.Say(SAY_NETMSG, "First Aid: +" + heal);
     }
-    _SetTimeout(targetCr, TO_SK_FIRST_AID, FIRST_AID_TIMEOUT(cr));
+    _SetTimeout(targetCr, TO_SK_FIRST_AID, FIRST_AID_TIMEOUT(cr, firstAidSkill));
 
     int healXpFactor = 1;
     if (targetCr.IsNpc()) {
@@ -318,6 +323,10 @@ bool UseDoctorOnCritter(Critter& cr, Critter& targetCr, Item@ item)
     }
 
     int doctorSkill = cr.Skill[SK_DOCTOR];
+	//  5% skill penalty/bonus for every IN below 5 or above 6
+	//  Gifted trait penalty 20%
+	int skillIntModPercent = skillIntModPercent = (20 + cr.Stat[ST_INTELLECT] - (_CritHasTrait(cr, TRAIT_GIFTED) ? 5 : 0 ) ) * 4;
+	doctorSkill = (doctorSkill * skillIntModPercent) / 100;
 
     @item = SelectSkillItem(cr, item, SK_DOCTOR);
     if (!valid(item)) {
@@ -386,7 +395,7 @@ bool UseDoctorOnCritter(Critter& cr, Critter& targetCr, Item@ item)
     }
 
     if (isInjured || (isKo && isMedic)) {
-        _SetTimeout(targetCr, TO_SK_DOCTOR, DOCTOR_TIMEOUT(cr));
+        _SetTimeout(targetCr, TO_SK_DOCTOR, DOCTOR_TIMEOUT(cr, doctorSkill));
     }
 
     if (uninjured > 0)

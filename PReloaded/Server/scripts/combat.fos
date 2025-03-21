@@ -264,10 +264,11 @@ void CombatAttack(Critter& cr, Critter& target, ProtoItem& weapon, uint8 weaponM
         wpnMaxDist = MIN(wpnMaxDist, 3 * MIN(int(10), (cr.Stat[ST_STRENGTH])));
         wpnMaxDist += 6 * cr.Perk[PE_HEAVE_HO];
     }
-    int    skillVal = cr.Skill[skillNum]; // skillVal wykorzystane pozniej jako: baseToHit = skillVal; oraz WearItem(cr, realWeapon, (MAX_SKILL_VAL - MIN(skillVal,200)) / 6);
+    int skillVal = cr.Skill[skillNum]; // skillVal wykorzystane pozniej jako: baseToHit = skillVal; oraz WearItem(cr, realWeapon, (MAX_SKILL_VAL - MIN(skillVal,200)) / 6);
 
-	if(valid(realWeapon) && (realWeapon.Proto.ProtoId == PID_NEEDLER_PISTOL)) skillVal = MAX(cr.Skill[SK_SMALL_GUNS], cr.Skill[SK_DOCTOR]);  //25-07-2013 Cubik: podczas uzywania Needler pistola pod uwage bedzie brany max ze skilli SG i Doc do celnosci i psucia sie pistola
-
+	if (valid(realWeapon) && (realWeapon.Proto.ProtoId == PID_NEEDLER_PISTOL)) {
+        skillVal = MAX(cr.Skill[SK_SMALL_GUNS], cr.Skill[SK_DOCTOR]);  //25-07-2013 Cubik: podczas uzywania Needler pistola pod uwage bedzie brany max ze skilli SG i Doc do celnosci i psucia sie pistola
+	}
 
     uint8  weaponSubtype = (skillNum == SK_SMALL_GUNS || skillNum == SK_BIG_GUNS || skillNum == SK_ENERGY_WEAPONS /*|| skillNum == SK_DOCTOR*/) ? WS_GUN : ((skillNum == SK_THROWING) ? WS_THROWING : WS_UNARMED);
     bool   isRanged = (weaponSubtype == WS_THROWING || weaponSubtype == WS_GUN);
@@ -436,12 +437,23 @@ void CombatAttack(Critter& cr, Critter& target, ProtoItem& weapon, uint8 weaponM
 
 	//Log(" weaponPid = " + weapon.ProtoId);
 
-
+	//  5% skill penalty/bonus for every IN below 5 or above 6
+	//  Gifted trait penalty 20%
+	int skillIntModPercent = skillIntModPercent = (20 + cr.Stat[ST_INTELLECT] - (_CritHasTrait(cr, TRAIT_GIFTED) ? 5 : 0 ) ) * 4;
+	skillVal = (skillVal * skillIntModPercent) / 100;
     // baseToHit used for all targets, adjusted for distance and other target-dependent qualities every time it is necessary
     int baseToHit = skillVal - CLAMP(cr.ParamBase[ST_EX_RANGE_PENALTY], 0, 250);
     if (isDummyTraining) {
         dummyInfo += "|" + COLOR_DTEXT_CAPTION + " Chance to Hit :: ";
-        dummyInfo += "|" + COLOR_DTEXT_REGULAR + " Base To Hit = |"  + COLOR_DTEXT_BONUS + " " + skillVal;
+        if (_CritHasTrait(cr, TRAIT_GIFTED)) {
+            dummyInfo += "|" + COLOR_DTEXT_REGULAR + " Gifted skill penalty = |" + COLOR_DTEXT_MALUS + " " + (-20) + "% , ";
+        }
+        if (skillIntModPercent < 100) {
+            dummyInfo += "|" + COLOR_DTEXT_REGULAR + " IN skill modifier = |" + COLOR_DTEXT_MALUS + " " + ((cr.Stat[ST_INTELLECT]-5)*4) + "%";
+        } else {
+            dummyInfo += "|" + COLOR_DTEXT_REGULAR + " IN skill modifier = |" + COLOR_DTEXT_BONUS + " " + ((cr.Stat[ST_INTELLECT]-5)*4) + "%";
+        }
+        dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , Base To Hit = |"  + COLOR_DTEXT_BONUS + " " + skillVal;
         dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , Alcohol Range Penalty = |"  + COLOR_DTEXT_MALUS + " " + CLAMP(cr.ParamBase[ST_EX_RANGE_PENALTY], 0, 250);
     }
     if (eyeDamage) {
