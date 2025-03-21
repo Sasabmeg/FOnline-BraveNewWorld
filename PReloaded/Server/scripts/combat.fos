@@ -2286,9 +2286,29 @@ void ApplyDamage(AttackStruct& attack, Critter& target, uint rounds, bool isCrit
         if (rawDmg > 0) {
             totalDmg += rawDmg;
         }
+
         if (isDummyTraining) {
             dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , raw Dmg = |" + COLOR_DTEXT_BONUS + " " + rawDmg;
             dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , Total Dmg = |" + COLOR_DTEXT_BONUS + " " + totalDmg;
+        }
+    }
+
+    //  Spray and Pray
+    if (!isCritical && attacker.Perk[PE_SPRAY_AND_PRAY] > 0 && totalDmg > 0 && isBurst) {
+        int sprayAndPrayRoll = Random(1, 100);
+        int sprayAndPrayChance = 5 + attacker.Stat[ST_CHARISMA] + attacker.Stat[ST_LUCK];
+        if (sprayAndPrayChance >= sprayAndPrayRoll) {
+            totalDmg += (totalDmg * 20) / 100;
+        }
+        if (isDummyTraining) {
+            dummyInfo += "\n|" + COLOR_DTEXT_REGULAR + " Spray and Pray chance = |" + COLOR_DTEXT_BONUS + " " + sprayAndPrayChance;
+            dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , vs Roll = |" + COLOR_DTEXT_ROLL + " " + sprayAndPrayRoll;
+            if (sprayAndPrayChance >= sprayAndPrayRoll) {
+                dummyInfo += "|" + COLOR_DTEXT_BONUS + "  Success |" + COLOR_DTEXT_REGULAR + " (+20% bonus damage)";
+            } else {
+                dummyInfo += "|" + COLOR_DTEXT_MALUS + "  Fail";
+            }
+            dummyInfo += "|" + COLOR_DTEXT_REGULAR + "  Total Dmg = |" + COLOR_DTEXT_BONUS + " " + totalDmg;
         }
     }
 
