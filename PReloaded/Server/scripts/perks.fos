@@ -250,17 +250,27 @@ void InitPerks() // export
     // still some customizing, todo: make it generic
     #define SATISFIES    # (__perk, __func, __p0, __p1, __p2)Perks[__perk].CustomSatisfies(__func, __p0, __p1, __p2)
 
-    SATISFIES(PE_WEAPON_HANDLING,        @_OrRangedSkill, 0, 0, 50);
-    SATISFIES(PE_BONUS_RANGED_DAMAGE,    @_OrRangedSkill, 0, 0, 100);
-    SATISFIES(PE_MORE_RANGED_DAMAGE,     @_OrRangedSkill, 0, 0, 150);
-
-    SATISFIES(PE_SHARPSHOOTER,           @_OrCombatSkill, 0, 0, 100);
-    SATISFIES(PE_BONUS_RATE_OF_ATTACK,   @_OrCombatSkill, 0, 0, 175);
+    //  level 3 perks
     SATISFIES(PE_MORE_CRITICALS,         @_OrCombatSkill, 0, 0, 50);
+    SATISFIES(PE_WEAPON_HANDLING,        @_OrRangedSkill, 0, 0, 50);
+
+    //  level 6 perks
     SATISFIES(PE_EVEN_MORE_CRITICALS,    @_OrCombatSkill, 0, 0, 75);
+
+    //  level 9 perks
+    SATISFIES(PE_BONUS_RANGED_DAMAGE,    @_OrRangedSkill, 0, 0, 100);
+    SATISFIES(PE_SHARPSHOOTER,           @_OrCombatSkill, 0, 0, 100);
+    SATISFIES(PE_PYROMANIAC,             @_OrCombatSkill, 0, 0, 100);
+
+    //  level 12 perks
     SATISFIES(PE_BETTER_CRITICALS,       @_OrCombatSkill, 0, 0, 125);
 
-    SATISFIES(PE_PYROMANIAC,             @_OrCombatSkill, 0, 0, 100);
+    //  level 15 perks
+    SATISFIES(PE_MORE_RANGED_DAMAGE,     @_OrRangedSkill, 0, 0, 150);
+
+    //  level 18 perks
+    SATISFIES(PE_BONUS_RATE_OF_ATTACK,   @_OrCombatSkill, 0, 0, 175);
+
 
     SATISFIES(PE_PROFESSION_ARMORER,           @_ProfessionCheck, SK_REPAIR,  50, 100);
     SATISFIES(PE_PROFESSION_GUNSMITH_S,        @_ProfessionCheck, SK_REPAIR,  50, 100);

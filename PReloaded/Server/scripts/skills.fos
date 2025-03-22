@@ -159,25 +159,14 @@ bool UseFirstAidOnCritter(Critter& cr, Critter& targetCr, Item@ item)
             int mdc = cr.Perk[PE_MEDIC] > 0 ? 1 : 0;
             int fmdc = cr.Perk[PE_FIELD_MEDIC] > 0 ? 1 : 0;
             healReduce = (healReduce * (3 - mdc - fmdc)) / 3;
-            float healFactor = float(CLAMP(100 - healReduce, 25, 100)) / 100;
+            float healFactor2 = float(CLAMP(100 - healReduce, 25, 100)) / 100;
             int oldAmount = heal;
-            heal = heal * healFactor;
-            //cr.Say(SAY_NETMSG, "Heal factor = " + healFactor + ", healReduce = " + healReduce + ", irremediable% = " + targetCr.ParamBase[ST_EX_IRREMEDIABLE] + ", oldAmount = " + oldAmount + ", newAmount = " + heal);
-            //Log("Heal factor = " + healFactor + "healReduce = " + healReduce + ", irremediable% = " + targetCr.ParamBase[ST_EX_IRREMEDIABLE] + ", oldAmount = " + oldAmount + ", newAmount = " + heal);
+            heal = heal * healFactor2;
+            //cr.Say(SAY_NETMSG, "Heal factor = " + healFactor2 + ", healReduce = " + healReduce + ", irremediable% = " + targetCr.ParamBase[ST_EX_IRREMEDIABLE] + ", oldAmount = " + oldAmount + ", newAmount = " + heal);
+            //Log("Heal factor = " + healFactor2 + "healReduce = " + healReduce + ", irremediable% = " + targetCr.ParamBase[ST_EX_IRREMEDIABLE] + ", oldAmount = " + oldAmount + ", newAmount = " + heal);
         }
     }
     //  BNW MECHANICS CHANGE END
-
-    //  Healer perk boost
-    if (isSelf && cr.Perk[PE_HEALER_II] > 0) {
-        int healerBonus = 0;
-        if (isSelf) {
-            healerBonus = CLAMP(5 + cr.Stat[ST_INTELLECT], 5, 15);
-        } else {
-            healerBonus = CLAMP(10 + cr.Stat[ST_INTELLECT], 10, 20);
-        }
-        heal += (heal * healerBonus) / 100;
-    }
 
     //  Way of the Fruit Perk increase all healing received
     if (targetCr.Perk[PE_WAY_OF_THE_FRUIT] > 0 && targetCr.Timeout[TO_FRUIT] > 0 && heal > 0) {

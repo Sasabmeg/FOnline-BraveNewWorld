@@ -43,7 +43,7 @@ int[][] PerksData =
     { 303, 0, 1 },  // Close Combat Master [PE_CLOSE_COMBAT_MASTER], Levelling, 1 ranks
     {               // level 1 requirements
         77, 1, 9,   // Level at least 9
-        203, 1, 150 // Close Combat 150
+        203, 1, 100 // Close Combat 100
     },
     #ifdef __SERVER
     {              // level 1 perk up effects
@@ -208,6 +208,7 @@ int[][] PerksData =
     { 315, 0, 1 }, // Sharpshooter [PE_SHARPSHOOTER], Levelling, 1 ranks
     {              // level 1 requirements
         77, 1, 9,  // Level at least 9
+        1, 1, 7,   // Perception at least 7
         4, 1, 3,   // Intelligence at least 3
     },
     #ifdef __SERVER
@@ -291,6 +292,7 @@ int[][] PerksData =
     { 322, 0, 1 }, // Better Critical [PE_BETTER_CRITICALS], Levelling, 1 ranks
     {              // level 1 requirements
         77, 1, 12, // Level at least 12
+        6, 1, 5,     // Luck at least 5
     },
     #ifdef __SERVER
     array<int>(0),               // level 1 perk up effects
@@ -345,11 +347,11 @@ int[][] PerksData =
     { 327, 0, 2 }, // Action Boy [PE_ACTION_BOY], Levelling, 2 ranks
     {              // level 1 requirements
         77, 1, 12, // Level at least 12
-        5, 1, 6,   // Agility at least 6
+        5, 1, 5,   // Agility at least 5
     },
     {              // level 2 requirements
         77, 1, 15, // Level at least 15
-        5, 1, 6,   // Agility at least 6
+        5, 1, 7,   // Agility at least 7
     },
     #ifdef __SERVER
     {              // level 1 perk up effects
@@ -457,9 +459,9 @@ int[][] PerksData =
     { 333, 0, 1 },   // Medic [PE_MEDIC], Levelling, 1 ranks
     {                // level 1 requirements
         77, 1, 9,    // Level at least 9
-        4, 1, 3,     // Intelligence at least 3
-        206, 1, 125, // First aid at least 125
-        207, 1, 125, // Doctor at least 125
+        4, 1, 5,     // Intelligence at least 5
+        206, 1, 75, // First aid at least 75
+        207, 1, 75, // Doctor at least 75
     },
     #ifdef __SERVER
     array<int>(0),                 // level 1 perk up effects
@@ -525,7 +527,7 @@ int[][] PerksData =
     { 339, 0, 1 },   // Ghost [PE_GHOST], Levelling, 1 ranks
     {                // level 1 requirements
         77, 1, 12,   // Level at least 12
-        208, 1, 150, // Sneak at least 150
+        208, 1, 125, // Sneak at least 125
     },
     #ifdef __SERVER
     array<int>(0),                 // level 1 perk up effects
@@ -1488,7 +1490,7 @@ int[][] PerksData =
     #ifdef __SERVER
     {              // level 1 perk up effects
         16, 1, 3,  // Damage Threshold increased by 3
-        23, 1, 10, // Damage Resistance increased by 10
+        23, 1, 9, // Damage Resistance increased by 9
     },
     {              // level 1 perk down effects
         -1         // Just revert
