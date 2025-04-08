@@ -29,6 +29,8 @@ ReservedFunctionsMap GetClientFunctionsMap()
 	client["item_inv_in"] = ReservedFunction(&ClientFunctions.ItemInvIn, "void %s( ItemCl& item, float netGain, string& debugMessage )");
 	client["item_inv_out"] = ReservedFunction(&ClientFunctions.ItemInvOut, "void %s( ItemCl& item, float netGain, string& debugMessage )");
 	client["quest_change"] = ReservedFunction(&ClientFunctions.QuestChange, "void %s( string& header, string& progress )");
+	client["iface_show_character_detail"] = ReservedFunction(&ClientFunctions.IfaceShowCharacterDetail, "void %s( int detailId, int x, int y )");
+	client["iface_show_item_detail"] = ReservedFunction(&ClientFunctions.IfaceShowItemDetail, "void %s( ItemCl& item, int left, int right, int top, int bottom, bool preferLeft )");
 	client["map_message"] = ReservedFunction( &ClientFunctions.MapMessage, "bool %s( string& message, uint16& hexX, uint16& hexY, uint& color, uint& delay )" );
     client["in_message"] = ReservedFunction( &ClientFunctions.InMessage, "bool %s( string& message, int& sayType, uint& critterId, uint& delay )" );
     client["out_message"] = ReservedFunction( &ClientFunctions.OutMessage, "bool %s( string& message,int& sayType)" );

@@ -742,6 +742,9 @@ public:
     typedef std::vector<SlotExt> SlotExtVec;
     SlotExtVec SlotsExt;
 
+	//	helper
+	void invMouseMoveASCallback(Item* item, int left, int right, int top, int bottom, bool preferLeft);
+
     void InvDraw();
     void InvMouseMove();
     void InvLMouseDown();
@@ -1217,8 +1220,10 @@ public:
     // Methods
     bool RegCheckData( CritterCl* newcr );
     void ChaDraw( bool is_reg );
-    void ChaLMouseDown( bool is_reg );
-    void ChaLMouseUp( bool is_reg );
+	void ChaLMouseDown(bool is_reg);
+	void ChaLMouseUp(bool is_reg);
+	void ChaRMouseDown( bool is_reg );
+    void ChaRMouseUp( bool is_reg );
     void ChaMouseMove( bool is_reg );
 
 /************************************************************************/

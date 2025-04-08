@@ -52,6 +52,7 @@ import bool SmartCursorClick( int click ) from "client/smart_cursor";
 
 import bool GuiImageCatchMouseClick(int click) from "client/client_GuiImage";
 import bool GuiImageCatchMouseRelease(int click) from "client/client_GuiImage";
+import bool CharacterTooltipCatchMouseRelease(int click) from "client/client_GuiTooltip";
 import bool GuiImageUpdateMousePositionChange(int x, int y) from "client/client_GuiImage";
 
 #define LeftCtrl        GUI_IsKeyPressed(DIK_LCONTROL)
@@ -272,6 +273,7 @@ bool mouse_down(int click)
 bool mouse_up(int click)
 {
     GuiImageCatchMouseRelease(click);
+    CharacterTooltipCatchMouseRelease(click);
     IndicatorMouse(false, 0);
 
     return(GUI_MouseUp(__MouseX, __MouseY, click));

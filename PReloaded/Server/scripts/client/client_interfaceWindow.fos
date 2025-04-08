@@ -139,6 +139,49 @@ class CInterfaceWindow {
         //textBox = textBox_;
     }
 
+    void FitScreen() {
+        if (posX + totalWidth > __ScreenWidth) {
+            posX = __ScreenWidth - totalWidth;
+        }
+        if (posX < 0) {
+            posX = 0;
+        }
+        if (posY + totalHeight > __ScreenHeight) {
+            posY = __ScreenHeight - totalHeight;
+        }
+        if (posY < 0) {
+            posY = 0;
+        }
+    }
+
+    void FitScreen(int left, int right, int top, int bottom, bool leftFirst) {
+        if (posY + totalHeight > __ScreenHeight) {
+            posY = __ScreenHeight - totalHeight;
+        }
+        if (posY < 0) {
+            posY = 0;
+        }
+        if (leftFirst) {
+            if (left - totalWidth - 10 > 0) {
+                posX = left - totalWidth - 10;
+            } else {
+                posX = right + 10;
+                if (posX + totalWidth > __ScreenWidth) {
+                    posX = __ScreenWidth - totalWidth;
+                }
+            }
+        } else {
+            if (right + totalWidth + 10 < __ScreenWidth) {
+                posX = right +10;
+            } else {
+                posX = left - totalWidth - 10;
+                if (posX < 0) {
+                    posX = 0;
+                }
+            }
+        }
+    }
+
     bool CatchMouseClick(int click) {
         if (GetCurrentCursor() == CURSOR_DEFAULT && click == MOUSE_CLICK_WHEEL_DOWN) {
             if (isWithinDrawArea(__MouseX, __MouseY)) {
@@ -376,7 +419,7 @@ class CInterfaceWindow {
         uint id;
         if (@name != null && name.length() > 0) {
             id = LoadSprite(name, path);
-            Log("Loading sprite: " + iniKey);
+            //Log("Loading sprite: " + iniKey);
         } else {
             id = 0;
             Log("Failed to log sprite:" + iniKey);

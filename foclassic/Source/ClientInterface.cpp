@@ -1906,23 +1906,101 @@ void FOClient::InvRMouseDown()
     }
 }
 
+void FOClient::invMouseMoveASCallback(Item* item, int left, int right, int top, int bottom, bool preferLeft) {
+	if (Script::PrepareContext(ClientFunctions.IfaceShowItemDetail, _FUNC_, "Game"))
+	{
+		Script::SetArgObject(item);
+		Script::SetArgUInt(left);
+		Script::SetArgUInt(right);
+		Script::SetArgUInt(top);
+		Script::SetArgUInt(bottom);
+		Script::SetArgBool(preferLeft);
+		Script::RunPrepared();
+	}
+}
+
 void FOClient::InvMouseMove()
 {
-    if( IfaceHold == IFACE_INV_MAIN )
-    {
-        InvX = GameOpt.MouseX - InvVectX;
-        InvY = GameOpt.MouseY - InvVectY;
+	bool foundItem = false;
+	//	inventory
+	if (IsCurInRect(InvWInv, InvX, InvY)) {
+		uint itemId = GetCurContainerItemId(Rect(InvWInv, InvX, InvY), InvHeightItem, InvScroll, InvCont);
+		Item* item = Chosen->GetItem(itemId);
+		invMouseMoveASCallback(item,
+								InvWInv.L + InvX,
+								InvWInv.R + InvX,
+								InvWInv.T + InvY + ((GameOpt.MouseY - InvWInv.T - InvY) / InvHeightItem) * InvHeightItem,
+								InvWInv.B + InvY + ((GameOpt.MouseY - InvWInv.B - InvY) / InvHeightItem) * InvHeightItem,
+								true);
+		foundItem = true;
+	} else if (IsCurInRect(InvWSlot1, InvX, InvY)) {
+		//	SLOT_HAND1;
+		uint itemId = Chosen->ItemSlotMain->GetId();
+		Item* item = Chosen->GetItem(itemId);
+		invMouseMoveASCallback(item,
+			InvWSlot1.L + InvX,
+			InvWSlot1.R + InvX,
+			InvWSlot1.T + InvY,
+			InvWSlot1.B + InvY,
+			true);
+		foundItem = true;
+	} else if (IsCurInRect(InvWSlot2, InvX, InvY)) {
+		//	SLOT_HAND2;
+		uint itemId = Chosen->ItemSlotExt->GetId();
+		Item* item = Chosen->GetItem(itemId);
+		invMouseMoveASCallback(item,
+			InvWSlot2.L + InvX,
+			InvWSlot2.R + InvX,
+			InvWSlot2.T + InvY,
+			InvWSlot2.B + InvY,
+			false);
+		foundItem = true;
+	} else if (IsCurInRect(InvWArmor, InvX, InvY)) {
+		//	SLOT_ARMOR;
+		uint itemId = Chosen->ItemSlotArmor->GetId();
+		Item* item = Chosen->GetItem(itemId);
+		invMouseMoveASCallback(item,
+			InvWArmor.L + InvX,
+			InvWArmor.R + InvX,
+			InvWArmor.T + InvY,
+			InvWArmor.B + InvY,
+			false);
+		foundItem = true;
+	} else {
+		// Find extended slot
+		for (auto it = SlotsExt.begin(), end = SlotsExt.end(); it != end; ++it) {
+			SlotExt& se = *it;
+			if (!se.Region.IsZero() && IsCurInRect(se.Region, InvX, InvY)) {
+				Item* item = Chosen->GetItemSlot(se.Index);
+				invMouseMoveASCallback(item,
+					se.Region.L + InvX,
+					se.Region.R + InvX,
+					se.Region.T + InvY,
+					se.Region.B + InvY,
+					true);
+				foundItem = true;
+			}
+		}
+	}
 
-        if( InvX < 0 )
-            InvX = 0;
-        if( InvX + InvWMain[2] > MODE_WIDTH )
-            InvX = MODE_WIDTH - InvWMain[2];
-        if( InvY < 0 )
-            InvY = 0;
-        // if(InvY+InvMain[3]>IntY) InvY=IntY-InvMain[3];
-        if( InvY + InvWMain[3] > MODE_HEIGHT )
-            InvY = MODE_HEIGHT - InvWMain[3];
-    }
+	if (!foundItem) {
+		invMouseMoveASCallback(NULL, 0, 0, 0, 0, true);
+	}
+	if (IfaceHold == IFACE_INV_MAIN)
+	{
+		InvX = GameOpt.MouseX - InvVectX;
+		InvY = GameOpt.MouseY - InvVectY;
+
+		if (InvX < 0)
+			InvX = 0;
+		if (InvX + InvWMain[2] > MODE_WIDTH)
+			InvX = MODE_WIDTH - InvWMain[2];
+		if (InvY < 0)
+			InvY = 0;
+		// if(InvY+InvMain[3]>IntY) InvY=IntY-InvMain[3];
+		if (InvY + InvWMain[3] > MODE_HEIGHT)
+			InvY = MODE_HEIGHT - InvWMain[3];
+	}
 }
 
 // ==============================================================================================================================
@@ -2066,6 +2144,23 @@ void FOClient::UseRMouseDown()
 
 void FOClient::UseMouseMove()
 {
+	bool foundItem = false;
+	//	use
+	if (IsCurInRect(UseWInv, UseX, UseY)) {
+		uint itemId = GetCurContainerItemId(Rect(UseWInv, UseX, UseY), UseHeightItem, UseScroll, UseCont);
+		Item* item = Chosen->GetItem(itemId);
+		invMouseMoveASCallback(item,
+			UseWInv.L + UseX,
+			UseWInv.R + UseX,
+			UseWInv.T + UseY + ((GameOpt.MouseY - UseWInv.T - UseY) / UseHeightItem) * UseHeightItem,
+			UseWInv.B + UseY + ((GameOpt.MouseY - UseWInv.B - UseY) / UseHeightItem) * UseHeightItem,
+			true);
+		foundItem = true;
+	}
+	if (!foundItem) {
+		invMouseMoveASCallback(NULL, 0, 0, 0, 0, true);
+	}
+
     if( IfaceHold == IFACE_USE_MAIN )
     {
         UseX = GameOpt.MouseX - UseVectX;
@@ -6472,6 +6567,12 @@ void FOClient::ChaDraw( bool is_reg )
     }
 }
 
+void FOClient::ChaRMouseDown(bool is_reg) {
+	CritterCl* cr = (is_reg ? RegNewCr : Chosen);
+	if (!cr)
+		return;
+}
+
 void FOClient::ChaLMouseDown( bool is_reg )
 {
     IfaceHold = IFACE_NONE;
@@ -6715,11 +6816,17 @@ label_DrawTrait:
     }
 }
 
+void FOClient::ChaRMouseUp(bool is_reg) {
+	CritterCl* cr = (is_reg ? RegNewCr : Chosen);
+	if (!cr)
+		return;
+}
+
 void FOClient::ChaLMouseUp( bool is_reg )
 {
-    CritterCl* cr = (is_reg ? RegNewCr : Chosen);
-    if( !cr )
-        return;
+	CritterCl* cr = (is_reg ? RegNewCr : Chosen);
+	if (!cr)
+		return;
 
     switch( IfaceHold )
     {
@@ -6954,7 +7061,263 @@ void FOClient::ChaLMouseUp( bool is_reg )
 
 void FOClient::ChaMouseMove( bool is_reg )
 {
-    if( IfaceHold != IFACE_CHA_MAIN )
+	bool tooltipFound = false;
+	// Special
+	if (!tooltipFound) {
+		for (uint i = 0, j = (uint)ChaSpecialParams.size(); i < j; i++) {
+			int param = ChaSpecialParams[i];
+
+			if (IsCurInRect(ChaWSpecialValue, ChaX + ChaWSpecialNextX * i, ChaY + ChaWSpecialNextY * i) ||
+				IsCurInRect(ChaWSpecialLevel, ChaX + ChaWSpecialNextX * i, ChaY + ChaWSpecialNextY * i) ||
+				IsCurInRect(ChaWSpecialText, ChaX + ChaWSpecialNextX * i, ChaY + ChaWSpecialNextY * i))
+			{
+				ChaSkilldexPic = SKILLDEX_PARAM(param);
+				Str::Copy(ChaName, MsgGame->GetStr(STR_PARAM_NAME_(param)));
+				Str::Copy(ChaDesc, MsgGame->GetStr(STR_PARAM_DESC_(param)));
+				if (Script::PrepareContext(ClientFunctions.IfaceShowCharacterDetail, _FUNC_, "Game")) {
+					Script::SetArgUInt(i);
+					Script::SetArgUInt(ChaWSpecialLevel.R + ChaX + ChaWSpecialNextX * i);
+					Script::SetArgUInt(ChaWSpecialText.T + ChaY + ChaWSpecialNextY * i);
+					Script::RunPrepared();
+				}
+				tooltipFound = true;
+			}
+		}
+	}
+
+	// Skills
+	if (!tooltipFound) {
+		for (uint i = SKILL_BEGIN; i <= SKILL_END; i++) {
+			int offs = i - SKILL_BEGIN;
+			if (IsCurInRect(ChaWSkillName, ChaX + ChaWSkillNextX * offs, ChaY + ChaWSkillNextY * offs)
+				|| IsCurInRect(ChaWSkillValue, ChaX + ChaWSkillNextX * offs, ChaY + ChaWSkillNextY * offs))
+			{
+				ChaSkilldexPic = SKILLDEX_PARAM(i);
+				Str::Copy(ChaName, MsgGame->GetStr(STR_PARAM_NAME_(i)));
+				Str::Copy(ChaDesc, MsgGame->GetStr(STR_PARAM_DESC_(i)));
+				ChaCurSkill = offs;
+				if (Script::PrepareContext(ClientFunctions.IfaceShowCharacterDetail, _FUNC_, "Game")) {
+					Script::SetArgUInt(i);
+					Script::SetArgUInt(ChaWSkillName.L + ChaX + ChaWSkillNextX * offs);
+					Script::SetArgUInt(ChaWSkillName.T + ChaY + ChaWSkillNextY * offs);
+					Script::RunPrepared();
+				}
+				tooltipFound = true;
+			}
+		}
+	}
+
+	// Damage
+	// Life
+	if (!tooltipFound) {
+		if (IsCurInRect(ChaWDmgLife, ChaX, ChaY)) {
+			ChaSkilldexPic = SKILLDEX_PARAM(ST_MAX_LIFE);
+			Str::Copy(ChaName, MsgGame->GetStr(STR_PARAM_NAME_(ST_MAX_LIFE)));
+			Str::Copy(ChaDesc, MsgGame->GetStr(STR_PARAM_DESC_(ST_MAX_LIFE)));
+			if (Script::PrepareContext(ClientFunctions.IfaceShowCharacterDetail, _FUNC_, "Game")) {
+				Script::SetArgUInt(ST_MAX_LIFE);
+				Script::SetArgUInt(ChaWDmgLife.R + ChaX);
+				Script::SetArgUInt(ChaWDmgLife.T + ChaY);
+				Script::RunPrepared();
+			}
+			tooltipFound = true;
+		}
+	}
+
+	// Body damages
+	if (!tooltipFound) {
+		for (uint i = DAMAGE_BEGIN; i <= DAMAGE_END; ++i) {
+			int offs = i - DAMAGE_BEGIN;
+			if (IsCurInRect(ChaWDmg, ChaX + ChaWDmgNextX * offs, ChaY + ChaWDmgNextY * offs)) {
+				ChaSkilldexPic = SKILLDEX_PARAM(i);
+				Str::Copy(ChaName, MsgGame->GetStr(STR_PARAM_NAME_(i)));
+				Str::Copy(ChaDesc, MsgGame->GetStr(STR_PARAM_DESC_(i)));
+				if (Script::PrepareContext(ClientFunctions.IfaceShowCharacterDetail, _FUNC_, "Game")) {
+					Script::SetArgUInt(i);
+					Script::SetArgUInt(ChaWDmg.R + ChaX + ChaWDmgNextX * offs);
+					Script::SetArgUInt(ChaWDmg.T + ChaY + ChaWDmgNextY * offs);
+					Script::RunPrepared();
+				}
+				tooltipFound = true;
+			}
+		}
+	}
+
+	// Sec. Stats
+	if (!tooltipFound) {
+		for (int i = 0; i < ShowStatsCnt; ++i) {
+			if (IsCurInRect(ChaWStatsName, ChaX + ChaWStatsNextX * i, ChaY + ChaWStatsNextY * i) ||
+				IsCurInRect(ChaWStatsValue, ChaX + ChaWStatsNextX * i, ChaY + ChaWStatsNextY * i))
+			{
+				ChaSkilldexPic = SKILLDEX_PARAM(ShowStats[i]);
+				Str::Copy(ChaName, MsgGame->GetStr(STR_PARAM_NAME_(ShowStats[i])));
+				Str::Copy(ChaDesc, MsgGame->GetStr(STR_PARAM_DESC_(ShowStats[i])));
+				if (Script::PrepareContext(ClientFunctions.IfaceShowCharacterDetail, _FUNC_, "Game")) {
+					Script::SetArgUInt(ShowStats[i]);
+					Script::SetArgUInt(ChaWStatsValue.R + ChaX + ChaWStatsNextX * i);
+					Script::SetArgUInt(ChaWStatsName.T + ChaY + ChaWStatsNextY * i);
+					Script::RunPrepared();
+				}
+				tooltipFound = true;
+			}
+		}
+	}
+
+	// Traits
+	if (is_reg) {
+		uint i, k;
+		// Left button
+		if (!tooltipFound) {
+			for (i = TRAIT_BEGIN, k = 0; i < TRAIT_BEGIN + TRAIT_COUNT / 2; ++i, ++k) {
+				if (IsCurInRect(RegBTraitL, RegTraitNextX * k + ChaX, RegTraitNextY * k + ChaY)) {
+					RegTraitNum = k;
+					ChaSkilldexPic = SKILLDEX_PARAM(i);
+					Str::Copy(ChaName, MsgGame->GetStr(STR_PARAM_NAME_(i)));
+					Str::Copy(ChaDesc, MsgGame->GetStr(STR_PARAM_DESC_(i)));
+					if (Script::PrepareContext(ClientFunctions.IfaceShowCharacterDetail, _FUNC_, "Game")) {
+						Script::SetArgUInt(i);
+						Script::SetArgUInt(RegBTraitR.R + ChaX + RegTraitNextX * k);
+						Script::SetArgUInt(RegBTraitR.T + ChaY + RegTraitNextY * k);
+						Script::RunPrepared();
+					}
+					tooltipFound = true;
+				}
+			}
+		}
+		// Right button
+		if (!tooltipFound) {
+			for (i = TRAIT_BEGIN + TRAIT_COUNT / 2, k = 0; i <= TRAIT_END; ++i, ++k) {
+				if (IsCurInRect(RegBTraitR, RegTraitNextX * k + ChaX, RegTraitNextY * k + ChaY)) {
+					RegTraitNum = k;
+					ChaSkilldexPic = SKILLDEX_PARAM(i);
+					Str::Copy(ChaName, MsgGame->GetStr(STR_PARAM_NAME_(i)));
+					Str::Copy(ChaDesc, MsgGame->GetStr(STR_PARAM_DESC_(i)));
+					if (Script::PrepareContext(ClientFunctions.IfaceShowCharacterDetail, _FUNC_, "Game")) {
+						Script::SetArgUInt(i);
+						Script::SetArgUInt(RegBTraitR.R + ChaX + RegTraitNextX * k);
+						Script::SetArgUInt(RegBTraitR.T + ChaY + RegTraitNextY * k);
+						Script::RunPrepared();
+					}
+					tooltipFound = true;
+				}
+			}
+		}
+		// Left text
+		if (!tooltipFound) {
+			for (i = TRAIT_BEGIN, k = 0; i < TRAIT_BEGIN + TRAIT_COUNT / 2; ++i, ++k) {
+				if (IsCurInRect(RegWTraitL, RegTraitNextX * k + ChaX, RegTraitNextY * k + ChaY)) {
+					RegTraitNum = k;
+					ChaSkilldexPic = SKILLDEX_PARAM(i);
+					Str::Copy(ChaName, MsgGame->GetStr(STR_PARAM_NAME_(i)));
+					Str::Copy(ChaDesc, MsgGame->GetStr(STR_PARAM_DESC_(i)));
+					if (Script::PrepareContext(ClientFunctions.IfaceShowCharacterDetail, _FUNC_, "Game")) {
+						Script::SetArgUInt(i);
+						Script::SetArgUInt(RegBTraitR.R + ChaX + RegTraitNextX * k);
+						Script::SetArgUInt(RegBTraitR.T + ChaY + RegTraitNextY * k);
+						Script::RunPrepared();
+					}
+					tooltipFound = true;
+				}
+			}
+		}
+		// Right text
+		if (!tooltipFound) {
+			for (i = TRAIT_BEGIN + TRAIT_COUNT / 2, k = 0; i <= TRAIT_END; ++i, ++k) {
+				if (IsCurInRect(RegWTraitR, RegTraitNextX * k + ChaX, RegTraitNextY * k + ChaY)) {
+					RegTraitNum = k;
+					ChaSkilldexPic = SKILLDEX_PARAM(i);
+					Str::Copy(ChaName, MsgGame->GetStr(STR_PARAM_NAME_(i)));
+					Str::Copy(ChaDesc, MsgGame->GetStr(STR_PARAM_DESC_(i)));
+					if (Script::PrepareContext(ClientFunctions.IfaceShowCharacterDetail, _FUNC_, "Game")) {
+						Script::SetArgUInt(i);
+						Script::SetArgUInt(RegBTraitR.R + ChaX + RegTraitNextX * k);
+						Script::SetArgUInt(RegBTraitR.T + ChaY + RegTraitNextY * k);
+						Script::RunPrepared();
+					}
+					tooltipFound = true;
+				}
+			}
+		}
+	}
+
+	// Switch (Perks/Karma/Kills)
+	if (!is_reg) {
+		if (!tooltipFound) {
+			// 3 Buttons
+			if (IsCurInRect(ChaTSwitch, ChaX, ChaY)) {
+				SwitchElementVec& text = ChaSwitchText[ChaCurSwitch];
+				int scroll = ChaSwitchScroll[ChaCurSwitch];
+				int cur_line = scroll + (GameOpt.MouseY - ChaTSwitch[1] - ChaY) / 11;
+				if (cur_line < (int)text.size()) {
+					SwitchElement& e = text[cur_line];
+					ChaSkilldexPic = e.PictureId;
+					Str::Copy(ChaName, MsgGame->GetStr(e.NameStrNum));
+					if (ChaCurSwitch == CHA_SWITCH_PERKS)
+						Str::Append(ChaName, e.Addon);
+					Str::Copy(ChaDesc, MsgGame->GetStr(e.DescStrNum));
+					if (ChaCurSwitch == CHA_SWITCH_PERKS) {
+						if (Script::PrepareContext(ClientFunctions.IfaceShowCharacterDetail, _FUNC_, "Game")) {
+							Script::SetArgUInt(e.NameStrNum);
+							Script::SetArgUInt(ChaTSwitch.R + ChaX);
+							Script::SetArgUInt(ChaTSwitch.T + ChaY + ((GameOpt.MouseY - ChaTSwitch.T - ChaY)/11)*11);
+							Script::RunPrepared();
+						}
+						tooltipFound = true;
+					}
+				}
+			}
+		}
+	}
+
+	if (!tooltipFound) {
+		if (!is_reg && IsCurInRect(ChaWLevel, ChaX, ChaY)) {
+			ChaSkilldexPic = SKILLDEX_PARAM(ST_LEVEL);
+			Str::Copy(ChaName, MsgGame->GetStr(STR_PARAM_NAME_(ST_LEVEL)));
+			Str::Copy(ChaDesc, MsgGame->GetStr(STR_PARAM_DESC_(ST_LEVEL)));
+			if (Script::PrepareContext(ClientFunctions.IfaceShowCharacterDetail, _FUNC_, "Game")) {
+				Script::SetArgUInt(ST_LEVEL);
+				Script::SetArgUInt(ChaWLevel.R + ChaX);
+				Script::SetArgUInt(ChaWLevel.T + ChaY);
+				Script::RunPrepared();
+			}
+			tooltipFound = true;
+		} else if (!is_reg && IsCurInRect(ChaWExp, ChaX, ChaY)) {
+			ChaSkilldexPic = SKILLDEX_PARAM(ST_EXPERIENCE);
+			Str::Copy(ChaName, MsgGame->GetStr(STR_PARAM_NAME_(ST_EXPERIENCE)));
+			Str::Copy(ChaDesc, MsgGame->GetStr(STR_PARAM_DESC_(ST_EXPERIENCE)));
+			if (Script::PrepareContext(ClientFunctions.IfaceShowCharacterDetail, _FUNC_, "Game")) {
+				Script::SetArgUInt(ST_EXPERIENCE);
+				Script::SetArgUInt(ChaWExp.R + ChaX);
+				Script::SetArgUInt(ChaWExp.T + ChaY);
+				Script::RunPrepared();
+			}
+			tooltipFound = true;
+		} else if (!is_reg && IsCurInRect(ChaWNextLevel, ChaX, ChaY)) {
+			ChaSkilldexPic = SKILLDEX_NEXT_LEVEL;
+			Str::Copy(ChaName, MsgGame->GetStr(STR_NEXT_LEVEL_NAME));
+			Str::Copy(ChaDesc, MsgGame->GetStr(STR_NEXT_LEVEL_DESC));
+			if (Script::PrepareContext(ClientFunctions.IfaceShowCharacterDetail, _FUNC_, "Game")) {
+				Script::SetArgUInt(SKILLDEX_NEXT_LEVEL);
+				Script::SetArgUInt(ChaWNextLevel.R + ChaX);
+				Script::SetArgUInt(ChaWNextLevel.T + ChaY);
+				Script::RunPrepared();
+			}
+			tooltipFound = true;
+		}
+	}
+
+
+	//	disable active tooltip when mouse not over anything interesting
+	if (!tooltipFound) {
+		if (Script::PrepareContext(ClientFunctions.IfaceShowCharacterDetail, _FUNC_, "Game")) {
+			Script::SetArgUInt(-1);
+			Script::SetArgUInt(0);
+			Script::SetArgUInt(0);
+			Script::RunPrepared();
+		}
+	}
+
+	if( IfaceHold != IFACE_CHA_MAIN )
         return;
 
     ChaX = GameOpt.MouseX - ChaVectX;
@@ -8494,7 +8857,42 @@ void FOClient::PupLMouseUp()
 
 void FOClient::PupMouseMove()
 {
-    if( IfaceHold == IFACE_PUP_MAIN )
+	bool foundItem = false;
+	//	pickup (loot)
+	if (IsCurInRect(PupWCont1, PupX, PupY)) {
+		uint itemId = GetCurContainerItemId(Rect(PupWCont1, PupX, PupY), PupHeightItem1, PupScroll1, PupCont1);
+		auto it = std::find(PupCont1.begin(), PupCont1.end(), itemId);
+		if (it != PupCont1.end()) {
+			Item& item = *it;
+			invMouseMoveASCallback(&item,
+				PupWCont1.L + PupX,
+				PupWCont1.R + PupX,
+				PupWCont1.T + PupY + ((GameOpt.MouseY - PupWCont1.T - PupY) / PupHeightItem1) * PupHeightItem1,
+				PupWCont1.B + PupY + ((GameOpt.MouseY - PupWCont1.B - PupY) / PupHeightItem1) * PupHeightItem1,
+				true);
+			foundItem = true;
+		}
+	}
+	if (IsCurInRect(PupWCont2, PupX, PupY)) {
+		uint itemId = GetCurContainerItemId(Rect(PupWCont2, PupX, PupY), PupHeightItem2, PupScroll2, PupCont2);
+		auto it = std::find(PupCont2.begin(), PupCont2.end(), itemId);
+		if (it != PupCont2.end()) {
+			Item& item = *it;
+			invMouseMoveASCallback(&item,
+				PupWCont2.L + PupX,
+				PupWCont2.R + PupX,
+				PupWCont2.T + PupY + ((GameOpt.MouseY - PupWCont2.T - PupY) / PupHeightItem2) * PupHeightItem2,
+				PupWCont2.B + PupY + ((GameOpt.MouseY - PupWCont2.B - PupY) / PupHeightItem2) * PupHeightItem2,
+				false);
+			foundItem = true;
+		}
+	}
+	if (!foundItem) {
+		invMouseMoveASCallback(NULL, 0, 0, 0, 0, true);
+	}
+
+
+	if( IfaceHold == IFACE_PUP_MAIN )
     {
         PupX = GameOpt.MouseX - PupVectX;
         PupY = GameOpt.MouseY - PupVectY;

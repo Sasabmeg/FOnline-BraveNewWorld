@@ -33,6 +33,8 @@ import void InitCarTracker() from "client/client_CarTracker";
 import void InitGuiImage() from "client/client_GuiImage";
 import void InitPsychoFx() from "client/client_psychoFx";
 import void InitMapGreeter() from "client/client_MapGreeter";
+import void InitCharacterTooltip() from "client/client_GuiTooltip";
+import void InitInventoryTooltip() from "client/client_GuiTooltip";
 
 import void RefreshCars(array<int>@ data, string@ ownerList) from "client/client_CarTracker";
 
@@ -171,6 +173,8 @@ bool start()
     InitGuiImage();
     InitPsychoFx();
     InitMapGreeter();
+    InitCharacterTooltip();
+    InitInventoryTooltip();
 
     InitBarterFilters();
     InitFixboyAddons();

@@ -611,6 +611,66 @@ void FOClient::DlgMouseMove(bool is_dialog)
 		}
 	}
 
+	bool foundItem = false;
+	//	barter
+	if (!is_dialog && IsCurInRect(BarterWMain, DlgX, DlgY)) {
+		if (IsCurInRect(BarterWCont1, DlgX, DlgY)) {
+			uint itemId = GetCurContainerItemId(Rect(BarterWCont1, DlgX, DlgY), BarterCont1HeightItem, BarterScroll1, BarterCont1);
+			Item* item = Chosen->GetItem(itemId);
+			invMouseMoveASCallback(item,
+				BarterWCont1.L + DlgX,
+				BarterWCont1.R + DlgX,
+				BarterWCont1.T + DlgY + ((GameOpt.MouseY - BarterWCont1.T - DlgY) / BarterCont1HeightItem) * BarterCont1HeightItem,
+				BarterWCont1.B + DlgY + ((GameOpt.MouseY - BarterWCont1.B - DlgY) / BarterCont1HeightItem) * BarterCont1HeightItem,
+				true);
+			foundItem = true;
+
+		} else if (IsCurInRect(BarterWCont2, DlgX, DlgY)) {
+			if (!(BarterIsPlayers && BarterOpponentHide)) {
+				uint itemId = GetCurContainerItemId(Rect(BarterWCont2, DlgX, DlgY), BarterCont2HeightItem, BarterScroll2, BarterCont2);
+				auto it = std::find(BarterCont2.begin(), BarterCont2.end(), itemId);
+				if (it != BarterCont2.end()) {
+					Item& item = *it;
+					invMouseMoveASCallback(&item,
+						BarterWCont2.L + DlgX,
+						BarterWCont2.R + DlgX,
+						BarterWCont2.T + DlgY +((GameOpt.MouseY - BarterWCont2.T - DlgY) / BarterCont2HeightItem) * BarterCont2HeightItem,
+						BarterWCont2.B + DlgY +((GameOpt.MouseY - BarterWCont2.B - DlgY) / BarterCont2HeightItem) * BarterCont2HeightItem,
+						false);
+					foundItem = true;
+				}
+			}
+		} else if (IsCurInRect(BarterWCont1o, DlgX, DlgY)) {
+			uint itemId = GetCurContainerItemId(Rect(BarterWCont1o, DlgX, DlgY), BarterCont1oHeightItem, BarterScroll1o, BarterCont1o);
+			Item* item = Chosen->GetItem(itemId);
+			invMouseMoveASCallback(item,
+				BarterWCont1.L + DlgX,
+				BarterWCont1.R + DlgX,
+				BarterWCont1o.T + DlgY + ((GameOpt.MouseY - BarterWCont1o.T - DlgY) / BarterCont1oHeightItem) * BarterCont1oHeightItem,
+				BarterWCont1o.B + DlgY + ((GameOpt.MouseY - BarterWCont1o.B - DlgY) / BarterCont1oHeightItem) * BarterCont1oHeightItem,
+				true);
+			foundItem = true;
+		} else if (IsCurInRect(BarterWCont2o, DlgX, DlgY)) {
+			if (!(BarterIsPlayers && BarterOpponentHide)) {
+				uint itemId = GetCurContainerItemId(Rect(BarterWCont2o, DlgX, DlgY), BarterCont2oHeightItem, BarterScroll2o, BarterCont2o);
+				auto it = std::find(BarterCont2o.begin(), BarterCont2o.end(), itemId);
+				if (it != BarterCont2o.end()) {
+					Item& item = *it;
+					invMouseMoveASCallback(&item,
+						BarterWCont2.L + DlgX,
+						BarterWCont2.R + DlgX,
+						BarterWCont2o.T + DlgY + ((GameOpt.MouseY - BarterWCont2o.T - DlgY) / BarterCont2oHeightItem) * BarterCont2oHeightItem,
+						BarterWCont2o.B + DlgY + ((GameOpt.MouseY - BarterWCont2o.B - DlgY) / BarterCont2oHeightItem) * BarterCont2oHeightItem,
+						false);
+					foundItem = true;
+				}
+			}
+		}
+	}
+	if (!foundItem) {
+		invMouseMoveASCallback(NULL, 0, 0, 0, 0, true);
+	}
+
 	if (IfaceHold == IFACE_DLG_MAIN)
 	{
 		DlgX = GameOpt.MouseX - DlgVectX;

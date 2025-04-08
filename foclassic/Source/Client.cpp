@@ -1690,6 +1690,10 @@ void FOClient::ParseMouse()
         old_cur_x = GameOpt.MouseX;
         old_cur_y = GameOpt.MouseY;
 
+		if (GetMainScreen() == CLIENT_MAIN_SCREEN_REGISTRATION) {
+			ChaMouseMove(true);
+		}
+
         if( GetActiveScreen() )
         {
             switch( GetActiveScreen() )
@@ -1740,7 +1744,7 @@ void FOClient::ParseMouse()
                     LmapMouseMove();
                     break;
                 case CLIENT_SCREEN_CHARACTER:
-                    ChaMouseMove( false );
+					ChaMouseMove(false);
                     break;
                 case CLIENT_SCREEN_PIPBOY:
                     PipMouseMove();
@@ -1779,7 +1783,7 @@ void FOClient::ParseMouse()
             Script::SetArgUInt( GameOpt.MouseY );
             Script::RunPrepared();
         }
-    }
+	}
 
     // Get buffered data
     if( MainWindow->MouseEvents.empty() )
@@ -2185,7 +2189,10 @@ void FOClient::ParseMouse()
                     case CLIENT_SCREEN_PICKUP:
                         PupRMouseDown();
                         break;
-                    case CLIENT_SCREEN_PIPBOY:
+					case CLIENT_SCREEN_CHARACTER:
+						ChaRMouseDown(false);
+						break;
+					case CLIENT_SCREEN_PIPBOY:
                         PipRMouseDown();
                         break;
 					case CLIENT_SCREEN_FIXBOY:
@@ -2206,6 +2213,9 @@ void FOClient::ParseMouse()
                     case CLIENT_MAIN_SCREEN_WORLDMAP:
                         GmapRMouseDown();
                         break;
+					case CLIENT_MAIN_SCREEN_REGISTRATION:
+						ChaRMouseDown(true);
+						break;
                     default:
                         break;
                 }
@@ -2220,6 +2230,9 @@ void FOClient::ParseMouse()
 			{
 				switch (GetActiveScreen())
 				{
+                    case CLIENT_SCREEN_CHARACTER:
+                        ChaRMouseUp( false );
+                        break;
 					case CLIENT_SCREEN_FIXBOY:
 						FixRMouseUp();
 						break;

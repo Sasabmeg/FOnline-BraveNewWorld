@@ -46,8 +46,13 @@ import void DrawQuestTracker() from "client/client_QuestTracker";
 import void DrawInventoryTracker() from "client/client_InventoryTracker";
 import void DrawCarTracker() from "client/client_CarTracker";
 import void DrawGuiImage() from "client/client_GuiImage";
+import void DrawCharacterTooltip() from "client/client_GuiTooltip";
+import void DrawInventoryTooltip() from "client/client_GuiTooltip";
 import void DrawPsychoImage() from "client/client_psychoFx";
 import void DrawMapGreeterMessage() from "client/client_MapGreeter";
+
+import void UpdateCharacterTooltip(int tooltipId, int posX, int posY) from "client/client_GuiTooltip";
+import void UpdateInventoryTooltip(ItemCl& item, int left, int right, int top, int bottom, bool preferLeft) from "client/client_GuiTooltip";
 
 import bool IsPossessMode() from "client_dev_menu";
 import bool IsAuthorized() from "client_dev_menu";
@@ -750,6 +755,14 @@ void render_iface(uint layer)
         DrawBurstRays();
 		DrawMuzzleFlashes();
 		DrawBurstMuzzles();
+
+		//  tooltip enhancement by Sasabmeg
+        if (sc == CLIENT_MAIN_SCREEN_REGISTRATION || sc == CLIENT_SCREEN_CHARACTER) {
+            DrawCharacterTooltip();
+        }
+        if (sc == CLIENT_SCREEN_INVENTORY || sc == CLIENT_SCREEN_BARTER || sc == CLIENT_SCREEN_PICKUP || sc == CLIENT_SCREEN_USE) {
+            DrawInventoryTooltip();
+        }
     }
 
     if((layer == 100 || layer == 101) && __WorldmapActive)
@@ -2730,12 +2743,33 @@ void item_inv_out(ItemCl& item, float netGain, string& debugMessage)
 *   Quest changes callbacks.
 *   Used by Quest Tracker.
 */
-void quest_change(string& header, string& progress)
-{
+void quest_change(string& header, string& progress) {
     //Message("QUEST CHANGED! \nHEADER:    " + header + "\nPROGRESS:    " + progress + "\n\n");
     //Log("QUEST CHANGED! HEADER (" + header + "), PROGRESS (" + progress + ")");
     SetQuestTrackerText(header, progress);
     ActivateQuestTracker();
+}
+
+/**
+*   FOClassic: Brave New World - Character information detail
+*   Player right clicks on character stats callbacks.
+*   Used by Gui Image viewer.
+*/
+void iface_show_character_detail(int detailId, int posX, int posY) {
+    //Message("Character detail: ID = " + detailId + ", posX = " + posX + ", posY = " + posY);
+    UpdateCharacterTooltip(detailId, posX, posY);
+}
+
+/**
+*   FOClassic: Brave New World - Character information detail
+*   Player right clicks on character stats callbacks.
+*   Used by Gui Image viewer.
+*/
+void iface_show_item_detail(ItemCl& item, int left, int right, int top, int bottom, bool preferLeft) {
+    //Message("iface_show_item_detail");
+    //Message("Item detail: ID = " + itemId + ", left = " + left + ", right = " + right + ", top = " + top + ", bottom = " + bottom + ", preferLeft = " + preferLeft);
+    //Message("Item detail: ID = " + (valid(item) ? "Valid" : "INVALID") + ", left = " + left + ", right = " + right + ", top = " + top + ", bottom = " + bottom + ", preferLeft = " + preferLeft);
+    UpdateInventoryTooltip(item, left, right, top, bottom, preferLeft);
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////

@@ -1,0 +1,750 @@
+/**
+*   FO version:     FOClassic: Brave New World
+*   Contributor:    Sasabazmeg
+*   File:           client_GuiTooltip.fos
+*
+*   Description:    Pop-up an image of a drawn map for quests or dungeons.
+*/
+
+#ifndef __GUI_TOOLTIP__
+#define __GUI_TOOLTIP__
+
+#include "../sprite.fos"
+#include "../_defines.fos"
+#include "../_client_defines.fos"
+#include "../_macros.fos"
+#include "../_colors.fos"
+#include "../client_gui_h.fos"
+#include "../combat_h.fos"
+#include "client_InterfaceControl.fos"
+#include "client_InterfaceTextbox.fos"
+#include "client_InterfaceWindow.fos"
+#include "../lexems_h.fos"
+
+import string showItemBonus(ItemCl& it, int type, int value) from "client_interface";
+
+CGuiTooltip characterTooltip;
+CGuiTooltip inventoryTooltip;
+CTooltips tooltipKeyValue;
+
+class CTooltips {
+    array<uint>     tooltipsKey;
+    array<string>   tooltipsValue;
+    array<string>   tooltipsValueExt;
+    CTooltips() {
+        InitTooltips();
+    }
+
+    string getToolTip(uint key) {
+        int index = 0;
+        index = tooltipsKey.find(key);
+        if (index >= 0) {
+            return tooltipsValue[index];
+        } else {
+            return "N/A";
+        }
+    }
+
+    string getToolTipExt(uint key) {
+        int index = 0;
+        index = tooltipsKey.find(key);
+        if (index >= 0) {
+            return tooltipsValueExt[index];
+        } else {
+            return "N/A";
+        }
+    }
+
+    void InitTooltips() {
+        string pipText = "\n\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t   «Vault-Tec Pip-Info™»";
+        string jjJournal = "\nJournal entry:";
+        string jjText = "\n\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t  - Chief Gadgeteer 'Jinxed' Jack -";
+        string pipReference = "\n|" + COLOR_GREEN + " Extended Pip-boy database search results:\n";
+        string notes = "\nNotes:";
+        string modifies = "\n\nModifies:";
+        string noData = "- No additional information available.";
+        //   special stats
+        tooltipsKey.insertLast(ST_STRENGTH);
+        tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(ST_STRENGTH)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(ST_STRENGTH))
+                                 + pipText + jjJournal
+                                 + "\n\n\"There is a small mining town to north in the mountains, Broken Hills. I saw a huge super-mutant drinking at the local tap house who wanted to arm wrestle every newcomer, I bet he could lift a whole caravan cart with his right arm.\""
+                                 + jjText);
+        tooltipsValueExt.insertLast(pipReference
+                                 + "\n- Initial Hit Points: (55 + 2*ST + EN)"
+                                 + "\n- Melee Damage: (ST - 5) with a minimum of 1."
+                                 + "\n- Carry Weight: [(25 + (ST*25 ))/2.2] + 20"
+                                 + "\n- Throwing Distance: 3*ST to reach weapon max. distance (+6 with Heave Ho!)"
+                                 + "\n- Throwing Damage: min. ST/2, max. ST (more with Heave Ho!)"
+                                 + "\n- To hit chance: if lower than weapon ST requirement then -20 To Hit for each missing ST"
+                                 + "\n- Stonewall Knockdown/Knockout resist: (clamp(ST, 1, CH+4) + clamp(EN, 1, CH+6) )*3 + 15*stonewallRank vs 1d100"
+                                 + "\n- Iron Limbs Weapon Drop resist: (ST - 5) + 2*ironLimbsRank vs 1d10"
+                                 + "\n- Heavy Handed Trait Knockdown chance: "
+                                 + "\n- Electric Shock effect (cannot run) duration reduce: ");
+
+        tooltipsKey.insertLast(ST_PERCEPTION);
+        tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(ST_PERCEPTION)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(ST_PERCEPTION))
+                                 + pipText + jjJournal
+                                 + "\n\n\"Just when I ran out of smokes, I found a tobacco plantation along the shore to the west. It even had a working press machine! So much about me being 'Jinxed' he-he, oh no.... a pack of floaters are swarming to the north, gotta leave quick, damn, where do these creatures even come from?\""
+                                 + jjText);
+        tooltipsValueExt.insertLast(pipReference
+                                 + "\n- Sight range: Base(20) + 3*PE + Sharpshooter(6) + Binoculars(6)"
+                                 + "\n- Ranged chance to hit bonus: 2*PE, (if weapon perk LongRange 4*PE, if Scope 5*PE)"
+                                 + "\n- Sequence: 2*PE");
+        tooltipsKey.insertLast(ST_ENDURANCE);
+        tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(ST_ENDURANCE)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(ST_ENDURANCE))
+                                 + pipText + jjJournal
+                                 + "\n\n\"Today I saw a skin-n-bones human like creature being eaten by dogs until another one scared the dogs off with a shotgun. After a short time he woke up and walked away like nothing happened. The radiation must have increased the natural regeneration of these creatures to a level where they simply cannot die. Some of them were even glowing! It was to the north-east at the huge metropolitan ruins, better avoid for now.\""
+                                 + jjText);
+        tooltipsValueExt.insertLast(pipReference
+                                 + "\n- Hit Points: (Initial: 55 + 2*ST + EN) + (Per level: (30 + EN)/8)"
+                                 + "\n- Stonewall KD/KO resist: (clamp(ST, 1, CH+4) + clamp(EN, 1, CH+6) )*3 + 15*stonewallRank vs 1d100"
+                                 + "\n- Enhanced Knockout Weapon perk resist factor.");
+
+        tooltipsKey.insertLast(ST_CHARISMA);
+        tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(ST_CHARISMA)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(ST_CHARISMA))
+                                 + pipText + jjJournal
+                                 + "\n\n\"A group of travelers were gossiping about a special lady in New Reno today. It seems that she is able to turn even the most unfriendly punks to do her bidding. I was wondering if it was her Magnetic Personality or something else, after all New Reno is also famous of addictive substances like Jet.\""
+                                 + jjText);
+        tooltipsValueExt.insertLast(pipReference
+                                 + "\n- Stonewall: ST clamped with CH+4, EN clamped with CH+6 (ex: 9 ST with 1 CH means 5 ST in calculations)"
+                                 + "\n- Confident Shooter (old More Ranged Damage) Perk damage bonus (per bullet):"
+                                 + "\n\t- 1 + CLAMP(attacker.CH - (((target.CH + 1) * 2) / 3), 0, 4)"
+                                 + "\n\t- ex: Att. CH6, Tar. CH5 bonus: 3"
+                                 + "\n\t- ex: Att. CH9, Tar. CH7 bonus: 5 (max)"
+                                 + "\n\t- ex: Att. CH5, Tar. CH1 bonus: 5 (max)"
+                                 + "\n\t- ex: Att. CH2, bonus: 1 (better take Bonus Ranged Damage perk instead)"
+                                 + "\n- Maximum Chance To Hit: 94 + (CH+1)/2");
+
+        tooltipsKey.insertLast(ST_INTELLECT);
+        tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(ST_INTELLECT)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(ST_INTELLECT))
+                                 + pipText + jjJournal
+                                 + "\n\n\"There is a very old and knowledgeable woman in the Hub working in a bookshop at the market square between the caravan offices. She had some good advice on technical books, but they were out of the 3rd volume of Big Books of Science. If I were to return there I sure will check that bookstore out again.\""
+                                 + jjText);
+        tooltipsValueExt.insertLast(pipReference
+                                 + "\n- Effectiveness of combat skills: (in combat calculations)"
+                                 + "\n\t- 4% skill penalty for every point below 5 IN"
+                                 + "\n\t\t(example: 100 SG skill with 1 IN becomes 84 SG skill)"
+                                 + "\n\t- 4% skill bonus for every point above 5 IN"
+                                 + "\n\t\t(example: 100 SG skill with 10 IN becomes 120 SG skill)"
+                                 + "\n- Critical hit chance bonus from To Hit overflow: clamp(toHitOverflow/10, 0, 5+IN)"
+                                 + "\n\t- ex: IN: 5, Hit Roll: 45 vs Hit Chance: 210 -> (165 overflow) / 10 -> 16 -> 10% crit. chance bonus"
+                                 + "\n\t- Note: Weaker version of this effect was present before, now it has higher cap with 5+IN"
+                                 + "\n- Critical hit chance for Aimed attacks: AimLocationBonus * (60 + 4*IN) / 100"
+                                 + "\n- Sniper crit. chance bonus: (5*IN - 2*LK) * sniperMargin/150 (max. 50)"
+                                 + "\n\t- SniperMargin value is the hit overflow compared to the hit roll, max. 150"
+                                 + "\n- Enhanced KO (head) resist factor for EN clamped with IN+4 (9EN and 2IN -> 6EN)"
+                                 + "\n- KO duration reduction factor: up to 2/3 duration reduction with 10IN"
+                                 + "\n\nNOTE: Does no longer give extra skill points per level.");
+
+        tooltipsKey.insertLast(ST_AGILITY);
+        tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(ST_AGILITY)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(ST_AGILITY))
+                                 + pipText + jjJournal
+                                 + "\n\n\"I saw some children yesterday playing around gecko traps in Klamath, far to the north-west, without triggering any them. Must be good to be young and agile.\""
+                                 + jjText);
+        tooltipsValueExt.insertLast(pipReference
+                                 + "\n- Armor Class: +3*AG (double with Livewire perk)"
+                                 + "\n- Action Points factor changed: (5 + 2*AG) -> (5 + (13+AG)/4)"
+                                 + "\n\t- ex: 7AG-10AG -> 10AP, 3AG-6AG -> 9AP, 1AG-2AG -> 8AP"
+                                 + "\n- Equipped Armor's can change AG level:"
+                                 + "\n\t- Light Armor +1AG bonus (Leather Armor types and also give Quick Pockets Perk)"
+                                 + "\n\t- Medium Armor -1AG malus (Combat Armor types and also give Iron Limbs Perk)"
+                                 + "\n\t- Heavy Armor -3AG malus (Metal Armor types and also give Stonewall Perk)");
+
+        tooltipsKey.insertLast(ST_LUCK);
+        tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(ST_LUCK)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(ST_LUCK))
+                                 + pipText + jjJournal
+                                 + "\n\n\"Finally I found some kind of abandoned theme-park with a working Nuka-Cola machine to the north-east but I didn't have any full water bags left to feed the machine. I shall not forget to pick some mutated fruits for the flavor before I return with fresh water.\""
+                                 + jjText);
+        tooltipsValueExt.insertLast(pipReference
+                                 + "\n- Critical Chance on all attacks: 1*LK as crit. chance"
+                                 + "\n- Reduce chance to be critically hit: LK/2 as crit. chance reduce"
+                                 + "\n\t- Reduce chance to be critically hit by Sniper Perk: LK*2 reduce"
+                                 + "\n- Critical Failure magnitude roll: Roll - 5 * (LK-5) vs 1d100"
+                                 + "\n- Critical Power roll factor as target: reduce power by 1*LK"
+                                 + "\n- Chance to get poisoned or radiated by creature attacks like:"
+                                 + "\n\t- Radscorpions, Floaters, Aliens or Centaurs: 1d10+1 vs LK"
+                                 + "\n- Thief Perk steal timeout reduce: 1d50 vs LK"
+                                 + "\n- Spearfishing rare catch factor: LK/2 (overwritten by Golden Locket = 5, Magic 8-ball = 10)"
+                                 + "\n- Primitive Tool (not) break chance: 10 + 5*LK vs 1d100"
+                                 + "\n- Car repair tool break chance: 1 vs 1d(Repair/10 + LK/2)");
+        //  skills
+        tooltipsKey.insertLast(SK_SMALL_GUNS);
+        tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(SK_SMALL_GUNS)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(SK_SMALL_GUNS))
+                                 + pipText);
+        tooltipsValueExt.insertLast(pipReference
+                                 + notes
+                                 + "\n- This is an active combat specialization skill, leveled by spending Skill Points, up to a maximum of 200. (if this is tagged as your combat specialization then 300)"
+                                 + "\n- To know more about Chance To Hit calculations attack a training dummy in a tent or base."
+                                 + modifies
+                                 + "\n- Base chance to hit with small guns.");
+
+        tooltipsKey.insertLast(SK_BIG_GUNS);
+        tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(SK_BIG_GUNS)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(SK_BIG_GUNS))
+                                 + pipText);
+        tooltipsValueExt.insertLast(pipReference
+                                 + notes
+                                 + "\n- This is an active combat specialization skill, leveled by spending Skill Points, up to a maximum of 200. (if this is tagged as your combat specialization then 300)"
+                                 + "\n- To know more about Chance To Hit calculations attack a training dummy in a tent or base."
+                                 + modifies
+                                 + "\n- Base chance to hit with big guns.");
+
+        tooltipsKey.insertLast(SK_ENERGY_WEAPONS);
+        tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(SK_ENERGY_WEAPONS)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(SK_ENERGY_WEAPONS))
+                                 + pipText);
+        tooltipsValueExt.insertLast(pipReference
+                                 + notes
+                                 + "\n- This is an active combat specialization skill, leveled by spending Skill Points, up to a maximum of 200. (if this is tagged as your combat specialization then 300)"
+                                 + "\n- To know more about Chance To Hit calculations attack a training dummy in a tent or base."
+                                 + modifies
+                                 + "\n- Base chance to hit with energy weapons.");
+
+        tooltipsKey.insertLast(SK_UNARMED);
+        tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(SK_UNARMED)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(SK_UNARMED))
+                                 + pipText);
+        tooltipsValueExt.insertLast(pipReference
+                                 + notes
+                                 + "\n- This is an active combat specialization skill, leveled by spending Skill Points, up to a maximum of 200. (if this is tagged as your combat specialization then 300)"
+                                 + "\n- To know more about Chance To Hit calculations attack a training dummy in a tent or base."
+                                 + modifies
+                                 + "\n- Base chance to hit with melee weapons or unarmed attacks.");
+
+        tooltipsKey.insertLast(SK_SCAVENGING);
+        tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(SK_SCAVENGING)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(SK_SCAVENGING))
+                                 + pipText);
+        tooltipsValueExt.insertLast(pipReference
+                                 + notes
+                                 + "\n- Passive non-combat skill, can be leveled by related activity up to a maximum of 200."
+                                 + "\n- To be able to scavenge you will need some kind of tool in inventory (not needed to be in hand), then hovering mouse over old barrels, newspaper machines, rusty sceneries etc., will change the mouse cursor and show your tool, indicating if that scenery is scavengeable."
+                                 + modifies
+                                 + "\n- Chance to scavenge useful or even rare materials.");
+
+        tooltipsKey.insertLast(SK_THROWING);
+        tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(SK_THROWING)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(SK_THROWING))
+                                 + pipText);
+        tooltipsValueExt.insertLast(pipReference
+                                 + notes
+                                 + "\n- This is an active combat specialization skill, leveled by spending Skill Points, up to a maximum of 200. (if this is tagged as your combat specialization then 300)"
+                                 + "\n- To know more about Chance To Hit calculations attack a training dummy in a tent or base."
+                                 + modifies
+                                 + "\n- Base chance to hit with throwing weapons.");
+
+        tooltipsKey.insertLast(SK_FIRST_AID);
+        tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(SK_FIRST_AID)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(SK_FIRST_AID))
+                                 + pipText);
+        tooltipsValueExt.insertLast(pipReference
+                                 + notes
+                                 + "\n- This is an active combat skill that you cannot specialize in. If you want to be a healer you can tag Doctor skill instead. You can level this skill by spending Skill Points, up to a maximum of 200."
+                                 + modifies
+                                 + "\n- First Aid cooldown and effect.");
+
+        tooltipsKey.insertLast(SK_DOCTOR);
+        tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(SK_DOCTOR)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(SK_DOCTOR))
+                                 + pipText);
+        tooltipsValueExt.insertLast(pipReference
+                                 + notes
+                                 + "\n- This is an active combat specialization skill, leveled by spending Skill Points, up to a maximum of 200. (if this is tagged as your combat specialization then 300)"
+                                 + modifies
+                                 + "\n- Doctor cooldown and chance to success.");
+
+        tooltipsKey.insertLast(SK_SNEAK);
+        tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(SK_SNEAK)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(SK_SNEAK))
+                                 + pipText);
+        tooltipsValueExt.insertLast(pipReference
+                                 + notes
+                                 + "\n- This is an active combat specialization skill, leveled by spending Skill Points, up to a maximum of 200. (if this is tagged as your combat specialization then 300)"
+                                 + modifies
+                                 + "\n- Chance that you can remain undetected while sneaking.");
+
+        tooltipsKey.insertLast(SK_LOCKPICK);
+        tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(SK_LOCKPICK)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(SK_LOCKPICK))
+                                 + pipText);
+        tooltipsValueExt.insertLast(pipReference
+                                 + notes
+                                 + "\n- Passive non-combat skill, can be leveled by related activity up to a maximum of 200."
+                                 + modifies
+                                 + "\n- Chance to open locks.");
+
+        tooltipsKey.insertLast(SK_STEAL);
+        tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(SK_STEAL)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(SK_STEAL))
+                                 + pipText);
+        tooltipsValueExt.insertLast(pipReference
+                                 + notes
+                                 + "\n- This is an active non-combat skill that you cannot specialize in. You can level this skill by spending Skill Points, up to a maximum of 200."
+                                 + modifies
+                                 + "\n- Chance to steal from NPC's or players in non safe towns.");
+
+        tooltipsKey.insertLast(SK_TRAPS);
+        tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(SK_TRAPS)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(SK_TRAPS))
+                                 + pipText);
+        tooltipsValueExt.insertLast(pipReference
+                                 + notes
+                                 + "\n- This is an active combat specialization skill, leveled by spending Skill Points, up to a maximum of 200. (if this is tagged as your combat specialization then 300)"
+                                 + modifies
+                                 + "\n- Explosives strength and chance of not triggering traps.");
+
+        tooltipsKey.insertLast(SK_SCIENCE);
+        tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(SK_SCIENCE)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(SK_SCIENCE))
+                                 + pipText);
+        tooltipsValueExt.insertLast(pipReference
+                                 + notes
+                                 + "\n- Passive non-combat skill, can be leveled by related activity up to a maximum of 200."
+                                 + modifies
+                                 + "\n- Ability to craft high-tech stuff.");
+
+        tooltipsKey.insertLast(SK_REPAIR);
+        tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(SK_REPAIR)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(SK_REPAIR))
+                                 + pipText);
+        tooltipsValueExt.insertLast(pipReference
+                                 + notes
+                                 + "\n- Passive non-combat skill, can be leveled by related activity up to a maximum of 200."
+                                 + modifies
+                                 + "\n- Ability to craft most items, armors and weapons."
+                                 + "\n- Chance to repair mostly items, cars or in general any mechanism.");
+
+        tooltipsKey.insertLast(SK_SPEECH);
+        tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(SK_SPEECH)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(SK_SPEECH))
+                                 + pipText);
+        tooltipsValueExt.insertLast(pipReference
+                                 + notes
+                                 + "\n- Passive non-combat skill, can be leveled by related activity up to a maximum of 200."
+                                 + modifies
+                                 + "\n- Party size."
+                                 + "\n- Sometimes dialog options and their chance to work.");
+
+        tooltipsKey.insertLast(SK_BARTER);
+        tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(SK_BARTER)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(SK_BARTER))
+                                 + pipText);
+        tooltipsValueExt.insertLast(pipReference
+                                 + notes
+                                 + "\n- Passive non-combat skill, can be leveled by related activity up to a maximum of 200."
+                                 + modifies
+                                 + "\n- Barter prices.");
+
+        tooltipsKey.insertLast(SK_GAMBLING);
+        tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(SK_GAMBLING)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(SK_GAMBLING))
+                                 + pipText);
+        tooltipsValueExt.insertLast(pipReference
+                                 + notes
+                                 + "\n- Passive non-combat skill, can be leveled by related activity up to a maximum of 200."
+                                 + modifies
+                                 + "\n- Gambling outcomes.");
+
+        tooltipsKey.insertLast(SK_OUTDOORSMAN);
+        tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(SK_OUTDOORSMAN)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(SK_OUTDOORSMAN))
+                                 + pipText);
+        tooltipsValueExt.insertLast(pipReference
+                                 + notes
+                                 + "\n- Passive non-combat skill, can be leveled by related activity up to a maximum of 200."
+                                 + "\n\t- Traveling on world map"
+                                 + "\n\t- Crafting traveling gear (spears, leather armor and such)"
+                                 + "\n\t- Spearfishing, cooking"
+                                 + modifies
+                                 + "\n- Chance to be able to evade encounters while traveling."
+                                 + "\n- Spearfishing, cooking and such.");
+        //  Hit Points and Damaged parts
+        tooltipsKey.insertLast(ST_MAX_LIFE);
+        tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(ST_MAX_LIFE)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(ST_MAX_LIFE)) + pipText);
+        tooltipsValueExt.insertLast(pipReference + noData);
+
+        tooltipsKey.insertLast(DAMAGE_POISONED);
+        tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(DAMAGE_POISONED)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(DAMAGE_POISONED)) + pipText);
+        tooltipsValueExt.insertLast(pipReference + noData);
+
+        tooltipsKey.insertLast(DAMAGE_RADIATED);
+        tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(DAMAGE_RADIATED)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(DAMAGE_RADIATED)) + pipText);
+        tooltipsValueExt.insertLast(pipReference + noData);
+
+        tooltipsKey.insertLast(DAMAGE_EYE);
+        tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(DAMAGE_EYE)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(DAMAGE_EYE)) + pipText);
+        tooltipsValueExt.insertLast(pipReference + noData);
+
+        tooltipsKey.insertLast(DAMAGE_RIGHT_ARM);
+        tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(DAMAGE_RIGHT_ARM)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(DAMAGE_RIGHT_ARM)) + pipText);
+        tooltipsValueExt.insertLast(pipReference + noData);
+
+        tooltipsKey.insertLast(DAMAGE_LEFT_ARM);
+        tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(DAMAGE_LEFT_ARM)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(DAMAGE_LEFT_ARM)) + pipText);
+        tooltipsValueExt.insertLast(pipReference + noData);
+
+        tooltipsKey.insertLast(DAMAGE_RIGHT_LEG);
+        tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(DAMAGE_RIGHT_LEG)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(DAMAGE_RIGHT_LEG)) + pipText);
+        tooltipsValueExt.insertLast(pipReference + noData);
+
+        tooltipsKey.insertLast(DAMAGE_LEFT_LEG);
+        tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(DAMAGE_LEFT_LEG)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(DAMAGE_LEFT_LEG)) + pipText);
+        tooltipsValueExt.insertLast(pipReference + noData);
+
+        //  Secondary stats
+        tooltipsKey.insertLast(ST_ARMOR_CLASS);
+        tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(ST_ARMOR_CLASS)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(ST_ARMOR_CLASS)) + pipText);
+        tooltipsValueExt.insertLast(pipReference + noData);
+
+        tooltipsKey.insertLast(ST_ACTION_POINTS);
+        tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(ST_ACTION_POINTS)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(ST_ACTION_POINTS)) + pipText);
+        tooltipsValueExt.insertLast(pipReference + noData);
+
+        tooltipsKey.insertLast(ST_CARRY_WEIGHT);
+        tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(ST_CARRY_WEIGHT)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(ST_CARRY_WEIGHT)) + pipText);
+        tooltipsValueExt.insertLast(pipReference
+                                 + notes
+                                 + "\n- This value is used to determine if you can carry your inventory or not. Once your reach your carry capacity, you will not be able to run but you are still able to walk.  Once you load double of this amount, your carried weight is simply too heavy and you will not be able to move at all, until you drop some stuff."
+                                 + "\n- Base formula: [(25 + (Strength*25)) / 2.2] + 20"
+                                 + "\n- Affected by:"
+                                 + "\n\t- Strength: +11.5 for each ST"
+                                 + "\n\t- Strong Back: +22 flat bonus"
+                                 + "\n\t- Pack Rat: +33% bonus (increases Strong Back value also)"
+                                 + "\n\t- Armor Craft Bonus if any available.");
+
+        tooltipsKey.insertLast(ST_MELEE_DAMAGE);
+        tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(ST_MELEE_DAMAGE)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(ST_MELEE_DAMAGE)) + pipText);
+        tooltipsValueExt.insertLast(pipReference + noData);
+
+        tooltipsKey.insertLast(ST_NORMAL_RESIST);
+        tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(ST_NORMAL_RESIST)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(ST_NORMAL_RESIST)) + pipText);
+        tooltipsValueExt.insertLast(pipReference + noData);
+
+        tooltipsKey.insertLast(ST_POISON_RESISTANCE);
+        tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(ST_POISON_RESISTANCE)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(ST_POISON_RESISTANCE)) + pipText);
+        tooltipsValueExt.insertLast(pipReference + noData);
+
+        tooltipsKey.insertLast(ST_RADIATION_RESISTANCE);
+        tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(ST_RADIATION_RESISTANCE)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(ST_RADIATION_RESISTANCE)) + pipText);
+        tooltipsValueExt.insertLast(pipReference + noData);
+
+        tooltipsKey.insertLast(ST_SEQUENCE);
+        tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(ST_SEQUENCE)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(ST_SEQUENCE)) + pipText);
+        tooltipsValueExt.insertLast(pipReference + noData);
+
+        tooltipsKey.insertLast(ST_HEALING_RATE);
+        tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(ST_HEALING_RATE)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(ST_HEALING_RATE)) + pipText);
+        tooltipsValueExt.insertLast(pipReference + noData);
+
+        tooltipsKey.insertLast(ST_CRITICAL_CHANCE);
+        tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(ST_CRITICAL_CHANCE)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(ST_CRITICAL_CHANCE)) + pipText);
+        tooltipsValueExt.insertLast(pipReference + noData);
+
+        //  level, exp, nextXp
+        tooltipsKey.insertLast(ST_LEVEL);
+        tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(ST_LEVEL)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(ST_LEVEL)) + pipText);
+        tooltipsValueExt.insertLast(pipReference + noData);
+
+        tooltipsKey.insertLast(ST_EXPERIENCE);
+        tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(ST_EXPERIENCE)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(ST_EXPERIENCE)) + pipText);
+        tooltipsValueExt.insertLast(pipReference + noData);
+
+        //  1006 - Exp for next level
+        tooltipsKey.insertLast(1006);
+        tooltipsValue.insertLast("\t\t\t" + "Next level experience" + "\n\n" + "The amount of experience required to advance to the next level." + pipText);
+        tooltipsValueExt.insertLast(pipReference + noData);
+
+    }
+};
+
+//  Exported - client_main
+void InitCharacterTooltip() {
+    tooltipKeyValue = CTooltips();
+}
+
+//  Exported - client_main
+void InitInventoryTooltip() {
+    tooltipKeyValue = CTooltips();
+}
+
+//  Exported - client_interface
+void UpdateCharacterTooltip(int tooltipId, int posX, int posY) {
+    if (valid(characterTooltip) && tooltipId < 0) {
+        characterTooltip.enabled = false;
+        return;
+    }
+
+    characterTooltip = CGuiTooltip(tooltipId);
+
+    if (valid(characterTooltip)) {
+        characterTooltip.enabled = false;
+    }
+
+    characterTooltip.posX = posX;
+    characterTooltip.posY = posY;
+    int x = posX;
+    int y = posY;
+    if (uint(tooltipId) >= SKILL_BEGIN && uint(tooltipId) < SKILL_BEGIN + SKILL_COUNT) {
+        characterTooltip.interfaceWindow = CInterfaceWindow(x - 620 - 30, y, 620, 100);
+    } else {
+        characterTooltip.interfaceWindow = CInterfaceWindow(x + 20, y, 620, 100);
+    }
+
+    characterTooltip.interfaceWindow.maxWidth = __ScreenWidth * 4 / 5;
+    characterTooltip.interfaceWindow.maxHeight = __ScreenHeight * 4 / 5;
+    characterTooltip.interfaceWindow.backgroundColor = COLOR_RGBA(0, 0, 0, 230);
+
+    characterTooltip.interfaceTextbox = CInterfaceTextbox(10, 10, 600, 800);
+    characterTooltip.interfaceTextbox.Init();
+    characterTooltip.interfaceTextbox.textColor = COLOR_LGREEN;
+
+    SetCharacterDetailText(tooltipKeyValue.getToolTip(tooltipId));
+
+    characterTooltip.interfaceWindow.posY -= characterTooltip.interfaceWindow.totalHeight;
+    characterTooltip.posY = characterTooltip.interfaceWindow.posY;
+
+    characterTooltip.interfaceWindow.childControls.insertLast(characterTooltip.interfaceTextbox);
+    characterTooltip.interfaceWindow.FitScreen();
+    characterTooltip.enabled = true;
+    //__HideCursor = true;
+}
+
+//  Exported - client_interface
+void UpdateInventoryTooltip(ItemCl& item, int left, int right, int top, int bottom, bool preferLeft) {
+    if (!valid(inventoryTooltip)) {
+        return;
+    }
+    if (!valid(item)) {
+        inventoryTooltip.enabled = false;
+        return;
+    }
+
+    inventoryTooltip = CGuiTooltip();
+
+    if (valid(inventoryTooltip)) {
+        inventoryTooltip.enabled = false;
+    }
+
+    //int x = __MouseX;
+    //int y = __MouseY;
+    int x = left;
+    int y = top;
+    inventoryTooltip.interfaceWindow = CInterfaceWindow(x + 20, y, 320, 100);
+
+    inventoryTooltip.interfaceWindow.maxWidth = __ScreenWidth * 4 / 5;
+    inventoryTooltip.interfaceWindow.maxHeight = __ScreenHeight * 4 / 5;
+    inventoryTooltip.interfaceWindow.backgroundColor = COLOR_RGBA(0, 0, 0, 230);
+    inventoryTooltip.interfaceTextbox = CInterfaceTextbox(10, 10, 300, 800);
+    inventoryTooltip.interfaceTextbox.Init();
+    inventoryTooltip.interfaceTextbox.textColor = COLOR_RGB(0, 0xD8, 0);
+    SetInventoryDetailText(item);
+    inventoryTooltip.interfaceWindow.childControls.insertLast(inventoryTooltip.interfaceTextbox);
+    inventoryTooltip.interfaceWindow.FitScreen(left, right, top, bottom, preferLeft);
+    inventoryTooltip.enabled = true;
+    //__HideCursor = true;
+}
+
+
+void SetCharacterDetailText(string& text) {
+    int h = characterTooltip.interfaceTextbox.setText(text);
+    characterTooltip.interfaceWindow.totalHeight = 20 + h;
+    //characterTooltip.interfaceWindow.posY -= characterTooltip.interfaceWindow.totalHeight;
+}
+
+void SetInventoryDetailText(ItemCl& item) {
+    CritterCl@ chosen = GetChosen();
+    if (!valid(chosen)) {
+        return;
+    }
+
+	string itemQualityPrefix = "";
+	if (valid(item)) {
+        if(item.GetType() == ITEM_TYPE_ARMOR || item.GetType()== ITEM_TYPE_WEAPON) {
+            if(item.Val4!=0)	itemQualityPrefix +="|" + COLOR_SAND + " Unique " + "|" + COLOR_LGREEN + " ";
+            else if(item.Val3!=0)	itemQualityPrefix +="|" + COLOR_GREEN_RED + " Advanced " + "|" + COLOR_LGREEN + " ";
+            else if(item.Val2!=0)	itemQualityPrefix +="|" + COLOR_WHITE + " Superior " + "|" + COLOR_LGREEN + " ";
+            else if(item.Val1!=0)	itemQualityPrefix +="|" + COLOR_LGRAY + " Improved " + "|" + COLOR_LGREEN + " ";
+            else if(item.Val0!=0) itemQualityPrefix +="|" + COLOR_GRAY + " Quality " + "|" + COLOR_LGREEN + " ";
+        }
+	}
+
+    string text = "" + itemQualityPrefix;
+    if (valid(item)) {
+        text += GetMsgStr(TEXTMSG_ITEM, STR_ITEM_INFO(item)) + "\n\n";
+        if (!GUI_IsKeyPressed(DIK_LSHIFT) && !GUI_IsKeyPressed(DIK_LCONTROL)) {
+                text += GetMsgStr(TEXTMSG_ITEM, STR_PROTO_INFO(item.Proto)+1) + "\n";
+        }
+
+        if (item.GetType() == ITEM_TYPE_WEAPON) {
+            // Ammo load
+            if(item.Proto.Weapon_MaxAmmoCount > 0) {
+                text += "\n";
+                string str = GetMsgStr(TEXTMSG_GAME, STR_INV_HAS_SHOTS);
+                str = ReplaceText(str, "VALUE", item.AmmoCount);
+                str = ReplaceText(str, "MAX_VALUE", item.Proto.Weapon_MaxAmmoCount);
+                str = ReplaceText(str, "AMMO", GetMsgStr(TEXTMSG_GAME, STR_CALIBER(item.Proto.Weapon_Caliber)));
+                text += str;
+            }
+
+            if(item.Proto.Weapon_Perk != 0)
+            {
+                string str = GetMsgStr(TEXTMSG_GAME, STR_WEAPON_PERK(item.Proto.Weapon_Perk));
+                text += "\nPerk: " + str + ".";
+            }
+
+            if(item.Proto.Weapon_MinStrength > 1)
+            {
+                text += "\nMinimum Strength: " + item.Proto.Weapon_MinStrength;
+            }
+        } else if (item.GetType() == ITEM_TYPE_ARMOR) {
+            text += "\nCrit chance mod: " + (item.Proto.Armor_CMCritChance);
+            text += "\nCrit power mod: " + (item.Proto.Armor_CMCritPower);
+            if (item.GetProtoId() == PID_TESLA_ARMOR) {
+                text += "\nCharges: "+item.Charge+"/"+item.Proto.Misc_ChargeMax;
+            }
+        } else if (item.GetType() == ITEM_TYPE_AMMO) {
+            text += "\nDM mod: " + (item.Proto.Ammo_DmgMult) + "/" + (item.Proto.Ammo_DmgDiv);
+            text += "\nDR mod: " + (item.Proto.Ammo_DrMod) + "%";
+            text += "\nAC mod: " + (item.Proto.Ammo_AcMod);
+            if (COMBAT_AMMO_AP(item.Proto)) {
+                text += "\nArmor Piercing";
+            }
+        } else if (item.GetType() == ITEM_TYPE_MISC) {
+            if (item.Proto.Misc_ToolSkillNum != 0) {
+                string str = GetMsgStr(TEXTMSG_GAME, STR_SKILL_NAME(item.Proto.Misc_ToolSkillNum));
+                text += "\n" + str + " bonus: " + item.Proto.Misc_ToolSkillBonus + ".";
+            }
+            if (item.Proto.Misc_ChargeMax > 0) {
+                text += "\nCharges: "+item.Charge+"/"+item.Proto.Misc_ChargeMax;
+            }
+        } else if(item.GetType() == ITEM_TYPE_KEY) {
+            // Key id
+            text += "\n" + ReplaceText(GetMsgStr(TEXTMSG_GAME, STR_INV_KEY_NUMBER), "KEY_ID", item.LockerId);
+        }
+
+        // Weight
+        string weightString = GetMsgStr(TEXTMSG_GAME, STR_ITEM_WEIGHT_GRAMM);
+        if (item.Proto.Weight * item.GetCount() == 1) {
+            weightString = ReplaceText(weightString, "grams.", "gram.");
+        }
+
+        text += "\n" + ReplaceText(weightString, "VALUE", item.Proto.Weight * item.GetCount());
+
+        // Show bonuses
+        if (item.Val0 != 0) {
+            text += "\n";
+            text += showItemBonus(item, item.Val0, item.Val5);
+            text += showItemBonus(item, item.Val1, item.Val6);
+            text += showItemBonus(item, item.Val2, item.Val7);
+            text += showItemBonus(item, item.Val3, item.Val8);
+            text += showItemBonus(item, item.Val4, item.Val9);
+        }
+
+        //Achievement book levels
+        if(item.GetProtoId() == PID_BOOK_OF_ACHIEVEMENT) {
+            text += "\nLevels: " + item.Val0;
+        }
+
+        if (IsLexem(item, "$crafter")) {
+            text += "\n\nCrafter: " + GetLexem(item, "$crafter");
+        } else {
+            text += "\n";
+        }
+
+        // Deterioration
+        if (item.IsDeteriorable()) {
+            uint8  flags = item.BrokenFlags;
+            uint8  brokenCount = item.BrokenCount;
+            uint16 wearCount = item.Deterioration;
+
+            // Broken level, procent
+            text += "\n";
+            if (FLAG(flags, BI_NOTRESC)) {
+                text += "|" + COLOR_GRAY + " " + GetMsgStr(TEXTMSG_GAME, STR_DETERIORATION_NO_RESC);
+            } else if (FLAG(flags, BI_LOWBROKEN)) {
+                text += GetMsgStr(TEXTMSG_GAME, STR_DETERIORATION_BROKEN_LOW);
+            } else if (FLAG(flags, BI_NORMBROKEN)) {
+                text += GetMsgStr(TEXTMSG_GAME, STR_DETERIORATION_BROKEN_NORM);
+            } else if (FLAG(flags, BI_HIGHBROKEN)) {
+                text += GetMsgStr(TEXTMSG_GAME, STR_DETERIORATION_BROKEN_HIGH);
+            } else {
+                int deterCurrent = 100 - wearCount * 100 / MAX_DETERIORATION;
+                int deterMax = 100 - brokenCount;
+                string currentColor = "";
+                if (deterCurrent > 75) {
+                    currentColor = " |" + COLOR_LGREEN;
+                } else if (deterCurrent > 50) {
+                    currentColor = " |" + COLOR_YELLOW;
+                } else if (deterCurrent > 25) {
+                    currentColor = " |" + COLOR_ORANGE;
+                } else {
+                    currentColor = " |" + COLOR_DORANGE;
+                }
+                currentColor += " " + deterCurrent;
+                string maxColor = "";
+                if (deterMax > 75) {
+                    maxColor = "|" + COLOR_LGREEN;
+                } else if (deterMax > 50) {
+                    maxColor = "|" + COLOR_YELLOW;
+                } else if (deterMax > 25) {
+                    maxColor = "|" + COLOR_ORANGE;
+                } else {
+                    maxColor = "|" + COLOR_DORANGE;
+                }
+                maxColor += " " + deterMax;
+                text += ReplaceText(ReplaceText(GetMsgStr(TEXTMSG_GAME, STR_DETERIORATION_PROCENT), "VALUE", currentColor), "MAXVALUE", maxColor);
+            }
+
+            // Service
+            if (FLAG(flags, BI_SERVICE)) {
+                text += "\n" + GetMsgStr(TEXTMSG_GAME, STR_DETERIORATION_SERVICE);
+            }
+
+            // Service ext
+            if (FLAG(flags, BI_SERVICE_EXT)) {
+                text += "\n" + GetMsgStr(TEXTMSG_GAME, STR_DETERIORATION_SERVICE_EXT);
+            }
+        }
+    } else {
+        text = "N/A - Invalid Item";
+    }
+    int h = inventoryTooltip.interfaceTextbox.setText(text);
+    inventoryTooltip.interfaceWindow.totalHeight = 20 + h;
+    inventoryTooltip.interfaceWindow.posY -= inventoryTooltip.interfaceWindow.totalHeight;
+}
+
+//  Exported
+void DrawCharacterTooltip() {
+    string pipExtInfo = "\t\t\t\t\t\t|" + COLOR_DDGREEN + " <<Hold Shift for extended pip-search results>>";
+    if (GUI_IsKeyPressed(DIK_LSHIFT) || GUI_IsKeyPressed(DIK_RSHIFT)) {
+        SetCharacterDetailText(tooltipKeyValue.getToolTip(characterTooltip.currentTooltipId) + tooltipKeyValue.getToolTipExt(characterTooltip.currentTooltipId));
+    } else {
+        SetCharacterDetailText(tooltipKeyValue.getToolTip(characterTooltip.currentTooltipId) + pipExtInfo);
+    }
+    characterTooltip.Draw();
+}
+
+//  Exported
+void DrawInventoryTooltip() {
+    inventoryTooltip.Draw();
+}
+
+//  Exported
+bool CharacterTooltipCatchMouseRelease(int click) {
+    if (!characterTooltip.enabled) {
+        return false;
+    } else {
+        characterTooltip.enabled = false;
+        return true;
+    }
+}
+
+class CGuiTooltip {
+    bool enabled;                           //  use this to toggle on/off
+    int currentTooltipId;
+    int posX, posY;
+    CInterfaceWindow interfaceWindow;
+    CInterfaceTextbox interfaceTextbox;
+
+    CGuiTooltip() {
+        enabled = false;
+    }
+
+    CGuiTooltip(int id) {
+        currentTooltipId = id;
+        enabled = false;
+    }
+
+    void Draw() {
+        if (!enabled) {
+            //Message("GuiImage disabled.");
+            return;
+        }
+        interfaceWindow.DrawWindow();
+    }
+};
+
+#endif 	//	__GUI_TOOLTIP__
