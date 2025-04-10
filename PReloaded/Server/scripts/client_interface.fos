@@ -757,7 +757,7 @@ void render_iface(uint layer)
 		DrawBurstMuzzles();
 
 		//  tooltip enhancement by Sasabmeg
-        if (sc == CLIENT_MAIN_SCREEN_REGISTRATION || sc == CLIENT_SCREEN_CHARACTER) {
+        if (sc == CLIENT_MAIN_SCREEN_REGISTRATION || sc == CLIENT_SCREEN_CHARACTER || sc == CLIENT_SCREEN_PERK) {
             DrawCharacterTooltip();
         }
         if (sc == CLIENT_SCREEN_INVENTORY || sc == CLIENT_SCREEN_BARTER || sc == CLIENT_SCREEN_PICKUP || sc == CLIENT_SCREEN_USE) {
@@ -2756,7 +2756,7 @@ void quest_change(string& header, string& progress) {
 *   Used by Gui Image viewer.
 */
 void iface_show_character_detail(int detailId, int posX, int posY) {
-    //Message("Character detail: ID = " + detailId + ", posX = " + posX + ", posY = " + posY);
+    Message("Character detail: ID = " + detailId + ", posX = " + posX + ", posY = " + posY);
     UpdateCharacterTooltip(detailId, posX, posY);
 }
 

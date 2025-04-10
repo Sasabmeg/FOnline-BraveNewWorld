@@ -7250,6 +7250,7 @@ void FOClient::ChaMouseMove( bool is_reg )
 				int cur_line = scroll + (GameOpt.MouseY - ChaTSwitch[1] - ChaY) / 11;
 				if (cur_line < (int)text.size()) {
 					SwitchElement& e = text[cur_line];
+					int perkId = (e.NameStrNum / 10) % 10000;
 					ChaSkilldexPic = e.PictureId;
 					Str::Copy(ChaName, MsgGame->GetStr(e.NameStrNum));
 					if (ChaCurSwitch == CHA_SWITCH_PERKS)
@@ -7257,7 +7258,7 @@ void FOClient::ChaMouseMove( bool is_reg )
 					Str::Copy(ChaDesc, MsgGame->GetStr(e.DescStrNum));
 					if (ChaCurSwitch == CHA_SWITCH_PERKS) {
 						if (Script::PrepareContext(ClientFunctions.IfaceShowCharacterDetail, _FUNC_, "Game")) {
-							Script::SetArgUInt(e.NameStrNum);
+							Script::SetArgUInt(perkId);
 							Script::SetArgUInt(ChaTSwitch.R + ChaX);
 							Script::SetArgUInt(ChaTSwitch.T + ChaY + ((GameOpt.MouseY - ChaTSwitch.T - ChaY)/11)*11);
 							Script::RunPrepared();
@@ -7720,6 +7721,44 @@ void FOClient::PerkLMouseUp()
 
 void FOClient::PerkMouseMove()
 {
+	bool tooltipFound = false;
+	// Perks tooltips
+	if (!tooltipFound) {
+		if (IsCurInRect(PerkWPerks, PerkX, PerkY)) 	{
+			int cur_perk = -1;
+			if (PerkNextX) {
+				cur_perk = PerkScroll + (GameOpt.MouseX - PerkWPerks[0] - PerkX) / PerkNextX;
+			}
+			if (PerkNextY) {
+				cur_perk = PerkScroll + (GameOpt.MouseY - PerkWPerks[1] - PerkY) / PerkNextY;
+			}
+			if (cur_perk >= 0 && cur_perk < (int)PerkCollection.size()) {
+				int currentPerk = PerkCollection[cur_perk];
+				ChaSkilldexPic = SKILLDEX_PARAM(currentPerk);
+				Str::Copy(ChaName, MsgGame->GetStr(STR_PARAM_NAME_(currentPerk)));
+				Str::Copy(ChaDesc, MsgGame->GetStr(STR_PARAM_DESC_(currentPerk)));
+				if (Script::PrepareContext(ClientFunctions.IfaceShowCharacterDetail, _FUNC_, "Game")) {
+					Script::SetArgUInt(currentPerk);
+					Script::SetArgUInt(PerkWPerks.L + PerkX + (GameOpt.MouseX - PerkWPerks[0] - PerkX) / ((PerkNextX != 0) ? PerkNextX : 1) * PerkNextX);
+					Script::SetArgUInt(PerkWPerks.T + PerkY + (GameOpt.MouseY - PerkWPerks[1] - PerkY) / ((PerkNextY != 0) ? PerkNextY : 1) * PerkNextY);
+					Script::RunPrepared();
+				}
+				tooltipFound = true;
+				
+			}
+		}
+	}
+
+	//	disable active tooltip when mouse not over anything interesting
+	if (!tooltipFound) {
+		if (Script::PrepareContext(ClientFunctions.IfaceShowCharacterDetail, _FUNC_, "Game")) {
+			Script::SetArgUInt(-1);
+			Script::SetArgUInt(0);
+			Script::SetArgUInt(0);
+			Script::RunPrepared();
+		}
+	}
+
     if( IfaceHold == IFACE_PERK_MAIN )
     {
         PerkX = GameOpt.MouseX - PerkVectX;
