@@ -371,7 +371,10 @@ void CombatAttack(Critter& cr, Critter& target, ProtoItem& weapon, uint8 weaponM
     int aimRoll = Random(-1, 8);
     if (cr.Trait[TRAIT_FAST_SHOT] != 0 && !isBurst && _WeaponAim(weapon, use))
         aim = CLAMP(aimRoll, 0, 8);
-
+    //  5% eyes, 5% groin and 20% torso, rest is 10%, except un-aimed which will be 20% (rolls: -1 and 0)
+    if ((aim == HIT_LOCATION_EYES || aim == HIT_LOCATION_GROIN) && Random(1, 100) > 50) {
+        aim == HIT_LOCATION_TORSO;
+    }
     // Now we change aim, if applicable
     if(aim == HIT_LOCATION_EYES && valid(cr) && (cr.Dir + 3) % 6 != target.Dir)
         aim = HIT_LOCATION_HEAD;
@@ -437,9 +440,15 @@ void CombatAttack(Critter& cr, Critter& target, ProtoItem& weapon, uint8 weaponM
 
 	//Log(" weaponPid = " + weapon.ProtoId);
 
+	int attackerLuck = cr.Stat[ST_LUCK];
+	int targetLuck = target.Stat[ST_LUCK];
+	if ((cr.Trait[TRAIT_JINXED] > 0 || target.Trait[TRAIT_JINXED] > 0) && Random(1, 100) > 50) {
+            attackerLuck = 1;
+            targetLuck = 1;
+	}
 	//  5% skill penalty/bonus for every IN below 5 or above 6
 	//  Gifted trait penalty 20%
-	int skillIntModPercent = skillIntModPercent = (20 + cr.Stat[ST_INTELLECT] - (_CritHasTrait(cr, TRAIT_GIFTED) ? 5 : 0 ) ) * 4;
+	int skillIntModPercent = (20 + cr.Stat[ST_INTELLECT] - (_CritHasTrait(cr, TRAIT_GIFTED) ? 5 : 0 ) ) * 4;
 	skillVal = (skillVal * skillIntModPercent) / 100;
     // baseToHit used for all targets, adjusted for distance and other target-dependent qualities every time it is necessary
     int baseToHit = skillVal - CLAMP(cr.ParamBase[ST_EX_RANGE_PENALTY], 0, 250);
@@ -682,7 +691,7 @@ void CombatAttack(Critter& cr, Critter& target, ProtoItem& weapon, uint8 weaponM
     }
     int hitRoll = Random(1, 100);
     int sniperMargin = CLAMP(toHit - hitRoll, 0, 150);
-    int toHitOverflow = CLAMP((toHit - hitRoll) / 10, 0, 2 * cr.Stat[ST_INTELLECT]);
+    int toHitOverflow = CLAMP((toHit - hitRoll - 50) / 10, 0, 5 + cr.Stat[ST_INTELLECT]);
     if (isDummyTraining) {
         dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , To Hit = |" + COLOR_DTEXT_BONUS + " " + toHit;
     }
@@ -817,10 +826,12 @@ void CombatAttack(Critter& cr, Critter& target, ProtoItem& weapon, uint8 weaponM
                 dummyText += "|" + COLOR_DTEXT_BONUS + " Silent Death perk auto crit. ";
             }
         } else {
-            int critChanceFromAimStatFactor = cr.Trait[TRAIT_FAST_SHOT] != 0 ? (cr.Stat[ST_AGILITY] + cr.Stat[ST_LUCK]) : (cr.Stat[ST_INTELLECT] * 2);
+            int critChanceFromAimStatFactor = cr.Trait[TRAIT_FAST_SHOT] != 0 ? (cr.Stat[ST_AGILITY] + attackerLuck) : (cr.Stat[ST_INTELLECT] * 2);
             int critChanceFromAim = (CLAMP(GetHitAim(aim), 0, 60) * (60 + 2 * critChanceFromAimStatFactor)) / 100;
             int finesseAdjustForBurst = ((cr.Trait[TRAIT_FINESSE] != 0 && isBurst) ? 10 : 0);
-            int chance = cr.Stat[ST_CRITICAL_CHANCE] - finesseAdjustForBurst + toHitOverflow + critChanceFromAim + attack.SelectWeaponBonus(BONUS_WEAPON_CRITICAL_CHANCE) - (target.Stat[ST_LUCK] / 2);
+            int manOfSteelReduce = target.Perk[PE_MAN_OF_STEEL] > 0 ? 10 : 0;
+            int chance = cr.Stat[ST_CRITICAL_CHANCE] + toHitOverflow + critChanceFromAim + attack.SelectWeaponBonus(BONUS_WEAPON_CRITICAL_CHANCE);
+            chance -= (targetLuck / 2) + manOfSteelReduce + finesseAdjustForBurst;
             int sneakAttackBonus = 0;
             if (attack.sneakAttack && cr.Perk[PE_SILENT_DEATH] == 0) {
                 int distance = GetDistantion(cr.HexX, cr.HexY, target.HexX, target.HexY);
@@ -830,6 +841,9 @@ void CombatAttack(Critter& cr, Critter& target, ProtoItem& weapon, uint8 weaponM
             if (isDummyTraining) {
                 dummyText += "|" + COLOR_DTEXT_REGULAR + " Base Crit Chance = |" + COLOR_DTEXT_BONUS + " " + cr.Stat[ST_CRITICAL_CHANCE];
                 dummyText += "|" + COLOR_DTEXT_REGULAR + " , CLAMP(toHitOverflow/10, 0, 2 * IN) = |" + COLOR_DTEXT_BONUS + " " + toHitOverflow;
+                if (target.Perk[PE_MAN_OF_STEEL] > 0) {
+                    dummyText += "|" + COLOR_DTEXT_REGULAR + " , Man of Steel reduce = |" + COLOR_DTEXT_MALUS + " " + manOfSteelReduce;
+                }
                 if (finesseAdjustForBurst > 0) {
                     dummyText += "|" + COLOR_DTEXT_REGULAR + " , No Finesse effect on burst (adjust) = |" + COLOR_DTEXT_MALUS + " " + (-1 * finesseAdjustForBurst);
                 }
@@ -838,7 +852,7 @@ void CombatAttack(Critter& cr, Critter& target, ProtoItem& weapon, uint8 weaponM
                     dummyText += "|" + COLOR_DTEXT_REGULAR + "  ( Aim(|" + COLOR_DTEXT_BONUS + " " + critChanceFromAim;
                     if (cr.Trait[TRAIT_FAST_SHOT] != 0) {
                         dummyText += "|" + COLOR_DTEXT_REGULAR + " ) * (60 + 2 * (AG[|" + COLOR_DTEXT_BONUS + " " + cr.Stat[ST_AGILITY];
-                        dummyText += "|" + COLOR_DTEXT_REGULAR + " ] + LK[|" + COLOR_DTEXT_BONUS + " " + cr.Stat[ST_LUCK];
+                        dummyText += "|" + COLOR_DTEXT_REGULAR + " ] + LK[|" + COLOR_DTEXT_BONUS + " " + attackerLuck;
                         dummyText += "|" + COLOR_DTEXT_REGULAR + " ]) ) / 100 )";
                     } else {
                         dummyText += "|" + COLOR_DTEXT_REGULAR + " ) * (60 + 4 * IN[|" + COLOR_DTEXT_BONUS + " " + cr.Stat[ST_INTELLECT];
@@ -849,7 +863,7 @@ void CombatAttack(Critter& cr, Critter& target, ProtoItem& weapon, uint8 weaponM
                     dummyText += "|" + COLOR_DTEXT_REGULAR + " , Sneak attack crit. bonus (5 + (18 - distance) * 2) = |" + COLOR_DTEXT_BONUS + " " + sneakAttackBonus;
                 }
                 dummyText += "|" + COLOR_DTEXT_REGULAR + " , Weap bonus = |" + COLOR_DTEXT_BONUS + " " + attack.SelectWeaponBonus(BONUS_WEAPON_CRITICAL_CHANCE);
-                dummyText += "|" + COLOR_DTEXT_REGULAR + " , Target LK/2 = |" + COLOR_DTEXT_MALUS + " -" + target.Stat[ST_LUCK] / 2;
+                dummyText += "|" + COLOR_DTEXT_REGULAR + " , Target LK/2 = |" + COLOR_DTEXT_MALUS + " -" + targetLuck / 2;
             }
             if(isHthAttack && cr.Perk[PE_CLOSE_COMBAT_MASTER] > 0) {
                 chance += 15;
@@ -897,11 +911,11 @@ void CombatAttack(Critter& cr, Critter& target, ProtoItem& weapon, uint8 weaponM
 
             //  BNW: reworked sniper perk, now it will give bonus crit chance if toHit above hitRoll, only for aimed hits, no fast shot trait
             if (!isCritical && weaponSubtype == WS_GUN && cr.Perk[PE_SNIPER] != 0 && aim != HIT_LOCATION_UNCALLED && aim != HIT_LOCATION_NONE && cr.Trait[TRAIT_FAST_SHOT] == 0) {
-                int sniperCritChanceBonus = CLAMP((cr.Stat[ST_INTELLECT] * 5 - target.Stat[ST_LUCK] * 2) * sniperMargin / 150, 0, 50);
+                int sniperCritChanceBonus = CLAMP((cr.Stat[ST_INTELLECT] * 5 - targetLuck * 2) * sniperMargin / 150, 0, 50);
                 if (isDummyTraining) {
                     dummyText += "|" + COLOR_DTEXT_REGULAR + " , Sniper Perk: Margin = |" + COLOR_DTEXT_BONUS + " " + sniperMargin;
                     dummyText += "|" + COLOR_DTEXT_REGULAR + " / 150 * (Attacker IN = |" + COLOR_DTEXT_BONUS + " " + cr.Stat[ST_INTELLECT];
-                    dummyText += "|" + COLOR_DTEXT_REGULAR + "  * 5) - (Target LK = |" + COLOR_DTEXT_BONUS + " " + target.Stat[ST_LUCK];
+                    dummyText += "|" + COLOR_DTEXT_REGULAR + "  * 5) - (Target LK = |" + COLOR_DTEXT_BONUS + " " + targetLuck;
                     dummyText += "|" + COLOR_DTEXT_REGULAR + "  * 2), Sniper crit. bonus = |" + COLOR_DTEXT_BONUS + " " + sniperCritChanceBonus;
                 }
                 chance += sniperCritChanceBonus;
@@ -1217,6 +1231,17 @@ void ApplyDamage(AttackStruct& attack, Critter& target, uint rounds, bool isCrit
 		_dmgMul[i] = dmgMul;
 	}
 
+	int attackerLuck = attacker.Stat[ST_LUCK];
+	int targetLuck = target.Stat[ST_LUCK];
+	if ((attacker.Trait[TRAIT_JINXED] > 0 || target.Trait[TRAIT_JINXED] > 0) && Random(1, 100) > 50) {
+            attackerLuck = 1;
+            targetLuck = 1;
+	}
+	//  5% skill penalty/bonus for every IN below 5 or above 6
+	//  Gifted trait penalty 20%
+	int skillIntModPercent = (20 + attacker.Stat[ST_INTELLECT] - (_CritHasTrait(attacker, TRAIT_GIFTED) ? 5 : 0 ) ) * 4;
+	int attackerSneakSkill = (attacker.Skill[SK_SNEAK] * skillIntModPercent) / 100;
+
     //  BNW STONEWALL REWORKS - HEAVY ARMOR GIVES STONEWALL OR IMPROVES PERK IF TAKEN
     uint stonewallRank = 0;
     if (target.PerkBase[PE_STONEWALL] > 0) {
@@ -1355,9 +1380,9 @@ void ApplyDamage(AttackStruct& attack, Critter& target, uint rounds, bool isCrit
         //05-03-2014 Cubil: bonus bazowy do broni do crit rolla
 		//roll +=AddCritRollWeapon(realWeapon); //disabled with new bypass
 
-		roll -= target.Stat[ST_LUCK];
+		roll -= targetLuck;
         if (isDummyTraining) {
-            dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , Target LK = |" + COLOR_DTEXT_MALUS + " -" + target.Stat[ST_LUCK];
+            dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , Target LK = |" + COLOR_DTEXT_MALUS + " -" + targetLuck;
         }
 
         if (target.Perk[PE_MAN_OF_STEEL] > 0) {
@@ -1448,10 +1473,10 @@ void ApplyDamage(AttackStruct& attack, Critter& target, uint rounds, bool isCrit
         */
 
         if (aim != HIT_LOCATION_NONE && aim != HIT_LOCATION_UNCALLED && validAttacker && attacker.Trait[TRAIT_FAST_SHOT] == 0) {
-            bypassRoll = roll - target.Stat[ST_LUCK];
+            bypassRoll = roll - targetLuck;
             if (isDummyTraining) {
                 dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , Bypass Roll = |" + COLOR_DTEXT_ROLL + " " + roll;
-                dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , Target LK factor = |" + COLOR_DTEXT_MALUS + " " + target.Stat[ST_LUCK];
+                dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , Target LK factor = |" + COLOR_DTEXT_MALUS + " " + targetLuck;
             }
             bypassRoll = CLAMP(bypassRoll, 0, 100);
             if (isDummyTraining) {
@@ -2032,10 +2057,10 @@ void ApplyDamage(AttackStruct& attack, Critter& target, uint rounds, bool isCrit
         if (valid(realWeapon)) {
             switch(realWeapon.Proto.ProtoId) {
                 case PID_SPIKED_KNUCKLES:
-                    heavyHandedStrengthMalus = -7;
+                    heavyHandedStrengthMalus = -6;
                     break;
                 case PID_BRASS_KNUCKLES:
-                    heavyHandedStrengthMalus = -5;
+                    heavyHandedStrengthMalus = -4;
                     break;
                 case PID_POWER_FIST:
                     heavyHandedStrengthMalus = -2;
@@ -2046,14 +2071,14 @@ void ApplyDamage(AttackStruct& attack, Critter& target, uint rounds, bool isCrit
             }
         }
         int heavyHandedRoll = Random(1, 20);
-        int finalHeavyHandedValue = 10 + attacker.Stat[ST_STRENGTH] + heavyHandedStrengthMalus - 3 * stonewallRank;
+        int finalHeavyHandedValue = 10 + attacker.Stat[ST_STRENGTH] + heavyHandedStrengthMalus - 5 * stonewallRank;
         if (finalHeavyHandedValue >= heavyHandedRoll) {
             SETFLAG(eff, HF_KNOCKDOWN);
             if (isDummyTraining) {
                 dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , Trait Heavy Handed |" + COLOR_DTEXT_BONUS + " SUCCESS";
                 dummyInfo += "|" + COLOR_DTEXT_REGULAR + " ( 10 + Attacker ST = |" + COLOR_DTEXT_BONUS + " " + attacker.Stat[ST_STRENGTH];
                 dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , Weapon Modifier = |" + COLOR_DTEXT_MALUS + " " + heavyHandedStrengthMalus;
-                dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , 3 * Stonewall Rank = |" + COLOR_DTEXT_MALUS + " " + stonewallRank;
+                dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , 5 * Stonewall Rank = |" + COLOR_DTEXT_MALUS + " " + stonewallRank;
                 dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , Final Value = |" + COLOR_DTEXT_BONUS + " " + finalHeavyHandedValue;
                 dummyInfo += "|" + COLOR_DTEXT_REGULAR + "  vs Roll = |" + COLOR_DTEXT_ROLL + " " + heavyHandedRoll;
             }
@@ -2062,7 +2087,7 @@ void ApplyDamage(AttackStruct& attack, Critter& target, uint rounds, bool isCrit
                 dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , Trait Heavy Handed |" + COLOR_DTEXT_MALUS + " FAIL";
                 dummyInfo += "|" + COLOR_DTEXT_REGULAR + " ( 10 + Attacker ST = |" + COLOR_DTEXT_BONUS + " " + attacker.Stat[ST_STRENGTH];
                 dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , Weapon Modifier = |" + COLOR_DTEXT_MALUS + " " + heavyHandedStrengthMalus;
-                dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , 3 * Stonewall Rank = |" + COLOR_DTEXT_MALUS + " " + stonewallRank;
+                dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , 5 * Stonewall Rank = |" + COLOR_DTEXT_MALUS + " " + stonewallRank;
                 dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , Final Value = |" + COLOR_DTEXT_BONUS + " " + finalHeavyHandedValue;
                 dummyInfo += "|" + COLOR_DTEXT_REGULAR + "  vs Roll = |" + COLOR_DTEXT_ROLL + " " + heavyHandedRoll;
             }
@@ -2240,18 +2265,19 @@ void ApplyDamage(AttackStruct& attack, Critter& target, uint rounds, bool isCrit
         if (target.IsNpc() && attack.sneakAttack) {
             //  Silent Death effect
             int distance = GetDistantion(attacker.HexX, attacker.HexY, target.HexX, target.HexY);
-            float sneakAttackMultiplier = float(CLAMP((18 - distance), 1, 16)) / 15;
+            float sneakDistanceFactor = float(CLAMP((18 - distance), 1, 15)) / 15;
+            float sneakMultiplier = float(100 + attackerSneakSkill) / 200;
             if (attacker.Perk[PE_SILENT_DEATH] != 0) {
-                //  max 4x on close range (0 - 3)
-                rawDmg *= 2 + sneakAttackMultiplier * 2;
+                //  NPC max 4.3x on close range (0 - 3)
+                rawDmg *= 2 + sneakDistanceFactor * sneakMultiplier;
                 if (isDummyTraining) {
-                    dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , Silent Death dmg mult on NPC = |" + COLOR_DTEXT_BONUS + " " + (2 + sneakAttackMultiplier * 2);
+                    dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , Silent Death dmg mult on NPC = |" + COLOR_DTEXT_BONUS + " " + (2 + sneakDistanceFactor * sneakMultiplier);
                 }
             } else {
-                // max 2x on close range (0 - 3)
-                rawDmg *= 1 + sneakAttackMultiplier * 1;
+                // NPC max 2.2x on close range (0 - 3)
+                rawDmg *= 1 + sneakDistanceFactor * sneakMultiplier;
                 if (isDummyTraining) {
-                    dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , Sneak Attack dmg mult on NPC = |" + COLOR_DTEXT_BONUS + " " + (1 + sneakAttackMultiplier * 1);
+                    dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , Sneak Attack dmg mult on NPC = |" + COLOR_DTEXT_BONUS + " " + (1 + sneakDistanceFactor * sneakMultiplier);
                 }
             }
         }
@@ -2296,7 +2322,7 @@ void ApplyDamage(AttackStruct& attack, Critter& target, uint rounds, bool isCrit
     //  Spray and Pray
     if (!isCritical && attacker.Perk[PE_SPRAY_AND_PRAY] > 0 && totalDmg > 0 && isBurst) {
         int sprayAndPrayRoll = Random(1, 100);
-        int sprayAndPrayChance = 5 + attacker.Stat[ST_CHARISMA] + attacker.Stat[ST_LUCK];
+        int sprayAndPrayChance = 5 + attacker.Stat[ST_CHARISMA] + attackerLuck;
         if (sprayAndPrayChance >= sprayAndPrayRoll) {
             totalDmg += (totalDmg * 20) / 100;
         }
@@ -3252,7 +3278,7 @@ void ApplyDamage(AttackStruct& attack, Critter& target, uint rounds, bool isCrit
 			int radiation = attacker.Stat[ST_RADIOACTIVE];
 			if(poison != 0 || radiation != 0)
 			{
-				if(Random(2, 11) > target.Stat[ST_LUCK])
+				if(Random(2, 11) > targetLuck)
 				{
 					if(poison > 0)
 						AffectPoison(target, Random(poison / 3, poison));
@@ -3265,7 +3291,7 @@ void ApplyDamage(AttackStruct& attack, Critter& target, uint rounds, bool isCrit
 				int attackerBt = attacker.Stat[ST_BODY_TYPE];
 				if(attackerBt == BT_RADSCORPION || attackerBt == BT_FLOATER || attackerBt == BT_ALIEN || attackerBt == BT_CENTAUR)
 				{
-					if(Random(2, 11) > target.Stat[ST_LUCK])
+					if(Random(2, 11) > targetLuck)
 					{
 						if(attackerBt == BT_RADSCORPION)
 							AffectPoison(target, Random(3, 15));
@@ -5326,8 +5352,11 @@ void InjureCritter(Critter& cr, uint dmg, uint dmgType, uint8 dir, uint attacker
     }
 
     Critter@ attacker = null;
-    if(attackerId != 0 && cr.Id != attackerId)
+    if (attackerId != 0 && cr.Id != attackerId) {
         @attacker = GetCritter(attackerId);
+    } else {
+        @attacker = GetCritter(cr.Id);
+    }
 
     AttackStruct attack;
     @attack.Attacker = attacker;

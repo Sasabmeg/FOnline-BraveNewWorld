@@ -230,7 +230,7 @@ void CommenceThrowing(Critter& cr, Map& map, Item& item, uint16 tx, uint16 ty)
         if (!cr.IsPlayer() || cr.GetAccess() == ACCESS_CLIENT) {
             if (IsGrenade(item)) {
                 cr.ModeBase[MODE_HIDE] = 0;
-            } else if (cr.Param[PE_SILENT_DEATH] != 0 && CLAMP((cr.Skill[SK_SNEAK] + cr.Skill[SK_THROWING]) / 4, 1, 95) < Random(1, 100)) {
+            } else if (cr.Param[PE_SILENT_DEATH] != 0 && CLAMP((cr.Skill[SK_SNEAK] + cr.Skill[SK_THROWING]) / 3, 1, 95) < Random(1, 100)) {
                 cr.ModeBase[MODE_HIDE] = 0;
             }
         }

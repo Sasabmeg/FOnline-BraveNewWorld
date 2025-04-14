@@ -1289,10 +1289,10 @@
 {100022}{}{Stamina and physical toughness. A character with a high Endurance will survive where others may not. Modifies: Hit Points, Poison & Radiation Resistance, Healing Rate, and the additional hit points per level.}
 # ST_CHARISMA
 {100031}{}{Charisma}
-{100032}{}{A combination of appearance and charm. A high Charisma is important for characters that want to influence people with words. Modifies: ability to lead other characters, NPC reactions, and barter prices.}
+{100032}{}{A combination of self confidence, appearance and charm. A high Charisma is important for characters that want to have a high self-esteem or influence people with words. Modifies: ability to lead other characters, NPC reactions, and barter prices.}
 # ST_INTELLECT
 {100041}{}{Intelligence}
-{100042}{}{Knowledge, wisdom and the ability to think quickly. A high Intelligence is important for any character. Modifies: the number of new skill points per level, dialogue options, and many skills.}
+{100042}{}{Knowledge, wisdom and the ability to think quickly. A high Intelligence is important for any character. Modifies: the effectiveness of most combat skills and critical chance with aimed shots.}
 # ST_AGILITY
 {100051}{}{Agility}
 {100052}{}{Coordination and the ability to move well. A high Agility is important for any active character. Modifies: Action Points, Armor Class, and many skills.}
@@ -1677,7 +1677,7 @@
 {103192}{}{Each level of Educated adds +2 skill points when you gain a new experience level. This Perk works best when purchased early in your adventure.}
 # PE_FIELD_MEDIC
 {103201}{}{Field Medic}
-{103202}{}{You are trained to help others, you can use First Aid/Doctor on players only if they don't have cooldown and your cooldown is applied to them, you can see if you can help them or not.  This Perk heals 20-40 additional hit points when using the First Aid.  You get more critical successes and fewer critical failures when you are healing.}
+{103202}{}{You are trained to help others while in the heat of the battle.  Reduces your First Aid and Doctor timeouts and increases the amount healed, also you can heal other undetected. You battlefield training allow you to heal plasma burn wounds more efficiently than other doctors.}
 # PE_FORTUNE_FINDER
 {103211}{}{Fortune Finder}
 {103212}{}{You have the talent of finding money. You find additional money in random encounters in the desert.}
@@ -1692,10 +1692,10 @@
 {103242}{}{The Slayer walks the earth!  In hand-to-hand combat all of your hits are upgraded to critical hits, causing destruction and mayhem.}
 # PE_SNIPER
 {103251}{}{Sniper}
-{103252}{}{You have mastered the firearm as a source of pain.  With this Perk, any successful hit in combat with a ranged weapon will be upgraded to a critical hit if you also make a Luck roll.}
+{103252}{}{You have mastered the firearm as a source of pain.  With this Perk, you accuracy above hit cap will be added to your critical hit chance based on your Intellect and your target Luck. This will greatly increase your chances to score critical hits.}
 # PE_SILENT_DEATH
 {103261}{}{Silent Death}
-{103262}{}{While Sneaking, if you hit a critter in the back, you will cause and automatic critical hit with +10 on the roll when attacking hand to hand or with a thrown or one handed weapon. Silent Death is that kind of Perk.}
+{103262}{}{While Sneaking, if you hit a critter in the back, you will cause and automatic critical hit with extra bonus on the power roll when attacking hand to hand or with a thrown or one handed weapon. Silent Death is that kind of Perk.}
 # PE_ACTION_BOY
 {103271}{}{Action Boy}
 {103272}{}{Each level of Action Boy (insert Girl if you wish) gives you an additional AP to spend every combat turn.  You can use these generic APs on any task.}
@@ -1932,7 +1932,7 @@
 {104272}{}{You cover your target in bullets... one of them is bound to find a hole.  Sometimes you will do an additional 20% final damage with non-critical burst attacks. (percent chance: 5+CH+LK)}
 # PE_MORE_RANGED_DAMAGE       (428)
 {104281}{}{More Ranged Damage}
-{104282}{}{Your advanced training in firearms and other ranged weapons has made you even more deadly in ranged combat than those with a basic training. You do +4 points of damage per bullet with ranged weapons.}
+{104282}{}{Your confidence in your yourself and in your advanced training in firearms and other ranged weapons has made you even more deadly in ranged combat. You can receive up to +5 damage per bullet per attack depending on your and your targets Charisma difference.}
 # PE_LIVEWIRE                 (429)
 {104291}{}{Livewire}
 {104292}{}{You have learnt to harness your extra energy and in battle you are a blur. You double your bonus AC gained from your AG (does not work with two-handed guns from Small Gun, Big Gun, Energy Weapon class).}
@@ -2155,10 +2155,10 @@
 {105042}{}{Your character's left arm has been severely hurt, and cannot function well.  If one arm has been crippled, you cannot use two-handed weapons.  If both arms have been crippled, you cannot attack with weapons.}
 # DAMAGE_RIGHT_LEG, damages
 {105051}{}{Crippled Right Leg}
-{105052}{}{Your character has a crippled right leg.}
+{105052}{}{Your character has a crippled right leg.  You should hobble to a doctor before you try to run again.}
 # DAMAGE_LEFT_LEG, damages
 {105061}{}{Crippled Left Leg}
-{105062}{}{Your character has a crippled left leg.}
+{105062}{}{Your character has a crippled left leg.  You should hobble to a doctor before you try to run again.}
 
 
 ####################################################################################################################################

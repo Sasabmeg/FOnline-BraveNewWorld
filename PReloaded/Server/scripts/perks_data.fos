@@ -265,8 +265,8 @@ int[][] PerksData =
     { 320, 0, 1 },   // Field Medic [PE_FIELD_MEDIC], Leveling, 1 ranks
     {                // level 1 requirements
         77, 1, 15,   // Level at least 15
-        206, 1, 175, // First aid at least 175
-        207, 1, 175, // Doctor aid at least 175
+        206, 1, 150, // First aid at least 150
+        207, 1, 150, // Doctor aid at least 150
         333, 1, 1    // Medic perk
     },
     #ifdef __SERVER
@@ -319,10 +319,10 @@ int[][] PerksData =
     },
     #endif
 
-	{ 325, 0, 1 }, // Sniper, Leveling, 1 ranks
+	{ 325, 0, 1 }, // Sniper [PE_SNIPER], Leveling, 1 ranks
 	{ // level 1 requirements
 		4, 1, 5, // Intelligence at least 5
-		77, 1, 12, // Level at least 12
+		77, 1, 18, // Level at least 18
 		419, 0, 0, // Fast Shot at most 0
 	},
     #ifdef __SERVER
@@ -334,7 +334,7 @@ int[][] PerksData =
 
     { 326, 0, 1 },   // Silent Death [PE_SILENT_DEATH], Levelling, 1 ranks
     {                // level 1 requirements
-        77, 1, 15,   // Level at least 15
+        77, 1, 18,   // Level at least 18
         208, 1, 175, // Sneak at least 175
     },
     #ifdef __SERVER
@@ -1295,7 +1295,7 @@ int[][] PerksData =
     { 423, 0, 1 }, // Man of Steel [PE_MAN_OF_STEEL], Levelling, 1 ranks
     {              // level 1 requirements
         77, 1, 15, // Level at least 15
-        2, 1, 8,   // Endurance at least 8
+        2, 1, 6,   // Endurance at least 6
     },
     #ifdef __SERVER
     array<int>(0),              // level 1 perk up effects
@@ -1355,6 +1355,7 @@ int[][] PerksData =
     { 428, 0, 1 }, // More Ranged Damage [PE_MORE_RANGED_DAMAGE], Levelling, 1 ranks
     {              // level 1 requirements
         77, 1, 15, // Level at least 15
+        3, 1, 4,   // CH at least 4
     },
     #ifdef __SERVER
     array<int>(0),              // level 1 perk up effects

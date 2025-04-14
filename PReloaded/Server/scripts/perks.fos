@@ -270,6 +270,7 @@ void InitPerks() // export
 
     //  level 18 perks
     SATISFIES(PE_BONUS_RATE_OF_ATTACK,   @_OrCombatSkill, 0, 0, 175);
+    SATISFIES(PE_SHARPSHOOTER,           @_OrRangedSkill, 0, 0, 175);
 
 
     SATISFIES(PE_PROFESSION_ARMORER,           @_ProfessionCheck, SK_REPAIR,  50, 100);

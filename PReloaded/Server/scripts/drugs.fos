@@ -610,6 +610,7 @@ uint ProcessDrug(Critter& cr, uint16 drugPid, uint& rate)
                                 amount = (amount * 5) / 4;
                             }
                         } else {
+                            //  for example: PID_SUPER_STIMPAK
                             amount = (amount * 3) / 4;
                         }
 

@@ -127,7 +127,16 @@ bool UseFirstAidOnCritter(Critter& cr, Critter& targetCr, Item@ item)
                 }
             }
         }
-        itemFactor = 10;
+        switch (item.GetProtoId()) {
+            case PID_FIRST_AID_KIT:
+                itemFactor = 10;
+                break;
+            case PID_FIELD_MEDIC_KIT:
+                itemFactor = 15;
+                break;
+            default:
+                itemFactor = 10;
+        }
     }
 
     int curHp = targetCr.Stat[ST_CURRENT_HP];
@@ -211,8 +220,8 @@ bool UseFirstAidOnCritter(Critter& cr, Critter& targetCr, Item@ item)
     _SetTimeout(targetCr, TO_SK_FIRST_AID, FIRST_AID_TIMEOUT(cr, firstAidSkill));
 
     int healXpFactor = 1;
-    if (targetCr.IsNpc()) {
-        healXpFactor *= 3;
+    if (_IsTrueNpc(targetCr) && !IsCurrentEnemy(targetCr, cr.Id)) {
+        healXpFactor *= 5;
     }
     if (isFieldMedic) {
         healXpFactor *= 2;
@@ -328,7 +337,7 @@ bool UseDoctorOnCritter(Critter& cr, Critter& targetCr, Item@ item)
         GameVar@ doctorToolUseVar = GetLocalVar(LVAR_doctor_use, cr.Id);
         if (valid(doctorToolUseVar)) {
             doctorToolUseVar = doctorToolUseVar + 1;
-            int doctorToolMaxUse = 5 + (doctorSkill / 20) + cr.PerkBase[PE_MEDIC] * 5 + cr.PerkBase[PE_FIELD_MEDIC] * 5;
+            int doctorToolMaxUse = 5 + CLAMP((doctorSkill-200)/10, 0, 10) + cr.PerkBase[PE_MEDIC] * 5 + cr.PerkBase[PE_FIELD_MEDIC] * 5;
             if (doctorToolUseVar >= doctorToolMaxUse) {
                 doctorToolUseVar = 0;
                 cr.DeleteItem(item.GetProtoId(), 1);
@@ -346,7 +355,16 @@ bool UseDoctorOnCritter(Critter& cr, Critter& targetCr, Item@ item)
             }
 
         }
-        itemFactor = 3;
+        switch (item.GetProtoId()) {
+            case PID_DOCTORS_BAG:
+                itemFactor = 3;
+                break;
+            case PID_PARAMEDICS_BAG:
+                itemFactor = 4;
+                break;
+            default:
+                itemFactor = 1;
+        }
     }
 
     int uninjured = 0;
@@ -360,7 +378,7 @@ bool UseDoctorOnCritter(Critter& cr, Critter& targetCr, Item@ item)
         if (!_CritHasInjureBody(targetCr, i))
             continue;
         injured++;
-        int roll = Random(5, 95) * ((isSelf && !isMedic) ? 2 : 1) * difficulty / 2 / itemFactor;
+        int roll = Random(5, 95) * ((isSelf && !isMedic) ? 2 : 1) * difficulty / itemFactor;
         if(doctorSkill > roll) {
             _CritUninjureBody(targetCr, i);
             cr.SayMsg(SAY_NETMSG, TEXTMSG_GAME, STR_SKILL_HEAL_DMG(i - DAMAGE_POISONED));
@@ -393,7 +411,8 @@ bool UseDoctorOnCritter(Critter& cr, Critter& targetCr, Item@ item)
             VerboseAction(cr, "applies wound dressing" + (uninjured > 1 ? "s" : ""));
         else
             VerboseAction(cr, targetCr, "treats injur" + (uninjured > 1 ? "ies" : "y") + " of TARGET");
-        cr.StatBase[ST_EXPERIENCE] += uninjured * 100 * (isFieldMedic ? 5 : (isMedic ? 3 : 1));
+        int doctorNpcBaseXp = (_IsTrueNpc(targetCr) && !IsCurrentEnemy(targetCr, cr.Id)) ? 100 : 20;
+        cr.StatBase[ST_EXPERIENCE] += uninjured * doctorNpcBaseXp * (isFieldMedic ? 5 : (isMedic ? 3 : 1));
         if (_IsTrueNpc(targetCr) && !isSelf && IsHumanoid(targetCr) && !IsCurrentEnemy(targetCr, cr.Id)) {
             if (_ValidReputationIndex(targetCr.Stat[ST_TEAM_ID]))
                 AddReputation(cr, targetCr.Stat[ST_TEAM_ID], uninjured * 8, REP_DOCTOR_CAP);
