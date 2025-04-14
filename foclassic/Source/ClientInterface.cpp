@@ -7250,7 +7250,7 @@ void FOClient::ChaMouseMove( bool is_reg )
 				int cur_line = scroll + (GameOpt.MouseY - ChaTSwitch[1] - ChaY) / 11;
 				if (cur_line < (int)text.size()) {
 					SwitchElement& e = text[cur_line];
-					int perkId = (e.NameStrNum / 10) % 10000;
+					int perkId = e.NameStrNum > 10000 ? (e.NameStrNum / 10) % 10000 : e.NameStrNum;
 					ChaSkilldexPic = e.PictureId;
 					Str::Copy(ChaName, MsgGame->GetStr(e.NameStrNum));
 					if (ChaCurSwitch == CHA_SWITCH_PERKS)

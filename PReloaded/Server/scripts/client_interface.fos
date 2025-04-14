@@ -2756,7 +2756,7 @@ void quest_change(string& header, string& progress) {
 *   Used by Gui Image viewer.
 */
 void iface_show_character_detail(int detailId, int posX, int posY) {
-    Message("Character detail: ID = " + detailId + ", posX = " + posX + ", posY = " + posY);
+    //Message("Character detail: ID = " + detailId + ", posX = " + posX + ", posY = " + posY);
     UpdateCharacterTooltip(detailId, posX, posY);
 }
 

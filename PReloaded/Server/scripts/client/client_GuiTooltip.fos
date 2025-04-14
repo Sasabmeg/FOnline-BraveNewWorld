@@ -51,7 +51,7 @@ class CTooltips {
         if (index >= 0) {
             return tooltipsValueExt[index];
         } else {
-            return "N/A";
+            return "\n\nN/A";
         }
     }
 
@@ -60,9 +60,11 @@ class CTooltips {
         string jjJournal = "\nJournal entry:";
         string jjText = "\n\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t  - Chief Gadgeteer 'Jinxed' Jack -";
         string pipReference = "\n|" + COLOR_GREEN + " Extended Pip-boy database search results:\n";
-        string notes = "\nNotes:";
+        string notes = "";//"\nNotes:";
         string modifies = "\n\nModifies:";
+        string tldr = "\n\nTLDR:";
         string noData = "- No additional information available.";
+        string @bullet = EncodeUTF8(0x2022);
         //   special stats
         tooltipsKey.insertLast(ST_STRENGTH);
         tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(ST_STRENGTH)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(ST_STRENGTH))
@@ -70,16 +72,16 @@ class CTooltips {
                                  + "\n\n\"There is a small mining town to north in the mountains, Broken Hills. I saw a huge super-mutant drinking at the local tap house who wanted to arm wrestle every newcomer, I bet he could lift a whole caravan cart with his right arm.\""
                                  + jjText);
         tooltipsValueExt.insertLast(pipReference
-                                 + "\n- Initial Hit Points: (55 + 2*ST + EN)"
-                                 + "\n- Melee Damage: (ST - 5) with a minimum of 1."
-                                 + "\n- Carry Weight: [(25 + (ST*25 ))/2.2] + 20"
-                                 + "\n- Throwing Distance: 3*ST to reach weapon max. distance (+6 with Heave Ho!)"
-                                 + "\n- Throwing Damage: min. ST/2, max. ST (more with Heave Ho!)"
-                                 + "\n- To hit chance: if lower than weapon ST requirement then -20 To Hit for each missing ST"
-                                 + "\n- Stonewall Knockdown/Knockout resist: (clamp(ST, 1, CH+4) + clamp(EN, 1, CH+6) )*3 + 15*stonewallRank vs 1d100"
-                                 + "\n- Iron Limbs Weapon Drop resist: (ST - 5) + 2*ironLimbsRank vs 1d10"
-                                 + "\n- Heavy Handed Trait Knockdown chance: "
-                                 + "\n- Electric Shock effect (cannot run) duration reduce: ");
+                                 + "\n\u2022 Initial Hit Points: (55 + 2*ST + EN)"
+                                 + "\n\u2022 Melee Damage: (ST - 5) with a minimum of 1."
+                                 + "\n\u2022 Carry Weight: [(25 + (ST*25 ))/2.2] + 20"
+                                 + "\n\u2022 Throwing Distance: 3*ST to reach weapon max. distance (+6 with Heave Ho!)"
+                                 + "\n\u2022 Throwing Damage: min. ST/2, max. ST (more with Heave Ho!)"
+                                 + "\n\u2022 To hit chance: if lower than weapon ST requirement then -20 To Hit for each missing ST"
+                                 + "\n\u2022 Stonewall Knockdown/Knockout resist: (clamp(ST, 1, CH+4) + clamp(EN, 1, CH+6) )*3 + 15*stonewallRank vs 1d100"
+                                 + "\n\u2022 Iron Limbs Weapon Drop resist: (ST - 5) + 2*ironLimbsRank vs 1d10"
+                                 + "\n\u2022 Heavy Handed Trait Knockdown chance: "
+                                 + "\n\u2022 Electric Shock effect (cannot run) duration reduce: ");
 
         tooltipsKey.insertLast(ST_PERCEPTION);
         tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(ST_PERCEPTION)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(ST_PERCEPTION))
@@ -87,18 +89,18 @@ class CTooltips {
                                  + "\n\n\"Just when I ran out of smokes, I found a tobacco plantation along the shore to the west. It even had a working press machine! So much about me being 'Jinxed' he-he, oh no.... a pack of floaters are swarming to the north, gotta leave quick, damn, where do these creatures even come from?\""
                                  + jjText);
         tooltipsValueExt.insertLast(pipReference
-                                 + "\n- Sight range: Base(20) + 3*PE + Sharpshooter(6) + Binoculars(6)"
-                                 + "\n- Ranged chance to hit bonus: 2*PE, (if weapon perk LongRange 4*PE, if Scope 5*PE)"
-                                 + "\n- Sequence: 2*PE");
+                                 + "\n\u2022 Sight range: Base(20) + 3*PE + Sharpshooter(6) + Binoculars(6)"
+                                 + "\n\u2022 Ranged chance to hit bonus: 2*PE, (if weapon perk LongRange 4*PE, if Scope 5*PE)"
+                                 + "\n\u2022 Sequence: 2*PE");
         tooltipsKey.insertLast(ST_ENDURANCE);
         tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(ST_ENDURANCE)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(ST_ENDURANCE))
                                  + pipText + jjJournal
                                  + "\n\n\"Today I saw a skin-n-bones human like creature being eaten by dogs until another one scared the dogs off with a shotgun. After a short time he woke up and walked away like nothing happened. The radiation must have increased the natural regeneration of these creatures to a level where they simply cannot die. Some of them were even glowing! It was to the north-east at the huge metropolitan ruins, better avoid for now.\""
                                  + jjText);
         tooltipsValueExt.insertLast(pipReference
-                                 + "\n- Hit Points: (Initial: 55 + 2*ST + EN) + (Per level: (30 + EN)/8)"
-                                 + "\n- Stonewall KD/KO resist: (clamp(ST, 1, CH+4) + clamp(EN, 1, CH+6) )*3 + 15*stonewallRank vs 1d100"
-                                 + "\n- Enhanced Knockout Weapon perk resist factor.");
+                                 + "\n\u2022 Hit Points: (Initial: 55 + 2*ST + EN) + (Per level: (30 + EN)/8)"
+                                 + "\n\u2022 Stonewall KD/KO resist: (clamp(ST, 1, CH+4) + clamp(EN, 1, CH+6) )*3 + 15*stonewallRank vs 1d100"
+                                 + "\n\u2022 Enhanced Knockout Weapon perk resist factor.");
 
         tooltipsKey.insertLast(ST_CHARISMA);
         tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(ST_CHARISMA)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(ST_CHARISMA))
@@ -106,14 +108,14 @@ class CTooltips {
                                  + "\n\n\"A group of travelers were gossiping about a special lady in New Reno today. It seems that she is able to turn even the most unfriendly punks to do her bidding. I was wondering if it was her Magnetic Personality or something else, after all New Reno is also famous of addictive substances like Jet.\""
                                  + jjText);
         tooltipsValueExt.insertLast(pipReference
-                                 + "\n- Stonewall: ST clamped with CH+4, EN clamped with CH+6 (ex: 9 ST with 1 CH means 5 ST in calculations)"
-                                 + "\n- Confident Shooter (old More Ranged Damage) Perk damage bonus (per bullet):"
-                                 + "\n\t- 1 + CLAMP(attacker.CH - (((target.CH + 1) * 2) / 3), 0, 4)"
-                                 + "\n\t- ex: Att. CH6, Tar. CH5 bonus: 3"
-                                 + "\n\t- ex: Att. CH9, Tar. CH7 bonus: 5 (max)"
-                                 + "\n\t- ex: Att. CH5, Tar. CH1 bonus: 5 (max)"
-                                 + "\n\t- ex: Att. CH2, bonus: 1 (better take Bonus Ranged Damage perk instead)"
-                                 + "\n- Maximum Chance To Hit: 94 + (CH+1)/2");
+                                 + "\n\u2022 Stonewall: ST clamped with CH+4, EN clamped with CH+6 (ex: 9 ST with 1 CH means 5 ST in calculations)"
+                                 + "\n\u2022 Confident Shooter (old More Ranged Damage) Perk damage bonus (per bullet):"
+                                 + "\n\t\u2022 1 + CLAMP(attacker.CH - (((target.CH + 1) * 2) / 3), 0, 4)"
+                                 + "\n\t\u2022 ex: Att. CH6, Tar. CH5 bonus: 3"
+                                 + "\n\t\u2022 ex: Att. CH9, Tar. CH7 bonus: 5 (max)"
+                                 + "\n\t\u2022 ex: Att. CH5, Tar. CH1 bonus: 5 (max)"
+                                 + "\n\t\u2022 ex: Att. CH2, bonus: 1 (better take Bonus Ranged Damage perk instead)"
+                                 + "\n\u2022 Maximum Chance To Hit: 94 + (CH+1)/2");
 
         tooltipsKey.insertLast(ST_INTELLECT);
         tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(ST_INTELLECT)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(ST_INTELLECT))
@@ -121,20 +123,20 @@ class CTooltips {
                                  + "\n\n\"There is a very old and knowledgeable woman in the Hub working in a bookshop at the market square between the caravan offices. She had some good advice on technical books, but they were out of the 3rd volume of Big Books of Science. If I were to return there I sure will check that bookstore out again.\""
                                  + jjText);
         tooltipsValueExt.insertLast(pipReference
-                                 + "\n- Effectiveness of combat skills: (in combat calculations)"
-                                 + "\n\t- 4% skill penalty for every point below 5 IN"
+                                 + "\n\u2022 Effectiveness of combat skills: (in combat calculations)"
+                                 + "\n\t\u2022 4% skill penalty for every point below 5 IN"
                                  + "\n\t\t(example: 100 SG skill with 1 IN becomes 84 SG skill)"
-                                 + "\n\t- 4% skill bonus for every point above 5 IN"
+                                 + "\n\t\u2022 4% skill bonus for every point above 5 IN"
                                  + "\n\t\t(example: 100 SG skill with 10 IN becomes 120 SG skill)"
-                                 + "\n- Critical hit chance bonus from To Hit overflow: clamp(toHitOverflow/10, 0, 5+IN)"
-                                 + "\n\t- ex: IN: 5, Hit Roll: 45 vs Hit Chance: 210 -> (165 overflow) / 10 -> 16 -> 10% crit. chance bonus"
-                                 + "\n\t- Note: Weaker version of this effect was present before, now it has higher cap with 5+IN"
-                                 + "\n- Critical hit chance for Aimed attacks: AimLocationBonus * (60 + 4*IN) / 100"
-                                 + "\n- Sniper crit. chance bonus: (5*IN - 2*LK) * sniperMargin/150 (max. 50)"
-                                 + "\n\t- SniperMargin value is the hit overflow compared to the hit roll, max. 150"
-                                 + "\n- Enhanced KO (head) resist factor for EN clamped with IN+4 (9EN and 2IN -> 6EN)"
-                                 + "\n- KO duration reduction factor: up to 2/3 duration reduction with 10IN"
-                                 + "\n\nNOTE: Does no longer give extra skill points per level.");
+                                 + "\n\u2022 Critical hit chance bonus from To Hit overflow: clamp(toHitOverflow/10, 0, 5+IN)"
+                                 + "\n\t\u2022 ex: IN: 5, Hit Roll: 45 vs Hit Chance: 210 -> (165 overflow) / 10 -> 16 -> 10% crit. chance bonus"
+                                 + "\n\t\u2022 Note: Weaker version of this effect was present before, now it has higher cap with 5+IN"
+                                 + "\n\u2022 Critical hit chance for Aimed attacks: AimLocationBonus * (60 + 4*IN) / 100"
+                                 + "\n\u2022 Sniper crit. chance bonus: (5*IN - 2*LK) * sniperMargin/150 (max. 50)"
+                                 + "\n\t\u2022 SniperMargin value is the hit overflow compared to the hit roll, max. 150"
+                                 + "\n\u2022 Enhanced KO (head) resist factor for EN clamped with IN+4 (9EN and 2IN -> 6EN)"
+                                 + "\n\u2022 KO duration reduction factor: up to 2/3 duration reduction with 10IN"
+                                 + "\n\nWarning: Does no longer give extra skill points per level.");
 
         tooltipsKey.insertLast(ST_AGILITY);
         tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(ST_AGILITY)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(ST_AGILITY))
@@ -142,13 +144,13 @@ class CTooltips {
                                  + "\n\n\"I saw some children yesterday playing around gecko traps in Klamath, far to the north-west, without triggering any them. Must be good to be young and agile.\""
                                  + jjText);
         tooltipsValueExt.insertLast(pipReference
-                                 + "\n- Armor Class: +3*AG (double with Livewire perk)"
-                                 + "\n- Action Points factor changed: (5 + 2*AG) -> (5 + (13+AG)/4)"
-                                 + "\n\t- ex: 7AG-10AG -> 10AP, 3AG-6AG -> 9AP, 1AG-2AG -> 8AP"
-                                 + "\n- Equipped Armor's can change AG level:"
-                                 + "\n\t- Light Armor +1AG bonus (Leather Armor types and also give Quick Pockets Perk)"
-                                 + "\n\t- Medium Armor -1AG malus (Combat Armor types and also give Iron Limbs Perk)"
-                                 + "\n\t- Heavy Armor -3AG malus (Metal Armor types and also give Stonewall Perk)");
+                                 + "\n\u2022 Armor Class: +3*AG (double with Livewire perk)"
+                                 + "\n\u2022 Action Points factor changed: (5 + 2*AG) -> (5 + (13+AG)/4)"
+                                 + "\n\t\u2022 ex: 7AG-10AG -> 10AP, 3AG-6AG -> 9AP, 1AG-2AG -> 8AP"
+                                 + "\n\u2022 Equipped Armor's can change AG level:"
+                                 + "\n\t\u2022 Light Armor +1AG bonus (Leather Armor types and also give Quick Pockets Perk)"
+                                 + "\n\t\u2022 Medium Armor -1AG malus (Combat Armor types and also give Iron Limbs Perk)"
+                                 + "\n\t\u2022 Heavy Armor -3AG malus (Metal Armor types and also give Stonewall Perk)");
 
         tooltipsKey.insertLast(ST_LUCK);
         tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(ST_LUCK)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(ST_LUCK))
@@ -156,191 +158,292 @@ class CTooltips {
                                  + "\n\n\"Finally I found some kind of abandoned theme-park with a working Nuka-Cola machine to the north-east but I didn't have any full water bags left to feed the machine. I shall not forget to pick some mutated fruits for the flavor before I return with fresh water.\""
                                  + jjText);
         tooltipsValueExt.insertLast(pipReference
-                                 + "\n- Critical Chance on all attacks: 1*LK as crit. chance"
-                                 + "\n- Reduce chance to be critically hit: LK/2 as crit. chance reduce"
-                                 + "\n\t- Reduce chance to be critically hit by Sniper Perk: LK*2 reduce"
-                                 + "\n- Critical Failure magnitude roll: Roll - 5 * (LK-5) vs 1d100"
-                                 + "\n- Critical Power roll factor as target: reduce power by 1*LK"
-                                 + "\n- Chance to get poisoned or radiated by creature attacks like:"
-                                 + "\n\t- Radscorpions, Floaters, Aliens or Centaurs: 1d10+1 vs LK"
-                                 + "\n- Thief Perk steal timeout reduce: 1d50 vs LK"
-                                 + "\n- Spearfishing rare catch factor: LK/2 (overwritten by Golden Locket = 5, Magic 8-ball = 10)"
-                                 + "\n- Primitive Tool (not) break chance: 10 + 5*LK vs 1d100"
-                                 + "\n- Car repair tool break chance: 1 vs 1d(Repair/10 + LK/2)");
+                                 + "\n\u2022 Critical Chance on all attacks: 1*LK as crit. chance"
+                                 + "\n\u2022 Reduce chance to be critically hit: LK/2 as crit. chance reduce"
+                                 + "\n\t\u2022 Reduce chance to be critically hit by Sniper Perk: LK*2 reduce"
+                                 + "\n\u2022 Critical Failure magnitude roll: Roll - 5 * (LK-5) vs 1d100"
+                                 + "\n\u2022 Critical Power roll factor as target: reduce power by 1*LK"
+                                 + "\n\u2022 Chance to get poisoned or radiated by creature attacks like:"
+                                 + "\n\t\u2022 Radscorpions, Floaters, Aliens or Centaurs: 1d10+1 vs LK"
+                                 + "\n\u2022 Thief Perk steal timeout reduce: 1d50 vs LK"
+                                 + "\n\u2022 Spearfishing rare catch factor: LK/2 (overwritten by Golden Locket = 5, Magic 8-ball = 10)"
+                                 + "\n\u2022 Primitive Tool (not) break chance: 10 + 5*LK vs 1d100"
+                                 + "\n\u2022 Car repair tool break chance: 1 vs 1d(Repair/10 + LK/2)");
         //  skills
         tooltipsKey.insertLast(SK_SMALL_GUNS);
         tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(SK_SMALL_GUNS)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(SK_SMALL_GUNS))
                                  + pipText);
         tooltipsValueExt.insertLast(pipReference
                                  + notes
-                                 + "\n- This is an active combat specialization skill, leveled by spending Skill Points, up to a maximum of 200. (if this is tagged as your combat specialization then 300)"
-                                 + "\n- To know more about Chance To Hit calculations attack a training dummy in a tent or base."
+                                 + "\n\u2022 This is an active combat specialization skill, leveled by spending Skill Points."
+                                 + "\n\t\u2022 Max: 200 (if this is tagged as your combat specialization then Max: 300)"
                                  + modifies
-                                 + "\n- Base chance to hit with small guns.");
+                                 + "\n\u2022 Base chance to hit with small guns."
+                                 + "\n\nNotes:"
+                                 + "\n\u2022 To know more about Chance To Hit, Damage, Critical or other effect calculations use a training dummy in a tent or base.");
 
         tooltipsKey.insertLast(SK_BIG_GUNS);
         tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(SK_BIG_GUNS)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(SK_BIG_GUNS))
                                  + pipText);
         tooltipsValueExt.insertLast(pipReference
                                  + notes
-                                 + "\n- This is an active combat specialization skill, leveled by spending Skill Points, up to a maximum of 200. (if this is tagged as your combat specialization then 300)"
-                                 + "\n- To know more about Chance To Hit calculations attack a training dummy in a tent or base."
+                                 + "\n\u2022 This is an active combat specialization skill, leveled by spending Skill Points."
+                                 + "\n\t\u2022 Max: 200 (if this is tagged as your combat specialization then Max: 300)"
                                  + modifies
-                                 + "\n- Base chance to hit with big guns.");
+                                 + "\n\u2022 Base chance to hit with big guns."
+                                 + "\n\nNotes:"
+                                 + "\n\u2022 Hex Shoot:"
+                                 + "\n\t\u2022 You are able to shoot rockets without the need of a target."
+                                 + "\n\t\u2022 Hold CTRL and left click to shoot."
+                                 + "\n\u2022 To know more about Chance To Hit, Damage, Critical or other effect calculations use a training dummy in a tent or base.");
 
         tooltipsKey.insertLast(SK_ENERGY_WEAPONS);
         tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(SK_ENERGY_WEAPONS)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(SK_ENERGY_WEAPONS))
                                  + pipText);
         tooltipsValueExt.insertLast(pipReference
                                  + notes
-                                 + "\n- This is an active combat specialization skill, leveled by spending Skill Points, up to a maximum of 200. (if this is tagged as your combat specialization then 300)"
-                                 + "\n- To know more about Chance To Hit calculations attack a training dummy in a tent or base."
+                                 + "\n\u2022 This is an active combat specialization skill, leveled by spending Skill Points."
+                                 + "\n\t\u2022 Max: 200 (if this is tagged as your combat specialization then Max: 300)"
                                  + modifies
-                                 + "\n- Base chance to hit with energy weapons.");
+                                 + "\n\u2022 Base chance to hit with energy weapons."
+                                 + "\n\nNotes:"
+                                 + "\n\u2022 To know more about Chance To Hit, Damage, Critical or other effect calculations use a training dummy in a tent or base.");
 
         tooltipsKey.insertLast(SK_UNARMED);
         tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(SK_UNARMED)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(SK_UNARMED))
                                  + pipText);
         tooltipsValueExt.insertLast(pipReference
                                  + notes
-                                 + "\n- This is an active combat specialization skill, leveled by spending Skill Points, up to a maximum of 200. (if this is tagged as your combat specialization then 300)"
-                                 + "\n- To know more about Chance To Hit calculations attack a training dummy in a tent or base."
+                                 + "\n\u2022 This is an active combat specialization skill, leveled by spending Skill Points."
+                                 + "\n\t\u2022 Max: 200 (if this is tagged as your combat specialization then Max: 300)"
                                  + modifies
-                                 + "\n- Base chance to hit with melee weapons or unarmed attacks.");
+                                 + "\n\u2022 Base chance to hit with melee weapons or unarmed attacks."
+                                 + "\n\nNotes:"
+                                 + "\n\u2022 To know more about Chance To Hit, Damage, Critical or other effect calculations use a training dummy in a tent or base.");
 
         tooltipsKey.insertLast(SK_SCAVENGING);
         tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(SK_SCAVENGING)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(SK_SCAVENGING))
                                  + pipText);
         tooltipsValueExt.insertLast(pipReference
                                  + notes
-                                 + "\n- Passive non-combat skill, can be leveled by related activity up to a maximum of 200."
-                                 + "\n- To be able to scavenge you will need some kind of tool in inventory (not needed to be in hand), then hovering mouse over old barrels, newspaper machines, rusty sceneries etc., will change the mouse cursor and show your tool, indicating if that scenery is scavengeable."
+                                 + "\n\u2022 Passive non-combat skill, can be leveled by related activity up to a maximum of 200."
+                                 + "\n\u2022 To be able to scavenge you will need some kind of tool in inventory (not needed to be in hand), then hovering mouse over old barrels, newspaper machines, rusty sceneries etc., will change the mouse cursor and show your tool, indicating if that scenery is scavengeable."
                                  + modifies
-                                 + "\n- Chance to scavenge useful or even rare materials.");
+                                 + "\n\u2022 Chance to scavenge useful or even rare materials.");
 
         tooltipsKey.insertLast(SK_THROWING);
         tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(SK_THROWING)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(SK_THROWING))
                                  + pipText);
         tooltipsValueExt.insertLast(pipReference
                                  + notes
-                                 + "\n- This is an active combat specialization skill, leveled by spending Skill Points, up to a maximum of 200. (if this is tagged as your combat specialization then 300)"
-                                 + "\n- To know more about Chance To Hit calculations attack a training dummy in a tent or base."
+                                 + "\n\u2022 This is an active combat specialization skill, leveled by spending Skill Points."
+                                 + "\n\t\u2022 Max: 200 (if this is tagged as your combat specialization then Max: 300)"
+                                 + "\n\u2022 Throwing damage formula:"
+                                 + "\n\t\u2022 Min: (Min. Weapon Damage + ST/2), Max: (Max. Weapon Damage + ST)"
                                  + modifies
-                                 + "\n- Base chance to hit with throwing weapons.");
+                                 + "\n\u2022 Base chance to hit with throwing weapons."
+                                 + "\n\nNotes:"
+                                 + "\n\u2022 Hex Throw:"
+                                 + "\n\t\u2022 You are able to throw grenades and stones without the need of a target."
+                                 + "\n\t\u2022 Hold ALT, Left Click to cycle through throwables and left click to throw."
+                                 + "\n\u2022 To know more about Chance To Hit, Damage, Critical or other effect calculations use a training dummy in a tent or base.");
 
         tooltipsKey.insertLast(SK_FIRST_AID);
         tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(SK_FIRST_AID)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(SK_FIRST_AID))
                                  + pipText);
         tooltipsValueExt.insertLast(pipReference
                                  + notes
-                                 + "\n- This is an active combat skill that you cannot specialize in. If you want to be a healer you can tag Doctor skill instead. You can level this skill by spending Skill Points, up to a maximum of 200."
+                                 + "\n\u2022 This is an active combat skill that you cannot specialize in."
+                                 + "\n\u2022 If you want to specialize a healer, tag the Doctor skill instead."
+                                 + "\n\u2022 You can level this skill by spending Skill Points, up to a maximum of 200."
                                  + modifies
-                                 + "\n- First Aid cooldown and effect.");
+                                 + "\n\u2022 First Aid Kit efficiency:"
+                                 + "\n\t\u2022 Max use: 5 + (firstAidSkill/10) + 5(Medic) + 5(Field Medic)"
+                                 + "\n\t\u2022 Tool use counter is per character and not tool."
+                                 + "\n\u2022 First Aid cooldown and effect:"
+                                 + "\n\t\u2022 Initial Heal (instant):"
+                                 + "\n\t\t\u2022 CLAMP(missingHP * HealFactor /100, 0, 20 + skill/4 + 25(Medic) + 25(Field Medic) + 3 * ItemFactor)"
+                                 + "\n\t\t\u2022 HealFactor: (30 self or 45 other) + 5(Medic) + 5(Field Medic) + 10(Item Factor)"
+                                 + "\n\t\t\u2022 ItemFactor: First Aid Kit(10), Field Medic Kit(15) otherwise (0)."
+                                 + "\n\t\u2022 Heal Over Time:"
+                                 + "\n\t\t\u2022 Same amount as Initial Heal is healed over a short period of time."
+                                 + "\n\t\t\u2022 Healing ticks every 5 seconds, 4 times total."
+                                 + "\n\t\t\u2022 Total FA duration is 20 seconds."
+                                 + "\n\t\t\u2022 Does not stack with another FA before expire, but overwrites effect."
+                                 + "\n\t\u2022 CD: 90 sec - Skill/4 - 20(Medic) - 10(Field Medic)"
+                                 + "\n\u2022 Experience:"
+                                 + "\n\t\u2022 NPC: 5 * HealAmount * ( 1.5(Medic) or 2(Field Medic) )"
+                                 + "\n\t\u2022 Player: HealAmount * ( 1.5(Medic) or 2(Field Medic) )"
+                                 + tldr
+                                 + " The higher the skill, the shorter the CD, more heal done and more usage on First Aid Kits.");
 
         tooltipsKey.insertLast(SK_DOCTOR);
         tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(SK_DOCTOR)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(SK_DOCTOR))
                                  + pipText);
         tooltipsValueExt.insertLast(pipReference
                                  + notes
-                                 + "\n- This is an active combat specialization skill, leveled by spending Skill Points, up to a maximum of 200. (if this is tagged as your combat specialization then 300)"
+                                 + "\n\u2022 This is an active combat specialization skill, leveled by spending Skill Points."
+                                 + "\n\t\u2022 Max: 200 (if this is tagged as your combat specialization then Max: 300)"
                                  + modifies
-                                 + "\n- Doctor cooldown and chance to success.");
+                                 + "\n\u2022 Doctor's Bag efficiency:"
+                                 + "\n\t\u2022 Max use: 5 + ((doctorSkill-200)/10) + 5(Medic) + 5(Field Medic)"
+                                 + "\n\t\u2022 Tool use counter is per character and not tool."
+                                 + "\n\u2022 Doctor cooldown and chance to success:"
+                                 + "\n\t\u2022 Doctor Skill vs (Random(5, 95) * ((isSelf && !isMedic) ? 2 : 1) * Difficulty / ItemFactor)"
+                                 + "\n\t\t\u2022 ItemFactor: Doctor's Bag(10), Paramedic's Bag(15) otherwise (0)."
+                                 + "\n\t\t\u2022 Difficulty: Starts 1 and +1 for each crippled arms or eyes."
+                                 + "\n\t\t\u2022 Healing self is twice as difficult, unless Medic perk."
+                                 + "\n\t\u2022 CD: 90 sec - Skill/5 - 20(Medic) - 10(Field Medic)"
+                                 + "\n\u2022 Experience:"
+                                 + "\n\t\u2022 NPC: 100 * healedInjuries * ( 3(Medic) or 5(Field Medic) )"
+                                 + "\n\t\u2022 Player: 20 * healedInjuries * ( 3(Medic) or 5(Field Medic) )"
+                                 + tldr
+                                 + " The higher the skill, the shorter the CD, more chance to heal cripple and more usage on doctors bag.");
 
         tooltipsKey.insertLast(SK_SNEAK);
         tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(SK_SNEAK)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(SK_SNEAK))
                                  + pipText);
         tooltipsValueExt.insertLast(pipReference
                                  + notes
-                                 + "\n- This is an active combat specialization skill, leveled by spending Skill Points, up to a maximum of 200. (if this is tagged as your combat specialization then 300)"
+                                 + "\n\u2022 This is an active combat specialization skill, leveled by spending Skill Points."
+                                 + "\n\t\u2022 Max: 200 (if this is tagged as your combat specialization then Max: 300)"
                                  + modifies
-                                 + "\n- Chance that you can remain undetected while sneaking.");
+                                 + "\n\u2022 Chance that you can remain undetected while sneaking."
+                                 + "\n\t\u2022 ((Sneak + Bonuses + Maluses)/6 + Distance) vs (Opponent Max. Sight Range)"
+                                 + "\n\t\u2022 Bonuses:"
+                                 + "\n\t\t\u2022 Next to wall: +30 bonus. (Ghost perk can be 5 hexes near wall)"
+                                 + "\n\t\u2022 Maluses:"
+                                 + "\n\t\t\u2022 Opponent look direction: -72 front, -26 front-sides, -12 back-sides, 0 back."
+                                 + "\n\t\t\u2022 Wearing Combat, Metal and Power Armors will fail sneak checks."
+                                 + "\n\t\t\u2022 Big Guns and SMG's in any hand: -150 malus to sneak checks."
+                                 + "\n\t\t\u2022 Energy weapons or riffles: -100 malus to sneak checks."
+                                 + "\n\t\t\u2022 Running without Silent Running perk if able to: -60 malus to sneak checks."
+                                 + "\n\t\t\u2022 Active explosive in hand: -60 malus to sneak checks."
+                                 + "\n\u2022 Sneak attack: (melee, thrown or single handed guns only)"
+                                 + "\n\t\u2022 An attack made from behind the target while sneaking."
+                                 + "\n\t\u2022 Bonus critical chance based on how close to target, up to 35% bonus:"
+                                 + "\n\t\t\u2022 5 + CLAMP((18 - distance)*2, 0, 30)"
+                                 + "\n\t\u2022 Bonus critical power based on how close to target, up to 20 bonus:"
+                                 + "\n\t\t\u2022 5 + CLAMP((18 - distance), 0, 15)"
+                                 + "\n\t\u2022 If target dies or KO, attacker is not un-stealthed."
+                                 + "\n\t\u2022 Bonus damage against NPC only, based on Sneak Skill and Distance. (closer better)"
+                                 + "\n\u2022 Distract throw: (Hold ALT to Hex Throw a stone near target(s))"
+                                 + "\n\t\u2022 Throwing a stone near low IN NPC will make them look at that direction for short time."
+                                 + "\n\t\u2022 Chance to success: CLAMP((SN + TH) / 3, 1, 95) vs 1d100"
+                                 + "\n\t\u2022 If fail, the sneaker will be un-stealthed."
+                                 + "\n\nNotes:"
+                                 + "\n\u2022 To know more about Chance To Hit, Damage, Critical or other effect calculations use a training dummy in a tent or base.");
 
         tooltipsKey.insertLast(SK_LOCKPICK);
         tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(SK_LOCKPICK)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(SK_LOCKPICK))
                                  + pipText);
         tooltipsValueExt.insertLast(pipReference
                                  + notes
-                                 + "\n- Passive non-combat skill, can be leveled by related activity up to a maximum of 200."
+                                 + "\n\u2022 This is an active combat skill that you cannot specialize in."
+                                 + "\n\u2022 You can level this skill by spending Skill Points, up to a maximum of 200."
                                  + modifies
-                                 + "\n- Chance to open locks.");
+                                 + "\n\u2022 Chance to open locks.");
 
         tooltipsKey.insertLast(SK_STEAL);
         tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(SK_STEAL)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(SK_STEAL))
                                  + pipText);
         tooltipsValueExt.insertLast(pipReference
                                  + notes
-                                 + "\n- This is an active non-combat skill that you cannot specialize in. You can level this skill by spending Skill Points, up to a maximum of 200."
+                                 + "\n\u2022 This is an active combat skill that you cannot specialize in."
+                                 + "\n\u2022 You can level this skill by spending Skill Points, up to a maximum of 200."
                                  + modifies
-                                 + "\n- Chance to steal from NPC's or players in non safe towns.");
+                                 + "\n\u2022 Chance to steal from NPC's or players in non safe towns.");
 
         tooltipsKey.insertLast(SK_TRAPS);
         tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(SK_TRAPS)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(SK_TRAPS))
                                  + pipText);
         tooltipsValueExt.insertLast(pipReference
                                  + notes
-                                 + "\n- This is an active combat specialization skill, leveled by spending Skill Points, up to a maximum of 200. (if this is tagged as your combat specialization then 300)"
+                                 + "\n\u2022 This is an active combat specialization skill, leveled by spending Skill Points."
+                                 + "\n\t\u2022 Max: 200 (if this is tagged as your combat specialization then Max: 300)"
                                  + modifies
-                                 + "\n- Explosives strength and chance of not triggering traps.");
+                                 + "\n\u2022 Magnitude of explosives and chance of not triggering traps."
+                                 + "\n\nNotes:"
+                                 + "\n\u2022 To know more about Chance To Hit, Damage, Critical or other effect calculations use a training dummy in a tent or base.");
 
         tooltipsKey.insertLast(SK_SCIENCE);
         tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(SK_SCIENCE)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(SK_SCIENCE))
                                  + pipText);
         tooltipsValueExt.insertLast(pipReference
                                  + notes
-                                 + "\n- Passive non-combat skill, can be leveled by related activity up to a maximum of 200."
+                                 + "\n\u2022 Passive non-combat skill, can be leveled by related activity up to a maximum of 200."
+                                 + "\n\u2022 Raise this skill by:"
+                                 + "\n\t\u2022 Crafting energy weapons or Tesla armors/helmets."
+                                 + "\n\t\u2022 Crafting most advanced (non-tribal) drugs."
+                                 + "\n\t\u2022 Crafting ammo for energy weapons."
+                                 + "\n\t\u2022 Repairing various energy equipment."
+                                 + "\n\t\u2022 Scavenging electronic parts from old computers."
+                                 + "\n\t\t\u2022 NOTE: Craft XP is based on components used in the craft."
                                  + modifies
-                                 + "\n- Ability to craft high-tech stuff.");
+                                 + "\n\u2022 Ability to craft high-tech stuff.");
 
         tooltipsKey.insertLast(SK_REPAIR);
         tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(SK_REPAIR)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(SK_REPAIR))
                                  + pipText);
         tooltipsValueExt.insertLast(pipReference
                                  + notes
-                                 + "\n- Passive non-combat skill, can be leveled by related activity up to a maximum of 200."
+                                 + "\n\u2022 Passive non-combat skill, can be leveled by related activity up to a maximum of 200."
+                                 + "\n\u2022 Raise this skill by:"
+                                 + "\n\t\u2022 Crafting non-energy weapons, combat or metal armors."
+                                 + "\n\t\u2022 Crafting every other item that is not specified otherwise in other skills."
+                                 + "\n\t\u2022 Repairing various non-energy equipment."
+                                 + "\n\t\t\u2022 NOTE: Craft XP is based on components used in the craft."
                                  + modifies
-                                 + "\n- Ability to craft most items, armors and weapons."
-                                 + "\n- Chance to repair mostly items, cars or in general any mechanism.");
+                                 + "\n\u2022 Ability to craft most items, armors and weapons."
+                                 + "\n\u2022 Chance to repair mostly items, cars or in general any mechanism.");
 
         tooltipsKey.insertLast(SK_SPEECH);
         tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(SK_SPEECH)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(SK_SPEECH))
                                  + pipText);
         tooltipsValueExt.insertLast(pipReference
                                  + notes
-                                 + "\n- Passive non-combat skill, can be leveled by related activity up to a maximum of 200."
+                                 + "\n\u2022 This is an passive combat skill that you cannot specialize in."
+                                 + "\n\u2022 You can level this skill by spending Skill Points, up to a maximum of 200."
                                  + modifies
-                                 + "\n- Party size."
-                                 + "\n- Sometimes dialog options and their chance to work.");
+                                 + "\n\u2022 Party size."
+                                 + "\n\u2022 Sometimes dialog options and their chance to work.");
 
         tooltipsKey.insertLast(SK_BARTER);
         tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(SK_BARTER)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(SK_BARTER))
                                  + pipText);
         tooltipsValueExt.insertLast(pipReference
                                  + notes
-                                 + "\n- Passive non-combat skill, can be leveled by related activity up to a maximum of 200."
+                                 + "\n\u2022 Passive non-combat skill, can be leveled by related activity up to a maximum of 200."
+                                 + "\n\u2022 Raise this skill by:"
+                                 + "\n\t\u2022 Selling and buying items for caps."
                                  + modifies
-                                 + "\n- Barter prices.");
+                                 + "\n\u2022 Barter prices.");
 
         tooltipsKey.insertLast(SK_GAMBLING);
         tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(SK_GAMBLING)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(SK_GAMBLING))
                                  + pipText);
         tooltipsValueExt.insertLast(pipReference
                                  + notes
-                                 + "\n- Passive non-combat skill, can be leveled by related activity up to a maximum of 200."
+                                 + "\n\u2022 Passive non-combat skill, can be leveled by related activity up to a maximum of 200."
+                                 + "\n\u2022 Raise this skill by:"
+                                 + "\n\t\u2022 TODO: Various Gambling activities."
                                  + modifies
-                                 + "\n- Gambling outcomes.");
+                                 + "\n\u2022 Gambling outcomes.");
 
         tooltipsKey.insertLast(SK_OUTDOORSMAN);
         tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(SK_OUTDOORSMAN)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(SK_OUTDOORSMAN))
                                  + pipText);
         tooltipsValueExt.insertLast(pipReference
                                  + notes
-                                 + "\n- Passive non-combat skill, can be leveled by related activity up to a maximum of 200."
-                                 + "\n\t- Traveling on world map"
-                                 + "\n\t- Crafting traveling gear (spears, leather armor and such)"
-                                 + "\n\t- Spearfishing, cooking"
+                                 + "\n\u2022 Passive non-combat skill, can be leveled by related activity up to a maximum of 200."
+                                 + "\n\u2022 Raise this skill by:"
+                                 + "\n\t\u2022 Traveling on world map."
+                                 + "\n\t\u2022 Crafting traveling gear (spears, leather armor and such)."
+                                 + "\n\t\u2022 Spearfishing, cooking."
+                                 + "\n\t\t\u2022 NOTE: Craft XP is based on components used in the craft."
                                  + modifies
-                                 + "\n- Chance to be able to evade encounters while traveling."
-                                 + "\n- Spearfishing, cooking and such.");
+                                 + "\n\u2022 Chance to be able to evade encounters while traveling."
+                                 + "\n\u2022 Spearfishing, cooking and such.");
         //  Hit Points and Damaged parts
         tooltipsKey.insertLast(ST_MAX_LIFE);
         tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(ST_MAX_LIFE)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(ST_MAX_LIFE)) + pipText);
@@ -387,13 +490,13 @@ class CTooltips {
         tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(ST_CARRY_WEIGHT)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(ST_CARRY_WEIGHT)) + pipText);
         tooltipsValueExt.insertLast(pipReference
                                  + notes
-                                 + "\n- This value is used to determine if you can carry your inventory or not. Once your reach your carry capacity, you will not be able to run but you are still able to walk.  Once you load double of this amount, your carried weight is simply too heavy and you will not be able to move at all, until you drop some stuff."
-                                 + "\n- Base formula: [(25 + (Strength*25)) / 2.2] + 20"
-                                 + "\n- Affected by:"
-                                 + "\n\t- Strength: +11.5 for each ST"
-                                 + "\n\t- Strong Back: +22 flat bonus"
-                                 + "\n\t- Pack Rat: +33% bonus (increases Strong Back value also)"
-                                 + "\n\t- Armor Craft Bonus if any available.");
+                                 + "\n\u2022 This value is used to determine if you can carry your inventory or not. Once your reach your carry capacity, you will not be able to run but you are still able to walk.  Once you load double of this amount, your carried weight is simply too heavy and you will not be able to move at all, until you drop some stuff."
+                                 + "\n\u2022 Base formula: [(25 + (Strength*25)) / 2.2] + 20"
+                                 + "\n\u2022 Affected by:"
+                                 + "\n\t\u2022 Strength: +11.5 for each ST"
+                                 + "\n\t\u2022 Strong Back: +22 flat bonus"
+                                 + "\n\t\u2022 Pack Rat: +33% bonus (increases Strong Back value also)"
+                                 + "\n\t\u2022 Armor Craft Bonus if any available.");
 
         tooltipsKey.insertLast(ST_MELEE_DAMAGE);
         tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(ST_MELEE_DAMAGE)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(ST_MELEE_DAMAGE)) + pipText);
@@ -417,7 +520,14 @@ class CTooltips {
 
         tooltipsKey.insertLast(ST_HEALING_RATE);
         tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(ST_HEALING_RATE)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(ST_HEALING_RATE)) + pipText);
-        tooltipsValueExt.insertLast(pipReference + noData);
+        tooltipsValueExt.insertLast(pipReference
+                                     + notes
+                                     + "\n\u2022 Base Healing Rate frequency: 60 sec"
+                                     + "\n\t\u2022 Eating Mutated Fruit further reduces this: 60 sec -> 40 sec."
+                                     + "\n\u2022 Healing Rate min is 3% of max hp per tick."
+                                     + "\n\u2022 Healing Rate caps at 10% of max hp per tick."
+                                     + "\n\u2022 You will get '+[HealAmount]' text over head and the message 'Regeneration' when this happens.");
+
 
         tooltipsKey.insertLast(ST_CRITICAL_CHANCE);
         tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(ST_CRITICAL_CHANCE)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(ST_CRITICAL_CHANCE)) + pipText);
@@ -434,83 +544,191 @@ class CTooltips {
 
         //  1006 - Exp for next level
         tooltipsKey.insertLast(1006);
-        tooltipsValue.insertLast("\t\t\t" + "Next level experience" + "\n\n" + "The amount of experience required to advance to the next level." + pipText);
+        tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_NEXT_LEVEL_NAME) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_NEXT_LEVEL_DESC) + pipText);
+        tooltipsValueExt.insertLast(pipReference + noData);
+
+        //  Text: Optional Traits
+        tooltipsKey.insertLast(STR_TRAITS_NAME);
+        tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_TRAITS_NAME) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_TRAITS_DESC) + pipText);
+        tooltipsValueExt.insertLast(pipReference + noData);
+
+        //  Text: Perks
+        tooltipsKey.insertLast(STR_PERKS_NAME);
+        tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PERKS_NAME) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PERKS_DESC) + pipText);
         tooltipsValueExt.insertLast(pipReference + noData);
 
         //  Traits
         tooltipsKey.insertLast(TRAIT_FAST_METABOLISM);
         tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(TRAIT_FAST_METABOLISM)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(TRAIT_FAST_METABOLISM)) + pipText);
-        tooltipsValueExt.insertLast(pipReference + noData);
+        tooltipsValueExt.insertLast(pipReference
+                                     + notes
+                                     + "\n\u2022 Half duration of drug effects."
+                                     + "\n\u2022 Healing Rate frequency: 60 sec -> 30 sec."
+                                     + "\n\t\u2022 Eating Mutated Fruit further reduces this: 30 sec -> 20 sec."
+                                     + "\n\u2022 Healing Rate min is 3% of max hp per tick."
+                                     + "\n\u2022 Healing Rate caps at 10% of max hp per tick."
+                                     + "\n\u2022 You will get '+[HealAmount]' text over head and the message 'Regeneration' when this happens.");
 
         tooltipsKey.insertLast(TRAIT_BRUISER);
         tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(TRAIT_BRUISER)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(TRAIT_BRUISER)) + pipText);
-        tooltipsValueExt.insertLast(pipReference + noData);
+        tooltipsValueExt.insertLast(pipReference
+                                     + notes
+                                     + "\n\u2022 +3 Strength bonus."
+                                     + "\n\u2022 -1 maximum AP (penalty)");
 
         tooltipsKey.insertLast(TRAIT_ONE_HANDER);
         tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(TRAIT_ONE_HANDER)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(TRAIT_ONE_HANDER)) + pipText);
-        tooltipsValueExt.insertLast(pipReference + noData);
+        tooltipsValueExt.insertLast(pipReference
+                                     + notes
+                                     + "\n\u2022 +20% chance to hit when using single-handed weapons."
+                                     + "\n\u2022 +5 flat damage when using single handed weapons."
+                                     + "\n\u2022 -40% chance to hit when using two-handed weapons.");
 
         tooltipsKey.insertLast(TRAIT_FINESSE);
         tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(TRAIT_FINESSE)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(TRAIT_FINESSE)) + pipText);
-        tooltipsValueExt.insertLast(pipReference + noData);
+        tooltipsValueExt.insertLast(pipReference
+                                     + notes
+                                     + "\n\u2022 +1 Intellect bonus"
+                                     + "\n\u2022 +10% bonus critical chance with non-burst attacks."
+                                     + "\n\u2022 Target receives +30% bonus damage resistance against your non-burst attacks."
+                                     + "\n\u2022 It also decreases target base armor critical chance by 25%."
+                                     + "\n\u2022 Your critical power roll minimum for non-burst attacks is increased to 30 (roll: 30-100)."
+                                     + "\n\u2022 Excludes other traits: Kamikaze, Fast Shot, Double Tap and Cautious Nature.");
 
         tooltipsKey.insertLast(TRAIT_KAMIKAZE);
         tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(TRAIT_KAMIKAZE)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(TRAIT_KAMIKAZE)) + pipText);
-        tooltipsValueExt.insertLast(pipReference + noData);
+        tooltipsValueExt.insertLast(pipReference
+                                     + notes
+                                     + "\n\u2022 +1 Agility bonus"
+                                     + "\n\u2022 +10% damage done (after damage resistance calculations)"
+                                     + "\n\u2022 +10% damage received (after damage resistance calculations)"
+                                     + "\n\u2022 Excludes other traits: Finesse, Fast Shot, Double Tap and Cautious Nature.");
 
         tooltipsKey.insertLast(TRAIT_HEAVY_HANDED);
         tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(TRAIT_HEAVY_HANDED)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(TRAIT_HEAVY_HANDED)) + pipText);
-        tooltipsValueExt.insertLast(pipReference + noData);
+        tooltipsValueExt.insertLast(pipReference
+                                     + notes
+                                     + "\n\u2022 +1 Strength bonus."
+                                     + "\n\u2022 Chance to knock down opponents with unarmed attacks."
+                                     + "\n\t\u2022 10 + ST + WeaponMalus - 5*StonewallRank vs 1d20"
+                                     + "\n\t\u2022 StonewallRank: +1 from heavy armor and +1 from Stonewall perk, can be a total of 2."
+                                     + "\n\t\u2022 WeaponMalus:"
+                                     + "\n\t\t\u2022 Unarmed: -8, SpikedK: -6, BrassK: -4, PowerFists: -2"
+                                     + "\n\u2022 Flat melee damage bonus: +5"
+                                     + "\n\u2022 Penalty to critical power rolls with Unarmed/Melee attacks only: -20");
 
         tooltipsKey.insertLast(TRAIT_FAST_SHOT);
         tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(TRAIT_FAST_SHOT)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(TRAIT_FAST_SHOT)) + pipText);
-        tooltipsValueExt.insertLast(pipReference + noData);
+        tooltipsValueExt.insertLast(pipReference
+                                     + notes
+                                     + "\n\u2022 +1 Agility bonus"
+                                     + "\n\u2022 -1 AP cost (flat reduce) for single shots only."
+                                     + "\n\u2022 Not possible to make aimed attacks."
+                                     + "\n\u2022 Attacks now hit random body part:"
+                                     + "\n\t\u2022 5% eye, 10% head, 2x10% arms, 2x10% legs, 5% groin, 20% torso, 20% unaimed"
+                                     + "\n\u2022 Hit location critical chance calculation changed from IN to LK + AG:"
+                                     + "\n\t\u2022 Critical Hit chance bonus: LocBonus * (60 + 2*AG + 2*LK))/100"
+                                     + "\n\t\u2022 LocBonus: Eyes 60, Head 40, Arms 30, Legs 20, Torso 10"
+                                     + "\n\u2022 Excludes other traits: Finesse, Kamikaze, Double Tap and Cautious Nature.");
 
         tooltipsKey.insertLast(TRAIT_DOUBLE_TAP);
         tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(TRAIT_DOUBLE_TAP)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(TRAIT_DOUBLE_TAP)) + pipText);
-        tooltipsValueExt.insertLast(pipReference + noData);
+        tooltipsValueExt.insertLast(pipReference
+                                     + notes
+                                     + "\n\u2022 +1 Agility bonus"
+                                     + "\n\u2022 Other effects of this trait have not been implemented yet!"
+                                     + "\n\u2022 Excludes other traits: Finesse, Kamikaze, Fast Shot and Cautious Nature.");
 
         tooltipsKey.insertLast(TRAIT_BLOODY_MESS);
         tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(TRAIT_BLOODY_MESS)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(TRAIT_BLOODY_MESS)) + pipText);
-        tooltipsValueExt.insertLast(pipReference + noData);
+        tooltipsValueExt.insertLast(pipReference
+                                     + notes
+                                     + "\n\u2022 More violent death animations."
+                                     + "\n\u2022 You will kill other humanoids but also get killed at negative HP instantly.");
 
         tooltipsKey.insertLast(TRAIT_JINXED);
         tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(TRAIT_JINXED)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(TRAIT_JINXED)) + pipText);
-        tooltipsValueExt.insertLast(pipReference + noData);
+        tooltipsValueExt.insertLast(pipReference
+                                     + notes
+                                     + "\n\u2022 -1 Luck. (penalty)"
+                                     + "\n\u2022 50% chance for critical failure to happen on missed attacks. (both for you and your opponents)"
+                                     + "\n\u2022 50% chance for combat calculations to use Luck = 1(both for you and your opponents)");
 
         tooltipsKey.insertLast(TRAIT_GOOD_NATURED);
         tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(TRAIT_GOOD_NATURED)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(TRAIT_GOOD_NATURED)) + pipText);
-        tooltipsValueExt.insertLast(pipReference + noData);
-
-        tooltipsKey.insertLast(TRAIT_CHEM_RELIANT);
-        tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(TRAIT_CHEM_RELIANT)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(TRAIT_CHEM_RELIANT)) + pipText);
-        tooltipsValueExt.insertLast(pipReference + noData);
+        tooltipsValueExt.insertLast(pipReference
+                                     + notes
+                                     + "\n\u2022 +1 Charisma bonus."
+                                     + "\n\u2022 +50 party points bonus."
+                                     + "\n\u2022 Cannot own slaves.");
 
         tooltipsKey.insertLast(TRAIT_BRUTISH_HULK);
         tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(TRAIT_BRUTISH_HULK)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(TRAIT_BRUTISH_HULK)) + pipText);
-        tooltipsValueExt.insertLast(pipReference + noData);
+        tooltipsValueExt.insertLast(pipReference
+                                     + notes
+                                     + "\n\u2022 -1 Charisma. (penalty)"
+                                     + "\n\u2022 +12 Hit Points bonus.");
+
+        tooltipsKey.insertLast(TRAIT_CHEM_RELIANT);
+        tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(TRAIT_CHEM_RELIANT)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(TRAIT_CHEM_RELIANT)) + pipText);
+        tooltipsValueExt.insertLast(pipReference
+                                     + notes
+                                     + "\n\u2022 All drug durations last half of their time."
+                                     + "\n\u2022 Bypass 2/3 of the Irremediable effect from Plasma Burn when using Stims."
+                                     + "\n\u2022 Psycho drug:"
+                                     + "\n\t\u2022 Reduced effect duration from: 30 -> 20"
+                                     + "\n\t\u2022 Reduced side-effect duration from: 90 -> 40"
+                                     + "\n\t\u2022 Psycho total drug effect and cooldown lasts 1 minute instead of 2 minutes."
+                                     + "\n\u2022 Reduced instant effect of healing drugs but increased their heal over time effect:"
+                                     + "\n\t\u2022 Super Stimpak: 6/8 Initial heal and additional two times 3/8 Heal over time (T0, 2, 6 sec)"
+                                     + "\n\t\t\u2022 Super Stimpaks only heal over time with this trait else they are just one big heal."
+                                     + "\n\t\u2022 Stimpak: 3/4 Initial heal and 5/4 Heal over time (T0, 3, 6, 9, 12 sec)"
+                                     + "\n\t\u2022 Healing Powder: 3/4 Initial heal and 5/4 Heal over time (T0, 10, 20, 30, 40 sec)"
+                                     + "\n\t\u2022 Heal over time effect of same drug type do not stack but overwrite effect.");
 
         tooltipsKey.insertLast(TRAIT_CAUTIOUS_NATURE);
         tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(TRAIT_CAUTIOUS_NATURE)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(TRAIT_CAUTIOUS_NATURE)) + pipText);
-        tooltipsValueExt.insertLast(pipReference + noData);
+        tooltipsValueExt.insertLast(pipReference
+                                     + notes
+                                     + "\n\u2022 +1 Perception bonus."
+                                     + "\n\u2022 Better placement in Random Encounters."
+                                     + "\n\u2022 10% reduced incoming damage."
+                                     + "\n\u2022 10% reduced outgoing damage."
+                                     + "\n\t\u2022 Both after damage reduction calculations.");
 
         tooltipsKey.insertLast(TRAIT_GIFTED);
         tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(TRAIT_GIFTED)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(TRAIT_GIFTED)) + pipText);
-        tooltipsValueExt.insertLast(pipReference + noData);
+        tooltipsValueExt.insertLast(pipReference
+                                     + notes
+                                     + "\n\u2022 +1 bonus to all S.P.E.C.I.A.L. stats."
+                                     + "\n\u2022 20% skill check penalty for combat calculations."
+                                     + "\n\t\u2022 ex: 200 Small Guns skill looses 20% and becomes 160 Small Guns skill when determining hit chance."
+                                     + "\n\u2022 Cannot take other traits.");
 
         tooltipsKey.insertLast(TRAIT_LONER);
         tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(TRAIT_LONER)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(TRAIT_LONER)) + pipText);
-        tooltipsValueExt.insertLast(pipReference + noData);
+        tooltipsValueExt.insertLast(pipReference
+                                     + notes
+                                     + "\n\u2022 +10% bonus to all experience gains, but cannot have any followers."
+                                     + "\n\u2022 This trait is under rework and it will serve for HARDCORE SOLO MODE game play later.");
 
         //  Perks
         //  Level 3 Perks
         tooltipsKey.insertLast(PE_ADRENALINE_RUSH);
         tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(PE_ADRENALINE_RUSH)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(PE_ADRENALINE_RUSH)) + pipText);
-        tooltipsValueExt.insertLast(pipReference + noData);
+        tooltipsValueExt.insertLast(pipReference
+                                     + notes
+                                     + "\n\u2022 Receive 1 DT and 5 DR for each 25% missing HP.");
 
         tooltipsKey.insertLast(PE_HEALER_II);
         tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(PE_HEALER_II)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(PE_HEALER_II)) + pipText);
-        tooltipsValueExt.insertLast(pipReference + noData);
+        tooltipsValueExt.insertLast(pipReference
+                                     + notes
+                                     + "\n\u2022 Bonus healing done to self and other depending on special stats:"
+                                     + "\n\u2022 Drugs on self: 10IN -> 15%, 7IN ->10%, 4IN -> 5%"
+                                     + "\n\u2022 Drugs on others: 7IN -> 15%, 4IN -> 10%, 1IN -> 5%"
+                                     + "\n\t\u2022 FA on self: (5+IN)%"
+                                     + "\n\t\u2022 FA on others: (10+IN)%");
 
         tooltipsKey.insertLast(PE_HTH_EVADE);
         tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(PE_HTH_EVADE)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(PE_HTH_EVADE)) + pipText);
@@ -518,151 +736,469 @@ class CTooltips {
 
         tooltipsKey.insertLast(PE_MORE_CRITICALS);
         tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(PE_MORE_CRITICALS)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(PE_MORE_CRITICALS)) + pipText);
-        tooltipsValueExt.insertLast(pipReference + noData);
+        tooltipsValueExt.insertLast(pipReference
+                                     + notes
+                                     + "\n\u2022 +6% bonus to critical hit chance.");
 
         tooltipsKey.insertLast(PE_QUICK_POCKETS);
         tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(PE_QUICK_POCKETS)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(PE_QUICK_POCKETS)) + pipText);
-        tooltipsValueExt.insertLast(pipReference + noData);
+        tooltipsValueExt.insertLast(pipReference
+                                     + notes
+                                     + "\n\u2022 Equipping items at half AP cost."
+                                     + "\n\u2022 Reload weapons costs 1 AP."
+                                     + "\n\u2022 Reduces AP cost of using drugs by 1. (Stim -> 2AP, SS -> 4AP)"
+                                     + "\n\t\u2022 Light armor does have this same perk, but they don't stack."
+                                     + "\n\t\u2022 It does stack with Field Medic for SS only, reducing SS AP cost to 3."
+                                     + "\n\u2022 If taken with Weapon Handling it does stack with Light Armor bonus for Rocket Launcher only.");
 
         tooltipsKey.insertLast(PE_QUICK_RECOVERY);
         tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(PE_QUICK_RECOVERY)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(PE_QUICK_RECOVERY)) + pipText);
-        tooltipsValueExt.insertLast(pipReference + noData);
+        tooltipsValueExt.insertLast(pipReference
+                                     + notes
+                                     + "\n\u2022 Reduced Loose Turn, Knockdown and Knock Out AP cost. (thus recovery time for KO)"
+                                     + "\n\u2022 Reference AP costs without this perk for character with 1IN:"
+                                     + "\n\t\u2022 Knockdown AP cost: 3"
+                                     + "\n\t\u2022 Lost Turn AP cost: Maximum AP"
+                                     + "\n\t\u2022 Knockout AP cost: Random(Maximum AP, 3 * Maximum AP)"
+                                     + "\n\u2022 This perk reduces AP cost to 1/3 of total value."
+                                     + "\n\u2022 Having 10IN reduces AP cost the same amount as this perk, to 1/3");
 
         tooltipsKey.insertLast(PE_WAY_OF_THE_FRUIT);
         tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(PE_WAY_OF_THE_FRUIT)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(PE_WAY_OF_THE_FRUIT)) + pipText);
-        tooltipsValueExt.insertLast(pipReference + noData);
+        tooltipsValueExt.insertLast(pipReference
+                                     + notes
+                                     + "\n\u2022 Eating Mutated Fruit heals you more."
+                                     + "\n\u2022 After eating Mutated Fruit you gain bonus healing from all sources."
+                                     + "\n\t\u2022 Bonus healing percentage: (5+ CH)%"
+                                     + "\n\u2022 Changed Mutated Fruit radiation formula: Rand(0, 6 - Max(LK, EN)/2)");
 
         tooltipsKey.insertLast(PE_WEAPON_HANDLING);
         tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(PE_WEAPON_HANDLING)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(PE_WEAPON_HANDLING)) + pipText);
-        tooltipsValueExt.insertLast(pipReference + noData);
+        tooltipsValueExt.insertLast(pipReference
+                                     + notes
+                                     + "\n\u2022 +2 ST bonus when checking weapon min. ST requirement."
+                                     + "\n\u2022 After shooting Rocket Launcher it will automatically reload it."
+                                     + "\n\t\u2022 Only reloads if same rocket is available."
+                                     + "\n\t\u2022 Total animation time for shoot and reload is a bit less than without this perk."
+                                     + "\n\t\u2022 AP reduced by Quick Pockets perk and Light Armor can stacks for Rockets only.");
 
         tooltipsKey.insertLast(PE_LIVEWIRE);
         tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(PE_LIVEWIRE)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(PE_LIVEWIRE)) + pipText);
-        tooltipsValueExt.insertLast(pipReference + noData);
+        tooltipsValueExt.insertLast(pipReference
+                                     + notes
+                                     + "\n\u2022 Bonuses with Single Handed guns or melee weapons only:"
+                                     + "\n\u2022 Double AC bonus derived from Agility."
+                                     + "\n\u2022 TODO: 5% bonus move speed."
+                                     + "\n\u2022 TODO: Combined with Dodger perks, it will automatically dodge an attack now and then while running."
+                                     + "\n\u2022 Note: Total AC (gear, agi, perk) is capped at 90");
 
         //  Level 6 Perks
         tooltipsKey.insertLast(PE_EVEN_MORE_CRITICALS);
         tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(PE_EVEN_MORE_CRITICALS)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(PE_EVEN_MORE_CRITICALS)) + pipText);
-        tooltipsValueExt.insertLast(pipReference + noData);
+        tooltipsValueExt.insertLast(pipReference
+                                     + notes
+                                     + "\n\u2022 9% critical hit chance bonus.");
 
         tooltipsKey.insertLast(PE_IN_YOUR_FACE);
         tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(PE_IN_YOUR_FACE)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(PE_IN_YOUR_FACE)) + pipText);
-        tooltipsValueExt.insertLast(pipReference + noData);
+        tooltipsValueExt.insertLast(pipReference
+                                     + notes
+                                     + "\n\u2022 Bonuses with Unarmed or Melee Weapons within melee-range only:"
+                                     + "\n\u2022 50% chance of an attack to miss on you."
+                                     + "\n\t\u2022 Burst attack counts each bullet, not the attack as a whole."
+                                     + "\n\t\u2022 Flamer attack ignores this perk.");
 
         tooltipsKey.insertLast(PE_SILENT_RUNNING);
         tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(PE_SILENT_RUNNING)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(PE_SILENT_RUNNING)) + pipText);
-        tooltipsValueExt.insertLast(pipReference + noData);
+        tooltipsValueExt.insertLast(pipReference
+                                     + notes
+                                     + "\n\u2022 Can run while sneaking.");
 
         tooltipsKey.insertLast(PE_TOUGHNESS);
         tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(PE_TOUGHNESS)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(PE_TOUGHNESS)) + pipText);
-        tooltipsValueExt.insertLast(pipReference + noData);
+        tooltipsValueExt.insertLast(pipReference
+                                     + notes
+                                     + "\n\u2022 +1 DT and +6 DR bonus to normal damage resistance."
+                                     + "\n\u2022 +1 DT and +5 DR bonus to all other damage resistances.");
 
         tooltipsKey.insertLast(PE_SPRAY_AND_PRAY);
         tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(PE_SPRAY_AND_PRAY)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(PE_SPRAY_AND_PRAY)) + pipText);
-        tooltipsValueExt.insertLast(pipReference + noData);
+        tooltipsValueExt.insertLast(pipReference
+                                     + notes
+                                     + "\n\u2022 Your burst attacks that are not critical can do 20% bonus damage."
+                                     + "\n\t\u2022 Chance: (5 + CH + LK)%"
+                                     + "\n\t\u2022 Final damage is increased by 20% and not per bullet.");
 
         //  Level 9 Perks
         tooltipsKey.insertLast(PE_STONEWALL);
         tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(PE_STONEWALL)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(PE_STONEWALL)) + pipText);
-        tooltipsValueExt.insertLast(pipReference + noData);
+        tooltipsValueExt.insertLast(pipReference
+                                     + notes
+                                     + "\n\u2022 Gives ability to resist Knockdowns and Knockbacks."
+                                     + "\n\t\u2022 Adds character +1 Stonewall rank and stack with Heavy Armor Perk."
+                                     + "\n\t\u2022 Does not protect against Head/Eyes attacks KD/KO effects."
+                                     + "\n\u2022 KO that are not from Head/Eyes can be downgraded to KD instead:"
+                                     + "\n\t\u2022 3 * (CLAMP(ST, 1, CH+4) + CLAMP(EN, 1, CH+6)) + 15 * StonewallRank vs 1d100"
+                                     + "\n\t\u2022 Final damage is increased by 20% and not per bullet.");
+
+        tooltipsKey.insertLast(PE_SHARPSHOOTER);
+        tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(PE_SHARPSHOOTER)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(PE_SHARPSHOOTER)) + pipText);
+        tooltipsValueExt.insertLast(pipReference
+                                     + notes
+                                     + "\n\u2022 +6 bonus to Sight Range."
+                                     + "\n\u2022 +8% bonus to Hit Chance."
+                                     + "\n\u2022 Reduces your targets armor critical chance modifier by 50%."
+                                     + "\n\t\u2022 Aimed attacks only.");
 
         tooltipsKey.insertLast(PE_BONUS_RANGED_DAMAGE);
         tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(PE_BONUS_RANGED_DAMAGE)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(PE_BONUS_RANGED_DAMAGE)) + pipText);
-        tooltipsValueExt.insertLast(pipReference + noData);
+        tooltipsValueExt.insertLast(pipReference
+                                     + notes
+                                     + "\n\u2022 +3 bonus damage per bullet with Guns."
+                                     + "\n\t\u2022 Works with energy weapons as well, despite the term 'per bullet'.");
 
         tooltipsKey.insertLast(PE_PYROMANIAC);
         tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(PE_PYROMANIAC)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(PE_PYROMANIAC)) + pipText);
-        tooltipsValueExt.insertLast(pipReference + noData);
+        tooltipsValueExt.insertLast(pipReference
+                                     + notes
+                                     + "\n\u2022 +25% bonus to fire based damage."
+                                     + "\n\u2022 Enemies die with flame animation more often.");
 
         tooltipsKey.insertLast(PE_EVEN_TOUGHER);
         tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(PE_EVEN_TOUGHER)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(PE_EVEN_TOUGHER)) + pipText);
-        tooltipsValueExt.insertLast(pipReference + noData);
+        tooltipsValueExt.insertLast(pipReference
+                                     + notes
+                                     + "\n\u2022 +3 DT and +9 DR bonus to normal damage resistance only.");
 
         tooltipsKey.insertLast(PE_MEDIC);
         tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(PE_MEDIC)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(PE_MEDIC)) + pipText);
-        tooltipsValueExt.insertLast(pipReference + noData);
+        tooltipsValueExt.insertLast(pipReference
+                                     + notes
+                                     + "\n\u2022 Increases HealFactor by 5. (5%) Initial heal value:"
+                                     + "\n\t\u2022 CLAMP(missingHP * HealFactor /100, 0, 20 + skill/4 + 25(Medic) + 25(Field Medic) + 3 * ItemFactor)"
+                                     + "\n\t\u2022 HealFactor: (30 self or 45 other) + 5(Medic) + 5(Field Medic) + 10(Item Factor)"
+                                     + "\n\t\u2022 ItemFactor: 10 if First Aid Kit or similar item is used, otherwise 0."
+                                     + "\n\u2022 Allows higher FA values: 20 + FA/4 + 25(Medic) + 25(Field Medic)"
+                                     + "\n\u2022 Can heal KO with doctor skill on others."
+                                     + "\n\u2022 Better chance of healing crippled limbs or eyes and cannot hurt themselves when self healing."
+                                     + "\n\u2022 More XP from using Doctor or First Aid skills."
+                                     + "\n\t\u2022 1.5 times the amount of XP for using First Aid."
+                                     + "\n\t\u2022 3 times the amount of XP for using First Aid."
+                                     + "\n\u2022 Shorter cooldown on Doctor and First Aid skills:"
+                                     + "\n\t\u2022 CD: 90 sec - Skill/4 - 20(medic) - 10(field medic)");
 
         tooltipsKey.insertLast(PE_HEAVE_HO);
         tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(PE_HEAVE_HO)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(PE_HEAVE_HO)) + pipText);
-        tooltipsValueExt.insertLast(pipReference + noData);
+        tooltipsValueExt.insertLast(pipReference
+                                     + notes
+                                     + "\n\u2022 +2 ST bonus when calculating throw range."
+                                     + "\n\u2022 +6 bonus to max throw range."
+                                     + "\n\u2022 Adds your melee damage to throwing damage formula:"
+                                     + "\n\t\u2022 Min: (ST + MeleeDamage), Max: (2*ST + MeleeDamage)");
 
         tooltipsKey.insertLast(PE_CLOSE_COMBAT_MASTER);
         tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(PE_CLOSE_COMBAT_MASTER)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(PE_CLOSE_COMBAT_MASTER)) + pipText);
-        tooltipsValueExt.insertLast(pipReference + noData);
+        tooltipsValueExt.insertLast(pipReference
+                                     + notes
+                                     + "\n\u2022 +15% bonus to critical hit chance with unarmed or melee attacks only."
+                                     + "\n\u2022 +10 bonus to Melee Damage.");
 
         //  Level 12 Perks
         tooltipsKey.insertLast(PE_BETTER_CRITICALS);
         tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(PE_BETTER_CRITICALS)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(PE_BETTER_CRITICALS)) + pipText);
-        tooltipsValueExt.insertLast(pipReference + noData);
+        tooltipsValueExt.insertLast(pipReference
+                                     + notes
+                                     + "\n\u2022 +20% bonus to critical power roll with ranged attacks."
+                                     + "\n\u2022 +25% bonus to critical power roll with unarmed or melee attacks only.");
 
         tooltipsKey.insertLast(PE_LIFEGIVER);
         tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(PE_LIFEGIVER)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(PE_LIFEGIVER)) + pipText);
-        tooltipsValueExt.insertLast(pipReference + noData);
+        tooltipsValueExt.insertLast(pipReference
+                                     + notes
+                                     + "\n\u2022 +30 Hit Points for each rank of this perk.");
 
         tooltipsKey.insertLast(PE_GHOST);
         tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(PE_GHOST)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(PE_GHOST)) + pipText);
-        tooltipsValueExt.insertLast(pipReference + noData);
+        tooltipsValueExt.insertLast(pipReference
+                                     + notes
+                                     + "\n\u2022 +30 Sneak bonus if you are within 5 hexes of a wall."
+                                     + "\n\u2022 Reduced character alpha (a bit more transparent) while sneaking."
+                                     + "\n\u2022 You start your random encounters in stealth mode, with no NPC targeting you.");
 
         tooltipsKey.insertLast(PE_ACTION_BOY);
         tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(PE_ACTION_BOY)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(PE_ACTION_BOY)) + pipText);
-        tooltipsValueExt.insertLast(pipReference + noData);
+        tooltipsValueExt.insertLast(pipReference
+                                     + notes
+                                     + "\n\u2022 +1 bonus to maximum Action Points for each level of this perk.");
 
         tooltipsKey.insertLast(PE_GAIN_STRENGTH);
         tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(PE_GAIN_STRENGTH)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(PE_GAIN_STRENGTH)) + pipText);
-        tooltipsValueExt.insertLast(pipReference + noData);
+        tooltipsValueExt.insertLast(pipReference
+                                     + notes
+                                     + "\n\u2022 +2 bonus to Strength.");
 
         tooltipsKey.insertLast(PE_GAIN_PERCEPTION);
         tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(PE_GAIN_PERCEPTION)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(PE_GAIN_PERCEPTION)) + pipText);
-        tooltipsValueExt.insertLast(pipReference + noData);
+        tooltipsValueExt.insertLast(pipReference
+                                     + notes
+                                     + "\n\u2022 +2 bonus to Perception.");
 
         tooltipsKey.insertLast(PE_GAIN_ENDURANCE);
         tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(PE_GAIN_ENDURANCE)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(PE_GAIN_ENDURANCE)) + pipText);
-        tooltipsValueExt.insertLast(pipReference + noData);
+        tooltipsValueExt.insertLast(pipReference
+                                     + notes
+                                     + "\n\u2022 +2 bonus to Endurance.");
 
         tooltipsKey.insertLast(PE_GAIN_CHARISMA);
         tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(PE_GAIN_CHARISMA)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(PE_GAIN_CHARISMA)) + pipText);
-        tooltipsValueExt.insertLast(pipReference + noData);
+        tooltipsValueExt.insertLast(pipReference
+                                     + notes
+                                     + "\n\u2022 +2 bonus to Charisma.");
 
         tooltipsKey.insertLast(PE_GAIN_INTELLIGENCE);
         tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(PE_GAIN_INTELLIGENCE)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(PE_GAIN_INTELLIGENCE)) + pipText);
-        tooltipsValueExt.insertLast(pipReference + noData);
+        tooltipsValueExt.insertLast(pipReference
+                                     + notes
+                                     + "\n\u2022 +2 bonus to Intellect.");
 
         tooltipsKey.insertLast(PE_GAIN_AGILITY);
         tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(PE_GAIN_AGILITY)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(PE_GAIN_AGILITY)) + pipText);
-        tooltipsValueExt.insertLast(pipReference + noData);
+        tooltipsValueExt.insertLast(pipReference
+                                     + notes
+                                     + "\n\u2022 +2 bonus to Agility.");
 
         tooltipsKey.insertLast(PE_GAIN_LUCK);
         tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(PE_GAIN_LUCK)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(PE_GAIN_LUCK)) + pipText);
-        tooltipsValueExt.insertLast(pipReference + noData);
+        tooltipsValueExt.insertLast(pipReference
+                                     + notes
+                                     + "\n\u2022 +2 bonus to Luck.");
 
         //  Level 15 Perks
         tooltipsKey.insertLast(PE_MORE_RANGED_DAMAGE);
         tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(PE_MORE_RANGED_DAMAGE)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(PE_MORE_RANGED_DAMAGE)) + pipText);
-        tooltipsValueExt.insertLast(pipReference + noData);
+        tooltipsValueExt.insertLast(pipReference
+                                     + notes
+                                     + "\n\u2022 Up to +5 bonus damage per bullet based on your and your targets Charisma:"
+                                     + "\n\t\u2022 CLAMP(attacker.CH - ((target.CH2 + 1)*2/3), 0, 4) + 1"
+                                     + "\n\t\u2022 ex: attacker.CH=5, target.CH=3 -> +3 damage per bullet"
+                                     + "\n\t\u2022 ex: attacker.CH=7, target.CH=4 -> +5 damage per bullet"
+                                     + "\n\u2022 Later also known or referenced as Confident Shooter.");
 
         tooltipsKey.insertLast(PE_MAN_OF_STEEL);
         tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(PE_MAN_OF_STEEL)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(PE_MAN_OF_STEEL)) + pipText);
-        tooltipsValueExt.insertLast(pipReference + noData);
+        tooltipsValueExt.insertLast(pipReference
+                                     + notes
+                                     + "\n\u2022 -10 penalty to enemy critical chance."
+                                     + "\n\u2022 -10 penalty to enemy critical power roll.");
 
         tooltipsKey.insertLast(PE_FIELD_MEDIC);
         tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(PE_FIELD_MEDIC)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(PE_FIELD_MEDIC)) + pipText);
-        tooltipsValueExt.insertLast(pipReference + noData);
+        tooltipsValueExt.insertLast(pipReference
+                                     + notes
+                                     + "\n\u2022 Allows you to use First Aid or Doctor and remain in stealth."
+                                     + "\n\u2022 Increases HealFactor by 5. (5%) Initial heal value:"
+                                     + "\n\t\u2022 CLAMP(missingHP * HealFactor /100, 0, 20 + skill/4 + 25(Medic) + 25(Field Medic) + 3 * ItemFactor)"
+                                     + "\n\t\u2022 HealFactor: (30 self or 45 other) + 5(Medic) + 5(Field Medic) + 10(Item Factor)"
+                                     + "\n\t\u2022 ItemFactor: 10 if First Aid Kit or similar item is used, otherwise 0."
+                                     + "\n\u2022 Allows higher FA values: 20 + FA/4 + 25(Medic) + 25(Field Medic)"
+                                     + "\n\u2022 More XP from using Doctor or First Aid skills."
+                                     + "\n\t\u2022 2 times the normal amount of XP for First Aid."
+                                     + "\n\t\u2022 5 times the normal amount of XP for Doctor."
+                                     + "\n\u2022 Shorter cooldown on Doctor and First Aid skills:"
+                                     + "\n\t\u2022 CD: 90 sec - Skill/4 - 20(medic) - 10(field medic)");
 
         //  Level 18 Perks
         tooltipsKey.insertLast(PE_BONUS_RATE_OF_ATTACK);
         tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(PE_BONUS_RATE_OF_ATTACK)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(PE_BONUS_RATE_OF_ATTACK)) + pipText);
-        tooltipsValueExt.insertLast(pipReference + noData);
+        tooltipsValueExt.insertLast(pipReference
+                                     + notes
+                                     + "\n\u2022 -1 AP cost for all attacks.");
 
         tooltipsKey.insertLast(PE_SNIPER);
         tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(PE_SNIPER)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(PE_SNIPER)) + pipText);
-        tooltipsValueExt.insertLast(pipReference + noData);
+        tooltipsValueExt.insertLast(pipReference
+                                     + notes
+                                     + "\n\u2022 Your accuracy over normal hit cap is added as critical hit chance:"
+                                     + "\n\t\u2022 Bonus Crit. = CLAMP((attacker.IN * 5 - target.LK * 2) * sniperMargin / 150, 0, 50);"
+                                     + "\n\t\u2022 SniperMargin = CAMP(ToHit - HitRoll, 0, 150)"
+                                     + "\n\t\u2022 ex: (Attacker 10 IN, Target 10 LK) -> up 30% bonus Critical Chance."
+                                     + "\n\u2022 This stacks with Aimed Attack critical chance bonuses.");
 
         tooltipsKey.insertLast(PE_SILENT_DEATH);
         tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(PE_SILENT_DEATH)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(PE_SILENT_DEATH)) + pipText);
-        tooltipsValueExt.insertLast(pipReference + noData);
+        tooltipsValueExt.insertLast(pipReference
+                                     + notes
+                                     + "\n\u2022 Stealth attacks always crits when attacking from behind with melee or single handed guns."
+                                     + "\n\u2022 Bonus Critical Power based off distance from target. (closer the better)"
+                                     + "\n\t\u2022 15 + CLAMP((18 - distance) * 3, 0, 45)"
+                                     + "\n\t\u2022 This power roll bonus is doubled against NPC's."
+                                     + "\n\t\u2022 Bonus damage against NPC only based on Sneak Skill and Distance."
+                                     + "\n\u2022 Distract throw never un-stealths.");
 
         tooltipsKey.insertLast(PE_SLAYER);
         tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(PE_SLAYER)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(PE_SLAYER)) + pipText);
+        tooltipsValueExt.insertLast(pipReference + noData);
+
+        //  Support Perks
+        tooltipsKey.insertLast(PE_AWARENESS);
+        tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(PE_AWARENESS)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(PE_AWARENESS)) + pipText);
+        tooltipsValueExt.insertLast(pipReference + noData);
+
+        tooltipsKey.insertLast(PE_DEAD_MAN_WALKING);
+        tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(PE_DEAD_MAN_WALKING)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(PE_DEAD_MAN_WALKING)) + pipText);
+        tooltipsValueExt.insertLast(pipReference + noData);
+
+        tooltipsKey.insertLast(PE_DEMOLITION_EXPERT);
+        tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(PE_DEMOLITION_EXPERT)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(PE_DEMOLITION_EXPERT)) + pipText);
+        tooltipsValueExt.insertLast(pipReference + noData);
+
+        tooltipsKey.insertLast(PE_DISMANTLER);
+        tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(PE_DISMANTLER)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(PE_DISMANTLER)) + pipText);
+        tooltipsValueExt.insertLast(pipReference + noData);
+
+        tooltipsKey.insertLast(PE_EDUCATED);
+        tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(PE_EDUCATED)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(PE_EDUCATED)) + pipText);
+        tooltipsValueExt.insertLast(pipReference + noData);
+
+        tooltipsKey.insertLast(PE_EXPLORER);
+        tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(PE_EXPLORER)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(PE_EXPLORER)) + pipText);
+        tooltipsValueExt.insertLast(pipReference + noData);
+
+        tooltipsKey.insertLast(PE_FASTER_HEALING);
+        tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(PE_FASTER_HEALING)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(PE_FASTER_HEALING)) + pipText);
+        tooltipsValueExt.insertLast(pipReference + noData);
+
+        tooltipsKey.insertLast(PE_FORTUNE_FINDER);
+        tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(PE_FORTUNE_FINDER)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(PE_FORTUNE_FINDER)) + pipText);
+        tooltipsValueExt.insertLast(pipReference + noData);
+
+        tooltipsKey.insertLast(PE_GECKO_SKINNING);
+        tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(PE_GECKO_SKINNING)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(PE_GECKO_SKINNING)) + pipText);
+        tooltipsValueExt.insertLast(pipReference + noData);
+
+        tooltipsKey.insertLast(PE_HARMLESS);
+        tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(PE_HARMLESS)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(PE_HARMLESS)) + pipText);
+        tooltipsValueExt.insertLast(pipReference + noData);
+
+        tooltipsKey.insertLast(PE_KAMA_SUTRA_MASTER);
+        tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(PE_KAMA_SUTRA_MASTER)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(PE_KAMA_SUTRA_MASTER)) + pipText);
+        tooltipsValueExt.insertLast(pipReference + noData);
+
+        tooltipsKey.insertLast(PE_LIGHT_STEP);
+        tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(PE_LIGHT_STEP)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(PE_LIGHT_STEP)) + pipText);
+        tooltipsValueExt.insertLast(pipReference + noData);
+
+        tooltipsKey.insertLast(PE_MAGNETIC_PERSONALITY);
+        tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(PE_MAGNETIC_PERSONALITY)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(PE_MAGNETIC_PERSONALITY)) + pipText);
+        tooltipsValueExt.insertLast(pipReference + noData);
+
+        tooltipsKey.insertLast(PE_MASTER_THIEF);
+        tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(PE_MASTER_THIEF)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(PE_MASTER_THIEF)) + pipText);
+        tooltipsValueExt.insertLast(pipReference + noData);
+
+        tooltipsKey.insertLast(PE_MR_FIXIT);
+        tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(PE_MR_FIXIT)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(PE_MR_FIXIT)) + pipText);
+        tooltipsValueExt.insertLast(pipReference + noData);
+
+        tooltipsKey.insertLast(PE_NEGOTIATOR);
+        tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(PE_NEGOTIATOR)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(PE_NEGOTIATOR)) + pipText);
+        tooltipsValueExt.insertLast(pipReference + noData);
+
+        tooltipsKey.insertLast(PE_PACK_RAT);
+        tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(PE_PACK_RAT)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(PE_PACK_RAT)) + pipText);
+        tooltipsValueExt.insertLast(pipReference + noData);
+
+        tooltipsKey.insertLast(PE_PATHFINDER);
+        tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(PE_PATHFINDER)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(PE_PATHFINDER)) + pipText);
+        tooltipsValueExt.insertLast(pipReference + noData);
+
+        tooltipsKey.insertLast(PE_PICKPOCKET);
+        tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(PE_PICKPOCKET)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(PE_PICKPOCKET)) + pipText);
+        tooltipsValueExt.insertLast(pipReference + noData);
+
+        tooltipsKey.insertLast(PE_RAD_RESISTANCE);
+        tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(PE_RAD_RESISTANCE)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(PE_RAD_RESISTANCE)) + pipText);
+        tooltipsValueExt.insertLast(pipReference + noData);
+
+        tooltipsKey.insertLast(PE_RANGER);
+        tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(PE_RANGER)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(PE_RANGER)) + pipText);
+        tooltipsValueExt.insertLast(pipReference + noData);
+
+        tooltipsKey.insertLast(PE_SCOUT);
+        tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(PE_SCOUT)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(PE_SCOUT)) + pipText);
+        tooltipsValueExt.insertLast(pipReference + noData);
+
+        tooltipsKey.insertLast(PE_SCROUNGER);
+        tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(PE_SCROUNGER)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(PE_SCROUNGER)) + pipText);
+        tooltipsValueExt.insertLast(pipReference + noData);
+
+        tooltipsKey.insertLast(PE_SEX_APPEAL);
+        tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(PE_SEX_APPEAL)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(PE_SEX_APPEAL)) + pipText);
+        tooltipsValueExt.insertLast(pipReference + noData);
+
+        tooltipsKey.insertLast(PE_SNAKEATER);
+        tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(PE_SNAKEATER)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(PE_SNAKEATER)) + pipText);
+        tooltipsValueExt.insertLast(pipReference + noData);
+
+        tooltipsKey.insertLast(PE_SPEAKER);
+        tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(PE_SPEAKER)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(PE_SPEAKER)) + pipText);
+        tooltipsValueExt.insertLast(pipReference + noData);
+
+        tooltipsKey.insertLast(PE_STEALTH_GIRL);
+        tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(PE_STEALTH_GIRL)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(PE_STEALTH_GIRL)) + pipText);
+        tooltipsValueExt.insertLast(pipReference + noData);
+
+        tooltipsKey.insertLast(PE_STRONG_BACK);
+        tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(PE_STRONG_BACK)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(PE_STRONG_BACK)) + pipText);
+        tooltipsValueExt.insertLast(pipReference + noData);
+
+        tooltipsKey.insertLast(PE_SWIFT_LEARNER);
+        tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(PE_SWIFT_LEARNER)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(PE_SWIFT_LEARNER)) + pipText);
+        tooltipsValueExt.insertLast(pipReference + noData);
+
+        tooltipsKey.insertLast(PE_THIEF);
+        tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(PE_THIEF)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(PE_THIEF)) + pipText);
+        tooltipsValueExt.insertLast(pipReference + noData);
+
+        tooltipsKey.insertLast(PE_TREASURE_HUNTER);
+        tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(PE_TREASURE_HUNTER)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(PE_TREASURE_HUNTER)) + pipText);
+        tooltipsValueExt.insertLast(pipReference + noData);
+
+        tooltipsKey.insertLast(PE_VAULT_CITY_INOCULATIONS);
+        tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(PE_VAULT_CITY_INOCULATIONS)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(PE_VAULT_CITY_INOCULATIONS)) + pipText);
+        tooltipsValueExt.insertLast(pipReference + noData);
+
+        tooltipsKey.insertLast(PE_VIGILANT_RECYCLER);
+        tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(PE_VIGILANT_RECYCLER)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(PE_VIGILANT_RECYCLER)) + pipText);
+        tooltipsValueExt.insertLast(pipReference + noData);
+
+        tooltipsKey.insertLast(PE_VAULT_CITY_TRAINING);
+        tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(PE_VAULT_CITY_TRAINING)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(PE_VAULT_CITY_TRAINING)) + pipText);
+        tooltipsValueExt.insertLast(pipReference + noData);
+
+        //  profession perks
+        tooltipsKey.insertLast(PE_PROFESSION_ARMORER);
+        tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(PE_PROFESSION_ARMORER)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(PE_PROFESSION_ARMORER)) + pipText);
+        tooltipsValueExt.insertLast(pipReference + noData);
+
+        tooltipsKey.insertLast(PE_PROFESSION_GUNSMITH_S);
+        tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(PE_PROFESSION_GUNSMITH_S)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(PE_PROFESSION_GUNSMITH_S)) + pipText);
+        tooltipsValueExt.insertLast(pipReference + noData);
+
+        tooltipsKey.insertLast(PE_PROFESSION_GUNSMITH_B);
+        tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(PE_PROFESSION_GUNSMITH_B)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(PE_PROFESSION_GUNSMITH_B)) + pipText);
+        tooltipsValueExt.insertLast(pipReference + noData);
+
+        tooltipsKey.insertLast(PE_PROFESSION_ENERGY_EXPERT);
+        tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(PE_PROFESSION_ENERGY_EXPERT)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(PE_PROFESSION_ENERGY_EXPERT)) + pipText);
+        tooltipsValueExt.insertLast(pipReference + noData);
+
+        tooltipsKey.insertLast(PE_PROFESSION_DOCTOR);
+        tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(PE_PROFESSION_DOCTOR)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(PE_PROFESSION_DOCTOR)) + pipText);
+        tooltipsValueExt.insertLast(pipReference + noData);
+
+        tooltipsKey.insertLast(PE_PROFESSION_DEMOLITION_EXPERT);
+        tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(PE_PROFESSION_DEMOLITION_EXPERT)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(PE_PROFESSION_DEMOLITION_EXPERT)) + pipText);
         tooltipsValueExt.insertLast(pipReference + noData);
     }
 };
