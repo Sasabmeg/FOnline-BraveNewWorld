@@ -154,6 +154,8 @@ import int GetCraftXpByPid(uint pid) from "skills";
 import void GainSkillXp(Critter& cr, uint skillNum, int xp) from "skills";
 import uint GetCraftingSkillNumByCraftPid(Item& item) from "skills";
 
+import bool isCharPointsChecksumOk(Critter& player, string& reason) from "mutationFeature";
+
 
 dictionary    ItemPids;
 dictionary    VarIds;
@@ -3302,10 +3304,14 @@ void map_critter_out(Map& map, Critter& cr)
         }
     }
 
-    if(cr.IsPlayer())
-    {
+    if(cr.IsPlayer()) {
         if (valid(map)) {
             SendCarInfoToPlayersOnMap(map);
+        }
+        //  send server log if players sPECIAL data is wrong after mutations
+        string reason = "";
+        if (!isCharPointsChecksumOk(cr, reason)) {
+            Log("MUTATION WARNING: " + reason);
         }
     }
 

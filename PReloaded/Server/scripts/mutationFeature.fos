@@ -1,0 +1,949 @@
+//
+// FOnline: Classic - Brave New World
+// Sasabmeg
+//
+// mutationFeature.fos
+//
+#ifndef __MUTATION_FEATURE__
+#define __MUTATION_FEATURE__
+
+#include "_macros.fos"
+#include "_colors.fos"
+
+string colorError = "|" + COLOR_RED + " ";
+string colorWarn = "|" + COLOR_DORANGE + " ";
+string colorAlreadyHave = "|" + COLOR_GOLDEN_YELLOW + " ";
+string colorNormal = "|" + COLOR_LGREEN + " ";
+
+
+bool d_CanRemoveTrait(Critter& player, Critter@ npc, int val) {
+    uint traitIndex = uint(val);
+    string reason = "";
+    return canRemoveTrait(player, traitIndex, reason);
+}
+
+bool d_CanAddTrait(Critter& player, Critter@ npc, int val) {
+    uint traitIndex = uint(val);
+    string reason = "";
+    return canAddTrait(player, traitIndex, reason);
+}
+
+void r_RemoveTrait(Critter& player, Critter@ npc, int val) {
+    uint traitIndex = uint(val);
+    string reason = "";
+    if (canRemoveTrait(player, traitIndex, reason)) {
+        removeTrait(player, traitIndex);
+    }
+}
+
+void r_AddTrait(Critter& player, Critter@ npc, int val) {
+    uint traitIndex = uint(val);
+    string reason = "";
+    if (canAddTrait(player, traitIndex, reason)) {
+        addTrait(player, traitIndex);
+    }
+}
+
+bool canRemoveTrait(Critter& player, uint traitIndex, string@ reason) {
+    if (TRAIT_BEGIN > traitIndex || TRAIT_END < traitIndex) {
+        reason = colorError + "Error: Trait index out of bounds." + colorNormal;
+        return false;
+    }
+    if (player.Trait[traitIndex] <= 0) {
+        reason = colorWarn + "Does not have this trait." + colorNormal;
+        return false;
+    }
+    switch (traitIndex) {
+        case TRAIT_FAST_METABOLISM:
+        case TRAIT_ONE_HANDER:
+        case TRAIT_HEAVY_HANDED:
+        case TRAIT_BLOODY_MESS:
+        case TRAIT_CHEM_RELIANT:
+            return true;
+        case TRAIT_BRUISER:
+            if (!canChangeSpecial(player, ST_STRENGTH, -3, reason)) {
+                return false;
+            }
+            return true;
+        case TRAIT_FINESSE:
+            if (!canChangeSpecial(player, ST_INTELLECT, -1, reason)) {
+                return false;
+            }
+            return true;
+        case TRAIT_KAMIKAZE:
+        case TRAIT_FAST_SHOT:
+        case TRAIT_DOUBLE_TAP:
+            if (!canChangeSpecial(player, ST_AGILITY, -1, reason)) {
+                return false;
+            }
+            return true;
+        case TRAIT_JINXED:
+            if (!canChangeSpecial(player, ST_LUCK, -1, reason)) {
+                return false;
+            }
+            return true;
+        case TRAIT_GOOD_NATURED:
+            if (!canChangeSpecial(player, ST_CHARISMA, -1, reason)) {
+                return false;
+            }
+            return true;
+        case TRAIT_BRUTISH_HULK:
+            if (!canChangeSpecial(player, ST_CHARISMA, 1, reason)) {
+                return false;
+            }
+            return true;
+        case TRAIT_CAUTIOUS_NATURE:
+            if (!canChangeSpecial(player, ST_PERCEPTION, -1, reason)) {
+                return false;
+            }
+            return true;
+        case TRAIT_GIFTED:
+            for (uint i = ST_STRENGTH; i <= ST_LUCK; i++) {
+                if (!canChangeSpecial(player, i, -1, reason)) {
+                    return false;
+                }
+            }
+            return true;
+        case TRAIT_LONER:
+            reason = colorError + "This HARDCORE MODE trait cannot be altered."  + colorNormal;
+            return false;
+        default:
+            return false;
+    }
+    return false;
+}
+
+bool canAddTrait(Critter& player, uint traitIndex, string@ reason) {
+    reason = "";
+    string exclusiveTrait = "Exclusive Trait of this type.";
+    if (TRAIT_BEGIN > traitIndex || TRAIT_END < traitIndex) {
+        reason = colorError + "Error: Trait index out of bounds." + colorNormal;
+        return false;
+    }
+    if (player.Trait[traitIndex] > 0) {
+        reason = colorAlreadyHave + "Already have." + colorNormal;
+        return false;
+    }
+    if (usedTraitPoints(player) >= 2) {
+        reason = colorWarn + "Maximum 2 traits." + colorNormal;
+        return false;
+    }
+    switch (traitIndex) {
+        case TRAIT_FAST_METABOLISM:
+        case TRAIT_ONE_HANDER:
+        case TRAIT_HEAVY_HANDED:
+        case TRAIT_BLOODY_MESS:
+        case TRAIT_CHEM_RELIANT:
+            return true;
+        case TRAIT_BRUISER:
+            if (!canChangeSpecial(player, ST_STRENGTH, +3, reason)) {
+                return false;
+            }
+            return true;
+        case TRAIT_FINESSE:
+            if (hasExclusiveTrait(player)) {
+                reason = colorWarn + exclusiveTrait + colorNormal;
+                return false;
+            }
+            if (!canChangeSpecial(player, ST_INTELLECT, +1, reason)) {
+                return false;
+            }
+            return true;
+        case TRAIT_KAMIKAZE:
+        case TRAIT_FAST_SHOT:
+        case TRAIT_DOUBLE_TAP:
+            if (hasExclusiveTrait(player)) {
+                reason = colorWarn + exclusiveTrait + colorNormal;
+                return false;
+            }
+            if (!canChangeSpecial(player, ST_AGILITY, +1, reason)) {
+                return false;
+            }
+            return true;
+        case TRAIT_JINXED:
+            if (!canChangeSpecial(player, ST_LUCK, -1, reason)) {
+                return false;
+            }
+            return true;
+        case TRAIT_GOOD_NATURED:
+            if (!canChangeSpecial(player, ST_CHARISMA, +1, reason)) {
+                return false;
+            }
+            return true;
+        case TRAIT_BRUTISH_HULK:
+            if (!canChangeSpecial(player, ST_CHARISMA, -1, reason)) {
+                return false;
+            }
+            return true;
+        case TRAIT_CAUTIOUS_NATURE:
+            if (hasExclusiveTrait(player)) {
+                reason = colorWarn + exclusiveTrait + colorNormal;
+                return false;
+            }
+            if (!canChangeSpecial(player, ST_PERCEPTION, +1, reason)) {
+                return false;
+            }
+            return true;
+        case TRAIT_GIFTED:
+            if (usedTraitPoints(player) > 0) {
+                reason = colorWarn + "Needs 2 unused trait points." + colorNormal;
+                return false;
+            }
+            for (uint i = ST_STRENGTH; i <= ST_LUCK; i++) {
+                if (!canChangeSpecial(player, i, +1, reason)) {
+                    return false;
+                }
+            }
+            return true;
+        case TRAIT_LONER:
+            reason = colorError + "This HARDCORE MODE trait cannot be altered." + colorNormal;
+            return false;
+        default:
+            return false;
+    }
+    return false;
+}
+
+bool canChangeSpecial(Critter& player, uint specialIndex, int byValue, string@ reason) {
+    if (ST_STRENGTH > specialIndex || ST_LUCK < specialIndex) {
+        reason = colorError + " Error: Special index out of bounds." + colorNormal;
+        return false;
+    }
+    string specialName = "";
+    switch (specialIndex) {
+        case ST_STRENGTH:
+            specialName = "Strength";
+            break;
+        case ST_PERCEPTION:
+            specialName = "Perception";
+            break;
+        case ST_ENDURANCE:
+            specialName = "Endurance";
+            break;
+        case ST_CHARISMA:
+            specialName = "Charisma";
+            break;
+        case ST_INTELLECT:
+            specialName = "Intellect";
+            break;
+        case ST_AGILITY:
+            specialName = "Agility";
+            break;
+        case ST_LUCK:
+            specialName = "Luck";
+            break;
+        default:
+            specialName = "Special";
+    }
+
+    if (player.StatBase[specialIndex] + byValue < 1) {
+        reason = colorWarn + specialName + " too low." + colorNormal;
+        return false;
+    }
+    if (player.StatBase[specialIndex] + byValue > 10) {
+        reason = colorWarn + specialName + " too high." + colorNormal;
+        return false;
+    }
+    switch (specialIndex) {
+        case ST_STRENGTH:
+            if (player.Perk[PE_ADRENALINE_RUSH] > 0 && player.StatBase[ST_STRENGTH] + byValue < 5) {
+                reason = colorWarn + "Blocked by Adrenaline Rush perk." + colorNormal;
+                return false;
+            }
+            if (player.Perk[PE_STONEWALL] > 0 && player.StatBase[ST_STRENGTH] + byValue < 6) {
+                reason = colorWarn + "Blocked by Stonewall perk." + colorNormal;
+                return false;
+            }
+            break;
+        case ST_PERCEPTION:
+            if (player.Perk[PE_SHARPSHOOTER] > 0 && player.StatBase[ST_PERCEPTION] + byValue < 7) {
+                reason = colorWarn + "Blocked by Sharpshooter perk." + colorNormal;
+                return false;
+            }
+            break;
+        case ST_ENDURANCE:
+            if (player.Perk[PE_TOUGHNESS] > 0 && player.StatBase[ST_ENDURANCE] + byValue < 4) {
+                reason = colorWarn + "Blocked by Toughness perk." + colorNormal;
+                return false;
+            }
+            if (player.Perk[PE_EVEN_TOUGHER] > 0 && player.StatBase[ST_ENDURANCE] + byValue < 5) {
+                reason = colorWarn + "Blocked by Even Tougher perk." + colorNormal;
+                return false;
+            }
+            if (player.Perk[PE_MAN_OF_STEEL] > 0 && player.StatBase[ST_ENDURANCE] + byValue < 6) {
+                reason = colorWarn + "Blocked by Man of Steel perk." + colorNormal;
+                return false;
+            }
+            break;
+        case ST_CHARISMA:
+            if (player.Perk[PE_WAY_OF_THE_FRUIT] > 0 && player.StatBase[ST_CHARISMA] + byValue < 4) {
+                reason = colorWarn + "Blocked by Way of the Fruit perk." + colorNormal;
+                return false;
+            }
+            if (player.Perk[PE_SPRAY_AND_PRAY] > 0 && player.StatBase[ST_CHARISMA] + byValue < 3) {
+                reason = colorWarn + "Blocked by Way of the Fruit perk." + colorNormal;
+                return false;
+            }
+            if (player.Perk[PE_MORE_RANGED_DAMAGE] > 0 && player.StatBase[ST_CHARISMA] + byValue < 4) {
+                reason = colorWarn + "Blocked by More Ranged Damage perk." + colorNormal;
+                return false;
+            }
+            break;
+        case ST_INTELLECT:
+            if (player.Perk[PE_HEALER_II] > 0 && player.StatBase[ST_INTELLECT] + byValue < 4) {
+                reason = colorWarn + "Blocked by Healer perk." + colorNormal;
+                return false;
+            }
+            if (player.Perk[PE_SHARPSHOOTER] > 0 && player.StatBase[ST_INTELLECT] + byValue < 3) {
+                reason = colorWarn + "Blocked by Sharpshooter perk." + colorNormal;
+                return false;
+            }
+            if (player.Perk[PE_MEDIC] > 0 && player.StatBase[ST_INTELLECT] + byValue < 5) {
+                reason = colorWarn + "Blocked by Medic perk." + colorNormal;
+                return false;
+            }
+            break;
+        case ST_AGILITY:
+            if (player.Perk[PE_QUICK_POCKETS] > 0 && player.StatBase[ST_AGILITY] + byValue < 5) {
+                reason = colorWarn + "Blocked by Quick Pockets perk." + colorNormal;
+                return false;
+            }
+            if (player.Perk[PE_QUICK_RECOVERY] > 0 && player.StatBase[ST_AGILITY] + byValue < 6) {
+                reason = colorWarn + "Blocked by Quick Recovery perk." + colorNormal;
+                return false;
+            }
+            if (player.Perk[PE_LIVEWIRE] > 0 && player.StatBase[ST_AGILITY] + byValue < 7) {
+                reason = colorWarn + "Blocked by Livewire perk." + colorNormal;
+                return false;
+            }
+            if (player.Perk[PE_ACTION_BOY] > 0 && player.StatBase[ST_AGILITY] + byValue < 5) {
+                reason = colorWarn + "Blocked by Action Boy perk." + colorNormal;
+                return false;
+            }
+            break;
+        case ST_LUCK:
+            if (player.Perk[PE_SPRAY_AND_PRAY] > 0 && player.StatBase[ST_LUCK] + byValue < 5) {
+                reason = colorWarn + "Blocked by Spray and Pray perk." + colorNormal;
+                return false;
+            }
+            break;
+        default:
+            return true;
+    }
+    return true;
+}
+
+void r_SpawnDummy(Critter& player, Critter@ npc, int val) {
+}
+
+/**
+ * Show the traits the player has and the reason why they are not removable. @lex removableTraits@ is used.
+ */
+void dlg_RemoveTraitList(Critter& player, Critter@ npc, string@ text) {
+    if (!IS_DIALOG_GENERATED(text))
+        return;
+
+    string removable = " -removable-";
+    string str = "\n\n[List of your traits:]\n";
+    string listPrefix = "\t";
+    string reason = "";
+
+    if (player.Trait[TRAIT_FAST_METABOLISM] > 0) {
+        str += listPrefix + "[Fast Metabolism: ";
+        if (canRemoveTrait(player, TRAIT_FAST_METABOLISM, reason)) {
+            str += removable + "]\n";
+        } else {
+            str += reason + "]\n";
+        }
+    }
+    if (player.Trait[TRAIT_BRUISER] > 0) {
+        str += listPrefix + "[Bruiser: ";
+        if (canRemoveTrait(player, TRAIT_BRUISER, reason)) {
+            str += removable + "]\n";
+        } else {
+            str += reason + "]\n";
+        }
+    }
+    if (player.Trait[TRAIT_ONE_HANDER] > 0) {
+        str += listPrefix + "[One Hander: ";
+        if (canRemoveTrait(player, TRAIT_ONE_HANDER, reason)) {
+            str += removable + "]\n";
+        } else {
+            str += reason + "]\n";
+        }
+    }
+    if (player.Trait[TRAIT_FINESSE] > 0) {
+        str += listPrefix + "[Finesse: ";
+        if (canRemoveTrait(player, TRAIT_FINESSE, reason)) {
+            str += removable + "]\n";
+        } else {
+            str += reason + "]\n";
+        }
+    }
+    if (player.Trait[TRAIT_KAMIKAZE] > 0) {
+        str += listPrefix + "[Kamikaze: ";
+        if (canRemoveTrait(player, TRAIT_KAMIKAZE, reason)) {
+            str += removable + "]\n";
+        } else {
+            str += reason + "]\n";
+        }
+    }
+    if (player.Trait[TRAIT_HEAVY_HANDED] > 0) {
+        str += listPrefix + "[Heavy Handed: ";
+        if (canRemoveTrait(player, TRAIT_HEAVY_HANDED, reason)) {
+            str += removable + "]\n";
+        } else {
+            str += reason + "]\n";
+        }
+    }
+    if (player.Trait[TRAIT_FAST_SHOT] > 0) {
+        str += listPrefix + "[Fast Shot: ";
+        if (canRemoveTrait(player, TRAIT_FAST_SHOT, reason)) {
+            str += removable + "]\n";
+        } else {
+            str += reason + "]\n";
+        }
+    }
+    if (player.Trait[TRAIT_DOUBLE_TAP] > 0) {
+        str += listPrefix + "[Double Tap: ";
+        if (canRemoveTrait(player, TRAIT_DOUBLE_TAP, reason)) {
+            str += removable + "]\n";
+        } else {
+            str += reason + "]\n";
+        }
+    }
+    if (player.Trait[TRAIT_BLOODY_MESS] > 0) {
+        str += listPrefix + "[Bloody Mess: ";
+        if (canRemoveTrait(player, TRAIT_BLOODY_MESS, reason)) {
+            str += removable + "]\n";
+        } else {
+            str += reason + "]\n";
+        }
+    }
+    if (player.Trait[TRAIT_JINXED] > 0) {
+        str += listPrefix + "[Jinxed: ";
+        if (canRemoveTrait(player, TRAIT_JINXED, reason)) {
+            str += removable + "]\n";
+        } else {
+            str += reason + "]\n";
+        }
+    }
+    if (player.Trait[TRAIT_GOOD_NATURED] > 0) {
+        str += listPrefix + "[Good Natured: ";
+        if (canRemoveTrait(player, TRAIT_GOOD_NATURED, reason)) {
+            str += removable + "]\n";
+        } else {
+            str += reason + "]\n";
+        }
+    }
+    if (player.Trait[TRAIT_CHEM_RELIANT] > 0) {
+        str += listPrefix + "[Chem Reliant: ";
+        if (canRemoveTrait(player, TRAIT_CHEM_RELIANT, reason)) {
+            str += removable + "]\n";
+        } else {
+            str += reason + "]\n";
+        }
+    }
+    if (player.Trait[TRAIT_BRUTISH_HULK] > 0) {
+        str += listPrefix + "[Brutish Hulk: ";
+        if (canRemoveTrait(player, TRAIT_BRUTISH_HULK, reason)) {
+            str += removable + "]\n";
+        } else {
+            str += reason + "]\n";
+        }
+    }
+    if (player.Trait[TRAIT_CAUTIOUS_NATURE] > 0) {
+        str += listPrefix + "[Cautious Nature: ";
+        if (canRemoveTrait(player, TRAIT_CAUTIOUS_NATURE, reason)) {
+            str += removable + "]\n";
+        } else {
+            str += reason + "]\n";
+        }
+    }
+    if (player.Trait[TRAIT_GIFTED] > 0) {
+        str += listPrefix + "[Gifted: ";
+        if (canRemoveTrait(player, TRAIT_GIFTED, reason)) {
+            str += removable + "]\n";
+        } else {
+            str += reason + "]\n";
+        }
+    }
+    if (player.Trait[TRAIT_LONER] > 0) {
+        str += listPrefix + "[Loner: ";
+        if (canRemoveTrait(player, TRAIT_LONER, reason)) {
+            str += removable + "]\n";
+        } else {
+            str += reason + "]\n";
+        }
+    }
+
+    text = "$removableTraits " + str;
+    if (text.length() > 998) {
+        text = substring(text, 0, 998);
+    }
+}
+
+/**
+ * Show the traits the player does not have and the reason why they are not available. @lex availableTraits@ is used.
+ */
+void dlg_AvailableTraitList(Critter& player, Critter@ npc, string@ text) {
+    if (!IS_DIALOG_GENERATED(text))
+        return;
+
+    string available = " Available  ";//" -available-";
+    string str = "\n\n[List of available traits:]\n";
+    string listPrefix = "\t";
+    string reason = "";
+
+    if (true) { //player.Trait[TRAIT_FAST_METABOLISM] <= 0) {
+        str += listPrefix + "[Fast Metabolism: ";
+        if (canAddTrait(player, TRAIT_FAST_METABOLISM, reason)) {
+            str += available + "]\n";
+        } else {
+            str += reason + "]\n";
+        }
+    }
+    if (true) {//(player.Trait[TRAIT_BRUISER] <= 0) {
+        str += listPrefix + "[Bruiser: ";
+        if (canAddTrait(player, TRAIT_BRUISER, reason)) {
+            str += available + "]\n";
+        } else {
+            str += reason + "]\n";
+        }
+    }
+    if (true){ //(player.Trait[TRAIT_ONE_HANDER] <= 0) {
+        str += listPrefix + "[One Hander: ";
+        if (canAddTrait(player, TRAIT_ONE_HANDER, reason)) {
+            str += available + "]\n";
+        } else {
+            str += reason + "]\n";
+        }
+    }
+    if (true) { //(player.Trait[TRAIT_FINESSE] <= 0) {
+        str += listPrefix + "[Finesse: ";
+        if (canAddTrait(player, TRAIT_FINESSE, reason)) {
+            str += available + "]\n";
+        } else {
+            str += reason + "]\n";
+        }
+    }
+    if (true) { //(player.Trait[TRAIT_KAMIKAZE] <= 0) {
+        str += listPrefix + "[Kamikaze: ";
+        if (canAddTrait(player, TRAIT_KAMIKAZE, reason)) {
+            str += available + "]\n";
+        } else {
+            str += reason + "]\n";
+        }
+    }
+    if (true) { //(player.Trait[TRAIT_HEAVY_HANDED] <= 0) {
+        str += listPrefix + "[Heavy Handed: ";
+        if (canAddTrait(player, TRAIT_HEAVY_HANDED, reason)) {
+            str += available + "]\n";
+        } else {
+            str += reason + "]\n";
+        }
+    }
+    if (true) { //(player.Trait[TRAIT_FAST_SHOT] <= 0) {
+        str += listPrefix + "[Fast Shot: ";
+        if (canAddTrait(player, TRAIT_FAST_SHOT, reason)) {
+            str += available + "]\n";
+        } else {
+            str += reason + "]\n";
+        }
+    }
+    if (true) { //(player.Trait[TRAIT_DOUBLE_TAP] <= 0) {
+        str += listPrefix + "[Double Tap: ";
+        if (canAddTrait(player, TRAIT_DOUBLE_TAP, reason)) {
+            str += available + "]\n";
+        } else {
+            str += reason + "]\n";
+        }
+    }
+    if (true) { //(player.Trait[TRAIT_BLOODY_MESS] <= 0) {
+        str += listPrefix + "[Bloody Mess: ";
+        if (canAddTrait(player, TRAIT_BLOODY_MESS, reason)) {
+            str += available + "]\n";
+        } else {
+            str += reason + "]\n";
+        }
+    }
+    if (true) { //(player.Trait[TRAIT_JINXED] <= 0) {
+        str += listPrefix + "[Jinxed: ";
+        if (canAddTrait(player, TRAIT_JINXED, reason)) {
+            str += available + "]\n";
+        } else {
+            str += reason + "]\n";
+        }
+    }
+    if (true) { //(player.Trait[TRAIT_GOOD_NATURED] <= 0) {
+        str += listPrefix + "[Good Natured: ";
+        if (canAddTrait(player, TRAIT_GOOD_NATURED, reason)) {
+            str += available + "]\n";
+        } else {
+            str += reason + "]\n";
+        }
+    }
+    if (true) { //(player.Trait[TRAIT_CHEM_RELIANT] <= 0) {
+        str += listPrefix + "[Chem Reliant: ";
+        if (canAddTrait(player, TRAIT_CHEM_RELIANT, reason)) {
+            str += available + "]\n";
+        } else {
+            str += reason + "]\n";
+        }
+    }
+    if (true) { //(player.Trait[TRAIT_BRUTISH_HULK] <= 0) {
+        str += listPrefix + "[Brutish Hulk: ";
+        if (canAddTrait(player, TRAIT_BRUTISH_HULK, reason)) {
+            str += available + "]\n";
+        } else {
+            str += reason + "]\n";
+        }
+    }
+    if (true) { //(player.Trait[TRAIT_CAUTIOUS_NATURE] <= 0) {
+        str += listPrefix + "[Cautious Nature: ";
+        if (canAddTrait(player, TRAIT_CAUTIOUS_NATURE, reason)) {
+            str += available + "]\n";
+        } else {
+            str += reason + "]\n";
+        }
+    }
+    if (true) { //(player.Trait[TRAIT_GIFTED] <= 0) {
+        str += listPrefix + "[Gifted: ";
+        if (canAddTrait(player, TRAIT_GIFTED, reason)) {
+            str += available + "]\n";
+        } else {
+            str += reason + "]\n";
+        }
+    }
+    if (true) { //(player.Trait[TRAIT_LONER] <= 0) {
+        str += listPrefix + "[Loner: ";
+        if (canAddTrait(player, TRAIT_LONER, reason)) {
+            str += available + "]\n";
+        } else {
+            str += reason + "]\n";
+        }
+    }
+
+    text = "$availableTraits " + str;
+    if (text.length() > 998) {
+        text = substring(text, 0, 998);
+    }
+}
+
+void addTrait(Critter& player, uint traitIndex) {
+    string reason = "";
+    bool canChangeGifted = false;
+
+    if (player.TraitBase[traitIndex] > 0) {
+        return;
+    }
+    if (usedTraitPoints(player) >= 2) {
+        return;
+    }
+
+    switch (traitIndex) {
+        case TRAIT_FAST_METABOLISM:
+        case TRAIT_ONE_HANDER:
+        case TRAIT_BLOODY_MESS:
+        case TRAIT_CHEM_RELIANT:
+            player.TraitBase[traitIndex] = 1;
+            break;
+        case TRAIT_BRUISER:
+            if (canChangeSpecial(player, ST_STRENGTH, +3, reason)) {
+                player.StatBase[ST_STRENGTH] += 3;
+                player.StatBase[ST_ACTION_POINTS] += -1;
+                player.TraitBase[traitIndex] = 1;
+                if (player.Stat[ST_CURRENT_HP] > player.Stat[ST_MAX_LIFE]) {
+                    player.StatBase[ST_CURRENT_HP] = player.Stat[ST_MAX_LIFE];
+                }
+            }
+            break;
+        case TRAIT_FINESSE:
+            if (canChangeSpecial(player, ST_INTELLECT, +1, reason) && !hasExclusiveTrait(player)) {
+                player.StatBase[ST_INTELLECT] += 1;
+                player.TraitBase[traitIndex] = 1;
+            }
+            break;
+        case TRAIT_KAMIKAZE:
+        case TRAIT_FAST_SHOT:
+        case TRAIT_DOUBLE_TAP:
+            if (canChangeSpecial(player, ST_AGILITY, +1, reason) && !hasExclusiveTrait(player)) {
+                player.StatBase[ST_AGILITY] += 1;
+                player.TraitBase[traitIndex] = 1;
+            }
+            break;
+        case TRAIT_HEAVY_HANDED:
+            if (canChangeSpecial(player, ST_STRENGTH, +1, reason)) {
+                player.StatBase[ST_STRENGTH] += 1;
+                player.StatBase[ST_MELEE_DAMAGE] += 5;
+                player.TraitBase[traitIndex] = 1;
+                if (player.Stat[ST_CURRENT_HP] > player.Stat[ST_MAX_LIFE]) {
+                    player.StatBase[ST_CURRENT_HP] = player.Stat[ST_MAX_LIFE];
+                }
+            }
+            break;
+        case TRAIT_JINXED:
+            if (canChangeSpecial(player, ST_LUCK, -1, reason)) {
+                player.StatBase[ST_LUCK] += -1;
+                player.TraitBase[traitIndex] = 1;
+            }
+            break;
+        case TRAIT_GOOD_NATURED:
+            if (canChangeSpecial(player, ST_CHARISMA, +1, reason)) {
+                player.StatBase[ST_CHARISMA] += 1;
+                player.TraitBase[traitIndex] = 1;
+            }
+            break;
+        case TRAIT_BRUTISH_HULK:
+            if (canChangeSpecial(player, ST_CHARISMA, -1, reason)) {
+                player.StatBase[ST_CHARISMA] += -1;
+                player.StatBase[ST_MELEE_DAMAGE] += +3;
+                player.StatBase[ST_MAX_LIFE] += 12;
+                player.TraitBase[traitIndex] = 1;
+                if (player.Stat[ST_CURRENT_HP] > player.Stat[ST_MAX_LIFE]) {
+                    player.StatBase[ST_CURRENT_HP] = player.Stat[ST_MAX_LIFE];
+                }
+            }
+            break;
+        case TRAIT_CAUTIOUS_NATURE:
+            if (canChangeSpecial(player, ST_PERCEPTION, +1, reason) && !hasExclusiveTrait(player)) {
+                player.StatBase[ST_PERCEPTION] += 1;
+                player.TraitBase[traitIndex] = 1;
+            }
+            break;
+        case TRAIT_GIFTED:
+            if (usedTraitPoints(player) > 0) {
+                return;
+            }
+            canChangeGifted = true;
+            for (uint i = ST_STRENGTH; i <= ST_LUCK; i++) {
+                if (!canChangeSpecial(player, i, +1, reason)) {
+                    canChangeGifted = false;
+                }
+            }
+            if (canChangeGifted) {
+                for (uint i = ST_STRENGTH; i <= ST_LUCK; i++) {
+                    player.StatBase[i] += 1;
+                }
+                player.TraitBase[traitIndex] = 1;
+                if (player.Stat[ST_CURRENT_HP] > player.Stat[ST_MAX_LIFE]) {
+                    player.StatBase[ST_CURRENT_HP] = player.Stat[ST_MAX_LIFE];
+                }
+            }
+            break;
+        case TRAIT_LONER:
+            if (canAddTrait(player, TRAIT_LONER, reason)) {
+                player.TraitBase[traitIndex] = 1;
+            }
+            break;
+        default:
+    }
+}
+
+void removeTrait(Critter& player, uint traitIndex) {
+    string reason = "";
+    bool canChangeGifted = false;
+
+    if (player.TraitBase[traitIndex] == 0) {
+        return;
+    }
+
+    switch (traitIndex) {
+        case TRAIT_FAST_METABOLISM:
+        case TRAIT_ONE_HANDER:
+        case TRAIT_BLOODY_MESS:
+        case TRAIT_CHEM_RELIANT:
+            player.TraitBase[traitIndex] = 0;
+            break;
+        case TRAIT_BRUISER:
+            if (canChangeSpecial(player, ST_STRENGTH, -3, reason)) {
+                player.StatBase[ST_STRENGTH] += -3;
+                player.StatBase[ST_ACTION_POINTS] += 1;
+                player.TraitBase[traitIndex] = 0;
+                if (player.Stat[ST_CURRENT_HP] > player.Stat[ST_MAX_LIFE]) {
+                    player.StatBase[ST_CURRENT_HP] = player.Stat[ST_MAX_LIFE];
+                }
+            }
+            break;
+        case TRAIT_FINESSE:
+            if (canChangeSpecial(player, ST_INTELLECT, -1, reason)) {
+                player.StatBase[ST_INTELLECT] += -1;
+                player.TraitBase[traitIndex] = 0;
+            }
+            break;
+        case TRAIT_KAMIKAZE:
+        case TRAIT_FAST_SHOT:
+        case TRAIT_DOUBLE_TAP:
+            if (canChangeSpecial(player, ST_AGILITY, -1, reason)) {
+                player.StatBase[ST_AGILITY] += -1;
+                player.TraitBase[traitIndex] = 0;
+            }
+            break;
+        case TRAIT_HEAVY_HANDED:
+            if (canChangeSpecial(player, ST_STRENGTH, -1, reason)) {
+                player.StatBase[ST_STRENGTH] += -1;
+                player.StatBase[ST_MELEE_DAMAGE] += -5;
+                player.TraitBase[traitIndex] = 0;
+            }
+            break;
+        case TRAIT_JINXED:
+            if (canChangeSpecial(player, ST_LUCK, +1, reason)) {
+                player.StatBase[ST_LUCK] += +1;
+                player.TraitBase[traitIndex] = 0;
+            }
+            break;
+        case TRAIT_GOOD_NATURED:
+            if (canChangeSpecial(player, ST_CHARISMA, -1, reason)) {
+                player.StatBase[ST_CHARISMA] += -1;
+                player.TraitBase[traitIndex] = 0;
+            }
+            break;
+        case TRAIT_BRUTISH_HULK:
+            if (canChangeSpecial(player, ST_CHARISMA, +1, reason)) {
+                player.StatBase[ST_CHARISMA] += +1;
+                player.StatBase[ST_MAX_LIFE] -= 12;
+                player.StatBase[ST_MELEE_DAMAGE] += -3;
+                player.TraitBase[traitIndex] = 0;
+                if (player.Stat[ST_CURRENT_HP] > player.Stat[ST_MAX_LIFE]) {
+                    player.StatBase[ST_CURRENT_HP] = player.Stat[ST_MAX_LIFE];
+                }
+            }
+            break;
+        case TRAIT_CAUTIOUS_NATURE:
+            if (canChangeSpecial(player, ST_PERCEPTION, -1, reason)) {
+                player.StatBase[ST_PERCEPTION] += -1;
+                player.TraitBase[traitIndex] = 0;
+            }
+            break;
+        case TRAIT_GIFTED:
+            canChangeGifted = true;
+            for (uint i = ST_STRENGTH; i <= ST_LUCK; i++) {
+                if (!canChangeSpecial(player, i, -1, reason)) {
+                    canChangeGifted = false;
+                }
+            }
+            if (canChangeGifted) {
+                for (uint i = ST_STRENGTH; i <= ST_LUCK; i++) {
+                    player.StatBase[i] += -1;
+                }
+                player.TraitBase[traitIndex] = 0;
+                if (player.Stat[ST_CURRENT_HP] > player.Stat[ST_MAX_LIFE]) {
+                    player.StatBase[ST_CURRENT_HP] = player.Stat[ST_MAX_LIFE];
+                }
+            }
+            break;
+        case TRAIT_LONER:
+            if (canRemoveTrait(player, TRAIT_LONER, reason)) {
+                player.TraitBase[traitIndex] = 0;
+            }
+            break;
+        default:
+    }
+}
+
+bool hasExclusiveTrait(Critter& player) {
+    if (player.Trait[TRAIT_FAST_SHOT] > 0 || player.Trait[TRAIT_FINESSE] > 0 || player.Trait[TRAIT_DOUBLE_TAP] > 0 || player.Trait[TRAIT_CAUTIOUS_NATURE] > 0 || player.Trait[TRAIT_KAMIKAZE] > 0) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+int usedTraitPoints(Critter& player) {
+    int traits = 0;
+    for (uint i = TRAIT_BEGIN; i <= TRAIT_END; i++) {
+        if (player.Trait[i] > 0) {
+            if (i == TRAIT_GIFTED) {
+                traits += 2;
+            } else {
+                traits++;
+            }
+        }
+    }
+    //player.Say(SAY_NETMSG, "Trait END = " + TRAIT_END + ", usedTraitPoints = " + traits);
+    return traits;
+}
+
+bool isCharPointsChecksumOk(Critter& player, string& reason) {
+    reason = "";
+    int totalBaseStats = 40;
+    if (usedTraitPoints(player) > 2) {
+        reason = "Too many Traits.";
+        return false;
+    }
+
+    //  extra specials from traits
+    if (player.Trait[TRAIT_GIFTED] > 0) {
+        totalBaseStats += 7;
+    }
+    if (player.Trait[TRAIT_BRUISER] > 0) {
+        totalBaseStats += 3;
+    }
+    if (player.Trait[TRAIT_FAST_SHOT] > 0) {
+        totalBaseStats += 1;
+    }
+    if (player.Trait[TRAIT_FINESSE] > 0) {
+        totalBaseStats += 1;
+    }
+    if (player.Trait[TRAIT_DOUBLE_TAP] > 0) {
+        totalBaseStats += 1;
+    }
+    if (player.Trait[TRAIT_CAUTIOUS_NATURE] > 0) {
+        totalBaseStats += 1;
+    }
+    if (player.Trait[TRAIT_KAMIKAZE] > 0) {
+        totalBaseStats += 1;
+    }
+    if (player.Trait[TRAIT_HEAVY_HANDED] > 0) {
+        totalBaseStats += 1;
+    }
+    if (player.Trait[TRAIT_GOOD_NATURED] > 0) {
+        totalBaseStats += 1;
+    }
+    if (player.Trait[TRAIT_BRUTISH_HULK] > 0) {
+        totalBaseStats -= 1;
+    }
+    if (player.Trait[TRAIT_JINXED] > 0) {
+        totalBaseStats -= 1;
+    }
+
+    //  extra specials from perks
+    if (player.Perk[PE_GAIN_STRENGTH] > 0) {
+        totalBaseStats += 2 * player.Perk[PE_GAIN_STRENGTH];
+    }
+    if (player.Perk[PE_GAIN_PERCEPTION] > 0) {
+        totalBaseStats += 2 * player.Perk[PE_GAIN_PERCEPTION];
+    }
+    if (player.Perk[PE_GAIN_ENDURANCE] > 0) {
+        totalBaseStats += 2 * player.Perk[PE_GAIN_ENDURANCE];
+    }
+    if (player.Perk[PE_GAIN_CHARISMA] > 0) {
+        totalBaseStats += 2 * player.Perk[PE_GAIN_CHARISMA];
+    }
+    if (player.Perk[PE_GAIN_INTELLIGENCE] > 0) {
+        totalBaseStats += 2 * player.Perk[PE_GAIN_INTELLIGENCE];
+    }
+    if (player.Perk[PE_GAIN_AGILITY] > 0) {
+        totalBaseStats += 2 * player.Perk[PE_GAIN_STRENGTH];
+    }
+    if (player.Perk[PE_GAIN_LUCK] > 0) {
+        totalBaseStats += 2 * player.Perk[PE_GAIN_LUCK];
+    }
+
+    int currentBaseStats = 0;
+    for (uint i = ST_STRENGTH; i <= ST_LUCK; i++) {
+        currentBaseStats += player.StatBase[i];
+    }
+    if (currentBaseStats > totalBaseStats) {
+        reason = "Player: " + player.Name + " has MORE base SPECIAL stats than it should: " + currentBaseStats + " vs " + totalBaseStats;
+        return false;
+    }
+    if (currentBaseStats < totalBaseStats) {
+        reason = "Player: " + player.Name + " has LESS base SPECIAL stats than it should: " + currentBaseStats + " vs " + totalBaseStats;
+        return false;
+    }
+    return true;
+}
+
+
+#endif 	//	__MUTATION_FEATURE__

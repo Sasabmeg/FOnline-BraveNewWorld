@@ -14,8 +14,9 @@ lang=engl
 12 2020 D _param p SK_OUTDOORSMAN < 50 #
 10 2030 D _script map_tent@d_IsTentOwner 0  #
 5 2040 R _script map_tent@r_ThrowSomething 0  #
-6 2050 D _script map_tent@d_IsKnownLocation 0  D _script map_tent@d_IsNotTentOwner 0  R _script map_tent@r_ForgetLocation 0  #
-0 2060 @
+300 2050 #
+6 2060 D _script map_tent@d_IsKnownLocation 0  D _script map_tent@d_IsNotTentOwner 0  R _script map_tent@r_ForgetLocation 0  #
+0 2070 @
 6 3000 None 0 #
 0 3010 @
 10 4000 None 1 #
@@ -103,7 +104,51 @@ lang=engl
 22 32000 None 0 #
 213 32010 R _param p ST_EXPERIENCE + 50 R _item p PID_IGUANA_ON_A_STICK + 1 R _param p ST_POISONING_LEVEL - 8 R _param p ST_RADIATION_LEVEL - 8 @
 23 33000 None 0 #
-213 33010 R _param p ST_EXPERIENCE + 55 R _item p PID_SMITTY_MEAL + 1 R _param p ST_POISONING_LEVEL - 15 R _param p ST_RADIATION_LEVEL - 15 &
+213 33010 R _param p ST_EXPERIENCE + 55 R _item p PID_SMITTY_MEAL + 1 R _param p ST_POISONING_LEVEL - 15 R _param p ST_RADIATION_LEVEL - 15 @
+300 34000 None 0 #
+301 34010 #
+302 34020 #
+303 34030 #
+304 34040 #
+5 34050 @
+301 35000 mutationFeature@dlg_RemoveTraitList 0 #
+301 35010 D _script mutationFeature@d_CanRemoveTrait 1 550 R _script mutationFeature@r_RemoveTrait 1 550 #
+301 35020 D _script mutationFeature@d_CanRemoveTrait 1 551 R _script mutationFeature@r_RemoveTrait 1 551 #
+301 35030 D _script mutationFeature@d_CanRemoveTrait 1 552 R _script mutationFeature@r_RemoveTrait 1 552 #
+301 35040 D _script mutationFeature@d_CanRemoveTrait 1 553 R _script mutationFeature@r_RemoveTrait 1 553 #
+301 35050 D _script mutationFeature@d_CanRemoveTrait 1 554 R _script mutationFeature@r_RemoveTrait 1 554 #
+301 35060 D _script mutationFeature@d_CanRemoveTrait 1 555 R _script mutationFeature@r_RemoveTrait 1 555 #
+301 35070 D _script mutationFeature@d_CanRemoveTrait 1 556 R _script mutationFeature@r_RemoveTrait 1 556 #
+301 35080 D _script mutationFeature@d_CanRemoveTrait 1 557 R _script mutationFeature@r_RemoveTrait 1 557 #
+301 35090 D _script mutationFeature@d_CanRemoveTrait 1 558 R _script mutationFeature@r_RemoveTrait 1 558 #
+301 35100 D _script mutationFeature@d_CanRemoveTrait 1 559 R _script mutationFeature@r_RemoveTrait 1 559 #
+301 35110 D _script mutationFeature@d_CanRemoveTrait 1 560 R _script mutationFeature@r_RemoveTrait 1 560 #
+301 35120 D _script mutationFeature@d_CanRemoveTrait 1 561 R _script mutationFeature@r_RemoveTrait 1 561 #
+301 35130 D _script mutationFeature@d_CanRemoveTrait 1 562 R _script mutationFeature@r_RemoveTrait 1 562 #
+301 35140 D _script mutationFeature@d_CanRemoveTrait 1 563 R _script mutationFeature@r_RemoveTrait 1 563 #
+301 35150 D _script mutationFeature@d_CanRemoveTrait 1 564 R _script mutationFeature@r_RemoveTrait 1 564 #
+301 35160 D _script mutationFeature@d_CanRemoveTrait 1 565 R _script mutationFeature@r_RemoveTrait 1 565 #
+300 35170 @
+302 36000 mutationFeature@dlg_AvailableTraitList 0 #
+302 36010 D _script mutationFeature@d_CanAddTrait 1 550 R _script mutationFeature@r_AddTrait 1 550 #
+302 36020 D _script mutationFeature@d_CanAddTrait 1 551 R _script mutationFeature@r_AddTrait 1 551 #
+302 36030 D _script mutationFeature@d_CanAddTrait 1 552 R _script mutationFeature@r_AddTrait 1 552 #
+302 36040 D _script mutationFeature@d_CanAddTrait 1 553 R _script mutationFeature@r_AddTrait 1 553 #
+302 36050 D _script mutationFeature@d_CanAddTrait 1 554 R _script mutationFeature@r_AddTrait 1 554 #
+302 36060 D _script mutationFeature@d_CanAddTrait 1 555 R _script mutationFeature@r_AddTrait 1 555 #
+302 36070 D _script mutationFeature@d_CanAddTrait 1 556 R _script mutationFeature@r_AddTrait 1 556 #
+302 36080 D _script mutationFeature@d_CanAddTrait 1 557 R _script mutationFeature@r_AddTrait 1 557 #
+302 36090 D _script mutationFeature@d_CanAddTrait 1 558 R _script mutationFeature@r_AddTrait 1 558 #
+302 36100 D _script mutationFeature@d_CanAddTrait 1 559 R _script mutationFeature@r_AddTrait 1 559 #
+302 36110 D _script mutationFeature@d_CanAddTrait 1 560 R _script mutationFeature@r_AddTrait 1 560 #
+302 36120 D _script mutationFeature@d_CanAddTrait 1 561 R _script mutationFeature@r_AddTrait 1 561 #
+302 36130 D _script mutationFeature@d_CanAddTrait 1 562 R _script mutationFeature@r_AddTrait 1 562 #
+302 36140 D _script mutationFeature@d_CanAddTrait 1 563 R _script mutationFeature@r_AddTrait 1 563 #
+302 36150 D _script mutationFeature@d_CanAddTrait 1 564 R _script mutationFeature@r_AddTrait 1 564 #
+302 36160 D _script mutationFeature@d_CanAddTrait 1 565 R _script mutationFeature@r_AddTrait 1 565 #
+300 36170 @
+303 37000 None 0 @
+304 38000 None 0 &
 
 [engl]
 {100}{}{none}
@@ -115,8 +160,9 @@ lang=engl
 {2020}{}{[Cooking]}
 {2030}{}{[Tent management]}
 {2040}{}{[Throw something into the fire]}
-{2050}{}{[Forget location]}
-{2060}{}{[Exit]}
+{2050}{}{[Sit back and reflect on the past]}
+{2060}{}{[Forget location]}
+{2070}{}{[Exit]}
 {3000}{}{[You no longer know the way to this location]}
 {3010}{}{[Exit]}
 {4000}{}{[You sit by the fire and decide what to do next with the place]}
@@ -216,4 +262,63 @@ Make sure you secure all items and move all followers to other place before you 
 {32010}{}{[Complete the dish]}
 {33000}{}{*You make a great meal, it looks lovely*}
 {33010}{}{[Complete the dish]}
+{34000}{}{You sit back and reflect on your past actions, your childhood, the ways Karma have affected you.  You were told that the only way to get rid of your Karma is to fulfll it.  But what about your self awareness, moments like these..}
+{34010}{}{If I would become to be less like this... [Remove Traits]}
+{34020}{}{If I would become to be more like this... [Add Traits]}
+{34030}{}{If I would focus less on this... [Remove Perks]}
+{34040}{}{If I would focus more on this... [Add Perks]}
+{34050}{}{[Back]}
+{35000}{}{That was never really me! It was just an illusion...@lex removableTraits@}
+{35010}{}{[Remove Fast Metabolism]}
+{35020}{}{[Remove Bruiser]
+}
+{35030}{}{[Remove One Hander]
+}
+{35040}{}{[Remove Finesse]
+}
+{35050}{}{[Remove Kamikaze]
+}
+{35060}{}{[Remove Heavy Handed]
+}
+{35070}{}{[Remove Fast Shot]
+}
+{35080}{}{[Remove Double Tap]
+}
+{35090}{}{[Remove Bloody Mess]
+}
+{35100}{}{[Remove Jinxed]
+}
+{35110}{}{[Remove Good Natured]
+}
+{35120}{}{[Remove Chem Reliant]
+}
+{35130}{}{[Remove Brutish Hulk]
+}
+{35140}{}{[Remove Cautious Nature]
+}
+{35150}{}{[Remove Gifted]
+}
+{35160}{}{[Remove Loner]
+}
+{35170}{}{[Back]}
+{36000}{}{This is how I always really have been...@lex availableTraits@}
+{36010}{}{[Add Fast Meabolism]}
+{36020}{}{[Add Bruiser]}
+{36030}{}{[Add One Hander]}
+{36040}{}{[Add Finesse]}
+{36050}{}{[Add Kamikaze]}
+{36060}{}{[Add Heavy Handed]}
+{36070}{}{[Add Fast Shot]}
+{36080}{}{[Add Double Tap]}
+{36090}{}{[Add Bloody Mess]}
+{36100}{}{[Add Jinxed]}
+{36110}{}{[Add Good Natured]}
+{36120}{}{[Add Chem Reliant]}
+{36130}{}{[Add Brutish Hulk]}
+{36140}{}{[Add Cautious Nature]}
+{36150}{}{[Add Gifted]}
+{36160}{}{[Add Loner]}
+{36170}{}{[Back]}
+{37000}{}{I think I should focus more on...}
+{38000}{}{I think I should focus less on...}
 
