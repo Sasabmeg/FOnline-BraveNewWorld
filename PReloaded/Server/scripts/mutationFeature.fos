@@ -16,6 +16,462 @@ string colorAlreadyHave = "|" + COLOR_GOLDEN_YELLOW + " ";
 string colorNormal = "|" + COLOR_LGREEN + " ";
 
 
+///
+///     SPECIALS
+///
+
+
+bool d_CanChangeSpecial(Critter& player, Critter@ npc, int val1, int val2) {
+    string reason = "";
+    return canChangeSpecial(player, val1, val2, 0, reason);
+}
+
+void r_ChangeSpecial(Critter& player, Critter@ npc, int val1, int val2, int val3, int val4) {
+    string reason = "";
+    if (canChangeSpecial(player, val1, val2, 0, reason) && canChangeSpecial(player, val3, val4, 0, reason)) {
+        changeSpecial(player, val1, val2);
+        changeSpecial(player, val3, val4);
+    }
+}
+
+/**
+ * Show the SPECIALs the player currently has and the reason they can be decreased or increased. @lex specials@ is used.
+ */
+void dlg_SpecialList(Critter& player, Critter@ npc, string@ text) {
+    if (!IS_DIALOG_GENERATED(text))
+        return;
+
+    string decreaseable = "-decreaseable-";
+    string increaseable = "-increaseable-";
+    string str = "";
+    array<string> randomText = {"The radiated wind is killing me!", "Hey... is this thick hair or a tree growing on my head?!?", "Is my skin green?"
+                                , "Why am I glowing? I haven't drunk that many bottles of Roentgen Rum!", "I'll sure leave behind a radiated corpse."};
+    string listPrefix = "\t";
+    string reason = "";
+
+    str += randomText[Random(0, randomText.length() - 1)];
+    str += "\n\n[List of your S.P.E.C.I.A.L.:]\n";
+    str += listPrefix + "[ST " + ((player.StatBase[ST_STRENGTH] == 10) ? "" : ((player.StatBase[ST_STRENGTH] == 1) ? "  " : " ")) + player.StatBase[ST_STRENGTH] + ":  ";
+    if (canChangeSpecial(player, 0, -1, 0, reason)) {
+        str += decreaseable + ", ";
+    } else {
+        str += reason + ", ";
+    }
+    if (canChangeSpecial(player, 0, 1, 0, reason)) {
+        str += increaseable + "]\n";
+    } else {
+        str += reason + "]\n";
+    }
+
+    str += listPrefix + "[PE " + ((player.StatBase[ST_PERCEPTION] == 10) ? "" : ((player.StatBase[ST_PERCEPTION] == 1) ? "  " : " ")) + player.StatBase[ST_PERCEPTION] + ":  ";
+    if (canChangeSpecial(player, 1, -1, 0, reason)) {
+        str += decreaseable + ", ";
+    } else {
+        str += reason + ", ";
+    }
+    if (canChangeSpecial(player, 1, 1, 0, reason)) {
+        str += increaseable + "]\n";
+    } else {
+        str += reason + "]\n";
+    }
+
+    str += listPrefix + "[EN " + ((player.StatBase[ST_ENDURANCE] == 10) ? "" : ((player.StatBase[ST_ENDURANCE] == 1) ? "  " : " ")) + player.StatBase[ST_ENDURANCE] + ":  ";
+    if (canChangeSpecial(player, 2, -1, 0, reason)) {
+        str += decreaseable + ", ";
+    } else {
+        str += reason + ", ";
+    }
+    if (canChangeSpecial(player, 2, 1, 0, reason)) {
+        str += increaseable + "]\n";
+    } else {
+        str += reason + "]\n";
+    }
+
+    str += listPrefix + "[CH " + ((player.StatBase[ST_CHARISMA] == 10) ? "" : ((player.StatBase[ST_CHARISMA] == 1) ? "  " : " ")) + player.StatBase[ST_CHARISMA] + ":  ";
+    if (canChangeSpecial(player, 3, -1, 0, reason)) {
+        str += decreaseable + ", ";
+    } else {
+        str += reason + ", ";
+    }
+    if (canChangeSpecial(player, 3, 1, 0, reason)) {
+        str += increaseable + "]\n";
+    } else {
+        str += reason + "]\n";
+    }
+
+    str += listPrefix + "[IN " + ((player.StatBase[ST_INTELLECT] == 10) ? "" : ((player.StatBase[ST_INTELLECT] == 1) ? "  " : " ")) + player.StatBase[ST_INTELLECT] + ":  ";
+    if (canChangeSpecial(player, 4, -1, 0, reason)) {
+        str += decreaseable + ", ";
+    } else {
+        str += reason + ", ";
+    }
+    if (canChangeSpecial(player, 4, 1, 0, reason)) {
+        str += increaseable + "]\n";
+    } else {
+        str += reason + "]\n";
+    }
+
+    str += listPrefix + "[AG" + ((player.StatBase[ST_AGILITY] == 10) ? "" : ((player.StatBase[ST_AGILITY] == 1) ? "  " : " ")) + player.StatBase[ST_AGILITY] + ":  ";
+    if (canChangeSpecial(player, 5, -1, 0, reason)) {
+        str += decreaseable + ", ";
+    } else {
+        str += reason + ", ";
+    }
+    if (canChangeSpecial(player, 5, 1, 0, reason)) {
+        str += increaseable + "]\n";
+    } else {
+        str += reason + "]\n";
+    }
+
+    str += listPrefix + "[LK " + ((player.StatBase[ST_LUCK] == 10) ? "" : ((player.StatBase[ST_LUCK] == 1) ? "  " : " ")) + player.StatBase[ST_LUCK] + ":  ";
+    if (canChangeSpecial(player, 6, -1, 0, reason)) {
+        str += decreaseable + ", ";
+    } else {
+        str += reason + ", ";
+    }
+    if (canChangeSpecial(player, 6, 1, 0, reason)) {
+        str += increaseable + "]\n";
+    } else {
+        str += reason + "]\n";
+    }
+
+
+    text = "$specials " + str;
+    if (text.length() > 998) {
+        text = substring(text, 0, 998);
+    }
+}
+
+string getSpecialName(uint specialIndex) {
+    string specialName = "";
+    switch (specialIndex) {
+        case ST_STRENGTH:
+            specialName = "Strength";
+            break;
+        case ST_PERCEPTION:
+            specialName = "Perception";
+            break;
+        case ST_ENDURANCE:
+            specialName = "Endurance";
+            break;
+        case ST_CHARISMA:
+            specialName = "Charisma";
+            break;
+        case ST_INTELLECT:
+            specialName = "Intellect";
+            break;
+        case ST_AGILITY:
+            specialName = "Agility";
+            break;
+        case ST_LUCK:
+            specialName = "Luck";
+            break;
+        default:
+            specialName = "Special";
+    }
+    return specialName;
+}
+
+bool canChangeSpecial(Critter& player, uint specialIndex, int byValue, uint ignoreIndex, string@ reason) {
+    if (ST_STRENGTH > specialIndex || ST_LUCK < specialIndex) {
+        reason = colorError + " Error: Special index out of bounds." + colorNormal;
+        return false;
+    }
+    string specialName = getSpecialName(specialIndex);
+
+    if (player.StatBase[specialIndex] + byValue < 1) {
+        reason = colorWarn + specialName + " too low." + colorNormal;
+        return false;
+    }
+    if (player.StatBase[specialIndex] + byValue > 10) {
+        reason = colorWarn + specialName + " too high." + colorNormal;
+        return false;
+    }
+    switch (specialIndex) {
+        case ST_STRENGTH:
+            if (player.Perk[PE_ADRENALINE_RUSH] > 0 && player.StatBase[ST_STRENGTH] + byValue < 5) {
+                reason = colorWarn + "Blocked by Adrenaline Rush perk." + colorNormal;
+                return false;
+            }
+            if (player.Perk[PE_STONEWALL] > 0 && player.StatBase[ST_STRENGTH] + byValue < 6) {
+                reason = colorWarn + "Blocked by Stonewall perk." + colorNormal;
+                return false;
+            }
+            if (player.Perk[PE_GAIN_STRENGTH] > 0 && ignoreIndex != PE_GAIN_STRENGTH) {
+                if (player.StatBase[ST_STRENGTH] + byValue < 3) {
+                    reason = colorWarn + "Blocked by Gain Strength perk." + colorNormal;
+                    return false;
+                }
+                if (player.Trait[TRAIT_BRUISER] > 0 && ignoreIndex != TRAIT_BRUISER && player.StatBase[ST_STRENGTH] + byValue < 6) {
+                    reason = colorWarn + "Blocked by Gain Strength perk and Bruiser trait." + colorNormal;
+                    return false;
+                }
+                if (player.Trait[TRAIT_HEAVY_HANDED] > 0 && ignoreIndex != TRAIT_HEAVY_HANDED && player.StatBase[ST_STRENGTH] + byValue < 4) {
+                    reason = colorWarn + "Blocked by Gain Strength perk and Bruiser trait." + colorNormal;
+                    return false;
+                }
+                if (player.Trait[TRAIT_BRUISER] > 0 && ignoreIndex != TRAIT_BRUISER && player.Trait[TRAIT_HEAVY_HANDED] > 0
+                        && ignoreIndex != TRAIT_GIFTED && player.StatBase[ST_STRENGTH] + byValue < 7) {
+                    reason = colorWarn + "Blocked by Gain Strength perk, Bruiser and Heavy Handed traits." + colorNormal;
+                    return false;
+                }
+                if (player.Trait[TRAIT_GIFTED] > 0 && ignoreIndex != TRAIT_GIFTED && player.StatBase[ST_STRENGTH] + byValue < 4) {
+                    reason = colorWarn + "Blocked by Gain Strength perk and Gifted trait." + colorNormal;
+                    return false;
+                }
+            } else {
+                if (player.Trait[TRAIT_BRUISER] > 0 && ignoreIndex != TRAIT_BRUISER && player.StatBase[ST_STRENGTH] + byValue < 4) {
+                    reason = colorWarn + "Blocked by Bruiser trait." + colorNormal;
+                    return false;
+                }
+                if (player.Trait[TRAIT_HEAVY_HANDED] > 0 && ignoreIndex != TRAIT_HEAVY_HANDED && player.StatBase[ST_STRENGTH] + byValue < 2) {
+                    reason = colorWarn + "Blocked by Bruiser trait." + colorNormal;
+                    return false;
+                }
+                if (player.Trait[TRAIT_BRUISER] > 0 && ignoreIndex != TRAIT_BRUISER
+                        && player.Trait[TRAIT_HEAVY_HANDED] > 0 && ignoreIndex != TRAIT_HEAVY_HANDED && player.StatBase[ST_STRENGTH] + byValue < 5) {
+                    reason = colorWarn + "Blocked by Bruiser and Heavy Handed traits." + colorNormal;
+                    return false;
+                }
+                if (player.Trait[TRAIT_GIFTED] > 0 && ignoreIndex != TRAIT_GIFTED && player.StatBase[ST_STRENGTH] + byValue < 2) {
+                    reason = colorWarn + "Blocked by Gifted trait." + colorNormal;
+                    return false;
+                }
+            }
+            break;
+        case ST_PERCEPTION:
+            if (player.Perk[PE_SHARPSHOOTER] > 0 && player.StatBase[ST_PERCEPTION] + byValue < 7) {
+                reason = colorWarn + "Blocked by Sharpshooter perk." + colorNormal;
+                return false;
+            }
+            if (player.Perk[PE_GAIN_PERCEPTION] > 0 && ignoreIndex != PE_GAIN_PERCEPTION) {
+                if (player.StatBase[ST_PERCEPTION] + byValue < 3) {
+                    reason = colorWarn + "Blocked by Gain Perception perk." + colorNormal;
+                    return false;
+                }
+                if (player.Trait[TRAIT_CAUTIOUS_NATURE] > 0 && ignoreIndex != TRAIT_CAUTIOUS_NATURE && player.StatBase[ST_PERCEPTION] + byValue < 4) {
+                    reason = colorWarn + "Blocked by Gain Perception perk and Cautious Nature trait." + colorNormal;
+                    return false;
+                }
+                if (player.Trait[TRAIT_GIFTED] > 0 && ignoreIndex != TRAIT_GIFTED && player.StatBase[ST_PERCEPTION] + byValue < 4) {
+                    reason = colorWarn + "Blocked by Gain Perception perk and Gifted trait." + colorNormal;
+                    return false;
+                }
+            } else {
+                if (player.Trait[TRAIT_CAUTIOUS_NATURE] > 0 && ignoreIndex != TRAIT_CAUTIOUS_NATURE && player.StatBase[ST_PERCEPTION] + byValue < 2) {
+                    reason = colorWarn + "Blocked by Cautious Nature trait." + colorNormal;
+                    return false;
+                }
+                if (player.Trait[TRAIT_GIFTED] > 0 && ignoreIndex != TRAIT_GIFTED && player.StatBase[ST_PERCEPTION] + byValue < 2) {
+                    reason = colorWarn + "Blocked by Gifted trait." + colorNormal;
+                    return false;
+                }
+            }
+            break;
+        case ST_ENDURANCE:
+            if (player.Perk[PE_TOUGHNESS] > 0 && player.StatBase[ST_ENDURANCE] + byValue < 4) {
+                reason = colorWarn + "Blocked by Toughness perk." + colorNormal;
+                return false;
+            }
+            if (player.Perk[PE_EVEN_TOUGHER] > 0 && player.StatBase[ST_ENDURANCE] + byValue < 5) {
+                reason = colorWarn + "Blocked by Even Tougher perk." + colorNormal;
+                return false;
+            }
+            if (player.Perk[PE_MAN_OF_STEEL] > 0 && player.StatBase[ST_ENDURANCE] + byValue < 6) {
+                reason = colorWarn + "Blocked by Man of Steel perk." + colorNormal;
+                return false;
+            }
+            if (player.Perk[PE_GAIN_ENDURANCE] > 0 && ignoreIndex != PE_GAIN_ENDURANCE) {
+                if (player.StatBase[ST_ENDURANCE] + byValue < 3) {
+                    reason = colorWarn + "Blocked by Gain Endurance perk." + colorNormal;
+                    return false;
+                }
+                if (player.Trait[TRAIT_GIFTED] > 0 && ignoreIndex != TRAIT_GIFTED && player.StatBase[ST_ENDURANCE] + byValue < 4) {
+                    reason = colorWarn + "Blocked by Gain Endurance perk and Gifted trait." + colorNormal;
+                    return false;
+                }
+            } else {
+                if (player.Trait[TRAIT_GIFTED] > 0 && ignoreIndex != TRAIT_GIFTED && player.StatBase[ST_ENDURANCE] + byValue < 2) {
+                    reason = colorWarn + "Blocked by Gifted trait." + colorNormal;
+                    return false;
+                }
+            }
+            break;
+        case ST_CHARISMA:
+            if (player.Perk[PE_WAY_OF_THE_FRUIT] > 0 && player.StatBase[ST_CHARISMA] + byValue < 4) {
+                reason = colorWarn + "Blocked by Way of the Fruit perk." + colorNormal;
+                return false;
+            }
+            if (player.Perk[PE_SPRAY_AND_PRAY] > 0 && player.StatBase[ST_CHARISMA] + byValue < 3) {
+                reason = colorWarn + "Blocked by Way of the Fruit perk." + colorNormal;
+                return false;
+            }
+            if (player.Perk[PE_MORE_RANGED_DAMAGE] > 0 && player.StatBase[ST_CHARISMA] + byValue < 4) {
+                reason = colorWarn + "Blocked by More Ranged Damage perk." + colorNormal;
+                return false;
+            }
+            if (player.Perk[PE_GAIN_CHARISMA] > 0 && ignoreIndex != PE_GAIN_CHARISMA) {
+                if (player.StatBase[ST_CHARISMA] + byValue < 3) {
+                    reason = colorWarn + "Blocked by Gain Charisma perk." + colorNormal;
+                    return false;
+                }
+                if (player.Trait[TRAIT_GIFTED] > 0 && ignoreIndex != TRAIT_GIFTED && player.StatBase[ST_CHARISMA] + byValue < 4) {
+                    reason = colorWarn + "Blocked by Gain Charisma perk and Gifted trait." + colorNormal;
+                    return false;
+                }
+            } else {
+                if (player.Trait[TRAIT_GIFTED] > 0 && ignoreIndex != TRAIT_GIFTED && player.StatBase[ST_CHARISMA] + byValue < 2) {
+                    reason = colorWarn + "Blocked by Gifted trait." + colorNormal;
+                    return false;
+                }
+                if (player.Trait[TRAIT_BRUTISH_HULK] > 0 && ignoreIndex != TRAIT_BRUTISH_HULK && player.StatBase[ST_CHARISMA] + byValue > 9) {
+                    reason = colorWarn + "Blocked by Brutish Hulk trait." + colorNormal;
+                    return false;
+                }
+            }
+            break;
+        case ST_INTELLECT:
+            if (player.Perk[PE_HEALER_II] > 0 && player.StatBase[ST_INTELLECT] + byValue < 4) {
+                reason = colorWarn + "Blocked by Healer perk." + colorNormal;
+                return false;
+            }
+            if (player.Perk[PE_SHARPSHOOTER] > 0 && player.StatBase[ST_INTELLECT] + byValue < 3) {
+                reason = colorWarn + "Blocked by Sharpshooter perk." + colorNormal;
+                return false;
+            }
+            if (player.Perk[PE_MEDIC] > 0 && player.StatBase[ST_INTELLECT] + byValue < 5) {
+                reason = colorWarn + "Blocked by Medic perk." + colorNormal;
+                return false;
+            }
+            if (player.Perk[PE_GAIN_INTELLIGENCE] > 0 && ignoreIndex != PE_GAIN_INTELLIGENCE) {
+                if (player.StatBase[ST_INTELLECT] + byValue < 3) {
+                    reason = colorWarn + "Blocked by Gain Intellect perk." + colorNormal;
+                    return false;
+                }
+                if (player.Trait[TRAIT_FINESSE] > 0 && ignoreIndex != TRAIT_FINESSE && player.StatBase[ST_INTELLECT] + byValue < 4) {
+                    reason = colorWarn + "Blocked by Gain Intellect perk and Finesse trait." + colorNormal;
+                    return false;
+                }
+                if (player.Trait[TRAIT_GIFTED] > 0 && ignoreIndex != TRAIT_GIFTED && player.StatBase[ST_INTELLECT] + byValue < 4) {
+                    reason = colorWarn + "Blocked by Gain Intellect perk and Gifted trait." + colorNormal;
+                    return false;
+                }
+            } else {
+                if (player.Trait[TRAIT_FINESSE] > 0 && ignoreIndex != TRAIT_FINESSE && player.StatBase[ST_INTELLECT] + byValue < 2) {
+                    reason = colorWarn + "Blocked by Finesse trait." + colorNormal;
+                    return false;
+                }
+                if (player.Trait[TRAIT_GIFTED] > 0 && ignoreIndex != TRAIT_GIFTED && player.StatBase[ST_INTELLECT] + byValue < 2) {
+                    reason = colorWarn + "Blocked by Gifted trait." + colorNormal;
+                    return false;
+                }
+            }
+            break;
+        case ST_AGILITY:
+            if (player.Perk[PE_QUICK_POCKETS] > 0 && player.StatBase[ST_AGILITY] + byValue < 5) {
+                reason = colorWarn + "Blocked by Quick Pockets perk." + colorNormal;
+                return false;
+            }
+            if (player.Perk[PE_QUICK_RECOVERY] > 0 && player.StatBase[ST_AGILITY] + byValue < 6) {
+                reason = colorWarn + "Blocked by Quick Recovery perk." + colorNormal;
+                return false;
+            }
+            if (player.Perk[PE_LIVEWIRE] > 0 && player.StatBase[ST_AGILITY] + byValue < 7) {
+                reason = colorWarn + "Blocked by Livewire perk." + colorNormal;
+                return false;
+            }
+            if (player.Perk[PE_ACTION_BOY] > 0 && player.StatBase[ST_AGILITY] + byValue < 5) {
+                reason = colorWarn + "Blocked by Action Boy perk." + colorNormal;
+                return false;
+            }
+            if (player.Perk[PE_GAIN_AGILITY] > 0 && ignoreIndex != PE_GAIN_AGILITY) {
+                if (player.StatBase[ST_AGILITY] + byValue < 3) {
+                    reason = colorWarn + "Blocked by Gain Agility perk." + colorNormal;
+                    return false;
+                }
+                if (player.Trait[TRAIT_KAMIKAZE] > 0 && ignoreIndex != TRAIT_KAMIKAZE && player.StatBase[ST_AGILITY] + byValue < 4) {
+                    reason = colorWarn + "Blocked by Gain Agility perk and Kamikaze trait." + colorNormal;
+                    return false;
+                }
+                if (player.Trait[TRAIT_FAST_SHOT] > 0 && ignoreIndex != TRAIT_FAST_SHOT && player.StatBase[ST_AGILITY] + byValue < 4) {
+                    reason = colorWarn + "Blocked by Gain Agility perk and Fast Shot trait." + colorNormal;
+                    return false;
+                }
+                if (player.Trait[TRAIT_DOUBLE_TAP] > 0 && ignoreIndex != TRAIT_DOUBLE_TAP && player.StatBase[ST_AGILITY] + byValue < 4) {
+                    reason = colorWarn + "Blocked by Gain Agility perk and Double Tap trait." + colorNormal;
+                    return false;
+                }
+                if (player.Trait[TRAIT_GIFTED] > 0 && ignoreIndex != TRAIT_GIFTED && player.StatBase[ST_AGILITY] + byValue < 4) {
+                    reason = colorWarn + "Blocked by Gain Agility perk and Gifted trait." + colorNormal;
+                    return false;
+                }
+            } else {
+                if (player.Trait[TRAIT_KAMIKAZE] > 0 && ignoreIndex != TRAIT_KAMIKAZE && player.StatBase[ST_AGILITY] + byValue < 2) {
+                    reason = colorWarn + "Blocked by Kamikaze trait." + colorNormal;
+                    return false;
+                }
+                if (player.Trait[TRAIT_FAST_SHOT] > 0 && ignoreIndex != TRAIT_FAST_SHOT && player.StatBase[ST_AGILITY] + byValue < 2) {
+                    reason = colorWarn + "Blocked by Fast Shot trait." + colorNormal;
+                    return false;
+                }
+                if (player.Trait[TRAIT_DOUBLE_TAP] > 0 && ignoreIndex != TRAIT_DOUBLE_TAP && player.StatBase[ST_AGILITY] + byValue < 2) {
+                    reason = colorWarn + "Blocked by Double Tap trait." + colorNormal;
+                    return false;
+                }
+                if (player.Trait[TRAIT_GIFTED] > 0 && ignoreIndex != TRAIT_GIFTED && player.StatBase[ST_AGILITY] + byValue < 2) {
+                    reason = colorWarn + "Blocked by Gifted trait." + colorNormal;
+                    return false;
+                }
+            }
+            break;
+        case ST_LUCK:
+            if (player.Perk[PE_SPRAY_AND_PRAY] > 0 && player.StatBase[ST_LUCK] + byValue < 5) {
+                reason = colorWarn + "Blocked by Spray and Pray perk." + colorNormal;
+                return false;
+            }
+            if (player.Perk[PE_GAIN_LUCK] > 0 && ignoreIndex != PE_GAIN_LUCK) {
+                if (player.StatBase[ST_LUCK] + byValue < 3) {
+                    reason = colorWarn + "Blocked by Gain Luck perk." + colorNormal;
+                    return false;
+                }
+                if (player.Trait[TRAIT_GIFTED] > 0 && ignoreIndex != TRAIT_GIFTED && player.StatBase[ST_LUCK] + byValue < 4) {
+                    reason = colorWarn + "Blocked by Gain Luck perk and Gifted trait." + colorNormal;
+                    return false;
+                }
+            } else {
+                if (player.Trait[TRAIT_GIFTED] > 0 && ignoreIndex != TRAIT_GIFTED && player.StatBase[ST_LUCK] + byValue < 2) {
+                    reason = colorWarn + "Blocked by Gifted trait." + colorNormal;
+                    return false;
+                }
+                if (player.Trait[TRAIT_JINXED] > 0 && ignoreIndex != TRAIT_JINXED && player.StatBase[ST_LUCK] + byValue > 9) {
+                    reason = colorWarn + "Blocked by Jinxed trait." + colorNormal;
+                    return false;
+                }
+            }
+            break;
+        default:
+            return true;
+    }
+    return true;
+}
+
+void changeSpecial(Critter& player, uint specialIndex, int byValue) {
+    string reason = "";
+    if (canChangeSpecial(player, specialIndex, byValue, 0, reason)) {
+        player.StatBase[specialIndex] += byValue;
+        if (player.StatBase[specialIndex] > 10 || player.StatBase[specialIndex] < 1) {
+            Log("MUTATIN FEATURE: ERROR: Invalid SPECIAL base for player/critter. Investigate. (" + player.Name + ", " + getSpecialName(specialIndex) + ", " + player.StatBase[specialIndex]);
+        }
+    } else {
+        Log("MUTATIN FEATURE: ERROR: Try to change special code reached but special cannot be changed. Investigate.");
+    }
+}
+
+///
+///     TRAITS
+///
+
+
 bool d_CanRemoveTrait(Critter& player, Critter@ npc, int val) {
     uint traitIndex = uint(val);
     string reason = "";
@@ -56,50 +512,62 @@ bool canRemoveTrait(Critter& player, uint traitIndex, string@ reason) {
     switch (traitIndex) {
         case TRAIT_FAST_METABOLISM:
         case TRAIT_ONE_HANDER:
-        case TRAIT_HEAVY_HANDED:
         case TRAIT_BLOODY_MESS:
         case TRAIT_CHEM_RELIANT:
             return true;
+        case TRAIT_HEAVY_HANDED:
+            if (!canChangeSpecial(player, ST_STRENGTH, -1, TRAIT_HEAVY_HANDED, reason)) {
+                return false;
+            }
+            return true;
         case TRAIT_BRUISER:
-            if (!canChangeSpecial(player, ST_STRENGTH, -3, reason)) {
+            if (!canChangeSpecial(player, ST_STRENGTH, -3, TRAIT_BRUISER, reason)) {
                 return false;
             }
             return true;
         case TRAIT_FINESSE:
-            if (!canChangeSpecial(player, ST_INTELLECT, -1, reason)) {
+            if (!canChangeSpecial(player, ST_INTELLECT, -1, TRAIT_FINESSE, reason)) {
                 return false;
             }
             return true;
         case TRAIT_KAMIKAZE:
+            if (!canChangeSpecial(player, ST_AGILITY, -1, TRAIT_KAMIKAZE, reason)) {
+                return false;
+            }
+            return true;
         case TRAIT_FAST_SHOT:
+            if (!canChangeSpecial(player, ST_AGILITY, -1, TRAIT_FAST_SHOT, reason)) {
+                return false;
+            }
+            return true;
         case TRAIT_DOUBLE_TAP:
-            if (!canChangeSpecial(player, ST_AGILITY, -1, reason)) {
+            if (!canChangeSpecial(player, ST_AGILITY, -1, TRAIT_DOUBLE_TAP, reason)) {
                 return false;
             }
             return true;
         case TRAIT_JINXED:
-            if (!canChangeSpecial(player, ST_LUCK, -1, reason)) {
+            if (!canChangeSpecial(player, ST_LUCK, +1, TRAIT_JINXED, reason)) {
                 return false;
             }
             return true;
         case TRAIT_GOOD_NATURED:
-            if (!canChangeSpecial(player, ST_CHARISMA, -1, reason)) {
+            if (!canChangeSpecial(player, ST_CHARISMA, -1, TRAIT_GOOD_NATURED, reason)) {
                 return false;
             }
             return true;
         case TRAIT_BRUTISH_HULK:
-            if (!canChangeSpecial(player, ST_CHARISMA, 1, reason)) {
+            if (!canChangeSpecial(player, ST_CHARISMA, +1, TRAIT_BRUTISH_HULK, reason)) {
                 return false;
             }
             return true;
         case TRAIT_CAUTIOUS_NATURE:
-            if (!canChangeSpecial(player, ST_PERCEPTION, -1, reason)) {
+            if (!canChangeSpecial(player, ST_PERCEPTION, -1, TRAIT_CAUTIOUS_NATURE, reason)) {
                 return false;
             }
             return true;
         case TRAIT_GIFTED:
             for (uint i = ST_STRENGTH; i <= ST_LUCK; i++) {
-                if (!canChangeSpecial(player, i, -1, reason)) {
+                if (!canChangeSpecial(player, i, -1, TRAIT_GIFTED, reason)) {
                     return false;
                 }
             }
@@ -131,12 +599,16 @@ bool canAddTrait(Critter& player, uint traitIndex, string@ reason) {
     switch (traitIndex) {
         case TRAIT_FAST_METABOLISM:
         case TRAIT_ONE_HANDER:
-        case TRAIT_HEAVY_HANDED:
         case TRAIT_BLOODY_MESS:
         case TRAIT_CHEM_RELIANT:
             return true;
+        case TRAIT_HEAVY_HANDED:
+            if (!canChangeSpecial(player, ST_STRENGTH, +1, TRAIT_HEAVY_HANDED, reason)) {
+                return false;
+            }
+            return true;
         case TRAIT_BRUISER:
-            if (!canChangeSpecial(player, ST_STRENGTH, +3, reason)) {
+            if (!canChangeSpecial(player, ST_STRENGTH, +3, TRAIT_BRUISER, reason)) {
                 return false;
             }
             return true;
@@ -145,33 +617,49 @@ bool canAddTrait(Critter& player, uint traitIndex, string@ reason) {
                 reason = colorWarn + exclusiveTrait + colorNormal;
                 return false;
             }
-            if (!canChangeSpecial(player, ST_INTELLECT, +1, reason)) {
+            if (!canChangeSpecial(player, ST_INTELLECT, +1, TRAIT_FINESSE, reason)) {
                 return false;
             }
             return true;
         case TRAIT_KAMIKAZE:
+            if (hasExclusiveTrait(player)) {
+                reason = colorWarn + exclusiveTrait + colorNormal;
+                return false;
+            }
+            if (!canChangeSpecial(player, ST_AGILITY, +1, TRAIT_KAMIKAZE, reason)) {
+                return false;
+            }
+            return true;
         case TRAIT_FAST_SHOT:
+            if (hasExclusiveTrait(player)) {
+                reason = colorWarn + exclusiveTrait + colorNormal;
+                return false;
+            }
+            if (!canChangeSpecial(player, ST_AGILITY, +1, TRAIT_FAST_SHOT, reason)) {
+                return false;
+            }
+            return true;
         case TRAIT_DOUBLE_TAP:
             if (hasExclusiveTrait(player)) {
                 reason = colorWarn + exclusiveTrait + colorNormal;
                 return false;
             }
-            if (!canChangeSpecial(player, ST_AGILITY, +1, reason)) {
+            if (!canChangeSpecial(player, ST_AGILITY, +1, TRAIT_DOUBLE_TAP, reason)) {
                 return false;
             }
             return true;
         case TRAIT_JINXED:
-            if (!canChangeSpecial(player, ST_LUCK, -1, reason)) {
+            if (!canChangeSpecial(player, ST_LUCK, -1, TRAIT_JINXED, reason)) {
                 return false;
             }
             return true;
         case TRAIT_GOOD_NATURED:
-            if (!canChangeSpecial(player, ST_CHARISMA, +1, reason)) {
+            if (!canChangeSpecial(player, ST_CHARISMA, +1, TRAIT_GOOD_NATURED, reason)) {
                 return false;
             }
             return true;
         case TRAIT_BRUTISH_HULK:
-            if (!canChangeSpecial(player, ST_CHARISMA, -1, reason)) {
+            if (!canChangeSpecial(player, ST_CHARISMA, -1, TRAIT_BRUTISH_HULK, reason)) {
                 return false;
             }
             return true;
@@ -180,7 +668,7 @@ bool canAddTrait(Critter& player, uint traitIndex, string@ reason) {
                 reason = colorWarn + exclusiveTrait + colorNormal;
                 return false;
             }
-            if (!canChangeSpecial(player, ST_PERCEPTION, +1, reason)) {
+            if (!canChangeSpecial(player, ST_PERCEPTION, +1, TRAIT_CAUTIOUS_NATURE, reason)) {
                 return false;
             }
             return true;
@@ -190,7 +678,7 @@ bool canAddTrait(Critter& player, uint traitIndex, string@ reason) {
                 return false;
             }
             for (uint i = ST_STRENGTH; i <= ST_LUCK; i++) {
-                if (!canChangeSpecial(player, i, +1, reason)) {
+                if (!canChangeSpecial(player, i, +1, TRAIT_GIFTED, reason)) {
                     return false;
                 }
             }
@@ -202,138 +690,6 @@ bool canAddTrait(Critter& player, uint traitIndex, string@ reason) {
             return false;
     }
     return false;
-}
-
-bool canChangeSpecial(Critter& player, uint specialIndex, int byValue, string@ reason) {
-    if (ST_STRENGTH > specialIndex || ST_LUCK < specialIndex) {
-        reason = colorError + " Error: Special index out of bounds." + colorNormal;
-        return false;
-    }
-    string specialName = "";
-    switch (specialIndex) {
-        case ST_STRENGTH:
-            specialName = "Strength";
-            break;
-        case ST_PERCEPTION:
-            specialName = "Perception";
-            break;
-        case ST_ENDURANCE:
-            specialName = "Endurance";
-            break;
-        case ST_CHARISMA:
-            specialName = "Charisma";
-            break;
-        case ST_INTELLECT:
-            specialName = "Intellect";
-            break;
-        case ST_AGILITY:
-            specialName = "Agility";
-            break;
-        case ST_LUCK:
-            specialName = "Luck";
-            break;
-        default:
-            specialName = "Special";
-    }
-
-    if (player.StatBase[specialIndex] + byValue < 1) {
-        reason = colorWarn + specialName + " too low." + colorNormal;
-        return false;
-    }
-    if (player.StatBase[specialIndex] + byValue > 10) {
-        reason = colorWarn + specialName + " too high." + colorNormal;
-        return false;
-    }
-    switch (specialIndex) {
-        case ST_STRENGTH:
-            if (player.Perk[PE_ADRENALINE_RUSH] > 0 && player.StatBase[ST_STRENGTH] + byValue < 5) {
-                reason = colorWarn + "Blocked by Adrenaline Rush perk." + colorNormal;
-                return false;
-            }
-            if (player.Perk[PE_STONEWALL] > 0 && player.StatBase[ST_STRENGTH] + byValue < 6) {
-                reason = colorWarn + "Blocked by Stonewall perk." + colorNormal;
-                return false;
-            }
-            break;
-        case ST_PERCEPTION:
-            if (player.Perk[PE_SHARPSHOOTER] > 0 && player.StatBase[ST_PERCEPTION] + byValue < 7) {
-                reason = colorWarn + "Blocked by Sharpshooter perk." + colorNormal;
-                return false;
-            }
-            break;
-        case ST_ENDURANCE:
-            if (player.Perk[PE_TOUGHNESS] > 0 && player.StatBase[ST_ENDURANCE] + byValue < 4) {
-                reason = colorWarn + "Blocked by Toughness perk." + colorNormal;
-                return false;
-            }
-            if (player.Perk[PE_EVEN_TOUGHER] > 0 && player.StatBase[ST_ENDURANCE] + byValue < 5) {
-                reason = colorWarn + "Blocked by Even Tougher perk." + colorNormal;
-                return false;
-            }
-            if (player.Perk[PE_MAN_OF_STEEL] > 0 && player.StatBase[ST_ENDURANCE] + byValue < 6) {
-                reason = colorWarn + "Blocked by Man of Steel perk." + colorNormal;
-                return false;
-            }
-            break;
-        case ST_CHARISMA:
-            if (player.Perk[PE_WAY_OF_THE_FRUIT] > 0 && player.StatBase[ST_CHARISMA] + byValue < 4) {
-                reason = colorWarn + "Blocked by Way of the Fruit perk." + colorNormal;
-                return false;
-            }
-            if (player.Perk[PE_SPRAY_AND_PRAY] > 0 && player.StatBase[ST_CHARISMA] + byValue < 3) {
-                reason = colorWarn + "Blocked by Way of the Fruit perk." + colorNormal;
-                return false;
-            }
-            if (player.Perk[PE_MORE_RANGED_DAMAGE] > 0 && player.StatBase[ST_CHARISMA] + byValue < 4) {
-                reason = colorWarn + "Blocked by More Ranged Damage perk." + colorNormal;
-                return false;
-            }
-            break;
-        case ST_INTELLECT:
-            if (player.Perk[PE_HEALER_II] > 0 && player.StatBase[ST_INTELLECT] + byValue < 4) {
-                reason = colorWarn + "Blocked by Healer perk." + colorNormal;
-                return false;
-            }
-            if (player.Perk[PE_SHARPSHOOTER] > 0 && player.StatBase[ST_INTELLECT] + byValue < 3) {
-                reason = colorWarn + "Blocked by Sharpshooter perk." + colorNormal;
-                return false;
-            }
-            if (player.Perk[PE_MEDIC] > 0 && player.StatBase[ST_INTELLECT] + byValue < 5) {
-                reason = colorWarn + "Blocked by Medic perk." + colorNormal;
-                return false;
-            }
-            break;
-        case ST_AGILITY:
-            if (player.Perk[PE_QUICK_POCKETS] > 0 && player.StatBase[ST_AGILITY] + byValue < 5) {
-                reason = colorWarn + "Blocked by Quick Pockets perk." + colorNormal;
-                return false;
-            }
-            if (player.Perk[PE_QUICK_RECOVERY] > 0 && player.StatBase[ST_AGILITY] + byValue < 6) {
-                reason = colorWarn + "Blocked by Quick Recovery perk." + colorNormal;
-                return false;
-            }
-            if (player.Perk[PE_LIVEWIRE] > 0 && player.StatBase[ST_AGILITY] + byValue < 7) {
-                reason = colorWarn + "Blocked by Livewire perk." + colorNormal;
-                return false;
-            }
-            if (player.Perk[PE_ACTION_BOY] > 0 && player.StatBase[ST_AGILITY] + byValue < 5) {
-                reason = colorWarn + "Blocked by Action Boy perk." + colorNormal;
-                return false;
-            }
-            break;
-        case ST_LUCK:
-            if (player.Perk[PE_SPRAY_AND_PRAY] > 0 && player.StatBase[ST_LUCK] + byValue < 5) {
-                reason = colorWarn + "Blocked by Spray and Pray perk." + colorNormal;
-                return false;
-            }
-            break;
-        default:
-            return true;
-    }
-    return true;
-}
-
-void r_SpawnDummy(Critter& player, Critter@ npc, int val) {
 }
 
 /**
@@ -649,7 +1005,7 @@ void addTrait(Critter& player, uint traitIndex) {
             player.TraitBase[traitIndex] = 1;
             break;
         case TRAIT_BRUISER:
-            if (canChangeSpecial(player, ST_STRENGTH, +3, reason)) {
+            if (canChangeSpecial(player, ST_STRENGTH, +3, TRAIT_BRUISER, reason)) {
                 player.StatBase[ST_STRENGTH] += 3;
                 player.StatBase[ST_ACTION_POINTS] += -1;
                 player.TraitBase[traitIndex] = 1;
@@ -659,21 +1015,31 @@ void addTrait(Critter& player, uint traitIndex) {
             }
             break;
         case TRAIT_FINESSE:
-            if (canChangeSpecial(player, ST_INTELLECT, +1, reason) && !hasExclusiveTrait(player)) {
+            if (canChangeSpecial(player, ST_INTELLECT, +1, TRAIT_FINESSE, reason) && !hasExclusiveTrait(player)) {
                 player.StatBase[ST_INTELLECT] += 1;
                 player.TraitBase[traitIndex] = 1;
             }
             break;
         case TRAIT_KAMIKAZE:
+            if (canChangeSpecial(player, ST_AGILITY, +1, TRAIT_KAMIKAZE, reason) && !hasExclusiveTrait(player)) {
+                player.StatBase[ST_AGILITY] += 1;
+                player.TraitBase[traitIndex] = 1;
+            }
+            break;
         case TRAIT_FAST_SHOT:
+            if (canChangeSpecial(player, ST_AGILITY, +1, TRAIT_FAST_SHOT, reason) && !hasExclusiveTrait(player)) {
+                player.StatBase[ST_AGILITY] += 1;
+                player.TraitBase[traitIndex] = 1;
+            }
+            break;
         case TRAIT_DOUBLE_TAP:
-            if (canChangeSpecial(player, ST_AGILITY, +1, reason) && !hasExclusiveTrait(player)) {
+            if (canChangeSpecial(player, ST_AGILITY, +1, TRAIT_DOUBLE_TAP, reason) && !hasExclusiveTrait(player)) {
                 player.StatBase[ST_AGILITY] += 1;
                 player.TraitBase[traitIndex] = 1;
             }
             break;
         case TRAIT_HEAVY_HANDED:
-            if (canChangeSpecial(player, ST_STRENGTH, +1, reason)) {
+            if (canChangeSpecial(player, ST_STRENGTH, +1, TRAIT_HEAVY_HANDED, reason)) {
                 player.StatBase[ST_STRENGTH] += 1;
                 player.StatBase[ST_MELEE_DAMAGE] += 5;
                 player.TraitBase[traitIndex] = 1;
@@ -683,19 +1049,19 @@ void addTrait(Critter& player, uint traitIndex) {
             }
             break;
         case TRAIT_JINXED:
-            if (canChangeSpecial(player, ST_LUCK, -1, reason)) {
+            if (canChangeSpecial(player, ST_LUCK, -1, TRAIT_JINXED, reason)) {
                 player.StatBase[ST_LUCK] += -1;
                 player.TraitBase[traitIndex] = 1;
             }
             break;
         case TRAIT_GOOD_NATURED:
-            if (canChangeSpecial(player, ST_CHARISMA, +1, reason)) {
+            if (canChangeSpecial(player, ST_CHARISMA, +1, TRAIT_GOOD_NATURED, reason)) {
                 player.StatBase[ST_CHARISMA] += 1;
                 player.TraitBase[traitIndex] = 1;
             }
             break;
         case TRAIT_BRUTISH_HULK:
-            if (canChangeSpecial(player, ST_CHARISMA, -1, reason)) {
+            if (canChangeSpecial(player, ST_CHARISMA, -1, TRAIT_BRUTISH_HULK, reason)) {
                 player.StatBase[ST_CHARISMA] += -1;
                 player.StatBase[ST_MELEE_DAMAGE] += +3;
                 player.StatBase[ST_MAX_LIFE] += 12;
@@ -706,7 +1072,7 @@ void addTrait(Critter& player, uint traitIndex) {
             }
             break;
         case TRAIT_CAUTIOUS_NATURE:
-            if (canChangeSpecial(player, ST_PERCEPTION, +1, reason) && !hasExclusiveTrait(player)) {
+            if (canChangeSpecial(player, ST_PERCEPTION, +1, TRAIT_CAUTIOUS_NATURE, reason) && !hasExclusiveTrait(player)) {
                 player.StatBase[ST_PERCEPTION] += 1;
                 player.TraitBase[traitIndex] = 1;
             }
@@ -717,7 +1083,7 @@ void addTrait(Critter& player, uint traitIndex) {
             }
             canChangeGifted = true;
             for (uint i = ST_STRENGTH; i <= ST_LUCK; i++) {
-                if (!canChangeSpecial(player, i, +1, reason)) {
+                if (!canChangeSpecial(player, i, +1, TRAIT_GIFTED, reason)) {
                     canChangeGifted = false;
                 }
             }
@@ -756,7 +1122,7 @@ void removeTrait(Critter& player, uint traitIndex) {
             player.TraitBase[traitIndex] = 0;
             break;
         case TRAIT_BRUISER:
-            if (canChangeSpecial(player, ST_STRENGTH, -3, reason)) {
+            if (canChangeSpecial(player, ST_STRENGTH, -3, TRAIT_BRUISER, reason)) {
                 player.StatBase[ST_STRENGTH] += -3;
                 player.StatBase[ST_ACTION_POINTS] += 1;
                 player.TraitBase[traitIndex] = 0;
@@ -766,40 +1132,50 @@ void removeTrait(Critter& player, uint traitIndex) {
             }
             break;
         case TRAIT_FINESSE:
-            if (canChangeSpecial(player, ST_INTELLECT, -1, reason)) {
+            if (canChangeSpecial(player, ST_INTELLECT, -1, TRAIT_FINESSE, reason)) {
                 player.StatBase[ST_INTELLECT] += -1;
                 player.TraitBase[traitIndex] = 0;
             }
             break;
         case TRAIT_KAMIKAZE:
+            if (canChangeSpecial(player, ST_AGILITY, -1, TRAIT_KAMIKAZE, reason)) {
+                player.StatBase[ST_AGILITY] += -1;
+                player.TraitBase[traitIndex] = 0;
+            }
+            break;
         case TRAIT_FAST_SHOT:
+            if (canChangeSpecial(player, ST_AGILITY, -1, TRAIT_FAST_SHOT, reason)) {
+                player.StatBase[ST_AGILITY] += -1;
+                player.TraitBase[traitIndex] = 0;
+            }
+            break;
         case TRAIT_DOUBLE_TAP:
-            if (canChangeSpecial(player, ST_AGILITY, -1, reason)) {
+            if (canChangeSpecial(player, ST_AGILITY, -1, TRAIT_DOUBLE_TAP, reason)) {
                 player.StatBase[ST_AGILITY] += -1;
                 player.TraitBase[traitIndex] = 0;
             }
             break;
         case TRAIT_HEAVY_HANDED:
-            if (canChangeSpecial(player, ST_STRENGTH, -1, reason)) {
+            if (canChangeSpecial(player, ST_STRENGTH, -1, TRAIT_HEAVY_HANDED, reason)) {
                 player.StatBase[ST_STRENGTH] += -1;
                 player.StatBase[ST_MELEE_DAMAGE] += -5;
                 player.TraitBase[traitIndex] = 0;
             }
             break;
         case TRAIT_JINXED:
-            if (canChangeSpecial(player, ST_LUCK, +1, reason)) {
+            if (canChangeSpecial(player, ST_LUCK, +1, TRAIT_JINXED, reason)) {
                 player.StatBase[ST_LUCK] += +1;
                 player.TraitBase[traitIndex] = 0;
             }
             break;
         case TRAIT_GOOD_NATURED:
-            if (canChangeSpecial(player, ST_CHARISMA, -1, reason)) {
+            if (canChangeSpecial(player, ST_CHARISMA, -1, TRAIT_GOOD_NATURED, reason)) {
                 player.StatBase[ST_CHARISMA] += -1;
                 player.TraitBase[traitIndex] = 0;
             }
             break;
         case TRAIT_BRUTISH_HULK:
-            if (canChangeSpecial(player, ST_CHARISMA, +1, reason)) {
+            if (canChangeSpecial(player, ST_CHARISMA, +1, TRAIT_BRUTISH_HULK, reason)) {
                 player.StatBase[ST_CHARISMA] += +1;
                 player.StatBase[ST_MAX_LIFE] -= 12;
                 player.StatBase[ST_MELEE_DAMAGE] += -3;
@@ -810,7 +1186,7 @@ void removeTrait(Critter& player, uint traitIndex) {
             }
             break;
         case TRAIT_CAUTIOUS_NATURE:
-            if (canChangeSpecial(player, ST_PERCEPTION, -1, reason)) {
+            if (canChangeSpecial(player, ST_PERCEPTION, -1, TRAIT_CAUTIOUS_NATURE, reason)) {
                 player.StatBase[ST_PERCEPTION] += -1;
                 player.TraitBase[traitIndex] = 0;
             }
@@ -818,7 +1194,7 @@ void removeTrait(Critter& player, uint traitIndex) {
         case TRAIT_GIFTED:
             canChangeGifted = true;
             for (uint i = ST_STRENGTH; i <= ST_LUCK; i++) {
-                if (!canChangeSpecial(player, i, -1, reason)) {
+                if (!canChangeSpecial(player, i, -1, TRAIT_GIFTED, reason)) {
                     canChangeGifted = false;
                 }
             }
@@ -860,9 +1236,1189 @@ int usedTraitPoints(Critter& player) {
             }
         }
     }
-    //player.Say(SAY_NETMSG, "Trait END = " + TRAIT_END + ", usedTraitPoints = " + traits);
     return traits;
 }
+
+
+///
+///     PERKS
+///
+
+
+/**
+ * Show the perks the player has and the reason why they are not removable. @lex removablePerks@ is used.
+ */
+void dlg_RemovePerkList(Critter& player, Critter@ npc, string@ text) {
+    if (!IS_DIALOG_GENERATED(text))
+        return;
+
+    string removable = " -removable-";
+    string str = "\n\n[List of your current Perks:]\n";
+    string listPrefix = "\t";
+    string reason = "";
+
+    //  level 3 perks
+    if (player.Perk[PE_MORE_CRITICALS] > 0) {
+        str += listPrefix + "[More Criticals: ";
+        if (canRemovePerk(player, PE_MORE_CRITICALS, reason)) {
+            str += removable + "]\n";
+        } else {
+            str += reason + "]\n";
+        }
+    }
+    if (player.Perk[PE_WEAPON_HANDLING] > 0) {
+        str += listPrefix + "[Weapon Handling: ";
+        if (canRemovePerk(player, PE_WEAPON_HANDLING, reason)) {
+            str += removable + "]\n";
+        } else {
+            str += reason + "]\n";
+        }
+    }
+    if (player.Perk[PE_ADRENALINE_RUSH] > 0) {
+        str += listPrefix + "[Adrenaline Rush: ";
+        if (canRemovePerk(player, PE_ADRENALINE_RUSH, reason)) {
+            str += removable + "]\n";
+        } else {
+            str += reason + "]\n";
+        }
+    }
+    if (player.Perk[PE_QUICK_RECOVERY] > 0) {
+        str += listPrefix + "[Quick Recovery: ";
+        if (canRemovePerk(player, PE_QUICK_RECOVERY, reason)) {
+            str += removable + "]\n";
+        } else {
+            str += reason + "]\n";
+        }
+    }
+    if (player.Perk[PE_LIVEWIRE] > 0) {
+        str += listPrefix + "[Livewire: ";
+        if (canRemovePerk(player, PE_LIVEWIRE, reason)) {
+            str += removable + "]\n";
+        } else {
+            str += reason + "]\n";
+        }
+    }
+    if (player.Perk[PE_WAY_OF_THE_FRUIT] > 0) {
+        str += listPrefix + "[Way of the Fruit: ";
+        if (canRemovePerk(player, PE_WAY_OF_THE_FRUIT, reason)) {
+            str += removable + "]\n";
+        } else {
+            str += reason + "]\n";
+        }
+    }
+    if (player.Perk[PE_HEALER_II] > 0) {
+        str += listPrefix + "[Healer: ";
+        if (canRemovePerk(player, PE_HEALER_II, reason)) {
+            str += removable + "]\n";
+        } else {
+            str += reason + "]\n";
+        }
+    }
+    if (player.Perk[PE_QUICK_POCKETS] > 0) {
+        str += listPrefix + "[Quick Pockets: ";
+        if (canRemovePerk(player, PE_QUICK_POCKETS, reason)) {
+            str += removable + "]\n";
+        } else {
+            str += reason + "]\n";
+        }
+    }
+
+    //  level 6 perks
+    if (player.Perk[PE_EVEN_MORE_CRITICALS] > 0) {
+        str += listPrefix + "[Even More Criticals: ";
+        if (canRemovePerk(player, PE_EVEN_MORE_CRITICALS, reason)) {
+            str += removable + "]\n";
+        } else {
+            str += reason + "]\n";
+        }
+    }
+    if (player.Perk[PE_IN_YOUR_FACE] > 0) {
+        str += listPrefix + "[In Your Face: ";
+        if (canRemovePerk(player, PE_IN_YOUR_FACE, reason)) {
+            str += removable + "]\n";
+        } else {
+            str += reason + "]\n";
+        }
+    }
+    if (player.Perk[PE_SILENT_RUNNING] > 0) {
+        str += listPrefix + "[Silent Running: ";
+        if (canRemovePerk(player, PE_SILENT_RUNNING, reason)) {
+            str += removable + "]\n";
+        } else {
+            str += reason + "]\n";
+        }
+    }
+    if (player.Perk[PE_TOUGHNESS] > 0) {
+        str += listPrefix + "[Toughness: ";
+        if (canRemovePerk(player, PE_TOUGHNESS, reason)) {
+            str += removable + "]\n";
+        } else {
+            str += reason + "]\n";
+        }
+    }
+    if (player.Perk[PE_SPRAY_AND_PRAY] > 0) {
+        str += listPrefix + "[Spray and Pray: ";
+        if (canRemovePerk(player, PE_SPRAY_AND_PRAY, reason)) {
+            str += removable + "]\n";
+        } else {
+            str += reason + "]\n";
+        }
+    }
+
+    //  level 9 perks
+    if (player.Perk[PE_STONEWALL] > 0) {
+        str += listPrefix + "[Stonewall: ";
+        if (canRemovePerk(player, PE_STONEWALL, reason)) {
+            str += removable + "]\n";
+        } else {
+            str += reason + "]\n";
+        }
+    }
+    if (player.Perk[PE_SHARPSHOOTER] > 0) {
+        str += listPrefix + "[Sharpshooter: ";
+        if (canRemovePerk(player, PE_SHARPSHOOTER, reason)) {
+            str += removable + "]\n";
+        } else {
+            str += reason + "]\n";
+        }
+    }
+    if (player.Perk[PE_BONUS_RANGED_DAMAGE] > 0) {
+        str += listPrefix + "[Bonus Ranged Damage: ";
+        if (canRemovePerk(player, PE_BONUS_RANGED_DAMAGE, reason)) {
+            str += removable + "]\n";
+        } else {
+            str += reason + "]\n";
+        }
+    }
+    if (player.Perk[PE_PYROMANIAC] > 0) {
+        str += listPrefix + "[Pyromaniac: ";
+        if (canRemovePerk(player, PE_PYROMANIAC, reason)) {
+            str += removable + "]\n";
+        } else {
+            str += reason + "]\n";
+        }
+    }
+    if (player.Perk[PE_EVEN_TOUGHER] > 0) {
+        str += listPrefix + "[Even Tougher: ";
+        if (canRemovePerk(player, PE_EVEN_TOUGHER, reason)) {
+            str += removable + "]\n";
+        } else {
+            str += reason + "]\n";
+        }
+    }
+    if (player.Perk[PE_MEDIC] > 0) {
+        str += listPrefix + "[Medic: ";
+        if (canRemovePerk(player, PE_MEDIC, reason)) {
+            str += removable + "]\n";
+        } else {
+            str += reason + "]\n";
+        }
+    }
+    if (player.Perk[PE_HEAVE_HO] > 0) {
+        str += listPrefix + "[Heave Ho!: ";
+        if (canRemovePerk(player, PE_HEAVE_HO, reason)) {
+            str += removable + "]\n";
+        } else {
+            str += reason + "]\n";
+        }
+    }
+    if (player.Perk[PE_CLOSE_COMBAT_MASTER] > 0) {
+        str += listPrefix + "[Close Combat Master: ";
+        if (canRemovePerk(player, PE_LIVEWIRE, reason)) {
+            str += removable + "]\n";
+        } else {
+            str += reason + "]\n";
+        }
+    }
+
+    //  level 12 perks
+    if (player.Perk[PE_BETTER_CRITICALS] > 0) {
+        str += listPrefix + "[Better Criticals: ";
+        if (canRemovePerk(player, PE_BETTER_CRITICALS, reason)) {
+            str += removable + "]\n";
+        } else {
+            str += reason + "]\n";
+        }
+    }
+    if (player.Perk[PE_LIFEGIVER] > 0) {
+        str += listPrefix + "[Lifegiver: ";
+        if (canRemovePerk(player, PE_LIFEGIVER, reason)) {
+            str += removable + "]\n";
+        } else {
+            str += reason + "]\n";
+        }
+    }
+    if (player.Perk[PE_GHOST] > 0) {
+        str += listPrefix + "[Ghost: ";
+        if (canRemovePerk(player, PE_GHOST, reason)) {
+            str += removable + "]\n";
+        } else {
+            str += reason + "]\n";
+        }
+    }
+    if (player.Perk[PE_ACTION_BOY] > 0) {
+        str += listPrefix + "[Action Boy: ";
+        if (canRemovePerk(player, PE_ACTION_BOY, reason)) {
+            str += removable + "]\n";
+        } else {
+            str += reason + "]\n";
+        }
+    }
+    if (player.Perk[PE_GAIN_STRENGTH] > 0) {
+        str += listPrefix + "[Gain Strength: ";
+        if (canRemovePerk(player, PE_GAIN_STRENGTH, reason)) {
+            str += removable + "]\n";
+        } else {
+            str += reason + "]\n";
+        }
+    }
+    if (player.Perk[PE_GAIN_PERCEPTION] > 0) {
+        str += listPrefix + "[Gain Perception: ";
+        if (canRemovePerk(player, PE_GAIN_PERCEPTION, reason)) {
+            str += removable + "]\n";
+        } else {
+            str += reason + "]\n";
+        }
+    }
+    if (player.Perk[PE_GAIN_ENDURANCE] > 0) {
+        str += listPrefix + "[Gain Endurance: ";
+        if (canRemovePerk(player, PE_GAIN_ENDURANCE, reason)) {
+            str += removable + "]\n";
+        } else {
+            str += reason + "]\n";
+        }
+    }
+    if (player.Perk[PE_GAIN_CHARISMA] > 0) {
+        str += listPrefix + "[Gain Charisma: ";
+        if (canRemovePerk(player, PE_GAIN_CHARISMA, reason)) {
+            str += removable + "]\n";
+        } else {
+            str += reason + "]\n";
+        }
+    }
+    if (player.Perk[PE_GAIN_INTELLIGENCE] > 0) {
+        str += listPrefix + "[Gain Intellect: ";
+        if (canRemovePerk(player, PE_GAIN_INTELLIGENCE, reason)) {
+            str += removable + "]\n";
+        } else {
+            str += reason + "]\n";
+        }
+    }
+    if (player.Perk[PE_GAIN_AGILITY] > 0) {
+        str += listPrefix + "[Gain Agility: ";
+        if (canRemovePerk(player, PE_GAIN_AGILITY, reason)) {
+            str += removable + "]\n";
+        } else {
+            str += reason + "]\n";
+        }
+    }
+    if (player.Perk[PE_GAIN_LUCK] > 0) {
+        str += listPrefix + "[Gain Luck: ";
+        if (canRemovePerk(player, PE_GAIN_LUCK, reason)) {
+            str += removable + "]\n";
+        } else {
+            str += reason + "]\n";
+        }
+    }
+
+    //  level 15 perks
+    if (player.Perk[PE_MORE_RANGED_DAMAGE] > 0) {
+        str += listPrefix + "[More Ranged Damage: ";
+        if (canRemovePerk(player, PE_MORE_RANGED_DAMAGE, reason)) {
+            str += removable + "]\n";
+        } else {
+            str += reason + "]\n";
+        }
+    }
+    if (player.Perk[PE_MAN_OF_STEEL] > 0) {
+        str += listPrefix + "[Man of Steel: ";
+        if (canRemovePerk(player, PE_MAN_OF_STEEL, reason)) {
+            str += removable + "]\n";
+        } else {
+            str += reason + "]\n";
+        }
+    }
+    if (player.Perk[PE_FIELD_MEDIC] > 0) {
+        str += listPrefix + "[Field Medic: ";
+        if (canRemovePerk(player, PE_FIELD_MEDIC, reason)) {
+            str += removable + "]\n";
+        } else {
+            str += reason + "]\n";
+        }
+    }
+
+    //  level 18 perks
+    if (player.Perk[PE_BONUS_RATE_OF_ATTACK] > 0) {
+        str += listPrefix + "[Bonus Rate of Attack: ";
+        if (canRemovePerk(player, PE_BONUS_RATE_OF_ATTACK, reason)) {
+            str += removable + "]\n";
+        } else {
+            str += reason + "]\n";
+        }
+    }
+    if (player.Perk[PE_SNIPER] > 0) {
+        str += listPrefix + "[Sniper: ";
+        if (canRemovePerk(player, PE_SNIPER, reason)) {
+            str += removable + "]\n";
+        } else {
+            str += reason + "]\n";
+        }
+    }
+    if (player.Perk[PE_SILENT_DEATH] > 0) {
+        str += listPrefix + "[Silent Death: ";
+        if (canRemovePerk(player, PE_SILENT_DEATH, reason)) {
+            str += removable + "]\n";
+        } else {
+            str += reason + "]\n";
+        }
+    }
+
+    text = "$removablePerks " + str;
+    if (text.length() > 998) {
+        text = substring(text, 0, 998);
+    }
+}
+
+/**
+ * Show the perks the player does not have and the reason why they are not available. @lex availablePerks@ is used.
+ */
+void dlg_AvailablePerkList(Critter& player, Critter@ npc, string@ text) {
+    if (!IS_DIALOG_GENERATED(text))
+        return;
+
+    string available = " -available-";//" -available-";
+    string str = "\n\n[List of current Perks:]\n";
+    string listPrefix = "\t";
+    string reason = "";
+
+    //  level 3 perks
+    if (player.Perk[PE_MORE_CRITICALS] > 0) {
+        str += listPrefix + "[More Criticals]\n";
+    }
+    if (player.Perk[PE_WEAPON_HANDLING] > 0) {
+        str += listPrefix + "[Weapon Handling]\n";
+    }
+    if (player.Perk[PE_ADRENALINE_RUSH] > 0) {
+        str += listPrefix + "[Adrenaline Rush]\n";
+    }
+    if (player.Perk[PE_QUICK_RECOVERY] > 0) {
+        str += listPrefix + "[Quick Recovery]\n";
+    }
+    if (player.Perk[PE_LIVEWIRE] > 0) {
+        str += listPrefix + "[Livewire]\n";
+    }
+    if (player.Perk[PE_WAY_OF_THE_FRUIT] > 0) {
+        str += listPrefix + "[Way of the Fruit]\n";
+    }
+    if (player.Perk[PE_HEALER_II] > 0) {
+        str += listPrefix + "[Healer]\n";
+    }
+    if (player.Perk[PE_QUICK_POCKETS] > 0) {
+        str += listPrefix + "[Quick Pockets]\n";
+    }
+
+    //  level 6 perks
+    if (player.Perk[PE_EVEN_MORE_CRITICALS] > 0) {
+        str += listPrefix + "[Even More Criticals]\n";
+    }
+    if (player.Perk[PE_IN_YOUR_FACE] > 0) {
+        str += listPrefix + "[In your Face]\n";
+    }
+    if (player.Perk[PE_SILENT_RUNNING] > 0) {
+        str += listPrefix + "[Silent Running]\n";
+    }
+    if (player.Perk[PE_TOUGHNESS] > 0) {
+        str += listPrefix + "[Toughness]\n";
+    }
+    if (player.Perk[PE_SPRAY_AND_PRAY] > 0) {
+        str += listPrefix + "[Adrenaline Rush]\n";
+    }
+
+    //  level 9 perks
+    if (player.Perk[PE_STONEWALL] > 0) {
+        str += listPrefix + "[Stonewall]\n";
+    }
+    if (player.Perk[PE_SHARPSHOOTER] > 0) {
+        str += listPrefix + "[Sharpshooter]\n";
+    }
+    if (player.Perk[PE_BONUS_RANGED_DAMAGE] > 0) {
+        str += listPrefix + "[Bonus Ranged Damage]\n";
+    }
+    if (player.Perk[PE_PYROMANIAC] > 0) {
+        str += listPrefix + "[Pyromaniac]\n";
+    }
+    if (player.Perk[PE_EVEN_TOUGHER] > 0) {
+        str += listPrefix + "[Even Tougher]\n";
+    }
+    if (player.Perk[PE_MEDIC] > 0) {
+        str += listPrefix + "[Medic]\n";
+    }
+    if (player.Perk[PE_HEAVE_HO] > 0) {
+        str += listPrefix + "[Heave Ho!]\n";
+    }
+    if (player.Perk[PE_CLOSE_COMBAT_MASTER] > 0) {
+        str += listPrefix + "[Close Combat Master]\n";
+    }
+
+    //  level 12 perks
+    if (player.Perk[PE_BETTER_CRITICALS] > 0) {
+        str += listPrefix + "[Better Criticals]\n";
+    }
+    if (player.Perk[PE_LIFEGIVER] > 0) {
+        str += listPrefix + "[Lifegiver(" + player.Perk[PE_LIFEGIVER] + ")]\n";
+    }
+    if (player.Perk[PE_GHOST] > 0) {
+        str += listPrefix + "[Ghost]\n";
+    }
+    if (player.Perk[PE_ACTION_BOY] > 0) {
+        str += listPrefix + "[Action Boy(" + player.Perk[PE_ACTION_BOY] + ")]\n";
+    }
+    if (player.Perk[PE_GAIN_STRENGTH] > 0) {
+        str += listPrefix + "[Gain Strength]\n";
+    }
+    if (player.Perk[PE_GAIN_PERCEPTION] > 0) {
+        str += listPrefix + "[Gain Perception]\n";
+    }
+    if (player.Perk[PE_GAIN_ENDURANCE] > 0) {
+        str += listPrefix + "[Gain Endurance]\n";
+    }
+    if (player.Perk[PE_GAIN_CHARISMA] > 0) {
+        str += listPrefix + "[Gain Charisma]\n";
+    }
+    if (player.Perk[PE_GAIN_INTELLIGENCE] > 0) {
+        str += listPrefix + "[Gain Intellect]\n";
+    }
+    if (player.Perk[PE_GAIN_AGILITY] > 0) {
+        str += listPrefix + "[Gain Agility]\n";
+    }
+    if (player.Perk[PE_GAIN_LUCK] > 0) {
+        str += listPrefix + "[Gain Luck]\n";
+    }
+
+    //  level 15 perks
+    if (player.Perk[PE_MORE_RANGED_DAMAGE] > 0) {
+        str += listPrefix + "[More Ranged Damage]\n";
+    }
+    if (player.Perk[PE_MAN_OF_STEEL] > 0) {
+        str += listPrefix + "[Man of Steel]\n";
+    }
+    if (player.Perk[PE_FIELD_MEDIC] > 0) {
+        str += listPrefix + "[Field Medic]\n";
+    }
+
+    //  level 18 perks
+    if (player.Perk[PE_BONUS_RATE_OF_ATTACK] > 0) {
+        str += listPrefix + "[Bonus Rate of Attack]\n";
+    }
+    if (player.Perk[PE_SNIPER] > 0) {
+        str += listPrefix + "[Sniper]\n";
+    }
+    if (player.Perk[PE_SILENT_DEATH] > 0) {
+        str += listPrefix + "[Silent Death]\n";
+    }
+
+    text = "$availablePerks " + str;
+    if (text.length() > 998) {
+        text = substring(text, 0, 998);
+    }
+}
+
+bool d_CanRemovePerk(Critter& player, Critter@ npc, int val) {
+    uint perkIndex = uint(val);
+    string reason = "";
+    if (canRemovePerk(player, perkIndex, reason)) {
+        Log("DEMAND - PERK REMOVE OK: " + getPerkName(perkIndex) + ", player: " + player.Name + ", reason: " + reason);
+        return true;
+    } else {
+        Log("DEMAND - CANNOT REMOVE PERK: " + getPerkName(perkIndex) + ", player: " + player.Name + ", reason: " + reason);
+        return false;
+    }
+}
+
+bool d_CanAddPerk(Critter& player, Critter@ npc, int val) {
+    uint perkIndex = uint(val);
+    string reason = "";
+    if (canAddPerk(player, perkIndex, reason)) {
+        Log("DEMAND - PERK ADD OK: " + getPerkName(perkIndex) + ", player: " + player.Name + ", reason: " + reason);
+        return true;
+    } else {
+        Log("DEMAND - CANNOT ADD PERK: " + getPerkName(perkIndex) + ", player: " + player.Name + ", reason: " + reason);
+        return false;
+    }
+}
+
+void r_RemovePerk(Critter& player, Critter@ npc, int val) {
+    uint perkIndex = uint(val);
+    string reason = "";
+    if (canRemovePerk(player, perkIndex, reason)) {
+        removePerk(player, perkIndex);
+    } else {
+        Log("MUTATION DIALONG ERROR: RESULT - CANNOT REMOVE PERK: " + getPerkName(perkIndex) + ", player: " + player.Name + ", reason: " + reason);
+    }
+}
+
+void r_AddPerk(Critter& player, Critter@ npc, int val) {
+    uint perkIndex = uint(val);
+    string reason = "";
+    if (canAddPerk(player, perkIndex, reason)) {
+        addPerk(player, perkIndex);
+    } else {
+        Log("MUTATION DIALOG ERROR: RESULT - CANNOT ADD PERK: " + getPerkName(perkIndex) + ", player: " + player.Name + ", reason: " + reason);
+    }
+}
+
+bool canRemovePerk(Critter& player, uint perkIndex, string@ reason) {
+    if (perkIndex < PERK_BEGIN  || perkIndex > PERK_END) {
+        reason = colorError + "Error: Perk index out of bounds." + colorNormal;
+        return false;
+    }
+    if (player.Perk[perkIndex] <= 0) {
+        reason = colorWarn + "Does not have this Perk." + colorNormal;
+        return false;
+    }
+
+    int highestPerk = getHighestPerkWithout(player, perkIndex);
+    //Log("MUTATION DIALOG - canRemovePerk() -> highestPerk:" + getPerkName(highestPerk) + ", player: " + player.Name);
+    if (highestPerk > 0) {
+        if (!hasPerkLevelsForWithout(player, highestPerk, perkIndex, reason)) {
+            return false;
+        }
+    }
+
+    switch (perkIndex) {
+        case PE_MEDIC:
+            if (player.Perk[PE_FIELD_MEDIC] > 0) {
+                reason = colorWarn + "Blocked by Field Medic perk.!" + colorNormal;
+                return false;
+            }
+            return true;
+        case PE_GAIN_STRENGTH:
+            if (!canChangeSpecial(player, ST_STRENGTH, -2, PE_GAIN_STRENGTH, reason)) {
+                return false;
+            }
+            return true;
+        case PE_GAIN_PERCEPTION:
+            if (!canChangeSpecial(player, ST_PERCEPTION, -2, PE_GAIN_PERCEPTION, reason)) {
+                return false;
+            }
+            return true;
+        case PE_GAIN_ENDURANCE:
+            if (!canChangeSpecial(player, ST_ENDURANCE, -2, PE_GAIN_ENDURANCE, reason)) {
+                return false;
+            }
+            return true;
+        case PE_GAIN_CHARISMA:
+            if (!canChangeSpecial(player, ST_CHARISMA, -2, PE_GAIN_CHARISMA, reason)) {
+                return false;
+            }
+            return true;
+        case PE_GAIN_INTELLIGENCE:
+            if (!canChangeSpecial(player, ST_INTELLECT, -2, PE_GAIN_INTELLIGENCE, reason)) {
+                return false;
+            }
+            return true;
+        case PE_GAIN_AGILITY:
+            if (!canChangeSpecial(player, ST_AGILITY, -2, PE_GAIN_AGILITY, reason)) {
+                return false;
+            }
+            return true;
+        case PE_GAIN_LUCK:
+            if (!canChangeSpecial(player, ST_LUCK, -2, PE_GAIN_LUCK, reason)) {
+                return false;
+            }
+            return true;
+        default:
+            return true;
+    }
+    return true;
+}
+
+bool canAddPerk(Critter& player, uint perkIndex, string@ reason) {
+    if (perkIndex < PERK_BEGIN  || perkIndex > PERK_END) {
+        reason = colorError + "Error: Perk index out of bounds." + colorNormal;
+        return false;
+    }
+    if (player.Perk[perkIndex] > 0) {
+        if (!isMultiRankPerk(perkIndex)) {
+            reason = colorWarn + "Already has this Perk." + colorNormal;
+            return false;
+        }
+    }
+    if (totalPerkCount(player) >= 8) {
+        reason = "Cannot have more than 8 leveling Perks.";
+        return false;
+    }
+    if (totalPerkCount(player) > player.Stat[ST_LEVEL] / 3) {
+        reason = "Cannot have more than " + (player.Stat[ST_LEVEL] / 3) + " leveling Perks at level " + player.Stat[ST_LEVEL] + ".";
+        return false;
+    }
+    if (!hasPerkLevelsForWithout(player, perkIndex, 0, reason)) {
+        return false;
+    }
+    int perkLevel = levelOfPerk(perkIndex);
+    if (perkLevel > player.Stat[ST_LEVEL]) {
+        reason = "Need to be at least level " + (perkLevel) + ".";
+        return false;
+    }
+
+    switch (perkIndex) {
+        //  level 3 perks
+        case PE_MORE_CRITICALS:
+            if (!hasRangedSkillAtLeast(player, 50) && player.Skill[SK_UNARMED] < 50) {
+                reason = colorWarn + "One combat skill must be at least 50!" + colorNormal;
+                return false;
+            }
+            return true;
+        case PE_WEAPON_HANDLING:
+            if (!hasRangedSkillAtLeast(player, 50)) {
+                reason = colorWarn + "One ranged combat skill must be at least 50!" + colorNormal;
+                return false;
+            }
+            return true;
+        case PE_ADRENALINE_RUSH:
+            if (player.StatBase[ST_STRENGTH] < 5) {
+                reason = colorWarn + "Strength must be at least 5!" + colorNormal;
+                return false;
+            }
+            return true;
+        case PE_QUICK_RECOVERY:
+            if (player.StatBase[ST_AGILITY] < 6) {
+                reason = colorWarn + "Agility must be at least 6!" + colorNormal;
+                return false;
+            }
+            return true;
+        case PE_LIVEWIRE:
+            if (player.StatBase[ST_AGILITY] < 7) {
+                reason = colorWarn + "Agility must be at least 7!" + colorNormal;
+                return false;
+            }
+            return true;
+        case PE_WAY_OF_THE_FRUIT:
+            if (player.StatBase[ST_CHARISMA] < 4) {
+                reason = colorWarn + "Charisma must be at least 4!" + colorNormal;
+                return false;
+            }
+            return true;
+        case PE_HEALER_II:
+            if (player.StatBase[ST_INTELLECT] < 4) {
+                reason = colorWarn + "Intellect must be at least 4!" + colorNormal;
+                return false;
+            }
+            if (player.Skill[SK_FIRST_AID] < 50) {
+                reason = colorWarn + "First Aid must be at least 50!" + colorNormal;
+                return false;
+            }
+            return true;
+        case PE_QUICK_POCKETS:
+            if (player.StatBase[ST_AGILITY] < 5) {
+                reason = colorWarn + "Agility must be at least 5!" + colorNormal;
+                return false;
+            }
+            return true;
+        //  level 6 perks
+        case PE_EVEN_MORE_CRITICALS:
+            if (!hasRangedSkillAtLeast(player, 75) && player.Skill[SK_UNARMED] < 75) {
+                reason = colorWarn + "One combat skill must be at least 75!" + colorNormal;
+                return false;
+            }
+            return true;
+        case PE_IN_YOUR_FACE:
+            if (player.Skill[SK_UNARMED] < 75) {
+                reason = colorWarn + "Close Combat must be at least 75!" + colorNormal;
+                return false;
+            }
+            return true;
+        case PE_SILENT_RUNNING:
+            if (player.Skill[SK_SNEAK] < 75) {
+                reason = colorWarn + "Sneak must be at least 75!" + colorNormal;
+                return false;
+            }
+            return true;
+        case PE_TOUGHNESS:
+            if (player.StatBase[ST_ENDURANCE] < 4) {
+                reason = colorWarn + "Endurance must be at least 4!" + colorNormal;
+                return false;
+            }
+            return true;
+        case PE_SPRAY_AND_PRAY:
+            if (player.StatBase[ST_CHARISMA] < 3) {
+                reason = colorWarn + "Charisma must be at least 3!" + colorNormal;
+                return false;
+            }
+            if (player.StatBase[ST_LUCK] < 3) {
+                reason = colorWarn + "Luck must be at least 3!" + colorNormal;
+                return false;
+            }
+            return true;
+        //  level 9 perks
+        case PE_STONEWALL:
+            if (player.StatBase[ST_STRENGTH] < 6) {
+                reason = colorWarn + "Strength must be at least 6!" + colorNormal;
+                return false;
+            }
+            return true;
+        case PE_SHARPSHOOTER:
+            if (!hasRangedSkillAtLeast(player, 100) && player.Skill[SK_UNARMED] < 100) {
+                reason = colorWarn + "One combat skill must be at least 100!" + colorNormal;
+                return false;
+            }
+            if (player.StatBase[ST_INTELLECT] < 3) {
+                reason = colorWarn + "Intellect must be at least 3!" + colorNormal;
+                return false;
+            }
+            return true;
+        case PE_BONUS_RANGED_DAMAGE:
+            if (!hasRangedSkillAtLeast(player, 100)) {
+                reason = colorWarn + "One ranged combat skill must be at least 100!" + colorNormal;
+                return false;
+            }
+            return true;
+        case PE_PYROMANIAC:
+            if (!hasRangedSkillAtLeast(player, 100)) {
+                reason = colorWarn + "One ranged combat skill must be at least 100!" + colorNormal;
+                return false;
+            }
+            return true;
+        case PE_EVEN_TOUGHER:
+            if (player.StatBase[ST_ENDURANCE] < 5) {
+                reason = colorWarn + "Endurance must be at least 5!" + colorNormal;
+                return false;
+            }
+            return true;
+        case PE_MEDIC:
+            if (player.Skill[SK_FIRST_AID] < 75) {
+                reason = colorWarn + "First Aid must be at least 75!" + colorNormal;
+                return false;
+            }
+            if (player.Skill[SK_DOCTOR] < 75) {
+                reason = colorWarn + "Doctor must be at least 75!" + colorNormal;
+                return false;
+            }
+            if (player.StatBase[ST_INTELLECT] < 5) {
+                reason = colorWarn + "Intellect must be at least 5!" + colorNormal;
+                return false;
+            }
+            return true;
+        case PE_HEAVE_HO:
+            if (player.Skill[SK_THROWING] < 100) {
+                reason = colorWarn + "Throwing must be at least 100!" + colorNormal;
+                return false;
+            }
+            return true;
+        case PE_CLOSE_COMBAT_MASTER:
+            if (player.Skill[SK_UNARMED] < 100) {
+                reason = colorWarn + "Unarmed must be at least 100!" + colorNormal;
+                return false;
+            }
+            return true;
+        //  level 12 perks
+        case PE_BETTER_CRITICALS:
+            if (!hasRangedSkillAtLeast(player, 125) && player.Skill[SK_UNARMED] < 125) {
+                reason = colorWarn + "One combat skill must be at least 125!" + colorNormal;
+                return false;
+            }
+            if (player.StatBase[ST_LUCK] < 5) {
+                reason = colorWarn + "Luck must be at least 5!" + colorNormal;
+                return false;
+            }
+            return true;
+        case PE_LIFEGIVER:
+            return true;
+        case PE_GHOST:
+            if (player.Skill[SK_SNEAK] < 125) {
+                reason = colorWarn + "Sneak must be at least 125!" + colorNormal;
+                return false;
+            }
+            return true;
+        case PE_ACTION_BOY:
+            if (player.Perk[PE_ACTION_BOY] > 0) {
+                if (player.StatBase[ST_AGILITY] < 7) {
+                    reason = colorWarn + "Agility must be at least 7!" + colorNormal;
+                    return false;
+                }
+            } else {
+                if (player.StatBase[ST_AGILITY] < 5) {
+                    reason = colorWarn + "Agility must be at least 5!" + colorNormal;
+                    return false;
+                }
+            }
+            return true;
+        case PE_GAIN_STRENGTH:
+            if (player.StatBase[ST_STRENGTH] > 8) {
+                reason = colorWarn + "Strength must be at most 8!" + colorNormal;
+                return false;
+            }
+            return true;
+        case PE_GAIN_PERCEPTION:
+            if (player.StatBase[ST_PERCEPTION] > 8) {
+                reason = colorWarn + "Perception must be at most 8!" + colorNormal;
+                return false;
+            }
+            return true;
+        case PE_GAIN_ENDURANCE:
+            if (player.StatBase[ST_ENDURANCE] > 8) {
+                reason = colorWarn + "Endurance must be at most 8!" + colorNormal;
+                return false;
+            }
+            return true;
+        case PE_GAIN_CHARISMA:
+            if (player.StatBase[ST_CHARISMA] > 8) {
+                reason = colorWarn + "Charisma must be at most 8!" + colorNormal;
+                return false;
+            }
+            return true;
+        case PE_GAIN_INTELLIGENCE:
+            if (player.StatBase[ST_INTELLECT] > 8) {
+                reason = colorWarn + "Intellect must be at most 8!" + colorNormal;
+                return false;
+            }
+            return true;
+        case PE_GAIN_AGILITY:
+            if (player.StatBase[ST_AGILITY] > 8) {
+                reason = colorWarn + "Agility must be at most 8!" + colorNormal;
+                return false;
+            }
+            return true;
+        case PE_GAIN_LUCK:
+            if (player.StatBase[ST_LUCK] > 8) {
+                reason = colorWarn + "Luck must be at most 8!" + colorNormal;
+                return false;
+            }
+            return true;
+        //  level 15 perks
+        case PE_MORE_RANGED_DAMAGE:
+            if (!hasRangedSkillAtLeast(player, 150)) {
+                reason = colorWarn + "One ranged combat skill must be at least 150!" + colorNormal;
+                return false;
+            }
+            if (player.StatBase[ST_CHARISMA] < 4) {
+                reason = colorWarn + "Charisma must be at least 4!" + colorNormal;
+                return false;
+            }
+            return true;
+        case PE_MAN_OF_STEEL:
+            if (player.StatBase[ST_ENDURANCE] < 6) {
+                reason = colorWarn + "Endurance must be at least 6!" + colorNormal;
+                return false;
+            }
+            return true;
+        case PE_FIELD_MEDIC:
+            if (player.Skill[SK_FIRST_AID] < 150) {
+                reason = colorWarn + "First Aid must be at least 75!" + colorNormal;
+                return false;
+            }
+            if (player.Skill[SK_DOCTOR] < 150) {
+                reason = colorWarn + "Doctor must be at least 75!" + colorNormal;
+                return false;
+            }
+            if (player.Perk[PE_MEDIC] < 1) {
+                reason = colorWarn + "Must also have Medic perk!" + colorNormal;
+                return false;
+            }
+            return true;
+        //  level 18 perks
+        case PE_BONUS_RATE_OF_ATTACK:
+            if (!hasRangedSkillAtLeast(player, 175) && player.Skill[SK_UNARMED] < 175) {
+                reason = colorWarn + "One combat skill must be at least 175!" + colorNormal;
+                return false;
+            }
+            return true;
+        case PE_SNIPER:
+            if (!hasRangedSkillAtLeast(player, 175)) {
+                reason = colorWarn + "One ranged combat skill must be at least 175!" + colorNormal;
+                return false;
+            }
+            return true;
+        case PE_SILENT_DEATH:
+            if (player.Skill[SK_SNEAK] < 175) {
+                reason = colorWarn + "Sneak must be at least 175!" + colorNormal;
+                return false;
+            }
+            return true;
+        default:
+            return true;
+    }
+    return false;
+}
+
+void removePerk(Critter& player, uint perkIndex) {
+    player.PerkBase[perkIndex] = 0;
+}
+
+void addPerk(Critter& player, uint perkIndex) {
+    player.PerkBase[perkIndex] = 1;
+}
+
+int totalPerkCount(Critter& player) {
+    int perkCount = 0;
+    for (uint i = 0; i < level3Perks.length; i++) {
+        if (player.Perk[level3Perks[i]] > 0) {
+            perkCount += player.Perk[level3Perks[i]];
+        }
+    }
+    for (uint i = 0; i < level6Perks.length; i++) {
+        if (player.Perk[level6Perks[i]] > 0) {
+            perkCount += player.Perk[level6Perks[i]];
+        }
+    }
+    for (uint i = 0; i < level9Perks.length; i++) {
+        if (player.Perk[level9Perks[i]] > 0) {
+            perkCount += player.Perk[level9Perks[i]];
+        }
+    }
+    for (uint i = 0; i < level12Perks.length; i++) {
+        if (player.Perk[level12Perks[i]] > 0) {
+            perkCount += player.Perk[level12Perks[i]];
+        }
+    }
+    for (uint i = 0; i < level15Perks.length; i++) {
+        if (player.Perk[level15Perks[i]] > 0) {
+            perkCount += player.Perk[level15Perks[i]];
+        }
+    }
+    for (uint i = 0; i < level18Perks.length; i++) {
+        if (player.Perk[level18Perks[i]] > 0) {
+            perkCount += player.Perk[level18Perks[i]];
+        }
+    }
+    return perkCount;
+}
+
+bool hasPerkLevelsForWithout(Critter& player, uint perkIndexFor, uint perkIndexWithout, string@ reason) {
+    reason = "N/A";
+    int level = 3;
+    int perkLevel = levelOfPerk(perkIndexFor);
+
+    //  level 3 perks always true
+    if (perkLevel == 3) {
+        return true;
+    }
+
+    //  level 6 perks must have at least 1 level 3 perk
+    for (uint i = 0; i < level3Perks.length; i++) {
+        if (perkIndexWithout != level3Perks[i] && player.Perk[level3Perks[i]] > 0) {
+            level += 3;
+        }
+    }
+    if (level >= 6) {
+        if (perkLevel == 6)
+            return true;
+    } else {
+        reason = colorAlreadyHave + "Need one more level 3 perk." + colorNormal;
+        return false;
+    }
+
+    //  level 9 perks must have at least 2 lower level perk
+    for (uint i = 0; i < level6Perks.length; i++) {
+        if (perkIndexWithout != level6Perks[i] && player.Perk[level6Perks[i]] > 0) {
+            level += 3;
+        }
+    }
+    if (level >= 9) {
+        if (perkLevel == 9)
+            return true;
+    } else {
+        reason = colorAlreadyHave + "Need one more level 6 or lower perk." + colorNormal;
+        return false;
+    }
+
+    //  level 12 perks must have at least 3 lower level perk
+    for (uint i = 0; i < level9Perks.length; i++) {
+        if (perkIndexWithout != level9Perks[i] && player.Perk[level9Perks[i]] > 0) {
+            level += 3;
+        }
+    }
+    if (level >= 12) {
+        if (perkLevel == 12)
+            return true;
+    } else {
+        reason = colorAlreadyHave + "Need one more level 9 or lower perk." + colorNormal;
+        return false;
+    }
+
+    //  level 15 perks must have at least 4 lower level perk
+    for (uint i = 0; i < level12Perks.length; i++) {
+        if (perkIndexWithout != level12Perks[i] && player.Perk[level12Perks[i]] > 0) {
+            level += 3;
+        }
+    }
+    if (level >= 15) {
+        if (perkLevel == 15)
+            return true;
+    } else {
+        reason = colorAlreadyHave + "Need one more level 12 or lower perk." + colorNormal;
+        return false;
+    }
+
+    //  level 18 perks must have at least 5 lower level perk
+    for (uint i = 0; i < level15Perks.length; i++) {
+        if (perkIndexWithout != level15Perks[i] && player.Perk[level15Perks[i]] > 0) {
+            level += 3;
+        }
+    }
+    if (level >= 18) {
+        if (perkLevel == 18)
+            return true;
+    } else {
+        reason = colorAlreadyHave + "Need one more level 15 or lower perk." + colorNormal;
+        return false;
+    }
+
+    reason = "Unknown Perk";
+    return false;
+}
+
+int levelOfPerk(uint perkIndex) {
+    for (uint i = 0; i < level3Perks.length; i++) {
+        if (perkIndex == level3Perks[i]) {
+            return 3;
+        }
+    }
+    for (uint i = 0; i < level6Perks.length; i++) {
+        if (perkIndex == level6Perks[i]) {
+            return 6;
+        }
+    }
+    for (uint i = 0; i < level9Perks.length; i++) {
+        if (perkIndex == level9Perks[i]) {
+            return 9;
+        }
+    }
+    for (uint i = 0; i < level12Perks.length; i++) {
+        if (perkIndex == level12Perks[i]) {
+            return 12;
+        }
+    }
+    for (uint i = 0; i < level15Perks.length; i++) {
+        if (perkIndex == level15Perks[i]) {
+            return 15;
+        }
+    }
+    for (uint i = 0; i < level18Perks.length; i++) {
+        if (perkIndex == level18Perks[i]) {
+            return 18;
+        }
+    }
+    return 10000;
+}
+
+uint[] multiRankPerks = {PE_LIFEGIVER, PE_ACTION_BOY};
+
+uint[] level3Perks = {PE_MORE_CRITICALS, PE_WEAPON_HANDLING, PE_ADRENALINE_RUSH, PE_QUICK_RECOVERY, PE_LIVEWIRE, PE_WAY_OF_THE_FRUIT, PE_HEALER_II, PE_QUICK_POCKETS};
+uint[] level6Perks = {PE_EVEN_MORE_CRITICALS, PE_IN_YOUR_FACE, PE_SILENT_RUNNING, PE_TOUGHNESS, PE_SPRAY_AND_PRAY};
+uint[] level9Perks = {PE_STONEWALL, PE_SHARPSHOOTER, PE_BONUS_RANGED_DAMAGE, PE_PYROMANIAC, PE_EVEN_TOUGHER, PE_MEDIC, PE_HEAVE_HO, PE_CLOSE_COMBAT_MASTER};
+uint[] level12Perks = {PE_BETTER_CRITICALS, PE_LIFEGIVER, PE_GHOST, PE_ACTION_BOY, PE_GAIN_STRENGTH, PE_GAIN_PERCEPTION,
+                       PE_GAIN_ENDURANCE, PE_GAIN_CHARISMA, PE_GAIN_INTELLIGENCE, PE_GAIN_AGILITY, PE_GAIN_LUCK};
+uint[] level15Perks = {PE_MORE_RANGED_DAMAGE, PE_MAN_OF_STEEL, PE_FIELD_MEDIC};
+uint[] level18Perks = {PE_BONUS_RATE_OF_ATTACK, PE_SNIPER, PE_SILENT_DEATH};
+
+uint getHighestPerkWithout(Critter& player, uint perkIndex) {
+    for (uint i = 0; i < level18Perks.length; i++) {
+        if (perkIndex != level18Perks[i] && player.Perk[level18Perks[i]] > 0) {
+            return level18Perks[i];
+        }
+    }
+    for (uint i = 0; i < level15Perks.length; i++) {
+        if (perkIndex != level15Perks[i] && player.Perk[level15Perks[i]] > 0) {
+            return level15Perks[i];
+        }
+    }
+    for (uint i = 0; i < level12Perks.length; i++) {
+        if (perkIndex != level12Perks[i] && player.Perk[level12Perks[i]] > 0) {
+            return level12Perks[i];
+        }
+    }
+    for (uint i = 0; i < level9Perks.length; i++) {
+        if (perkIndex != level9Perks[i] && player.Perk[level9Perks[i]] > 0) {
+            return level9Perks[i];
+        }
+    }
+    for (uint i = 0; i < level6Perks.length; i++) {
+        if (perkIndex != level6Perks[i] && player.Perk[level6Perks[i]] > 0) {
+            return level6Perks[i];
+        }
+    }
+    for (uint i = 0; i < level3Perks.length; i++) {
+        if (perkIndex != level3Perks[i] && player.Perk[level3Perks[i]] > 0) {
+            return level3Perks[i];
+        }
+    }
+    return 0;
+}
+
+bool isMultiRankPerk(uint perkIndex) {
+    for (uint i = 0; i < multiRankPerks.length; i++) {
+        if (perkIndex == multiRankPerks[i]) {
+            return true;
+        }
+    }
+    return false;
+}
+
+string getPerkName(uint perkIndex) {
+    switch (perkIndex) {
+        //  level 3 perks
+        case PE_MORE_CRITICALS:         return "More Criticals";
+        case PE_WEAPON_HANDLING:        return "Weapon Handling";
+        case PE_ADRENALINE_RUSH:        return "Adrenaline Rush";
+        case PE_QUICK_RECOVERY:         return "Quick Recovery";
+        case PE_LIVEWIRE:               return "Livewire";
+        case PE_WAY_OF_THE_FRUIT:       return "Way of the Fruit";
+        case PE_HEALER_II:              return "Healer";
+        case PE_QUICK_POCKETS:          return "Quick Pockets";
+        //  level 6 perks
+        case PE_EVEN_MORE_CRITICALS:    return "Even More Criticals";
+        case PE_IN_YOUR_FACE:           return "In Your Face";
+        case PE_SILENT_RUNNING:         return "Silent Running";
+        case PE_TOUGHNESS:              return "Toughness";
+        case PE_SPRAY_AND_PRAY:         return "Spray and Pray";
+        //  level 9 perks
+        case PE_STONEWALL:              return "Stonewall";
+        case PE_SHARPSHOOTER:           return "Sharpshooter";
+        case PE_BONUS_RANGED_DAMAGE:    return "Bonus Ranged Damage";
+        case PE_PYROMANIAC:             return "Pyromaniac";
+        case PE_EVEN_TOUGHER:           return "Even Tougher";
+        case PE_MEDIC:                  return "Medic";
+        case PE_HEAVE_HO:               return "Heave Ho!";
+        case PE_CLOSE_COMBAT_MASTER:    return "Close Combat Master";
+        //  level 12 perks
+        case PE_BETTER_CRITICALS:       return "Better Criticals";
+        case PE_LIFEGIVER:              return "Lifegiver";
+        case PE_GHOST:                  return "Ghost";
+        case PE_ACTION_BOY:             return "Action Boy";
+        case PE_GAIN_STRENGTH:          return "Gain Strength";
+        case PE_GAIN_PERCEPTION:        return "Gain Perception";
+        case PE_GAIN_ENDURANCE:         return "Gain Endurance";
+        case PE_GAIN_CHARISMA:          return "Gain Charisma";
+        case PE_GAIN_INTELLIGENCE:      return "Gain Intelligence";
+        case PE_GAIN_AGILITY:           return "Gain Agility";
+        case PE_GAIN_LUCK:              return "Gain Luck";
+        //  level 15 perks
+        case PE_MORE_RANGED_DAMAGE:     return "More Ranged Damage";
+        case PE_MAN_OF_STEEL:           return "Man of Steel";
+        case PE_FIELD_MEDIC:            return "Field Medic";
+        //  level 18 perks
+        case PE_BONUS_RATE_OF_ATTACK:   return "Bonus Rate of Attack";
+        case PE_SNIPER:                 return "Sniper";
+        case PE_SILENT_DEATH:           return "Silent Death";
+    }
+    return "Unknown";
+}
+
+bool hasRangedSkillAtLeast(Critter& player, int skillValue) {
+    if (player.Skill[SK_SMALL_GUNS] >= skillValue || player.Skill[SK_BIG_GUNS] >= skillValue
+            || player.Skill[SK_ENERGY_WEAPONS] >= skillValue || player.Skill[SK_THROWING] >= skillValue) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+
+///
+///     OTHER
+///
+
 
 bool isCharPointsChecksumOk(Critter& player, string& reason) {
     reason = "";
@@ -944,6 +2500,5 @@ bool isCharPointsChecksumOk(Critter& player, string& reason) {
     }
     return true;
 }
-
 
 #endif 	//	__MUTATION_FEATURE__
