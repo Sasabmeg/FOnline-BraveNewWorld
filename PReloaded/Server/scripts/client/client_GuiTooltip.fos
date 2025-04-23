@@ -61,6 +61,7 @@ class CTooltips {
         string jjText = "\n\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t  - Chief Gadgeteer 'Jinxed' Jack -";
         string pipReference = "\n|" + COLOR_GREEN + " Extended Pip-boy database search results:\n";
         string notes = "";//"\nNotes:";
+        string requirements = "\n\nRequirements:";
         string modifies = "\n\nModifies:";
         string tldr = "\n\nTLDR:";
         string noData = "- No additional information available.";
@@ -574,6 +575,7 @@ class CTooltips {
         tooltipsValueExt.insertLast(pipReference
                                      + notes
                                      + "\n\u2022 +3 Strength bonus."
+                                     + "\n\u2022 Doubled Melee Damage from Strength."
                                      + "\n\u2022 -1 maximum AP (penalty)");
 
         tooltipsKey.insertLast(TRAIT_ONE_HANDER);
@@ -666,8 +668,9 @@ class CTooltips {
         tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(TRAIT_BRUTISH_HULK)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(TRAIT_BRUTISH_HULK)) + pipText);
         tooltipsValueExt.insertLast(pipReference
                                      + notes
-                                     + "\n\u2022 -1 Charisma. (penalty)"
-                                     + "\n\u2022 +12 Hit Points bonus.");
+                                     + "\n\u2022 Flat Melee Damage bonus: +3"
+                                     + "\n\u2022 +12 Hit Points bonus."
+                                     + "\n\u2022 -1 Charisma. (penalty)");
 
         tooltipsKey.insertLast(TRAIT_CHEM_RELIANT);
         tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(TRAIT_CHEM_RELIANT)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(TRAIT_CHEM_RELIANT)) + pipText);
@@ -718,7 +721,9 @@ class CTooltips {
         tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(PE_ADRENALINE_RUSH)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(PE_ADRENALINE_RUSH)) + pipText);
         tooltipsValueExt.insertLast(pipReference
                                      + notes
-                                     + "\n\u2022 Receive 1 DT and 5 DR for each 25% missing HP.");
+                                     + "\n\u2022 Receive 1 DT and 5 DR for each 25% missing HP."
+                                     + requirements
+                                     + "\n\t\u2022 Strength >= 5");
 
         tooltipsKey.insertLast(PE_HEALER_II);
         tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(PE_HEALER_II)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(PE_HEALER_II)) + pipText);
@@ -728,7 +733,10 @@ class CTooltips {
                                      + "\n\u2022 Drugs on self: 10IN -> 15%, 7IN ->10%, 4IN -> 5%"
                                      + "\n\u2022 Drugs on others: 7IN -> 15%, 4IN -> 10%, 1IN -> 5%"
                                      + "\n\t\u2022 FA on self: (5+IN)%"
-                                     + "\n\t\u2022 FA on others: (10+IN)%");
+                                     + "\n\t\u2022 FA on others: (10+IN)%"
+                                     + requirements
+                                     + "\n\t\u2022 Intellect >= 4"
+                                     + "\n\t\u2022 First Aid >= 50");
 
         tooltipsKey.insertLast(PE_HTH_EVADE);
         tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(PE_HTH_EVADE)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(PE_HTH_EVADE)) + pipText);
@@ -738,7 +746,9 @@ class CTooltips {
         tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(PE_MORE_CRITICALS)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(PE_MORE_CRITICALS)) + pipText);
         tooltipsValueExt.insertLast(pipReference
                                      + notes
-                                     + "\n\u2022 +6% bonus to critical hit chance.");
+                                     + "\n\u2022 +6% bonus to critical hit chance."
+                                     + requirements
+                                     + "\n\t\u2022 One ranged combat skill or Close Combat >= 50");
 
         tooltipsKey.insertLast(PE_QUICK_POCKETS);
         tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(PE_QUICK_POCKETS)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(PE_QUICK_POCKETS)) + pipText);
@@ -749,7 +759,9 @@ class CTooltips {
                                      + "\n\u2022 Reduces AP cost of using drugs by 1. (Stim -> 2AP, SS -> 4AP)"
                                      + "\n\t\u2022 Light armor does have this same perk, but they don't stack."
                                      + "\n\t\u2022 It does stack with Field Medic for SS only, reducing SS AP cost to 3."
-                                     + "\n\u2022 If taken with Weapon Handling it does stack with Light Armor bonus for Rocket Launcher only.");
+                                     + "\n\u2022 If taken with Weapon Handling it does stack with Light Armor bonus for Rocket Launcher only."
+                                     + requirements
+                                     + "\n\t\u2022 Agility >= 5");
 
         tooltipsKey.insertLast(PE_QUICK_RECOVERY);
         tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(PE_QUICK_RECOVERY)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(PE_QUICK_RECOVERY)) + pipText);
@@ -761,7 +773,9 @@ class CTooltips {
                                      + "\n\t\u2022 Lost Turn AP cost: Maximum AP"
                                      + "\n\t\u2022 Knockout AP cost: Random(Maximum AP, 3 * Maximum AP)"
                                      + "\n\u2022 This perk reduces AP cost to 1/3 of total value."
-                                     + "\n\u2022 Having 10IN reduces AP cost the same amount as this perk, to 1/3");
+                                     + "\n\u2022 Having 10IN reduces AP cost the same amount as this perk, to 1/3"
+                                     + requirements
+                                     + "\n\t\u2022 Agility >= 6");
 
         tooltipsKey.insertLast(PE_WAY_OF_THE_FRUIT);
         tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(PE_WAY_OF_THE_FRUIT)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(PE_WAY_OF_THE_FRUIT)) + pipText);
@@ -770,7 +784,9 @@ class CTooltips {
                                      + "\n\u2022 Eating Mutated Fruit heals you more."
                                      + "\n\u2022 After eating Mutated Fruit you gain bonus healing from all sources."
                                      + "\n\t\u2022 Bonus healing percentage: (5+ CH)%"
-                                     + "\n\u2022 Changed Mutated Fruit radiation formula: Rand(0, 6 - Max(LK, EN)/2)");
+                                     + "\n\u2022 Changed Mutated Fruit radiation formula: Rand(0, 6 - Max(LK, EN)/2)"
+                                     + requirements
+                                     + "\n\t\u2022 Charisma >= 4");
 
         tooltipsKey.insertLast(PE_WEAPON_HANDLING);
         tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(PE_WEAPON_HANDLING)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(PE_WEAPON_HANDLING)) + pipText);
@@ -780,7 +796,9 @@ class CTooltips {
                                      + "\n\u2022 After shooting Rocket Launcher it will automatically reload it."
                                      + "\n\t\u2022 Only reloads if same rocket is available."
                                      + "\n\t\u2022 Total animation time for shoot and reload is a bit less than without this perk."
-                                     + "\n\t\u2022 AP reduced by Quick Pockets perk and Light Armor can stacks for Rockets only.");
+                                     + "\n\t\u2022 AP reduced by Quick Pockets perk and Light Armor can stacks for Rockets only."
+                                     + requirements
+                                     + "\n\t\u2022 One ranged combat skill >= 50");
 
         tooltipsKey.insertLast(PE_LIVEWIRE);
         tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(PE_LIVEWIRE)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(PE_LIVEWIRE)) + pipText);
@@ -790,14 +808,18 @@ class CTooltips {
                                      + "\n\u2022 Double AC bonus derived from Agility."
                                      + "\n\u2022 TODO: 5% bonus move speed."
                                      + "\n\u2022 TODO: Combined with Dodger perks, it will automatically dodge an attack now and then while running."
-                                     + "\n\u2022 Note: Total AC (gear, agi, perk) is capped at 90");
+                                     + "\n\u2022 Note: Total AC (gear, agi, perk) is capped at 90"
+                                     + requirements
+                                     + "\n\t\u2022 Agility >= 7");
 
         //  Level 6 Perks
         tooltipsKey.insertLast(PE_EVEN_MORE_CRITICALS);
         tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(PE_EVEN_MORE_CRITICALS)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(PE_EVEN_MORE_CRITICALS)) + pipText);
         tooltipsValueExt.insertLast(pipReference
                                      + notes
-                                     + "\n\u2022 9% critical hit chance bonus.");
+                                     + "\n\u2022 9% critical hit chance bonus."
+                                     + requirements
+                                     + "\n\t\u2022 One ranged combat skill or Close Combat >= 75");
 
         tooltipsKey.insertLast(PE_IN_YOUR_FACE);
         tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(PE_IN_YOUR_FACE)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(PE_IN_YOUR_FACE)) + pipText);
@@ -806,20 +828,26 @@ class CTooltips {
                                      + "\n\u2022 Bonuses with Unarmed or Melee Weapons within melee-range only:"
                                      + "\n\u2022 50% chance of an attack to miss on you."
                                      + "\n\t\u2022 Burst attack counts each bullet, not the attack as a whole."
-                                     + "\n\t\u2022 Flamer attack ignores this perk.");
+                                     + "\n\t\u2022 Flamer attack ignores this perk."
+                                     + requirements
+                                     + "\n\t\u2022 Close Combat >= 75");
 
         tooltipsKey.insertLast(PE_SILENT_RUNNING);
         tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(PE_SILENT_RUNNING)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(PE_SILENT_RUNNING)) + pipText);
         tooltipsValueExt.insertLast(pipReference
                                      + notes
-                                     + "\n\u2022 Can run while sneaking.");
+                                     + "\n\u2022 Can run while sneaking."
+                                     + requirements
+                                     + "\n\t\u2022 Sneak >= 75");
 
         tooltipsKey.insertLast(PE_TOUGHNESS);
         tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(PE_TOUGHNESS)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(PE_TOUGHNESS)) + pipText);
         tooltipsValueExt.insertLast(pipReference
                                      + notes
                                      + "\n\u2022 +1 DT and +6 DR bonus to normal damage resistance."
-                                     + "\n\u2022 +1 DT and +5 DR bonus to all other damage resistances.");
+                                     + "\n\u2022 +1 DT and +5 DR bonus to all other damage resistances."
+                                     + requirements
+                                     + "\n\t\u2022  Endurance >= 4");
 
         tooltipsKey.insertLast(PE_SPRAY_AND_PRAY);
         tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(PE_SPRAY_AND_PRAY)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(PE_SPRAY_AND_PRAY)) + pipText);
@@ -827,7 +855,10 @@ class CTooltips {
                                      + notes
                                      + "\n\u2022 Your burst attacks that are not critical can do 20% bonus damage."
                                      + "\n\t\u2022 Chance: (5 + CH + LK)%"
-                                     + "\n\t\u2022 Final damage is increased by 20% and not per bullet.");
+                                     + "\n\t\u2022 Final damage is increased by 20% and not per bullet."
+                                     + requirements
+                                     + "\n\t\u2022  Charisma >= 3"
+                                     + "\n\t\u2022  Luck >= 3");
 
         //  Level 9 Perks
         tooltipsKey.insertLast(PE_STONEWALL);
@@ -839,7 +870,9 @@ class CTooltips {
                                      + "\n\t\u2022 Does not protect against Head/Eyes attacks KD/KO effects."
                                      + "\n\u2022 KO that are not from Head/Eyes can be downgraded to KD instead:"
                                      + "\n\t\u2022 3 * (CLAMP(ST, 1, CH+4) + CLAMP(EN, 1, CH+6)) + 15 * StonewallRank vs 1d100"
-                                     + "\n\t\u2022 Final damage is increased by 20% and not per bullet.");
+                                     + "\n\t\u2022 Final damage is increased by 20% and not per bullet."
+                                     + requirements
+                                     + "\n\t\u2022  Strength >= 6");
 
         tooltipsKey.insertLast(PE_SHARPSHOOTER);
         tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(PE_SHARPSHOOTER)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(PE_SHARPSHOOTER)) + pipText);
@@ -848,27 +881,37 @@ class CTooltips {
                                      + "\n\u2022 +6 bonus to Sight Range."
                                      + "\n\u2022 +8% bonus to Hit Chance."
                                      + "\n\u2022 Reduces your targets armor critical chance modifier by 50%."
-                                     + "\n\t\u2022 Aimed attacks only.");
+                                     + "\n\t\u2022 Aimed attacks only."
+                                     + requirements
+                                     + "\n\t\u2022  One ranged combat skill or Close Combat >= 100"
+                                     + "\n\t\u2022  Perception >= 7"
+                                     + "\n\t\u2022  Intellect >= 3");
 
         tooltipsKey.insertLast(PE_BONUS_RANGED_DAMAGE);
         tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(PE_BONUS_RANGED_DAMAGE)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(PE_BONUS_RANGED_DAMAGE)) + pipText);
         tooltipsValueExt.insertLast(pipReference
                                      + notes
                                      + "\n\u2022 +3 bonus damage per bullet with Guns."
-                                     + "\n\t\u2022 Works with energy weapons as well, despite the term 'per bullet'.");
+                                     + "\n\t\u2022 Works with energy weapons as well, despite the term 'per bullet'."
+                                     + requirements
+                                     + "\n\t\u2022  One ranged combat skill >= 100");
 
         tooltipsKey.insertLast(PE_PYROMANIAC);
         tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(PE_PYROMANIAC)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(PE_PYROMANIAC)) + pipText);
         tooltipsValueExt.insertLast(pipReference
                                      + notes
                                      + "\n\u2022 +25% bonus to fire based damage."
-                                     + "\n\u2022 Enemies die with flame animation more often.");
+                                     + "\n\u2022 Enemies die with flame animation more often."
+                                     + requirements
+                                     + "\n\t\u2022  One ranged combat skill >= 100");
 
         tooltipsKey.insertLast(PE_EVEN_TOUGHER);
         tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(PE_EVEN_TOUGHER)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(PE_EVEN_TOUGHER)) + pipText);
         tooltipsValueExt.insertLast(pipReference
                                      + notes
-                                     + "\n\u2022 +3 DT and +9 DR bonus to normal damage resistance only.");
+                                     + "\n\u2022 +3 DT and +9 DR bonus to normal damage resistance only."
+                                     + requirements
+                                     + "\n\t\u2022  Endurance >= 5");
 
         tooltipsKey.insertLast(PE_MEDIC);
         tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(PE_MEDIC)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(PE_MEDIC)) + pipText);
@@ -885,7 +928,11 @@ class CTooltips {
                                      + "\n\t\u2022 1.5 times the amount of XP for using First Aid."
                                      + "\n\t\u2022 3 times the amount of XP for using First Aid."
                                      + "\n\u2022 Shorter cooldown on Doctor and First Aid skills:"
-                                     + "\n\t\u2022 CD: 90 sec - Skill/4 - 20(medic) - 10(field medic)");
+                                     + "\n\t\u2022 CD: 90 sec - Skill/4 - 20(medic) - 10(field medic)"
+                                     + requirements
+                                     + "\n\t\u2022  First Aid >= 75"
+                                     + "\n\t\u2022  Doctor >= 75"
+                                     + "\n\t\u2022  Intellect >= 5");
 
         tooltipsKey.insertLast(PE_HEAVE_HO);
         tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(PE_HEAVE_HO)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(PE_HEAVE_HO)) + pipText);
@@ -894,14 +941,18 @@ class CTooltips {
                                      + "\n\u2022 +2 ST bonus when calculating throw range."
                                      + "\n\u2022 +6 bonus to max throw range."
                                      + "\n\u2022 Adds your melee damage to throwing damage formula:"
-                                     + "\n\t\u2022 Min: (ST + MeleeDamage), Max: (2*ST + MeleeDamage)");
+                                     + "\n\t\u2022 Min: (ST + MeleeDamage), Max: (2*ST + MeleeDamage)"
+                                     + requirements
+                                     + "\n\t\u2022  Throwing >= 100");
 
         tooltipsKey.insertLast(PE_CLOSE_COMBAT_MASTER);
         tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(PE_CLOSE_COMBAT_MASTER)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(PE_CLOSE_COMBAT_MASTER)) + pipText);
         tooltipsValueExt.insertLast(pipReference
                                      + notes
                                      + "\n\u2022 +15% bonus to critical hit chance with unarmed or melee attacks only."
-                                     + "\n\u2022 +10 bonus to Melee Damage.");
+                                     + "\n\u2022 +10 bonus to Melee Damage."
+                                     + requirements
+                                     + "\n\t\u2022  Close Combat >= 100");
 
         //  Level 12 Perks
         tooltipsKey.insertLast(PE_BETTER_CRITICALS);
@@ -909,7 +960,10 @@ class CTooltips {
         tooltipsValueExt.insertLast(pipReference
                                      + notes
                                      + "\n\u2022 +20% bonus to critical power roll with ranged attacks."
-                                     + "\n\u2022 +25% bonus to critical power roll with unarmed or melee attacks only.");
+                                     + "\n\u2022 +25% bonus to critical power roll with unarmed or melee attacks only."
+                                     + requirements
+                                     + "\n\t\u2022  One ranged combat skill >= 125"
+                                     + "\n\t\u2022  Luck >= 5");
 
         tooltipsKey.insertLast(PE_LIFEGIVER);
         tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(PE_LIFEGIVER)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(PE_LIFEGIVER)) + pipText);
@@ -923,55 +977,73 @@ class CTooltips {
                                      + notes
                                      + "\n\u2022 +30 Sneak bonus if you are within 5 hexes of a wall."
                                      + "\n\u2022 Reduced character alpha (a bit more transparent) while sneaking."
-                                     + "\n\u2022 You start your random encounters in stealth mode, with no NPC targeting you.");
+                                     + "\n\u2022 You start your random encounters in stealth mode, with no NPC targeting you."
+                                     + requirements
+                                     + "\n\t\u2022  Sneak >= 125");
 
         tooltipsKey.insertLast(PE_ACTION_BOY);
         tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(PE_ACTION_BOY)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(PE_ACTION_BOY)) + pipText);
         tooltipsValueExt.insertLast(pipReference
                                      + notes
-                                     + "\n\u2022 +1 bonus to maximum Action Points for each level of this perk.");
+                                     + "\n\u2022 +1 bonus to maximum Action Points for each level of this perk."
+                                     + requirements
+                                     + "\n\t\u2022  Agility >= 5");
 
         tooltipsKey.insertLast(PE_GAIN_STRENGTH);
         tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(PE_GAIN_STRENGTH)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(PE_GAIN_STRENGTH)) + pipText);
         tooltipsValueExt.insertLast(pipReference
                                      + notes
-                                     + "\n\u2022 +2 bonus to Strength.");
+                                     + "\n\u2022 +2 bonus to Strength."
+                                     + requirements
+                                     + "\n\t\u2022  Strength <= 8");
 
         tooltipsKey.insertLast(PE_GAIN_PERCEPTION);
         tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(PE_GAIN_PERCEPTION)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(PE_GAIN_PERCEPTION)) + pipText);
         tooltipsValueExt.insertLast(pipReference
                                      + notes
-                                     + "\n\u2022 +2 bonus to Perception.");
+                                     + "\n\u2022 +2 bonus to Perception."
+                                     + requirements
+                                     + "\n\t\u2022  Perception <= 8");
 
         tooltipsKey.insertLast(PE_GAIN_ENDURANCE);
         tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(PE_GAIN_ENDURANCE)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(PE_GAIN_ENDURANCE)) + pipText);
         tooltipsValueExt.insertLast(pipReference
                                      + notes
-                                     + "\n\u2022 +2 bonus to Endurance.");
+                                     + "\n\u2022 +2 bonus to Endurance."
+                                     + requirements
+                                     + "\n\t\u2022  Endurance <= 8");
 
         tooltipsKey.insertLast(PE_GAIN_CHARISMA);
         tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(PE_GAIN_CHARISMA)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(PE_GAIN_CHARISMA)) + pipText);
         tooltipsValueExt.insertLast(pipReference
                                      + notes
-                                     + "\n\u2022 +2 bonus to Charisma.");
+                                     + "\n\u2022 +2 bonus to Charisma."
+                                     + requirements
+                                     + "\n\t\u2022  Charisma <= 8");
 
         tooltipsKey.insertLast(PE_GAIN_INTELLIGENCE);
         tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(PE_GAIN_INTELLIGENCE)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(PE_GAIN_INTELLIGENCE)) + pipText);
         tooltipsValueExt.insertLast(pipReference
                                      + notes
-                                     + "\n\u2022 +2 bonus to Intellect.");
+                                     + "\n\u2022 +2 bonus to Intellect."
+                                     + requirements
+                                     + "\n\t\u2022  Intellect <= 8");
 
         tooltipsKey.insertLast(PE_GAIN_AGILITY);
         tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(PE_GAIN_AGILITY)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(PE_GAIN_AGILITY)) + pipText);
         tooltipsValueExt.insertLast(pipReference
                                      + notes
-                                     + "\n\u2022 +2 bonus to Agility.");
+                                     + "\n\u2022 +2 bonus to Agility."
+                                     + requirements
+                                     + "\n\t\u2022  Agility <= 8");
 
         tooltipsKey.insertLast(PE_GAIN_LUCK);
         tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(PE_GAIN_LUCK)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(PE_GAIN_LUCK)) + pipText);
         tooltipsValueExt.insertLast(pipReference
                                      + notes
-                                     + "\n\u2022 +2 bonus to Luck.");
+                                     + "\n\u2022 +2 bonus to Luck."
+                                     + requirements
+                                     + "\n\t\u2022  Luck <= 8");
 
         //  Level 15 Perks
         tooltipsKey.insertLast(PE_MORE_RANGED_DAMAGE);
@@ -982,14 +1054,19 @@ class CTooltips {
                                      + "\n\t\u2022 CLAMP(attacker.CH - ((target.CH2 + 1)*2/3), 0, 4) + 1"
                                      + "\n\t\u2022 ex: attacker.CH=5, target.CH=3 -> +3 damage per bullet"
                                      + "\n\t\u2022 ex: attacker.CH=7, target.CH=4 -> +5 damage per bullet"
-                                     + "\n\u2022 Later also known or referenced as Confident Shooter.");
+                                     + "\n\u2022 Later also known or referenced as Confident Shooter."
+                                     + requirements
+                                     + "\n\t\u2022  One ranged combat skill >= 150"
+                                     + "\n\t\u2022 Charisma >= 4");
 
         tooltipsKey.insertLast(PE_MAN_OF_STEEL);
         tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(PE_MAN_OF_STEEL)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(PE_MAN_OF_STEEL)) + pipText);
         tooltipsValueExt.insertLast(pipReference
                                      + notes
                                      + "\n\u2022 -10 penalty to enemy critical chance."
-                                     + "\n\u2022 -10 penalty to enemy critical power roll.");
+                                     + "\n\u2022 -10 penalty to enemy critical power roll."
+                                     + requirements
+                                     + "\n\t\u2022 Endurance >= 6");
 
         tooltipsKey.insertLast(PE_FIELD_MEDIC);
         tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(PE_FIELD_MEDIC)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(PE_FIELD_MEDIC)) + pipText);
@@ -1005,14 +1082,20 @@ class CTooltips {
                                      + "\n\t\u2022 2 times the normal amount of XP for First Aid."
                                      + "\n\t\u2022 5 times the normal amount of XP for Doctor."
                                      + "\n\u2022 Shorter cooldown on Doctor and First Aid skills:"
-                                     + "\n\t\u2022 CD: 90 sec - Skill/4 - 20(medic) - 10(field medic)");
+                                     + "\n\t\u2022 CD: 90 sec - Skill/4 - 20(medic) - 10(field medic)"
+                                     + requirements
+                                     + "\n\t\u2022  First Aid >= 150"
+                                     + "\n\t\u2022  Doctor >= 150"
+                                     + "\n\t\u2022  Medic Perk");
 
         //  Level 18 Perks
         tooltipsKey.insertLast(PE_BONUS_RATE_OF_ATTACK);
         tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(PE_BONUS_RATE_OF_ATTACK)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(PE_BONUS_RATE_OF_ATTACK)) + pipText);
         tooltipsValueExt.insertLast(pipReference
                                      + notes
-                                     + "\n\u2022 -1 AP cost for all attacks.");
+                                     + "\n\u2022 -1 AP cost for all attacks."
+                                     + requirements
+                                     + "\n\t\u2022  One ranged combat skill or Close Combat >= 175");
 
         tooltipsKey.insertLast(PE_SNIPER);
         tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(PE_SNIPER)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(PE_SNIPER)) + pipText);
@@ -1022,7 +1105,9 @@ class CTooltips {
                                      + "\n\t\u2022 Bonus Crit. = CLAMP((attacker.IN * 5 - target.LK * 2) * sniperMargin / 150, 0, 50);"
                                      + "\n\t\u2022 SniperMargin = CAMP(ToHit - HitRoll, 0, 150)"
                                      + "\n\t\u2022 ex: (Attacker 10 IN, Target 10 LK) -> up 30% bonus Critical Chance."
-                                     + "\n\u2022 This stacks with Aimed Attack critical chance bonuses.");
+                                     + "\n\u2022 This stacks with Aimed Attack critical chance bonuses."
+                                     + requirements
+                                     + "\n\t\u2022  One ranged combat skill >= 175");
 
         tooltipsKey.insertLast(PE_SILENT_DEATH);
         tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(PE_SILENT_DEATH)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(PE_SILENT_DEATH)) + pipText);
@@ -1033,7 +1118,9 @@ class CTooltips {
                                      + "\n\t\u2022 15 + CLAMP((18 - distance) * 3, 0, 45)"
                                      + "\n\t\u2022 This power roll bonus is doubled against NPC's."
                                      + "\n\t\u2022 Bonus damage against NPC only based on Sneak Skill and Distance."
-                                     + "\n\u2022 Distract throw never un-stealths.");
+                                     + "\n\u2022 Distract throw never un-stealths."
+                                     + requirements
+                                     + "\n\t\u2022  Sneak >= 175");
 
         tooltipsKey.insertLast(PE_SLAYER);
         tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(PE_SLAYER)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(PE_SLAYER)) + pipText);
@@ -1307,9 +1394,9 @@ void SetInventoryDetailText(ItemCl& item) {
 	if (valid(item)) {
         if(item.GetType() == ITEM_TYPE_ARMOR || item.GetType()== ITEM_TYPE_WEAPON) {
             if(item.Val4!=0)	itemQualityPrefix +="|" + COLOR_SAND + " Unique " + "|" + COLOR_LGREEN + " ";
-            else if(item.Val3!=0)	itemQualityPrefix +="|" + COLOR_GREEN_RED + " Advanced " + "|" + COLOR_LGREEN + " ";
-            else if(item.Val2!=0)	itemQualityPrefix +="|" + COLOR_WHITE + " Superior " + "|" + COLOR_LGREEN + " ";
-            else if(item.Val1!=0)	itemQualityPrefix +="|" + COLOR_LGRAY + " Improved " + "|" + COLOR_LGREEN + " ";
+            else if(item.Val3!=0) itemQualityPrefix +="|" + COLOR_GREEN_RED + " Advanced " + "|" + COLOR_LGREEN + " ";
+            else if(item.Val2!=0) itemQualityPrefix +="|" + COLOR_WHITE + " Superior " + "|" + COLOR_LGREEN + " ";
+            else if(item.Val1!=0) itemQualityPrefix +="|" + COLOR_LGRAY + " Improved " + "|" + COLOR_LGREEN + " ";
             else if(item.Val0!=0) itemQualityPrefix +="|" + COLOR_GRAY + " Quality " + "|" + COLOR_LGREEN + " ";
         }
 	}
@@ -1332,19 +1419,30 @@ void SetInventoryDetailText(ItemCl& item) {
                 text += str;
             }
 
-            if(item.Proto.Weapon_Perk != 0)
-            {
+            if (item.Proto.Weapon_Perk != 0) {
                 string str = GetMsgStr(TEXTMSG_GAME, STR_WEAPON_PERK(item.Proto.Weapon_Perk));
                 text += "\nPerk: " + str + ".";
             }
 
-            if(item.Proto.Weapon_MinStrength > 1)
-            {
+            if (item.Proto.Weapon_MinStrength > 1) {
                 text += "\nMinimum Strength: " + item.Proto.Weapon_MinStrength;
             }
+
+            if (item.Proto.Weapon_DmgMin_0 > 0 && item.Proto.Weapon_DmgMax_0 > 0) {
+                text += "\nBase damage: " + item.Proto.Weapon_DmgMin_0 + "-" + item.Proto.Weapon_DmgMax_0;
+            }
         } else if (item.GetType() == ITEM_TYPE_ARMOR) {
+
+            text += "\nArmor Class: " + item.Proto.Armor_AC;
             text += "\nCrit chance mod: " + (item.Proto.Armor_CMCritChance);
             text += "\nCrit power mod: " + (item.Proto.Armor_CMCritPower);
+            text += "\nDamage resistances: (DT/DR)";
+            text += "\n\tNormal:    " + item.Proto.Armor_DTNormal + "/" + item.Proto.Armor_DRNormal;
+            text += "\n\tLaser:      " + item.Proto.Armor_DTLaser + "/" + item.Proto.Armor_DRLaser;
+            text += "\n\tFire:         " + item.Proto.Armor_DTFire + "/" + item.Proto.Armor_DRFire;
+            text += "\n\tPlasma:    " + item.Proto.Armor_DTPlasma + "/" + item.Proto.Armor_DRPlasma;
+            text += "\n\tElectric:   " + item.Proto.Armor_DTElectr + "/" + item.Proto.Armor_DRElectr;
+            text += "\n\tExplode:   " + item.Proto.Armor_DTExplode + "/" + item.Proto.Armor_DRExplode;
             if (item.GetProtoId() == PID_TESLA_ARMOR) {
                 text += "\nCharges: "+item.Charge+"/"+item.Proto.Misc_ChargeMax;
             }
