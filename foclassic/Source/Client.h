@@ -1550,6 +1550,7 @@ public:
     int        FixX, FixY, FixVectX, FixVectY;
 	int		   FixResultImageWidth, FixResultImageHeight, FixToolsImageWidth, FixToolsImageHeight, FixIngredientsImageWidth, FixIngredientsImageHeight;
 	int        FixCurCraft;
+	int		   FixMaxInfoLength;
 
     struct SCraft
     {

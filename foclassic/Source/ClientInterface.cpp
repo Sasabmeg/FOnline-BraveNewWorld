@@ -901,6 +901,7 @@ int FOClient::InitIface()
 	FixToolsImageHeight = IfaceIni.GetInt("FixToolsImageHeight", 40);
 	FixIngredientsImageWidth = IfaceIni.GetInt("FixIngredientsImageWidth", 40);
 	FixIngredientsImageHeight = IfaceIni.GetInt("FixIngredientsImageHeight", 40);
+	FixMaxInfoLength = IfaceIni.GetInt("FixMaxInfoLength", 170);
 
     FixMode = FIX_MODE_LIST;
     FixCurCraft = -1;
@@ -10342,8 +10343,12 @@ void FOClient::FixGenerate( int fix_mode )
         if( craft->Info.length() )
         {
             str = "\n";
-            str += craft->Info;
-            str += "\n";
+			if ((craft->Info).length() < FixMaxInfoLength) {
+				str += craft->Info;
+			} else {
+				str += craft->Info.substr(0, FixMaxInfoLength) + "...";
+			}
+			str += "\n";
             FixGenerateStrLine( str, r );
         }
 
@@ -10467,9 +10472,8 @@ void FOClient::FixGenerateItems( UInt16Vec& items_vec, UIntVec& val_vec, UInt8Ve
             str += MsgGame->GetStr( STR_FIX_PIECES );
         }
 
-        str += "\n";
     }
-
+	str += "\n";
     FixGenerateStrLine( str, r );
 
     x = FixWWin[0] + FixWWin.W() / 2 - width / 2 * (uint)items_vec.size();
