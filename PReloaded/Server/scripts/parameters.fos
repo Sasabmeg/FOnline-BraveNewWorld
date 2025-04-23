@@ -472,6 +472,7 @@ void CritterGenerate(array<int>& data)     // Export to client_main@player_data_
     }
     if (_param_[TRAIT_BRUTISH_HULK] != 0) {
         _param_[ST_MAX_LIFE] += 12;
+        _param_[ST_MELEE_DAMAGE] += 3;
     }
     _param_[ST_CURRENT_HP] = _param_[ST_MAX_LIFE];
     _param_[ST_CURRENT_AP] = _param_[ST_ACTION_POINTS] * 100;

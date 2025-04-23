@@ -437,8 +437,8 @@ int[][] PerksData =
     },
     #ifdef __SERVER
     {               // level 1 perk up effects
-        31, 1, 30,  // Poison Resistance increased by 30
-        30, 1, 20,  // Radiation Resistance increased by 20
+        31, 1, 10,  // Poison Resistance increased by 10
+        30, 1, 5,  // Radiation Resistance increased by 5
     },
     {               // level 1 perk down effects
         -1          // Just revert
@@ -447,7 +447,7 @@ int[][] PerksData =
 
     { 332, 1, 1 },   // Mr. Fixit [PE_MR_FIXIT], Support, 1 ranks
     {                // level 1 requirements
-        213, 1, 120, // Repair at least 150
+        213, 1, 125, // Repair at least 125
     },
     #ifdef __SERVER
     array<int>(0),                 // level 1 perk up effects
@@ -926,7 +926,7 @@ int[][] PerksData =
     { 385, 0, 1 }, // Gain Strength [PE_GAIN_STRENGTH], Levelling, 1 ranks
     {              // level 1 requirements
         77, 1, 12, // Level at least 12
-        0, 0, 9,   // Strength at most 9
+        0, 0, 8,   // Strength at most 8
     },
     #ifdef __SERVER
     {              // level 1 perk up effects
@@ -940,7 +940,7 @@ int[][] PerksData =
     { 386, 0, 1 }, // Gain Perception [PE_GAIN_PERCEPTION], Levelling, 1 ranks
     {              // level 1 requirements
         77, 1, 12, // Level at least 12
-        1, 0, 9,   // Perception at most 9
+        1, 0, 8,   // Perception at most 8
     },
     #ifdef __SERVER
     {              // level 1 perk up effects
@@ -954,7 +954,7 @@ int[][] PerksData =
     { 387, 0, 1 }, // Gain Endurance [PE_GAIN_ENDURANCE], Levelling, 1 ranks
     {              // level 1 requirements
         77, 1, 12, // Level at least 12
-        2, 0, 9,   // Endurance at most 9
+        2, 0, 8,   // Endurance at most 8
     },
     #ifdef __SERVER
     {              // level 1 perk up effects
@@ -968,7 +968,7 @@ int[][] PerksData =
     { 388, 0, 1 }, // Gain Charisma [PE_GAIN_CHARISMA], Levelling, 1 ranks
     {              // level 1 requirements
         77, 1, 12, // Level at least 12
-        3, 0, 9,   // Charisma at most 9
+        3, 0, 8,   // Charisma at most 8
     },
     #ifdef __SERVER
     {              // level 1 perk up effects
@@ -982,7 +982,7 @@ int[][] PerksData =
     { 389, 0, 1 }, // Gain Intelligence [PE_GAIN_INTELLIGENCE], Levelling, 1 ranks
     {              // level 1 requirements
         77, 1, 12, // Level at least 12
-        4, 0, 9,   // Intelligence at most 9
+        4, 0, 8,   // Intelligence at most 8
     },
     #ifdef __SERVER
     {              // level 1 perk up effects
@@ -996,7 +996,7 @@ int[][] PerksData =
     { 390, 0, 1 }, // Gain Agility [PE_GAIN_AGILITY], Levelling, 1 ranks
     {              // level 1 requirements
         77, 1, 12, // Level at least 12
-        5, 0, 9,   // Agility at most 9
+        5, 0, 8,   // Agility at most 8
     },
     #ifdef __SERVER
     {              // level 1 perk up effects
@@ -1010,7 +1010,7 @@ int[][] PerksData =
     { 391, 0, 1 }, // Gain Luck [PE_GAIN_LUCK], Levelling, 1 ranks
     {              // level 1 requirements
         77, 1, 12, // Level at least 12
-        6, 0, 9,   // Luck at most 9
+        6, 0, 8,   // Luck at most 8
     },
     #ifdef __SERVER
     {              // level 1 perk up effects
