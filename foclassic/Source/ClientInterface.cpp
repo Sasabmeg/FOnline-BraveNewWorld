@@ -10329,7 +10329,7 @@ void FOClient::FixGenerate( int fix_mode )
         UInt8Vec tmp_vec;            // Temp vector
         for( uint i = 0; i < craft->OutItems.size(); i++ )
             tmp_vec.push_back( 0 );  // Push AND
-        FixGenerateItems( craft->OutItems, craft->OutItemsVal, tmp_vec, str, r, x );
+        FixGenerateItems( craft->OutItems, craft->OutItemsVal, tmp_vec, str, r, x, FIX_DRAW_PIC_WIDTH_0, FIX_DRAW_PIC_HEIGHT_0);
 
         // About
         if( craft->Info.length() )
@@ -10381,7 +10381,7 @@ void FOClient::FixGenerate( int fix_mode )
             str = "\n";
             str += MsgGame->GetStr( STR_FIX_TOOLS );
             FixGenerateStrLine( str, r );
-            FixGenerateItems( craft->NeedTools, craft->NeedToolsVal, craft->NeedToolsOr, str, r, x );
+            FixGenerateItems( craft->NeedTools, craft->NeedToolsVal, craft->NeedToolsOr, str, r, x, FIX_DRAW_PIC_WIDTH, FIX_DRAW_PIC_HEIGHT);
         }
 
         // Need items
@@ -10390,7 +10390,7 @@ void FOClient::FixGenerate( int fix_mode )
             str = "\n";
             str += MsgGame->GetStr( STR_FIX_ITEMS );
             FixGenerateStrLine( str, r );
-            FixGenerateItems( craft->NeedItems, craft->NeedItemsVal, craft->NeedItemsOr, str, r, x );
+            FixGenerateItems( craft->NeedItems, craft->NeedItemsVal, craft->NeedItemsOr, str, r, x, FIX_DRAW_PIC_WIDTH, FIX_DRAW_PIC_HEIGHT);
         }
     }
     else if( fix_mode == FIX_MODE_RESULT )
@@ -10424,7 +10424,7 @@ void FOClient::FixGenerateStrLine( string& str, Rect& r )
     r.T = r.B;
 }
 
-void FOClient::FixGenerateItems( UInt16Vec& items_vec, UIntVec& val_vec, UInt8Vec& or_vec, string& str, Rect& r, int& x )
+void FOClient::FixGenerateItems( UInt16Vec& items_vec, UIntVec& val_vec, UInt8Vec& or_vec, string& str, Rect& r, int& x, int width, int height)
 {
     str = "";
     for( uint i = 0, j = (uint)items_vec.size(); i < j; i++ )
@@ -10465,8 +10465,8 @@ void FOClient::FixGenerateItems( UInt16Vec& items_vec, UIntVec& val_vec, UInt8Ve
 
     FixGenerateStrLine( str, r );
 
-    x = FixWWin[0] + FixWWin.W() / 2 - FIX_DRAW_PIC_WIDTH / 2 * (uint)items_vec.size();
-    for( uint i = 0, j = (uint)items_vec.size(); i < j; i++, x += FIX_DRAW_PIC_WIDTH )
+    x = FixWWin[0] + FixWWin.W() / 2 - width / 2 * (uint)items_vec.size();
+    for( uint i = 0, j = (uint)items_vec.size(); i < j; i++, x += width )
     {
         ProtoItem* proto = ItemMngr.GetProtoItem( items_vec[i] );
         if( !proto )
@@ -10478,12 +10478,12 @@ void FOClient::FixGenerateItems( UInt16Vec& items_vec, UIntVec& val_vec, UInt8Ve
 
         Rect r2 = r;
         r2.L = x;
-        r2.R = x + FIX_DRAW_PIC_WIDTH;
-        r2.B += FIX_DRAW_PIC_HEIGHT;
+        r2.R = x + width;
+        r2.B += height;
 
         FixDrawComp.push_back( new FixDrawComponent( r2, anim ) );
     }
-    r.B += FIX_DRAW_PIC_HEIGHT;
+    r.B += height;
     r.T = r.B;
 }
 

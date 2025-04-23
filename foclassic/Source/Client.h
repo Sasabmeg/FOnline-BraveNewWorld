@@ -1613,8 +1613,10 @@ public:
         FixDrawComponent( Rect& r, AnyFrames* anim ) : IsText( false ), Anim( anim ) { Place = r; }
     };
     typedef std::vector<FixDrawComponent*> FixDrawComponentVec;
-    #define FIX_DRAW_PIC_WIDTH         (40)
-    #define FIX_DRAW_PIC_HEIGHT        (40)
+	#define FIX_DRAW_PIC_WIDTH         (40)
+	#define FIX_DRAW_PIC_HEIGHT        (40)
+	#define FIX_DRAW_PIC_WIDTH_0       (120)
+	#define FIX_DRAW_PIC_HEIGHT_0      (80)
 
     FixDrawComponentVec FixDrawComp;
     std::string         FixResultStr;
@@ -1623,7 +1625,7 @@ public:
 
     void       FixGenerate( int fix_mode );
     void       FixGenerateStrLine( std::string& str, Rect& r );
-    void       FixGenerateItems( UInt16Vec& items_vec, UIntVec& val_vec, UInt8Vec& or_vec, std::string& str, Rect& r, int& x );
+    void       FixGenerateItems( UInt16Vec& items_vec, UIntVec& val_vec, UInt8Vec& or_vec, std::string& str, Rect& r, int& x, int width, int height);
     int        GetMouseCraft();
     SCraftVec* GetCurSCrafts();
 
