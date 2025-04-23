@@ -895,6 +895,13 @@ int FOClient::InitIface()
     FixVectY = 0;
     FixX = (MODE_WIDTH - FixWMain.W() ) / 2;
     FixY = (MODE_HEIGHT - FixWMain.H() ) / 2;
+	FixResultImageWidth = IfaceIni.GetInt("FixResultImageWidth", 120);
+	FixResultImageHeight = IfaceIni.GetInt("FixResultImageHeight", 80);
+	FixToolsImageWidth = IfaceIni.GetInt("FixToolsImageWidth", 40);
+	FixToolsImageHeight = IfaceIni.GetInt("FixToolsImageHeight", 40);
+	FixIngredientsImageWidth = IfaceIni.GetInt("FixIngredientsImageWidth", 40);
+	FixIngredientsImageHeight = IfaceIni.GetInt("FixIngredientsImageHeight", 40);
+
     FixMode = FIX_MODE_LIST;
     FixCurCraft = -1;
     FixScrollLst = 0;
@@ -10329,7 +10336,7 @@ void FOClient::FixGenerate( int fix_mode )
         UInt8Vec tmp_vec;            // Temp vector
         for( uint i = 0; i < craft->OutItems.size(); i++ )
             tmp_vec.push_back( 0 );  // Push AND
-        FixGenerateItems( craft->OutItems, craft->OutItemsVal, tmp_vec, str, r, x, FIX_DRAW_PIC_WIDTH_0, FIX_DRAW_PIC_HEIGHT_0);
+        FixGenerateItems( craft->OutItems, craft->OutItemsVal, tmp_vec, str, r, x, FixResultImageWidth, FixResultImageHeight);
 
         // About
         if( craft->Info.length() )
@@ -10381,7 +10388,7 @@ void FOClient::FixGenerate( int fix_mode )
             str = "\n";
             str += MsgGame->GetStr( STR_FIX_TOOLS );
             FixGenerateStrLine( str, r );
-            FixGenerateItems( craft->NeedTools, craft->NeedToolsVal, craft->NeedToolsOr, str, r, x, FIX_DRAW_PIC_WIDTH, FIX_DRAW_PIC_HEIGHT);
+            FixGenerateItems( craft->NeedTools, craft->NeedToolsVal, craft->NeedToolsOr, str, r, x, FixToolsImageWidth, FixToolsImageHeight);
         }
 
         // Need items
@@ -10390,7 +10397,7 @@ void FOClient::FixGenerate( int fix_mode )
             str = "\n";
             str += MsgGame->GetStr( STR_FIX_ITEMS );
             FixGenerateStrLine( str, r );
-            FixGenerateItems( craft->NeedItems, craft->NeedItemsVal, craft->NeedItemsOr, str, r, x, FIX_DRAW_PIC_WIDTH, FIX_DRAW_PIC_HEIGHT);
+            FixGenerateItems( craft->NeedItems, craft->NeedItemsVal, craft->NeedItemsOr, str, r, x, FixIngredientsImageWidth, FixIngredientsImageHeight);
         }
     }
     else if( fix_mode == FIX_MODE_RESULT )

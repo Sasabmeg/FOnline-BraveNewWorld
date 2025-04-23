@@ -1548,7 +1548,8 @@ public:
     AnyFrames* FixMainPic, * FixPBDoneDn, * FixPBScrUpDn, * FixPBScrDnDn, * FixPBFixDn;
     Rect       FixWMain, FixBDone, FixBScrUp, FixBScrDn, FixWWin, FixBFix;
     int        FixX, FixY, FixVectX, FixVectY;
-    int        FixCurCraft;
+	int		   FixResultImageWidth, FixResultImageHeight, FixToolsImageWidth, FixToolsImageHeight, FixIngredientsImageWidth, FixIngredientsImageHeight;
+	int        FixCurCraft;
 
     struct SCraft
     {
@@ -1613,10 +1614,6 @@ public:
         FixDrawComponent( Rect& r, AnyFrames* anim ) : IsText( false ), Anim( anim ) { Place = r; }
     };
     typedef std::vector<FixDrawComponent*> FixDrawComponentVec;
-	#define FIX_DRAW_PIC_WIDTH         (40)
-	#define FIX_DRAW_PIC_HEIGHT        (40)
-	#define FIX_DRAW_PIC_WIDTH_0       (120)
-	#define FIX_DRAW_PIC_HEIGHT_0      (80)
 
     FixDrawComponentVec FixDrawComp;
     std::string         FixResultStr;
