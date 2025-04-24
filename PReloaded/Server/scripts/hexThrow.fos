@@ -302,7 +302,7 @@ void CommenceHexThrowingEffectAfterAnimation(Critter& cr, Map& map, Item& item, 
         }
         cr.Wait(__Breaktime);
         if (!ignoreApCost) {
-            cr.StatBase[ST_CURRENT_AP] -= 100 * HexThrowActionPointsCost(item, cr);
+            cr.StatBase[ST_CURRENT_AP] -= 100 * HexThrowActionPointsCost(item, cr) - (cr.Perk[PE_BONUS_RATE_OF_ATTACK] > 0 ? 0 : 10 * cr.Stat[ST_AGILITY]);
         }
 
         uint16 fixedStartX = cr.HexX;
@@ -340,7 +340,7 @@ void CommenceHexThrowingEffectAfterAnimation(Critter& cr, Map& map, Item& item, 
         cr.SetDir(dir);
         cr.Wait(__Breaktime);
         if (!ignoreApCost) {
-            cr.StatBase[ST_CURRENT_AP] -= 100 * HexThrowActionPointsCost(item, cr);
+            cr.StatBase[ST_CURRENT_AP] -= 100 * HexThrowActionPointsCost(item, cr) - (cr.Perk[PE_BONUS_RATE_OF_ATTACK] > 0 ? 0 : 10 * cr.Stat[ST_AGILITY]);
         }
 
         uint16 fixedStartX = cr.HexX;

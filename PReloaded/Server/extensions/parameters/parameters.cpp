@@ -261,6 +261,19 @@ EXPORT int getParam_Agility(CritterMutual& cr, uint)
 		}
 	}
 
+	//	BNW change, cannot have more than 9 AG in Combat Armors and more than 7 AG in Metal/Tesla/Power Armors
+	if (armor != NULL && armor->Proto != NULL) {
+		if ((armor->Proto->Armor_Perk > 0 && armor->Proto->Armor_Perk < 10) 
+				|| (armor->Proto->Armor_Perk > ARMOR_PERK_METAL && armor->Proto->Armor_Perk < ARMOR_PERK_METAL+10)
+				|| armor->Proto->Armor_Perk == ARMOR_PERK_HEAVY) {
+			val = CLAMP(val, 1, 7);
+		}
+		if ((armor->Proto->Armor_Perk >= ARMOR_PERK_COMBAT && armor->Proto->Armor_Perk < ARMOR_PERK_METAL)
+			|| armor->Proto->Armor_Perk == ARMOR_PERK_MEDIUM) {
+			val = CLAMP(val, 1, 9);
+		}
+	}
+
 	return CLAMP(val,1,10);
 }
 
@@ -287,7 +300,7 @@ EXPORT int getParam_MaxLife(CritterMutual& cr, uint)
 
 EXPORT int getParam_MaxAp(CritterMutual& cr, uint)
 {
-	int val = cr.Params[ST_ACTION_POINTS] + cr.Params[ST_ACTION_POINTS_EXT] + (13 + getParam_Agility(cr, 0)) / 4;
+	int val = cr.Params[ST_ACTION_POINTS] + cr.Params[ST_ACTION_POINTS_EXT] + (26 + getParam_Agility(cr, 0)) / 6;
 	
 	const Item* armor=cr.ItemSlotArmor;
 	if (checkBonus(armor, BONUS_ARMOR_MAX_AP) != 0) val++;

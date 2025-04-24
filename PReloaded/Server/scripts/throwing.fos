@@ -237,7 +237,7 @@ void CommenceThrowing(Critter& cr, Map& map, Item& item, uint16 tx, uint16 ty)
     }
     cr.Wait(__Breaktime);
     uint8 brofBonus = (cr.Perk[PE_BONUS_RATE_OF_ATTACK]>0)?1:0;
-    cr.StatBase[ST_CURRENT_AP] -= 100 * ActionPointsCost(item, brofBonus);
+    cr.StatBase[ST_CURRENT_AP] -= 100 * ActionPointsCost(item, brofBonus) - (cr.Perk[PE_BONUS_RATE_OF_ATTACK] > 0 ? 0 : 10 * cr.Stat[ST_AGILITY]);
 
     uint16 fixedStartX = cr.HexX;
     uint16 fixedStartY = cr.HexY;

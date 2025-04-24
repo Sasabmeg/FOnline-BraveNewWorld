@@ -239,9 +239,10 @@ void CombatAttack(Critter& cr, Critter& target, ProtoItem& weapon, uint8 weaponM
 	uint8 use = _WeaponModeUse(weaponMode);
 
 	//  we used up 1 AP to start animation, rest of the AP cost needs to be subtracted
+	//  BNW Mechanics change: reduced AP cost of attack by 0.1 AP per 1 AG, non stacking with BRoA
     int apCost = (cr.Perk[PE_BONUS_RATE_OF_ATTACK] > 0 ) ? -1 : 0;
-    apCost += _WeaponApCost(weapon, use) - 1;
-    cr.StatBase[ST_CURRENT_AP] -= 100 * apCost;
+    apCost += (_WeaponApCost(weapon, use) - 1);
+    cr.StatBase[ST_CURRENT_AP] -= (apCost * 100)  - (cr.Perk[PE_BONUS_RATE_OF_ATTACK] > 0 ? 0 : (10 * cr.Stat[ST_AGILITY]));
 
 	//if(cr.IsPlayer())
 	//{
