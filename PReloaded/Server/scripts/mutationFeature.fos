@@ -17,6 +17,330 @@ string colorNormal = "|" + COLOR_LGREEN + " ";
 
 
 ///
+///     TAGGED SKILL
+///
+
+
+bool d_IsNotTaggedSkill(Critter& player, Critter@ npc, int val1) {
+    return !d_IsTaggedSkill(player, npc, val1);
+}
+
+bool d_IsTaggedSkill(Critter& player, Critter@ npc, int val1) {
+    string reason = "";
+    if (player.Param[TAG_SKILL1] == val1) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+void r_SwapTagSkill(Critter& player, Critter@ npc, int val) {
+    uint skillIndex = uint(val);
+    string reason = "";
+    if (canSwapTag(player, skillIndex, reason)) {
+        uint oldTagIndex = player.ParamBase[TAG_SKILL1];
+        int oldSkillVal = player.SkillBase[oldTagIndex];
+        player.SkillBase[oldTagIndex] = player.SkillBase[skillIndex];
+        player.SkillBase[skillIndex] = oldSkillVal;
+        player.ParamBase[TAG_SKILL1] = skillIndex;
+    } else {
+        Log("MUTATION DIALONG ERROR: RESULT - CANNOT SWAP PERK: " + getSkillName(skillIndex) + ", player: " + player.Name + ", reason: " + reason);
+    }
+}
+
+bool d_CanSwapTagSkill(Critter& player, Critter@ npc, int val1) {
+    string reason = "";
+    return canSwapTag(player, val1, reason);
+}
+
+/**
+ * Show the SPECIALs the player currently has and the reason they can be decreased or increased. @lex tagSkill@ is used.
+ */
+void dlg_TagSkillList(Critter& player, Critter@ npc, string@ text) {
+    if (!IS_DIALOG_GENERATED(text))
+        return;
+
+    if (player.Param[TAG_SKILL1] < int(SKILL_BEGIN) || player.Param[TAG_SKILL1] > int(SKILL_END)) {
+        text = "$tagSkill " + "Error: Tag skill N/A.?!";
+        return;
+    }
+
+    string taggable = "-tag swappable-";
+    string str = "";
+    string listPrefix = "\t";
+    string reason = "";
+
+    str += "\n\n[List of your combat specialization skills:]\n";
+
+    str += listPrefix + "[Small Guns: \t\t " + player.SkillBase[SK_SMALL_GUNS] + "\t";
+    if (canSwapTag(player, SK_SMALL_GUNS, reason)) {
+        str += taggable + "]\n";
+    } else {
+        str += reason + "]\n";
+    }
+    str += listPrefix + "[Big Guns: \t\t\t" + player.SkillBase[SK_BIG_GUNS] + "\t";
+    if (canSwapTag(player, SK_BIG_GUNS, reason)) {
+        str += taggable + "]\n";
+    } else {
+        str += reason + "]\n";
+    }
+    str += listPrefix + "[Energy Weapons:  " + player.SkillBase[SK_ENERGY_WEAPONS] + "\t";
+    if (canSwapTag(player, SK_ENERGY_WEAPONS, reason)) {
+        str += taggable + "]\n";
+    } else {
+        str += reason + "]\n";
+    }
+    str += listPrefix + "[Close Combat: \t " + player.SkillBase[SK_UNARMED] + "\t";
+    if (canSwapTag(player, SK_UNARMED, reason)) {
+        str += taggable + "]\n";
+    } else {
+        str += reason + "]\n";
+    }
+    str += listPrefix + "[Throwing: \t\t\t" + player.SkillBase[SK_THROWING] + "\t";
+    if (canSwapTag(player, SK_THROWING, reason)) {
+        str += taggable + "]\n";
+    } else {
+        str += reason + "]\n";
+    }
+    str += listPrefix + "[Doctor: \t\t\t   " + player.SkillBase[SK_DOCTOR] + "\t";
+    if (canSwapTag(player, SK_DOCTOR, reason)) {
+        str += taggable + "]\n";
+    } else {
+        str += reason + "]\n";
+    }
+    str += listPrefix + "[Sneak: \t\t\t\t" + player.SkillBase[SK_SNEAK] + "\t";
+    if (canSwapTag(player, SK_SNEAK, reason)) {
+        str += taggable + "]\n";
+    } else {
+        str += reason + "]\n";
+    }
+    str += listPrefix + "[Traps: \t\t\t\t " + player.SkillBase[SK_TRAPS] + "\t";
+    if (canSwapTag(player, SK_TRAPS, reason)) {
+        str += taggable + "]\n";
+    } else {
+        str += reason + "]\n";
+    }
+
+    text = "$tagSkill " + str;
+    if (text.length() > 998) {
+        text = substring(text, 0, 998);
+    }
+}
+
+bool canSwapTag(Critter& player, uint skillIndex, string@ reason) {
+    uint currentTagIndex = player.Param[TAG_SKILL1];
+    Log("SWAP TAG: " + getSkillName(currentTagIndex) + " -> " + getSkillName(skillIndex));
+    if (player.Param[TAG_SKILL1] < int(SKILL_BEGIN) || player.Param[TAG_SKILL1] > int(SKILL_END)) {
+        reason = "Error: Tag skill N/A.?!";
+        return false;
+    }
+    if (skillIndex < SKILL_BEGIN || skillIndex > SKILL_END) {
+        reason = colorWarn + "Error: Skill index out of bounds." + colorNormal;
+        return false;
+    }
+    if (currentTagIndex == skillIndex) {
+        reason = colorAlreadyHave + "This is your Tag Skill." + colorNormal;
+        return false;
+    }
+
+
+    if (isRangedSkill(skillIndex) && isRangedSkill(currentTagIndex)) {
+        if (skillIndex == SK_THROWING || currentTagIndex == SK_THROWING) {
+            if (player.Perk[PE_HEAVE_HO] > 0 && (player.Skill[skillIndex] < 100 || player.Skill[currentTagIndex] < 100)) {
+                reason = colorWarn + "Heave Ho!" + colorNormal;
+                return false;
+            }
+        }
+        Log("Both Ranged skill. OK");
+        return true;
+    }
+
+    if (isRangedSkill(skillIndex) || isRangedSkill(currentTagIndex)) {
+        if (skillIndex == SK_UNARMED || currentTagIndex == SK_UNARMED) {
+            if (player.Perk[PE_WEAPON_HANDLING] > 0 && player.Skill[SK_UNARMED] < 50 && !hasRangedSkillAtLeastWithout(player, 50, currentTagIndex)) { reason = colorWarn + "Weapon Handling" + colorNormal; return false; }
+            if (player.Perk[PE_BONUS_RANGED_DAMAGE] > 0 && player.Skill[SK_UNARMED] < 100 && !hasRangedSkillAtLeastWithout(player, 100, currentTagIndex)) { reason = colorWarn + "Bonus Ranged Damage" + colorNormal; return false; }
+            if (player.Perk[PE_PYROMANIAC] > 0 && player.Skill[SK_UNARMED] < 100 && !hasRangedSkillAtLeastWithout(player, 100, currentTagIndex)) { reason = colorWarn +  colorWarn + "Pyromaniac" + colorNormal; return false; }
+            if (player.Perk[PE_MORE_RANGED_DAMAGE] > 0 && player.Skill[SK_UNARMED] < 150 && !hasRangedSkillAtLeastWithout(player, 150, currentTagIndex)) { reason = colorWarn +  "More Ranged Damage" + colorNormal; return false; }
+            if (player.Perk[PE_SNIPER] > 0 && player.Skill[SK_UNARMED] < 175 && !hasRangedSkillAtLeastWithout(player, 175, currentTagIndex)) { reason = colorWarn +  "Sniper" + colorNormal; return false; }
+
+            if (player.Perk[PE_IN_YOUR_FACE] > 0 && player.Skill[currentTagIndex] < 75) { reason = colorWarn +  "In Your Face" + colorNormal; return false; }
+            if (player.Perk[PE_CLOSE_COMBAT_MASTER] > 0 && player.Skill[currentTagIndex] < 100) { reason = colorWarn +  "Close Combat Master" + colorNormal; return false; }
+        }
+        if (skillIndex == SK_SNEAK || currentTagIndex == SK_SNEAK) {
+            if (player.Perk[PE_WEAPON_HANDLING] > 0 && player.Skill[SK_SNEAK] < 50 && !hasRangedSkillAtLeastWithout(player, 50, currentTagIndex)) { reason = colorWarn +  "Weapon Handling" + colorNormal; return false; }
+            if (player.Perk[PE_BONUS_RANGED_DAMAGE] > 0 && player.Skill[SK_SNEAK] < 100 && !hasRangedSkillAtLeastWithout(player, 100, currentTagIndex)) { reason = colorWarn +  "Bonus Ranged Damage" + colorNormal; return false; }
+            if (player.Perk[PE_PYROMANIAC] > 0 && player.Skill[SK_SNEAK] < 100 && !hasRangedSkillAtLeastWithout(player, 100, currentTagIndex)) { reason = colorWarn +  "Pyromaniac" + colorNormal; return false; }
+            if (player.Perk[PE_MORE_RANGED_DAMAGE] > 0 && player.Skill[SK_SNEAK] < 150 && !hasRangedSkillAtLeastWithout(player, 150, currentTagIndex)) { reason = colorWarn +  "More Ranged Damage" + colorNormal; return false; }
+            if (player.Perk[PE_SNIPER] > 0 && player.Skill[SK_SNEAK] < 175 && !hasRangedSkillAtLeastWithout(player, 175, currentTagIndex)) { reason = colorWarn +  "Sniper" + colorNormal; return false; }
+
+            if (player.Perk[PE_MORE_CRITICALS] > 0 && player.Skill[SK_SNEAK] < 50 && !hasCombatSkillAtLeastWithout(player, 50, currentTagIndex)) { reason = colorWarn +  "More Criticals" + colorNormal; return false; }
+            if (player.Perk[PE_EVEN_MORE_CRITICALS] > 0 && player.Skill[SK_SNEAK] < 75 && !hasCombatSkillAtLeastWithout(player, 75, currentTagIndex)) { reason = colorWarn +  "Even More Criticals" + colorNormal; return false; }
+            if (player.Perk[PE_SHARPSHOOTER] > 0 && player.Skill[SK_SNEAK] < 100 && !hasCombatSkillAtLeastWithout(player, 100, currentTagIndex)) { reason = colorWarn +  "Sharpshooter" + colorNormal; return false; }
+            if (player.Perk[PE_BONUS_RATE_OF_ATTACK] > 0 && player.Skill[SK_SNEAK] < 175 && !hasCombatSkillAtLeastWithout(player, 175, currentTagIndex)) { reason = colorWarn +  "Bonus Rate of Attack" + colorNormal; return false; }
+
+            if (player.Perk[PE_SILENT_RUNNING] > 0 && player.Skill[currentTagIndex] < 75) { reason = colorWarn +  "Silent Running" + colorNormal; return false; }
+            if (player.Perk[PE_GHOST] > 0 && player.Skill[currentTagIndex] < 125) { reason = colorWarn +  "Ghost" + colorNormal; return false; }
+            if (player.Perk[PE_SILENT_DEATH] > 0 && player.Skill[currentTagIndex] < 175) { reason = colorWarn +  "Silent Death" + colorNormal; return false; }
+            if (player.Perk[PE_STEALTH_GIRL] > 0 && player.Skill[currentTagIndex] < 100) { reason = colorWarn +  "Stealth Girl" + colorNormal; return false; }
+        }
+        if (skillIndex == SK_DOCTOR || currentTagIndex == SK_DOCTOR) {
+            if (player.Perk[PE_WEAPON_HANDLING] > 0 && player.Skill[SK_DOCTOR] < 50 && !hasRangedSkillAtLeastWithout(player, 50, currentTagIndex)) { reason = colorWarn +  "Weapon Handling" + colorNormal; return false; }
+            if (player.Perk[PE_BONUS_RANGED_DAMAGE] > 0 && player.Skill[SK_DOCTOR] < 100 && !hasRangedSkillAtLeastWithout(player, 100, currentTagIndex)) { reason = colorWarn +  "Bonus Ranged Damage" + colorNormal; return false; }
+            if (player.Perk[PE_PYROMANIAC] > 0 && player.Skill[SK_DOCTOR] < 100 && !hasRangedSkillAtLeastWithout(player, 100, currentTagIndex)) { reason = colorWarn +  "Pyromaniac" + colorNormal; return false; }
+            if (player.Perk[PE_MORE_RANGED_DAMAGE] > 0 && player.Skill[SK_DOCTOR] < 150 && !hasRangedSkillAtLeastWithout(player, 150, currentTagIndex)) { reason = colorWarn +  "More Ranged Damage" + colorNormal; return false; }
+            if (player.Perk[PE_SNIPER] > 0 && player.Skill[SK_DOCTOR] < 175 && !hasRangedSkillAtLeastWithout(player, 175, currentTagIndex)) { reason = colorWarn +  "Sniper" + colorNormal; return false; }
+
+            if (player.Perk[PE_MORE_CRITICALS] > 0 && player.Skill[SK_DOCTOR] < 50 && !hasCombatSkillAtLeastWithout(player, 50, currentTagIndex)) { reason = colorWarn +  "More Criticals" + colorNormal; return false; }
+            if (player.Perk[PE_EVEN_MORE_CRITICALS] > 0 && player.Skill[SK_DOCTOR] < 75 && !hasCombatSkillAtLeastWithout(player, 75, currentTagIndex)) { reason = colorWarn +  "Even More Criticals" + colorNormal; return false; }
+            if (player.Perk[PE_SHARPSHOOTER] > 0 && player.Skill[SK_DOCTOR] < 100 && !hasCombatSkillAtLeastWithout(player, 100, currentTagIndex)) { reason = colorWarn +  "Sharpshooter" + colorNormal; return false; }
+            if (player.Perk[PE_BONUS_RATE_OF_ATTACK] > 0 && player.Skill[SK_DOCTOR] < 175 && !hasCombatSkillAtLeastWithout(player, 175, currentTagIndex)) { reason = colorWarn +  "Bonus Rate of Attack" + colorNormal; return false; }
+
+            if (player.Perk[PE_MEDIC] > 0 && player.Skill[currentTagIndex] < 75) { reason = colorWarn +  "Medic" + colorNormal; return false; }
+            if (player.Perk[PE_FIELD_MEDIC] > 0 && player.Skill[currentTagIndex] < 150) { reason = colorWarn +  "Field Medic" + colorNormal; return false; }
+            if (player.Perk[PE_DEAD_MAN_WALKING] > 0 && player.Skill[currentTagIndex] < 50) { reason = colorWarn +  "Dead Man Walking" + colorNormal; return false; }
+            if (player.Perk[PE_FASTER_HEALING] > 0 && player.Skill[currentTagIndex] < 75) { reason = colorWarn +  "Faster Healing" + colorNormal; return false; }
+            if (player.Perk[PE_RAD_RESISTANCE] > 0 && player.Skill[currentTagIndex] < 100) { reason = colorWarn +  "Rad Resistance" + colorNormal; return false; }
+        }
+        if (skillIndex == SK_TRAPS || currentTagIndex == SK_TRAPS) {
+            if (player.Perk[PE_WEAPON_HANDLING] > 0 && player.Skill[SK_TRAPS] < 50 && !hasRangedSkillAtLeastWithout(player, 50, currentTagIndex)) { reason = colorWarn +  "Weapon Handling" + colorNormal; return false; }
+            if (player.Perk[PE_BONUS_RANGED_DAMAGE] > 0 && player.Skill[SK_TRAPS] < 100 && !hasRangedSkillAtLeastWithout(player, 100, currentTagIndex)) { reason = colorWarn +  "Bonus Ranged Damage" + colorNormal; return false; }
+            if (player.Perk[PE_PYROMANIAC] > 0 && player.Skill[SK_TRAPS] < 100 && !hasRangedSkillAtLeastWithout(player, 100, currentTagIndex)) { reason = colorWarn +  "Pyromaniac" + colorNormal; return false; }
+            if (player.Perk[PE_MORE_RANGED_DAMAGE] > 0 && player.Skill[SK_TRAPS] < 150 && !hasRangedSkillAtLeastWithout(player, 150, currentTagIndex)) { reason = colorWarn +  "More Ranged Damage" + colorNormal; return false; }
+            if (player.Perk[PE_SNIPER] > 0 && player.Skill[SK_TRAPS] < 175 && !hasRangedSkillAtLeastWithout(player, 175, currentTagIndex)) { reason = colorWarn +  "Sniper" + colorNormal; return false; }
+
+            if (player.Perk[PE_MORE_CRITICALS] > 0 && player.Skill[SK_TRAPS] < 50 && !hasCombatSkillAtLeastWithout(player, 50, currentTagIndex)) { reason = colorWarn +  "More Criticals" + colorNormal; return false; }
+            if (player.Perk[PE_EVEN_MORE_CRITICALS] > 0 && player.Skill[SK_TRAPS] < 75 && !hasCombatSkillAtLeastWithout(player, 75, currentTagIndex)) { reason = colorWarn +  "Even More Criticals" + colorNormal; return false; }
+            if (player.Perk[PE_SHARPSHOOTER] > 0 && player.Skill[SK_TRAPS] < 100 && !hasCombatSkillAtLeastWithout(player, 100, currentTagIndex)) { reason = colorWarn +  "Sharpshooter" + colorNormal; return false; }
+            if (player.Perk[PE_BONUS_RATE_OF_ATTACK] > 0 && player.Skill[SK_TRAPS] < 175 && !hasCombatSkillAtLeastWithout(player, 175, currentTagIndex)) { reason = colorWarn +  "Bonus Rate of Attack" + colorNormal; return false; }
+
+            if (player.Perk[PE_LIGHT_STEP] > 0 && player.Skill[currentTagIndex] < 50) { reason = colorWarn +  "Light Step" + colorNormal; return false; }
+            if (player.Perk[PE_DEMOLITION_EXPERT] > 0 && player.Skill[currentTagIndex] < 125) { reason = colorWarn +  "Demolition Expert" + colorNormal; return false; }
+        }
+    }
+    if (skillIndex == SK_UNARMED || currentTagIndex == SK_UNARMED) {
+        if (skillIndex == SK_THROWING || currentTagIndex == SK_THROWING) {
+            if (player.Perk[PE_HEAVE_HO] > 0 && player.Skill[SK_UNARMED] < 100) { reason = colorWarn +  "Heave Ho!" + colorNormal; return false; }
+        }
+        if (skillIndex == SK_SNEAK || currentTagIndex == SK_SNEAK) {
+            if (player.Perk[PE_IN_YOUR_FACE] > 0 && player.Skill[SK_SNEAK] < 75) { reason = colorWarn +  "In Your Face" + colorNormal; return false; }
+            if (player.Perk[PE_CLOSE_COMBAT_MASTER] > 0 && player.Skill[SK_SNEAK] < 100) { reason = colorWarn +  "Close Combat Master" + colorNormal; return false; }
+
+            if (player.Perk[PE_MORE_CRITICALS] > 0 && player.Skill[SK_SNEAK] < 50 && !hasCombatSkillAtLeastWithout(player, 50, currentTagIndex)) { reason = colorWarn +  "More Criticals" + colorNormal; return false; }
+            if (player.Perk[PE_EVEN_MORE_CRITICALS] > 0 && player.Skill[SK_SNEAK] < 75 && !hasCombatSkillAtLeastWithout(player, 75, currentTagIndex)) { reason = colorWarn +  "Even More Criticals" + colorNormal; return false; }
+            if (player.Perk[PE_SHARPSHOOTER] > 0 && player.Skill[SK_SNEAK] < 100 && !hasCombatSkillAtLeastWithout(player, 100, currentTagIndex)) { reason = colorWarn +  "Sharpshooter" + colorNormal; return false; }
+            if (player.Perk[PE_BONUS_RATE_OF_ATTACK] > 0 && player.Skill[SK_SNEAK] < 175 && !hasCombatSkillAtLeastWithout(player, 175, currentTagIndex)) { reason = colorWarn +  "Bonus Rate of Attack" + colorNormal; return false; }
+
+            if (player.Perk[PE_SILENT_RUNNING] > 0 && player.Skill[SK_UNARMED] < 75) { reason = colorWarn +  "Silent Running" + colorNormal; return false; }
+            if (player.Perk[PE_GHOST] > 0 && player.Skill[SK_UNARMED] < 125) { reason = colorWarn +  "Ghost" + colorNormal; return false; }
+            if (player.Perk[PE_SILENT_DEATH] > 0 && player.Skill[SK_UNARMED] < 175) { reason = colorWarn +  "Silent Death" + colorNormal; return false; }
+            if (player.Perk[PE_STEALTH_GIRL] > 0 && player.Skill[SK_UNARMED] < 100) { reason = colorWarn +  "Stealth Girl" + colorNormal; return false; }
+        }
+        if (skillIndex == SK_DOCTOR || currentTagIndex == SK_DOCTOR) {
+            if (player.Perk[PE_IN_YOUR_FACE] > 0 && player.Skill[SK_DOCTOR] < 75) { reason = colorWarn +  "In Your Face" + colorNormal; return false; }
+            if (player.Perk[PE_CLOSE_COMBAT_MASTER] > 0 && player.Skill[SK_DOCTOR] < 100) { reason = colorWarn +  "Close Combat Master" + colorNormal; return false; }
+
+            if (player.Perk[PE_MORE_CRITICALS] > 0 && player.Skill[SK_DOCTOR] < 50 && !hasCombatSkillAtLeastWithout(player, 50, currentTagIndex)) { reason = colorWarn +  "More Criticals" + colorNormal; return false; }
+            if (player.Perk[PE_EVEN_MORE_CRITICALS] > 0 && player.Skill[SK_DOCTOR] < 75 && !hasCombatSkillAtLeastWithout(player, 75, currentTagIndex)) { reason = colorWarn +  "Even More Criticals" + colorNormal; return false; }
+            if (player.Perk[PE_SHARPSHOOTER] > 0 && player.Skill[SK_DOCTOR] < 100 && !hasCombatSkillAtLeastWithout(player, 100, currentTagIndex)) { reason = colorWarn +  "Sharpshooter" + colorNormal; return false; }
+            if (player.Perk[PE_BONUS_RATE_OF_ATTACK] > 0 && player.Skill[SK_DOCTOR] < 175 && !hasCombatSkillAtLeastWithout(player, 175, currentTagIndex)) { reason = colorWarn +  "Bonus Rate of Attack" + colorNormal; return false; }
+
+            if (player.Perk[PE_MEDIC] > 0 && player.Skill[SK_UNARMED] < 75) { reason = colorWarn +  "Medic" + colorNormal; return false; }
+            if (player.Perk[PE_FIELD_MEDIC] > 0 && player.Skill[SK_UNARMED] < 150) { reason = colorWarn +  "Field Medic" + colorNormal; return false; }
+            if (player.Perk[PE_DEAD_MAN_WALKING] > 0 && player.Skill[SK_UNARMED] < 50) { reason = colorWarn +  "Dead Man Walking" + colorNormal; return false; }
+            if (player.Perk[PE_FASTER_HEALING] > 0 && player.Skill[SK_UNARMED] < 75) { reason = colorWarn +  "Faster Healing" + colorNormal; return false; }
+            if (player.Perk[PE_RAD_RESISTANCE] > 0 && player.Skill[SK_UNARMED] < 100) { reason = colorWarn +  "Rad Resistance" + colorNormal; return false; }
+        }
+        if (skillIndex == SK_TRAPS || currentTagIndex == SK_TRAPS) {
+            if (player.Perk[PE_IN_YOUR_FACE] > 0 && player.Skill[SK_TRAPS] < 75) { reason = colorWarn +  "In Your Face" + colorNormal; return false; }
+            if (player.Perk[PE_CLOSE_COMBAT_MASTER] > 0 && player.Skill[SK_TRAPS] < 100) { reason = colorWarn +  "Close Combat Master" + colorNormal; return false; }
+
+            if (player.Perk[PE_MORE_CRITICALS] > 0 && player.Skill[SK_TRAPS] < 50 && !hasCombatSkillAtLeastWithout(player, 50, currentTagIndex)) { reason = colorWarn +  "More Criticals" + colorNormal; return false; }
+            if (player.Perk[PE_EVEN_MORE_CRITICALS] > 0 && player.Skill[SK_TRAPS] < 75 && !hasCombatSkillAtLeastWithout(player, 75, currentTagIndex)) { reason = colorWarn +  "Even More Criticals" + colorNormal; return false; }
+            if (player.Perk[PE_SHARPSHOOTER] > 0 && player.Skill[SK_TRAPS] < 100 && !hasCombatSkillAtLeastWithout(player, 100, currentTagIndex)) { reason = colorWarn +  "Sharpshooter" + colorNormal; return false; }
+            if (player.Perk[PE_BONUS_RATE_OF_ATTACK] > 0 && player.Skill[SK_TRAPS] < 175 && !hasCombatSkillAtLeastWithout(player, 175, currentTagIndex)) { reason = colorWarn +  "Bonus Rate of Attack" + colorNormal; return false; }
+
+            if (player.Perk[PE_LIGHT_STEP] > 0 && player.Skill[SK_UNARMED] < 50) { reason = colorWarn +  "Light Step" + colorNormal; return false; }
+            if (player.Perk[PE_DEMOLITION_EXPERT] > 0 && player.Skill[SK_UNARMED] < 125) { reason = colorWarn +  "Demolition Expert" + colorNormal; return false; }
+        }
+    }
+    if (skillIndex == SK_SNEAK || currentTagIndex == SK_SNEAK) {
+        if (skillIndex == SK_THROWING || currentTagIndex == SK_THROWING) {
+            if (player.Perk[PE_HEAVE_HO] > 0 && player.Skill[SK_SNEAK] < 100) { reason = colorWarn +  "Heave Ho!" + colorNormal; return false; }
+        }
+        if (skillIndex == SK_DOCTOR || currentTagIndex == SK_DOCTOR) {
+            if (player.Perk[PE_SILENT_RUNNING] > 0 && player.Skill[SK_DOCTOR] < 75) { reason = colorWarn +  "Silent Running" + colorNormal; return false; }
+            if (player.Perk[PE_GHOST] > 0 && player.Skill[SK_DOCTOR] < 125) { reason = colorWarn +  "Ghost" + colorNormal; return false; }
+            if (player.Perk[PE_SILENT_DEATH] > 0 && player.Skill[SK_DOCTOR] < 175) { reason = colorWarn +  "Silent Death" + colorNormal; return false; }
+            if (player.Perk[PE_STEALTH_GIRL] > 0 && player.Skill[SK_DOCTOR] < 100) { reason = colorWarn +  "Stealth Girl" + colorNormal; return false; }
+
+            if (player.Perk[PE_MEDIC] > 0 && player.Skill[SK_SNEAK] < 75) { reason = colorWarn +  "Medic" + colorNormal; return false; }
+            if (player.Perk[PE_FIELD_MEDIC] > 0 && player.Skill[SK_SNEAK] < 150) { reason = colorWarn +  "Field Medic" + colorNormal; return false; }
+            if (player.Perk[PE_DEAD_MAN_WALKING] > 0 && player.Skill[SK_SNEAK] < 50) { reason = colorWarn +  "Dead Man Walking" + colorNormal; return false; }
+            if (player.Perk[PE_FASTER_HEALING] > 0 && player.Skill[SK_SNEAK] < 75) { reason = colorWarn +  "Faster Healing" + colorNormal; return false; }
+            if (player.Perk[PE_RAD_RESISTANCE] > 0 && player.Skill[SK_SNEAK] < 100) { reason = colorWarn +  "Rad Resistance" + colorNormal; return false; }
+        }
+        if (skillIndex == SK_TRAPS || currentTagIndex == SK_TRAPS) {
+            if (player.Perk[PE_SILENT_RUNNING] > 0 && player.Skill[SK_TRAPS] < 75) { reason = colorWarn +  "Silent Running" + colorNormal; return false; }
+            if (player.Perk[PE_GHOST] > 0 && player.Skill[SK_TRAPS] < 125) { reason = colorWarn +  "Ghost" + colorNormal; return false; }
+            if (player.Perk[PE_SILENT_DEATH] > 0 && player.Skill[SK_TRAPS] < 175) { reason = colorWarn +  "Silent Death" + colorNormal; return false; }
+            if (player.Perk[PE_STEALTH_GIRL] > 0 && player.Skill[SK_TRAPS] < 100) { reason = colorWarn +  "Stealth Girl" + colorNormal; return false; }
+
+            if (player.Perk[PE_LIGHT_STEP] > 0 && player.Skill[SK_SNEAK] < 50) { reason = colorWarn +  "Light Step" + colorNormal; return false; }
+            if (player.Perk[PE_DEMOLITION_EXPERT] > 0 && player.Skill[SK_SNEAK] < 125) { reason = colorWarn +  "Demolition Expert" + colorNormal; return false; }
+        }
+    }
+    if (skillIndex == SK_DOCTOR || currentTagIndex == SK_DOCTOR) {
+        if (skillIndex == SK_THROWING || currentTagIndex == SK_THROWING) {
+            if (player.Perk[PE_HEAVE_HO] > 0 && player.Skill[SK_DOCTOR] < 100) { reason = colorWarn +  "Heave Ho!" + colorNormal; return false; }
+        }
+        if (skillIndex == SK_TRAPS || currentTagIndex == SK_TRAPS) {
+            if (player.Perk[PE_MEDIC] > 0 && player.Skill[SK_TRAPS] < 75) { reason = colorWarn +  "Medic" + colorNormal; return false; }
+            if (player.Perk[PE_FIELD_MEDIC] > 0 && player.Skill[SK_TRAPS] < 150) { reason = colorWarn +  "Field Medic" + colorNormal; return false; }
+            if (player.Perk[PE_DEAD_MAN_WALKING] > 0 && player.Skill[SK_TRAPS] < 50) { reason = colorWarn +  "Dead Man Walking" + colorNormal; return false; }
+            if (player.Perk[PE_FASTER_HEALING] > 0 && player.Skill[SK_TRAPS] < 75) { reason = colorWarn +  "Faster Healing" + colorNormal; return false; }
+            if (player.Perk[PE_RAD_RESISTANCE] > 0 && player.Skill[SK_TRAPS] < 100) { reason = colorWarn +  "Rad Resistance" + colorNormal; return false; }
+
+            if (player.Perk[PE_LIGHT_STEP] > 0 && player.Skill[SK_DOCTOR] < 50) { reason = colorWarn +  "Light Step" + colorNormal; return false; }
+            if (player.Perk[PE_DEMOLITION_EXPERT] > 0 && player.Skill[SK_DOCTOR] < 125) { reason = colorWarn +  "Demolition Expert" + colorNormal; return false; }
+        }
+    }
+
+    return true;
+}
+
+bool isRangedSkill(uint skillIndex) {
+    if (skillIndex == SK_SMALL_GUNS || skillIndex == SK_BIG_GUNS || skillIndex == SK_ENERGY_WEAPONS || skillIndex == SK_THROWING) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+string getSkillName(uint skillIndex) {
+    switch (skillIndex) {
+        case SK_SMALL_GUNS: return "Small Guns";
+        case SK_BIG_GUNS: return "Big Guns";
+        case SK_ENERGY_WEAPONS: return "Energy Weapons";
+        case SK_UNARMED: return "Unarmed";
+        case SK_SCAVENGING: return "Scavenging";
+        case SK_THROWING: return "Throwing";
+        case SK_FIRST_AID: return "First Aid";
+        case SK_DOCTOR: return "Doctor";
+        case SK_SNEAK: return "Sneak";
+        case SK_LOCKPICK: return "Lockpick";
+        case SK_STEAL: return "Steal";
+        case SK_TRAPS: return "Traps";
+        case SK_SCIENCE: return "Science";
+        case SK_REPAIR: return "Repair";
+        case SK_SPEECH: return "Speech";
+        case SK_BARTER: return "Barter";
+        case SK_GAMBLING: return "Gambling";
+        case SK_OUTDOORSMAN: return "Outdoorsman";
+    }
+    return "Index: " + skillIndex + " unknown.";
+}
+
+///
 ///     SPECIALS
 ///
 
@@ -2405,6 +2729,11 @@ string getPerkName(uint perkIndex) {
     return "Unknown";
 }
 
+
+///
+///     OTHER
+///
+
 bool hasRangedSkillAtLeast(Critter& player, int skillValue) {
     if (player.Skill[SK_SMALL_GUNS] >= skillValue || player.Skill[SK_BIG_GUNS] >= skillValue
             || player.Skill[SK_ENERGY_WEAPONS] >= skillValue || player.Skill[SK_THROWING] >= skillValue) {
@@ -2414,11 +2743,32 @@ bool hasRangedSkillAtLeast(Critter& player, int skillValue) {
     }
 }
 
+bool hasRangedSkillAtLeastWithout(Critter& player, int skillValue, uint withoutIndex) {
+    if ((player.Skill[SK_SMALL_GUNS] >= skillValue && withoutIndex != SK_SMALL_GUNS)
+            || (player.Skill[SK_BIG_GUNS] >= skillValue && withoutIndex != SK_BIG_GUNS)
+            || (player.Skill[SK_ENERGY_WEAPONS] >= skillValue  && withoutIndex != SK_ENERGY_WEAPONS)
+            || (player.Skill[SK_THROWING] >= skillValue && withoutIndex != SK_THROWING)) {
+        return true;
+    } else {
+        return false;
+    }
+}
 
-///
-///     OTHER
-///
+bool hasCombatSkillAtLeastWithout(Critter& player, int skillValue, uint withoutIndex) {
+    if ((player.Skill[SK_SMALL_GUNS] >= skillValue && withoutIndex != SK_SMALL_GUNS)
+            || (player.Skill[SK_BIG_GUNS] >= skillValue && withoutIndex != SK_BIG_GUNS)
+            || (player.Skill[SK_ENERGY_WEAPONS] >= skillValue  && withoutIndex != SK_ENERGY_WEAPONS)
+            || (player.Skill[SK_UNARMED] >= skillValue  && withoutIndex != SK_UNARMED)
+            || (player.Skill[SK_THROWING] >= skillValue && withoutIndex != SK_THROWING)) {
+        return true;
+    } else {
+        return false;
+    }
+}
 
+int getTextWidth(string text) {
+    return 0;
+}
 
 bool isCharPointsChecksumOk(Critter& player, string& reason) {
     reason = "";

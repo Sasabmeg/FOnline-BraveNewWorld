@@ -111,7 +111,15 @@ lang=engl
 303 34030 #
 304 34040 #
 305 34050 #
-5 34060 @
+313 34060 D _script mutationFeature@d_IsTaggedSkill 1 200 #
+313 34070 D _script mutationFeature@d_IsTaggedSkill 1 201 #
+313 34080 D _script mutationFeature@d_IsTaggedSkill 1 202 #
+313 34090 D _script mutationFeature@d_IsTaggedSkill 1 203 #
+313 34100 D _script mutationFeature@d_IsTaggedSkill 1 205 #
+313 34110 D _script mutationFeature@d_IsTaggedSkill 1 207 #
+313 34120 D _script mutationFeature@d_IsTaggedSkill 1 210 #
+313 34130 D _script mutationFeature@d_IsTaggedSkill 1 211 #
+5 34140 @
 301 35000 mutationFeature@dlg_RemoveTraitList 0 #
 301 35010 D _script mutationFeature@d_CanRemoveTrait 1 550 R _script mutationFeature@r_RemoveTrait 1 550 #
 301 35020 D _script mutationFeature@d_CanRemoveTrait 1 551 R _script mutationFeature@r_RemoveTrait 1 551 #
@@ -292,7 +300,17 @@ lang=engl
 305 46040 D _script mutationFeature@d_CanChangeSpecial 2 3 1 R _script mutationFeature@r_ChangeSpecial 4 6 -1 3 1 #
 305 46050 D _script mutationFeature@d_CanChangeSpecial 2 4 1 R _script mutationFeature@r_ChangeSpecial 4 6 -1 4 1 #
 305 46060 D _script mutationFeature@d_CanChangeSpecial 2 5 1 R _script mutationFeature@r_ChangeSpecial 4 6 -1 5 1 #
-305 46070 &
+305 46070 @
+313 47000 mutationFeature@dlg_TagSkillList 0 #
+313 47010 D _script mutationFeature@d_CanSwapTagSkill 1 200 R _script mutationFeature@r_SwapTagSkill 1 200 #
+313 47020 D _script mutationFeature@d_CanSwapTagSkill 1 201 R _script mutationFeature@r_SwapTagSkill 1 201 #
+313 47030 D _script mutationFeature@d_CanSwapTagSkill 1 202 R _script mutationFeature@r_SwapTagSkill 1 202 #
+313 47040 D _script mutationFeature@d_CanSwapTagSkill 1 203 R _script mutationFeature@r_SwapTagSkill 1 203 #
+313 47050 D _script mutationFeature@d_CanSwapTagSkill 1 205 R _script mutationFeature@r_SwapTagSkill 1 205 #
+313 47060 D _script mutationFeature@d_CanSwapTagSkill 1 207 R _script mutationFeature@r_SwapTagSkill 1 207 #
+313 47070 D _script mutationFeature@d_CanSwapTagSkill 1 208 R _script mutationFeature@r_SwapTagSkill 1 208 #
+313 47080 D _script mutationFeature@d_CanSwapTagSkill 1 211 R _script mutationFeature@r_SwapTagSkill 1 211 #
+300 47090 &
 
 [engl]
 {100}{}{none}
@@ -412,7 +430,15 @@ Make sure you secure all items and move all followers to other place before you 
 {34030}{}{If I would focus less on this... [Remove Perks]}
 {34040}{}{If I would focus more on this... [Add Perks]}
 {34050}{}{Is that a tree growing on my head? This radiation is killing me... [Change S.P.E.C.I.A.L.]}
-{34060}{}{[Back]}
+{34060}{}{Hm, Small Guns... they are so small. [Change Tagged Skill]}
+{34070}{}{Are really Flamers my thing? [Change Tagged Skill]@@Is it really the Bozar that I dream of? [Change Tagged Skill]}
+{34080}{}{Is it really the Laser Riffle that I love the most? [Change Tagged Skill]}
+{34090}{}{Getting up close and personal with all the mutated abominations in the wastland? Really? [Change Tagged Skill]}
+{34100}{}{Do I really want to gather all the knives and spears I throw at people? [Change Tagged Skill]}
+{34110}{}{Dealing with crippled people all the time... depressing! [Change Tagged Skill]}
+{34120}{}{Let's just enter the front door this time. With guns blazing of course! [Change Tagged Skill]}
+{34130}{}{Traps. Bah. Who am I? Some hobo from Kalamath? [Change Tagged Skill]}
+{34140}{}{[Back]}
 {35000}{}{That was never really me! It was just an illusion...@lex removableTraits@}
 {35010}{}{[Remove Fast Metabolism]}
 {35020}{}{[Remove Bruiser]
@@ -610,4 +636,14 @@ Make sure you secure all items and move all followers to other place before you 
 {46050}{}{Mentats, yum! [Gain 1 Intellect]}
 {46060}{}{**Singing: Speed, is all I need.** [Gain 1 Agility]}
 {46070}{}{[Back]}
+{47000}{}{It be better if I retrain myself to be better at.. [Change Tag Skill] @lex tagSkill@}
+{47010}{}{Small Guns. [Swap Tag skill to Small Guns]}
+{47020}{}{Big Guns. [Swap Tag skill to Big Guns]}
+{47030}{}{Energy Weapons. [Swap Tag skill to Energy Weapons]}
+{47040}{}{Close Combat. [Swap Tag skill to Close Combat]}
+{47050}{}{Throwing. [Swap Tag skill to Throwing]}
+{47060}{}{Doctor. [Swap Tag skill to Doctor]}
+{47070}{}{Sneak. [Swap Tag skill to Sneak]}
+{47080}{}{Traps. [Swap Tag skill to Traps]}
+{47090}{}{[Back]}
 
