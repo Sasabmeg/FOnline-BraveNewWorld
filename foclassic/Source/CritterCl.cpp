@@ -1356,6 +1356,9 @@ uint CritterCl::GetAnim1( Item* anim_item /* = NULL */ )
 {
     if( !anim_item )
         anim_item = ItemSlotMain;
+	if (!anim_item) {
+		return ANIM1_UNARMED;
+	}
 
     switch( Cond )
     {
