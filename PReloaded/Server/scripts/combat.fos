@@ -1039,12 +1039,15 @@ void CombatAttack(Critter& cr, Critter& target, ProtoItem& weapon, uint8 weaponM
             //  for laser and plasma effects
             if (weaponSubtype == WS_GUN && valid(ammo) && (ammo.ProtoId == PID_SMALL_ENERGY_CELL || ammo.ProtoId == PID_MICRO_FUSION_CELL) ) {
                 //cr.Say(SAY_NORM, "EW");
+
+                /* DO NOT animte laser/plasma bolt anymore, because it's rendered client side
                 uint8 dir = GetDirection(attack.Hx, attack.Hy, attack.Tx, attack.Ty);
                 uint16 fixedStartX = attack.Hx;
                 uint16 fixedStartY = attack.Hy;
                 uint dist = GetDistantion(fixedStartX, fixedStartY, attack.Tx, attack.Ty);
                 map.MoveHexByDir(fixedStartX, fixedStartY, dir, dist > 1 ? 1 : 0);
                 map.RunFlyEffect(_WeaponEffect(weapon, use), null, realTarget, fixedStartX, fixedStartY, attack.Tx, attack.Ty);
+                */
             } else {
                 //cr.Say(SAY_NORM, "NOT EW - HIT");
                 //  only animate missed attacks with spear/knife etc.
@@ -1115,6 +1118,16 @@ void CombatAttack(Critter& cr, Critter& target, ProtoItem& weapon, uint8 weaponM
             AI_TrySayCombatText(target, COMBAT_TEXT_MISS);
         }
         target.Action(CRITTER_ACTION_DODGE, 0, null);       // Todo: type front/back
+        if (weaponSubtype == WS_GUN && valid(ammo) && (ammo.ProtoId == PID_SMALL_ENERGY_CELL || ammo.ProtoId == PID_MICRO_FUSION_CELL) ) {
+            //cr.Say(SAY_NORM, "EW");
+            uint8 dir = GetDirection(attack.Hx, attack.Hy, attack.Tx, attack.Ty);
+            uint16 fixedStartX = attack.Hx;
+            uint16 fixedStartY = attack.Hy;
+            uint dist = GetDistantion(fixedStartX, fixedStartY, attack.Tx, attack.Ty);
+            map.MoveHexByDir(fixedStartX, fixedStartY, dir, dist > 1 ? 1 : 0);
+            map.RunFlyEffect(_WeaponEffect(weapon, use), null, realTarget, fixedStartX, fixedStartY, attack.Tx, attack.Ty);
+        }
+
     }
 }
 
