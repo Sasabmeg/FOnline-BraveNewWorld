@@ -2107,6 +2107,40 @@ void ApplyDamage(AttackStruct& attack, Critter& target, uint rounds, bool isCrit
             }
         }
     }
+    //  flamer knockdown effect: flamer and incinerator can knockdown opponents
+    bool isFlamethrower = (weapPid == PID_FLAMER) || (weapPid == PID_IMPROVED_FLAMETHROWER);
+    if (validAttacker && isFlamethrower) {
+        int knockdownRoll = Random(1, 100);
+        int knockbackMagnitude = 0;
+        int burntKdBonus = 0;
+        if (target.ParamBase[TO_EX_BURNT] + BURN_EFFECT_LINGER_TIME > int(GetTick())) {
+            burntKdBonus = target.Param[ST_EX_BURNT];
+        }
+        if (weapPid == PID_FLAMER) {
+            knockbackMagnitude = CLAMP((50 + burntKdBonus) / (stonewallRank + 1), 0, 50);
+        }
+        if (weapPid == PID_IMPROVED_FLAMETHROWER) {
+            knockbackMagnitude = CLAMP((75 + burntKdBonus) / (stonewallRank + 1), 0, 75);
+        }
+		if (knockdownRoll <= knockbackMagnitude) {
+            SETFLAG(eff, HF_KNOCKDOWN);
+            if (isDummyTraining) {
+                dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , Flamer Weap Knockdown |" + COLOR_DTEXT_BONUS + " SUCCESS";
+                dummyInfo += "|" + COLOR_DTEXT_REGULAR + "  ( Defender Burnt bonus = |" + COLOR_DTEXT_BONUS + " " + burntKdBonus;
+                dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , StonewallRank = |" + COLOR_DTEXT_MALUS + " " + stonewallRank;
+                dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , Formula: (Flamer(50)/Incinerator(75) + burntBonus) / (1 + StonewallRank) = |" + COLOR_DTEXT_BONUS + " " + knockbackMagnitude;
+                dummyInfo += "|" + COLOR_DTEXT_REGULAR + "  vs Roll = |" + COLOR_DTEXT_ROLL + " " + knockdownRoll + " |" + COLOR_DTEXT_REGULAR + " )";
+            }
+		} else {
+            if (isDummyTraining) {
+                dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , Flamer Weap Knockdown |" + COLOR_DTEXT_MALUS + " FAIL";
+                dummyInfo += "|" + COLOR_DTEXT_REGULAR + " ( Defender Burnt bonus = |" + COLOR_DTEXT_BONUS + " " + burntKdBonus;
+                dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , StonewallRank = |" + COLOR_DTEXT_MALUS + " " + stonewallRank;
+                dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , Formula: (Flamer(50)/Incinerator(100) + burntBonus) / (1 + StonewallRank) = |" + COLOR_DTEXT_BONUS + " " + knockbackMagnitude;
+                dummyInfo += "|" + COLOR_DTEXT_REGULAR + "  vs Roll = |" + COLOR_DTEXT_ROLL + " " + knockdownRoll + " |" + COLOR_DTEXT_REGULAR + " )";
+            }
+		}
+	}
 
 
 	// ############################################################################################

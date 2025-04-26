@@ -288,8 +288,8 @@ bool start()
     // Battle timeout
     SetSendParameter(TO_BATTLE, true);
     // FA/Doc timeouts for Field Medic awareness info
-    SetSendParameter(TO_SK_FIRST_AID, true, "Utils.dll@_AllowParameterIfFieldMedic");
-    SetSendParameter(TO_SK_DOCTOR, true, "Utils.dll@_AllowParameterIfFieldMedic");
+    SetSendParameter(TO_SK_FIRST_AID, true, "Utils.dll@_AllowParameterIfMedic");
+    SetSendParameter(TO_SK_DOCTOR, true, "Utils.dll@_AllowParameterIfMedic");
     // Endurance
     SetSendParameter(ST_ENDURANCE, true); //SetSendParameter(ST_ENDURANCE, true, "Utils.dll@_AllowParameterIfAwareness");
     // Injures
@@ -339,6 +339,12 @@ bool start()
 
 	// Alpha
 	SetSendParameter(ST_ALPHA, true);
+
+	// BNW new mechanics
+	SetSendParameter(ST_EX_BURNT, true, "Utils.dll@_AllowParameterIfFieldMedic");
+	SetSendParameter(TO_EX_BURNT, true, "Utils.dll@_AllowParameterIfMedic");
+	SetSendParameter(ST_EX_IRREMEDIABLE, true, "Utils.dll@_AllowParameterIfFieldMedic");
+	SetSendParameter(TO_EX_IRREMEDIABLE, true, "Utils.dll@_AllowParameterIfMedic");
 
     // Look fields in fonline.h 'struct Item::ItemData'
     //               SortValue  Info Indicator    PicMapHash       PicInvHash   AnimWaitBase AStay[2] AShow[2] AHide[2]      Flags      Rate LightDist Inten Flags  LightColor    ScriptId TrapValue       Count             Cost                ScriptValues[10]                                                                                                   Other 36 bytes

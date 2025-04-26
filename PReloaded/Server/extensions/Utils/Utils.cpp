@@ -47,6 +47,11 @@ EXPORT int _AllowParameterIfAwareness(uint parameter, Critter& fromCr, Critter& 
 	return fromCr.Params[parameter];
 }
 
+EXPORT int _AllowParameterIfMedic(uint parameter, Critter& fromCr, Critter& toCr)
+{
+	return (toCr.Params[PE_MEDIC] > 0) ? fromCr.Params[parameter] : 0;
+}
+
 EXPORT int _AllowParameterIfFieldMedic(uint parameter, Critter& fromCr, Critter& toCr)
 {
 	return (toCr.Params[PE_FIELD_MEDIC] > 0) ? fromCr.Params[parameter] : 0;

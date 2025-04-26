@@ -595,23 +595,70 @@ void render_iface(uint layer)
                 {
                     int dy = -10;
 
-                    if(chosen.Perk[PE_FIELD_MEDIC] != 0 && cr.IsPlayer())
+                    if(chosen.Perk[PE_MEDIC] != 0 && cr.IsPlayer())
                     {
                         uint faTimeout = 0;
                         uint docTimeout = 0;
-                        if(cr.Timeout[TO_SK_FIRST_AID] > 0)
+                        int burntTimeout = 0;
+                        uint burntValue = 0;
+                        int plasmaTimeout = 0;
+                        uint plasmaValue = 0;
+                        if (cr.Timeout[TO_SK_FIRST_AID] > 0) {
                             faTimeout = (cr.Timeout[TO_SK_FIRST_AID]/__TimeMultiplier) + 1;
-                        if(cr.Timeout[TO_SK_DOCTOR] > 0)
+                        }
+                        if (cr.Timeout[TO_SK_DOCTOR] > 0) {
                             docTimeout = (cr.Timeout[TO_SK_DOCTOR]/__TimeMultiplier) + 1;
+                        }
+                        if (cr.Param[TO_EX_IRREMEDIABLE] + PLASMA_EFFECT_LINGER_TIME > int(GetTick())) {
+                            plasmaTimeout = (cr.Param[TO_EX_IRREMEDIABLE] + PLASMA_EFFECT_LINGER_TIME - int(GetTick())) / 1000;
+                        }
+                        if(cr.ParamBase[ST_EX_IRREMEDIABLE] > 0) {
+                            plasmaValue = (cr.ParamBase[ST_EX_IRREMEDIABLE]);
+                        }
+                        if (cr.Param[TO_EX_BURNT] + BURN_EFFECT_LINGER_TIME > int(GetTick())) {
+                            burntTimeout = (cr.Param[TO_EX_BURNT] + BURN_EFFECT_LINGER_TIME - int(GetTick())) / 1000;
+                        }
+                        if(cr.ParamBase[ST_EX_BURNT] > 0) {
+                            burntValue = (cr.ParamBase[ST_EX_BURNT]);
+                        }
 
                         string skillTimeout = "";
-                        if(faTimeout > 0)
-                            skillTimeout += "FA: "+faTimeout+" ";
-                        if(docTimeout > 0)
-                            skillTimeout += "DOC: "+docTimeout;
-
-                        if(skillTimeout != "")
-                        {
+                        if (faTimeout > 0) {
+                            skillTimeout += "FA: " + faTimeout;
+                            if (docTimeout > 0 || plasmaTimeout > 0 || burntTimeout > 0) {
+                                skillTimeout += ", ";
+                            } else {
+                                skillTimeout += " ";
+                            }
+                        }
+                        if (docTimeout > 0) {
+                            skillTimeout += "DOC: " + docTimeout;
+                            if (plasmaTimeout > 0 || burntTimeout > 0) {
+                                skillTimeout += ", ";
+                            } else {
+                                skillTimeout += " ";
+                            }
+                        }
+                        if (plasmaTimeout > 0) {
+                            skillTimeout += "PL: ";
+                            if (chosen.Perk[PE_FIELD_MEDIC] != 0) {
+                                skillTimeout += plasmaValue + "% ";
+                            }
+                            skillTimeout += plasmaTimeout;
+                            if (burntTimeout > 0) {
+                                skillTimeout += ", ";
+                            } else {
+                                skillTimeout += " ";
+                            }
+                        }
+                        if (burntTimeout > 0) {
+                            skillTimeout += "BR: ";
+                            if (chosen.Perk[PE_FIELD_MEDIC] != 0) {
+                                skillTimeout += burntValue + "% ";
+                            }
+                            skillTimeout += burntTimeout;
+                        }
+                        if (skillTimeout != "") {
                             DrawText(skillTimeout, __MouseX + 15, __MouseY + dy, __ScreenWidth, 20, AW_COLOR_FACTION_RANK, FONT_TYPE_DEFAULT, FONT_FLAG_ALIGN | FONT_FLAG_BORDERED);
                             dy -= 10;
                         }

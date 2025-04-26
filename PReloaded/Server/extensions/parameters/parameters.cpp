@@ -300,7 +300,7 @@ EXPORT int getParam_MaxLife(CritterMutual& cr, uint)
 
 EXPORT int getParam_MaxAp(CritterMutual& cr, uint)
 {
-	int val = cr.Params[ST_ACTION_POINTS] + cr.Params[ST_ACTION_POINTS_EXT] + (26 + getParam_Agility(cr, 0)) / 6;
+	int val = cr.Params[ST_ACTION_POINTS] + cr.Params[ST_ACTION_POINTS_EXT] + (38 + getParam_Agility(cr, 0)) / 8;
 	
 	const Item* armor=cr.ItemSlotArmor;
 	if (checkBonus(armor, BONUS_ARMOR_MAX_AP) != 0) val++;
