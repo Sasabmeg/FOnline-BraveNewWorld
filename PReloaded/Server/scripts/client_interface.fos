@@ -639,7 +639,7 @@ void render_iface(uint layer)
                                 skillTimeout += " ";
                             }
                         }
-                        if (plasmaTimeout > 0) {
+                        if (plasmaTimeout > 0 && plasmaTimeout < 100) {
                             skillTimeout += "PL: ";
                             if (chosen.Perk[PE_FIELD_MEDIC] != 0) {
                                 skillTimeout += plasmaValue + "% ";
@@ -651,7 +651,7 @@ void render_iface(uint layer)
                                 skillTimeout += " ";
                             }
                         }
-                        if (burntTimeout > 0) {
+                        if (burntTimeout > 0 && burntTimeout < 100) {
                             skillTimeout += "BR: ";
                             if (chosen.Perk[PE_FIELD_MEDIC] != 0) {
                                 skillTimeout += burntValue + "% ";
