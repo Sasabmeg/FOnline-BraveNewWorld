@@ -62,7 +62,11 @@
 //Robes
 #define PID_PURPLE_ROBE                     (113)
 #define PID_BRIDGEKEEPER_ROBE               (524)
-#define PID_SAND_ROBE                       (750) // Has same stats as PID_PURPLE_ROBE
+#define PID_SAND_ROBE                       (750)   // PID_DESERT_ROBE
+//#define PID_WORN_ROBE                       (755) // defines at clothes, because of running animation different from other robes
+#define PID_BLUE_ROBE                       (756)
+#define PID_RED_ROBE                        (757)
+#define PID_GRAY_ROBE                       (758)
 #define PID_BLACK_ROBE                      (780)
 
 //Helmets
@@ -73,7 +77,7 @@
 
 //New armors
 #define PID_TIBBETS_PRISON                  (723)
-#define PID_VAULT_SUIT2                     (724)
+#define PID_ROGUE_BANDANA                   (724)
 
 //More helmets
 #define PID_COMBAT_HELMET                  (725)

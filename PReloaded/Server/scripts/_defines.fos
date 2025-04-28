@@ -185,9 +185,11 @@
 #define ARMOR_PERK_THERMAL_LEATHER              (12)    // Light and +30 rad resist
 #define ARMOR_PERK_COMBAT                       (20)    // Medium and +25 radiation resist
 #define ARMOR_PERK_METAL                        (30)    // Heavy and +15 rad resist
+#define ARMOR_PERK_TESLA                        (31)    // Heavy and +35 rad resist
 #define ARMOR_PERK_LIGHT                       (101)    // +1 AG
 #define ARMOR_PERK_MEDIUM                      (102)    // -1 AG
 #define ARMOR_PERK_HEAVY                       (103)    // -3 AG
+#define ARMOR_PERK_CAMOUFLAGE_HP               (104)    // Camouflage: Hide exact HP
 
 #define ARMOR_AP_REGEN_NAKED_WALK               (50)
 #define ARMOR_AP_REGEN_NAKED_RUN                (25)
@@ -202,6 +204,9 @@
 #define HELMET_PERK_CHARISMA                     (1)    // +1 charisma
 #define HELMET_PERK_PERCEPTION_GLASSES           (2)    // PE1:+3, PE2:+2, PE3:+1, PE4+:0
 #define HELMET_PERK_PROTECT_EYES                 (3)    // when attacked, HIT_LOCATION_EYES changes to HIT_LOCATION_HEAD
+#define HELMET_PERK_BONUS_PERCEPTION             (4)   // PE: +1
+#define HELMET_PERK_MALUS_PERCEPTION             (5)   // PE: -1
+#define HELMET_PERK_CAMOUFLAGE_NAME              (6)   // Camouflage: Hide name at distance
 
 #define SLOT_PERK_COSMETIC_CASE                  (0x02) // +1 charisma to female
 #define SLOT_PERK_MOTION_SENSOR                  (0x04) // +20 outdoorsman
