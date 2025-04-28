@@ -1432,17 +1432,16 @@ void SetInventoryDetailText(ItemCl& item) {
                 text += "\nBase damage: " + item.Proto.Weapon_DmgMin_0 + "-" + item.Proto.Weapon_DmgMax_0;
             }
         } else if (item.GetType() == ITEM_TYPE_ARMOR) {
-
             text += "\nArmor Class: " + item.Proto.Armor_AC;
             text += "\nCrit chance mod: " + (item.Proto.Armor_CMCritChance);
             text += "\nCrit power mod: " + (item.Proto.Armor_CMCritPower);
             text += "\nDamage resistances: (DT/DR)";
-            text += "\n\tNormal:    " + item.Proto.Armor_DTNormal + "/" + item.Proto.Armor_DRNormal;
-            text += "\n\tLaser:      " + item.Proto.Armor_DTLaser + "/" + item.Proto.Armor_DRLaser;
+            text += "\n\tNormal: \u00A0\u00A0\u00A0" + item.Proto.Armor_DTNormal + "/" + item.Proto.Armor_DRNormal;
+            text += "\n\tLaser:     \u00A0" + item.Proto.Armor_DTLaser + "/" + item.Proto.Armor_DRLaser;
             text += "\n\tFire:         " + item.Proto.Armor_DTFire + "/" + item.Proto.Armor_DRFire;
-            text += "\n\tPlasma:    " + item.Proto.Armor_DTPlasma + "/" + item.Proto.Armor_DRPlasma;
-            text += "\n\tElectric:   " + item.Proto.Armor_DTElectr + "/" + item.Proto.Armor_DRElectr;
-            text += "\n\tExplode:   " + item.Proto.Armor_DTExplode + "/" + item.Proto.Armor_DRExplode;
+            text += "\n\tPlasma:  \u00A0\u00A0" + item.Proto.Armor_DTPlasma + "/" + item.Proto.Armor_DRPlasma;
+            text += "\n\tElectric:  \u00A0" + item.Proto.Armor_DTElectr + "/" + item.Proto.Armor_DRElectr;
+            text += "\n\tExplode:  \u00A0" + item.Proto.Armor_DTExplode + "/" + item.Proto.Armor_DRExplode;
             if (item.GetProtoId() == PID_TESLA_ARMOR) {
                 text += "\nCharges: "+item.Charge+"/"+item.Proto.Misc_ChargeMax;
             }
@@ -1607,5 +1606,15 @@ class CGuiTooltip {
         interfaceWindow.DrawWindow();
     }
 };
+
+/// TOOLS
+
+/*
+string adjustText(string& adjust, int length) {
+    int curLength = 0;
+    for (int i = 0; i < adjust.length; i++) {
+        curLength += adjust
+    }
+}*/
 
 #endif 	//	__GUI_TOOLTIP__
