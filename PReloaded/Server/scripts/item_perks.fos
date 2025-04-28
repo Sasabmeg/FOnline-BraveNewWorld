@@ -74,20 +74,21 @@ void ApplyItemPerk(Critter& cr, uint8 type, uint perk, bool enable) {
                 case ARMOR_PERK_POWERED:
                     genericPerk = ARMOR_PERK_HEAVY;
                     cr.StatBase[ST_STRENGTH_EXT] += 3 * sign;
-                    cr.StatBase[ST_RADIATION_RESISTANCE_EXT] += 30 * sign;
+                    cr.StatBase[ST_RADIATION_RESISTANCE_EXT] += 35 * sign;
                     break;
                 case ARMOR_PERK_ADVANCED_I:
                     genericPerk = ARMOR_PERK_HEAVY;
                     cr.StatBase[ST_STRENGTH_EXT] += 4 * sign;
-                    cr.StatBase[ST_RADIATION_RESISTANCE_EXT] += 60 * sign;
+                    cr.StatBase[ST_RADIATION_RESISTANCE_EXT] += 40 * sign;
                     break;
                 case ARMOR_PERK_ADVANCED_II:
                     genericPerk = ARMOR_PERK_HEAVY;
                     cr.StatBase[ST_STRENGTH_EXT] += 4 * sign;
-                    cr.StatBase[ST_RADIATION_RESISTANCE_EXT] += 75 * sign;
+                    cr.StatBase[ST_RADIATION_RESISTANCE_EXT] += 40 * sign;
                     break;
                 case ARMOR_PERK_LEATHER_JACKET:
                     genericPerk = ARMOR_PERK_LIGHT;
+                    cr.StatBase[ST_RADIATION_RESISTANCE_EXT] += 5 * sign;
                     cr.StatBase[ST_CHARISMA_EXT] += 1 * sign;
                     break;
                 case ARMOR_PERK_LEATHER_ARMOR:
@@ -96,7 +97,7 @@ void ApplyItemPerk(Critter& cr, uint8 type, uint perk, bool enable) {
                     break;
                 case ARMOR_PERK_THERMAL_LEATHER:
                     genericPerk = ARMOR_PERK_LIGHT;
-                    cr.StatBase[ST_RADIATION_RESISTANCE_EXT] += 30 * sign;
+                    cr.StatBase[ST_RADIATION_RESISTANCE_EXT] += 35 * sign;
                     break;
                 case ARMOR_PERK_COMBAT:
                     genericPerk = ARMOR_PERK_MEDIUM;
@@ -105,6 +106,10 @@ void ApplyItemPerk(Critter& cr, uint8 type, uint perk, bool enable) {
                 case ARMOR_PERK_METAL:
                     genericPerk = ARMOR_PERK_HEAVY;
                     cr.StatBase[ST_RADIATION_RESISTANCE_EXT] += 15 * sign;
+                    break;
+                case ARMOR_PERK_TESLA:
+                    genericPerk = ARMOR_PERK_HEAVY;
+                    cr.StatBase[ST_RADIATION_RESISTANCE_EXT] += 35 * sign;
                     break;
 
                 default:
@@ -122,6 +127,12 @@ void ApplyItemPerk(Critter& cr, uint8 type, uint perk, bool enable) {
                     cr.StatBase[ST_PERCEPTION_EXT] += (cr.StatBase[ST_PERCEPTION] >= 4 ? 0 : 4 - CLAMP(cr.StatBase[ST_PERCEPTION], 1, 3)) * sign;
                     break;
                 // HELMET_PERK_PROTECT_EYES -> combat.fos, "now we change aim"
+                case HELMET_PERK_BONUS_PERCEPTION:
+                    cr.StatBase[ST_PERCEPTION_EXT] += 1 * sign;
+                    break;
+                case HELMET_PERK_MALUS_PERCEPTION:
+                    cr.StatBase[ST_PERCEPTION_EXT] += -1 * sign;
+                    break;
 
                 default:
                     break;
