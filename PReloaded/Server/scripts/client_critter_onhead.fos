@@ -207,7 +207,21 @@ void DrawCritterOnHead()	//export
 		    if (isPsycho) {
                 name = "|" + COLOR_RED + " " + head;
 		    }
-
+		    //  this is to check if target has hidden name from head slot
+            ItemCl@ headItem = cr.GetItem(0, SLOT_HEAD);
+		    if (valid(headItem) && headItem.Proto.Armor_Perk == HELMET_PERK_CAMOUFLAGE_NAME) {
+                uint dist = GetDistantion(chosen.HexX, chosen.HexY, cr.HexX, cr.HexY);
+                uint16 bonus = 0;
+                ItemCl@ item = cr.GetItem(0, SLOT_HAND1);
+                if(valid(item) && item.GetProtoId() == PID_BINOCULARS) {
+                    bonus = 6;
+                }
+                uint cSight = chosen.IsLife() ? __LookNormal + chosen.Stat[ST_PERCEPTION] * 3 + chosen.Param[PE_SHARPSHOOTER] * 6 + bonus: __LookMinimum;
+                cSight = MAX(cSight, __LookMinimum);
+                if (dist > cSight / 3) {
+                    name = "|" + COLOR_DDGREEN + " Wastelander";
+                }
+		    }
 		}
 		else
 			name = " ";
@@ -254,6 +268,39 @@ void DrawCritterOnHead()	//export
 			    /*if (isPsycho) {
                     hp = "|" + COLOR_RED + " " + cr.Param[ST_CURRENT_HP] + "/" + cr.Param[ST_MAX_LIFE];
 			    }*/
+                ItemCl@ bodyItem = cr.GetItem(0, SLOT_ARMOR);
+                if (valid(bodyItem) && bodyItem.Proto.Armor_Perk == ARMOR_PERK_CAMOUFLAGE_HP) {
+                    uint dist = GetDistantion(chosen.HexX, chosen.HexY, cr.HexX, cr.HexY);
+                    uint16 bonus = 0;
+                    ItemCl@ item = cr.GetItem(0, SLOT_HAND1);
+                    if(valid(item) && item.GetProtoId() == PID_BINOCULARS) {
+                        bonus = 6;
+                    }
+                    uint cSight = chosen.IsLife() ? __LookNormal + chosen.Stat[ST_PERCEPTION] * 3 + chosen.Param[PE_SHARPSHOOTER] * 6 + bonus: __LookMinimum;
+                    cSight = MAX(cSight, __LookMinimum);
+                    //Message("hp_proc = " + hp_proc + "color = " + color_r + ", " + color_g + ", " + color_b);
+                    if (dist > cSight * 2 / 3) {
+                        if (hp_proc >= 100) {
+                            hp = "|" + COLOR_RGB(0, 255, 0) + " Uninjured";
+                        } else if (hp_proc > 50) {
+                            hp = "|" + COLOR_RGB(92, 166, 0) + " Injured";
+                        } else if (hp_proc > 0) {
+                            hp = "|" + COLOR_RGB(175, 80, 0) + " Badly Injured";
+                        }
+                    } else if (dist > cSight / 3) {
+                        if (hp_proc >= 100) {
+                            hp = "|" + COLOR_RGB(0, 255, 0) + " Uninjured";
+                        } else if (hp_proc > 75) {
+                            hp = "|" + COLOR_RGB(72, 183, 0) + " Barely Injured";
+                        } else if (hp_proc > 50) {
+                            hp = "|" + COLOR_RGB(109, 146, 0) + " Injured";
+                        } else if (hp_proc > 25) {
+                            hp = "|" + COLOR_RGB(155, 100, 0) + " Badly Injured";
+                        } else if (hp_proc > 0) {
+                            hp = "|" + COLOR_RGB(199, 56, 0) + " Near Death";
+                        }
+                    }
+                }
 			}
 			else
 			{
