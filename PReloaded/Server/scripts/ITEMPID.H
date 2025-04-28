@@ -77,7 +77,7 @@
 
 //New armors
 #define PID_TIBBETS_PRISON                  (723)
-#define PID_ROGUE_BANDANA                   (724)
+#define PID_VAULT_SUIT2                     (724)
 
 //More helmets
 #define PID_COMBAT_HELMET                  (725)
@@ -97,6 +97,7 @@
 #define PID_ENCLAVE_COMBAT_HELMET_MK2      (739)
 #define PID_DESERT_COMBAT_HELMET           (740)
 #define PID_NCR_HELMET                     (741)
+#define PID_ROGUE_BANDANA                  (742)
 
 //TODO:
 //#define PID_BLACK_ROBE                      (xxx)
