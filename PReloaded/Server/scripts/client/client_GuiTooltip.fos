@@ -1407,7 +1407,8 @@ void SetInventoryDetailText(ItemCl& item) {
         if (!GUI_IsKeyPressed(DIK_LSHIFT) && !GUI_IsKeyPressed(DIK_LCONTROL)) {
                 text += GetMsgStr(TEXTMSG_ITEM, STR_PROTO_INFO(item.Proto)+1) + "\n";
         }
-
+        int ammoCount = 0;
+        int ammoWeight = 0;
         if (item.GetType() == ITEM_TYPE_WEAPON) {
             // Ammo load
             if(item.Proto.Weapon_MaxAmmoCount > 0) {
@@ -1417,6 +1418,13 @@ void SetInventoryDetailText(ItemCl& item) {
                 str = ReplaceText(str, "MAX_VALUE", item.Proto.Weapon_MaxAmmoCount);
                 str = ReplaceText(str, "AMMO", GetMsgStr(TEXTMSG_GAME, STR_CALIBER(item.Proto.Weapon_Caliber)));
                 text += str;
+                if (item.AmmoCount > 0) {
+                    ProtoItem@ ammo = GetProtoItem(item.AmmoPid);
+                    if (valid(ammo)) {
+                        ammoCount = item.AmmoCount;
+                        ammoWeight = ammo.Weight;
+                    }
+                }
             }
 
             if (item.Proto.Weapon_Perk != 0) {
@@ -1433,8 +1441,6 @@ void SetInventoryDetailText(ItemCl& item) {
             }
         } else if (item.GetType() == ITEM_TYPE_ARMOR) {
             text += "\nArmor Class: " + item.Proto.Armor_AC;
-            text += "\nCrit chance mod: " + (item.Proto.Armor_CMCritChance);
-            text += "\nCrit power mod: " + (item.Proto.Armor_CMCritPower);
             text += "\nDamage resistances: (DT/DR)";
             text += "\n\tNormal: \u00A0\u00A0\u00A0" + item.Proto.Armor_DTNormal + "/" + item.Proto.Armor_DRNormal;
             text += "\n\tLaser:     \u00A0" + item.Proto.Armor_DTLaser + "/" + item.Proto.Armor_DRLaser;
@@ -1442,6 +1448,8 @@ void SetInventoryDetailText(ItemCl& item) {
             text += "\n\tPlasma:  \u00A0\u00A0" + item.Proto.Armor_DTPlasma + "/" + item.Proto.Armor_DRPlasma;
             text += "\n\tElectric:  \u00A0" + item.Proto.Armor_DTElectr + "/" + item.Proto.Armor_DRElectr;
             text += "\n\tExplode:  \u00A0" + item.Proto.Armor_DTExplode + "/" + item.Proto.Armor_DRExplode;
+            text += "\nCrit chance mod: " + (item.Proto.Armor_CMCritChance);
+            text += "\nCrit power mod: " + (item.Proto.Armor_CMCritPower);
             if (item.GetProtoId() == PID_TESLA_ARMOR) {
                 text += "\nCharges: "+item.Charge+"/"+item.Proto.Misc_ChargeMax;
             }
@@ -1470,8 +1478,17 @@ void SetInventoryDetailText(ItemCl& item) {
         if (item.Proto.Weight * item.GetCount() == 1) {
             weightString = ReplaceText(weightString, "grams.", "gram.");
         }
-
-        text += "\n" + ReplaceText(weightString, "VALUE", item.Proto.Weight * item.GetCount());
+        string ammoWeightReplaceString = "";
+        int totalWeight = item.Proto.Weight * item.GetCount();
+        string totalWeightString = "";
+        if (item.GetCount() > 1 && item.Proto.Weight > 0) {
+            totalWeightString += "  (" + item.GetCount() + " * " + item.Proto.Weight + "g)";
+        }
+        if (ammoCount > 0) {
+            totalWeight +=  ammoWeight * ammoCount;
+            ammoWeightReplaceString = "  (" + (item.Proto.Weight * item.GetCount()) + "g + " + ammoCount + " * " + ammoWeight + "g)";
+        }
+        text += "\n" + ReplaceText(weightString, "VALUE", "" + totalWeight) + totalWeightString + ammoWeightReplaceString;
 
         // Show bonuses
         if (item.Val0 != 0) {
