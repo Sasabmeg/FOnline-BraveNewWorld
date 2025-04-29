@@ -1442,14 +1442,26 @@ void SetInventoryDetailText(ItemCl& item) {
         } else if (item.GetType() == ITEM_TYPE_ARMOR) {
             text += "\nArmor Class: " + item.Proto.Armor_AC;
             text += "\nDamage resistances: (DT/DR)";
+            if (item.GetProtoId() == PID_FRONT_PLATED_METAL_ARMOR || item.GetProtoId() == PID_FRONT_PLATED_METAL_HELMET) {
+                text += "\nFront:";
+                text += "\n\tNormal: \u00A0\u00A0\u00A0" + (item.Proto.Armor_DTNormal + 3) + "/" + (item.Proto.Armor_DRNormal + 10);
+                text += "\n\tLaser:     \u00A0" + (item.Proto.Armor_DTLaser + 3) + "/" + (item.Proto.Armor_DRLaser + 10);
+                text += "\n\tFire:         " + (item.Proto.Armor_DTFire + 3) + "/" + (item.Proto.Armor_DRFire + 10);
+                text += "\n\tPlasma:  \u00A0\u00A0" + (item.Proto.Armor_DTPlasma + 3) + "/" + (item.Proto.Armor_DRPlasma + 10);
+                text += "\n\tElectric:  \u00A0" + (item.Proto.Armor_DTElectr + 3) + "/" + (item.Proto.Armor_DRElectr + 10);
+                text += "\n\tExplode:  \u00A0" + (item.Proto.Armor_DTExplode + 3) + "/" + (item.Proto.Armor_DRExplode + 10);
+                text += "\n\tCrit chance mod: " + (item.Proto.Armor_CMCritChance - 10);
+                text += "\n\tCrit power mod: " + (item.Proto.Armor_CMCritPower - 10);
+                text += "\nBack:";
+            }
             text += "\n\tNormal: \u00A0\u00A0\u00A0" + item.Proto.Armor_DTNormal + "/" + item.Proto.Armor_DRNormal;
             text += "\n\tLaser:     \u00A0" + item.Proto.Armor_DTLaser + "/" + item.Proto.Armor_DRLaser;
             text += "\n\tFire:         " + item.Proto.Armor_DTFire + "/" + item.Proto.Armor_DRFire;
             text += "\n\tPlasma:  \u00A0\u00A0" + item.Proto.Armor_DTPlasma + "/" + item.Proto.Armor_DRPlasma;
             text += "\n\tElectric:  \u00A0" + item.Proto.Armor_DTElectr + "/" + item.Proto.Armor_DRElectr;
             text += "\n\tExplode:  \u00A0" + item.Proto.Armor_DTExplode + "/" + item.Proto.Armor_DRExplode;
-            text += "\nCrit chance mod: " + (item.Proto.Armor_CMCritChance);
-            text += "\nCrit power mod: " + (item.Proto.Armor_CMCritPower);
+            text += "\n\tCrit chance mod: " + (item.Proto.Armor_CMCritChance);
+            text += "\n\tCrit power mod: " + (item.Proto.Armor_CMCritPower);
             if (item.GetProtoId() == PID_TESLA_ARMOR) {
                 text += "\nCharges: "+item.Charge+"/"+item.Proto.Misc_ChargeMax;
             }

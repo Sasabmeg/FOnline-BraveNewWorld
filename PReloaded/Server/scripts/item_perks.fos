@@ -133,6 +133,14 @@ void ApplyItemPerk(Critter& cr, uint8 type, uint perk, bool enable) {
                 case HELMET_PERK_MALUS_PERCEPTION:
                     cr.StatBase[ST_PERCEPTION_EXT] += -1 * sign;
                     break;
+                //  metal mask
+                case HELMET_PERK_METAL_MASK:
+                    cr.StatBase[ST_PERCEPTION_EXT] += -1 * sign;
+                    break;
+                //  metal mask 2 and front plated metal mask
+                case HELMET_PERK_METAL_MASK_2:
+                    cr.StatBase[ST_PERCEPTION_EXT] += -2 * sign;
+                    break;
 
                 default:
                     break;

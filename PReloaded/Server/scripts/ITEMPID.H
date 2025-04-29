@@ -29,6 +29,7 @@
 #define PID_HARDENED_POWER_ARMOR            (232)
 #define PID_ADVANCED_POWER_ARMOR            (348)
 #define PID_ADVANCED_POWER_ARMOR_MK2        (349)
+#define PID_FRONT_PLATED_METAL_ARMOR        (743)
 
 //Clothes
 #define PID_VAULT_13_SUIT                   (753)
@@ -98,6 +99,7 @@
 #define PID_DESERT_COMBAT_HELMET           (740)
 #define PID_NCR_HELMET                     (741)
 #define PID_ROGUE_BANDANA                  (742)
+#define PID_FRONT_PLATED_METAL_HELMET      (744)
 
 //TODO:
 //#define PID_BLACK_ROBE                      (xxx)
