@@ -736,10 +736,23 @@ void render_iface(uint layer)
                             if(valid(helmet))
                             {
                                 string _helmet = "No helmet";
-                                if(IsLexem(helmet, "$-"))
-                                    _helmet = GetLexem(helmet, "$-");
-                                else
-                                    _helmet = GetMsgStr(TEXTMSG_ITEM, STR_ITEM_INFO(helmet));
+                                uint dist = GetDistantion(chosen.HexX, chosen.HexY, cr.HexX, cr.HexY);
+                                uint16 bonus = 0;
+                                ItemCl@ item = cr.GetItem(0, SLOT_HAND1);
+                                if(valid(item) && item.GetProtoId() == PID_BINOCULARS) {
+                                    bonus = 6;
+                                }
+                                uint cSight = chosen.IsLife() ? __LookNormal + chosen.Stat[ST_PERCEPTION] * 3 + chosen.Param[PE_SHARPSHOOTER] * 6 + bonus: __LookMinimum;
+                                cSight = MAX(cSight, __LookMinimum);
+                                if (valid(armor) && armor.Proto.Armor_Perk == ARMOR_PERK_CAMOUFLAGE_HP && dist > cSight / 3) {
+                                    _helmet = "";
+                                } else {
+                                    if (IsLexem(helmet, "$-")) {
+                                        _helmet = GetLexem(helmet, "$-");
+                                    } else {
+                                        _helmet = GetMsgStr(TEXTMSG_ITEM, STR_ITEM_INFO(helmet));
+                                    }
+                                }
                                 DrawText(_helmet, __MouseX + 15, __MouseY + dy, __ScreenWidth, 20, valid(helmet) && helmet.GetType() == ITEM_TYPE_ARMOR ? AW_COLOR_HEADGEAR : COLOR_GRAY, FONT_TYPE_DEFAULT, FONT_FLAG_ALIGN | FONT_FLAG_BORDERED);
                                 dy -= 10;
                             }
