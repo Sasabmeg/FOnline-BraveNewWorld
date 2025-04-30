@@ -3,6 +3,7 @@
 
 #include "_defines.fos"
 #include "_macros.fos"
+#include "_colors.fos"
 
 #ifdef __CLIENT // Macro defined in client_main.fos
 #define Item    ItemCl
@@ -21,6 +22,81 @@ uint BonusNumber(Item@ it)
 	else if(it.Val0!=0) return 1;
 	else return 0;
 }
+
+string itemBonusColor(uint bonusType, int value) {
+    string result = "";
+    int minRoll = 0;
+    int maxRoll = 0;
+    if (getMinMaxRoll(bonusType, minRoll, maxRoll)) {
+        int dif = maxRoll - minRoll + 1;
+        if (value < minRoll + (dif * 25) / 100) {
+            result = "|" + COLOR_GRAY + " ";
+        } else if (value < minRoll + (dif * 45) / 100) {
+            result = "|" + COLOR_LGRAY + " ";
+        } else if (value < minRoll + (dif * 65) / 100) {
+            result = "|" + COLOR_WHITE + " ";
+        } else if (value < minRoll + (dif * 85) / 100) {
+            result = "|" + COLOR_GREEN_RED + " ";
+        } else {
+            result = "|" + COLOR_SAND + " ";
+        }
+    }
+    return result;
+}
+
+bool getMinMaxRoll(uint bonusType, int& minRoll, int& maxRoll) {
+    minRoll = 1;
+    maxRoll = 0;
+    //  armors
+	switch(bonusType) {
+		// Armors and helmets
+		case BONUS_ARMOR_CRIT_CHANCE: {minRoll=1;maxRoll=5;break;}
+		case BONUS_ARMOR_CRIT_POWER: {minRoll=1;maxRoll=5;break;}
+		case BONUS_ARMOR_NORMAL_DT: {maxRoll=5;break;}
+		case BONUS_ARMOR_LASER_DT: {maxRoll=5;break;}
+		case BONUS_ARMOR_FIRE_DT: {maxRoll=5;break;}
+		case BONUS_ARMOR_PLASMA_DT: {maxRoll=5;break;}
+		case BONUS_ARMOR_NORMAL_DR: {maxRoll=10;break;}
+		case BONUS_ARMOR_LASER_DR: {maxRoll=10;break;}
+		case BONUS_ARMOR_FIRE_DR: {maxRoll=10;break;}
+		case BONUS_ARMOR_PLASMA_DR: {maxRoll=10;break;}
+		// Only armors
+		case BONUS_ARMOR_EXPLODE_DT: {maxRoll=5;break;}
+		case BONUS_ARMOR_EXPLODE_DR: {maxRoll=10;break;}
+		case BONUS_ARMOR_MAX_AP: {maxRoll = 1; break;}
+		case BONUS_ARMOR_RAD_RES: {minRoll=10;maxRoll=30;break;}
+		case BONUS_ARMOR_POISON_RES: {minRoll=10;maxRoll=30;break;}
+		case BONUS_ARMOR_STRENGTH: {maxRoll = 1; break;}
+		case BONUS_ARMOR_PERCEPTION: {maxRoll = 1; break;}
+		case BONUS_ARMOR_ENDURANCE: {maxRoll = 1; break;}
+		case BONUS_ARMOR_CHARISMA: {maxRoll = 1; break;}
+		case BONUS_ARMOR_INTELLIGENCE: {maxRoll = 1; break;}
+		case BONUS_ARMOR_AGILITY: {maxRoll = 1; break;}
+		case BONUS_ARMOR_LUCK: {maxRoll = 1; break;}
+		case BONUS_ARMOR_CARRY_WEIGHT: {minRoll=5;maxRoll=20;break;}
+		case BONUS_ARMOR_HEALING_RATE: {minRoll=1;maxRoll=5;break;}
+		default: break;
+	}
+	//  weapons
+    switch(bonusType)
+	{
+		case BONUS_WEAPON_CRITICAL_ROLL: {maxRoll=5;break;}
+		case BONUS_WEAPON_CRITICAL_CHANCE: {maxRoll=5;break;}
+		case BONUS_WEAPON_MIN_DMG: {minRoll=10;maxRoll=25;break;}
+		case BONUS_WEAPON_MAX_DMG: {minRoll=10;maxRoll=25;break;}
+		case BONUS_WEAPON_ACCURACY: {minRoll=5;maxRoll=25;break;}
+		case BONUS_WEAPON_MAX_RANGE: {minRoll=1;maxRoll=2;break;}
+		case BONUS_WEAPON_MAX_AP: {maxRoll = 1; break;}
+		default: break;
+	}
+
+	if (maxRoll > 0) {
+        return true;
+	} else {
+	    return true;
+	}
+}
+
 
 //  this part is not shared with client, server only
 
@@ -92,7 +168,9 @@ void AddSpecialBonusEncounterBoss(Item@ it)
 	return;
 }
 
-void AddSpecialBonusLow(Item@ it) // 03-03-2014 Cubik: funkcja dla skrzynek spawnujacych bonusowe bronie/armory o nizјszej jakosci (rzadziej unique, czesciej advanced) - GORSZA WERSJA AddSpecialBonus
+//  03-03-2014 Cubik: funkcja dla skrzynek spawnujacych bonusowe bronie/armory o nizјszej jakosci (rzadziej unique, czesciej advanced) - GORSZA WERSJA AddSpecialBonus
+//  03-03-2014 Cubik: function for boxes spawning bonus weapons/armor of lower quality (less often unique, more often advanced) - WORSE VERSION of AddSpecialBonus
+void AddSpecialBonusLow(Item@ it)
 {
 	if(it.GetType() == ITEM_TYPE_WEAPON && !it.IsStackable())
 	{

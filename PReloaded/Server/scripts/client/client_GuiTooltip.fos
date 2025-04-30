@@ -1426,12 +1426,6 @@ void SetInventoryDetailText(ItemCl& item) {
                     }
                 }
             }
-
-            if (item.Proto.Weapon_Perk != 0) {
-                string str = GetMsgStr(TEXTMSG_GAME, STR_WEAPON_PERK(item.Proto.Weapon_Perk));
-                text += "\nPerk: " + str + ".";
-            }
-
             if (item.Proto.Weapon_MinStrength > 1) {
                 text += "\nMinimum Strength: " + item.Proto.Weapon_MinStrength;
             }
@@ -1439,7 +1433,40 @@ void SetInventoryDetailText(ItemCl& item) {
             if (item.Proto.Weapon_DmgMin_0 > 0 && item.Proto.Weapon_DmgMax_0 > 0) {
                 text += "\nBase damage: " + item.Proto.Weapon_DmgMin_0 + "-" + item.Proto.Weapon_DmgMax_0;
             }
+            if (item.Proto.Weapon_Perk != 0) {
+                string str = GetMsgStr(TEXTMSG_GAME, STR_WEAPON_PERK(item.Proto.Weapon_Perk));
+                text += "\nPerk: " + str + ".";
+            }
         } else if (item.GetType() == ITEM_TYPE_ARMOR) {
+            string radResistStr = "";
+            string perkStr = "";
+            if (item.Proto.Armor_Perk != 0) {
+                if (item.Proto.Slot == SLOT_ARMOR) {
+                    switch (item.Proto.Armor_Perk) {
+                        case ARMOR_PERK_POWERED: radResistStr += "+35"; perkStr = "\nHeavy: -3 AG (also AG cap 7)\nPerk: Stonewall.\nPerk: Adv. Powered. (+3 ST)"; break;
+                        case ARMOR_PERK_ADVANCED_I:
+                        case ARMOR_PERK_ADVANCED_II: radResistStr += "+40"; perkStr = "\nHeavy: -3 AG (also AG cap 7)\nPerk: Stonewall.\nPerk: Adv. Powered. (+4 ST)"; break;
+                        case ARMOR_PERK_LEATHER_JACKET: radResistStr += "+5"; perkStr = "\nLight: +1 AG \nPerk: Quick Pockets.\nPerk: Swagger. (+1 CH)"; break;
+                        case ARMOR_PERK_LEATHER_ARMOR: radResistStr += "+10"; perkStr = "\nLight: +1 AG \nPerk: Quick Pockets."; break;
+                        case ARMOR_PERK_THERMAL_LEATHER: radResistStr += "+35"; perkStr = "\nPerk: Flame Resistant. (Higher Flamer KD resist)"; break;
+                        case ARMOR_PERK_COMBAT: radResistStr += "+25"; perkStr = "\nMedium: -1 AG (also AG cap 9)\nPerk: Iron Limbs."; break;
+                        case ARMOR_PERK_METAL: radResistStr += "+15"; perkStr = "\nHeavy: -3 AG (also AG cap 7)\nPerk: Stonewall."; break;
+                        case ARMOR_PERK_TESLA: radResistStr += "+35"; perkStr = "\nHeavy: -3 AG (also AG cap 7)\nPerk: Stonewall."; break;
+                        case ARMOR_PERK_CAMOUFLAGE_HP: radResistStr += "+10"; perkStr = "\nPerk: Camouflage. (Hide HP and Helm)"; break;
+                    }
+                } else if (item.Proto.Slot == SLOT_HEAD) {
+                    switch (item.Proto.Armor_Perk) {
+                        case HELMET_PERK_CHARISMA: perkStr = "\nPerk: Stylish. (+1 CH)"; break;
+                        case HELMET_PERK_PERCEPTION_GLASSES: perkStr = "\nPerk: Sight Correction. (PE set to 4 if lower)"; break;
+                        case HELMET_PERK_PROTECT_EYES: perkStr = "\nPerk: Protect Eyes. (Aim location Eyes changed to Head)"; break;
+                        case HELMET_PERK_BONUS_PERCEPTION: perkStr = "\nPerk: Clear Vision. (+1 PE)"; break;
+                        case HELMET_PERK_MALUS_PERCEPTION: perkStr = "\nPerk: Impaired Vision. (-1 PE)"; break;
+                        case HELMET_PERK_CAMOUFLAGE_NAME: perkStr = "\nPerk: Camouflage. (Hide Name)"; break;
+                        case HELMET_PERK_METAL_MASK: perkStr = "\nPerk: Camouflage. (Hide Name)\nPerk: Impaired Vision. (-1 PE)"; break;
+                        case HELMET_PERK_METAL_MASK_2: perkStr = "\nPerk: Camouflage. (Hide Name)\nPerk: Impaired Vision. (-2 PE)"; break;
+                    }
+                }
+            }
             text += "\nArmor Class: " + item.Proto.Armor_AC;
             text += "\nDamage resistances: (DT/DR)";
             if (item.GetProtoId() == PID_FRONT_PLATED_METAL_ARMOR || item.GetProtoId() == PID_FRONT_PLATED_METAL_HELMET) {
@@ -1460,10 +1487,17 @@ void SetInventoryDetailText(ItemCl& item) {
             text += "\n\tPlasma:  \u00A0\u00A0" + item.Proto.Armor_DTPlasma + "/" + item.Proto.Armor_DRPlasma;
             text += "\n\tElectric:  \u00A0" + item.Proto.Armor_DTElectr + "/" + item.Proto.Armor_DRElectr;
             text += "\n\tExplode:  \u00A0" + item.Proto.Armor_DTExplode + "/" + item.Proto.Armor_DRExplode;
+            if (radResistStr.length() > 0) {
+                text += "\n\tRadiation Resist: " + radResistStr;
+            }
             text += "\n\tCrit chance mod: " + (item.Proto.Armor_CMCritChance);
             text += "\n\tCrit power mod: " + (item.Proto.Armor_CMCritPower);
+            text += "\n";
             if (item.GetProtoId() == PID_TESLA_ARMOR) {
                 text += "\nCharges: "+item.Charge+"/"+item.Proto.Misc_ChargeMax;
+            }
+            if (perkStr.length() > 0) {
+                text += perkStr;
             }
         } else if (item.GetType() == ITEM_TYPE_AMMO) {
             text += "\nDM mod: " + (item.Proto.Ammo_DmgMult) + "/" + (item.Proto.Ammo_DmgDiv);
@@ -1484,23 +1518,6 @@ void SetInventoryDetailText(ItemCl& item) {
             // Key id
             text += "\n" + ReplaceText(GetMsgStr(TEXTMSG_GAME, STR_INV_KEY_NUMBER), "KEY_ID", item.LockerId);
         }
-
-        // Weight
-        string weightString = GetMsgStr(TEXTMSG_GAME, STR_ITEM_WEIGHT_GRAMM);
-        if (item.Proto.Weight * item.GetCount() == 1) {
-            weightString = ReplaceText(weightString, "grams.", "gram.");
-        }
-        string ammoWeightReplaceString = "";
-        int totalWeight = item.Proto.Weight * item.GetCount();
-        string totalWeightString = "";
-        if (item.GetCount() > 1 && item.Proto.Weight > 0) {
-            totalWeightString += "  (" + item.GetCount() + " * " + item.Proto.Weight + "g)";
-        }
-        if (ammoCount > 0) {
-            totalWeight +=  ammoWeight * ammoCount;
-            ammoWeightReplaceString = "  (" + (item.Proto.Weight * item.GetCount()) + "g + " + ammoCount + " * " + ammoWeight + "g)";
-        }
-        text += "\n" + ReplaceText(weightString, "VALUE", "" + totalWeight) + totalWeightString + ammoWeightReplaceString;
 
         // Show bonuses
         if (item.Val0 != 0) {
@@ -1577,6 +1594,23 @@ void SetInventoryDetailText(ItemCl& item) {
                 text += "\n" + GetMsgStr(TEXTMSG_GAME, STR_DETERIORATION_SERVICE_EXT);
             }
         }
+
+        // Weight
+        string weightString = GetMsgStr(TEXTMSG_GAME, STR_ITEM_WEIGHT_GRAMM);
+        if (item.Proto.Weight * item.GetCount() == 1) {
+            weightString = ReplaceText(weightString, "grams.", "gram.");
+        }
+        string ammoWeightReplaceString = "";
+        int totalWeight = item.Proto.Weight * item.GetCount();
+        string totalWeightString = "";
+        if (item.GetCount() > 1 && item.Proto.Weight > 0) {
+            totalWeightString += "  (" + item.GetCount() + " * " + item.Proto.Weight + "g)";
+        }
+        if (ammoCount > 0) {
+            totalWeight +=  ammoWeight * ammoCount;
+            ammoWeightReplaceString = "  (" + (item.Proto.Weight * item.GetCount()) + "g + " + ammoCount + " * " + ammoWeight + "g)";
+        }
+        text += "\n\n" + ReplaceText(weightString, "VALUE", "" + totalWeight) + totalWeightString + ammoWeightReplaceString;
     } else {
         text = "N/A - Invalid Item";
     }
