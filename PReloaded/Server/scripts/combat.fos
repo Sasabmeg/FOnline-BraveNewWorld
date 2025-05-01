@@ -1239,12 +1239,6 @@ void ApplyDamage(AttackStruct& attack, Critter& target, uint rounds, bool isCrit
     if((dir == target.Dir || ((dir + 1) % 6) == target.Dir || ((dir + 5) % 6) == target.Dir))
         attackFront = false;
 
-	array<int>	_dmgMul;
-	_dmgMul.resize(rounds);
-	for (uint i = 0; i < rounds; i++) {
-		_dmgMul[i] = dmgMul;
-	}
-
 	int attackerLuck = attacker.Stat[ST_LUCK];
 	int targetLuck = target.Stat[ST_LUCK];
 	if ((attacker.Trait[TRAIT_JINXED] > 0 || target.Trait[TRAIT_JINXED] > 0) && Random(1, 100) > 50) {
@@ -1306,7 +1300,31 @@ void ApplyDamage(AttackStruct& attack, Critter& target, uint rounds, bool isCrit
         isDummyTraining = true;
     }
 
-    string dummyInfo;
+    string dummyInfo = "";
+
+    if (ammoPid == PID_45_CALIBER_AMMO) {
+        int roll = Random(0, 99);
+        if (roll >= 66) {
+            dmgMul = 12;
+            if (isDummyTraining) {
+                dummyInfo += "|" + COLOR_DTEXT_CAPTION + " .45 caliber Triple Damage :: ";
+                dummyInfo += "|" + COLOR_DTEXT_REGULAR + " (3xDam. Roll = |" + COLOR_DTEXT_ROLL + " " + roll;
+                dummyInfo += "|" + COLOR_DTEXT_REGULAR + "  vs 66 |" + COLOR_DTEXT_BONUS + "  Success!\n";
+            }
+        } else {
+            if (isDummyTraining) {
+                dummyInfo += "|" + COLOR_DTEXT_CAPTION + " .45 caliber Triple Damage :: ";
+                dummyInfo += "|" + COLOR_DTEXT_REGULAR + " (3xDam. Roll = |" + COLOR_DTEXT_ROLL + " " + roll;
+                dummyInfo += "|" + COLOR_DTEXT_REGULAR + "  vs 66 |" + COLOR_DTEXT_MALUS + "  Fail!\n";
+            }
+        }
+    }
+	array<int>	_dmgMul;
+	_dmgMul.resize(rounds);
+	for (uint i = 0; i < rounds; i++) {
+		_dmgMul[i] = dmgMul;
+	}
+
 
 	if (isThrustThrowWeapon)  // bronie, ktore maja zamienione primary_attack mode swing na thrust
 	{
@@ -1379,7 +1397,7 @@ void ApplyDamage(AttackStruct& attack, Critter& target, uint rounds, bool isCrit
         aim_--;
 
         if (isDummyTraining) {
-            dummyInfo = "|" + COLOR_DTEXT_CAPTION + " Crit Power :: ";
+            dummyInfo += "|" + COLOR_DTEXT_CAPTION + " Crit Power :: ";
         }
 
         int roll = Random(0, 100);
