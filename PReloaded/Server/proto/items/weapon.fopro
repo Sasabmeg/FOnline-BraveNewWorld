@@ -1,5 +1,6 @@
 # 3.2.0
 
+#PID_KNIFE
 [Proto]
 ProtoId=4
 Type=3
@@ -27,10 +28,10 @@ Weapon_Anim2_1=Anim2Thrust1H
 Weapon_PicUse_0=art\intrface\swing.frm
 Weapon_PicUse_1=art\intrface\thrust.frm
 Weapon_PicUse_2=art\intrface\blank.frm
-Weapon_DmgMin_0=7
-Weapon_DmgMin_1=7
-Weapon_DmgMax_0=12
-Weapon_DmgMax_1=12
+Weapon_DmgMin_0=8
+Weapon_DmgMin_1=8
+Weapon_DmgMax_0=13
+Weapon_DmgMax_1=13
 Weapon_MaxDist_0=1
 Weapon_MaxDist_1=1
 Weapon_ApCost_0=3
@@ -40,6 +41,7 @@ Weapon_Aim_1=1
 Weapon_SoundId_0=51
 Weapon_SoundId_1=51
 
+#PID_CLUB
 [Proto]
 ProtoId=5
 Type=3
@@ -72,6 +74,7 @@ Weapon_ApCost_0=3
 Weapon_Aim_0=1
 Weapon_SoundId_0=54
 
+#PID_SLEDGEHAMMER
 [Proto]
 ProtoId=6
 Type=3
@@ -100,19 +103,20 @@ Weapon_Anim2_1=Anim2Thrust1H
 Weapon_PicUse_0=art\intrface\swing.frm
 Weapon_PicUse_1=art\intrface\thrust.frm
 Weapon_PicUse_2=art\intrface\blank.frm
-Weapon_DmgMin_0=8
-Weapon_DmgMin_1=8
-Weapon_DmgMax_0=16
-Weapon_DmgMax_1=16
+Weapon_DmgMin_0=19
+Weapon_DmgMin_1=19
+Weapon_DmgMax_0=37
+Weapon_DmgMax_1=37
 Weapon_MaxDist_0=2
 Weapon_MaxDist_1=2
-Weapon_ApCost_0=4
-Weapon_ApCost_1=5
+Weapon_ApCost_0=6
+Weapon_ApCost_1=6
 Weapon_Aim_0=1
 Weapon_Aim_1=1
 Weapon_SoundId_0=55
 Weapon_SoundId_1=55
 
+#PID_SPEAR
 [Proto]
 ProtoId=7
 Type=3
@@ -141,21 +145,22 @@ Weapon_Remove_1=1
 Weapon_PicUse_0=art\intrface\thrust.frm
 Weapon_PicUse_1=art\intrface\throw.frm
 Weapon_PicUse_2=art\intrface\blank.frm
-Weapon_DmgMin_0=8
-Weapon_DmgMin_1=8
-Weapon_DmgMax_0=12
-Weapon_DmgMax_1=12
+Weapon_DmgMin_0=18
+Weapon_DmgMin_1=43
+Weapon_DmgMax_0=18
+Weapon_DmgMax_1=43
 Weapon_Effect_0=4007
 Weapon_Effect_1=4007
 Weapon_MaxDist_0=2
 Weapon_MaxDist_1=15
-Weapon_ApCost_0=4
-Weapon_ApCost_1=5
+Weapon_ApCost_0=6
+Weapon_ApCost_1=7
 Weapon_Aim_0=1
 Weapon_Aim_1=1
 Weapon_SoundId_0=56
 Weapon_SoundId_1=56
 
+#PID_10MM_PISTOL
 [Proto]
 ProtoId=8
 Type=3
@@ -193,6 +198,7 @@ Weapon_Aim_0=1
 Weapon_SoundId_0=65
 CraftLevel=1
 
+#PID_10MM_SMG
 [Proto]
 ProtoId=9
 Type=3
@@ -238,6 +244,7 @@ Weapon_SoundId_0=68
 Weapon_SoundId_1=68
 CraftLevel=2
 
+#PID_HUNTING_RIFLE
 [Proto]
 ProtoId=10
 Type=3
@@ -267,8 +274,8 @@ Weapon_Anim2_0=Anim2Single
 Weapon_PicUse_0=art\intrface\single.frm
 Weapon_PicUse_1=art\intrface\blank.frm
 Weapon_PicUse_2=art\intrface\blank.frm
-Weapon_DmgMin_0=8
-Weapon_DmgMax_0=20
+Weapon_DmgMin_0=18
+Weapon_DmgMax_0=33
 Weapon_MaxDist_0=40
 Weapon_Round_0=1
 Weapon_ApCost_0=5
@@ -276,6 +283,7 @@ Weapon_Aim_0=1
 Weapon_SoundId_0=71
 CraftLevel=1
 
+#PID_FLAMER
 [Proto]
 ProtoId=11
 Type=3
@@ -306,12 +314,13 @@ Weapon_PicUse_1=art\intrface\blank.frm
 Weapon_PicUse_2=art\intrface\blank.frm
 Weapon_DmgMin_0=50
 Weapon_DmgMax_0=85
-Weapon_MaxDist_0=8
+Weapon_MaxDist_0=7
 Weapon_Round_0=1
 Weapon_ApCost_0=6
 Weapon_SoundId_0=73
 CraftLevel=1
 
+#PID_MINIGUN
 [Proto]
 ProtoId=12
 Type=3
@@ -350,6 +359,7 @@ Weapon_SoundId_0=76
 NeedBlueprint=9767
 CraftLevel=2
 
+#PID_ROCKET_LAUNCHER
 [Proto]
 ProtoId=13
 Type=3
@@ -397,6 +407,7 @@ Weapon_SoundId_1=78
 NeedBlueprint=9765
 CraftLevel=2
 
+#PID_PLASMA_RIFLE
 [Proto]
 ProtoId=15
 Type=3
@@ -437,6 +448,7 @@ Weapon_SoundId_0=75
 NeedBlueprint=9761
 CraftLevel=2
 
+#PID_LASER_PISTOL
 [Proto]
 ProtoId=16
 Type=3
@@ -475,6 +487,7 @@ Weapon_Aim_0=1
 Weapon_SoundId_0=67
 CraftLevel=1
 
+#PID_DESERT_EAGLE
 [Proto]
 ProtoId=18
 Type=3
@@ -512,6 +525,7 @@ Weapon_Aim_0=1
 Weapon_SoundId_0=66
 CraftLevel=1
 
+#PID_ROCK
 [Proto]
 ProtoId=19
 Type=3
@@ -554,6 +568,7 @@ Weapon_Aim_1=1
 Weapon_SoundId_0=50
 Weapon_SoundId_1=50
 
+#PID_CROWBAR
 [Proto]
 ProtoId=20
 Type=3
@@ -586,6 +601,7 @@ Weapon_ApCost_0=4
 Weapon_Aim_0=1
 Weapon_SoundId_0=53
 
+#PID_BRASS_KNUCKLES
 [Proto]
 ProtoId=21
 Type=3
@@ -600,6 +616,7 @@ SoundId=48
 Cost=50
 Material=1
 Weapon_Anim1=1
+Weapon_Perk=9
 Weapon_MinStrength=1
 Weapon_ActiveUses=1
 Weapon_Skill_0=203
@@ -610,13 +627,14 @@ Weapon_Anim2_0=Anim2PunchRight
 Weapon_PicUse_0=art\intrface\punch.frm
 Weapon_PicUse_1=art\intrface\blank.frm
 Weapon_PicUse_2=art\intrface\blank.frm
-Weapon_DmgMin_0=5
-Weapon_DmgMax_0=16
+Weapon_DmgMin_0=6
+Weapon_DmgMax_0=17
 Weapon_MaxDist_0=1
 Weapon_ApCost_0=3
 Weapon_Aim_0=1
 Weapon_SoundId_0=49
 
+#PID_14MM_PISTOL
 [Proto]
 ProtoId=22
 Type=3
@@ -656,6 +674,7 @@ Weapon_SoundId_0=69
 NeedBlueprint=9750
 CraftLevel=2
 
+#PID_ASSAULT_RIFLE
 [Proto]
 ProtoId=23
 Type=3
@@ -687,11 +706,11 @@ Weapon_Anim2_1=Anim2Burst
 Weapon_PicUse_0=art\intrface\single.frm
 Weapon_PicUse_1=art\intrface\burst.frm
 Weapon_PicUse_2=art\intrface\blank.frm
-Weapon_DmgMin_0=25
-Weapon_DmgMin_1=25
+Weapon_DmgMin_0=24
+Weapon_DmgMin_1=24
 Weapon_DmgMax_0=35
 Weapon_DmgMax_1=35
-Weapon_MaxDist_0=50
+Weapon_MaxDist_0=45
 Weapon_MaxDist_1=35
 Weapon_Round_0=1
 Weapon_Round_1=15
@@ -703,6 +722,7 @@ Weapon_SoundId_1=72
 NeedBlueprint=9753
 CraftLevel=2
 
+#PID_PLASMA_PISTOL
 [Proto]
 ProtoId=24
 Type=3
@@ -730,8 +750,8 @@ Weapon_DmgType_0=4
 Weapon_PicUse_0=art\intrface\single.frm
 Weapon_PicUse_1=art\intrface\blank.frm
 Weapon_PicUse_2=art\intrface\blank.frm
-Weapon_DmgMin_0=30
-Weapon_DmgMax_0=45
+Weapon_DmgMin_0=25
+Weapon_DmgMax_0=40
 Weapon_Effect_0=4002
 Weapon_MaxDist_0=32
 Weapon_Round_0=1
@@ -741,6 +761,7 @@ Weapon_SoundId_0=70
 NeedBlueprint=9759
 CraftLevel=2
 
+#PID_FRAG_GRENADE
 [Proto]
 ProtoId=25
 Type=3
@@ -775,6 +796,7 @@ Weapon_ApCost_0=5
 Weapon_SoundId_0=79
 CraftLevel=1
 
+#PID_PLASMA_GRENADE
 [Proto]
 ProtoId=26
 Type=3
@@ -801,8 +823,8 @@ Weapon_Remove_0=1
 Weapon_PicUse_0=art\intrface\throw.frm
 Weapon_PicUse_1=art\intrface\blank.frm
 Weapon_PicUse_2=art\intrface\blank.frm
-Weapon_DmgMin_0=60
-Weapon_DmgMax_0=120
+Weapon_DmgMin_0=35
+Weapon_DmgMax_0=60
 Weapon_Effect_0=4025
 Weapon_MaxDist_0=15
 Weapon_ApCost_0=4
@@ -810,6 +832,7 @@ Weapon_SoundId_0=80
 NeedBlueprint=9768
 CraftLevel=2
 
+#PID_PULSE_GRENADE
 [Proto]
 ProtoId=27
 Type=3
@@ -843,6 +866,7 @@ Weapon_MaxDist_0=15
 Weapon_ApCost_0=4
 Weapon_SoundId_0=81
 
+#PID_GATLING_LASER
 [Proto]
 ProtoId=28
 Type=3
@@ -879,6 +903,7 @@ Weapon_Round_0=10
 Weapon_ApCost_0=7
 Weapon_SoundId_0=77
 
+#PID_THROWING_KNIFE
 [Proto]
 ProtoId=45
 Type=3
@@ -894,6 +919,7 @@ Cost=32
 Material=1
 Weapon_Anim1=4
 Weapon_MinStrength=3
+Weapon_Perk=3
 Weapon_ActiveUses=3
 Weapon_CriticalFailture=1
 Weapon_Skill_0=205
@@ -908,9 +934,9 @@ Weapon_PicUse_0=art\intrface\throw.frm
 Weapon_PicUse_1=art\intrface\swing.frm
 Weapon_PicUse_2=art\intrface\blank.frm
 Weapon_DmgMin_0=18
-Weapon_DmgMin_1=18
+Weapon_DmgMin_1=2
 Weapon_DmgMax_0=40
-Weapon_DmgMax_1=40
+Weapon_DmgMax_1=4
 Weapon_Effect_0=4006
 Weapon_Effect_1=4006
 Weapon_MaxDist_0=15
@@ -922,6 +948,7 @@ Weapon_Aim_1=1
 Weapon_SoundId_0=52
 Weapon_SoundId_1=52
 
+#PID_FLARE
 [Proto]
 ProtoId=79
 Type=3
@@ -957,6 +984,7 @@ Weapon_ApCost_0=2
 Weapon_Aim_0=1
 Weapon_SoundId_0=52
 
+#PID_SHOTGUN
 [Proto]
 ProtoId=94
 Type=3
@@ -1003,6 +1031,7 @@ Weapon_SoundId_0=82
 Weapon_SoundId_1=82
 CraftLevel=1
 
+#PID_SUPER_SLEDGE
 [Proto]
 ProtoId=115
 Type=3
@@ -1031,14 +1060,14 @@ Weapon_Anim2_1=Anim2Thrust1H
 Weapon_PicUse_0=art\intrface\swing.frm
 Weapon_PicUse_1=art\intrface\thrust.frm
 Weapon_PicUse_2=art\intrface\blank.frm
-Weapon_DmgMin_0=36
-Weapon_DmgMin_1=36
-Weapon_DmgMax_0=72
-Weapon_DmgMax_1=72
+Weapon_DmgMin_0=46
+Weapon_DmgMin_1=46
+Weapon_DmgMax_0=92
+Weapon_DmgMax_1=92
 Weapon_MaxDist_0=2
 Weapon_MaxDist_1=2
-Weapon_ApCost_0=4
-Weapon_ApCost_1=5
+Weapon_ApCost_0=6
+Weapon_ApCost_1=6
 Weapon_Aim_0=1
 Weapon_Aim_1=1
 Weapon_SoundId_0=55
@@ -1046,6 +1075,7 @@ Weapon_SoundId_1=55
 NeedBlueprint=9771
 CraftLevel=1
 
+#PID_RIPPER
 [Proto]
 ProtoId=116
 Type=3
@@ -1079,13 +1109,13 @@ Weapon_PicUse_1=art\intrface\thrust.frm
 Weapon_PicUse_2=art\intrface\blank.frm
 Weapon_DmgMin_0=15
 Weapon_DmgMin_1=15
-Weapon_DmgMax_0=32
-Weapon_DmgMax_1=32
+Weapon_DmgMax_0=43
+Weapon_DmgMax_1=43
 Weapon_MaxDist_0=1
 Weapon_MaxDist_1=1
 Weapon_Round_0=1
 Weapon_Round_1=1
-Weapon_ApCost_0=3
+Weapon_ApCost_0=4
 Weapon_ApCost_1=4
 Weapon_Aim_0=1
 Weapon_Aim_1=1
@@ -1094,6 +1124,7 @@ Weapon_SoundId_1=48
 NeedBlueprint=9764
 CraftLevel=2
 
+#PID_LASER_RIFLE
 [Proto]
 ProtoId=118
 Type=3
@@ -1134,6 +1165,7 @@ Weapon_SoundId_0=74
 NeedBlueprint=9760
 CraftLevel=2
 
+#PID_ALIEN_LASER_PISTOL
 [Proto]
 ProtoId=120
 Type=3
@@ -1172,6 +1204,7 @@ Weapon_ApCost_0=4
 Weapon_Aim_0=1
 Weapon_SoundId_0=83
 
+#PID_9MM_MAUSER
 [Proto]
 ProtoId=122
 Type=3
@@ -1210,6 +1243,7 @@ Weapon_Aim_0=1
 Weapon_SoundId_0=66
 CraftLevel=1
 
+#PID_SNIPER_RIFLE
 [Proto]
 ProtoId=143
 Type=3
@@ -1239,8 +1273,8 @@ Weapon_Anim2_0=Anim2Single
 Weapon_PicUse_0=art\intrface\single.frm
 Weapon_PicUse_1=art\intrface\blank.frm
 Weapon_PicUse_2=art\intrface\blank.frm
-Weapon_DmgMin_0=25
-Weapon_DmgMax_0=35
+Weapon_DmgMin_0=23
+Weapon_DmgMax_0=46
 Weapon_MaxDist_0=50
 Weapon_Round_0=1
 Weapon_ApCost_0=5
@@ -1249,6 +1283,7 @@ Weapon_SoundId_0=71
 NeedBlueprint=9755
 CraftLevel=2
 
+#PID_MOLOTOV_COCKTAIL
 [Proto]
 ProtoId=159
 Type=3
@@ -1283,6 +1318,7 @@ Weapon_ApCost_0=5
 Weapon_SoundId_0=79
 CraftLevel=1
 
+#PID_CATTLE_PROD
 [Proto]
 ProtoId=160
 Type=3
@@ -1314,22 +1350,23 @@ Weapon_Anim2_1=Anim2Thrust1H
 Weapon_PicUse_0=art\intrface\swing.frm
 Weapon_PicUse_1=art\intrface\thrust.frm
 Weapon_PicUse_2=art\intrface\blank.frm
-Weapon_DmgMin_0=12
-Weapon_DmgMin_1=12
-Weapon_DmgMax_0=20
-Weapon_DmgMax_1=20
+Weapon_DmgMin_0=18
+Weapon_DmgMin_1=18
+Weapon_DmgMax_0=42
+Weapon_DmgMax_1=42
 Weapon_MaxDist_0=1
 Weapon_MaxDist_1=1
 Weapon_Round_0=1
 Weapon_Round_1=1
-Weapon_ApCost_0=3
-Weapon_ApCost_1=4
+Weapon_ApCost_0=4
+Weapon_ApCost_1=5
 Weapon_Aim_0=1
 Weapon_Aim_1=1
 Weapon_SoundId_0=57
 Weapon_SoundId_1=57
 CraftLevel=1
 
+#PID_RED_RYDER_BB_GUN
 [Proto]
 ProtoId=161
 Type=3
@@ -1367,6 +1404,7 @@ Weapon_Aim_0=1
 Weapon_SoundId_0=85
 CraftLevel=1
 
+#PID_RED_RYDER_LE_BB_GUN
 [Proto]
 ProtoId=162
 Type=3
@@ -1405,6 +1443,7 @@ Weapon_Aim_0=1
 Weapon_SoundId_0=85
 CraftLevel=1
 
+#PID_ACTIVE_FLARE
 [Proto]
 ProtoId=205
 Type=3
@@ -1441,6 +1480,7 @@ Weapon_ApCost_0=2
 Weapon_Aim_0=1
 Weapon_SoundId_0=52
 
+#PID_TURBO_PLASMA_RIFLE
 [Proto]
 ProtoId=233
 Type=3
@@ -1470,8 +1510,8 @@ Weapon_Anim2_0=Anim2Single
 Weapon_PicUse_0=art\intrface\single.frm
 Weapon_PicUse_1=art\intrface\blank.frm
 Weapon_PicUse_2=art\intrface\blank.frm
-Weapon_DmgMin_0=50
-Weapon_DmgMax_0=70
+Weapon_DmgMin_0=56
+Weapon_DmgMax_0=64
 Weapon_Effect_0=4002
 Weapon_MaxDist_0=35
 Weapon_Round_0=1
@@ -1480,6 +1520,7 @@ Weapon_Aim_0=1
 Weapon_SoundId_0=75
 CraftLevel=2
 
+#PID_SPIKED_KNUCKLES
 [Proto]
 ProtoId=234
 Type=3
@@ -1504,13 +1545,14 @@ Weapon_Anim2_0=Anim2PunchRight
 Weapon_PicUse_0=art\intrface\punch.frm
 Weapon_PicUse_1=art\intrface\blank.frm
 Weapon_PicUse_2=art\intrface\blank.frm
-Weapon_DmgMin_0=8
-Weapon_DmgMax_0=22
+Weapon_DmgMin_0=9
+Weapon_DmgMax_0=23
 Weapon_MaxDist_0=1
 Weapon_ApCost_0=3
 Weapon_Aim_0=1
 Weapon_SoundId_0=49
 
+#PID_POWER_FIST
 [Proto]
 ProtoId=235
 Type=3
@@ -1529,7 +1571,7 @@ Weapon_MaxAmmoCount=50
 Weapon_Caliber=3
 Weapon_DefaultAmmoPid=38
 Weapon_MinStrength=1
-Weapon_Perk=3
+Weapon_Perk=9
 Weapon_ActiveUses=1
 Weapon_Skill_0=203
 Weapon_Skill_1=200
@@ -1539,8 +1581,8 @@ Weapon_Anim2_0=Anim2PunchRight
 Weapon_PicUse_0=art\intrface\punch.frm
 Weapon_PicUse_1=art\intrface\blank.frm
 Weapon_PicUse_2=art\intrface\blank.frm
-Weapon_DmgMin_0=16
-Weapon_DmgMax_0=32
+Weapon_DmgMin_0=21
+Weapon_DmgMax_0=37
 Weapon_MaxDist_0=1
 Weapon_Round_0=1
 Weapon_ApCost_0=3
@@ -1548,6 +1590,7 @@ Weapon_Aim_0=1
 Weapon_SoundId_0=49
 CraftLevel=2
 
+#PID_COMBAT_KNIFE
 [Proto]
 ProtoId=236
 Type=3
@@ -1575,19 +1618,20 @@ Weapon_Anim2_1=Anim2Thrust1H
 Weapon_PicUse_0=art\intrface\swing.frm
 Weapon_PicUse_1=art\intrface\thrust.frm
 Weapon_PicUse_2=art\intrface\blank.frm
-Weapon_DmgMin_0=12
-Weapon_DmgMin_1=12
-Weapon_DmgMax_0=19
-Weapon_DmgMax_1=19
+Weapon_DmgMin_0=15
+Weapon_DmgMin_1=15
+Weapon_DmgMax_0=21
+Weapon_DmgMax_1=21
 Weapon_MaxDist_0=1
 Weapon_MaxDist_1=1
-Weapon_ApCost_0=3
+Weapon_ApCost_0=4
 Weapon_ApCost_1=4
 Weapon_Aim_0=1
 Weapon_Aim_1=1
 Weapon_SoundId_0=51
 Weapon_SoundId_1=51
 
+#PID_223_PISTOL
 [Proto]
 ProtoId=241
 Type=3
@@ -1617,7 +1661,7 @@ Weapon_PicUse_0=art\intrface\single.frm
 Weapon_PicUse_1=art\intrface\blank.frm
 Weapon_PicUse_2=art\intrface\blank.frm
 Weapon_DmgMin_0=30
-Weapon_DmgMax_0=40
+Weapon_DmgMax_0=45
 Weapon_MaxDist_0=30
 Weapon_Round_0=1
 Weapon_ApCost_0=4
@@ -1626,6 +1670,7 @@ Weapon_SoundId_0=69
 NeedBlueprint=9752
 CraftLevel=2
 
+#PID_COMBAT_SHOTGUN
 [Proto]
 ProtoId=242
 Type=3
@@ -1672,6 +1717,7 @@ Weapon_SoundId_0=82
 Weapon_SoundId_1=82
 CraftLevel=2
 
+#PID_JONNY_BB_GUN
 [Proto]
 ProtoId=261
 Type=3
@@ -1708,6 +1754,7 @@ Weapon_ApCost_0=5
 Weapon_Aim_0=1
 Weapon_SoundId_0=85
 
+#PID_HK_CAWS
 [Proto]
 ProtoId=268
 Type=3
@@ -1755,6 +1802,7 @@ Weapon_SoundId_1=82
 NeedBlueprint=9757
 CraftLevel=2
 
+#PID_ROBO_ROCKET_LAUNCHER
 [Proto]
 ProtoId=270
 Type=3
@@ -1790,6 +1838,7 @@ Weapon_Round_0=1
 Weapon_ApCost_0=5
 Weapon_SoundId_0=78
 
+#PID_SHARP_SPEAR
 [Proto]
 ProtoId=280
 Type=3
@@ -1819,21 +1868,22 @@ Weapon_Remove_1=1
 Weapon_PicUse_0=art\intrface\thrust.frm
 Weapon_PicUse_1=art\intrface\throw.frm
 Weapon_PicUse_2=art\intrface\blank.frm
-Weapon_DmgMin_0=12
-Weapon_DmgMin_1=12
-Weapon_DmgMax_0=20
-Weapon_DmgMax_1=20
+Weapon_DmgMin_0=21
+Weapon_DmgMin_1=45
+Weapon_DmgMax_0=21
+Weapon_DmgMax_1=45
 Weapon_Effect_0=4007
 Weapon_Effect_1=4007
 Weapon_MaxDist_0=2
 Weapon_MaxDist_1=15
-Weapon_ApCost_0=4
-Weapon_ApCost_1=5
+Weapon_ApCost_0=6
+Weapon_ApCost_1=7
 Weapon_Aim_0=1
 Weapon_Aim_1=1
 Weapon_SoundId_0=56
 Weapon_SoundId_1=56
 
+#PID_TOMMY_GUN
 [Proto]
 ProtoId=283
 Type=3
@@ -1866,10 +1916,10 @@ Weapon_PicUse_1=art\intrface\burst.frm
 Weapon_PicUse_2=art\intrface\blank.frm
 Weapon_DmgMin_0=3
 Weapon_DmgMin_1=3
-Weapon_DmgMax_0=20
-Weapon_DmgMax_1=20
+Weapon_DmgMax_0=30
+Weapon_DmgMax_1=30
 Weapon_MaxDist_0=32
-Weapon_MaxDist_1=16
+Weapon_MaxDist_1=24
 Weapon_Round_0=1
 Weapon_Round_1=15
 Weapon_ApCost_0=5
@@ -1879,6 +1929,7 @@ Weapon_SoundId_0=72
 Weapon_SoundId_1=72
 CraftLevel=1
 
+#PID_SCOPED_HUNTING_RIFLE
 [Proto]
 ProtoId=287
 Type=3
@@ -1908,14 +1959,15 @@ Weapon_Anim2_0=Anim2Single
 Weapon_PicUse_0=art\intrface\single.frm
 Weapon_PicUse_1=art\intrface\blank.frm
 Weapon_PicUse_2=art\intrface\blank.frm
-Weapon_DmgMin_0=8
-Weapon_DmgMax_0=20
-Weapon_MaxDist_0=40
+Weapon_DmgMin_0=18
+Weapon_DmgMax_0=33
+Weapon_MaxDist_0=50
 Weapon_Round_0=1
 Weapon_ApCost_0=5
 Weapon_Aim_0=1
 Weapon_SoundId_0=71
 
+#PID_SHOVEL
 [Proto]
 ProtoId=289
 Type=3
@@ -1957,6 +2009,7 @@ Weapon_SoundId_0=55
 Weapon_SoundId_1=55
 CraftLevel=1
 
+#PID_EYEBALL_FIST_1
 [Proto]
 ProtoId=290
 Type=3
@@ -1986,6 +2039,7 @@ Weapon_MaxDist_0=1
 Weapon_ApCost_0=3
 Weapon_Aim_0=1
 
+#PID_EYEBALL_FIST_2
 [Proto]
 ProtoId=291
 Type=3
@@ -2015,6 +2069,7 @@ Weapon_MaxDist_0=1
 Weapon_ApCost_0=3
 Weapon_Aim_0=1
 
+#PID_BOXING_GLOVES
 [Proto]
 ProtoId=292
 Type=3
@@ -2047,6 +2102,7 @@ Weapon_ApCost_0=3
 Weapon_Aim_0=1
 Weapon_SoundId_0=49
 
+#PID_PLATED_BOXING_GLOVES
 [Proto]
 ProtoId=293
 Type=3
@@ -2062,7 +2118,7 @@ Cost=300
 Material=7
 Weapon_Anim1=1
 Weapon_MinStrength=1
-Weapon_Perk=4
+Weapon_Perk=9
 Weapon_ActiveUses=1
 Weapon_Skill_0=203
 Weapon_Skill_1=200
@@ -2079,6 +2135,7 @@ Weapon_ApCost_0=3
 Weapon_Aim_0=1
 Weapon_SoundId_0=49
 
+#PID_HK_P90C
 [Proto]
 ProtoId=296
 Type=3
@@ -2126,6 +2183,7 @@ Weapon_SoundId_1=72
 NeedBlueprint=9756
 CraftLevel=2
 
+#PID_SPRINGER_RIFLE
 [Proto]
 ProtoId=299
 Type=3
@@ -2162,6 +2220,7 @@ Weapon_ApCost_0=5
 Weapon_Aim_0=1
 Weapon_SoundId_0=71
 
+#PID_ZIP_GUN
 [Proto]
 ProtoId=300
 Type=3
@@ -2198,6 +2257,7 @@ Weapon_ApCost_0=4
 Weapon_Aim_0=1
 Weapon_SoundId_0=86
 
+#PID_44_MAGNUM_REVOLVER
 [Proto]
 ProtoId=313
 Type=3
@@ -2233,6 +2293,7 @@ Weapon_ApCost_0=4
 Weapon_Aim_0=1
 Weapon_SoundId_0=69
 
+#PID_SWITCHBLADE
 [Proto]
 ProtoId=319
 Type=3
@@ -2274,6 +2335,7 @@ Weapon_Aim_1=1
 Weapon_SoundId_0=51
 Weapon_SoundId_1=51
 
+#PID_SHARPENED_POLE
 [Proto]
 ProtoId=320
 Type=3
@@ -2302,21 +2364,22 @@ Weapon_Remove_1=1
 Weapon_PicUse_0=art\intrface\thrust.frm
 Weapon_PicUse_1=art\intrface\throw.frm
 Weapon_PicUse_2=art\intrface\blank.frm
-Weapon_DmgMin_0=2
-Weapon_DmgMin_1=2
-Weapon_DmgMax_0=4
-Weapon_DmgMax_1=4
+Weapon_DmgMin_0=8
+Weapon_DmgMin_1=8
+Weapon_DmgMax_0=22
+Weapon_DmgMax_1=22
 Weapon_Effect_0=4007
 Weapon_Effect_1=4007
 Weapon_MaxDist_0=2
 Weapon_MaxDist_1=15
-Weapon_ApCost_0=4
-Weapon_ApCost_1=5
+Weapon_ApCost_0=6
+Weapon_ApCost_1=6
 Weapon_Aim_0=1
 Weapon_Aim_1=1
 Weapon_SoundId_0=56
 Weapon_SoundId_1=56
 
+#PID_GREASE_GUN
 [Proto]
 ProtoId=332
 Type=3
@@ -2362,6 +2425,7 @@ Weapon_SoundId_0=68
 Weapon_SoundId_1=68
 CraftLevel=1
 
+#PID_BOZAR
 [Proto]
 ProtoId=350
 Type=3
@@ -2393,9 +2457,9 @@ Weapon_Anim2_1=Anim2Burst
 Weapon_PicUse_0=art\intrface\single.frm
 Weapon_PicUse_1=art\intrface\burst.frm
 Weapon_PicUse_2=art\intrface\blank.frm
-Weapon_DmgMin_0=50
-Weapon_DmgMin_1=60
-Weapon_DmgMax_0=60
+Weapon_DmgMin_0=55
+Weapon_DmgMin_1=55
+Weapon_DmgMax_0=70
 Weapon_DmgMax_1=70
 Weapon_MaxDist_0=50
 Weapon_MaxDist_1=40
@@ -2407,6 +2471,7 @@ Weapon_Aim_0=1
 Weapon_SoundId_0=64
 Weapon_SoundId_1=64
 
+#PID_FN_FAL
 [Proto]
 ProtoId=351
 Type=3
@@ -2438,14 +2503,14 @@ Weapon_Anim2_1=Anim2Burst
 Weapon_PicUse_0=art\intrface\single.frm
 Weapon_PicUse_1=art\intrface\burst.frm
 Weapon_PicUse_2=art\intrface\blank.frm
-Weapon_DmgMin_0=22
-Weapon_DmgMin_1=13
-Weapon_DmgMax_0=33
-Weapon_DmgMax_1=17
+Weapon_DmgMin_0=27
+Weapon_DmgMin_1=32
+Weapon_DmgMax_0=27
+Weapon_DmgMax_1=32
 Weapon_MaxDist_0=35
 Weapon_MaxDist_1=30
 Weapon_Round_0=1
-Weapon_Round_1=10
+Weapon_Round_1=5
 Weapon_ApCost_0=5
 Weapon_ApCost_1=6
 Weapon_Aim_0=1
@@ -2454,6 +2519,7 @@ Weapon_SoundId_1=72
 NeedBlueprint=9754
 CraftLevel=2
 
+#PID_HK_G11
 [Proto]
 ProtoId=352
 Type=3
@@ -2485,10 +2551,10 @@ Weapon_Anim2_1=Anim2Burst
 Weapon_PicUse_0=art\intrface\single.frm
 Weapon_PicUse_1=art\intrface\burst.frm
 Weapon_PicUse_2=art\intrface\blank.frm
-Weapon_DmgMin_0=21
-Weapon_DmgMin_1=24
-Weapon_DmgMax_0=34
-Weapon_DmgMax_1=32
+Weapon_DmgMin_0=31
+Weapon_DmgMin_1=31
+Weapon_DmgMax_0=44
+Weapon_DmgMax_1=44
 Weapon_MaxDist_0=35
 Weapon_MaxDist_1=25
 Weapon_Round_0=1
@@ -2499,6 +2565,7 @@ Weapon_Aim_0=1
 Weapon_SoundId_0=72
 Weapon_SoundId_1=72
 
+#PID_INDEPENDENT / XL70E3
 [Proto]
 ProtoId=353
 Type=3
@@ -2530,10 +2597,10 @@ Weapon_Anim2_1=Anim2Burst
 Weapon_PicUse_0=art\intrface\single.frm
 Weapon_PicUse_1=art\intrface\burst.frm
 Weapon_PicUse_2=art\intrface\blank.frm
-Weapon_DmgMin_0=40
-Weapon_DmgMin_1=38
-Weapon_DmgMax_0=55
-Weapon_DmgMax_1=48
+Weapon_DmgMin_0=33
+Weapon_DmgMin_1=33
+Weapon_DmgMax_0=45
+Weapon_DmgMax_1=45
 Weapon_MaxDist_0=50
 Weapon_MaxDist_1=35
 Weapon_Round_0=1
@@ -2545,6 +2612,7 @@ Weapon_SoundId_0=72
 Weapon_SoundId_1=72
 CraftLevel=2
 
+#PID_PANCOR_JACKHAMMER
 [Proto]
 ProtoId=354
 Type=3
@@ -2576,10 +2644,10 @@ Weapon_Anim2_1=Anim2Burst
 Weapon_PicUse_0=art\intrface\single.frm
 Weapon_PicUse_1=art\intrface\burst.frm
 Weapon_PicUse_2=art\intrface\blank.frm
-Weapon_DmgMin_0=24
-Weapon_DmgMin_1=24
-Weapon_DmgMax_0=33
-Weapon_DmgMax_1=33
+Weapon_DmgMin_0=25
+Weapon_DmgMin_1=25
+Weapon_DmgMax_0=35
+Weapon_DmgMax_1=35
 Weapon_MaxDist_0=30
 Weapon_MaxDist_1=25
 Weapon_Round_0=1
@@ -2592,6 +2660,7 @@ Weapon_SoundId_1=82
 NeedBlueprint=9758
 CraftLevel=2
 
+#PID_LIGHT_SUPPORT_WEAPON
 [Proto]
 ProtoId=355
 Type=3
@@ -2640,6 +2709,7 @@ NeedBlueprint=9766
 Weapon_NoRunning=0
 CraftLevel=2
 
+#PID_PLANT_SPIKE
 [Proto]
 ProtoId=365
 Type=3
@@ -2680,6 +2750,7 @@ Weapon_Aim_1=1
 Weapon_SoundId_0=50
 Weapon_SoundId_1=50
 
+#PID_DEATHCLAW_CLAW_1
 [Proto]
 ProtoId=371
 Type=3
@@ -2711,6 +2782,7 @@ Weapon_ApCost_0=3
 Weapon_Aim_0=1
 Weapon_SoundId_0=48
 
+#PID_DEATHCLAW_CLAW_2
 [Proto]
 ProtoId=372
 Type=3
@@ -2742,6 +2814,7 @@ Weapon_ApCost_0=3
 Weapon_Aim_0=1
 Weapon_SoundId_0=48
 
+#PID_SHIV
 [Proto]
 ProtoId=383
 Type=3
@@ -2782,6 +2855,7 @@ Weapon_Aim_1=1
 Weapon_SoundId_0=51
 Weapon_SoundId_1=51
 
+#PID_WRENCH
 [Proto]
 ProtoId=384
 Type=3
@@ -2816,6 +2890,7 @@ Weapon_SoundId_0=53
 Misc_ToolSkillNum=213
 Misc_ToolSkillBonus=35
 
+#PID_SAWED_OFF_SHOTGUN
 [Proto]
 ProtoId=385
 Type=3
@@ -2851,8 +2926,8 @@ Weapon_DmgMin_0=19
 Weapon_DmgMin_1=19
 Weapon_DmgMax_0=27
 Weapon_DmgMax_1=27
-Weapon_MaxDist_0=7
-Weapon_MaxDist_1=5
+Weapon_MaxDist_0=11
+Weapon_MaxDist_1=7
 Weapon_Round_0=1
 Weapon_Round_1=2
 Weapon_ApCost_0=4
@@ -2862,6 +2937,7 @@ Weapon_SoundId_0=82
 Weapon_SoundId_1=82
 CraftLevel=1
 
+#PID_LOUISVILLE_SLUGGER
 [Proto]
 ProtoId=386
 Type=3
@@ -2887,13 +2963,14 @@ Weapon_Anim2_0=Anim2Swing1H
 Weapon_PicUse_0=art\intrface\swing.frm
 Weapon_PicUse_1=art\intrface\blank.frm
 Weapon_PicUse_2=art\intrface\blank.frm
-Weapon_DmgMin_0=24
-Weapon_DmgMax_0=60
+Weapon_DmgMin_0=36
+Weapon_DmgMax_0=72
 Weapon_MaxDist_0=1
 Weapon_ApCost_0=4
 Weapon_Aim_0=1
 Weapon_SoundId_0=54
 
+#PID_M60
 [Proto]
 ProtoId=387
 Type=3
@@ -2931,6 +3008,7 @@ Weapon_SoundId_0=76
 Weapon_NoRunning=0
 CraftLevel=1
 
+#PID_NEEDLER_PISTOL
 [Proto]
 ProtoId=388
 Type=3
@@ -2970,6 +3048,7 @@ Weapon_SoundId_0=90
 NeedBlueprint=9751
 CraftLevel=2
 
+#PID_AVENGER_MINIGUN
 [Proto]
 ProtoId=389
 Type=3
@@ -3007,6 +3086,7 @@ Weapon_ApCost_0=7
 Weapon_SoundId_0=76
 CraftLevel=2
 
+#PID_SOLAR_SCORCHER
 [Proto]
 ProtoId=390
 Type=3
@@ -3043,6 +3123,7 @@ Weapon_ApCost_0=4
 Weapon_Aim_0=1
 Weapon_SoundId_0=67
 
+#PID_HK_G11E
 [Proto]
 ProtoId=391
 Type=3
@@ -3074,10 +3155,10 @@ Weapon_Anim2_1=Anim2Burst
 Weapon_PicUse_0=art\intrface\single.frm
 Weapon_PicUse_1=art\intrface\burst.frm
 Weapon_PicUse_2=art\intrface\blank.frm
-Weapon_DmgMin_0=27
+Weapon_DmgMin_0=33
 Weapon_DmgMin_1=33
-Weapon_DmgMax_0=41
-Weapon_DmgMax_1=48
+Weapon_DmgMax_0=46
+Weapon_DmgMax_1=46
 Weapon_MaxDist_0=40
 Weapon_MaxDist_1=35
 Weapon_Round_0=1
@@ -3088,6 +3169,7 @@ Weapon_Aim_0=1
 Weapon_SoundId_0=72
 Weapon_SoundId_1=72
 
+#PID_M72_GAUSS_RIFLE
 [Proto]
 ProtoId=392
 Type=3
@@ -3125,6 +3207,7 @@ Weapon_ApCost_0=5
 Weapon_Aim_0=1
 Weapon_SoundId_0=87
 
+#PID_PHAZER
 [Proto]
 ProtoId=393
 Type=3
@@ -3163,6 +3246,7 @@ Weapon_ApCost_0=4
 Weapon_Aim_0=1
 Weapon_SoundId_0=67
 
+#PID_PK12_GAUSS_PISTOL
 [Proto]
 ProtoId=394
 Type=3
@@ -3200,6 +3284,7 @@ Weapon_ApCost_0=4
 Weapon_Aim_0=1
 Weapon_SoundId_0=89
 
+#PID_VINDICATOR_MINIGUN
 [Proto]
 ProtoId=395
 Type=3
@@ -3235,6 +3320,7 @@ Weapon_Round_0=25
 Weapon_ApCost_0=7
 Weapon_SoundId_0=76
 
+#PID_YK32_PULSE_PISTOL
 [Proto]
 ProtoId=396
 Type=3
@@ -3275,6 +3361,7 @@ Weapon_SoundId_0=48
 NeedBlueprint=9776
 CraftLevel=2
 
+#PID_YK42B_PULSE_RIFLE
 [Proto]
 ProtoId=397
 Type=3
@@ -3312,6 +3399,7 @@ Weapon_ApCost_0=5
 Weapon_Aim_0=1
 Weapon_SoundId_0=88
 
+#PID_44_MAGNUM_SPEEDLOADER
 [Proto]
 ProtoId=398
 Type=3
@@ -3349,6 +3437,7 @@ Weapon_ApCost_0=4
 Weapon_Aim_0=1
 Weapon_SoundId_0=69
 
+#PID_SUPER_CATTLE_PROD
 [Proto]
 ProtoId=399
 Type=3
@@ -3388,14 +3477,15 @@ Weapon_MaxDist_0=1
 Weapon_MaxDist_1=1
 Weapon_Round_0=1
 Weapon_Round_1=1
-Weapon_ApCost_0=3
-Weapon_ApCost_1=4
+Weapon_ApCost_0=4
+Weapon_ApCost_1=5
 Weapon_Aim_0=1
 Weapon_Aim_1=1
 Weapon_SoundId_0=57
 Weapon_SoundId_1=57
 NeedBlueprint=9763
 
+#PID_IMPROVED_FLAMETHROWER
 [Proto]
 ProtoId=400
 Type=3
@@ -3427,13 +3517,14 @@ Weapon_PicUse_1=art\intrface\blank.frm
 Weapon_PicUse_2=art\intrface\blank.frm
 Weapon_DmgMin_0=110
 Weapon_DmgMax_0=135
-Weapon_MaxDist_0=10
+Weapon_MaxDist_0=8
 Weapon_Round_0=1
 Weapon_ApCost_0=6
 Weapon_SoundId_0=73
 CraftLevel=2
 NeedBlueprint=9772
 
+#PID_LASER_RIFLE_EXT_CAP
 [Proto]
 ProtoId=401
 Type=3
@@ -3473,6 +3564,7 @@ Weapon_Aim_0=1
 Weapon_SoundId_0=74
 CraftLevel=2
 
+#PID_MAGNETO_LASER_PISTOL
 [Proto]
 ProtoId=402
 Type=3
@@ -3512,6 +3604,7 @@ Weapon_Aim_0=1
 Weapon_SoundId_0=67
 CraftLevel=1
 
+#PID_FN_FAL_NIGHT_SCOPE
 [Proto]
 ProtoId=403
 Type=3
@@ -3543,14 +3636,14 @@ Weapon_Anim2_1=Anim2Burst
 Weapon_PicUse_0=art\intrface\single.frm
 Weapon_PicUse_1=art\intrface\burst.frm
 Weapon_PicUse_2=art\intrface\blank.frm
-Weapon_DmgMin_0=19
-Weapon_DmgMin_1=9
-Weapon_DmgMax_0=26
-Weapon_DmgMax_1=18
+Weapon_DmgMin_0=27
+Weapon_DmgMin_1=27
+Weapon_DmgMax_0=32
+Weapon_DmgMax_1=32
 Weapon_MaxDist_0=35
 Weapon_MaxDist_1=30
 Weapon_Round_0=1
-Weapon_Round_1=10
+Weapon_Round_1=5
 Weapon_ApCost_0=5
 Weapon_ApCost_1=6
 Weapon_Aim_0=1
@@ -3558,6 +3651,7 @@ Weapon_SoundId_0=72
 Weapon_SoundId_1=72
 CraftLevel=2
 
+#PID_DESERT_EAGLE_EXT_MAG
 [Proto]
 ProtoId=404
 Type=3
@@ -3594,6 +3688,7 @@ Weapon_ApCost_0=4
 Weapon_Aim_0=1
 Weapon_SoundId_0=66
 
+#PID_ASSAULT_RIFLE_EXT_MAG
 [Proto]
 ProtoId=405
 Type=3
@@ -3625,11 +3720,11 @@ Weapon_Anim2_1=Anim2Burst
 Weapon_PicUse_0=art\intrface\single.frm
 Weapon_PicUse_1=art\intrface\burst.frm
 Weapon_PicUse_2=art\intrface\blank.frm
-Weapon_DmgMin_0=25
-Weapon_DmgMin_1=25
+Weapon_DmgMin_0=24
+Weapon_DmgMin_1=24
 Weapon_DmgMax_0=35
 Weapon_DmgMax_1=35
-Weapon_MaxDist_0=50
+Weapon_MaxDist_0=45
 Weapon_MaxDist_1=35
 Weapon_Round_0=1
 Weapon_Round_1=15
@@ -3640,6 +3735,7 @@ Weapon_SoundId_0=72
 Weapon_SoundId_1=72
 CraftLevel=2
 
+#PID_PLASMA_PISTOL_EXT_CART
 [Proto]
 ProtoId=406
 Type=3
@@ -3668,8 +3764,8 @@ Weapon_Anim2_0=Anim2Single
 Weapon_PicUse_0=art\intrface\single.frm
 Weapon_PicUse_1=art\intrface\blank.frm
 Weapon_PicUse_2=art\intrface\blank.frm
-Weapon_DmgMin_0=30
-Weapon_DmgMax_0=45
+Weapon_DmgMin_0=25
+Weapon_DmgMax_0=40
 Weapon_Effect_0=4002
 Weapon_MaxDist_0=32
 Weapon_Round_0=1
@@ -3678,6 +3774,7 @@ Weapon_Aim_0=1
 Weapon_SoundId_0=70
 CraftLevel=2
 
+#PID_MEGA_POWER_FIST
 [Proto]
 ProtoId=407
 Type=3
@@ -3696,7 +3793,7 @@ Weapon_MaxAmmoCount=50
 Weapon_Caliber=3
 Weapon_DefaultAmmoPid=38
 Weapon_MinStrength=1
-Weapon_Perk=3
+Weapon_Perk=9
 Weapon_ActiveUses=1
 Weapon_Skill_0=203
 Weapon_Skill_1=200
@@ -3706,8 +3803,8 @@ Weapon_Anim2_0=Anim2PunchRight
 Weapon_PicUse_0=art\intrface\punch.frm
 Weapon_PicUse_1=art\intrface\blank.frm
 Weapon_PicUse_2=art\intrface\blank.frm
-Weapon_DmgMin_0=20
-Weapon_DmgMax_0=40
+Weapon_DmgMin_0=25
+Weapon_DmgMax_0=45
 Weapon_MaxDist_0=1
 Weapon_Round_0=1
 Weapon_ApCost_0=3
@@ -3715,6 +3812,7 @@ Weapon_Aim_0=1
 Weapon_SoundId_0=49
 NeedBlueprint=9762
 
+#PID_HOLY_HAND_GRENADE
 [Proto]
 ProtoId=421
 Type=3
@@ -3752,6 +3850,7 @@ Weapon_MaxDist_0=15
 Weapon_ApCost_0=4
 Weapon_SoundId_0=80
 
+#PID_FOOLS_GOLD
 [Proto]
 ProtoId=423
 Type=3
@@ -3795,6 +3894,7 @@ Weapon_Aim_1=1
 Weapon_SoundId_0=50
 Weapon_SoundId_1=50
 
+#PID_URANIUM_ORE
 [Proto]
 ProtoId=426
 Type=3
@@ -3838,6 +3938,7 @@ Weapon_Aim_1=1
 Weapon_SoundId_0=50
 Weapon_SoundId_1=50
 
+#PID_FIRE_GECKO_FLAME_WEAPON / PID_FLAME_BREATH
 [Proto]
 ProtoId=427
 Type=3
@@ -3870,6 +3971,7 @@ Weapon_Round_0=1
 Weapon_ApCost_0=6
 Weapon_SoundId_0=73
 
+#PID_REFINED_ORE
 [Proto]
 ProtoId=486
 Type=3
@@ -3913,6 +4015,7 @@ Weapon_Aim_1=1
 Weapon_SoundId_0=50
 Weapon_SoundId_1=50
 
+#PID_SPECIAL_BOXER_WEAPON
 [Proto]
 ProtoId=489
 Type=3
@@ -3949,6 +4052,7 @@ Weapon_Aim_1=1
 Weapon_SoundId_0=49
 Weapon_SoundId_1=49
 
+#PID_RING_BOXING_GLOVES
 [Proto]
 ProtoId=496
 Type=3
@@ -3980,6 +4084,7 @@ Weapon_ApCost_0=3
 Weapon_Aim_0=1
 Weapon_SoundId_0=49
 
+#PID_RING_PLATED_BOXING_GLOVES
 [Proto]
 ProtoId=497
 Type=3
@@ -4011,6 +4116,7 @@ Weapon_ApCost_0=3
 Weapon_Aim_0=1
 Weapon_SoundId_0=49
 
+#PID_GUN_TURRET_WEAPON
 [Proto]
 ProtoId=498
 Type=3
@@ -4046,6 +4152,7 @@ Weapon_ApCost_0=5
 Weapon_Aim_0=1
 Weapon_SoundId_0=75
 
+#PID_FN_FAL_HPFA
 [Proto]
 ProtoId=500
 Type=3
@@ -4077,14 +4184,14 @@ Weapon_Anim2_1=Anim2Burst
 Weapon_PicUse_0=art\intrface\single.frm
 Weapon_PicUse_1=art\intrface\burst.frm
 Weapon_PicUse_2=art\intrface\blank.frm
-Weapon_DmgMin_0=24
-Weapon_DmgMin_1=14
-Weapon_DmgMax_0=36
-Weapon_DmgMax_1=18
+Weapon_DmgMin_0=27
+Weapon_DmgMin_1=27
+Weapon_DmgMax_0=32
+Weapon_DmgMax_1=32
 Weapon_MaxDist_0=35
 Weapon_MaxDist_1=30
 Weapon_Round_0=1
-Weapon_Round_1=10
+Weapon_Round_1=5
 Weapon_ApCost_0=5
 Weapon_ApCost_1=6
 Weapon_Aim_0=1
@@ -4092,6 +4199,7 @@ Weapon_SoundId_0=72
 Weapon_SoundId_1=72
 CraftLevel=2
 
+#PID_LIL_JESUS_WEAPON
 [Proto]
 ProtoId=517
 Type=3
@@ -4119,10 +4227,10 @@ Weapon_Anim2_1=Anim2Thrust1H
 Weapon_PicUse_0=art\intrface\swing.frm
 Weapon_PicUse_1=art\intrface\thrust.frm
 Weapon_PicUse_2=art\intrface\blank.frm
-Weapon_DmgMin_0=14
-Weapon_DmgMin_1=14
-Weapon_DmgMax_0=21
-Weapon_DmgMax_1=21
+Weapon_DmgMin_0=24
+Weapon_DmgMin_1=24
+Weapon_DmgMax_0=39
+Weapon_DmgMax_1=39
 Weapon_MaxDist_0=1
 Weapon_MaxDist_1=1
 Weapon_ApCost_0=2
@@ -4132,6 +4240,7 @@ Weapon_Aim_1=1
 Weapon_SoundId_0=51
 Weapon_SoundId_1=51
 
+#PID_DUAL_MINIGUN
 [Proto]
 ProtoId=518
 Type=3
@@ -4166,6 +4275,7 @@ Weapon_Round_0=40
 Weapon_ApCost_0=6
 Weapon_SoundId_0=76
 
+#PID_HEAVY_DUAL_MINIGUN
 [Proto]
 ProtoId=520
 Type=3
@@ -4201,6 +4311,7 @@ Weapon_Round_0=40
 Weapon_ApCost_0=6
 Weapon_SoundId_0=76
 
+#PID_WAKIZASHI_BLADE
 [Proto]
 ProtoId=522
 Type=3
@@ -4229,10 +4340,10 @@ Weapon_Anim2_1=Anim2Thrust1H
 Weapon_PicUse_0=art\intrface\swing.frm
 Weapon_PicUse_1=art\intrface\thrust.frm
 Weapon_PicUse_2=art\intrface\blank.frm
-Weapon_DmgMin_0=14
-Weapon_DmgMin_1=14
-Weapon_DmgMax_0=26
-Weapon_DmgMax_1=26
+Weapon_DmgMin_0=15
+Weapon_DmgMin_1=15
+Weapon_DmgMax_0=47
+Weapon_DmgMax_1=47
 Weapon_MaxDist_0=1
 Weapon_MaxDist_1=1
 Weapon_ApCost_0=3
@@ -4242,6 +4353,7 @@ Weapon_Aim_1=1
 Weapon_SoundId_0=51
 Weapon_SoundId_1=51
 
+#PID_END_BOSS_KIFE
 [Proto]
 ProtoId=530
 Type=3
@@ -4282,6 +4394,7 @@ Weapon_Aim_1=1
 Weapon_SoundId_0=36
 Weapon_SoundId_1=36
 
+#PID_END_BOSS_PLASMA_GUN
 [Proto]
 ProtoId=531
 Type=3
@@ -4324,6 +4437,7 @@ Weapon_Aim_0=1
 Weapon_SoundId_0=64
 Weapon_SoundId_1=64
 
+#PID_PASHTSHUUR_SPIKE
 [Proto]
 ProtoId=573
 Type=3
@@ -4359,6 +4473,7 @@ Weapon_ApCost_0=3
 Weapon_SoundId_0=50
 Weapon_SoundId_1=50
 
+#PID_POISONED_THROWING_KNIFE
 [Proto]
 ProtoId=584
 Type=3
@@ -4374,6 +4489,7 @@ Cost=40
 Material=1
 Weapon_Anim1=4
 Weapon_MinStrength=3
+Weapon_Perk=3
 Weapon_ActiveUses=1
 Weapon_CriticalFailture=1
 Weapon_Skill_0=205
@@ -4388,9 +4504,9 @@ Weapon_PicUse_0=art\intrface\throw.frm
 Weapon_PicUse_1=art\intrface\swing.frm
 Weapon_PicUse_2=art\intrface\blank.frm
 Weapon_DmgMin_0=18
-Weapon_DmgMin_1=18
+Weapon_DmgMin_1=2
 Weapon_DmgMax_0=40
-Weapon_DmgMax_1=40
+Weapon_DmgMax_1=4
 Weapon_Effect_0=4006
 Weapon_Effect_1=4006
 Weapon_MaxDist_0=15
@@ -4402,6 +4518,7 @@ Weapon_Aim_1=1
 Weapon_SoundId_0=52
 Weapon_SoundId_1=52
 
+#PID_OLD_SHOVEL
 [Proto]
 ProtoId=600
 Type=3
@@ -4441,6 +4558,7 @@ Weapon_Aim_1=1
 Weapon_SoundId_0=55
 Weapon_SoundId_1=55
 
+#PID_PLASMA_TORCH
 [Proto]
 ProtoId=610
 Type=3
@@ -4487,6 +4605,7 @@ Weapon_Aim_1=1
 Weapon_SoundId_0=57
 Weapon_SoundId_1=57
 
+#PID_WEAK_FLAME_BREATH
 [Proto]
 ProtoId=616
 Type=3
@@ -4519,6 +4638,7 @@ Weapon_Round_0=1
 Weapon_ApCost_0=4
 Weapon_SoundId_0=73
 
+#PID_BAN_HAMMER
 [Proto]
 ProtoId=617
 Type=3
@@ -4561,6 +4681,7 @@ Weapon_SoundId_1=55
 NeedBlueprint=9771
 CraftLevel=1
 
+#PID_HOLY_SPEAR
 [Proto]
 ProtoId=618
 Type=3
@@ -4605,6 +4726,7 @@ Weapon_SoundId_1=56
 NeedBlueprint=9771
 CraftLevel=1
 
+#PID_GRENADE_PISTOL
 [Proto]
 ProtoId=619
 Type=3
@@ -4644,6 +4766,7 @@ Weapon_SoundId_0=78
 NeedBlueprint=0
 CraftLevel=1
 
+#PID_GRENADE_LAUNCHER
 [Proto]
 ProtoId=620
 Type=3
@@ -4673,8 +4796,8 @@ Weapon_Anim2_0=Anim2Single
 Weapon_PicUse_0=art\intrface\single.frm
 Weapon_PicUse_1=art\intrface\blank.frm
 Weapon_PicUse_2=art\intrface\blank.frm
-Weapon_DmgMin_0=50
-Weapon_DmgMax_0=90
+Weapon_DmgMin_0=45
+Weapon_DmgMax_0=80
 Weapon_Effect_0=4025
 Weapon_MaxDist_0=25
 Weapon_Round_0=1
@@ -4683,6 +4806,7 @@ Weapon_SoundId_0=78
 NeedBlueprint=0
 CraftLevel=2
 
+#PID_TEST_KNIFE
 [Proto]
 ProtoId=622
 Type=3
@@ -4723,6 +4847,7 @@ Weapon_Aim_1=1
 Weapon_SoundId_0=51
 Weapon_SoundId_1=51
 
+#PID_LASER_SUPPORT_WEAPON
 [Proto]
 ProtoId=624
 Type=3
@@ -4757,7 +4882,7 @@ Weapon_PicUse_2=art\intrface\blank.frm
 Weapon_DmgMin_0=45
 Weapon_DmgMin_1=45
 Weapon_DmgMax_0=54
-Weapon_DmgMax_1=60
+Weapon_DmgMax_1=54
 Weapon_Effect_0=4009
 Weapon_MaxDist_0=45
 Weapon_MaxDist_1=35
@@ -4772,6 +4897,7 @@ NeedBlueprint=9775
 Weapon_NoRunning=0
 CraftLevel=2
 
+#PID_LASER_SMG
 [Proto]
 ProtoId=625
 Type=3
@@ -4804,9 +4930,9 @@ Weapon_PicUse_0=art\intrface\single.frm
 Weapon_PicUse_1=art\intrface\burst.frm
 Weapon_PicUse_2=art\intrface\blank.frm
 Weapon_DmgMin_0=20
-Weapon_DmgMin_1=32
+Weapon_DmgMin_1=20
 Weapon_DmgMax_0=35
-Weapon_DmgMax_1=42
+Weapon_DmgMax_1=35
 Weapon_Effect_0=4009
 Weapon_MaxDist_0=30
 Weapon_MaxDist_1=25
@@ -4820,6 +4946,7 @@ Weapon_SoundId_1=77
 NeedBlueprint=9774
 CraftLevel=2
 
+#PID_FIRE_GRENADE
 [Proto]
 ProtoId=626
 Type=3
@@ -4846,8 +4973,8 @@ Weapon_Remove_0=1
 Weapon_PicUse_0=art\intrface\throw.frm
 Weapon_PicUse_1=art\intrface\blank.frm
 Weapon_PicUse_2=art\intrface\blank.frm
-Weapon_DmgMin_0=40
-Weapon_DmgMax_0=80
+Weapon_DmgMin_0=35
+Weapon_DmgMax_0=60
 Weapon_Effect_0=4025
 Weapon_MaxDist_0=15
 Weapon_ApCost_0=4
@@ -4855,6 +4982,7 @@ Weapon_SoundId_0=80
 NeedBlueprint=9773
 CraftLevel=2
 
+#PID_UNARMED_STRIKE_PUNCH
 [Proto]
 ProtoId=1000
 Type=3
@@ -4880,6 +5008,7 @@ Weapon_MaxDist_0=1
 Weapon_ApCost_0=3
 Weapon_Aim_0=1
 
+#PID_UNARMED_STRIKE_STRONGPUNCH
 [Proto]
 ProtoId=1001
 Type=3
@@ -4907,6 +5036,7 @@ Weapon_MaxDist_0=1
 Weapon_ApCost_0=3
 Weapon_Aim_0=1
 
+#PID_UNARMED_STRIKE_HAMMERPUNCH
 [Proto]
 ProtoId=1002
 Type=3
@@ -4936,6 +5066,7 @@ Weapon_MaxDist_0=1
 Weapon_ApCost_0=3
 Weapon_Aim_0=1
 
+#PID_UNARMED_STRIKE_HAYMAKER
 [Proto]
 ProtoId=1003
 Type=3
@@ -4965,6 +5096,7 @@ Weapon_MaxDist_0=1
 Weapon_ApCost_0=3
 Weapon_Aim_0=1
 
+#PID_UNARMED_STRIKE_JAB
 [Proto]
 ProtoId=1010
 Type=3
@@ -4995,6 +5127,7 @@ Weapon_MaxDist_0=1
 Weapon_ApCost_0=6
 Weapon_Aim_0=1
 
+#PID_UNARMED_STRIKE_PALM
 [Proto]
 ProtoId=1011
 Type=3
@@ -5025,6 +5158,7 @@ Weapon_MaxDist_0=1
 Weapon_ApCost_0=6
 Weapon_Aim_0=1
 
+#PID_UNARMED_STRIKE_PIERCING
 [Proto]
 ProtoId=1012
 Type=3
@@ -5055,6 +5189,7 @@ Weapon_MaxDist_0=1
 Weapon_ApCost_0=8
 Weapon_Aim_0=1
 
+#PID_UNARMED_KICK
 [Proto]
 ProtoId=1020
 Type=3
@@ -5081,6 +5216,7 @@ Weapon_MaxDist_0=1
 Weapon_ApCost_0=4
 Weapon_Aim_0=1
 
+#PID_UNARMED_KICK_STRONG
 [Proto]
 ProtoId=1021
 Type=3
@@ -5109,6 +5245,7 @@ Weapon_MaxDist_0=1
 Weapon_ApCost_0=4
 Weapon_Aim_0=1
 
+#PID_UNARMED_KICK_SNAP
 [Proto]
 ProtoId=1022
 Type=3
@@ -5138,6 +5275,7 @@ Weapon_MaxDist_0=1
 Weapon_ApCost_0=4
 Weapon_Aim_0=1
 
+#PID_UNARMED_KICK_POWER
 [Proto]
 ProtoId=1023
 Type=3
@@ -5168,6 +5306,7 @@ Weapon_MaxDist_0=1
 Weapon_ApCost_0=4
 Weapon_Aim_0=1
 
+#PID_UNARMED_KICK_HIP
 [Proto]
 ProtoId=1030
 Type=3
@@ -5199,6 +5338,7 @@ Weapon_MaxDist_0=1
 Weapon_ApCost_0=7
 Weapon_Aim_0=1
 
+#PID_UNARMED_KICK_HOOK
 [Proto]
 ProtoId=1031
 Type=3
@@ -5230,6 +5370,7 @@ Weapon_MaxDist_0=1
 Weapon_ApCost_0=7
 Weapon_Aim_0=1
 
+#PID_UNARMED_KICK_PIERCING
 [Proto]
 ProtoId=1032
 Type=3
@@ -5261,6 +5402,7 @@ Weapon_MaxDist_0=1
 Weapon_ApCost_0=9
 Weapon_Aim_0=1
 
+#PID_DYNACORD
 [Proto]
 ProtoId=1834
 Type=3
@@ -5294,6 +5436,7 @@ Weapon_ApCost_0=5
 Weapon_SoundId_0=79
 CraftLevel=2
 
+#PID_DUAL_LASER_CANNON
 [Proto]
 ProtoId=9659
 Type=3
@@ -5333,6 +5476,7 @@ Weapon_ApCost_0=5
 Weapon_Aim_0=1
 Weapon_SoundId_0=74
 
+#PID_FAKE_FRAG_GRENADE
 [Proto]
 ProtoId=9674
 Type=3
@@ -5366,6 +5510,7 @@ Weapon_MaxDist_0=15
 Weapon_ApCost_0=5
 Weapon_SoundId_0=79
 
+#PID_FAKE_PLASMA_GRENADE
 [Proto]
 ProtoId=9675
 Type=3
@@ -5399,6 +5544,7 @@ Weapon_MaxDist_0=15
 Weapon_ApCost_0=4
 Weapon_SoundId_0=80
 
+#PID_FAKE_SUPER_SLEDGE
 [Proto]
 ProtoId=9676
 Type=3
@@ -5433,13 +5579,14 @@ Weapon_DmgMax_0=72
 Weapon_DmgMax_1=72
 Weapon_MaxDist_0=2
 Weapon_MaxDist_1=2
-Weapon_ApCost_0=4
-Weapon_ApCost_1=5
+Weapon_ApCost_0=6
+Weapon_ApCost_1=7
 Weapon_Aim_0=1
 Weapon_Aim_1=1
 Weapon_SoundId_0=55
 Weapon_SoundId_1=55
 
+#PID_FLARE_GREEN
 [Proto]
 ProtoId=9721
 Type=3
@@ -5475,6 +5622,7 @@ Weapon_ApCost_0=2
 Weapon_Aim_0=1
 Weapon_SoundId_0=52
 
+#PID_ACTIVE_FLARE_GREEN
 [Proto]
 ProtoId=9722
 Type=3
@@ -5511,6 +5659,7 @@ Weapon_ApCost_0=2
 Weapon_Aim_0=1
 Weapon_SoundId_0=52
 
+#PID_FLARE_WHITE
 [Proto]
 ProtoId=9723
 Type=3
@@ -5546,6 +5695,7 @@ Weapon_ApCost_0=2
 Weapon_Aim_0=1
 Weapon_SoundId_0=52
 
+#PID_ACTIVE_FLARE_WHITE
 [Proto]
 ProtoId=9724
 Type=3
@@ -5581,6 +5731,7 @@ Weapon_ApCost_0=2
 Weapon_Aim_0=1
 Weapon_SoundId_0=52
 
+#PID_FLARE_YELLOW
 [Proto]
 ProtoId=9725
 Type=3
@@ -5616,6 +5767,7 @@ Weapon_ApCost_0=2
 Weapon_Aim_0=1
 Weapon_SoundId_0=52
 
+#PID_ACTIVE_FLARE_YELLOW
 [Proto]
 ProtoId=9726
 Type=3
@@ -5652,6 +5804,7 @@ Weapon_ApCost_0=2
 Weapon_Aim_0=1
 Weapon_SoundId_0=52
 
+#PID_ALIEN_BLASTER???
 [Proto]
 ProtoId=9915
 Type=3
@@ -5692,6 +5845,7 @@ Weapon_ApCost_0=4
 Weapon_Aim_0=1
 RevealSneakers=60
 
+#PID_FAKE_SPEAR
 [Proto]
 ProtoId=9916
 Type=3
@@ -5736,6 +5890,7 @@ Weapon_Aim_1=1
 Weapon_SoundId_0=56
 Weapon_SoundId_1=56
 
+#PID_FAKE_THROWING_KNIFE
 [Proto]
 ProtoId=9917
 Type=3
@@ -5778,6 +5933,7 @@ Weapon_Aim_0=1
 Weapon_Aim_1=1
 Weapon_SoundId_0=52
 
+#PID_FAKE_FIRE_GRENADE
 [Proto]
 ProtoId=9941
 Type=3
@@ -5812,6 +5968,8 @@ Weapon_ApCost_0=4
 Weapon_SoundId_0=80
 NeedBlueprint=9773
 CraftLevel=2
+
+#PID_RAILWAY_RIFLE
 [Proto]
 ProtoId=25195
 Type=3
@@ -5850,6 +6008,7 @@ Weapon_Aim_0=1
 Weapon_SoundId_0=71
 CraftLevel=1
 
+#PID_SAIGA_12
 [Proto]
 ProtoId=25445
 Type=3
@@ -5896,6 +6055,7 @@ Weapon_SoundId_0=82
 Weapon_SoundId_1=82
 CraftLevel=2
 
+#PID_PLASMA_GATLING
 [Proto]
 ProtoId=25452
 Type=3
@@ -5931,6 +6091,7 @@ Weapon_Round_0=10
 Weapon_ApCost_0=7
 Weapon_SoundId_0=77
 
+#PID_BOSS_HORRIGANS_1
 [Proto]
 ProtoId=25473
 Type=3
@@ -5973,6 +6134,7 @@ Weapon_ApCost_1=5
 Weapon_SoundId_0=64
 Weapon_SoundId_1=64
 
+#PID_BOSS_HORRIGANS_2
 [Proto]
 ProtoId=25474
 Type=3
@@ -6018,6 +6180,7 @@ Weapon_ApCost_1=3
 Weapon_SoundId_0=78
 Weapon_SoundId_1=73
 
+#PID_BOSS_HORRIGANS_3
 [Proto]
 ProtoId=25475
 Type=3

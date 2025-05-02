@@ -152,6 +152,7 @@
 #define PID_COMBAT_SHOTGUN                  (242)
 #define PID_HK_CAWS                         (268)
 #define PID_PANCOR_JACKHAMMER               (354)
+#define PID_SAIGA_12                        (25445)
     //Pistol-machine gun
 #define PID_10MM_SMG                        (9)
 #define PID_HK_P90C                         (296)
@@ -171,7 +172,7 @@
 #define PID_LIGHT_SUPPORT_WEAPON            (355)
 #define PID_M60                             (387)  // 7.62
 
-//Energo
+//Energy
     //Laser
 #define PID_LASER_PISTOL                    (16)
 #define PID_MAGNETO_LASER_PISTOL            (402)
@@ -189,6 +190,7 @@
 #define PID_PLASMA_PISTOL_EXT_CART          (406)
 #define PID_PLASMA_RIFLE                    (15)
 #define PID_TURBO_PLASMA_RIFLE              (233)
+#define PID_PLASMA_GATLING                  (25452)
     //Pulse
 #define PID_YK32_PULSE_PISTOL               (396)  // Small Energy
 #define PID_YK42B_PULSE_RIFLE               (397)  // Micro Fusion
@@ -285,6 +287,10 @@
 #define PID_HOLY_HAND_GRENADE               (421) // Grenade
 #define PID_BAN_HAMMER		                (617) // Mlot do wywalania gracza z gry na "off"
 #define PID_HOLY_SPEAR		                (618) // Spear ze specjalnymi nieznanymi dzis efektami (30-08-2013)
+#define PID_RAILWAY_RIFLE		            (25195)
+#define PID_BOSS_HORRIGANS_1                (25473)
+#define PID_BOSS_HORRIGANS_2                (25474)
+#define PID_BOSS_HORRIGANS_3                (25475)
 
 /******************************************************************
 ***************       Ammo                          ***************
@@ -1193,6 +1199,24 @@
 #define PID_MOVABLE_LOCKER2                 (667)
 #define PID_MOVABLE_WOODLOCKER1             (668)
 #define PID_MOVABLE_WOODLOCKER2             (669)
+
+/******************************************************************
+***************       Reserved Unarmed Types        ***************
+******************************************************************/
+#define PID_UNARMED_STRIKE_PUNCH           (1000)
+#define PID_UNARMED_STRIKE_STRONGPUNCH     (1001)
+#define PID_UNARMED_STRIKE_HAMMERPUNCH     (1002)
+#define PID_UNARMED_STRIKE_HAYMAKER        (1003)
+#define PID_UNARMED_STRIKE_JAB             (1010)
+#define PID_UNARMED_STRIKE_PALM            (1011)
+#define PID_UNARMED_STRIKE_PIERCING        (1012)
+#define PID_UNARMED_KICK                   (1020)
+#define PID_UNARMED_KICK_STRONG            (1021)
+#define PID_UNARMED_KICK_SNAP              (1022)
+#define PID_UNARMED_KICK_POWER             (1023)
+#define PID_UNARMED_KICK_HIP               (1030)
+#define PID_UNARMED_KICK_HOOK              (1031)
+#define PID_UNARMED_KICK_PIERCING          (1032)
 
 
 /******************************************************************
