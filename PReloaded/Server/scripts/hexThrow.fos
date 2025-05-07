@@ -336,7 +336,7 @@ void CommenceSpearHexThrowing(Critter& attacker, Critter& target, Map& map, Item
     int dy = fixedTargetY - fixedStartY;
     float flyAngle = atan2(dy, dx);
     int animFlySpeed = GetAnimFlySpeedByAngle(flyAngle);
-    uint animationTimeToWait = animFlySpeed * dist - 50;
+    int animationTimeToWait = CLAMP(animFlySpeed * dist - 50, 0, 5000);
     uint criticalHit = isCritical ? 1 : 0;
 
     uint[] values2 = { map.Id, fixedStartX, fixedStartY, tx, ty, weaponPid, attacker.Id, target.Id , criticalHit};
@@ -515,8 +515,8 @@ uint e_HexThrowExplode(array<uint>@ values)     // map id, tx, ty, pid, attacker
     return 0;
 }
 
-uint e_HexThrowSpear(array<uint>@ values)     // map_id, fromX, fromY, toX, toY, weapon_pid, attacker_id, target_id, isCriticalHit
-{
+// map_id, fromX, fromY, toX, toY, weapon_pid, attacker_id, target_id, isCriticalHit
+uint e_HexThrowSpear(array<uint>@ values) {
     Map@ map = GetMap(values[0]);
     Critter@ attacker = GetCritter(values[6]);
     Critter@ target = GetCritter(values[7]);
@@ -619,9 +619,7 @@ uint e_HexThrowSpear(array<uint>@ values)     // map_id, fromX, fromY, toX, toY,
 
     if (valid(critterHit)) {
         //attacker.Say(SAY_NORM, "Closest critter hit: " + critterHit.Name + ", directHit: " + directHit + ", dist: " + closestDist);
-
         array<CombatRes> results;
-
         // Fill the main attack structure
         AttackStruct attack;
         @attack.Attacker = attacker;
@@ -654,7 +652,7 @@ uint e_HexThrowSpear(array<uint>@ values)     // map_id, fromX, fromY, toX, toY,
 
         attack.DmgMul = 4;
 
-        ApplyDamage(attack, critterHit, 1, isCritical, false, results, directHit ? 1 : 0);
+        ApplyDamage(attack, critterHit, 1, isCritical, false, results, (closestDist > 8 ? directHit ? 2 : 1 : 0));
         FlushResults(results);
     }
     return 0;

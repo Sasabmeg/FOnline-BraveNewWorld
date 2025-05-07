@@ -3090,10 +3090,15 @@ void ApplyDamage(AttackStruct& attack, Critter& target, uint rounds, bool isCrit
     } else if (isSpearThrow && !target.IsKnockout() && target.Mode[MODE_NO_KNOCK] == 0) {
         //  special knockback or knockdown for spear throw
         int knockbackFactor = 0;
-        if (CriticalChance > 0) {
+        if (CriticalChance > 1) {
             knockbackFactor = 100;
-        } else {
+        } else if (CriticalChance == 1){
             knockbackFactor = 50;
+        } else {
+            knockbackFactor = 25;
+        }
+        if (map.IsTurnBased()) {
+            knockbackFactor /= 2;
         }
         int roll = Random(0, 99);
         if (isDummyTraining) {
