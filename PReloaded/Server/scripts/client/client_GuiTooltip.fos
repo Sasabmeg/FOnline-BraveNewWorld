@@ -243,10 +243,14 @@ class CTooltips {
                                  + "\n\t\u2022 Min: (Min. Weapon Damage + ST/2), Max: (Max. Weapon Damage + ST)"
                                  + modifies
                                  + "\n\u2022 Base chance to hit with throwing weapons."
+                                 + "\n\u2022 Base armor penetration with throwing weapons: (skill/10) -> 1DR"
                                  + "\n\nNotes:"
                                  + "\n\u2022 Hex Throw:"
                                  + "\n\t\u2022 You are able to throw grenades and stones without the need of a target."
                                  + "\n\t\u2022 Hold ALT, Left Click to cycle through throwables and left click to throw."
+                                 + "\n\u2022 Spear Throw:"
+                                 + "\n\t\u2022 Spears hit chance is based on real time projectile hex, they hit along a line from attacker to target hex, which was predicted at the time of throw. In Real Time combat mode, if a spear lands a direct hit (central line max 4 hexes in front of target hex or 2 behind the target hex, it will have 100% knockback chance reduced by Stonewall Rank of target. While a glancing hit (left or right side line) has only 50%. Effect is 25% for Turn Based combat mode."
+                                 + "\n\t\u2022 This effect is lower if target hit is closer than 8 hexes, so the optimal throw range would be between 8 and 21 hexes with Heave Ho! perk."
                                  + "\n\u2022 To know more about Chance To Hit, Damage, Critical or other effect calculations use a training dummy in a tent or base.");
 
         tooltipsKey.insertLast(SK_FIRST_AID);
