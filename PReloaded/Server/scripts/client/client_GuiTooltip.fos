@@ -56,7 +56,7 @@ class CTooltips {
     }
 
     void InitTooltips() {
-        string pipText = "\n\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t   «Vault-Tec Pip-Info™»";
+        string pipText = "\n\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t   \u00ABVault-Tec Pip-Info\u2122\u00BB";
         string jjJournal = "\nJournal entry:";
         string jjText = "\n\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t  - Chief Gadgeteer 'Jinxed' Jack -";
         string pipReference = "\n|" + COLOR_GREEN + " Extended Pip-boy database search results:\n";
@@ -1404,9 +1404,7 @@ void SetInventoryDetailText(ItemCl& item) {
     string text = "" + itemQualityPrefix;
     if (valid(item)) {
         text += GetMsgStr(TEXTMSG_ITEM, STR_ITEM_INFO(item)) + "\n\n";
-        if (!GUI_IsKeyPressed(DIK_LSHIFT) && !GUI_IsKeyPressed(DIK_LCONTROL)) {
-                text += GetMsgStr(TEXTMSG_ITEM, STR_PROTO_INFO(item.Proto)+1) + "\n";
-        }
+        text += GetMsgStr(TEXTMSG_ITEM, STR_PROTO_INFO(item.Proto)+1) + "\n";
         int ammoCount = 0;
         int ammoWeight = 0;
         if (item.GetType() == ITEM_TYPE_WEAPON) {
@@ -1430,6 +1428,24 @@ void SetInventoryDetailText(ItemCl& item) {
                 text += "\nMinimum Strength: " + item.Proto.Weapon_MinStrength;
             }
 
+            if (item.Proto.Weapon_MaxDist_0 > 0) {
+                uint16	rounds = _WeaponRound(item.Proto, 0);
+                bool 	isBurst = rounds > 1;
+                if (isBurst) {
+                    text += "\nBurst range: " + item.Proto.Weapon_MaxDist_0;
+                } else {
+                    text += "\nRange: " + item.Proto.Weapon_MaxDist_0;
+                }
+                if (item.Proto.Weapon_MaxDist_1 > 0) {
+                    uint16	rounds = _WeaponRound(item.Proto, 1);
+                    bool 	isBurst = rounds > 1;
+                    if (isBurst) {
+                        text += "\t(Burst range: " + item.Proto.Weapon_MaxDist_1 + ")";
+                    } else if (item.Proto.Weapon_Anim2_1 == ANIM2_THROW) {
+                        text += "\t(Throw range: " + item.Proto.Weapon_MaxDist_1 + ")";
+                    }
+                }
+            }
             if (item.Proto.Weapon_DmgMin_0 > 0 && item.Proto.Weapon_DmgMax_0 > 0) {
                 text += "\nBase damage: " + item.Proto.Weapon_DmgMin_0 + "-" + item.Proto.Weapon_DmgMax_0;
             }
@@ -1537,7 +1553,7 @@ void SetInventoryDetailText(ItemCl& item) {
         if (IsLexem(item, "$crafter")) {
             text += "\n\nCrafter: " + GetLexem(item, "$crafter");
         } else {
-            text += "\n";
+            //text += "\n";
         }
 
         // Deterioration
@@ -1547,9 +1563,9 @@ void SetInventoryDetailText(ItemCl& item) {
             uint16 wearCount = item.Deterioration;
 
             // Broken level, procent
-            text += "\n";
+            text += "\n\n";
             if (FLAG(flags, BI_NOTRESC)) {
-                text += "|" + COLOR_GRAY + " " + GetMsgStr(TEXTMSG_GAME, STR_DETERIORATION_NO_RESC);
+                text += "|" + COLOR_GRAY + " " + GetMsgStr(TEXTMSG_GAME, STR_DETERIORATION_NO_RESC) +  "|" + COLOR_LGREEN + " ";
             } else if (FLAG(flags, BI_LOWBROKEN)) {
                 text += GetMsgStr(TEXTMSG_GAME, STR_DETERIORATION_BROKEN_LOW);
             } else if (FLAG(flags, BI_NORMBROKEN)) {
@@ -1582,6 +1598,7 @@ void SetInventoryDetailText(ItemCl& item) {
                 }
                 maxColor += " " + deterMax;
                 text += ReplaceText(ReplaceText(GetMsgStr(TEXTMSG_GAME, STR_DETERIORATION_PROCENT), "VALUE", currentColor), "MAXVALUE", maxColor);
+                text += "|" + COLOR_LGREEN + " ";
             }
 
             // Service
@@ -1594,6 +1611,7 @@ void SetInventoryDetailText(ItemCl& item) {
                 text += "\n" + GetMsgStr(TEXTMSG_GAME, STR_DETERIORATION_SERVICE_EXT);
             }
         }
+        text += "\nBase price: " + item.Proto.Cost;
 
         // Weight
         string weightString = GetMsgStr(TEXTMSG_GAME, STR_ITEM_WEIGHT_GRAMM);
