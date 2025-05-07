@@ -46,6 +46,7 @@ import void WearItem(Critter& cr, Item& item, int wearCount) from "repair";
 import void WearHandsOnDeath(Critter& cr) from "repair";
 import void SetMinWear(Item& item, int wearProcent) from "repair";
 import void CommenceHexThrowing(Critter& cr, Map& map, Item& item, uint16 tx, uint16 ty, bool ignoreApCost) from "hexThrow";
+import void CommenceSpearHexThrowing(Critter& attacker, Critter& target, Map& map, Item& item, uint16 tx, uint16 ty, bool isCritical, bool ignoreApCost) from "hexThrow";
 import void CommenceHexShoting(Critter& cr, Map& map, Item& item, uint16 tx, uint16 ty, bool ignoreApCost) from "hexShot";
 import uint GetAnimFlySpeedByAngle(float flyAngle) from "hexShot";
 
@@ -1131,67 +1132,6 @@ void CombatAttack(Critter& cr, Critter& target, ProtoItem& weapon, uint8 weaponM
     }
 }
 
-//  ATTACK STRUCT - 0 attackerId, 1 targetId, 2 realWeaponId, 3 weapMode, 4 ammo, 5 hx, 6 hy, 7 tx, 8 ty, 9 aim, 10 isBurst, 11 weaponSubtype, 12
-uint e_ApplyDamage(array<uint>@ values) {
-    AttackStruct attack;
-
-    @attack.Attacker = GetCritter(values[0]);
-    if (!valid(attack.Attacker)) {
-        Log("e_ApplyDamage :: Attacker not valid.");
-    } else {
-        Log("e_ApplyDamage :: Attacker = " + attack.Attacker.Name);
-    }
-
-    attack.TargetId = values[1];
-    Critter@ target = GetCritter(attack.TargetId);
-    if (!valid(target)) {
-        Log("e_ApplyDamage :: Target not valid.");
-    } else {
-        Log("e_ApplyDamage :: Target = " + target.Name);
-    }
-
-    @attack.RealWeapon = GetItem(values[2]);
-    if (!valid(attack.RealWeapon)) {
-        Log("e_ApplyDamage :: RealWeapon not valid.");
-    } else {
-        Log("e_ApplyDamage :: RealWeapon PID = " + attack.RealWeapon.Proto.ProtoId);
-    }
-
-    attack.weaponMode = values[3];
-    Log("e_ApplyDamage :: weaponMode = " + attack.weaponMode);
-
-    @attack.Ammo = GetProtoItem(values[4]);
-    if (!valid(attack.Ammo)) {
-        Log("e_ApplyDamage :: Ammo not valid.");
-    } else {
-        Log("e_ApplyDamage :: Ammo PID = " + attack.Ammo.ProtoId);
-    }
-
-    attack.Hx = values[5];
-    attack.Hy = values[6];
-    attack.Tx = values[7];
-    attack.Ty = values[8];
-    Log("e_ApplyDamage :: Hx = " + attack.Hx + ", Hy = " + attack.Hx + ", Tx = " + attack.Tx + ", Ty = " + attack.Ty);
-
-    /*
-    attack.set_Aim(values[6]);
-    attack.IsBurst = isBurst;
-    attack.BloodyMess = cr.Trait[TRAIT_BLOODY_MESS] != 0;
-    attack.CombatMessage = true;
-    attack.IsUnarmed = (weaponSubtype == WS_UNARMED);
-    attack.WeaponPerk = (isUnarmed && weapon.Weapon_UnarmedArmorPiercing) ? WEAPON_PERK_PENETRATE : weaponPerk;
-    attack.WeaponSubtype = weaponSubtype;
-    attack.DmgMin = _WeaponDmgMin(weapon, use);
-    attack.DmgMax = _WeaponDmgMax(weapon, use);
-    attack.DmgType = dmgType;
-    attack.BonusDmg = 0;
-
-    uint8 use = _WeaponModeUse(weaponMode);
-    uint8 aim = _WeaponModeAim(weaponMode);
-    */
-    return 0;
-}
-
 void ApplyDamage(AttackStruct& attack, Critter& target, uint rounds, bool isCritical, bool intentionally, array<CombatRes>& results, int CriticalChance)
 {
 	Item@ usedArmor = _GetCritterArmor(target, attack.AimHead);
@@ -1212,6 +1152,7 @@ void ApplyDamage(AttackStruct& attack, Critter& target, uint rounds, bool isCrit
     uint     extraMessageSelf = 0;
     bool     isShotgun = (valid(attack.Ammo) && (attack.Ammo.Ammo_Caliber == 11));
     bool     isBurst = (rounds > 1);
+	bool     isSpearThrow = (valid(realWeapon) ? (realWeapon.Proto.ProtoId == PID_SHARPENED_POLE || realWeapon.Proto.ProtoId == PID_SPEAR || realWeapon.Proto.ProtoId == PID_SHARP_SPEAR) : false);
 	//bool     isFireGeckoShell = (valid(attack.Ammo) && (attack.Ammo.ProtoId == PID_SHOTGUN_DRAGON_BREATH_SHELLS));
 	uint16   ammoPid = attack.ammoPid;
     if(valid(attack.Ammo)) ammoPid = attack.Ammo.ProtoId;
@@ -3146,10 +3087,79 @@ void ApplyDamage(AttackStruct& attack, Critter& target, uint rounds, bool isCrit
         }
 
         target.ToDead(anim2Dead, attacker);
-    }
-    else
-	if(isKo)
-    {
+    } else if (isSpearThrow && !target.IsKnockout() && target.Mode[MODE_NO_KNOCK] == 0) {
+        //  special knockback or knockdown for spear throw
+        int knockbackFactor = 0;
+        if (CriticalChance > 0) {
+            knockbackFactor = 100;
+        } else {
+            knockbackFactor = 50;
+        }
+        int roll = Random(0, 99);
+        if (isDummyTraining) {
+            dummyInfo += "\n|" + COLOR_DTEXT_CAPTION + " Spear Throwing Special effect ::";
+            if (CriticalChance > 0) {
+                dummyInfo += "|" + COLOR_DTEXT_REGULAR + "  Direct Hit, Knockback factor = |" + COLOR_DTEXT_BONUS + " " + knockbackFactor;
+            } else {
+                dummyInfo += "|" + COLOR_DTEXT_REGULAR + "  Glancing Hit, Knockback factor = |" + COLOR_DTEXT_BONUS + " " + knockbackFactor;
+            }
+        }
+        knockbackFactor /= stonewallRank + 1;
+        if (isDummyTraining) {
+            if (stonewallRank > 0) {
+                dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , StonewallRank = |" + COLOR_DTEXT_BONUS +  " " + stonewallRank;
+                dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , New Knockback factor = |" + COLOR_DTEXT_BONUS +  " " + knockbackFactor;
+            }
+        }
+        if (roll < knockbackFactor) {
+            int knockDist = knockDmg / 10;
+            if (stonewallRank > 0) {
+                knockDist /= stonewallRank + 1;
+            }
+            knockDist--;
+            if (knockDist > 5) {
+                knockDist = 5;
+            }
+            uint16 knockHx = attack.Hx;
+            uint16 knockHy = attack.Hy;
+            if (knockDist > 0) {
+                map.GetHexCoordWall(target.HexX, target.HexY, knockHx, knockHy, 180.0f, knockDist);
+                target.ToKnockout(KNOCKOUT_ANIM2_DEFAULT(attackFront), 0, knockHx, knockHy);
+                if (isDummyTraining) {
+                    dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , Knockback resist: |" + COLOR_DTEXT_BONUS +  " FAIL";
+                    dummyInfo += "|" + COLOR_DTEXT_REGULAR + "  Roll = |" + COLOR_DTEXT_ROLL + " " + roll + " vs " + knockbackFactor;
+                    dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , Knockback distance = |" + COLOR_DTEXT_BONUS + " " + knockDist;
+                }
+            } else {
+                target.ToKnockout(KNOCKOUT_ANIM2_DEFAULT(attackFront), 0, target.HexX, target.HexY);
+                if (isDummyTraining) {
+                    dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , Knockback resist: |" + COLOR_DTEXT_BONUS +  " FAIL";
+                    dummyInfo += "|" + COLOR_DTEXT_REGULAR + "  Roll = |" + COLOR_DTEXT_ROLL + " " + roll + " vs " + knockbackFactor;
+                    dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , Knockback distance = |" + COLOR_DTEXT_BONUS + " " + knockDist;
+                }
+            }
+            int  currentAp = target.Stat[ST_CURRENT_AP];
+            int  targetAp = currentAp;
+            bool quick = target.Perk[PE_QUICK_RECOVERY] > 0;
+            float intellectFactor = (0.33 + (10.0 - target.Stat[ST_INTELLECT]) / 9.0);
+            float apLoss = quick ? 1 : (3 * intellectFactor);
+            if (!(target.IsKnockout() && map.IsTurnBased())) {
+                targetAp -= apLoss;
+            }
+            if (targetAp < currentAp) {
+                target.StatBase[ST_CURRENT_AP] = 100 * targetAp;
+                if (isDummyTraining) {
+                    dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , AP loss: |" + COLOR_DTEXT_MALUS +  " " + apLoss;
+                }
+            }
+        } else {
+            //  knockdown/back resist
+            if (isDummyTraining) {
+                dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , Knockback resist |" + COLOR_DTEXT_MALUS +  "  SUCCESS";
+                dummyInfo += "|" + COLOR_DTEXT_REGULAR + "  Roll = |" + COLOR_DTEXT_ROLL + " " + roll + " vs " + knockbackFactor;
+            }
+        }
+    } else if (isKo) {
         //Log("isKo = True");
 		int  maxAp = target.Stat[ST_ACTION_POINTS];
         int  currentAp = target.Stat[ST_CURRENT_AP];
@@ -3203,8 +3213,9 @@ void ApplyDamage(AttackStruct& attack, Critter& target, uint rounds, bool isCrit
             else
                 target.ToKnockout(KNOCKOUT_ANIM2_DEFAULT(attackFront), 0, target.HexX, target.HexY);
         }
-        if(targetAp < currentAp)
+        if (targetAp < currentAp) {
             target.StatBase[ST_CURRENT_AP] = 100 * targetAp;
+        }
     }
 
     // Damage
@@ -4498,14 +4509,30 @@ void AttackThrowingOrRocket(AttackStruct& attack, Map& map, Critter& cr, Critter
                 }
             }
         } else {
-            //cr.Say(SAY_NETMSG, "Throw attack damage non-explosive: min = " + attack.DmgMin + ", max = " + attack.DmgMax + ", melee bonus = " + cr.Stat[ST_MELEE_DAMAGE]);
-            //map.RunFlyEffect(realWeapon.GetProtoId(), cr, null, 0, 0, tx, ty);
-            //map.RunFlyEffect(_WeaponEffect(weapon, use), cr, (useNormal ? normalTarget : realTarget), hx, hy, tx, ty);
-            uint8 use = _WeaponModeUse(attack.weaponMode);
-            CommenceThrown(attack, map, attack.Tx, attack.Ty, realTarget, attack.RealWeapon.Proto, criticalHit, realTarget.Id, results, changedTarget);
-            //ApplyDamage(attack, realTarget, 1, criticalHit, !changedTarget, results, 0);
-
-
+            if (attack.RealWeapon.GetProtoId() == PID_SHARPENED_POLE || attack.RealWeapon.GetProtoId() == PID_SPEAR || attack.RealWeapon.GetProtoId() == PID_SHARP_SPEAR) {
+                if (realTarget.IsMoving()) {
+                    uint16 predictedToX = realTarget.HexX;
+                    uint16 predictedToY = realTarget.HexY;
+                    uint distance = GetDistantion(cr.HexX, cr.HexY, realTarget.HexX, realTarget.HexY);
+                    int predictDistance = 0;
+                    int dx = realTarget.HexX - cr.HexX;
+                    int dy = realTarget.HexY - cr.HexY;
+                    float flyAngle = atan2(dy, dx);
+                    uint speed = GetAnimFlySpeedByAngle(flyAngle);
+                    if (realTarget.IsRunning()) {
+                        predictDistance = (distance * speed) / ANIM_FLY_TIMEFACTOR_RUN;
+                    } else {
+                        predictDistance = (distance * speed) / ANIM_FLY_TIMEFACTOR_WALK;
+                    }
+                    map.MoveHexByDir(predictedToX, predictedToY, realTarget.Dir, predictDistance);
+                    CommenceSpearHexThrowing(cr, realTarget, map, attack.RealWeapon, predictedToX, predictedToY, criticalHit, true);
+                } else {
+                    CommenceSpearHexThrowing(cr, realTarget, map, attack.RealWeapon, attack.Tx, attack.Ty, criticalHit, true);
+                }
+            } else {
+                uint8 use = _WeaponModeUse(attack.weaponMode);
+                CommenceThrown(attack, map, attack.Tx, attack.Ty, realTarget, attack.RealWeapon.Proto, criticalHit, realTarget.Id, results, changedTarget);
+            }
         }
     } else {
         // Miss with missiles
@@ -4678,10 +4705,8 @@ void CommenceThrown(AttackStruct& attack, Map@ map, uint16 tx, uint16 ty, Critte
     }
 
     map.RunFlyEffect(itemFlyingPid, null, realTarget, fixedStartX, fixedStartY, attack.Tx, attack.Ty);
-    /*
-    uint[] values = { map.Id, 0, realTarget.Id, fixedStartX, fixedStartY, 0, 0, itemFlyingPid };
-    CreateTimeEvent(AFTER(REAL_MS(animationTime)), "hexThrow@e_HexThrowFlyCritter", values, false);
-    */
+    //uint[] values = { map.Id, 0, realTarget.Id, fixedStartX, fixedStartY, 0, 0, itemFlyingPid };
+    //CreateTimeEvent(AFTER(REAL_MS(animationTime)), "hexThrow@e_HexThrowFlyCritter", values, false);
 
     //uint[] values2 = { map.Id, attacker.Id, realTarget.Id, attacker.HexX, attacker.HexY, realTarget.HexX, realTarget.HexY, weaponPid };
     //CreateTimeEvent(AFTER(REAL_MS(600 + 35*dist)), "e_CommenceThrownApplyDamage", values2, false);
@@ -4701,37 +4726,9 @@ void CommenceThrown(AttackStruct& attack, Map@ map, uint16 tx, uint16 ty, Critte
     } else {
         //Log("CommenceThrown :: INVALID attack.Ammo");
     }
-    /*
-    //Log("CommenceThrown :: attacker.Id = " + attacker.Id + ", realTarget.Id = " + realTarget.Id);
-    uint[] values3 = { attacker.Id, realTarget.Id, realWeaponId, attack.weaponMode, ammoPid, attacker.HexX, attacker.HexY, realTarget.HexX, realTarget.HexY };
-    CreateTimeEvent(AFTER(REAL_MS(animationTime + 35*dist)), "e_ApplyDamage", values3, false);
-    */
-    ApplyDamage(attack, realTarget, 1, isCritical, !changedTarget, results, 0);
-}
-
-/*
-//  values: 0 mapId, 1 attackerId, 2 targetId, 3 weapPid, 4 hitLocation, 5 isCritical, 6 intentionallyId
-void e_CommenceThrownApplyDamage(array<uint>@ values) {
-    array<CombatRes> results;
-    AttackStruct     attack;
-    Map@ map = GetMap(values[0]);
-    if (!valid(map)) {
-        return;
-    }
-
-    @attack.Attacker = GetCritter(values[1]);
-    attack.Aim = values[4];
-    ProtoItem@ proto = GetProtoItem(values[3]);
-
-    attack.DmgMin = _WeaponDmgMin(proto, 0) + _WeaponDmgMin(proto, 0) * attack.SelectWeaponBonus(BONUS_WEAPON_MIN_DMG)/100;
-    attack.DmgMax = _WeaponDmgMax(proto, 0) + _WeaponDmgMax(proto, 0) * attack.SelectWeaponBonus(BONUS_WEAPON_MAX_DMG)/100;
-    attack.DmgType = _WeaponDmgType(proto, 0);
-    attack.WeaponPerk = proto.Weapon_Perk;
 
     ApplyDamage(attack, realTarget, 1, isCritical, !changedTarget, results, 0);
-    FlushResults(results);
 }
-*/
 
 void CommenceExplosion(AttackStruct& attack, Map@ map, uint16 tx, uint16 ty, Critter@ target, uint weapPid, bool isCritical, uint intentionallyId, bool isRocket, array<CombatRes>& results, bool isExplodeRocket) {
     uint radius = 2;

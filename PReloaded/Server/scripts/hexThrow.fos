@@ -7,7 +7,9 @@
 # define ItemMutual          Item
 # include "utils_h.fos"
 # include "combat_h.fos"
+#include "combat_msg.fos"
 import uint GetAnimFlySpeedByAngle(float flyAngle) from "hexShot";
+import void ApplyDamage(AttackStruct& attack, Critter& target, uint rounds, bool isCritical, bool intentionally, array<CombatRes>& results, int CriticalChance) from "combat";
 #endif
 
 #ifdef __CLIENT
@@ -182,6 +184,13 @@ bool IsDistractWeapon(ItemMutual& item) {
     return false;
 }
 
+bool IsSpearWeapon(ItemMutual& item) {
+    if (item.GetProtoId() == PID_SHARPENED_POLE || item.GetProtoId() == PID_SPEAR || item.GetProtoId() == PID_SHARP_SPEAR) {
+        return true;
+    }
+    return false;
+}
+
 bool IsGrenade(ItemMutual& item)
 {
     if(!IsHexThrowingWeapon(item))
@@ -273,6 +282,68 @@ void CommenceHexThrowing(Critter& cr, Map& map, Item& item, uint16 tx, uint16 ty
     }
 }
 
+void CommenceSpearHexThrowing(Critter& attacker, Critter& target, Map& map, Item& item, uint16 tx, uint16 ty, bool isCritical, bool ignoreApCost = false) {
+    if ((attacker.Param[TO_EX_ANIM_INTERRUPT] > int(GetTick()) - ANIM_ACTION_TIME_DEFAULT) || attacker.IsDead() || attacker.IsKnockout()) {
+        return;
+    }
+
+    uint16 weaponPid = item.GetProtoId();
+    ProtoItem@ protoWeapon = GetProtoItem(weaponPid);
+    uint8 use;
+    switch (weaponPid) {
+        case PID_SPEAR:
+        case PID_SHARP_SPEAR:
+        case PID_SHARPENED_POLE:
+            use = 1;
+            break;
+        default:
+            use = 0;
+    }
+    uint itemFlyingPid = _WeaponEffect(protoWeapon, use);
+
+    uint8 dir = GetDirection(attacker.HexX, attacker.HexY, tx, ty);
+    attacker.SetDir(dir);
+    if(attacker.Mode[MODE_HIDE] != 0) {
+        if(!attacker.IsPlayer() || attacker.GetAccess() == ACCESS_CLIENT)
+            attacker.ModeBase[MODE_HIDE] = 0;
+    }
+    attacker.Wait(__Breaktime);
+    if (!ignoreApCost) {
+        attacker.StatBase[ST_CURRENT_AP] -= 100 * HexThrowActionPointsCost(item, attacker) - (attacker.Perk[PE_BONUS_RATE_OF_ATTACK] > 0 ? 0 : 10 * attacker.Stat[ST_AGILITY]);
+    }
+
+    uint16 fixedStartX = attacker.HexX;
+    uint16 fixedStartY = attacker.HexY;
+    uint16 fixedTargetX = tx;
+    uint16 fixedTargetY = ty;
+    //map.MoveHexByDir(fixedTargetX, fixedTargetY, 2, 1);
+    //map.MoveHexByDir(fixedTargetX, fixedTargetY, 3, 1);
+    uint dist = GetDistantion(fixedStartX, fixedStartY, fixedTargetX, fixedTargetY);
+
+    uint distSourceFromTarget = GetDistantion(attacker.HexX, attacker.HexY, tx, ty);
+    if (distSourceFromTarget > 1) {
+        map.MoveHexByDir(fixedStartX, fixedStartY, dir, 1);
+    }
+
+    map.RunFlyEffect(itemFlyingPid, null, null, fixedStartX, fixedStartY, fixedTargetX, fixedTargetY);
+
+    if(attacker.Timeout[TO_BATTLE] < int(__TimeoutBattle))
+        _SetTimeout(attacker, TO_BATTLE, __TimeoutBattle);
+    if(!map.IsTurnBased() && map.IsTurnBasedAvailability())
+        map.BeginTurnBased(attacker);
+
+    int dx = fixedTargetX - fixedStartX;
+    int dy = fixedTargetY - fixedStartY;
+    float flyAngle = atan2(dy, dx);
+    int animFlySpeed = GetAnimFlySpeedByAngle(flyAngle);
+    uint animationTimeToWait = animFlySpeed * dist - 50;
+    uint criticalHit = isCritical ? 1 : 0;
+
+    uint[] values2 = { map.Id, fixedStartX, fixedStartY, tx, ty, weaponPid, attacker.Id, target.Id , criticalHit};
+    CreateTimeEvent(AFTER(REAL_MS(animationTimeToWait)), "e_HexThrowSpear", values2, false);
+
+}
+
 void CommenceHexThrowingEffectAfterAnimation(Critter& cr, Map& map, Item& item, uint16 tx, uint16 ty, bool ignoreApCost = false) {
     //  player interrupts with S or is not able to perform action
     if ((cr.Param[TO_EX_ANIM_INTERRUPT] > int(GetTick()) - ANIM_ACTION_TIME_DEFAULT) || cr.IsDead() || cr.IsKnockout()) {
@@ -335,6 +406,8 @@ void CommenceHexThrowingEffectAfterAnimation(Critter& cr, Map& map, Item& item, 
         CreateTimeEvent(AFTER(REAL_MS(animationTimeToWait)), "e_HexThrowExplode", values2, false);
 
         cr.DeleteItem(item.GetProtoId(), 1);
+    } else if (IsSpearWeapon(item)) {
+        //cr.DeleteItem(item.GetProtoId(), 1);
     } else if (IsDistractWeapon(item)) {
         uint8 dir = GetDirection(cr.HexX, cr.HexY, tx, ty);
         cr.SetDir(dir);
@@ -441,6 +514,152 @@ uint e_HexThrowExplode(array<uint>@ values)     // map id, tx, ty, pid, attacker
     cr.RunClientScript("hexThrow@_UpdateWeapons", 0, 0, 0, null, null);
     return 0;
 }
+
+uint e_HexThrowSpear(array<uint>@ values)     // map_id, fromX, fromY, toX, toY, weapon_pid, attacker_id, target_id, isCriticalHit
+{
+    Map@ map = GetMap(values[0]);
+    Critter@ attacker = GetCritter(values[6]);
+    Critter@ target = GetCritter(values[7]);
+    Item@ usedWeapon = attacker.GetItem(values[5], -1);
+    uint fromX = values[1];
+    uint fromY = values[2];
+    uint toX = values[3];
+    uint toY = values[4];
+    bool isCritical = values[8] > 0;
+
+    attacker.PlaySound('W', SOUND_WEAPON_USE, '4', '2', true);         // '1'?
+
+    array<Critter@> critsCentralLine;
+    array<Critter@> critsLeftLine;
+    array<Critter@> critsRightLine;
+
+    int closestDist = 160;
+    bool directHit = false;
+    Critter@ critterHit;
+
+    int dist = GetDistantion(fromX, fromY, toX, toY);
+    uint16 posX = 0, posY = 0;
+    posX = toX + (toX - fromX) * 3 / dist;
+    posY = toY + (toY - fromY) * 3 / dist;
+    //map.RunEffect(PID_EXPLODE_ROCKET, posX, posY, 0);
+
+    //  central line
+    uint foundCentralCritters = map.GetCrittersPath(fromX, fromY, toX, toY, 0.0f, dist + 2, FIND_LIFE_AND_KO, critsCentralLine);
+    if (foundCentralCritters > 0) {
+        for (uint i = 0; i < foundCentralCritters; i++) {
+            int tempDist = int(GetDistantion(fromX, fromY, critsCentralLine[i].HexX, critsCentralLine[i].HexY));
+            if (tempDist > dist - 4) {
+                //critsCentralLine[i].Say(SAY_NORM, "Spear Hit Central! dist: " + tempDist + ", closestDist = " + closestDist);
+                if (closestDist > tempDist) {
+                    @critterHit = critsCentralLine[i];
+                    closestDist = tempDist;
+                    directHit = true;
+                    //critsCentralLine[i].Say(SAY_NORM, "Setting closest NPC, dist: " + tempDist + ", closestDist = " + closestDist);
+                }
+            } else {
+                //  too close, spear would travel too far, so animation glitch on hit
+                //critsCentralLine[i].Say(SAY_NORM, "Too close: Central! dist: " + tempDist + ", closestDist = " + closestDist);
+            }
+        }
+    }
+
+    //  left line
+    uint8  leftDir = GetOffsetDir(fromX, fromY, toX, toY, 90.0f);
+    uint16 leftStartX = fromX;
+    uint16 leftStartY = fromY;
+    uint16 leftEndX = posX;
+    uint16 leftEndY = posY;
+    //map.MoveHexByDir(leftStartX, leftStartY, leftDir, 1);
+    map.MoveHexByDir(leftEndX, leftEndY, leftDir, 1);
+    int distLeft = GetDistantion(fromX, fromY, leftEndX, leftEndY);
+    uint foundLeftCritters = map.GetCrittersPath(leftStartX, leftStartY, leftEndX, leftEndY, 0.0f, dist + 2, FIND_LIFE_AND_KO, critsLeftLine);
+    if (foundLeftCritters > 0) {
+        for (uint i = 0; i < foundLeftCritters; i++) {
+            int tempDist = int(GetDistantion(fromX, fromY, critsLeftLine[i].HexX, critsLeftLine[i].HexY));
+            if (tempDist > dist - 3) {
+                //critsLeftLine[i].Say(SAY_NORM, "Spear Hit Left! dist: " + tempDist + ", closestDist = " + closestDist);
+                if (closestDist > tempDist) {
+                    @critterHit = critsLeftLine[i];
+                    closestDist = tempDist;
+                    directHit = false;
+                }
+            } else {
+                //  too close, spear would travel too far, so animation glitch on hit
+                //critsLeftLine[i].Say(SAY_NORM, "Too close: Left! dist: " + tempDist + ", closestDist = " + closestDist);
+            }
+        }
+    }
+
+    //  right line
+    uint8  rightDir = GetOffsetDir(fromX, fromY, toX, toY, -90.0f);
+    uint16 rightStartX = fromX;
+    uint16 rightStartY = fromY;
+    uint16 rightEndX = posX;
+    uint16 rightEndY = posY;
+    //map.MoveHexByDir(rightStartX, rightStartY, rightDir, 1);
+    map.MoveHexByDir(rightEndX, rightEndY, rightDir, 1);
+    int distRight = GetDistantion(fromX, fromY, rightEndX, rightEndY);
+    uint foundRightCritters = map.GetCrittersPath(rightStartX, rightStartY, rightEndX, rightEndY, 0.0f, dist + 2, FIND_LIFE_AND_KO, critsRightLine);
+    if (foundRightCritters > 0) {
+        for (uint i = 0; i < foundRightCritters; i++) {
+            int tempDist = int(GetDistantion(fromX, fromY, critsRightLine[i].HexX, critsRightLine[i].HexY));
+            if (tempDist > dist - 3) {
+                //critsRightLine[i].Say(SAY_NORM, "Spear Hit Right! dist: " + tempDist + ", closestDist = " + closestDist);
+                if (closestDist > tempDist) {
+                    @critterHit = critsRightLine[i];
+                    closestDist = tempDist;
+                    directHit = false;
+                }
+            } else {
+                //  too close, spear would travel too far, so animation glitch on hit
+                //critsRightLine[i].Say(SAY_NORM, "Too close: Right! dist: " + tempDist + ", closestDist = " + closestDist);
+            }
+        }
+    }
+
+    if (valid(critterHit)) {
+        //attacker.Say(SAY_NORM, "Closest critter hit: " + critterHit.Name + ", directHit: " + directHit + ", dist: " + closestDist);
+
+        array<CombatRes> results;
+
+        // Fill the main attack structure
+        AttackStruct attack;
+        @attack.Attacker = attacker;
+        @attack.RealWeapon = usedWeapon;
+        attack.Hx = fromX;
+        attack.Hy = fromY;
+        attack.Tx = toX;
+        attack.Ty = toY;
+        attack.set_Aim(HIT_LOCATION_UNCALLED);
+        attack.IsBurst = false;
+        attack.BloodyMess = attacker.Trait[TRAIT_BLOODY_MESS] != 0;
+        attack.CombatMessage = true;
+        attack.IsUnarmed = false;
+        attack.WeaponPerk = usedWeapon.Proto.Weapon_Perk;
+        attack.DmgMin = _WeaponDmgMin(usedWeapon.Proto, 1);   //  for spear throw use is 1
+        attack.DmgMax = _WeaponDmgMax(usedWeapon.Proto, 1);
+        attack.DmgType = DAMAGE_TYPE_NORMAL;
+        attack.BonusDmg = 0;
+        attack.weaponMode = 1;  //  spear throw?
+        attack.weaponPid = usedWeapon.GetProtoId();
+
+        if (attacker.Perk[PE_HEAVE_HO] > 0) {
+            attack.DmgMin += attacker.Stat[ST_STRENGTH] + attacker.Stat[ST_MELEE_DAMAGE];
+            attack.DmgMax += 2 * attacker.Stat[ST_STRENGTH] + attacker.Stat[ST_MELEE_DAMAGE];
+        } else {
+            attack.DmgMin += attacker.Stat[ST_STRENGTH] / 2;
+            attack.DmgMax += attacker.Stat[ST_STRENGTH];
+        }
+        attack.DRMod = int(attacker.Skill[SK_THROWING] / -10);
+
+        attack.DmgMul = 4;
+
+        ApplyDamage(attack, critterHit, 1, isCritical, false, results, directHit ? 1 : 0);
+        FlushResults(results);
+    }
+    return 0;
+}
+
 
 uint e_HexThrowDistract(array<uint>@ values) {    // map id, tx, ty, pid, thrower id
     Map@ map = GetMap(values[0]);
