@@ -783,12 +783,12 @@ uint e_HexThrowDetectHidden(array<uint>@ values) {    // map id, tx, ty, pid, th
     uint foundCritters = map.GetCrittersHex(tx, ty, 10, FIND_LIFE, crits);
     for (uint i = 0; i < foundCritters; i++) {
         if (crits[i].Mode[MODE_HIDE] != 0 && crits[i].GetAccess() <= ACCESS_TESTER) {
-            uint16 pbx = flare.HexX;
-            uint16 pby = flare.HexY;
-            uint16 bx = flare.HexX;
-            uint16 by = flare.HexY;
-            map.GetCrittersPath(crits[i].HexX, crits[i].HexY, flare.HexX, flare.HexY, 0.0f, 0, 0, null, pbx, pby, bx, by);
-            if (bx == flare.HexX && by == flare.HexY) {
+            uint16 pbx = tx;
+            uint16 pby = ty;
+            uint16 bx = tx;
+            uint16 by = ty;
+            map.GetCrittersPath(crits[i].HexX, crits[i].HexY, tx, ty, 0.0f, 0, 0, null, pbx, pby, bx, by);
+            if (bx == tx && by == ty) {
                 //crits[i].Say(SAY_NORM, "I was hiding! (" + flare.Id + ")");
                 crits[i].ModeBase[MODE_HIDE] = 0;
             } else {
