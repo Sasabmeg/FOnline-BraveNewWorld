@@ -120,7 +120,7 @@ string[] commandlist =
     "animate", "antiblock", "append", "aura", "auracleanup",
     "bc", "blockers", "broadcast",
     "ces", "changefaction", "changerank", "checkbank", "checkbankaccount",
-    "checkbankaccounts", "checktown", "cleanup", "clearallillegalflags",
+    "checkbankaccounts", "checktown", "cleanup", "cleanitems", "clearallillegalflags",
     "clearenemystack", "clearenemystacks", "clearinventory", "clearillegalflags",
     "cleartimeouts", "clone", "condition", "controlmobs", "controlnpc", "corecheats",
     "countitems", "createlocation", "crinfo", "criticalchance", "critterinfo",
@@ -170,7 +170,7 @@ string[] gmcommandlist =
     "addfollower", "addmob", "addnpc", "animate", "antiblock", "append", "alts",
     "bc", "broadcast", "blockers",
     "changefaction", "changerank", "checkbank", "checkbankaccount",
-    "checkbankaccounts", "cleanup", "clearenemystack", "clearenemystacks",
+    "checkbankaccounts", "cleanup", "cleanitems", "clearenemystack", "clearenemystacks",
     "clearillegalflags", "clearinventory", "ces", "cleartimeouts", "clone",
     "corecheats", "cto", "countitems", "createlocation", "criticalchance",
     "critterinfo", "crinfo",
@@ -3589,6 +3589,48 @@ void ExecCleanupCommand(array<string@>@ command, Critter@ player)
 
     player.Say(SAY_NETMSG, count + " critters sucessfully removed.");
 }
+
+void ExecCleanItemsCommand(array<string@>@ command, Critter@ player)
+{
+    Map@ map = player.GetMap();
+    if (!valid(map)) {
+        return;
+    }
+
+    if (player.GetAccess() < ACCESS_ADMIN) {
+        player.Say(SAY_NETMSG, "You need admin access level to clean up items.");
+        return;
+    }
+
+    player.Say(SAY_NETMSG, "Executing cleanitems command");
+
+    int pid = 0;
+    if (command.length() < 2) {
+        player.Say(SAY_NETMSG, "Wrong number of parameters");
+        return;
+    }
+
+    // try to parse pid if it was passed as number
+    bool parsed = StrToInt(command[2], pid);
+    // otherwise, check in the global dictionary
+    if (!parsed) {
+        if(!GetItemPid(command[2], pid)) {
+            player.Say(SAY_NETMSG, "Item does not exist");
+            return;
+        }
+    }
+
+    array<Item@> items;
+    uint numFlares = map.GetItems(pid, items);
+    int totalDeleted = 0;
+    for (uint i = 0; i < numFlares; i++) {
+        DeleteItem(items[i]);
+        totalDeleted++;
+    }
+
+    player.Say(SAY_NETMSG, "Found and deleted " + totalDeleted + " items with pid: " + pid);
+}
+
 
 //
 // Controling npcs
@@ -9734,6 +9776,10 @@ bool ExecCommand(Critter& player, string@ commandString)
     else if(command[1] == "cleanup")
     {
         ExecCleanupCommand(command, player);
+    }
+    else if(command[1] == "cleanitems")
+    {
+        ExecCleanItemsCommand(command, player);
     }
     else if(command[1] == "clearallillegalflags")
     {
