@@ -45,7 +45,7 @@ import void QuakeScreen(Map& map) from "effects";
 import void WearItem(Critter& cr, Item& item, int wearCount) from "repair";
 import void WearHandsOnDeath(Critter& cr) from "repair";
 import void SetMinWear(Item& item, int wearProcent) from "repair";
-import void CommenceHexThrowing(Critter& cr, Map& map, Item& item, uint16 tx, uint16 ty, bool ignoreApCost) from "hexThrow";
+import void CommenceHexThrowing(Critter& cr, Map& map, Item& item, uint realWeaponId, uint16 tx, uint16 ty, bool ignoreApCost) from "hexThrow";
 import void CommenceSpearHexThrowing(Critter& attacker, Critter& target, Map& map, Item& item, uint16 tx, uint16 ty, bool isCritical, bool ignoreApCost) from "hexThrow";
 import void CommenceHexShoting(Critter& cr, Map& map, Item& item, uint16 tx, uint16 ty, bool ignoreApCost) from "hexShot";
 import uint GetAnimFlySpeedByAngle(float flyAngle) from "hexShot";
@@ -4508,9 +4508,9 @@ void AttackThrowingOrRocket(AttackStruct& attack, Map& map, Critter& cr, Critter
                         predictDistance = (distance * speed) / ANIM_FLY_TIMEFACTOR_WALK;
                     }
                     map.MoveHexByDir(predictedToX, predictedToY, realTarget.Dir, predictDistance);
-                    CommenceHexThrowing(cr, map, attack.RealWeapon, predictedToX, predictedToY, true);
+                    CommenceHexThrowing(cr, map, attack.RealWeapon, 0, predictedToX, predictedToY, true);
                 } else {
-                    CommenceHexThrowing(cr, map, attack.RealWeapon, attack.Tx, attack.Ty, true);
+                    CommenceHexThrowing(cr, map, attack.RealWeapon, 0, attack.Tx, attack.Ty, true);
                 }
             }
         } else {
@@ -4626,7 +4626,7 @@ void AttackThrowingOrRocket(AttackStruct& attack, Map& map, Critter& cr, Critter
                 if (isRocket) {
                     CommenceHexShoting(cr, map, attack.RealWeapon, attack.Tx, attack.Ty, true);
                 } else {
-                    CommenceHexThrowing(cr, map, attack.RealWeapon, attack.Tx, attack.Ty, true);
+                    CommenceHexThrowing(cr, map, attack.RealWeapon, 0, attack.Tx, attack.Ty, true);
                 }
             } else {
                 ApplyDamage(attack, normalTarget, 1, false, false, results, 0);
@@ -4660,7 +4660,7 @@ void AttackThrowingOrRocket(AttackStruct& attack, Map& map, Critter& cr, Critter
                 if (isRocket) {
                     CommenceHexShoting(cr, map, attack.RealWeapon, attack.Tx, attack.Ty, true);
                 } else {
-                    CommenceHexThrowing(cr, map, attack.RealWeapon, attack.Tx, attack.Ty, true);
+                    CommenceHexThrowing(cr, map, attack.RealWeapon, 0, attack.Tx, attack.Ty, true);
                 }
             }
         }

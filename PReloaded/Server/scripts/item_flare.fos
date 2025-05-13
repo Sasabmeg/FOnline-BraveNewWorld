@@ -11,16 +11,12 @@
 
 #include "_colors.fos"
 #include "_macros.fos"
+#include "_other_h.fos"
 #include "utils_h.fos"
 
-// active flares lifetime, in minutes
-#define FLARE_PULSE_COUNT               (180)
-#define FLARE_PULSE_FREQ_MIN            (2)
-#define FLARE_PULSE_FREQ_MAX            (3)
-#define FLAREGROUND_PULSE_FREQ_MIN      (1)
-#define FLAREGROUND_PULSE_FREQ_MAX      (3)
-
 #define STR_LIGHT_FLARE         (4070)
+
+import void RevealHidden(Map& map, uint16 tx, uint16 ty, int radius) from "hexThrow";
 
 
 void _FlareInit(Item& item, bool firstTime) {
@@ -72,6 +68,7 @@ bool _Used(Item& item, Critter& crit, Critter@ onCritter, Item@ onItem, Scenery@
             if (new_pid == PID_ACTIVE_FLARE) {
                 array<uint> values = {newItem.Id, FLARE_PULSE_COUNT};
                 CreateTimeEvent(AFTER(REAL_SECOND(Random(FLARE_PULSE_FREQ_MIN, FLARE_PULSE_FREQ_MAX))), "e_PulseFlare", values, true);
+                RevealHidden(map, crit.HexX, crit.HexY, FLARELIT_REVEAL_RADIUS);
             }
             return true;
         }
@@ -112,23 +109,17 @@ uint e_PulseFlare(array<uint>@ data) {
             return 0;
         }
 
-        array<Critter@> crits;
-        uint foundCritters = map.GetCrittersHex(flare.HexX, flare.HexY, 5, FIND_LIFE, crits);
-        for (uint i = 0; i < foundCritters; i++) {
-            if (crits[i].Mode[MODE_HIDE] != 0 && crits[i].GetAccess() <= ACCESS_TESTER) {
-                uint16 pbx = flare.HexX;
-                uint16 pby = flare.HexY;
-                uint16 bx = flare.HexX;
-                uint16 by = flare.HexY;
-                map.GetCrittersPath(crits[i].HexX, crits[i].HexY, flare.HexX, flare.HexY, 0.0f, 0, 0, null, pbx, pby, bx, by);
-                if (bx == flare.HexX && by == flare.HexY) {
-                    //crits[i].Say(SAY_NORM, "I was hiding! (" + flare.Id + ")");
-                    crits[i].ModeBase[MODE_HIDE] = 0;
-                } else {
-                    //crits[i].Say(SAY_NORM, "Hiding behind wall! (" + flare.Id + ")");
-                }
-            }
+        //  only pulse when on ground or in slot1/2 of critters
+        bool allowReveal = false;
+        //Log("FLARE ::  " + flare.Id + " (Accessory = " + flare.Accessory + ", MapId = " + flare.MapId + ", CritId = " + flare.CritId + ", CritSlot = " + flare.CritSlot + ", ContainerId = " + flare.ContainerId + ")");
+        if (flare.Accessory == ACCESSORY_HEX || (flare.Accessory == ACCESSORY_CRITTER && (flare.CritSlot == 1 || flare.CritSlot == 2))) {
+            allowReveal = true;
         }
+        if (allowReveal) {
+            //Log("REVEAL :: " + flare.Id + " (Accessory = " + flare.Accessory + ", MapId = " + flare.MapId + ", CritId = " + flare.CritId + ", CritSlot = " + flare.CritSlot + ", ContainerId = " + flare.ContainerId + ")");
+            RevealHidden(map, flare.HexX, flare.HexY, FLAREGROUND_REVEAL_RADIUS);
+        }
+
         return REAL_SECOND(Random(FLARE_PULSE_FREQ_MIN, FLARE_PULSE_FREQ_MAX));
     }
 }

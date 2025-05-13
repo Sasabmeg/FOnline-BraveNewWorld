@@ -14,6 +14,7 @@
 #include "../_client_defines.fos"
 #include "../_macros.fos"
 #include "../_colors.fos"
+#include "../_other_h.fos"
 #include "../client_gui_h.fos"
 #include "../combat_h.fos"
 #include "client_InterfaceControl.fos"
@@ -22,6 +23,7 @@
 #include "../lexems_h.fos"
 
 import string showItemBonus(ItemCl& it, int type, int value) from "client_interface";
+import bool IsDetectHiddenWeapon(ItemMutual& item) from "hexThrow";
 
 CGuiTooltip characterTooltip;
 CGuiTooltip inventoryTooltip;
@@ -1452,6 +1454,17 @@ void SetInventoryDetailText(ItemCl& item) {
             }
             if (item.Proto.Weapon_DmgMin_0 > 0 && item.Proto.Weapon_DmgMax_0 > 0) {
                 text += "\nBase damage: " + item.Proto.Weapon_DmgMin_0 + "-" + item.Proto.Weapon_DmgMax_0;
+            }
+            if (IsDetectHiddenWeapon(item)) {
+                text += "\nReveal hidden once:";
+                text += "\n\tReveal radius on lit: " + FLARELIT_REVEAL_RADIUS;
+                text += "\n\tReveal radius on thrown hex: " + FLARELIT_REVEAL_RADIUS;
+                text += "\nReveal hidden per pulse:";
+                text += "\n\tMust be in any hands or on the ground.";
+                text += "\n\tReveal radius per pulse: " + FLAREGROUND_REVEAL_RADIUS;
+                text += "\n\tPulse frequency: " + FLARE_PULSE_FREQ_MIN + "-" + FLARE_PULSE_FREQ_MAX + " seconds.";
+                text += "\n\tPulse count: " + FLARE_PULSE_COUNT;
+                text += "\n\tLifetime after lit: " + (FLARE_PULSE_FREQ_MIN * FLARE_PULSE_COUNT / 60) + "-" + (FLARE_PULSE_FREQ_MAX * FLARE_PULSE_COUNT / 60) + " minutes.";
             }
             if (item.Proto.Weapon_Perk != 0) {
                 string str = GetMsgStr(TEXTMSG_GAME, STR_WEAPON_PERK(item.Proto.Weapon_Perk));
