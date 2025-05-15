@@ -37,3 +37,6 @@ Working versions or ones that need testing may be added later, periodaically, bu
 Jinexd Jack interface: (download from Dropbox if there is fresh version, so my LFS quota doesn't drop) <br>
 2024-05-30 Jinxed Jack interface, added pickup/container filter buttons: https://www.dropbox.com/scl/fi/y9khvvrfkskn1hu4ly868/JinxedJack.zip?rlkey=hzuq2ezgsl2utc63ue0bhnff2&st=wkoymh2q&dl=0
 
+2025-05-15 Last update is Hex Trow Flares to detect sneaker.
+https://www.dropbox.com/scl/fi/14p4sekr2759wknimslue/FOClassic-BNW_2025-05-15_FlareHexThrow.zip?rlkey=d1o4ckq07sn8fx1cecnvknwfa&st=36fwisuw&dl=0
+
