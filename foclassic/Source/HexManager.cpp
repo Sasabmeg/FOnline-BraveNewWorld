@@ -1573,7 +1573,7 @@ void HexManager::CollectLightSources()
         if( allow_light )
             lightSources.push_back( LightSource( o->MapX, o->MapY, o->LightColor, o->LightDistance, o->LightIntensity, o->LightDirOff | ( (o->LightDay & 3) << 6 ) ) );
     }
-    #else
+	#else
     if( !IsMapLoaded() )
         return;
 
@@ -1584,9 +1584,34 @@ void HexManager::CollectLightSources()
     for( auto it = hexItems.begin(), end = hexItems.end(); it != end; ++it )
     {
         ItemHex* item = (*it);
-        if( item->IsItem() && item->IsLight() )
-            lightSources.push_back( LightSource( item->GetHexX(), item->GetHexY(), item->LightGetColor(), item->LightGetDistance(), item->LightGetIntensity(), item->LightGetFlags() ) );
-    }
+		if (item->IsItem() && item->IsLight()) {
+			lightSources.push_back(LightSource(item->GetHexX(), item->GetHexY(), item->LightGetColor(), item->LightGetDistance(), item->LightGetIntensity(), item->LightGetFlags()));
+		} else if (item->GetProtoId() >= 4000 && item->GetProtoId() <= 4050 && item->IsLight()) {
+			//	allow this for thrown or shoot projectiles to give light source, I made it on PID, find better way!
+			//	4024 is flare, 4001 is rocket
+			//	item proto property cost means that how many hexes the light is behind the object, used for rockets
+			/*if (item->GetProtoId() == 4001 || item->GetProtoId() == 4024) {
+				WriteLog("FLYING OBJECT :: Proto<%u> Hex<%u, %u> HexScreen<%u, %u> Accessory<%u> Color<%u> Dist<%u> Intensity<%u> Flags<%u> IsLight<%u> IsItem<%u> Cost<%u>\n",
+					item->GetProtoId(), item->HexX, item->HexY, item->HexScrX, item->HexScrY, item->Accessory, item->LightGetColor(), item->LightGetDistance(), item->LightGetIntensity(), item->LightGetFlags(), item->IsLight() ? 1 : 0, item->IsItem() ? 1 : 0, item->Proto->Cost);
+			}*/
+			int rocketLightDistanceBehind = item->Proto->Cost;
+			if (rocketLightDistanceBehind > 10)
+				rocketLightDistanceBehind = 0;
+			if (rocketLightDistanceBehind > 0) {
+				int hexX = item->HexX, hexY = item->HexY;
+				for (uint i = 0; i < rocketLightDistanceBehind; i++) {
+					MoveHexByDirUnsafe(hexX, hexY, (item->Data.Dir + 3) % 6);
+				}
+				if (hexX < 0)
+					hexX = 1;
+				if (hexY < 0)
+					hexY = 1;
+				lightSources.push_back(LightSource((uint16)hexX, (uint16)hexY, item->LightGetColor(), item->LightGetDistance(), item->LightGetIntensity(), item->LightGetFlags()));
+			} else {
+				lightSources.push_back(LightSource(item->GetHexX(), item->GetHexY(), item->LightGetColor(), item->LightGetDistance(), item->LightGetIntensity(), item->LightGetFlags()));
+			}
+		}
+	}
 
     // Items in critters slots
     for( auto it = allCritters.begin(), end = allCritters.end(); it != end; ++it )

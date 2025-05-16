@@ -199,11 +199,18 @@ void finish()
 {
 }
 
+uint activationTime = 0;
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Main loop function. Returned time of next call in milliseconds.
 uint loop()
 {
     GUI_Update(LOOP_TIME);
+
+    //  rebuild lightning around 20 times per second, because of flare throw and flying rocket light effects
+    if ((GetTick() > activationTime + 45)) {
+        activationTime = GetTick();
+        RefreshMap(false, false, true);
+    }
 
     if(IsReplaying())
         Replay();
