@@ -1586,7 +1586,7 @@ void HexManager::CollectLightSources()
         ItemHex* item = (*it);
 		if (item->IsItem() && item->IsLight()) {
 			lightSources.push_back(LightSource(item->GetHexX(), item->GetHexY(), item->LightGetColor(), item->LightGetDistance(), item->LightGetIntensity(), item->LightGetFlags()));
-		} else if (item->GetProtoId() >= 4000 && item->GetProtoId() <= 4050 && item->IsLight()) {
+		} else if (item->GetProtoId() >= 4000 && item->GetProtoId() <= 4099 && item->IsLight()) {
 			//	allow this for thrown or shoot projectiles to give light source, I made it on PID, find better way!
 			//	4024 is flare, 4001 is rocket
 			//	item proto property cost means that how many hexes the light is behind the object, used for rockets

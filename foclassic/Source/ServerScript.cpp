@@ -2478,7 +2478,29 @@ ProtoItem* FOServer::SScriptFunc::Crit_GetSlotProto( Critter* cr, int slot, uint
     return item->Proto;
 }
 
-bool FOServer::SScriptFunc::Crit_MoveItem( Critter* cr, uint item_id, uint count, uint8 to_slot )
+bool FOServer::SScriptFunc::Crit_MoveItemSilently(Critter* cr, uint item_id, uint count, uint8 to_slot) {
+	if (cr->IsNotValid)
+		SCRIPT_ERROR_R0("This nullptr.");
+	if (!item_id)
+		SCRIPT_ERROR_R0("Item id arg is zero.");
+	Item* item = cr->GetItem(item_id, cr->IsPlayer());
+	if (!item)
+		SCRIPT_ERROR_R0("Item not found.");
+	if (!count)
+		count = item->GetCount();
+	if (item->AccCritter.Slot == to_slot)
+		return true;                                    // SCRIPT_ERROR_R0("To slot arg is equal of current item slot.");
+	if (count > item->GetCount())
+		SCRIPT_ERROR_R0("Item count arg is greater than items count.");
+	bool result = cr->MoveItem(item->AccCritter.Slot, to_slot, item_id, count, true);
+	if (!result)
+		return false;             // SCRIPT_ERROR_R0("Fail to move item.");
+	//cr->Send_AddItem(item);
+	return true;
+}
+
+
+bool FOServer::SScriptFunc::Crit_MoveItem( Critter* cr, uint item_id, uint count, uint8 to_slot)
 {
     if( cr->IsNotValid )
         SCRIPT_ERROR_R0( "This nullptr." );

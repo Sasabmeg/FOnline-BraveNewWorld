@@ -1532,9 +1532,13 @@ uint Critter::CountItemPid( uint16 pid )
     return res;
 }
 
-bool Critter::MoveItem( uint8 from_slot, uint8 to_slot, uint item_id, uint count )
+bool Critter::MoveItem( uint8 from_slot, uint8 to_slot, uint item_id, uint count, bool silently )
 {
-    if( !item_id )
+	/*
+	if (IsPlayer()) {
+		WriteLog("CRITTER::MOVEITEM Id<%u> FromSlot<%u> ToSlot<%u> Count<%u> Silently<%u>\n", item_id, from_slot, to_slot, count, silently ? 1 : 0);
+	}*/
+	if( !item_id )
     {
         switch( from_slot )
         {
@@ -1679,14 +1683,18 @@ bool Critter::MoveItem( uint8 from_slot, uint8 to_slot, uint item_id, uint count
     if( item_swap )
         item_swap->AccCritter.Slot = from_slot;
 
-    SendAA_MoveItem( item, CRITTER_ACTION_MOVE_ITEM, from_slot );
-    item->EventMove( this, from_slot );
-    EventMoveItem( item, from_slot );
+	if (!silently) {
+		SendAA_MoveItem(item, CRITTER_ACTION_MOVE_ITEM, from_slot);
+		item->EventMove(this, from_slot);
+		EventMoveItem(item, from_slot);
+	}
     if( item_swap )
     {
-        SendAA_MoveItem( item, CRITTER_ACTION_MOVE_ITEM_SWAP, to_slot );
-        item->EventMove( this, to_slot );
-        EventMoveItem( item, to_slot );
+		if (!silently) {
+			SendAA_MoveItem(item, CRITTER_ACTION_MOVE_ITEM_SWAP, to_slot);
+			item->EventMove(this, to_slot);
+			EventMoveItem(item, to_slot);
+		}
     }
 
     return true;

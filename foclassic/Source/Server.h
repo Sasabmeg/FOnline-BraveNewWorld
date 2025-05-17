@@ -630,8 +630,8 @@ public:
         static uint          Crit_GetItems( Critter* cr, int slot, ScriptArray* items );
         static uint          Crit_GetItemsByType( Critter* cr, int type, ScriptArray* items );
         static ProtoItem*    Crit_GetSlotProto( Critter* cr, int slot, uint8& mode );
-        static bool          Crit_MoveItem( Critter* cr, uint item_id, uint count, uint8 to_slot );
-
+        static bool          Crit_MoveItem( Critter* cr, uint item_id, uint count, uint8 to_slot);
+		static bool          Crit_MoveItemSilently(Critter* cr, uint item_id, uint count, uint8 to_slot);
         static uint         Npc_ErasePlane( Critter* npc, int plane_type, bool all );
         static bool         Npc_ErasePlaneIndex( Critter* npc, uint index );
         static void         Npc_DropPlanes( Critter* npc );

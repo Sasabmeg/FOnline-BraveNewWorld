@@ -1136,8 +1136,9 @@ bool ScriptBind::RegisterAll( asIScriptEngine* engine, const uint8& app )
         RegisterObjectMethod( engine, "Critter", "uint GetItems(int slot, Item@[]@+ items) const", focFUNCTION( BIND_CLASS Crit_GetItems ), asCALL_CDECL_OBJFIRST );
         RegisterObjectMethod( engine, "Critter", "uint GetItemsByType(int type, Item@[]@+ items) const", focFUNCTION( BIND_CLASS Crit_GetItemsByType ), asCALL_CDECL_OBJFIRST );
         RegisterObjectMethod( engine, "Critter", "ProtoItem@+ GetSlotProto(int slot, uint8& mode) const", focFUNCTION( BIND_CLASS Crit_GetSlotProto ), asCALL_CDECL_OBJFIRST );
-        RegisterObjectMethod( engine, "Critter", "bool MoveItem(uint itemId, uint count, uint8 toSlot)", focFUNCTION( BIND_CLASS Crit_MoveItem ), asCALL_CDECL_OBJFIRST );
-        RegisterObjectMethod( engine, "Critter", "bool PickItem(uint16 hexX, uint16 hexY, uint16 protoId)", focFUNCTION( BIND_CLASS Crit_PickItem ), asCALL_CDECL_OBJFIRST );
+		RegisterObjectMethod(engine, "Critter", "bool MoveItem(uint itemId, uint count, uint8 toSlot)", focFUNCTION(BIND_CLASS Crit_MoveItem), asCALL_CDECL_OBJFIRST);
+		RegisterObjectMethod(engine, "Critter", "bool MoveItemSilently(uint itemId, uint count, uint8 toSlot)", focFUNCTION(BIND_CLASS Crit_MoveItemSilently), asCALL_CDECL_OBJFIRST);
+		RegisterObjectMethod( engine, "Critter", "bool PickItem(uint16 hexX, uint16 hexY, uint16 protoId)", focFUNCTION( BIND_CLASS Crit_PickItem ), asCALL_CDECL_OBJFIRST );
         RegisterObjectMethod( engine, "Critter", "void SetFavoriteItem(int slot, uint16 pid)", focFUNCTION( BIND_CLASS Crit_SetFavoriteItem ), asCALL_CDECL_OBJFIRST );
         RegisterObjectMethod( engine, "Critter", "uint16 GetFavoriteItem(int slot)", focFUNCTION( BIND_CLASS Crit_GetFavoriteItem ), asCALL_CDECL_OBJFIRST );
 

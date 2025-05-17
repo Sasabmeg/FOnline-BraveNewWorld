@@ -183,7 +183,7 @@ public:
     void        GetItemsType( int type, ItemPtrVec& items, bool lock );
     uint        CountItemPid( uint16 item_pid );
     void        TakeDefaultItem( uint8 slot );
-    bool        MoveItem( uint8 from_slot, uint8 to_slot, uint item_id, uint count );
+    bool        MoveItem( uint8 from_slot, uint8 to_slot, uint item_id, uint count, bool silently = false );
     uint        RealCountItems() { return (uint)invItems.size(); }
     uint        CountItems();
     ItemPtrVec& GetInventory()

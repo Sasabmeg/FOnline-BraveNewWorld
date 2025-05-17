@@ -595,6 +595,7 @@ class Critter
 	uint GetItemsByType(int type, array<Item@> @ items) const; // Arguments for this function have been guessed
 	ProtoItem@ GetSlotProto(int slot, uint8&inout mode) const; // Arguments for this function have been guessed
 	bool MoveItem(uint itemId, uint count, uint8 toSlot); // Arguments for this function have been guessed
+	bool MoveItemSilently(uint itemId, uint count, uint8 toSlot); // Arguments for this function have been guessed
 	bool PickItem(uint16 hexX, uint16 hexY, uint16 protoId); // Arguments for this function have been guessed
 	void SetFavoriteItem(int slot, uint16 pid); // Arguments for this function have been guessed
 	uint16 GetFavoriteItem(int slot); // Arguments for this function have been guessed

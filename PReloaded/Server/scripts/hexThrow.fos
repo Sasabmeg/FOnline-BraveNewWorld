@@ -301,10 +301,10 @@ void unsafe_HexThrow(Critter& player, int px, int py, int p2, string@ param3, ar
     if (IsDetectHiddenWeapon(item)) {
         Item@ currentWeaponTarget = _CritGetItemHand(player);
         if (valid(currentWeaponTarget)) {
-            player.MoveItem(currentWeaponTarget.Id, currentWeaponTarget.GetCount(), SLOT_INV);
+            player.MoveItemSilently(currentWeaponTarget.Id, currentWeaponTarget.GetCount(), SLOT_INV);
             currentWeaponId = currentWeaponTarget.Id;
         }
-        player.MoveItem(item.Id, item.GetCount(), SLOT_HAND1);
+        player.MoveItemSilently(item.Id, item.GetCount(), SLOT_HAND1);
         item.Update();
         if (player.IsPlayer()) {
             player.RunClientScript("hexThrow@_UpdateFlareEffect", 0, 0, 0, null, null);
@@ -409,11 +409,11 @@ void CommenceHexThrowingEffectAfterAnimation(Critter& cr, Map& map, Item& item, 
     if (realWeaponId != 0) {
         Item@ currentWeaponTarget = _CritGetItemHand(cr);
         if (valid(currentWeaponTarget)) {
-            cr.MoveItem(currentWeaponTarget.Id, currentWeaponTarget.GetCount(), SLOT_INV);
+            cr.MoveItemSilently(currentWeaponTarget.Id, currentWeaponTarget.GetCount(), SLOT_INV);
         }
         Item@ realWeapon = GetItem(realWeaponId);
         if (valid(realWeapon)) {
-            cr.MoveItem(realWeapon.Id, realWeapon.GetCount(), SLOT_HAND1);
+            cr.MoveItemSilently(realWeapon.Id, realWeapon.GetCount(), SLOT_HAND1);
         }
         realWeapon.Update();
         if (cr.IsPlayer()) {
