@@ -301,10 +301,10 @@ void unsafe_HexThrow(Critter& player, int px, int py, int p2, string@ param3, ar
     if (IsDetectHiddenWeapon(item)) {
         Item@ currentWeaponTarget = _CritGetItemHand(player);
         if (valid(currentWeaponTarget)) {
-            player.MoveItemSilently(currentWeaponTarget.Id, currentWeaponTarget.GetCount(), SLOT_INV);
+            player.MoveItem(currentWeaponTarget.Id, currentWeaponTarget.GetCount(), SLOT_INV);
             currentWeaponId = currentWeaponTarget.Id;
         }
-        player.MoveItemSilently(item.Id, item.GetCount(), SLOT_HAND1);
+        player.MoveItem(item.Id, item.GetCount(), SLOT_HAND1);
         item.Update();
         if (player.IsPlayer()) {
             player.RunClientScript("hexThrow@_UpdateFlareEffect", 0, 0, 0, null, null);
