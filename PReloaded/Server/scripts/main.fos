@@ -3180,6 +3180,10 @@ void map_critter_in(Map& map, Critter& cr)
             }
         }
         */
+        //  refresh stop attack press, just in case server crashed and it got saved in a future date
+        if (cr.Param[TO_EX_ANIM_INTERRUPT] > int(GetTick())) {
+            cr.ParamBase[TO_EX_ANIM_INTERRUPT] = 0;
+        }
     }
 
     //  refresh car info for player entering the map
