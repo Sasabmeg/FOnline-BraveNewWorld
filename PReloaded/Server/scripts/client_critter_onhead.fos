@@ -231,6 +231,28 @@ void DrawCritterOnHead()	//export
                     bonus = 6;
                 }
                 uint cSight = chosen.IsLife() ? __LookNormal + chosen.Stat[ST_PERCEPTION] * 3 + chosen.Param[PE_SHARPSHOOTER] * 6 + bonus: __LookMinimum;
+                int hour = __Hour;
+                int nightMalus = 0;
+                if (hour > 18) {
+                    nightMalus = CLAMP(hour - 18, 0, 4) * 3;
+                } else if (hour < 7) {
+                    nightMalus = CLAMP(7 - hour, 0, 4) * 3;
+                }
+                if (nightMalus > 0) {
+                    ItemCl@ helmet = cr.GetItem(0, SLOT_HEAD);
+                    if (valid(helmet) && helmet.Proto.Armor_Perk == HELMET_PERK_NIGHT_SIGHT) {
+                        nightMalus = 0;
+                    }
+                    ItemCl@ activeWeapon = cr.GetItem(0, SLOT_HAND1);
+                    if (valid(activeWeapon) && activeWeapon.Proto.Weapon_Perk == WEAPON_PERK_NIGHT_SIGHT) {
+                        nightMalus = 0;
+                    }
+                }
+                if (int(cSight) > __LookMinimum + nightMalus) {
+                    cSight -= nightMalus;
+                } else {
+                    cSight = __LookMinimum;
+                }
                 cSight = MAX(cSight, __LookMinimum);
                 if (dist > cSight / 3 || (hideNameRank > 1 && dist > 4)) {
                     name = "|" + COLOR_DDGREEN + " Wastelander";
@@ -291,6 +313,28 @@ void DrawCritterOnHead()	//export
                         bonus = 6;
                     }
                     uint cSight = chosen.IsLife() ? __LookNormal + chosen.Stat[ST_PERCEPTION] * 3 + chosen.Param[PE_SHARPSHOOTER] * 6 + bonus: __LookMinimum;
+                    int hour = __Hour;
+                    int nightMalus = 0;
+                    if (hour > 18) {
+                        nightMalus = CLAMP(hour - 18, 0, 4) * 3;
+                    } else if (hour < 7) {
+                        nightMalus = CLAMP(7 - hour, 0, 4) * 3;
+                    }
+                    if (nightMalus > 0) {
+                        ItemCl@ helmet = cr.GetItem(0, SLOT_HEAD);
+                        if (valid(helmet) && helmet.Proto.Armor_Perk == HELMET_PERK_NIGHT_SIGHT) {
+                            nightMalus = 0;
+                        }
+                        ItemCl@ activeWeapon = cr.GetItem(0, SLOT_HAND1);
+                        if (valid(activeWeapon) && activeWeapon.Proto.Weapon_Perk == WEAPON_PERK_NIGHT_SIGHT) {
+                            nightMalus = 0;
+                        }
+                    }
+                    if (int(cSight) > __LookMinimum + nightMalus) {
+                        cSight -= nightMalus;
+                    } else {
+                        cSight = __LookMinimum;
+                    }
                     cSight = MAX(cSight, __LookMinimum);
                     //Message("hp_proc = " + hp_proc + "color = " + color_r + ", " + color_g + ", " + color_b);
                     if (dist > cSight * 2 / 3) {

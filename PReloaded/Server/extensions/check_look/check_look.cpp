@@ -105,6 +105,18 @@ int TraceWall(uint16 hx, uint16 hy, uint16 tx, uint16 ty, Map& map, int dist)
     return dist;
 }
 
+const Item* GetHeadArmor(CritterMutual& cr)
+{
+	for (ItemVecIt it = cr.InvItems.begin(), end = cr.InvItems.end();it != end;++it)
+	{
+		if ((*it)->AccCritter.Slot == SLOT_HEAD) return *it;
+	}
+	return cr.DefItemSlotArmor;
+}
+
+#define WEAPON_PERK_NIGHT_SIGHT                 (7)
+#define HELMET_PERK_NIGHT_SIGHT                 (9)
+
 EXPORT bool check_look(Map& map, Critter& cr, Critter& opponent)
 {
 	if(!Init) InitLook();
@@ -148,6 +160,24 @@ EXPORT bool check_look(Map& map, Critter& cr, Critter& opponent)
     front_range*=3;
     front_range+= cr.Params[ST_BONUS_LOOK];
 	front_range+=(int)(FOClassic->LookNormal);
+	int hour = (FOClassic->Hour);
+	int nightMalus = 0;
+	if (hour > 18) {
+		nightMalus = CLAMP(hour - 18, 0, 4) * 3;
+	} else if (hour < 7) {
+		nightMalus = CLAMP(7 - hour, 0, 4) * 3;
+	}
+	/*if (!cr.CritterIsNpc) {
+		Log("CHECK LOOK :: hour<%u> nightMalus<%u>\n", hour, nightMalus);
+	}*/
+	const Item* armor = GetHeadArmor(cr);
+	if (armor != NULL && armor->Proto->Armor_Perk == HELMET_PERK_NIGHT_SIGHT) {
+		nightMalus = 0;
+	}
+	if (cr.ItemSlotMain != NULL && cr.ItemSlotMain->Proto->Weapon_Perk == WEAPON_PERK_NIGHT_SIGHT) {
+		nightMalus = 0;
+	}
+	front_range -= nightMalus;
 
 	if(dist > front_range) return false;
 

@@ -209,9 +209,34 @@ void Critter::FullClear()
     invItems.clear();
 }
 
+#define WEAPON_PERK_NIGHT_SIGHT                  (7)
+#define HELMET_PERK_NIGHT_SIGHT                  (9)   // No night sight penalty
 int Critter::GetLook()
 {
     int look = GameOpt.LookNormal + GetParam( ST_PERCEPTION ) * 3 + GetParam( ST_BONUS_LOOK ) + GetMultihex();
+	int hour = GameOpt.Hour;
+	int nightMalus = 0;
+	if (hour > 18) {
+		nightMalus = CLAMP(hour - 18, 0, 4) * 3;
+	}
+	else if (hour < 7) {
+		nightMalus = CLAMP(7 - hour, 0, 4) * 3;
+	}
+	/*
+	if (IsPlayer()) {
+		WriteLog("CRITTER GETLOOK :: hour<%u> nightMalus<%u>\n", hour, nightMalus);
+	}*/
+	if (nightMalus > 0) {
+		Item* headGear = GetItemSlot(SLOT_HEAD);
+		if (headGear != NULL && headGear->Proto != NULL && headGear->Proto->UserData[28] == HELMET_PERK_NIGHT_SIGHT) {
+			nightMalus = 0;
+		}
+		Item* mainHand = GetItemSlot(SLOT_HAND1);
+		if (mainHand != NULL && mainHand->Proto != NULL && mainHand->Proto->Weapon_Perk == WEAPON_PERK_NIGHT_SIGHT) {
+			nightMalus = 0;
+		}
+		look -= nightMalus;
+	}
     if( look < (int)GameOpt.LookMinimum )
         look = GameOpt.LookMinimum;
     return look;

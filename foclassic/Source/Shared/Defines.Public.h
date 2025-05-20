@@ -1237,6 +1237,8 @@
 #define SLOT_ARMOR                                        (3)
 #define SLOT_GROUND                                       (255)
 #define SLOT_LAST                                         (SLOT_ARMOR) // extensions/scripts
+#define SLOT_HEAD										  (4)	// Head armor
+#define SLOT_TROPHY									      (5)	// Animals skins, teeths, claws, etc.
 
 // Show screen modes
 // Ouput: it is 'uint param' in Critter::ShowScreen.

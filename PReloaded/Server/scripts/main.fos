@@ -3638,7 +3638,29 @@ bool FovCheck(Critter& cr, Critter& opponent)
 
     uint16 dist = GetDistantion(cx, cy, ox, oy);
     uint16 range =  __LookNormal + cr.Stat[ST_PERCEPTION] * 3 + _CritGetPerk(cr, PE_SHARPSHOOTER) * 6;
-    if(dist > range)
+    int hour = __Hour;
+	int nightMalus = 0;
+	if (hour > 18) {
+		nightMalus = CLAMP(hour - 18, 0, 4) * 3;
+	} else if (hour < 7) {
+		nightMalus = CLAMP(7 - hour, 0, 4) * 3;
+	}
+	if (nightMalus > 0) {
+        Item@ helmet = cr.GetItem(0, SLOT_HEAD);
+        if (valid(helmet) && helmet.Proto.Armor_Perk == HELMET_PERK_NIGHT_SIGHT) {
+            nightMalus = 0;
+        }
+        Item@ activeWeapon = cr.GetItem(0, SLOT_HAND1);
+        if (valid(activeWeapon) && activeWeapon.Proto.Weapon_Perk == WEAPON_PERK_NIGHT_SIGHT) {
+            nightMalus = 0;
+        }
+	}
+	if (int(range) > __LookMinimum + nightMalus) {
+        range -= nightMalus;
+    } else {
+        range = __LookMinimum;
+    }
+    if (dist > range)
         return false;
 
     // transform direction from critter A to critter B into "character coord-space"
