@@ -533,9 +533,11 @@ uint CritterCl::GetLook()
 	int hour = GameOpt.Hour;
 	int nightMalus = 0;
 	if (hour > 18) {
+		//nightMalus = CLAMP(hour - 18, 0, 4) * GameOptExt.NightTimeSightMalus / 4;
 		nightMalus = CLAMP(hour - 18, 0, 4) * 3;
 	}
 	else if (hour < 7) {
+		//nightMalus = CLAMP(7 - hour, 0, 4) * GameOptExt.NightTimeSightMalus / 4;
 		nightMalus = CLAMP(7 - hour, 0, 4) * 3;
 	}
 	if (nightMalus > 0) {

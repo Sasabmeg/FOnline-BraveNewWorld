@@ -694,15 +694,16 @@ bool ScriptBind::RegisterAll( asIScriptEngine* engine, const uint8& app )
         RegisterGlobalProperty( engine, "uint __TraitBegin", &GameOpt.TraitBegin );
         RegisterGlobalProperty( engine, "uint __TraitEnd", &GameOpt.TraitEnd );
         RegisterGlobalProperty( engine, "uint __ReputationBegin", &GameOpt.ReputationBegin );
-        RegisterGlobalProperty( engine, "uint __ReputationEnd", &GameOpt.ReputationEnd );
+		RegisterGlobalProperty( engine, "uint __ReputationEnd", &GameOpt.ReputationEnd);
+		//RegisterGlobalProperty( engine, "uint __NightTimeSightMalus", &GameOptExt.NightTimeSightMalus);
 
-        RegisterGlobalProperty( engine, "int __ReputationLoved", &GameOpt.ReputationLoved );
+		RegisterGlobalProperty( engine, "int __ReputationLoved", &GameOpt.ReputationLoved );
         RegisterGlobalProperty( engine, "int __ReputationLiked", &GameOpt.ReputationLiked );
         RegisterGlobalProperty( engine, "int __ReputationAccepted", &GameOpt.ReputationAccepted );
         RegisterGlobalProperty( engine, "int __ReputationNeutral", &GameOpt.ReputationNeutral );
         RegisterGlobalProperty( engine, "int __ReputationAntipathy", &GameOpt.ReputationAntipathy );
         RegisterGlobalProperty( engine, "int __ReputationHated", &GameOpt.ReputationHated );
-    }
+	}
     #endif
 
     //

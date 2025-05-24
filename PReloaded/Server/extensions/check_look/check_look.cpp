@@ -116,22 +116,21 @@ const Item* GetHeadArmor(CritterMutual& cr)
 
 #define WEAPON_PERK_NIGHT_SIGHT                 (7)
 #define HELMET_PERK_NIGHT_SIGHT                 (9)
-
 EXPORT bool check_look(Map& map, Critter& cr, Critter& opponent)
 {
-	if(!Init) InitLook();
-	if(_CritHasExtMode(opponent,MODE_EXT_GOD)) return false;
+	if (!Init) InitLook();
+	if (_CritHasExtMode(opponent, MODE_EXT_GOD)) return false;
 
-	if(!cr.CritterIsNpc)
+	if (!cr.CritterIsNpc)
 	{
-		if(_CritHasExtMode(cr,MODE_EXT_LOOK_ADMIN)) return true;
-		if(cr.MapId != map.Data.MapId && map.Data.UserData[MAP_DATA_ACTIVE_COUNTDOWN]!=0) return false;
+		if (_CritHasExtMode(cr, MODE_EXT_LOOK_ADMIN)) return true;
+		if (cr.MapId != map.Data.MapId && map.Data.UserData[MAP_DATA_ACTIVE_COUNTDOWN] != 0) return false;
 	}
-	if(_CritHasExtMode(opponent,MODE_EXT_LOOK_INVISIBLE) && _CritHasMode(opponent, MODE_HIDE))
-        return false; // 100% invis for admins
+	if (_CritHasExtMode(opponent, MODE_EXT_LOOK_INVISIBLE) && _CritHasMode(opponent, MODE_HIDE))
+		return false; // 100% invis for admins
 
-	if(_CritHasExtMode(opponent,MODE_EXT_LOOK_ALWAYS_VISIBLE) && !_CritHasMode(opponent, MODE_HIDE))
-        return true;
+	if (_CritHasExtMode(opponent, MODE_EXT_LOOK_ALWAYS_VISIBLE) && !_CritHasMode(opponent, MODE_HIDE))
+		return true;
 
 	uint16 cx = cr.HexX;
 	uint16 cy = cr.HexY;
@@ -141,9 +140,9 @@ EXPORT bool check_look(Map& map, Critter& cr, Critter& opponent)
 	bool stealhBoyActive = (opponent.ItemSlotExt->Proto->ProtoId == PID_ACTIVE_STEALTH_BOY || opponent.ItemSlotMain->Proto->ProtoId == PID_ACTIVE_STEALTH_BOY);
 
 	int dist = GetDistantion(cx, cy, ox, oy);
-	if(dist>60) return false;
+	if (dist > 60) return false;
 
-	if((dist<=cr.ItemSlotExt->Proto->MagicPower || dist<=cr.ItemSlotMain->Proto->MagicPower) && // is in Motion Sensor range
+	if ((dist <= cr.ItemSlotExt->Proto->MagicPower || dist <= cr.ItemSlotMain->Proto->MagicPower) && // is in Motion Sensor range
 		(!stealhBoyActive || (stealhBoyActive && !_CritHasMode(opponent, MODE_HIDE))))          // don't have active Stealth Boy OR have active SB and is not sneaked
 		return true;
 
@@ -153,18 +152,21 @@ EXPORT bool check_look(Map& map, Critter& cr, Critter& opponent)
 	}
 
 	// dead/unconcious/neg hp - only minimum range
-	if(cr.Cond != CRITTER_CONDITION_LIFE) return (dist <= (int)(FOClassic->LookMinimum));
+	if (cr.Cond != CRITTER_CONDITION_LIFE) return (dist <= (int)(FOClassic->LookMinimum));
 
-    int front_range=(cr.Params[DAMAGE_EYE]!=0)?1:(CLAMP((cr.Params[ST_PERCEPTION]+cr.Params[ST_PERCEPTION_EXT]),1,10));
-	if(cr.Params[PE_SHARPSHOOTER]) front_range+=2*cr.Params[PE_SHARPSHOOTER];
-    front_range*=3;
-    front_range+= cr.Params[ST_BONUS_LOOK];
-	front_range+=(int)(FOClassic->LookNormal);
+	int front_range = (cr.Params[DAMAGE_EYE] != 0) ? 1 : (CLAMP((cr.Params[ST_PERCEPTION] + cr.Params[ST_PERCEPTION_EXT]), 1, 10));
+	if (cr.Params[PE_SHARPSHOOTER]) front_range += 2 * cr.Params[PE_SHARPSHOOTER];
+	front_range *= 3;
+	front_range += cr.Params[ST_BONUS_LOOK];
+	front_range += (int)(FOClassic->LookNormal);
 	int hour = (FOClassic->Hour);
 	int nightMalus = 0;
 	if (hour > 18) {
+		//nightMalus = CLAMP(hour - 18, 0, 4) * (FOClassicExt->NightTimeSightMalus) / 4;
 		nightMalus = CLAMP(hour - 18, 0, 4) * 3;
-	} else if (hour < 7) {
+	}
+	else if (hour < 7) {
+		//nightMalus = CLAMP(7 - hour, 0, 4) * (FOClassicExt->NightTimeSightMalus) / 4;
 		nightMalus = CLAMP(7 - hour, 0, 4) * 3;
 	}
 	/*if (!cr.CritterIsNpc) {
@@ -177,7 +179,14 @@ EXPORT bool check_look(Map& map, Critter& cr, Critter& opponent)
 	if (cr.ItemSlotMain != NULL && cr.ItemSlotMain->Proto->Weapon_Perk == WEAPON_PERK_NIGHT_SIGHT) {
 		nightMalus = 0;
 	}
-	front_range -= nightMalus;
+	front_range += cr.Params[ST_BONUS_LOOK];
+	if (nightMalus > 0) {
+		if (front_range > FOClassic->LookMinimum + nightMalus) {
+			front_range -= nightMalus;
+		} else {
+			front_range = FOClassic->LookMinimum;
+		}
+	}
 
 	if(dist > front_range) return false;
 

@@ -321,6 +321,7 @@ struct GameOptionsExt
 
     void* CommandLine;
     void* ConfigFile;
+	//uint NightTimeSightMalus;
 
     GameOptionsExt();
 };

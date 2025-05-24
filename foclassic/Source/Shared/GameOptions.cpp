@@ -327,4 +327,5 @@ GameOptionsExt::GameOptionsExt()
 
     CommandLine = NULL;
     ConfigFile = NULL;
+	//NightTimeSightMalus = 12;
 }
