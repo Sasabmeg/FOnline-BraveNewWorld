@@ -81,14 +81,22 @@ CraftItem& CraftItem::operator=( const CraftItem& _right )
 
 bool CraftItem::IsValid()
 {
-    if( !Num )
-        return false;
-    if( !Name.length() )
-        return false;
-    if( NeedItems.empty() )
-        return false;
-    if( OutItems.empty() )
-        return false;
+	if (!Num) {
+		WriteLogF(_FUNC_, " :: Num is invalid (0).\n");
+		return false;
+	}
+	if (!Name.length()) {
+		WriteLogF(_FUNC_, " :: Name.length invalid.\n");
+		return false;
+	}
+	if (NeedItems.empty()) {
+		WriteLogF(_FUNC_, " :: NeedItems is empty.\n");
+		return false;
+	}
+	if (OutItems.empty()) {
+		WriteLogF(_FUNC_, " :: OutItems is empty.\n");
+		return false;
+	}
     return true;
 }
 
@@ -694,12 +702,18 @@ bool CraftManager::AddCraft( uint num, const char* str )
 
 bool CraftManager::AddCraft( CraftItem* craft, bool make_copy )
 {
-    if( !craft )
-        return false;
-    if( !craft->IsValid() )
-        return false;
-    if( IsCraftExist( craft->Num ) )
-        return false;
+	if (!craft) {
+		WriteLogF(_FUNC_, " :: AddCraft - CraftItem is null.\n");
+		return false;
+	}
+	if (!craft->IsValid()) {
+		WriteLogF(_FUNC_, " :: AddCraft - CraftItem is not valid.\n");
+		return false;
+	}
+	if (IsCraftExist(craft->Num)) {
+		WriteLogF(_FUNC_, " :: AddCraft - CraftItem already exists.\n");
+		return false;
+	}
 
     if( make_copy )
     {
