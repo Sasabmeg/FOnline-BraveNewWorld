@@ -1414,20 +1414,10 @@ void SetInventoryDetailText(ItemCl& item) {
         int ammoCount = 0;
         int ammoWeight = 0;
         if (item.GetType() == ITEM_TYPE_WEAPON) {
-            // Ammo load
-            if(item.Proto.Weapon_MaxAmmoCount > 0) {
-                text += "\n";
-                string str = GetMsgStr(TEXTMSG_GAME, STR_INV_HAS_SHOTS);
-                str = ReplaceText(str, "VALUE", item.AmmoCount);
-                str = ReplaceText(str, "MAX_VALUE", item.Proto.Weapon_MaxAmmoCount);
-                str = ReplaceText(str, "AMMO", GetMsgStr(TEXTMSG_GAME, STR_CALIBER(item.Proto.Weapon_Caliber)));
-                text += str;
-                if (item.AmmoCount > 0) {
-                    ProtoItem@ ammo = GetProtoItem(item.AmmoPid);
-                    if (valid(ammo)) {
-                        ammoCount = item.AmmoCount;
-                        ammoWeight = ammo.Weight;
-                    }
+            if (item.Proto.Weapon_Skill_0 >= 200 && item.Proto.Weapon_Skill_0 <= 218) {
+                text += "\nSkill: " + GetMsgStr(TEXTMSG_GAME, STR_SKILL_NAME(item.Proto.Weapon_Skill_0));
+                if (item.Proto.Weapon_ActiveUses > 1 && item.Proto.Weapon_Skill_0 != item.Proto.Weapon_Skill_1 && item.Proto.Weapon_Skill_1 >= 200 && item.Proto.Weapon_Skill_1 <= 218) {
+                    text += " / " + GetMsgStr(TEXTMSG_GAME, STR_SKILL_NAME(item.Proto.Weapon_Skill_1));
                 }
             }
             if (item.Proto.Weapon_MinStrength > 1) {
@@ -1454,6 +1444,22 @@ void SetInventoryDetailText(ItemCl& item) {
             }
             if (item.Proto.Weapon_DmgMin_0 > 0 && item.Proto.Weapon_DmgMax_0 > 0) {
                 text += "\nBase damage: " + item.Proto.Weapon_DmgMin_0 + "-" + item.Proto.Weapon_DmgMax_0;
+            }
+            // Ammo load
+            if(item.Proto.Weapon_MaxAmmoCount > 0) {
+                text += "\n";
+                string str = GetMsgStr(TEXTMSG_GAME, STR_INV_HAS_SHOTS);
+                str = ReplaceText(str, "VALUE", item.AmmoCount);
+                str = ReplaceText(str, "MAX_VALUE", item.Proto.Weapon_MaxAmmoCount);
+                str = ReplaceText(str, "AMMO", GetMsgStr(TEXTMSG_GAME, STR_CALIBER(item.Proto.Weapon_Caliber)));
+                text += str;
+                if (item.AmmoCount > 0) {
+                    ProtoItem@ ammo = GetProtoItem(item.AmmoPid);
+                    if (valid(ammo)) {
+                        ammoCount = item.AmmoCount;
+                        ammoWeight = ammo.Weight;
+                    }
+                }
             }
             if (IsDetectHiddenWeapon(item)) {
                 text += "\nReveal hidden once:";
