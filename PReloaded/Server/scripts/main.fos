@@ -3495,6 +3495,11 @@ void items_crafted(array<Item@>& items, array<uint>& itemsCount, array<Item@>& r
     }
     //Log("Total Craft XP = " + craftXp);
 
+    //  lockpick levels too slow at start, so it needs help
+    if (crafter.SkillBase[craftSkillNum] < 100 && craftSkillNum == SK_LOCKPICK) {
+        craftXp *= Random(2, 5);
+    }
+
     GainSkillXp(crafter, craftSkillNum, craftXp);
 
 	TC_CraftCapsReward(crafter, (multiplier * items[0].Proto.Cost));

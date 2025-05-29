@@ -11,7 +11,8 @@
 #include "multihex_h.fos"
 #include "utils_h.fos"
 
-#define LOCKER_SOUND_RADIUS    (15)
+#define LOCKER_SOUND_RADIUS     (15)
+#define LOCKER_MAX_KEY_ID       (1000000)
 
 import void TryPickupContainer(Critter& cr, Item& locker) from "movable_container";
 import void TryRotateContainer(Critter& cr, Item& locker) from "movable_container";
@@ -75,56 +76,95 @@ bool UseSkillOnLocker(Critter& cr, Item& locker, int skill)   // Export
         uint8  mode = 0;
         uint16 activePid = cr.GetSlotProto(SLOT_HAND1, mode).ProtoId;
         //Item@  lockpicks = _CritGetItemHand(cr);
+        bool hasTools = false;
         Item@  lockpicks = SelectSkillItem(cr, lockpicks, SK_LOCKPICK);
-        if (!valid(lockpicks)) {
+        if (!valid(lockpicks) || lockpicks.Proto.Misc_ToolSkillNum != SK_LOCKPICK) {
             @lockpicks = SelectSkillItemExt(cr, lockpicks, SK_LOCKPICK);
         }
         if (valid(lockpicks) && lockpicks.Proto.Misc_ToolSkillNum == SK_LOCKPICK) {
+            hasTools = true;
             if (cr.GetAccess() >= ACCESS_TESTER) {
                 cr.Say(SAY_NETMSG, "Lockpick tool bonus = " + lockpicks.Proto.Misc_ToolSkillBonus + ", skill = " + cr.Skill[SK_LOCKPICK]);
             }
             base += lockpicks.Proto.Misc_ToolSkillBonus;
-            if (Random(0, 30) == 0) {
+            if (Random(0, CLAMP(10 + cr.Skill[SK_LOCKPICK]/10, 0, 20)) == 0) {
                 cr.DeleteItem(lockpicks.GetProtoId(), 1);
             }
         }
         // Todo: PID_ELECTRONIC_LOCKPICKS, PID_ELEC_LOCKPICK_MKII
-
-        base = CLAMP(base, 0, 95);
         int roll = Random(1, 100);
-        if (base >= roll) {
-            if (locker.Proto.Container_Changeble && !LockerOpen(locker)) {
-                Log("ERR: something wrong with this locker: " + locker.MapId + "," + locker.HexX + "," + locker.HexY + " pid " + locker.GetProtoId());
+        int lockpickTimeout = 15 - CLAMP(base / 10, 0, 12);
+        base = CLAMP(base, 0, 95);
+        if (base == 0) {
+            if (hasTools) {
+                cr.Say(SAY_NETMSG, "Even with thieves' tools this lock seems to be too complex for me!");
+            } else {
+                cr.Say(SAY_NETMSG, "Without any thieves' tools? No way!");
             }
-            locker.LockerId = 0;
-            locker.LockerComplexity = 0;
-            // TODO: OnOpen ??
-            if (locker.GetType() == ITEM_TYPE_CONTAINER) {
-                cr.ShowContainer(null, locker, locker.Proto.GroundLevel ? TRANSFER_HEX_CONT_DOWN : TRANSFER_HEX_CONT_UP);
-            }
-            cr.StatBase[ST_EXPERIENCE] += (30 + 10 * exp_mod);
-            if (cr.GetAccess() >= ACCESS_TESTER) {
-                cr.Say(SAY_NETMSG, "Lockpick SUCCESS :: base = " + base + " vs roll " + roll);
-            }
-            int xp = CLAMP((210 - cr.Skill[SK_LOCKPICK]) / 10, 1, 15) + exp_mod;
-            GainSkillXp(cr, SK_LOCKPICK, Random(xp / 2, xp));
-            AddScore(cr, SCORE_CRACKER, 1);
+            _SetTimeout(cr, TO_SK_LOCKPICK, REAL_SECOND(3));
         } else {
-            cr.SayMsg(SAY_NETMSG, TEXTMSG_GAME, STR_SKILL_LOCKPICK_FAIL);
-            if (cr.GetAccess() >= ACCESS_TESTER) {
-                cr.Say(SAY_NETMSG, "Lockpick FAIL :: base = " + base + " vs roll " + roll);
-            }
-            if (cr.Skill[SK_LOCKPICK] < 100) {
-                int xp = CLAMP((110 - cr.Skill[SK_LOCKPICK]) / 10, 1, 11) + exp_mod;
-                GainSkillXp(cr, SK_LOCKPICK, Random(1, 1 + xp / 2));
+            if (base >= roll) {
+                if (locker.Proto.Container_Changeble && !LockerOpen(locker)) {
+                    Log("ERR: something wrong with this locker: " + locker.MapId + "," + locker.HexX + "," + locker.HexY + " pid " + locker.GetProtoId());
+                }
+                locker.LockerId = 0;
+                locker.LockerComplexity = 0;
+                // TODO: OnOpen ??
+                if (locker.GetType() == ITEM_TYPE_CONTAINER) {
+                    cr.ShowContainer(null, locker, locker.Proto.GroundLevel ? TRANSFER_HEX_CONT_DOWN : TRANSFER_HEX_CONT_UP);
+                }
+                cr.StatBase[ST_EXPERIENCE] += (30 + 10 * exp_mod);
+                if (cr.GetAccess() >= ACCESS_TESTER) {
+                    cr.Say(SAY_NETMSG, "Lockpick SUCCESS :: base = " + base + " vs roll " + roll);
+                }
+                int xp = CLAMP((210 - cr.Skill[SK_LOCKPICK]) / 10, 1, 15) + exp_mod;
+                //  leveling lockpick is too slow otherwise
+                if (cr.Skill[SK_LOCKPICK] < 100) {
+                    xp *= Random(2, 3 + exp_mod);
+                }
+                GainSkillXp(cr, SK_LOCKPICK, Random(xp / 2, xp));
+                AddScore(cr, SCORE_CRACKER, 1);
+                _SetTimeout(cr, TO_SK_LOCKPICK, REAL_SECOND(lockpickTimeout));
+            } else {
+                cr.SayMsg(SAY_NETMSG, TEXTMSG_GAME, STR_SKILL_LOCKPICK_FAIL);
+                //  add more info for noobs
+                if (!hasTools && cr.Stat[ST_LEVEL] < 12) {
+                    cr.Say(SAY_NETMSG, "If you have any thieves' tools, you can equip them in main or off-hand slot to get bonuses.");
+                }
+                if (cr.GetAccess() >= ACCESS_TESTER) {
+                    cr.Say(SAY_NETMSG, "Lockpick FAIL :: base = " + base + " vs roll " + roll);
+                }
+                if (cr.Skill[SK_LOCKPICK] < 100) {
+                    int xp = CLAMP((110 - cr.Skill[SK_LOCKPICK]) / 10, 1, 11) + exp_mod;
+                    //  leveling lockpick is too slow otherwise
+                    if (cr.Skill[SK_LOCKPICK] < 75) {
+                        xp *= Random(2, 3 + exp_mod);
+                    }
+                    GainSkillXp(cr, SK_LOCKPICK, Random(1, 1 + xp / 2));
+                }
+                _SetTimeout(cr, TO_SK_LOCKPICK, REAL_SECOND(lockpickTimeout));
             }
         }
-        _SetTimeout(cr, TO_SK_LOCKPICK, LOCKPICK_TIMEOUT(cr));
     } else if (skill == SK_SCIENCE) {
-        if (cr.IsPlayer() && cr.GetAccess() >= ACCESS_TESTER) {
-            cr.Say(SAY_NETMSG, "Complexity: " + locker.LockerComplexity + ", id: " + locker.LockerId);
+        if (cr.IsPlayer()) {
+            if (cr.GetAccess() >= ACCESS_TESTER) {
+                cr.Say(SAY_NETMSG, "Complexity: " + locker.LockerComplexity + ", id: " + locker.LockerId);
+            } else {
+                if (locker.LockerComplexity == 0) {
+                    cr.Say(SAY_NETMSG, "It's not locked.");
+                } else if (locker.LockerComplexity < 50) {
+                    cr.Say(SAY_NETMSG, "This lock is simple." + (locker.LockerId < LOCKER_MAX_KEY_ID ? (" (Key id: " + locker.LockerId + ")") : ""));
+                } else if (locker.LockerComplexity < 100) {
+                    cr.Say(SAY_NETMSG, "A more complex lock." + (locker.LockerId < LOCKER_MAX_KEY_ID ? (" (Key id: " + locker.LockerId + ")") : ""));
+                } else if (locker.LockerComplexity < 200) {
+                    cr.Say(SAY_NETMSG, "A very complex lock!" + (locker.LockerId < LOCKER_MAX_KEY_ID ? (" (Key id: " + locker.LockerId + ")") : ""));
+                } else if (locker.LockerComplexity < 300) {
+                    cr.Say(SAY_NETMSG, "An almost unpickable lock!" + (locker.LockerId < LOCKER_MAX_KEY_ID ? (" (Key id: " + locker.LockerId + ")") : ""));
+                } else {
+                    cr.Say(SAY_NETMSG, "This lock has excellent craftsmanship, it must be impossible to pick!" + (locker.LockerId < LOCKER_MAX_KEY_ID ? (" (Key id: " + locker.LockerId + ")") : ""));
+                }
+            }
         }
-
         TryPickupContainer(cr, locker);
     } else if(skill == SK_REPAIR) {
         TryRotateContainer(cr, locker);
