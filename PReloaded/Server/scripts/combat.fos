@@ -2263,7 +2263,7 @@ void ApplyDamage(AttackStruct& attack, Critter& target, uint rounds, bool isCrit
             dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , Confident Shooter (old MRD) bonus = |" + COLOR_DTEXT_BONUS + " " + mrdBonus;
             dummyInfo += "|" + COLOR_DTEXT_REGULAR + "  ( Attacker CH  = |" + COLOR_DTEXT_BONUS + " " + attacker.Stat[ST_CHARISMA];
             dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , Target CH = |" + COLOR_DTEXT_MALUS + " " + target.Stat[ST_CHARISMA] + ", ";
-            dummyInfo += "|" + COLOR_DTEXT_BONUS + " Formula: 1 + CLAMP(CH1 - (CH2+1)*2/3, 0, 4) )";
+            dummyInfo += "|" + COLOR_DTEXT_BONUS + " Formula: 1 + CLAMP(CH1 - (CH2+1)*2/3, 0, 6) )";
         }
     }
 

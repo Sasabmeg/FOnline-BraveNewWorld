@@ -607,6 +607,26 @@ void GMToolsDraw(uint layer, int mouseX, int mouseY)
 
                 if(critter.Lexems.length() > 0)
                     y = draw("\tlexems: " + critter.Lexems, x, y);
+                //  draw the armor resistance and perks
+               	ItemCl@ usedArmor = critter.GetItem(0, SLOT_ARMOR);
+               	if (valid(usedArmor)) {
+                    string armorText = "";
+                    armorText += "Normal " + usedArmor.Proto.Armor_DTNormal + "/"  + usedArmor.Proto.Armor_DRNormal + "%, Crit. Resist " + usedArmor.Proto.Armor_CMCritChance + "/" + usedArmor.Proto.Armor_CMCritPower;
+                    y = draw("\tArmor:  " + armorText + "\n", x, y);
+               	}
+                string resistsText = "";
+                resistsText = "Normal " + critter.GetDT(DAMAGE_TYPE_NORMAL, false) + "/" + critter.GetDR(DAMAGE_TYPE_NORMAL, false) + "%\n";
+                y = draw("\tResist: " + resistsText + "\n", x, y);
+
+                string perksText = "";
+                if (critter.Perk[PE_WASTELANDERS_RESILIENCE] > 0) perksText += "WR ";
+                if (critter.Perk[PE_TOUGHNESS] > 0) perksText += "TG ";
+                if (critter.Perk[PE_EVEN_TOUGHER] > 0) perksText += "ET ";
+                if (critter.Perk[PE_IN_YOUR_FACE] > 0) perksText += "IYF ";
+                if (critter.Perk[PE_STONEWALL] > 0) perksText += "SW ";
+                if (critter.Perk[PE_STONEWALL] > 0) perksText += "IL ";
+                if (critter.Perk[PE_MAN_OF_STEEL] > 0) perksText += "MoS";
+                y = draw("\tPerks: " + perksText + "\n", x, y);
 
                 y = draw("}", x, y);
             }

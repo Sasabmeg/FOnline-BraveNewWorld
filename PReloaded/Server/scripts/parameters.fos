@@ -483,8 +483,7 @@ void CritterGenerate(array<int>& data)     // Export to client_main@player_data_
     #ifdef __SERVER
     if(IsHumanoid(cr))
         cr.StatBase[ST_MAX_LIFE] += 40;
-    bool isDummyTraining = cr.CrType >= CRTYPE_DUMMY_STAND ? (cr.CrType <= CRTYPE_DUMMY_POWER_ARMOR ? true : false) : false;
-    if (cr.IsPlayer() || isDummyTraining) {
+    if (cr.IsPlayer()) {
         _param_[ST_MAX_LIFE] += 100;
         _param_[PE_WASTELANDERS_RESILIENCE] = 1;
     }

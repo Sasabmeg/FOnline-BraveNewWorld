@@ -245,6 +245,19 @@ void r_takeMatsForDummy(Critter& player, Critter@ npc, int armorType) {
 
 //  PERK COSTS
 
+//  Wastelander's Resilience upgrade
+uint[] wastelandersResilienceMats = {PID_JUNK, 1};
+
+bool d_hasMatsWastelandersResilience(Critter& player, Critter@ npc) {
+    return hasMats(player, wastelandersResilienceMats);
+}
+
+void r_takeMatsWastelandersResilience(Critter& player, Critter@ npc) {
+    if (!takeMats(player, wastelandersResilienceMats)) {
+        Log("TRAINING DUMMY :: Dialog desync when trying to upgrade Wastelander's Resilience to dummy. Player = " + player.Name);
+    }
+}
+
 //  Toughness upgrade
 uint[] toughnessMats = {PID_JUNK, 1, PID_FIBER, 2, PID_GOLDEN_GECKO_PELT, 2};
 
@@ -346,6 +359,10 @@ void dlg_ShowDummyStats(Critter& player, Critter@ npc, string@ text) {
 
     array<string> perks;
     bool perkFound = false;
+    if (npc.Perk[PE_WASTELANDERS_RESILIENCE] > 0) {
+        perks.insertLast("Wastelander's Resilience");
+        perkFound = true;
+    }
     if (npc.Perk[PE_TOUGHNESS] > 0) {
         perks.insertLast("Toughness");
         perkFound = true;

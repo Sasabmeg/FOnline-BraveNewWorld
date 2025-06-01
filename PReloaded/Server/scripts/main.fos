@@ -275,6 +275,12 @@ bool start()
     // Perks for client_combat hit chance
     SetSendParameter(PE_DODGER, true);
     SetSendParameter(PE_IN_YOUR_FACE, true);
+    SetSendParameter(PE_TOUGHNESS, true);
+    SetSendParameter(PE_EVEN_TOUGHER, true);
+    SetSendParameter(PE_MAN_OF_STEEL, true);
+    SetSendParameter(PE_STONEWALL, true);
+    SetSendParameter(PE_IRON_LIMBS, true);
+    SetSendParameter(PE_WASTELANDERS_RESILIENCE, true);
     // Agility
     SetSendParameter(ST_AGILITY, true);
     // Hit points, uses Strenght and Endurance

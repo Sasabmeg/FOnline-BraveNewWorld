@@ -259,6 +259,7 @@ void InitPerks() // export
 
     //  level 9 perks
     SATISFIES(PE_BONUS_RANGED_DAMAGE,    @_OrRangedSkill, 0, 0, 100);
+    SATISFIES(PE_MORE_RANGED_DAMAGE,     @_OrRangedSkill, 0, 0, 100);
     SATISFIES(PE_SHARPSHOOTER,           @_OrCombatSkill, 0, 0, 100);
     SATISFIES(PE_PYROMANIAC,             @_OrCombatSkill, 0, 0, 100);
 
@@ -266,7 +267,6 @@ void InitPerks() // export
     SATISFIES(PE_BETTER_CRITICALS,       @_OrCombatSkill, 0, 0, 125);
 
     //  level 15 perks
-    SATISFIES(PE_MORE_RANGED_DAMAGE,     @_OrRangedSkill, 0, 0, 150);
 
     //  level 18 perks
     SATISFIES(PE_BONUS_RATE_OF_ATTACK,   @_OrCombatSkill, 0, 0, 175);

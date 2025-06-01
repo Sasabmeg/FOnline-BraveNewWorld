@@ -851,7 +851,7 @@ class CTooltips {
         tooltipsValueExt.insertLast(pipReference
                                      + notes
                                      + "\n\u2022 +2 DT and +6 DR bonus to all damage resistance types."
-                                     + "\n\u2022 Excludes: Even Tougher."
+                                     + "\n\u2022 Mutually exclusive with Even Tougher."
                                      + requirements
                                      + "\n\t\u2022  Endurance >= 4");
 
@@ -899,8 +899,23 @@ class CTooltips {
                                      + notes
                                      + "\n\u2022 +3 bonus damage per bullet with Guns."
                                      + "\n\t\u2022 Works with energy weapons as well, despite the term 'per bullet'."
+                                     + "\n\u2022 Mutually exclusive with Bonus Ranged Damage."
                                      + requirements
                                      + "\n\t\u2022  One ranged combat skill >= 100");
+
+        tooltipsKey.insertLast(PE_MORE_RANGED_DAMAGE);
+        tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(PE_MORE_RANGED_DAMAGE)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(PE_MORE_RANGED_DAMAGE)) + pipText);
+        tooltipsValueExt.insertLast(pipReference
+                                     + notes
+                                     + "\n\u2022 Up to +5 bonus damage per bullet based on your and your targets Charisma:"
+                                     + "\n\t\u2022 CLAMP(attacker.CH - ((target.CH2 + 1)*2/3), 0, 6) + 1"
+                                     + "\n\t\u2022 ex: attacker.CH=5, target.CH=3 -> +3 damage per bullet"
+                                     + "\n\t\u2022 ex: attacker.CH=7, target.CH=4 -> +5 damage per bullet"
+                                     + "\n\u2022 Mutually exclusive with Bonus Ranged Damage."
+                                     + "\n\u2022 Later also known or referenced as Confident Shooter."
+                                     + requirements
+                                     + "\n\t\u2022  One ranged combat skill >= 100"
+                                     + "\n\t\u2022 Charisma >= 4");
 
         tooltipsKey.insertLast(PE_PYROMANIAC);
         tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(PE_PYROMANIAC)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(PE_PYROMANIAC)) + pipText);
@@ -916,7 +931,7 @@ class CTooltips {
         tooltipsValueExt.insertLast(pipReference
                                      + notes
                                      + "\n\u2022 +3 DT and +9 DR bonus to normal damage resistance only."
-                                     + "\n\u2022 Excludes: Toughness."
+                                     + "\n\u2022 Mutually exclusive with Toughness."
                                      + requirements
                                      + "\n\t\u2022  Endurance >= 5");
 
@@ -1053,19 +1068,6 @@ class CTooltips {
                                      + "\n\t\u2022  Luck <= 8");
 
         //  Level 15 Perks
-        tooltipsKey.insertLast(PE_MORE_RANGED_DAMAGE);
-        tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(PE_MORE_RANGED_DAMAGE)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(PE_MORE_RANGED_DAMAGE)) + pipText);
-        tooltipsValueExt.insertLast(pipReference
-                                     + notes
-                                     + "\n\u2022 Up to +5 bonus damage per bullet based on your and your targets Charisma:"
-                                     + "\n\t\u2022 CLAMP(attacker.CH - ((target.CH2 + 1)*2/3), 0, 4) + 1"
-                                     + "\n\t\u2022 ex: attacker.CH=5, target.CH=3 -> +3 damage per bullet"
-                                     + "\n\t\u2022 ex: attacker.CH=7, target.CH=4 -> +5 damage per bullet"
-                                     + "\n\u2022 Later also known or referenced as Confident Shooter."
-                                     + requirements
-                                     + "\n\t\u2022  One ranged combat skill >= 150"
-                                     + "\n\t\u2022 Charisma >= 4");
-
         tooltipsKey.insertLast(PE_MAN_OF_STEEL);
         tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(PE_MAN_OF_STEEL)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(PE_MAN_OF_STEEL)) + pipText);
         tooltipsValueExt.insertLast(pipReference

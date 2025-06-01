@@ -159,8 +159,8 @@ bool canSwapTag(Critter& player, uint skillIndex, string@ reason) {
         if (skillIndex == SK_UNARMED || currentTagIndex == SK_UNARMED) {
             if (player.Perk[PE_WEAPON_HANDLING] > 0 && player.Skill[SK_UNARMED] < 50 && !hasRangedSkillAtLeastWithout(player, 50, currentTagIndex)) { reason = colorWarn + "Weapon Handling" + colorNormal; return false; }
             if (player.Perk[PE_BONUS_RANGED_DAMAGE] > 0 && player.Skill[SK_UNARMED] < 100 && !hasRangedSkillAtLeastWithout(player, 100, currentTagIndex)) { reason = colorWarn + "Bonus Ranged Damage" + colorNormal; return false; }
+            if (player.Perk[PE_MORE_RANGED_DAMAGE] > 0 && player.Skill[SK_UNARMED] < 100 && !hasRangedSkillAtLeastWithout(player, 100, currentTagIndex)) { reason = colorWarn +  "More Ranged Damage" + colorNormal; return false; }
             if (player.Perk[PE_PYROMANIAC] > 0 && player.Skill[SK_UNARMED] < 100 && !hasRangedSkillAtLeastWithout(player, 100, currentTagIndex)) { reason = colorWarn +  colorWarn + "Pyromaniac" + colorNormal; return false; }
-            if (player.Perk[PE_MORE_RANGED_DAMAGE] > 0 && player.Skill[SK_UNARMED] < 150 && !hasRangedSkillAtLeastWithout(player, 150, currentTagIndex)) { reason = colorWarn +  "More Ranged Damage" + colorNormal; return false; }
             if (player.Perk[PE_SNIPER] > 0 && player.Skill[SK_UNARMED] < 175 && !hasRangedSkillAtLeastWithout(player, 175, currentTagIndex)) { reason = colorWarn +  "Sniper" + colorNormal; return false; }
 
             if (player.Perk[PE_IN_YOUR_FACE] > 0 && player.Skill[currentTagIndex] < 75) { reason = colorWarn +  "In Your Face" + colorNormal; return false; }
@@ -169,8 +169,8 @@ bool canSwapTag(Critter& player, uint skillIndex, string@ reason) {
         if (skillIndex == SK_SNEAK || currentTagIndex == SK_SNEAK) {
             if (player.Perk[PE_WEAPON_HANDLING] > 0 && player.Skill[SK_SNEAK] < 50 && !hasRangedSkillAtLeastWithout(player, 50, currentTagIndex)) { reason = colorWarn +  "Weapon Handling" + colorNormal; return false; }
             if (player.Perk[PE_BONUS_RANGED_DAMAGE] > 0 && player.Skill[SK_SNEAK] < 100 && !hasRangedSkillAtLeastWithout(player, 100, currentTagIndex)) { reason = colorWarn +  "Bonus Ranged Damage" + colorNormal; return false; }
+            if (player.Perk[PE_MORE_RANGED_DAMAGE] > 0 && player.Skill[SK_SNEAK] < 100 && !hasRangedSkillAtLeastWithout(player, 100, currentTagIndex)) { reason = colorWarn +  "More Ranged Damage" + colorNormal; return false; }
             if (player.Perk[PE_PYROMANIAC] > 0 && player.Skill[SK_SNEAK] < 100 && !hasRangedSkillAtLeastWithout(player, 100, currentTagIndex)) { reason = colorWarn +  "Pyromaniac" + colorNormal; return false; }
-            if (player.Perk[PE_MORE_RANGED_DAMAGE] > 0 && player.Skill[SK_SNEAK] < 150 && !hasRangedSkillAtLeastWithout(player, 150, currentTagIndex)) { reason = colorWarn +  "More Ranged Damage" + colorNormal; return false; }
             if (player.Perk[PE_SNIPER] > 0 && player.Skill[SK_SNEAK] < 175 && !hasRangedSkillAtLeastWithout(player, 175, currentTagIndex)) { reason = colorWarn +  "Sniper" + colorNormal; return false; }
 
             if (player.Perk[PE_MORE_CRITICALS] > 0 && player.Skill[SK_SNEAK] < 50 && !hasCombatSkillAtLeastWithout(player, 50, currentTagIndex)) { reason = colorWarn +  "More Criticals" + colorNormal; return false; }
@@ -186,8 +186,8 @@ bool canSwapTag(Critter& player, uint skillIndex, string@ reason) {
         if (skillIndex == SK_DOCTOR || currentTagIndex == SK_DOCTOR) {
             if (player.Perk[PE_WEAPON_HANDLING] > 0 && player.Skill[SK_DOCTOR] < 50 && !hasRangedSkillAtLeastWithout(player, 50, currentTagIndex)) { reason = colorWarn +  "Weapon Handling" + colorNormal; return false; }
             if (player.Perk[PE_BONUS_RANGED_DAMAGE] > 0 && player.Skill[SK_DOCTOR] < 100 && !hasRangedSkillAtLeastWithout(player, 100, currentTagIndex)) { reason = colorWarn +  "Bonus Ranged Damage" + colorNormal; return false; }
+            if (player.Perk[PE_MORE_RANGED_DAMAGE] > 0 && player.Skill[SK_DOCTOR] < 100 && !hasRangedSkillAtLeastWithout(player, 100, currentTagIndex)) { reason = colorWarn +  "More Ranged Damage" + colorNormal; return false; }
             if (player.Perk[PE_PYROMANIAC] > 0 && player.Skill[SK_DOCTOR] < 100 && !hasRangedSkillAtLeastWithout(player, 100, currentTagIndex)) { reason = colorWarn +  "Pyromaniac" + colorNormal; return false; }
-            if (player.Perk[PE_MORE_RANGED_DAMAGE] > 0 && player.Skill[SK_DOCTOR] < 150 && !hasRangedSkillAtLeastWithout(player, 150, currentTagIndex)) { reason = colorWarn +  "More Ranged Damage" + colorNormal; return false; }
             if (player.Perk[PE_SNIPER] > 0 && player.Skill[SK_DOCTOR] < 175 && !hasRangedSkillAtLeastWithout(player, 175, currentTagIndex)) { reason = colorWarn +  "Sniper" + colorNormal; return false; }
 
             if (player.Perk[PE_MORE_CRITICALS] > 0 && player.Skill[SK_DOCTOR] < 50 && !hasCombatSkillAtLeastWithout(player, 50, currentTagIndex)) { reason = colorWarn +  "More Criticals" + colorNormal; return false; }
@@ -204,8 +204,8 @@ bool canSwapTag(Critter& player, uint skillIndex, string@ reason) {
         if (skillIndex == SK_TRAPS || currentTagIndex == SK_TRAPS) {
             if (player.Perk[PE_WEAPON_HANDLING] > 0 && player.Skill[SK_TRAPS] < 50 && !hasRangedSkillAtLeastWithout(player, 50, currentTagIndex)) { reason = colorWarn +  "Weapon Handling" + colorNormal; return false; }
             if (player.Perk[PE_BONUS_RANGED_DAMAGE] > 0 && player.Skill[SK_TRAPS] < 100 && !hasRangedSkillAtLeastWithout(player, 100, currentTagIndex)) { reason = colorWarn +  "Bonus Ranged Damage" + colorNormal; return false; }
+            if (player.Perk[PE_MORE_RANGED_DAMAGE] > 0 && player.Skill[SK_TRAPS] < 100 && !hasRangedSkillAtLeastWithout(player, 100, currentTagIndex)) { reason = colorWarn +  "More Ranged Damage" + colorNormal; return false; }
             if (player.Perk[PE_PYROMANIAC] > 0 && player.Skill[SK_TRAPS] < 100 && !hasRangedSkillAtLeastWithout(player, 100, currentTagIndex)) { reason = colorWarn +  "Pyromaniac" + colorNormal; return false; }
-            if (player.Perk[PE_MORE_RANGED_DAMAGE] > 0 && player.Skill[SK_TRAPS] < 150 && !hasRangedSkillAtLeastWithout(player, 150, currentTagIndex)) { reason = colorWarn +  "More Ranged Damage" + colorNormal; return false; }
             if (player.Perk[PE_SNIPER] > 0 && player.Skill[SK_TRAPS] < 175 && !hasRangedSkillAtLeastWithout(player, 175, currentTagIndex)) { reason = colorWarn +  "Sniper" + colorNormal; return false; }
 
             if (player.Perk[PE_MORE_CRITICALS] > 0 && player.Skill[SK_TRAPS] < 50 && !hasCombatSkillAtLeastWithout(player, 50, currentTagIndex)) { reason = colorWarn +  "More Criticals" + colorNormal; return false; }
@@ -1714,6 +1714,14 @@ void dlg_RemovePerkList(Critter& player, Critter@ npc, string@ text) {
             str += reason + "]\n";
         }
     }
+    if (player.Perk[PE_MORE_RANGED_DAMAGE] > 0) {
+        str += listPrefix + "[More Ranged Damage: ";
+        if (canRemovePerk(player, PE_MORE_RANGED_DAMAGE, reason)) {
+            str += removable + "]\n";
+        } else {
+            str += reason + "]\n";
+        }
+    }
     if (player.Perk[PE_PYROMANIAC] > 0) {
         str += listPrefix + "[Pyromaniac: ";
         if (canRemovePerk(player, PE_PYROMANIAC, reason)) {
@@ -1846,14 +1854,6 @@ void dlg_RemovePerkList(Critter& player, Critter@ npc, string@ text) {
     }
 
     //  level 15 perks
-    if (player.Perk[PE_MORE_RANGED_DAMAGE] > 0) {
-        str += listPrefix + "[More Ranged Damage: ";
-        if (canRemovePerk(player, PE_MORE_RANGED_DAMAGE, reason)) {
-            str += removable + "]\n";
-        } else {
-            str += reason + "]\n";
-        }
-    }
     if (player.Perk[PE_MAN_OF_STEEL] > 0) {
         str += listPrefix + "[Man of Steel: ";
         if (canRemovePerk(player, PE_MAN_OF_STEEL, reason)) {
@@ -2297,6 +2297,16 @@ bool canAddPerk(Critter& player, uint perkIndex, string@ reason) {
                 return false;
             }
             return true;
+        case PE_MORE_RANGED_DAMAGE:
+            if (!hasRangedSkillAtLeast(player, 100)) {
+                reason = colorWarn + "One ranged combat skill must be at least 100!" + colorNormal;
+                return false;
+            }
+            if (player.StatBase[ST_CHARISMA] < 4) {
+                reason = colorWarn + "Charisma must be at least 4!" + colorNormal;
+                return false;
+            }
+            return true;
         case PE_PYROMANIAC:
             if (!hasRangedSkillAtLeast(player, 100)) {
                 reason = colorWarn + "One ranged combat skill must be at least 100!" + colorNormal;
@@ -2410,16 +2420,6 @@ bool canAddPerk(Critter& player, uint perkIndex, string@ reason) {
             }
             return true;
         //  level 15 perks
-        case PE_MORE_RANGED_DAMAGE:
-            if (!hasRangedSkillAtLeast(player, 150)) {
-                reason = colorWarn + "One ranged combat skill must be at least 150!" + colorNormal;
-                return false;
-            }
-            if (player.StatBase[ST_CHARISMA] < 4) {
-                reason = colorWarn + "Charisma must be at least 4!" + colorNormal;
-                return false;
-            }
-            return true;
         case PE_MAN_OF_STEEL:
             if (player.StatBase[ST_ENDURANCE] < 6) {
                 reason = colorWarn + "Endurance must be at least 6!" + colorNormal;
@@ -2630,10 +2630,10 @@ uint[] multiRankPerks = {PE_LIFEGIVER, PE_ACTION_BOY};
 
 uint[] level3Perks = {PE_MORE_CRITICALS, PE_WEAPON_HANDLING, PE_ADRENALINE_RUSH, PE_QUICK_RECOVERY, PE_LIVEWIRE, PE_WAY_OF_THE_FRUIT, PE_HEALER_II, PE_QUICK_POCKETS};
 uint[] level6Perks = {PE_EVEN_MORE_CRITICALS, PE_IN_YOUR_FACE, PE_SILENT_RUNNING, PE_TOUGHNESS, PE_SPRAY_AND_PRAY};
-uint[] level9Perks = {PE_STONEWALL, PE_SHARPSHOOTER, PE_BONUS_RANGED_DAMAGE, PE_PYROMANIAC, PE_EVEN_TOUGHER, PE_MEDIC, PE_HEAVE_HO, PE_CLOSE_COMBAT_MASTER};
+uint[] level9Perks = {PE_MORE_RANGED_DAMAGE, PE_STONEWALL, PE_SHARPSHOOTER, PE_BONUS_RANGED_DAMAGE, PE_PYROMANIAC, PE_EVEN_TOUGHER, PE_MEDIC, PE_HEAVE_HO, PE_CLOSE_COMBAT_MASTER};
 uint[] level12Perks = {PE_BETTER_CRITICALS, PE_LIFEGIVER, PE_GHOST, PE_ACTION_BOY, PE_GAIN_STRENGTH, PE_GAIN_PERCEPTION,
                        PE_GAIN_ENDURANCE, PE_GAIN_CHARISMA, PE_GAIN_INTELLIGENCE, PE_GAIN_AGILITY, PE_GAIN_LUCK};
-uint[] level15Perks = {PE_MORE_RANGED_DAMAGE, PE_MAN_OF_STEEL, PE_FIELD_MEDIC};
+uint[] level15Perks = {PE_MAN_OF_STEEL, PE_FIELD_MEDIC};
 uint[] level18Perks = {PE_BONUS_RATE_OF_ATTACK, PE_SNIPER, PE_SILENT_DEATH};
 
 uint getHighestPerkWithout(Critter& player, uint perkIndex) {
@@ -2700,6 +2700,7 @@ string getPerkName(uint perkIndex) {
         case PE_STONEWALL:              return "Stonewall";
         case PE_SHARPSHOOTER:           return "Sharpshooter";
         case PE_BONUS_RANGED_DAMAGE:    return "Bonus Ranged Damage";
+        case PE_MORE_RANGED_DAMAGE:     return "More Ranged Damage";
         case PE_PYROMANIAC:             return "Pyromaniac";
         case PE_EVEN_TOUGHER:           return "Even Tougher";
         case PE_MEDIC:                  return "Medic";
@@ -2718,7 +2719,6 @@ string getPerkName(uint perkIndex) {
         case PE_GAIN_AGILITY:           return "Gain Agility";
         case PE_GAIN_LUCK:              return "Gain Luck";
         //  level 15 perks
-        case PE_MORE_RANGED_DAMAGE:     return "More Ranged Damage";
         case PE_MAN_OF_STEEL:           return "Man of Steel";
         case PE_FIELD_MEDIC:            return "Field Medic";
         //  level 18 perks
