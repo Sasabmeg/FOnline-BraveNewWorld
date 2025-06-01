@@ -1,0 +1,102 @@
+#ifndef __CURSOR_EXT__
+#define __CURSOR_EXT__
+
+// Cursor extension for FOClassic: Brave New World
+// Sasabmeg
+
+#include "../_defines.fos"
+#include "../_macros.fos"
+#include "../_colors.fos"
+
+// AngelScript doesn't allow defines with brackets for default arguments
+#ifdef FONT_TYPE_DEFAULT
+ #undef FONT_TYPE_DEFAULT
+ #define FONT_TYPE_DEFAULT  5
+#endif
+
+#ifdef FONT_FLAG_BORDERED
+ #undef FONT_FLAG_BORDERED
+ #define FONT_FLAG_BORDERED 0x0200
+#endif
+
+import uint8 GetCurrentAim() from "client_keybinds";
+import bool GUI_IsKeyPressed(uint8 key) from "client_gui";
+import int GUI_GetActiveMainScreen() from "client_gui";
+import int GUI_GetActiveScreen() from "client_gui";
+import int toHitUncapped(CritterCl& chosen, CritterCl& target, ProtoItem& weapon, uint8 weaponMode) from "client_combat";
+
+class CursorExt {
+    uint drawLayer;
+
+    // configurable via InitOverHitCap()
+    bool drawOverHitCap;
+    int drawOverHitCapOffsetX;
+    int drawOverHitCapOffsetY;
+    uint drawOverHitCapColor;
+    int drawOverHitCapFont;
+    int drawOverHitCapFlags;
+
+    CursorExt() {
+        this.drawLayer = 3;
+        this.InitOverHitCap( true );
+    }
+
+    void InitOverHitCap(bool enable, int offsetX = 30, int offsetY = 7, uint color = COLOR_DDORANGE, int font = FONT_TYPE_DEFAULT, int flags = FONT_FLAG_BORDERED) {
+        this.drawOverHitCap = enable;
+        this.drawOverHitCapOffsetX = offsetX;
+        this.drawOverHitCapOffsetY = offsetY;
+        this.drawOverHitCapColor = color;
+        this.drawOverHitCapFont = font;
+        this.drawOverHitCapFlags = flags;
+    }
+
+    // called from render_iface(uint)
+    void Draw(uint layer) { // just a fast shortcut for scripts which doesn't collect chosen inside render_iface()
+        CritterCl@ chosen = GetChosen();
+        if (valid(chosen))
+            this.Draw(layer, chosen);
+    }
+
+    void Draw(uint layer, CritterCl& chosen) {
+        // collect informations only once per rendering cycle
+        /*if (layer != this.drawLayer) {
+            return;
+        }*/
+        //DrawText("Debug", __MouseX + this.drawOverHitCapOffsetX, __MouseY + this.drawOverHitCapOffsetY, 0, 0, this.drawOverHitCapColor, this.drawOverHitCapFont, this.drawOverHitCapFlags);
+
+        if (GetCurrentMapPid() > 0 && GetCurrentCursor() == CURSOR_USE_WEAPON && GUI_GetActiveScreen() == CLIENT_MAIN_SCREEN_GAME) {
+            // if there's no item under cursor, no magick can be done
+            CritterCl@ target = GetMonitorCritter(__MouseX, __MouseY, false);
+            if (valid(target)) {
+                string text = "";
+                ItemCl@ chosenWeapon = _CritGetItemHand(chosen);
+                uint8 weaponMode = 0;
+                if (valid(chosenWeapon) && chosenWeapon.GetType() == ITEM_TYPE_WEAPON) {
+                    weaponMode = chosenWeapon.Mode & 0x0F;
+                    if (valid(chosenWeapon.Proto)) {
+                        int toHitOveCap = toHitUncapped(chosen, target, chosenWeapon.Proto, weaponMode);
+                        if (toHitOveCap > 100) {
+                            text += "+" + (toHitOveCap - 100) + "%";
+                            if (this.drawOverHitCap) {
+                                DrawText(text, __MouseX + this.drawOverHitCapOffsetX, __MouseY + this.drawOverHitCapOffsetY, 0, 0, this.drawOverHitCapColor, this.drawOverHitCapFont, this.drawOverHitCapFlags);
+                            }
+                        }
+                    } else {
+                        DrawText("Invalid Proto? Report bug please!", __MouseX + this.drawOverHitCapOffsetX, __MouseY + this.drawOverHitCapOffsetY, 0, 0, this.drawOverHitCapColor, this.drawOverHitCapFont, this.drawOverHitCapFlags);
+                    }
+                } else {
+                    //  this works strange here, we get invalid target if unarmed out of range, but otherwise not, I checked engine, but didn't understand why, but for now it's ok
+                    //DrawText("Invalid Target", __MouseX + this.drawOverHitCapOffsetX, __MouseY + this.drawOverHitCapOffsetY, 0, 0, this.drawOverHitCapColor, this.drawOverHitCapFont, this.drawOverHitCapFlags);
+                }
+            }
+        }
+    }
+};
+
+CursorExt cursorExt();
+
+void CursorExtDraw(uint layer) {    // EXPORT
+    cursorExt.Draw(layer);
+}
+
+#endif // __CURSOR_EXT__ //

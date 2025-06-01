@@ -93,6 +93,7 @@ import uint GetContainerId() from "client_container_addons";
 import uint GetBodyId() from "client_container_addons";
 
 import void SmartCursorDraw( uint layer ) from "client/smart_cursor";
+import void CursorExtDraw( uint layer ) from "client/client_cursorExt";
 
 import string itemBonusColor(uint bonusType, int value) from "item_bonus";
 
@@ -525,6 +526,7 @@ void render_iface(uint layer)
 			RenderThrowing();
 
 			SmartCursorDraw( layer );
+			CursorExtDraw(layer);
 		}
     }
 

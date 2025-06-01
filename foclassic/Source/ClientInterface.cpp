@@ -9153,7 +9153,7 @@ void FOClient::CurDraw()
             Str::Format( str, "%d%%", hit );
 
             SprMngr.Flush();
-            SprMngr.DrawStr( Rect( GameOpt.MouseX + 6, GameOpt.MouseY + 6, x + 500, y + 500 ), str, 0, COLOR_TEXT_RED );
+            SprMngr.DrawStr( Rect( GameOpt.MouseX + 6, GameOpt.MouseY + 6, x + 500, y + 500 ), str, FONT_FLAG_BORDERED, COLOR_TEXT_RED );
             break;
         }
         case CURSOR_USE_ITEM:

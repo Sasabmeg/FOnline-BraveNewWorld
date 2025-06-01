@@ -71,6 +71,7 @@ int[][] PerksData =
     { 305, 0, 1 }, // Bonus Ranged Damage [PE_BONUS_RANGED_DAMAGE], Levelling, 1 ranks
     {              // level 1 requirements
         77, 1, 9,  // Level at least 9
+        428, 0, 0, // More Ranged Damage at most 0
     },
     #ifdef __SERVER
     array<int>(0),               // level 1 perk up effects
@@ -168,23 +169,24 @@ int[][] PerksData =
     {              // level 1 requirements
         77, 1, 6,  // Level at least 6
         2, 1, 4,   // Endurance at least 4
+		438, 0, 0, // Even Tougher at most 0
     },
     #ifdef __SERVER
     {              // level 1 perk up effects
-        16, 1, 1,  // Normal Damage Threshold increased by 1
-        17, 1, 1,  // Laser Damage Threshold increased by 1
-        18, 1, 1,  // Fire Damage Threshold increased by 1
-        19, 1, 1,  // Plasma Damage Threshold increased by 1
-        20, 1, 1,  // Electric Damage Threshold increased by 1
-        21, 1, 1,  // EMP Damage Threshold increased by 1
-        22, 1, 1,  // Explode Damage Threshold increased by 1
+        16, 1, 2,  // Normal Damage Threshold increased by 2
+        17, 1, 2,  // Laser Damage Threshold increased by 2
+        18, 1, 2,  // Fire Damage Threshold increased by 2
+        19, 1, 2,  // Plasma Damage Threshold increased by 2
+        20, 1, 2,  // Electric Damage Threshold increased by 2
+        21, 1, 2,  // EMP Damage Threshold increased by 2
+        22, 1, 2,  // Explode Damage Threshold increased by 2
         23, 1, 6,  // Normal Damage Resistance increased by 6
-        24, 1, 5,  // Laser Damage Resistance increased by 5
-        25, 1, 5,  // Fire Damage Resistance increased by 5
-        26, 1, 5,  // Plasma Damage Resistance increased by 5
-        27, 1, 5,  // Electric Damage Resistance increased by 5
-        28, 1, 5,  // EMP Damage Resistance increased by 5
-        29, 1, 5,  // Explode Damage Resistance increased by 5
+        24, 1, 6,  // Laser Damage Resistance increased by 6
+        25, 1, 6,  // Fire Damage Resistance increased by 6
+        26, 1, 6,  // Plasma Damage Resistance increased by 6
+        27, 1, 6,  // Electric Damage Resistance increased by 6
+        28, 1, 6,  // EMP Damage Resistance increased by 6
+        29, 1, 6,  // Explode Damage Resistance increased by 6
     },
     {              // level 1 perk down effects
         -1         // Just revert
@@ -1033,7 +1035,7 @@ int[][] PerksData =
     },
     #endif
 
-    { 393, 2, 1 }, // Here and Now, Disabled, 1 ranks
+    { 393, 1, 1 }, // Here and Now [PE_WASTELANDERS_RESILIENCE], Support, 1 ranks
     array<int>(0),              // level 1 requirements
     #ifdef __SERVER
     array<int>(0),              // level 1 perk up effects
@@ -1356,6 +1358,7 @@ int[][] PerksData =
     {              // level 1 requirements
         77, 1, 15, // Level at least 15
         3, 1, 4,   // CH at least 4
+        305, 0, 0, // Bonus Ranged Damage at most 0
     },
     #ifdef __SERVER
     array<int>(0),              // level 1 perk up effects
@@ -1485,8 +1488,9 @@ int[][] PerksData =
 
     { 438, 0, 1 }, // Even Tougher [PE_EVEN_TOUGHER], Levelling, 1 ranks
     {              // level 1 requirements
-        77, 1, 9,  // Level at least 9
+        77, 1, 6,  // Level at least 6
         2, 1, 6,   // Endurance at least 6
+		313, 0, 0, // Toughness at most 0
     },
     #ifdef __SERVER
     {              // level 1 perk up effects

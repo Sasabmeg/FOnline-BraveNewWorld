@@ -83,7 +83,14 @@ int checkBonus(ItemCl@ it, int bonusType)
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // To-hit chance.
-int to_hit(CritterCl& chosen, CritterCl& target, ProtoItem& weapon, uint8 weaponMode)
+int to_hit(CritterCl& chosen, CritterCl& target, ProtoItem& weapon, uint8 weaponMode) {
+    return CLAMP(toHitUncapped(chosen, target, weapon, weaponMode), 5, _MaxToHit(chosen));
+}
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// To-hit chance.
+int toHitUncapped(CritterCl& chosen, CritterCl& target, ProtoItem& weapon, uint8 weaponMode)
 {
     int use = _WeaponModeUse(weaponMode);
     int hitLocation = _WeaponModeAim(weaponMode);
@@ -240,7 +247,7 @@ int to_hit(CritterCl& chosen, CritterCl& target, ProtoItem& weapon, uint8 weapon
     if(skillNum == SK_UNARMED)
         hitMod /= 2;
     toHit -= hitMod;
-    toHit = CLAMP(toHit, 5, _MaxToHit(chosen));
+    //toHit = CLAMP(toHit, 5, _MaxToHit(chosen));
 
     if(target.Perk[PE_DODGER] > 0)
     {
@@ -258,7 +265,7 @@ int to_hit(CritterCl& chosen, CritterCl& target, ProtoItem& weapon, uint8 weapon
             toHit -= target.Perk[PE_DODGER]*5;
         }
     }
-    toHit = CLAMP(toHit, 5, _MaxToHit(chosen));
+    //toHit = CLAMP(toHit, 5, _MaxToHit(chosen));
 
     if(target.Perk[PE_IN_YOUR_FACE] > 0 && dist < 3)
     {
@@ -274,7 +281,7 @@ int to_hit(CritterCl& chosen, CritterCl& target, ProtoItem& weapon, uint8 weapon
     }
 
 
-    toHit = CLAMP(toHit, 5, _MaxToHit(chosen));
+    //toHit = CLAMP(toHit, 5, _MaxToHit(chosen));
 
     return toHit;
 }

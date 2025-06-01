@@ -850,8 +850,8 @@ class CTooltips {
         tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(PE_TOUGHNESS)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(PE_TOUGHNESS)) + pipText);
         tooltipsValueExt.insertLast(pipReference
                                      + notes
-                                     + "\n\u2022 +1 DT and +6 DR bonus to normal damage resistance."
-                                     + "\n\u2022 +1 DT and +5 DR bonus to all other damage resistances."
+                                     + "\n\u2022 +2 DT and +6 DR bonus to all damage resistance types."
+                                     + "\n\u2022 Excludes: Even Tougher."
                                      + requirements
                                      + "\n\t\u2022  Endurance >= 4");
 
@@ -916,6 +916,7 @@ class CTooltips {
         tooltipsValueExt.insertLast(pipReference
                                      + notes
                                      + "\n\u2022 +3 DT and +9 DR bonus to normal damage resistance only."
+                                     + "\n\u2022 Excludes: Toughness."
                                      + requirements
                                      + "\n\t\u2022  Endurance >= 5");
 
@@ -1069,8 +1070,8 @@ class CTooltips {
         tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(PE_MAN_OF_STEEL)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(PE_MAN_OF_STEEL)) + pipText);
         tooltipsValueExt.insertLast(pipReference
                                      + notes
-                                     + "\n\u2022 -10 penalty to enemy critical chance."
-                                     + "\n\u2022 -10 penalty to enemy critical power roll."
+                                     + "\n\u2022 -5 penalty to enemy critical chance."
+                                     + "\n\u2022 -5 penalty to enemy critical power roll."
                                      + requirements
                                      + "\n\t\u2022 Endurance >= 6");
 
@@ -1133,6 +1134,18 @@ class CTooltips {
         tooltipsValueExt.insertLast(pipReference + noData);
 
         //  Support Perks
+        tooltipsKey.insertLast(PE_WASTELANDERS_RESILIENCE);
+        tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(PE_WASTELANDERS_RESILIENCE)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(PE_WASTELANDERS_RESILIENCE)) + pipText);
+        tooltipsValueExt.insertLast(pipReference
+                                     + notes
+                                     + "\n\u2022 Reduced chance to being critically hit by 5%."
+                                     + "\n\u2022 Reduced critical power roll when critically hit by 5."
+                                     + "\n\u2022 3 DT and 10 DR against Brust attacks only."
+                                     + requirements
+                                     + "\n\t\u2022  None. This perk is free for all players and some boss NPC's."
+                                     + "\n\nNotes:"
+                                     + "\n\t\u2022 This perk is used by developers to balance both PVE and PVP and is subject to change according to meta shifts.");
+
         tooltipsKey.insertLast(PE_AWARENESS);
         tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(PE_AWARENESS)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(PE_AWARENESS)) + pipText);
         tooltipsValueExt.insertLast(pipReference + noData);

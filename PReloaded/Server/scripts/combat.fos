@@ -831,9 +831,10 @@ void CombatAttack(Critter& cr, Critter& target, ProtoItem& weapon, uint8 weaponM
             int critChanceFromAimStatFactor = cr.Trait[TRAIT_FAST_SHOT] != 0 ? (cr.Stat[ST_AGILITY] + attackerLuck) : (cr.Stat[ST_INTELLECT] * 2);
             int critChanceFromAim = (CLAMP(GetHitAim(aim), 0, 60) * (60 + 2 * critChanceFromAimStatFactor)) / 100;
             int finesseAdjustForBurst = ((cr.Trait[TRAIT_FINESSE] != 0 && isBurst) ? 10 : 0);
-            int manOfSteelReduce = target.Perk[PE_MAN_OF_STEEL] > 0 ? 10 : 0;
+            int manOfSteelReduce = target.Perk[PE_MAN_OF_STEEL] > 0 ? 5 : 0;
+            int wastelandersResilienceReduce = target.Perk[PE_WASTELANDERS_RESILIENCE] > 0 ? 5 : 0;
             int chance = cr.Stat[ST_CRITICAL_CHANCE] + toHitOverflow + critChanceFromAim + attack.SelectWeaponBonus(BONUS_WEAPON_CRITICAL_CHANCE);
-            chance -= (targetLuck / 2) + manOfSteelReduce + finesseAdjustForBurst;
+            chance -= (targetLuck / 2) + manOfSteelReduce + wastelandersResilienceReduce + finesseAdjustForBurst;
             int sneakAttackBonus = 0;
             if (attack.sneakAttack && cr.Perk[PE_SILENT_DEATH] == 0) {
                 int distance = GetDistantion(cr.HexX, cr.HexY, target.HexX, target.HexY);
@@ -845,6 +846,9 @@ void CombatAttack(Critter& cr, Critter& target, ProtoItem& weapon, uint8 weaponM
                 dummyText += "|" + COLOR_DTEXT_REGULAR + " , CLAMP(toHitOverflow/10, 0, 2 * IN) = |" + COLOR_DTEXT_BONUS + " " + toHitOverflow;
                 if (target.Perk[PE_MAN_OF_STEEL] > 0) {
                     dummyText += "|" + COLOR_DTEXT_REGULAR + " , Man of Steel reduce = |" + COLOR_DTEXT_MALUS + " " + manOfSteelReduce;
+                }
+                if (target.Perk[PE_WASTELANDERS_RESILIENCE] > 0) {
+                    dummyText += "|" + COLOR_DTEXT_REGULAR + " , Wastelander's Resilience reduce = |" + COLOR_DTEXT_MALUS + " " + wastelandersResilienceReduce;
                 }
                 if (finesseAdjustForBurst > 0) {
                     dummyText += "|" + COLOR_DTEXT_REGULAR + " , No Finesse effect on burst (adjust) = |" + COLOR_DTEXT_MALUS + " " + (-1 * finesseAdjustForBurst);
@@ -1359,9 +1363,15 @@ void ApplyDamage(AttackStruct& attack, Critter& target, uint rounds, bool isCrit
         }
 
         if (target.Perk[PE_MAN_OF_STEEL] > 0) {
-            roll -= 10;
+            roll -= 5;
             if (isDummyTraining) {
-                dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , Man of Steel = |" + COLOR_DTEXT_MALUS + " -10";
+                dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , Man of Steel = |" + COLOR_DTEXT_MALUS + " -5";
+            }
+        }
+        if (target.Perk[PE_WASTELANDERS_RESILIENCE] > 0) {
+            roll -= 5;
+            if (isDummyTraining) {
+                dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , Wastelander's Resilience = |" + COLOR_DTEXT_MALUS + " -5";
             }
         }
 
@@ -1550,8 +1560,11 @@ void ApplyDamage(AttackStruct& attack, Critter& target, uint rounds, bool isCrit
             //Log("Critical table offset = " + offset + ", CriticalTable[offset] = " + CriticalTable[offset] + ", _dmgMul[0] = " + _dmgMul[0]);
 			_dmgMul[0] >>= 2;
             //Log("Critical table offset = " + offset + ", CriticalTable[offset] = " + CriticalTable[offset] + ", _dmgMul[0] = " + _dmgMul[0]);
+            //  adjust the critical table here, because otherwise need to change a lot values in the table itself, and I want +0.5 factor for player and +1.5 for npc
             if (!targetIsPlayer) {
-                _dmgMul[0] = (_dmgMul[0] * 4) / 3;
+                _dmgMul[0] = _dmgMul[0] + 6;
+            } else {
+                _dmgMul[0] = _dmgMul[0] + 1;
             }
 		}
 
@@ -2155,8 +2168,6 @@ void ApplyDamage(AttackStruct& attack, Critter& target, uint rounds, bool isCrit
     int armorDR = target.GetArmorDR(dmgType, attack.AimHead);
     int armorDT = target.GetArmorDT(dmgType, attack.AimHead);
 
-    int partialBypassDR = targetDR - armorDR + (armorDR / 4);
-    int partialBypassDT = targetDT - armorDT + (armorDT / 4);
 
     if (isDummyTraining) {
         dummyInfo += "\n";
@@ -2165,6 +2176,18 @@ void ApplyDamage(AttackStruct& attack, Critter& target, uint rounds, bool isCrit
         dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , Target DT = |" + COLOR_DTEXT_BONUS + " " + targetDT;
         dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , DR = |" + COLOR_DTEXT_BONUS + " " + targetDR;
     }
+
+    if (target.Perk[PE_WASTELANDERS_RESILIENCE] > 0 && isBurst) {
+        targetDR += 10;
+        targetDT += 3;
+        if (isDummyTraining) {
+            dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , Perk Wastelander's Resilience DR |" + COLOR_DTEXT_MALUS + " +10";
+            dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , Perk Wastelander's Resilience DT |" + COLOR_DTEXT_MALUS + " +3";
+        }
+    }
+
+    int partialBypassDR = targetDR - armorDR + (armorDR / 4);
+    int partialBypassDT = targetDT - armorDT + (armorDT / 4);
 
     if (FLAG(eff, HF_BYPASS_ARMOR) && dmgType != DAMAGE_TYPE_EMP) {
         bypassValue = (50 * bypassRoll) / 100;
@@ -2210,6 +2233,7 @@ void ApplyDamage(AttackStruct& attack, Critter& target, uint rounds, bool isCrit
             dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , Trait Finesse DR and partialBypass DR |" + COLOR_DTEXT_MALUS + " +30";
         }
     }
+
     targetDR += attack.DRMod;   // Always
     partialBypassDR += attack.DRMod;
     if (isDummyTraining) {
@@ -2227,8 +2251,8 @@ void ApplyDamage(AttackStruct& attack, Critter& target, uint rounds, bool isCrit
         //  BNW change, bonus ranged damage and more ranged damage depend on CH
         //  Maybe merge into one perk later named Burst With Confidence? idk
         //  formula is: CLAMP(CH1 - CH2/2, 0, 3) where CH1 is attacker's Charisma and CH2 is target's Charisma
-        int bonusFromCh = CLAMP(attacker.Stat[ST_CHARISMA] - (((target.Stat[ST_CHARISMA] + 1) * 2) / 3), 0, 4);
-        int brdBonus = attacker.Perk[PE_BONUS_RANGED_DAMAGE] * 3;
+        int bonusFromCh = CLAMP(attacker.Stat[ST_CHARISMA] - (((target.Stat[ST_CHARISMA] + 1) * 2) / 3), 0, 6);
+        int brdBonus = attacker.Perk[PE_BONUS_RANGED_DAMAGE] * 4;
         attack.BonusDmg += brdBonus;
         if (isDummyTraining && attacker.Perk[PE_BONUS_RANGED_DAMAGE] != 0) {
             dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , BDR bonus damage = |" + COLOR_DTEXT_BONUS + " " + brdBonus;
@@ -2351,9 +2375,9 @@ void ApplyDamage(AttackStruct& attack, Critter& target, uint rounds, bool isCrit
 
     if (validAttacker) {
         if (attack.Attacker.Perk[PE_PYROMANIAC] != 0 && dmgType == DAMAGE_TYPE_FIRE && ammoPid != PID_SHOTGUN_DRAGON_BREATH_SHELLS) {
-            totalDmg += totalDmg / 4; // now +25% fire dmg
+            totalDmg += totalDmg / 10; // now +10% fire dmg
             if (isDummyTraining) {
-                dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , Pyromaniac 25% fire-dmg boost: Total Dmg = |" + COLOR_DTEXT_BONUS + " " + totalDmg;
+                dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , Pyromaniac 10% fire-dmg boost: Total Dmg = |" + COLOR_DTEXT_BONUS + " " + totalDmg;
             }
         }
         if (attack.Attacker.Trait[TRAIT_HEAVY_HANDED] != 0 && attack.IsUnarmed) {
@@ -2624,6 +2648,10 @@ void ApplyDamage(AttackStruct& attack, Critter& target, uint rounds, bool isCrit
             } else if (oldDmg > 35) {
                 map.RunEffect(PID_EXPLODE_FIRE_SMALL, stepX, stepY, 0);
             }
+            int burnFactorDivider = 4;
+            if (attacker.Perk[PE_PYROMANIAC] > 0) {
+                burnFactorDivider = 3;
+            }
             if (target.ParamBase[TO_EX_BURNT] + BURN_EFFECT_LINGER_TIME > int(GetTick())) {
                 float burntFactor = float(100 + CLAMP(target.ParamBase[ST_EX_BURNT], 0, 100)) / 100;
                 totalDmg = int(totalDmg * burntFactor);
@@ -2633,7 +2661,8 @@ void ApplyDamage(AttackStruct& attack, Critter& target, uint rounds, bool isCrit
                     dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , " + COLOR_DTEXT_BONUS + " Fire Vulnerability Stacking Mechanic";
                     dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , Old Fire Vul. = |" + COLOR_DTEXT_BONUS + " " + target.ParamBase[ST_EX_BURNT] + "%";
                 }
-                target.ParamBase[ST_EX_BURNT] = CLAMP(target.ParamBase[ST_EX_BURNT] + oldDmg / 4, 0, 100);
+
+                target.ParamBase[ST_EX_BURNT] = CLAMP(target.ParamBase[ST_EX_BURNT] + oldDmg / burnFactorDivider, 0, 100);
                 if (isDummyTraining) {
                     dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , New Fire Vul. = |" + COLOR_DTEXT_BONUS + " " + target.ParamBase[ST_EX_BURNT] + "%";
                 }
@@ -2643,7 +2672,7 @@ void ApplyDamage(AttackStruct& attack, Critter& target, uint rounds, bool isCrit
             } else {
                 //attack.Attacker.Say(SAY_NETMSG, "First fire damage");
                 //Log("First fire damage");
-                target.ParamBase[ST_EX_BURNT] = CLAMP(oldDmg / 4, 0, 100);
+                target.ParamBase[ST_EX_BURNT] = CLAMP(oldDmg / burnFactorDivider, 0, 100);
                 target.ParamBase[TO_EX_BURNT] = GetTick();
             }
         }
