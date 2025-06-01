@@ -320,18 +320,18 @@ void dlg_ShowLoyality(Critter& player, Critter@ npc, string@ text)
 
 void dlg_ShowStats(Critter& player, Critter@ npc, string@ text)
 {
-if(!IS_DIALOG_GENERATED(text)) return;
-	
+    if(!IS_DIALOG_GENERATED(text)) return;
+
 	text +="$stats" + "ST: " +  npc.Stat[ST_STRENGTH] + " PE: " + npc.Stat[ST_PERCEPTION] + " EN: " + npc.Stat[ST_ENDURANCE] + " CH: " +  npc.Stat[ST_CHARISMA] + " IN: " +  npc.Stat[ST_INTELLECT] + " AG: " + npc.Stat[ST_AGILITY] + " LK: " + npc.Stat[ST_LUCK] + "\nLevel: " + npc.Stat[ST_LEVEL] + "\nExperience: " + npc.Stat[ST_EXPERIENCE] + "\nSkill: ";
-	
+
 	switch(GetBestWeaponSkill(npc))
     {
-    case SK_SMALL_GUNS: {text+="Small Guns (" + npc.Skill[SK_SMALL_GUNS] + "%)";break;}
-    case SK_BIG_GUNS: {text+="Big Guns (" + npc.Skill[SK_BIG_GUNS] + "%)";break;}
-    case SK_ENERGY_WEAPONS: {text+="Energy Weapons (" + npc.Skill[SK_ENERGY_WEAPONS] + "%)";break;}
-    case SK_UNARMED: {text+="Close Combat (" + npc.Skill[SK_UNARMED] + "%)";break;}
-    case SK_THROWING:{ text+="Throwing (" + npc.Skill[SK_THROWING] + "%)";break;}
-	default: break;
+        case SK_SMALL_GUNS: {text+="Small Guns (" + npc.Skill[SK_SMALL_GUNS] + "%)";break;}
+        case SK_BIG_GUNS: {text+="Big Guns (" + npc.Skill[SK_BIG_GUNS] + "%)";break;}
+        case SK_ENERGY_WEAPONS: {text+="Energy Weapons (" + npc.Skill[SK_ENERGY_WEAPONS] + "%)";break;}
+        case SK_UNARMED: {text+="Close Combat (" + npc.Skill[SK_UNARMED] + "%)";break;}
+        case SK_THROWING:{ text+="Throwing (" + npc.Skill[SK_THROWING] + "%)";break;}
+        default: break;
     }
 }
 
