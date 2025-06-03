@@ -845,6 +845,8 @@ void RevealHidden(Map& map, uint16 tx, uint16 ty, int radius) {
 #ifdef __CLIENT
 
 bool Active = false;
+bool currentHandActive = false;
+ItemCl@ currentHandItem;
 int  LastCursor = 0;
 int  itemPos = 0;
 uint availableCnt = 0;
@@ -977,14 +979,36 @@ bool FindAvailableWeapons()
         return false;
 }
 
-bool HexThrowingMouseDown(int click)
-{
-    if(!IsHexThrowingActive())
-        return false;
-    if(click == MOUSE_CLICK_RIGHT)
-    {
-        if(availableCnt > 0)
-        {
+bool IsHandWeaponThrowable() {
+    CritterCl@ chosen = GetChosen();
+    ItemCl@ throwable = chosen.GetItem(0, SLOT_HAND1);
+    if (valid(throwable)) {
+        //Message("IsHandWeaponThrowable() :: HAND1 (" + throwable.Id + ", " + throwable.GetProtoId() + ")");
+        if (_WeaponSkill(throwable.Proto, 0) == SK_THROWING) {
+            @currentHandItem = throwable;
+            return true;
+        }
+    } /*else {
+        @throwable = chosen.GetItem(0, SLOT_HAND2);
+        if (valid(throwable)) {
+            Message("IsHandWeaponThrowable() :: HAND2 (" + throwable.Id + ", " + throwable.GetProtoId() + ")");
+            @currentHandItem = throwable;
+            return true;
+        }
+    }*/
+    return false;
+}
+
+bool HexThrowingMouseDown(int click) {
+    /*
+    if (IsHexThrowingActive()) {
+        Message("HexThrowingMouseDown() :: IsHexThrowingActive() = TRUE");
+    }
+    if (IsHexThrowingCurrentHandActive()) {
+        Message("HexThrowingMouseDown() :: IsHexThrowingCurrentHandActive() = TRUE");
+    }*/
+    if (IsHexThrowingActive() && click == MOUSE_CLICK_RIGHT) {
+        if (availableCnt > 0) {
             bool next = false;
             do {
                 itemPos = (itemPos+1)%THROWABLE_SIZE;
@@ -1015,13 +1039,14 @@ bool HexThrowingMouseDown(int click)
                         break;
                 }
             } while (!next);
-        }
-        else
+        } else {
             itemPos = 0;
-        //Message("pos "+itemPos);
+            //Message("pos "+itemPos);
+        }
+        return true;
     }
-    else
-    {
+
+    if ((IsHexThrowingActive() || IsHexThrowingCurrentHandActive()) && click == MOUSE_CLICK_LEFT) {
         CritterCl@ chosen = GetChosen();
 
         array<uint> actions;
@@ -1037,9 +1062,10 @@ bool HexThrowingMouseDown(int click)
             if(!chosen.IsAnimPlaying())
                 TryHexThrow();
         }
+        return true;
     }
 
-    return true;
+    return false;
 }
 
 bool IsHexThrowingActive() // export?
@@ -1047,64 +1073,93 @@ bool IsHexThrowingActive() // export?
     return Active;
 }
 
+bool IsHexThrowingCurrentHandActive() {
+    return currentHandActive;
+}
+
+
 void HexThrowingKeyDown(uint8 key)   // export
 {
-    if(key == DIK_LMENU && !__ConsoleActive)
+    if (key == DIK_LMENU && !__ConsoleActive)
         SetHexThrowing(true);
+    if (key == DIK_LCONTROL && !__ConsoleActive) {
+        SetHexThrowingCurrentHand(true);
+    }
 }
 
 void HexThrowingKeyUp(uint8 key)   // export
 {
     if(key == DIK_LMENU)
         SetHexThrowing(false);
+    if(key == DIK_LCONTROL)
+        SetHexThrowingCurrentHand(false);
 }
 
 void HexThrowingInputLost() // export
 {
     SetHexThrowing(false);
+    SetHexThrowingCurrentHand(false);
 }
 
-void SetHexThrowing(bool enabled)
-{
-    if(enabled)
-    {
+void SetHexThrowing(bool enabled) {
+    if (enabled) {
         //Active = true;
         LastCursor = ::GetCurrentCursor();
-        if(LastCursor == CURSOR_USE_WEAPON)
-        {
-            if(FindAvailableWeapons())
+        if (LastCursor == CURSOR_USE_WEAPON) {
+            if (FindAvailableWeapons()) {
                 Active = true;
-            else
+                currentHandActive = false;
+            } else {
                 Active = false;
+            }
         }
-
         //ChangeCursor(1);         // todo
-    }
-    else
-    {
+    } else {
         Active = false;
         //ChangeCursor(LastCursor);
     }
 }
 
-void RenderHexThrowing() // export
-{
-    if(!IsHexThrowingActive())
-        return;
-    CritterCl@ chosen = GetChosen();
-    if(!valid(chosen))
-        return;
+void SetHexThrowingCurrentHand(bool enabled) {
+    if (enabled) {
+        //Active = true;
+        LastCursor = ::GetCurrentCursor();
+        if (LastCursor == CURSOR_USE_WEAPON) {
+            if (IsHandWeaponThrowable()) {
+                currentHandActive = true;
+                Active = false;
+            } else {
+                currentHandActive = false;
+            }
+        }
+    } else {
+        currentHandActive = false;
+    }
+}
 
-    if(!Active)
+void RenderHexThrowing() {
+    //Message("RenderHexThrowing()");
+    if (IsHexThrowingActive()) {
+        ItemCl@ item = availableItems[itemPos];
+        RenderHexThrowing(item);
+    }
+    if (IsHexThrowingCurrentHandActive()) {
+        RenderHexThrowing(currentHandItem);
+    }
+}
+
+void RenderHexThrowing(ItemCl@ item) // export
+{
+    CritterCl@ chosen = GetChosen();
+    if (!valid(chosen))
         return;
 
     uint16 hx = 0, hy = 0;
-    if(!GetMonitorHex(__MouseX, __MouseY, hx, hy))
+    if (!GetMonitorHex(__MouseX, __MouseY, hx, hy))
         return;
     // todo: check for sanity?
 
     //throw indicator
-    ItemCl@ item = availableItems[itemPos];
     //Message("HexThrow :: ItemProto = " + item.GetProtoId());
     int radius = HexThrowGetMaxRange(chosen, item);
     //Message("HexThrow :: Radius = " + radius);
@@ -1181,11 +1236,19 @@ void RenderHexThrowing() // export
 
 }
 
-void TryHexThrow()
+void TryHexThrow() {
+    //Message("TryHexThrow()");
+    if (IsHexThrowingActive()) {
+        ItemCl@ item = availableItems[itemPos];
+        TryHexThrow(item);
+    }
+    if (IsHexThrowingCurrentHandActive()) {
+        TryHexThrow(currentHandItem);
+    }
+}
+
+void TryHexThrow(ItemCl@ item)
 {
-    // sanity check
-    if(!IsHexThrowingActive())
-        return;
     CritterCl@ chosen = GetChosen();
     if(!valid(chosen))
         return;
@@ -1194,9 +1257,6 @@ void TryHexThrow()
     if(!GetMonitorHex(__MouseX, __MouseY, hx, hy))
         return;
     // todo: check for sanity?
-
-    ItemCl@ item = availableItems[itemPos];
-
     if(!IsHexThrowableThere(chosen, item, hx, hy))
         return;
 

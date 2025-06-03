@@ -473,10 +473,18 @@ bool HexShotingMouseDown(int click)
     if(!IsHexShotingActive())
         return false;
 
-    if(click != MOUSE_CLICK_LEFT)
-    {
+    if (click != MOUSE_CLICK_LEFT) {
         SetHexShoting(false);
         return false;
+    } else {
+        CritterCl@ chosen = GetChosen();
+        ItemCl@ weapon = chosen.GetItem(0, SLOT_HAND1);
+        if (valid(weapon)) {
+            //Message("SetHexShoting() :: HAND1 (" + weapon.Id + ", " + weapon.GetProtoId() + ")");
+            if (!IsHexShotWeapon(weapon)) {
+                Active = false;
+            }
+        }
     }
 
     CritterCl@ chosen = GetChosen();
@@ -529,6 +537,18 @@ void SetHexShoting(bool enabled)
         if(LastCursor == CURSOR_USE_WEAPON)
             Active = true;
         //ChangeCursor(CURSOR_USE_WEAPON);
+        //  if not hex shoot weapon, then false
+        CritterCl@ chosen = GetChosen();
+        ItemCl@ weapon = chosen.GetItem(0, SLOT_HAND1);
+        if (valid(weapon)) {
+            //Message("SetHexShoting() :: HAND1 (" + weapon.Id + ", " + weapon.GetProtoId() + ")");
+            if (!IsHexShotWeapon(weapon)) {
+                Active = false;
+            }
+        } else {
+            //Message("SetHexShoting() :: Invalid Weapon (" + weapon.Id + ", " + weapon.GetProtoId() + ")");
+            Active = false;
+        }
     }
     else
     {

@@ -79,6 +79,7 @@ import int stringReplaceText(string& s, string@ f, string@ t) from "config_file"
 
 import void RenderThrowing() from "throwing";
 import void RenderHexShoting() from "hexShot";
+import bool IsHexShotWeapon(ItemMutual@ item) from "hexShot";
 import void RenderHexThrowing() from "hexThrow";
 
 import void DrawCritterOnHead() from "client_critter_onhead";
@@ -511,8 +512,15 @@ void render_iface(uint layer)
         DrawCarTracker();
         DrawGuiImage();
         DrawPsychoImage();
-        RenderHexThrowing();
         RenderHexShoting();
+
+        CritterCl@ chosen = GetChosen();
+        if (valid(chosen)) {
+            ItemCl@ weapon = chosen.GetItem(0, SLOT_HAND1);
+            if (!valid(weapon) || !IsHexShotWeapon(weapon)) {
+                RenderHexThrowing();
+            }
+        }
 
         if(__ConfigOnHeadAwareness > 0)
             DrawCritterOnHead();
