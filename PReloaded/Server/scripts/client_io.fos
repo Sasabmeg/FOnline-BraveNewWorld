@@ -23,6 +23,11 @@ import bool GMToolsMenu() from "client_gmtools";
 #ifdef __DEBUG__
 import void DialogImageKey(uint8 key) from "client_interface";
 #endif
+//import Rect@ getIntWMain() from "client_interface";
+import int getIntWMain_X1() from "client_interface";
+import int getIntWMain_Y1() from "client_interface";
+import int getIntWMain_X2() from "client_interface";
+import int getIntWMain_Y2() from "client_interface";
 
 import bool ProcessBind(uint8 key) from "client_keybinds";
 
@@ -73,6 +78,18 @@ import bool GuiImageUpdateMousePositionChange(int x, int y) from "client/client_
 int PrevMouseX = __MouseX;
 int PrevMouseY = __MouseY;
 
+uint ZoomActivatedTime = 0;
+
+
+#define ZOOM_TEXT_ACTIVE_DELAY      (500)
+void DisableZoomText() {
+    if (GetTick() > ZoomActivatedTime + ZOOM_TEXT_ACTIVE_DELAY && !GUI_IsKeyPressed(DIK_Z)) {
+        __MapZooming = false;
+    }
+    if (GUI_IsKeyPressed(DIK_Z)) {
+
+    }
+}
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Called on mouse/keyboard input lost (alt-tab, minimize, lost focus).
 void input_lost()
@@ -266,8 +283,22 @@ bool mouse_down(int click)
             return( false );
        }
      */
-    else
+    else if (GUI_GetActiveScreen() == CLIENT_MAIN_SCREEN_GAME && (click == MOUSE_CLICK_WHEEL_DOWN || click == MOUSE_CLICK_WHEEL_UP)) {
+        Rect@ mainWindowRectangle = Rect(0, __ScreenHeight - getIntWMain_Y2(), __ScreenWidth, __ScreenHeight - getIntWMain_Y1());
+        //@mainWindowRectangle = getIntWMain();
+        if (valid(mainWindowRectangle)) {
+            //Message("mainWindowRectangle " + mainWindowRectangle.ToString());
+            if (!mainWindowRectangle.IsInside(__MouseX, __MouseY)) {
+                __MapZooming = true;
+                ZoomActivatedTime = GetTick();
+            }
+        } else {
+            //Message("mainWindowRectangle invalid!");
+        }
+        return false;
+    } else {
         return(GUI_MouseDown(__MouseX, __MouseY, click));
+    }
 }
 
 bool mouse_up(int click)

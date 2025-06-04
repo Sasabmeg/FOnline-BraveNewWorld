@@ -37,6 +37,8 @@
 
 #include "item_dogtags_h.fos"
 
+import void DisableZoomText() from "client_io";
+
 import void BroadcastDraw() from "client_broadcast";
 
 import void changedParam_Hide(CritterCl& cr, uint, int oldValue) from "parameters";
@@ -845,6 +847,7 @@ void render_iface(uint layer)
 		DrawQuestTracker();
         DrawInventoryTracker();
         DrawMapGreeterMessage();
+        DisableZoomText();
 
         // weapon muzzle and rays by Vice Dice (bulet tracers)
         DrawRays();
@@ -2297,13 +2300,36 @@ bool ReadIniInt(string& key, int& ret)
     return valid(s) && StrToInt(s, ret);
 }
 
+//  to pass this to mouse Zoom without pressing Z, but not when over dialog box, best I could do atm without engine change
+Rect@ IntWMain;
+
+Rect@ getIntWMain() {
+    return IntWMain;
+}
+
+int getIntWMain_X1() {
+    return IntWMain.X1;
+}
+int getIntWMain_Y1() {
+    return IntWMain.Y1;
+}
+int getIntWMain_X2() {
+    return IntWMain.X2;
+}
+int getIntWMain_Y2() {
+    return IntWMain.Y2;
+}
+
 void InitIndicators() // export
 {
+    Message("InitIndicators()");
     IndicatorDraw = __IndicatorType != 1;
     CounterDraw = __IndicatorType != 0;
     __IndicatorType = 3;   // none
 
-    Rect IntWMain("IntMain");
+    @IntWMain = @Rect("IntMain");
+    //Rect IntWMain("IntMain");
+    //Message("IntWMain = " + IntWMain.ToString());
     int IntX = -1;
     ReadIniInt("IntX", IntX);
     if(IntX == -1)
@@ -2348,12 +2374,12 @@ void DrawIndicators()
 {
     if(!InterfaceShown)
         return;
-    // DrawRect(ItemBar,COLOR_WHITE);
-    /*DrawRect(AmmoCounter,COLOR_RED);
-       DrawRect(WearCounter,COLOR_GREEN);
-       DrawRect(ItemBar,COLOR_BLUE);
-       DrawRect(IntWMain,COLOR_WHITE);
-       DrawRect(SmallBox,COLOR_DGREEN);*/
+    //DrawRect(ItemBar,COLOR_WHITE);
+    //DrawRect(AmmoCounter,COLOR_RED);
+    //DrawRect(WearCounter,COLOR_GREEN);
+    //DrawRect(ItemBar,COLOR_BLUE);
+    //DrawRect(IntWMain,COLOR_WHITE);
+    //DrawRect(SmallBox,COLOR_DGREEN);
     CritterCl@ chosen = GetChosen();
     if(!valid(chosen))
         return;
@@ -2407,55 +2433,7 @@ void DrawIndicators()
     }
 }
 
-class Rect
-{
-    int X1;
-    int Y1;
-    int X2;
-    int Y2;
-    Rect(string & ini_str)
-    {
-        GUI_GetIniCoords(ini_str, X1, Y1, X2, Y2);
-    }
-    Rect(string & ini_str, int x_off, int y_off)
-    {
-        GUI_GetIniCoords(ini_str, X1, Y1, X2, Y2);
-        X1 += x_off;
-        Y1 += y_off;
-        X2 += x_off;
-        Y2 += y_off;
-    }
-    Rect(Rect@ rect, int x_off, int y_off)
-    {
-        this.X1 = rect.X1 + x_off;
-        this.Y1 = rect.Y1 + y_off;
-        this.X2 = rect.X2 + x_off;
-        this.Y2 = rect.Y2 + y_off;
-    }
 
-    Rect(int x1, int y1, int x2, int y2)
-    {
-        X1 = x1;
-        Y1 = y1;
-        X2 = x2;
-        Y2 = y2;
-    }
-    /*void UpdateRect(Rect@ rect, int x_off, int y_off)
-       {
-            this.X1=rect.X1+x_off;
-            this.Y1=rect.Y1+y_off;
-            this.X2=rect.X2+x_off;
-            this.Y2=rect.Y2+y_off;
-       }*/
-
-    bool IsInside(int x, int y)
-    {
-        return(X1 <= x && x <= X2 && Y1 <= y && y <= Y2);
-    }
-
-    int H() { return Y2 - Y1 + 1; }
-    int W() { return X2 - X1 + 1; }
-};
 
 /*void DrawRect(Rect@ rect, uint color)
    {

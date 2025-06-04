@@ -43,12 +43,12 @@ import IGUIScreenOpt@ GUI_CreateScreen(int screenIndex, string@ sprName) from "c
 import IGUIScreenOpt@ GUI_GetScreen(int screenIndex) from "client_gui";
 
 //Funkcje ze starego GUI moda:
-import IGUIElementTextOpt@		GUI_AddText(int screenIndex) from "client_gui"; 
-import IGUIElementTextOpt@		GUI_AddText(int screenIndex, string@ text, int x, int y) from "client_gui"; 
-import IGUIElementImageOpt@		GUI_AddImage(int screenIndex) from "client_gui"; 
-import IGUIElementImageOpt@		GUI_AddImage(int screenIndex, string@ sprName, int patch, int x, int y) from "client_gui"; 
-import IGUIElementButtonOpt@		GUI_AddButton(int screenIndex) from "client_gui"; 
-import IGUIElementButtonOpt@		GUI_AddButton(int screenIndex, int x, int y) from "client_gui"; 
+import IGUIElementTextOpt@		GUI_AddText(int screenIndex) from "client_gui";
+import IGUIElementTextOpt@		GUI_AddText(int screenIndex, string@ text, int x, int y) from "client_gui";
+import IGUIElementImageOpt@		GUI_AddImage(int screenIndex) from "client_gui";
+import IGUIElementImageOpt@		GUI_AddImage(int screenIndex, string@ sprName, int patch, int x, int y) from "client_gui";
+import IGUIElementButtonOpt@		GUI_AddButton(int screenIndex) from "client_gui";
+import IGUIElementButtonOpt@		GUI_AddButton(int screenIndex, int x, int y) from "client_gui";
 // Delete old screen, hardcoded screens included
 import void GUI_DeleteScreen(int screenIndex) from "client_gui";
 
@@ -77,14 +77,14 @@ shared interface IGUIScreenCallbackFocus
     void OnLostFocus();
 };
 
-shared interface IGUIScreenCallbackKeyPress   
-{ 
-   bool OnKeyPress(uint8 key,string& keyText); 
+shared interface IGUIScreenCallbackKeyPress
+{
+   bool OnKeyPress(uint8 key,string& keyText);
 }
 
-shared interface IGUIScreenCallbackMouseDown 
-{ 
-   bool OnMouseDown(int click); 
+shared interface IGUIScreenCallbackMouseDown
+{
+   bool OnMouseDown(int click);
 }
 
 
@@ -136,21 +136,21 @@ shared interface IGUIElementOpt
 	void CallbackMouseMove(IGUIElementCallbackMouseMove@ callback);
 	void Position(int x, int y);                                                  // default zeros                                         // default picture off
 	void Position(int x, int y, int w, int h);
-	void Position(string& iniKey);      
-	void Visible(bool visible);    
-	void AbsolutePosition(bool absolutePosition);   
-	void AbsolutePosition(int x, int y);  
-	void CollisionTransparent(bool collisionTransparent);    
+	void Position(string& iniKey);
+	void Visible(bool visible);
+	void AbsolutePosition(bool absolutePosition);
+	void AbsolutePosition(int x, int y);
+	void CollisionTransparent(bool collisionTransparent);
 	void AddText(int id, string@ text, int x, int y, int width, int height, int font, uint color, int flags);
 	void AddImage(int id, string@ sprName, int x, int y);
 	void AddImage(int id, int patch, string@ sprName, int x, int y);
 	IGUIElementCallbackInit@ GetCallbackInit();
-	
+
 	void MouseDown(int click);
 	void MouseUp(int click, bool IsCollision);
 	void MouseMove(int x, int y);
-	
-	
+
+
 	void Draw(int screenX, int screenY);
 	void Update(uint dt);
 	void SetFocused(bool state);
@@ -177,7 +177,7 @@ shared interface IGUIElementOpt
 	void KeyUp(uint8 key);
 }
 
-shared interface IGUIElementTextOpt 
+shared interface IGUIElementTextOpt
 {
 	void CallbackInit(IGUIElementCallbackInit@ callback);                         // default null
 	void CallbackDraw(IGUIElementCallbackDraw@ callback);                         // default null
@@ -189,7 +189,7 @@ shared interface IGUIElementTextOpt
 	void Position(int x, int y, int w, int h);
 	void Position(string& iniKey);
 	void AbsolutePosition(int x, int y);
-	void AbsolutePosition(bool absolutePosition); 
+	void AbsolutePosition(bool absolutePosition);
 	void Text(string@ text);
 	void Text(string@ text, int font, uint color);
 	void Text(string@ text, int font, uint color, int flags);
@@ -199,7 +199,7 @@ shared interface IGUIElementTextOpt
 	void TextOptions(int font, uint color);
 	void TextOptions(int font, uint color, int flags);
 	void TextOptions(int font, uint color, uint colorDown, int flags);
-	void TextColor(uint color); 
+	void TextColor(uint color);
 
 	void Draw(int screenX, int screenY);
 	void SetText(string& text);
@@ -216,27 +216,27 @@ shared interface IGUIElementTextOpt
 	int GetId();
 }
 
-shared interface IGUIElementImageOpt 
+shared interface IGUIElementImageOpt
 {
 	void CallbackInit(IGUIElementCallbackInit@ callback);                         // default null
 	void CallbackDraw(IGUIElementCallbackDraw@ callback);                         // default null
-	void CallbackMouseDown(IGUIElementCallbackMouseDown@ callback);		      // default null		
+	void CallbackMouseDown(IGUIElementCallbackMouseDown@ callback);		      // default null
 	void CallbackMouseClick(IGUIElementCallbackMouseClick@ callback);             // default null
-	
+
 	void Position(int x, int y);
 	void Position(int x, int y, int w, int h);
 	void Position(string& iniKey);
-	void AbsolutePosition(bool absolutePosition); 
+	void AbsolutePosition(bool absolutePosition);
 	void Visible(bool visible);
 
-	
+
 	void SetVisible(bool visible);
 	void SetPosX(int x);
 	void SetPosY(int y);
 	void SetFocused(bool state);
 	void Draw(int screenX, int screenY);
 
-	
+
 	//Info
 	bool IsVisible();
 	int GetPosX();
@@ -247,17 +247,17 @@ shared interface IGUIElementImageOpt
 	bool IsCollision(int screenX, int screenY, int mouseX, int mouseY);
 }
 
-shared interface IGUIElementButtonOpt 
+shared interface IGUIElementButtonOpt
 {
 	void CallbackInit(IGUIElementCallbackInit@ callback);                         // default null
 	void CallbackDraw(IGUIElementCallbackDraw@ callback);                         // default null
-	void CallbackMouseDown(IGUIElementCallbackMouseDown@ callback);	       // default null	
+	void CallbackMouseDown(IGUIElementCallbackMouseDown@ callback);	       // default null
 	void CallbackMouseClick(IGUIElementCallbackMouseClick@ callback);             // default null
 
 	void Position(int x, int y);
 	void Position(int x, int y, int w, int h);
 	void Position(string& iniKey);
-	void AbsolutePosition(bool absolutePosition); 
+	void AbsolutePosition(bool absolutePosition);
 	void Text(string@ text);
 	void Text(string@ text, int font, uint color);
 	void Text(string@ text, int font, uint color, int flags);
@@ -267,7 +267,7 @@ shared interface IGUIElementButtonOpt
 	void TextWidth(int width);
 	void UpPic(string@ sprName);
 	void DownPic(string@ sprName);
-	void ClickableZone(int width, int height); 
+	void ClickableZone(int width, int height);
 	void ClickableZone(int x, int y, int width, int height);
 
 	void SetVisible(bool visible);
@@ -276,5 +276,62 @@ shared interface IGUIElementButtonOpt
 	//info
 	bool IsVisible();
 }
+
+class Rect
+{
+    int X1;
+    int Y1;
+    int X2;
+    int Y2;
+    Rect(string & ini_str)
+    {
+        GUI_GetIniCoords(ini_str, X1, Y1, X2, Y2);
+        if (ini_str == "IntMain") {
+            //Message("Constructor Rect = IntMain");
+        }
+    }
+    Rect(string & ini_str, int x_off, int y_off)
+    {
+        GUI_GetIniCoords(ini_str, X1, Y1, X2, Y2);
+        X1 += x_off;
+        Y1 += y_off;
+        X2 += x_off;
+        Y2 += y_off;
+    }
+    Rect(Rect@ rect, int x_off, int y_off)
+    {
+        this.X1 = rect.X1 + x_off;
+        this.Y1 = rect.Y1 + y_off;
+        this.X2 = rect.X2 + x_off;
+        this.Y2 = rect.Y2 + y_off;
+    }
+
+    Rect(int x1, int y1, int x2, int y2)
+    {
+        X1 = x1;
+        Y1 = y1;
+        X2 = x2;
+        Y2 = y2;
+    }
+    /*void UpdateRect(Rect@ rect, int x_off, int y_off)
+       {
+            this.X1=rect.X1+x_off;
+            this.Y1=rect.Y1+y_off;
+            this.X2=rect.X2+x_off;
+            this.Y2=rect.Y2+y_off;
+       }*/
+
+    bool IsInside(int x, int y)
+    {
+        return(X1 <= x && x <= X2 && Y1 <= y && y <= Y2);
+    }
+
+    int H() { return Y2 - Y1 + 1; }
+    int W() { return X2 - X1 + 1; }
+
+    string ToString() {
+        return "(" + X1 + ", " + Y1 + ", " + X2 + ", " + Y2 + ")";
+    }
+};
 
 #endif // __CLIENT_GUI__
