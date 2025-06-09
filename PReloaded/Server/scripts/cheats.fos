@@ -8353,101 +8353,118 @@ void ExecGetTimeCommand(array<string@>@ command, Critter@ player) {
 // TODO: finish tester params table and move command to tester access
 void ExecParamCommand(array<string@>@ command, Critter@ player, Critter@ target)     // ~param
 {
-    if(command.length() >= 4)
-    {
+    if (command.length() >= 4) {
         int  control = 0;
         int  param = -1;
         bool ok = false;
-        if(!StrToInt(command[2], control))
-        {
+        if (!StrToInt(command[2], control)) {
             player.Say(SAY_NETMSG, "Wrong arguments.");
             return;
-        }
-        else
-        {
-            if(control != 0)
-            {
+        } else {
+            if (control == 0) {
+                if (StrToInt(command[3], param)) {
+                    if (param < 0 || param > 999) {
+                        player.Say(SAY_NETMSG, "Invalid param number.");
+                        return;
+                    }
+                    if (target.Id == player.Id || (player.GetAccess() >= ACCESS_ADMIN)) {
+                        if(player.GetAccess() == ACCESS_TESTER && !Present(param, testerparamlist)) {
+                            player.Say(SAY_NETMSG, "You can't view or edit this param.");
+                            return;
+                        }
+
+                        int  value = 0;
+                        bool haveValue = false;
+                        if (command.length >= 5) {
+                            haveValue = true;
+                            if (!StrToInt(command[4], value)) {
+                                player.Say(SAY_NETMSG, "Invalid value argument <" + command[4] + ">");
+                                return;
+                            }
+                        }
+
+                        if (!haveValue) {
+                            player.Say(SAY_NETMSG, "Param " + param + " of critter " + target.Name + "(" + target.Id + "): " + target.Param[param]);
+                            return;
+                        }
+
+                        int oldValue = target.Param[param];
+
+                        // pre-process
+                        switch (param) {
+                            case ST_AGE:
+                                SetLvar(target, LVAR_birth_year, __Year - value);
+                                SynchronizeAge(target);
+                                if (oldValue != target.Param[ST_AGE]) {
+                                    player.Say(SAY_NETMSG, "SynchronizeAge " + target.Name + "(" + target.Id + "): " + oldValue + " -> " + target.Param[ST_AGE]);
+                                }
+                                break;
+                            default:
+                                target.ParamBase[param] = value;
+                                break;
+                        }
+
+                        player.Say(SAY_NETMSG, "Changed param " + param + " of critter " + target.Name + "(" + target.Id + "): " + oldValue + " -> " + target.Param[param]);
+
+                        // post-process
+                        switch (param) {
+                            case ST_BASE_CRTYPE:
+                                target.DisguisedBy = player.Id;
+                                break;
+                        }
+                    } else {
+                        player.Say(SAY_NETMSG, "Wrong target: " + target.Name + "(" + target.Id + ")");
+                        return;
+                    }
+                } else {
+                    player.Say(SAY_NETMSG, "Wrong arguments.");
+                    return;
+                }
+            } else if (control == 1) {
+                if (StrToInt(command[3], param)) {
+                    if (param < 0 || param > 999) {
+                        player.Say(SAY_NETMSG, "Invalid param number.");
+                        return;
+                    }
+                    int  value = 0;
+                    bool haveValue = false;
+                    if (command.length >= 5 && player.GetAccess() >= ACCESS_ADMIN) {
+                        haveValue = true;
+                        if (!StrToInt(command[4], value)) {
+                            player.Say(SAY_NETMSG, "Invalid value argument <" + command[4] + ">");
+                            return;
+                        }
+                    }
+
+                    // get critters in sight
+                    array<Critter@> critters;
+                    uint num = target.GetCritters(false, FIND_ALL, critters);
+                    bool set = false;
+                    for(uint i = 0; i < num; i++) {
+                        if (GetDistantion(target.HexX, target.HexY, critters[i].HexX, critters[i].HexY) > 1)
+                            continue;
+                        if (GetDirection(target.HexX, target.HexY, critters[i].HexX, critters[i].HexY) != target.Dir)
+                            continue;
+                        if (haveValue) {
+                            critters[i].Say(SAY_NORM, "Setting param: " + param + " to: " + value);
+                            player.Say(SAY_NETMSG, "Setting param: " + param + " to: " + value);
+                            critters[i].ParamBase[param] = value;
+                        } else {
+                            critters[i].Say(SAY_NORM, "Param: " + param + " of target is: " + critters[i].Param[param]);
+                            player.Say(SAY_NETMSG, "Param: " + param + " of target is: " + critters[i].Param[param]);
+                        }
+                        set = true;
+                    }
+                    if (!set) {
+                        player.Say(SAY_NETMSG, "Critter to get/set param should be in front of you.");
+                    }
+                }
+            } else {
                 player.Say(SAY_NETMSG, "Invalid param group.");
                 return;
             }
         }
-
-        if(StrToInt(command[3], param))
-        {
-            if(param < 0 || param > 999)
-            {
-                player.Say(SAY_NETMSG, "Invalid param number.");
-                return;
-            }
-            if(target.Id == player.Id || (player.GetAccess() >= ACCESS_ADMIN))
-            {
-                if(player.GetAccess() == ACCESS_TESTER && !Present(param, testerparamlist))
-                {
-                    player.Say(SAY_NETMSG, "You can't view or edit this param.");
-                    return;
-                }
-
-                int  value = 0;
-                bool haveValue = false;
-                if(command.length >= 5)
-                {
-                    haveValue = true;
-                    if(!StrToInt(command[4], value))
-                    {
-                        player.Say(SAY_NETMSG, "Invalid value argument <" + command[4] + ">");
-                        return;
-                    }
-                }
-
-                if(!haveValue)
-                {
-                    player.Say(SAY_NETMSG, "Param " + param + " of critter " + target.Name + "(" + target.Id + "): " + target.Param[param]);
-                    return;
-                }
-
-                int oldValue = target.Param[param];
-
-                // pre-process
-                switch(param)
-                {
-                case ST_AGE:
-                {
-                    SetLvar(target, LVAR_birth_year, __Year - value);
-                    SynchronizeAge(target);
-                    if(oldValue != target.Param[ST_AGE])
-                        player.Say(SAY_NETMSG, "SynchronizeAge " + target.Name + "(" + target.Id + "): " + oldValue + " -> " + target.Param[ST_AGE]);
-                };
-                    break;
-
-                default:
-                    target.ParamBase[param] = value;
-                    break;
-                }
-
-                player.Say(SAY_NETMSG, "Changed param " + param + " of critter " + target.Name + "(" + target.Id + "): " + oldValue + " -> " + target.Param[param]);
-
-                // post-process
-                switch(param)
-                {
-                case ST_BASE_CRTYPE:
-                    target.DisguisedBy = player.Id;
-                    break;
-                }
-            }
-            else
-            {
-                player.Say(SAY_NETMSG, "Wrong target: " + target.Name + "(" + target.Id + ")");
-                return;
-            }
-        }
-        else
-        {
-            player.Say(SAY_NETMSG, "Wrong arguments.");
-            return;
-        }
-    }
-    else
-    {
+    } else {
         player.Say(SAY_NETMSG, "Missing arguments.");
     }
 }
