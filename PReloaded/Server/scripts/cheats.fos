@@ -8475,7 +8475,42 @@ void ExecParamCommand(array<string@>@ command, Critter@ player, Critter@ target)
             }
         }
     } else {
-        player.Say(SAY_NETMSG, "Missing arguments.");
+        player.Say(SAY_NETMSG, "Missing arguments. To your own Small Guns skill, try: `param 0 200");
+        if (player.GetAccess() >= ACCESS_TESTER && command.length() >= 2) {
+            int  control = 0;
+            if (!StrToInt(command[2], control)) {
+                player.Say(SAY_NETMSG, "Wrong arguments.");
+                return;
+            } else {
+                array<Critter@> cs;
+                uint num = target.GetCritters(false, FIND_ALL, cs);
+                for (uint i = 0; i < num; i++) {
+                    if (control == 3) {
+                        cs[i].Say(SAY_NORM, "ST: " + cs[i].Stat[ST_STRENGTH] + ", PE: " + cs[i].Stat[ST_PERCEPTION] + ", EN: " + cs[i].Stat[ST_ENDURANCE] +
+                                  ", CH: " + cs[i].Stat[ST_CHARISMA] + ", IN: " + cs[i].Stat[ST_INTELLECT] + ", AG: " + cs[i].Stat[ST_AGILITY] +
+                                  ", LK: " + cs[i].Stat[ST_LUCK]);
+                    } if (control == 4) {
+                        string str = "";
+                        if (cs[i].Perk[PE_WASTELANDERS_RESILIENCE] > 0) str += "WR, ";
+                        if (cs[i].Perk[PE_TOUGHNESS] > 0) str += "TOU, ";
+                        if (cs[i].Perk[PE_EVEN_TOUGHER] > 0) str += "ET, ";
+                        if (cs[i].Perk[PE_ADRENALINE_RUSH] > 0) str += "AR, ";
+                        if (cs[i].Perk[PE_MAN_OF_STEEL] > 0) str += "MoS, ";
+                        if (cs[i].Perk[PE_STONEWALL] > 0) str += "SW, ";
+                        if (cs[i].Perk[PE_IRON_LIMBS] > 0) str += "IL, ";
+                        if (cs[i].Perk[PE_IN_YOUR_FACE] > 0) str += "IYF, ";
+                        if (str.length() == 0) {
+                            str += "No Defensive Perks.";
+                        }
+                        cs[i].Say(SAY_NORM, str);
+                    } else {
+                        player.Say(SAY_NETMSG, "Wrong arguments. To see special data of all critters around try: `param 3");
+                    }
+                }
+            }
+        } else {
+            player.Say(SAY_NETMSG, "Wrong arguments. To see defensive perks data of all critters around try: `param 4");
+        }
     }
 }
 
