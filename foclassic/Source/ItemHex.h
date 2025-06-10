@@ -61,7 +61,7 @@ public:
     void   RestoreAlpha();
     void   RefreshAlpha();
 	void   SetSprite(Sprite* spr);
-	void   SetSprite(Sprite* spr, bool forceContourColoring);
+	void   SetSprite(Sprite* spr, bool forceContourColoring, bool friendly = false);
     int    GetEggType();
 
     // Finish

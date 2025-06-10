@@ -1540,6 +1540,8 @@
 # define PE_SILENT_RUNNING                                (316)
 # define PE_MASTER_TRADER                                 (318)
 # define PE_QUICK_POCKETS                                 (349)
+# define PE_TRAPPER									      (452)
+
 
 # define DAMAGE_POISONED                                  (500) // ClientInterface.cpp
 # define DAMAGE_RADIATED                                  (501) // ClientInterface.cpp

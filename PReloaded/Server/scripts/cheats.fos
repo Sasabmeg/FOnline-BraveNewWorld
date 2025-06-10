@@ -981,7 +981,7 @@ void ExecGiveCommand(array<string@>@ command, Critter@ player, Critter@ target)
 
     player.Say(SAY_NETMSG, "Executing give command");
 
-    int pid = 0, number = 1;
+    int pid = 0, number = 1, val0 = 0;
     if(command.length() < 3)
     {
         player.Say(SAY_NETMSG, "Wrong number of parameters");
@@ -1015,9 +1015,16 @@ void ExecGiveCommand(array<string@>@ command, Critter@ player, Critter@ target)
         return;
     }
 
+    if (command.length() > 4)
+    {
+        // we just use 1 in case of failure
+        StrToInt(command[4], val0);
+    }
+
     Item@ item = number > 0 ? target.AddItem(pid, 1) : null;
     if(valid(item))
     {
+        item.Val0 = val0;
         if(legit)     // record spawner id
         {
             ILog("legitspawn", AuthedInfo(player.Id) + " gave legit item " +  "(Id:" + item.Id + ") to critter " + target.Id);

@@ -150,6 +150,9 @@ bool _TrapUse(Item& trap, Critter& cr, int skill)
 {
     int result = SkillCheck(cr, SK_TRAPS, skill, null, -_Complexity(trap));
 
+    if (cr.IsPlayer() && cr.GetAccess() >= ACCESS_TESTER) {
+        cr.Say(SAY_NETMSG, "Disarming trap: complexity = " + _Complexity(trap) + ", result = " + result);
+    }
     if(result == SKILL_CHECK_SUCCESS)
     {
         cr.Say(SAY_NETMSG, "You've successfully disarmed the trap.");

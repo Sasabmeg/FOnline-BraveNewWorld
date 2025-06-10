@@ -287,21 +287,36 @@ void ItemHex::SetSprite(Sprite* spr)
 }
 
 //	Could have defaulted 2nd param to false and use func above, but was having runtime error on Reloaded S3. Maybe not from that, but stays like this for now.
-void ItemHex::SetSprite(Sprite* spr, bool forceContourColoring)
-{
-    if( spr )
-        SprDraw = spr;
-    if( SprDrawValid )
-    {
-        SprDraw->SetColor( IsColorize() ? GetColor() : 0 );
-        SprDraw->SetEgg( GetEggType() );
-		if (IsBadItem())
+void ItemHex::SetSprite(Sprite* spr, bool forceContourColoring, bool friendly) {
+	if (spr) {
+		SprDraw = spr;
+	}
+    if (SprDrawValid) {
+        SprDraw->SetColor(IsColorize() ? GetColor() : 0);
+        SprDraw->SetEgg(GetEggType());
+		if (IsBadItem()) {
 			SprDraw->SetContour(CONTOUR_RED);
-		else
-			if ( forceContourColoring && ( IsAmmo() || IsArmor() || IsWeapon() || IsMisc() || IsKey() || IsDrug() ) )
-			{
-				SprDraw->SetContour(CONTOUR_YELLOW);
+		} else {
+			if (forceContourColoring) {
+				if (IsKey()) {
+					SprDraw->SetContour(CONTOUR_CUSTOM, 0xFFCC6600);
+				} else if (IsTrap()) {
+					if (friendly) {
+						SprDraw->SetContour(CONTOUR_CUSTOM, 0xFF00FF00);
+					} else {
+						SprDraw->SetContour(CONTOUR_YELLOW);
+					}
+				} else if (IsContainer()) {
+					SprDraw->SetContour(CONTOUR_CUSTOM, 0xFFFFFF00);
+				} else if (IsMisc()) {
+					if (!IsNoHighlight()) {
+						SprDraw->SetContour(CONTOUR_CUSTOM, 0xFF8000FF);
+					}
+				} else if (IsAmmo() || IsArmor() || IsWeapon() || IsDrug()) {
+					SprDraw->SetContour(CONTOUR_CUSTOM, 0xFF80FF80);
+				}
 			}
+		}
 	}
 }
 

@@ -362,7 +362,22 @@ bool HexManager::AddItem( uint id, uint16 pid, uint16 hx, uint16 hy, bool is_add
                                                  &item->DrawEffect, &item->SprDrawValid );
             if( !item->IsNoLightInfluence() && !(item->IsFlat() && item->IsScenOrGrid() ) )
                 spr.SetLight( hexLight, maxHexX, maxHexY );
-			item->SetSprite(&spr, ItemHighlightActive);
+			if (item->IsTrap()) {
+				CritterCl* chosen = GetChosen();
+				if (chosen != NULL) {
+					if (item != NULL && &(item->Data) != NULL && item->Data.ScriptValues != NULL && chosen->Id == item->Data.ScriptValues[0]) {
+						item->SetSprite(&spr, true, true);
+					} else if (chosen->Params[PE_TRAPPER] > 0) {
+						item->SetSprite(&spr, true, false);
+					} else {
+						item->SetSprite(&spr, false);
+					}
+				} else {
+					item->SetSprite(&spr, false);
+				}
+			} else {
+				item->SetSprite(&spr, ItemHighlightActive);
+			}
         }
 
         if( item->IsLight() || !item->IsLightThru() )
@@ -1079,9 +1094,23 @@ void HexManager::RebuildMap( int rx, int ry )
                         spr.SetLight( hexLight, maxHexX, maxHexY );
 					//    Set contour color to show visible items on map (Item detection feature)
 					if (item->IsItem()) {
-						item->SetSprite(&spr, ItemHighlightActive);
-					}
-					else {
+						if (item->IsTrap()) {
+							CritterCl* chosen = GetChosen();
+							if (chosen != NULL) {
+								if (item != NULL && &(item->Data) != NULL && item->Data.ScriptValues != NULL && chosen->Id == item->Data.ScriptValues[0]) {
+									item->SetSprite(&spr, true, true);
+								} else if (chosen->Params[PE_TRAPPER] > 0) {
+									item->SetSprite(&spr, true, false);
+								} else {
+									item->SetSprite(&spr, false);
+								}
+							} else {
+								item->SetSprite(&spr, false);
+							}
+						} else {
+							item->SetSprite(&spr, ItemHighlightActive);
+						}
+					} else {
 						item->SetSprite(&spr);
 					}
                 }

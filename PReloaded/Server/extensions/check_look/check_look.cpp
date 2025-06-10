@@ -390,8 +390,13 @@ EXPORT bool check_trap_look(Map& map, Critter& cr, Item& trap)
 {
 	int dist = GetDistantion(cr.HexX,cr.HexY,trap.AccHex.HexX,trap.AccHex.HexY);
 	int perception = CLAMP(cr.Params[ST_PERCEPTION]+cr.Params[ST_PERCEPTION_EXT],1,10);
+	if (trap.Data.ScriptValues != NULL && trap.Data.ScriptValues[0] == cr.Id && dist < 15 + 3 * perception) {
+		return true;
+	}
+	perception = CLAMP(perception - 4, 0, 6);
 	int skilldiff = cr.Params[SK_TRAPS]-trap.TrapGetValue();
-	return dist <= max((perception/2 + skilldiff/50), 2);
+	int skillBonus = skilldiff < 200 ? 0 : (skilldiff - 200) / 25 + 1;
+	return dist <= max((perception / 3 + skilldiff / 50 + skillBonus), 2);
 }
 
 EXPORT uint Map_WallDistance(Map& map, uint16 hx, uint16 hy) // test
