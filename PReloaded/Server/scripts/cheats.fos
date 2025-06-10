@@ -8420,7 +8420,7 @@ void ExecParamCommand(array<string@>@ command, Critter@ player, Critter@ target)
                     player.Say(SAY_NETMSG, "Wrong arguments.");
                     return;
                 }
-            } else if (control == 1) {
+            } else if (control == 1 || control == 2) {
                 if (StrToInt(command[3], param)) {
                     if (param < 0 || param > 999) {
                         player.Say(SAY_NETMSG, "Invalid param number.");
@@ -8441,26 +8441,36 @@ void ExecParamCommand(array<string@>@ command, Critter@ player, Critter@ target)
                     uint num = target.GetCritters(false, FIND_ALL, critters);
                     bool set = false;
                     for(uint i = 0; i < num; i++) {
-                        if (GetDistantion(target.HexX, target.HexY, critters[i].HexX, critters[i].HexY) > 1)
+                        if (control == 1 && GetDistantion(target.HexX, target.HexY, critters[i].HexX, critters[i].HexY) > 1)
                             continue;
-                        if (GetDirection(target.HexX, target.HexY, critters[i].HexX, critters[i].HexY) != target.Dir)
+                        if (control == 1 && GetDirection(target.HexX, target.HexY, critters[i].HexX, critters[i].HexY) != target.Dir)
                             continue;
                         if (haveValue) {
-                            critters[i].Say(SAY_NORM, "Setting param: " + param + " to: " + value);
-                            player.Say(SAY_NETMSG, "Setting param: " + param + " to: " + value);
+                            if (control == 1) {
+                                player.Say(SAY_NETMSG, "Setting param: " + param + " to: " + value);
+                            } else {
+                                critters[i].Say(SAY_NORM, "Setting param: " + param + " to: " + value);
+                            }
                             critters[i].ParamBase[param] = value;
                         } else {
-                            critters[i].Say(SAY_NORM, "Param: " + param + " of target is: " + critters[i].Param[param]);
-                            player.Say(SAY_NETMSG, "Param: " + param + " of target is: " + critters[i].Param[param]);
+                            if (control == 1) {
+                                player.Say(SAY_NETMSG, "Param: " + param + " of target is: " + critters[i].Param[param]);
+                            } else {
+                                critters[i].Say(SAY_NORM, "Param: " + param + " of target is: " + critters[i].Param[param]);
+                            }
                         }
                         set = true;
                     }
                     if (!set) {
-                        player.Say(SAY_NETMSG, "Critter to get/set param should be in front of you.");
+                        if (control == 1) {
+                            player.Say(SAY_NETMSG, "Critter to get/set param should be in front of you.");
+                        } else {
+                            player.Say(SAY_NETMSG, "No visible critters.");
+                        }
                     }
                 }
             } else {
-                player.Say(SAY_NETMSG, "Invalid param group.");
+                player.Say(SAY_NETMSG, "Invalid param group. Use 0 to get/set self params, 1 for target in front of you and 2 for all targets that are visible.");
                 return;
             }
         }
