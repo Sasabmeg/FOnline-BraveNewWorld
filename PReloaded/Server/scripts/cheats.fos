@@ -83,6 +83,7 @@ import bool            IsGrenade(Item& item) from "throwing";
 import uint            numDigits(int number) from "critter_description";
 import void            SetCritterEvents(Critter& cr) from "logging_critter";
 import void            SetWear(Item& item, int wearProcent) from "repair";
+import void            WearItem(Critter& cr, Item& item, int wearCount) from "repair";
 import int             stringReplaceText(string& s, string@ f, string@ t) from "config_file";
 import array<Critter@> WorldmapGetPlayers(uint zx, uint zy) from "worldmap_players";
 import int             WorldmapGetTotalValue() from "worldmap";
@@ -981,7 +982,7 @@ void ExecGiveCommand(array<string@>@ command, Critter@ player, Critter@ target)
 
     player.Say(SAY_NETMSG, "Executing give command");
 
-    int pid = 0, number = 1, val0 = 0;
+    int pid = 0, number = 1, val = 0, wear = 100000;
     if(command.length() < 3)
     {
         player.Say(SAY_NETMSG, "Wrong number of parameters");
@@ -1015,16 +1016,81 @@ void ExecGiveCommand(array<string@>@ command, Critter@ player, Critter@ target)
         return;
     }
 
-    if (command.length() > 4)
-    {
-        // we just use 1 in case of failure
-        StrToInt(command[4], val0);
-    }
-
     Item@ item = number > 0 ? target.AddItem(pid, 1) : null;
-    if(valid(item))
-    {
-        item.Val0 = val0;
+    if (valid(item)) {
+        string[] swear = { "-w", "-wear" };
+        if (StrToInt(GetParameterString(command, swear), wear)) {
+            wear = CLAMP(wear, 0, 100);
+            player.Say(SAY_NETMSG, "Changing wear to: " + wear + "%");
+            SetWear(item, wear);
+            item.Update();
+        }
+        string[] sval0 = { "-v0", "-val0" };
+        if (StrToInt(GetParameterString(command, sval0), val)) {
+            player.Say(SAY_NETMSG, "Changing val0 to: " + val);
+            item.Val0 = val;
+            item.Update();
+        }
+        string[] sval1 = { "-v1", "-val1" };
+        if (StrToInt(GetParameterString(command, sval1), val)) {
+            player.Say(SAY_NETMSG, "Changing val1 to: " + val);
+            item.Val1 = val;
+            item.Update();
+        }
+        string[] sval2 = { "-v2", "-val2" };
+        if (StrToInt(GetParameterString(command, sval2), val)) {
+            player.Say(SAY_NETMSG, "Changing val2 to: " + val);
+            item.Val2 = val;
+            item.Update();
+        }
+        string[] sval3 = { "-v3", "-val3" };
+        if (StrToInt(GetParameterString(command, sval3), val)) {
+            player.Say(SAY_NETMSG, "Changing val3 to: " + val);
+            item.Val3 = val;
+            item.Update();
+        }
+        string[] sval4 = { "-v4", "-val4" };
+        if (StrToInt(GetParameterString(command, sval4), val)) {
+            player.Say(SAY_NETMSG, "Changing val4 to: " + val);
+            item.Val4 = val;
+            item.Update();
+        }
+        string[] sval5 = { "-v5", "-val5" };
+        if (StrToInt(GetParameterString(command, sval5), val)) {
+            player.Say(SAY_NETMSG, "Changing val5 to: " + val);
+            item.Val5 = val;
+            item.Update();
+        }
+        string[] sval6 = { "-v6", "-val6" };
+        if (StrToInt(GetParameterString(command, sval6), val)) {
+            player.Say(SAY_NETMSG, "Changing val6 to: " + val);
+            item.Val6 = val;
+            item.Update();
+        }
+        string[] sval7 = { "-v7", "-val7" };
+        if (StrToInt(GetParameterString(command, sval7), val)) {
+            player.Say(SAY_NETMSG, "Changing val7 to: " + val);
+            item.Val7 = val;
+            item.Update();
+        }
+        string[] sval8 = { "-v8", "-val8" };
+        if (StrToInt(GetParameterString(command, sval8), val)) {
+            player.Say(SAY_NETMSG, "Changing val8 to: " + val);
+            item.Val8 = val;
+            item.Update();
+        }
+        string[] sval9 = { "-v9", "-val9" };
+        if (StrToInt(GetParameterString(command, sval9), val)) {
+            player.Say(SAY_NETMSG, "Changing val9 to: " + val);
+            item.Val9 = val;
+            item.Update();
+        }
+        string[] strapValue = { "-tv", "-trapValue" };
+        if (StrToInt(GetParameterString(command, strapValue), val)) {
+            item.set_TrapValue(val);
+            item.Update();
+            player.Say(SAY_NETMSG, "Changed Trap Value to: " + item.get_TrapValue());
+        }
         if(legit)     // record spawner id
         {
             ILog("legitspawn", AuthedInfo(player.Id) + " gave legit item " +  "(Id:" + item.Id + ") to critter " + target.Id);

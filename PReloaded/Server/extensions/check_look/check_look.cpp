@@ -181,7 +181,7 @@ EXPORT bool check_look(Map& map, Critter& cr, Critter& opponent)
 	}
 	front_range += cr.Params[ST_BONUS_LOOK];
 	if (nightMalus > 0) {
-		if (front_range > FOClassic->LookMinimum + nightMalus) {
+		if (front_range > (int)FOClassic->LookMinimum + nightMalus) {
 			front_range -= nightMalus;
 		} else {
 			front_range = FOClassic->LookMinimum;
@@ -389,13 +389,16 @@ int GetEngineLook(Critter& cr)
 EXPORT bool check_trap_look(Map& map, Critter& cr, Item& trap)
 {
 	int dist = GetDistantion(cr.HexX,cr.HexY,trap.AccHex.HexX,trap.AccHex.HexY);
-	int perception = CLAMP(cr.Params[ST_PERCEPTION]+cr.Params[ST_PERCEPTION_EXT],1,10);
+	int perception = CLAMP(cr.Params[ST_PERCEPTION]+cr.Params[ST_PERCEPTION_EXT], 1, 10);
+	int max_range = TraceWall(cr.HexX, cr.HexY, trap.AccHex.HexX, trap.AccHex.HexY, map, max_range); // in case wall is blocking
+	if (dist > max_range) {
+		return false;
+	}
 	if (trap.Data.ScriptValues != NULL && trap.Data.ScriptValues[0] == cr.Id && dist < 15 + 3 * perception) {
 		return true;
 	}
-	perception = CLAMP(perception - 4, 0, 6);
-	int skilldiff = cr.Params[SK_TRAPS]-trap.TrapGetValue();
-	int skillBonus = skilldiff < 200 ? 0 : (skilldiff - 200) / 25 + 1;
+	int skilldiff = CLAMP(cr.Params[SK_TRAPS] - trap.TrapGetValue(), -300, 300);
+	int skillBonus = cr.Params[SK_TRAPS] < 200 ? 0 : (CLAMP(skilldiff, 0, 200) / 25 + 1);
 	return dist <= max((perception / 3 + skilldiff / 50 + skillBonus), 2);
 }
 
