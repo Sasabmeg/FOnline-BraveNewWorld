@@ -370,6 +370,9 @@ class CTooltips {
                                  + "\n\t\u2022 Max: 200 (if this is tagged as your combat specialization then Max: 300)"
                                  + modifies
                                  + "\n\u2022 Magnitude of explosives and chance of not triggering traps."
+                                 + "\n\u2022 Detection range of traps."
+                                 + "\n\t\u2022 Formula: (PE-4)/3 + (Skill-Difficulty)/50 + TrapSkillBonus"
+                                 + "\n\t\u2022 TrapSkillBonus = (TrapsSkill - 200) / 25 + 1"
                                  + "\n\nNotes:"
                                  + "\n\u2022 To know more about Chance To Hit, Damage, Critical or other effect calculations use a training dummy in a tent or base.");
 
@@ -1438,7 +1441,6 @@ void SetInventoryDetailText(ItemCl& item) {
             if (item.Proto.Weapon_MinStrength > 1) {
                 text += "\nMinimum Strength: " + item.Proto.Weapon_MinStrength;
             }
-
             if (item.Proto.Weapon_MaxDist_0 > 0) {
                 uint16	rounds = _WeaponRound(item.Proto, 0);
                 bool 	isBurst = rounds > 1;
@@ -1561,6 +1563,16 @@ void SetInventoryDetailText(ItemCl& item) {
                 text += "\nArmor Piercing";
             }
         } else if (item.GetType() == ITEM_TYPE_MISC) {
+            if (item.GetProtoId() == PID_BEAR_TRAP_SPRUNG) {
+                text += "\nTrap features:";
+                text += "\n\t\u2022 Trappers can see it easier.";
+                text += "\n\t\u2022 Light step will not trigger own traps.";
+                text += "\n\t\u2022 Chance to cripple limbs.";
+                text += "\n\t\u2022 Increased damage against animals or beasts.";
+                text += "\n\t\u2022 Increased damage per crippled limb.";
+                text += "\nTrap base damage: 5 - 15";
+                text += "\nTrap damage bonus: " + item.Val4 + "\n";
+            }
             if (item.Proto.Misc_ToolSkillNum != 0) {
                 string str = GetMsgStr(TEXTMSG_GAME, STR_SKILL_NAME(item.Proto.Misc_ToolSkillNum));
                 text += "\n" + str + " bonus: " + item.Proto.Misc_ToolSkillBonus + ".";

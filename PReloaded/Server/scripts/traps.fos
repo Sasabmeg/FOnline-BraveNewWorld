@@ -37,6 +37,318 @@ import void InjureCritter(Critter& cr, uint dmg, uint dmgType, uint8 dir, uint a
 // void MakeBearTrap(Item& trap, uint complexity, uint hideSkill, uint bonusDamage)
 // void MakeAlarmTrap(Item& trap, uint complexity, uint hideSkill, uint16 pid, uint8 min, uint8 max, uint16 bag, uint8 level, uint8 entire)
 
+bool isActiveTrap(uint protoId) {
+    switch (protoId) {
+        case PID_BEAR_TRAP:
+            return true;
+    }
+    return false;
+}
+
+bool _TrapUse(Item& trap, Critter& cr, int skill) {
+    int complexity = trap.Val3;
+    int skillValue = cr.Skill[SK_TRAPS];
+
+    //  if own trap then simply pick it up
+    if (skill == -1 && int(cr.Id) == trap.Val0) {
+        Item@ disarmedTrap = cr.AddItem(PID_BEAR_TRAP_SPRUNG, 1);
+        if (valid(disarmedTrap)) {
+            disarmedTrap.Val3 = trap.Val3;
+            disarmedTrap.Val4 = trap.Val4;
+            disarmedTrap.Update();
+        }
+        if (trap.Val9 > 0) {
+            //Log("Deleting time event = " + trap.Val9);
+            EraseTimeEvent(trap.Val9);
+        }
+        DeleteItem(trap);
+        return true;
+    }
+
+    if (skill == SK_SCIENCE) {
+        string text = "";
+        if (int(cr.Id) == trap.Val0) {
+            text += "This is your own trap. ";
+        }
+        if (complexity > skillValue) {
+            text += "Too complex!";
+        } else if (complexity + 75 > skillValue) {
+            text += "Very complex!";
+        } else if (complexity + 50 > skillValue) {
+            text += "Limited complexity!";
+        } else if (complexity + 25 > skillValue) {
+            text += "Almost Simple!";
+        } else if (complexity > skillValue) {
+            text += "Very simple!";
+        } else {
+            text += "Trivial!";
+        }
+        if (cr.IsPlayer() && cr.GetAccess() >= ACCESS_TESTER) {
+            text += " Complexity = " + _Complexity(trap);
+        }
+        cr.Say(SAY_NETMSG, text);
+        return true;
+    }
+
+    int result = SKILL_CHECK_FAILURE;
+    if (int(cr.Id) == trap.Val0) {
+        result = SKILL_CHECK_SUCCESS;
+    } else if (skillValue - complexity > Random(0, 99)) {
+        result = SKILL_CHECK_SUCCESS;
+    } else {
+        result = SKILL_CHECK_FAILURE;
+    }
+
+    if (cr.IsPlayer() && cr.GetAccess() >= ACCESS_TESTER) {
+        cr.Say(SAY_NETMSG, "Disarming trap: complexity = " + _Complexity(trap) + ", result = " + result);
+    }
+    if (result == SKILL_CHECK_SUCCESS) {
+        if (int(cr.Id) != trap.Val0) {
+            cr.Say(SAY_NETMSG, "You've successfully disarmed the trap.");
+            cr.StatBase[ST_EXPERIENCE] += TRAP_CLEAR_EXPERIENCE(trap);
+        } else {
+            cr.Say(SAY_NETMSG, "You've disarmed your own trap. (Auto success).");
+        }
+        Map@ map = cr.GetMap();
+        if (valid(map)) {
+            Item@ newTrap = map.AddItem(trap.HexX, trap.HexY, PID_BEAR_TRAP_SPRUNG, 1);
+            if (valid(newTrap)) {
+                newTrap.Val4 = trap.Val4;
+                newTrap.Update();
+            }
+        }
+        if (trap.Val9 > 0) {
+            //Log("Deleting time event = " + trap.Val9);
+            EraseTimeEvent(trap.Val9);
+        }
+        DeleteItem(trap);
+    } else {
+        cr.Say(SAY_NETMSG, "You've accidentally triggered the trap.");
+        trap.EventWalk(cr, true, cr.Dir);
+    }
+    return true;
+}
+
+bool UseBearTrap(Critter& cr, Item& trap) {
+    //cr.Say(SAY_NETMSG, "Trying to lay down bear trap...");
+    Map@ map = cr.GetMap();
+    if (!valid(map)) {
+        cr.Say(SAY_NETMSG, "Cannot set up bear trap here.");
+        return true;
+    }
+
+    if (cr.Timeout[TO_BATTLE] > 0) {
+        cr.Say(SAY_NETMSG, "Cannot set up bear trap while in combat.");
+        return true;
+    }
+
+    array<Item@> items;
+    uint count = map.GetItems(cr.HexX, cr.HexY, items);
+    for (uint i = 0; i < count; i++) {
+        if (isActiveTrap(items[i].GetProtoId())) {
+            cr.Say(SAY_NETMSG, "There is a trap already!");
+            return true;
+        }
+    }
+
+    //Item@ newTrap = map.AddItem(cr.HexX, cr.HexY, PID_BEAR_TRAP, 1);
+    Item@ newTrap = cr.AddItem(PID_BEAR_TRAP, 1);
+    if (!valid(newTrap)) {
+        cr.Say(SAY_NETMSG, "Cannot set the trap.");
+        return true;
+    }
+    //  owner of the trap
+    newTrap.Val0 = cr.Id;
+    //  trap value is used to check track visibility range
+    newTrap.set_TrapValue(CLAMP(Random(cr.Skill[SK_TRAPS] - 100, cr.Skill[SK_TRAPS]), 0, 300));
+    //  trap complexity when setting it up
+    newTrap.Val3 = CLAMP(cr.Skill[SK_TRAPS] - 95, 0, 300);
+    //  trap bonus damage should be set when crafting it
+    //newTrap.Val4 = CLAMP((cr.Skill[SK_TRAPS] - 100) / 10, 0, 25);
+    newTrap.Val4 = trap.Val4;
+    //newTrap.Update();
+    cr.MoveItem(newTrap.Id, 1, SLOT_GROUND);
+    newTrap.Update();
+
+    //  create timer to disolve trap
+    array<uint> values = {newTrap.Id};
+    newTrap.Val9 = CreateTimeEvent(AFTER(REAL_MINUTE(15 + cr.Skill[SK_TRAPS]/20*3)), "e_ExpireTrap", values, true);
+    //newTrap.Val9 = CreateTimeEvent(AFTER(REAL_SECOND(5)), "e_ExpireTrap", values, true);
+    //Log("Create time event = " + newTrap.Val9);
+
+    DeleteItem(trap);
+    if (cr.Timeout[TO_BATTLE] < int(__TimeoutBattle)) {
+        _SetTimeout(cr, TO_BATTLE, __TimeoutBattle);
+    }
+    return true;
+}
+
+//  itemId, pulseCount
+uint e_ExpireTrap(array<uint>@ data) {
+    //Log("Trap Expire :: Enter (" + data[0] + ")");
+    if (data.length() < 1) {
+        Log("Trap expire fail: !id");
+        return 0;
+    }
+    if (data[0] == 0) {
+        Log("Trap removing fail: id == 0");
+        return 0;
+    }
+    Item@ trap = GetItem(data[0]);
+    if (!valid(trap) || trap.IsNotValid) {
+        // item is gone already - don't panic!
+        DLog("Trap already removed");
+        return 0;
+    }
+    uint16 hexX = 0, hexY = 0;
+    Map@ map = trap.GetMapPosition(hexX, hexY);
+    if (valid(map)) {
+        map.AddItem(hexX, hexY, PID_JUNK, 1);
+    }
+    DeleteItem(trap);
+    return 0;
+}
+
+/**
+ * Sets the bear trap script for the item and assigns its parameters
+ * @param     trap     The item to become a bear trap
+ * @param     complexity       Complexity level for disarming the trap
+ * @param     hideSkill     Value of traps skill used to hide the item, 0 to disable
+ * @param     bonusDamage       Bonus damage dealt upon the trap activation
+ */
+void MakeBearTrap(Item& trap, uint complexity, uint hideSkill, uint bonusDamage)   // export
+{
+    if (hideSkill > 0) {
+        trap.TrapValue = hideSkill;
+    }
+    _BonusDamage(trap) = bonusDamage;
+    _Complexity(trap) = complexity;
+    trap.SetScript("_BearTrapInit");
+}
+
+void _BearTrapClosedInit(Item& item, bool firstTime) {
+    if (firstTime) {
+        SETFLAG(item.Flags, ITEM_FLAG_CAN_PICKUP);
+    }
+    //item.SetEvent(ITEM_EVENT_SKILL, "_BearTrapClosedUse");
+}
+
+void _BearTrapInit(Item& item, bool firstTime) {
+    if(firstTime)
+        SETFLAG(item.Flags, ITEM_FLAG_TRAP);
+    item.SetEvent(ITEM_EVENT_WALK, "_BearTrapWalk");
+    item.SetEvent(ITEM_EVENT_SKILL, "_TrapUse");
+}
+
+void _BearTrapWalk(Item& trap, Critter& cr, bool entered, uint8 dir) {
+    if (entered && cr.Stat[ST_LOCOMOTION_TYPE] != LOCOMOTION_FLY) {
+        array<uint> data = { trap.Id, cr.Id };
+        if (int(cr.Id) != trap.Val0 || cr.Perk[PE_LIGHT_STEP] == 0) {
+            //  if light step and traps skill higher than trap complexity then 33% chance to avoid setting off the trap if running and 66% if walking
+            int roll = Random(1, 100);
+            if (trap.Val3 > cr.Skill[SK_TRAPS] || cr.Perk[PE_LIGHT_STEP] == 0 || roll > (cr.IsRunning() ? 33 : 66)) {
+                if (cr.IsPlayer() && cr.GetAccess() >= ACCESS_TESTER) {
+                    cr.Say(SAY_NETMSG, "Moving into bear trap: complexity = " + _Complexity(trap) + ", roll = " + roll + ", IsRunning() = " + cr.IsRunning() + ", bonus damage = " + trap.Val4);
+                }
+                CreateTimeEvent(ELAPSED_TIME, "e_Clamp", data, false);
+            } else {
+                if (cr.IsPlayer() && cr.GetAccess() >= ACCESS_TESTER) {
+                    cr.Say(SAY_NETMSG, "Avoided bear trap: complexity = " + _Complexity(trap) + ", roll = " + roll + ", IsRunning() = " + cr.IsRunning());
+                }
+            }
+        }
+    }
+}
+
+uint e_Clamp(array<uint>@ values) {
+    Item@ trap = GetItem(values[0]);
+    if (!valid(trap))
+        return 0;
+    Critter@ cr = GetCritter(values[1]);
+    if(!valid(cr))
+        return 0;
+
+    int damageMul = 1 + cr.DamageBase[DAMAGE_LEFT_LEG] + cr.DamageBase[DAMAGE_RIGHT_LEG] + cr.DamageBase[DAMAGE_RIGHT_ARM] + cr.DamageBase[DAMAGE_LEFT_ARM];
+    switch (cr.Stat[ST_BASE_CRTYPE]) {
+        case CRTYPE_ALIEN:
+        case CRTYPE_ALIEN_SILVER:
+        case CRTYPE_ANT:
+        case CRTYPE_BEAR:
+        case CRTYPE_DEATHCLAW:
+        case CRTYPE_DEATHCLAW_SMALL:
+        case CRTYPE_DEATHCLAW_SPECIAL:
+        case CRTYPE_DOG:
+        case CRTYPE_DOG_RED:
+        case CRTYPE_GECKO:
+        case CRTYPE_GECKO_FIRE:
+        case CRTYPE_GECKO_SMALL:
+        case CRTYPE_MANTIS:
+        case CRTYPE_MOLERAT:
+        case CRTYPE_PIGRAT:
+        case CRTYPE_RAT:
+        case CRTYPE_SCORPION:
+        case CRTYPE_SCORPION_SMALL:
+            damageMul += 1;
+            break;
+    }
+    int damage = (Random(5, 15) + _BonusDamage(trap)) * damageMul;
+    InjureCritter(cr, damage, DAMAGE_TYPE_NORMAL, cr.Dir, 0);
+    int ironLimbsRank = 0;
+    if (cr.PerkBase[PE_IRON_LIMBS] > 0) {
+        ironLimbsRank++;
+    }
+	Item@ usedArmor = cr.GetItem(0, SLOT_ARMOR);
+    if (valid(usedArmor)) {
+        uint armorPerk = usedArmor.Proto.Armor_Perk;
+        if ((armorPerk >= ARMOR_PERK_COMBAT  && armorPerk < ARMOR_PERK_COMBAT + 10) || armorPerk == ARMOR_PERK_MEDIUM) {
+            ironLimbsRank++;
+        }
+    }
+    int roll = Random(1, 100);
+    //  33% chance to avoid cripple limbs per iron limbs perk rank (level perk or armor)
+    if (roll > ironLimbsRank * 33) {
+        if (cr.IsPlayer() && cr.GetAccess() >= ACCESS_TESTER) {
+            cr.Say(SAY_NETMSG, "Iron Limbs avoid cripple FAIL: roll = " + roll);
+        }
+        if (Random(1, 100) > 50) {
+            if (cr.DamageBase[DAMAGE_LEFT_LEG] > 0 && cr.DamageBase[DAMAGE_RIGHT_LEG] > 0) {
+                cr.DamageBase[DAMAGE_LEFT_ARM] = 1;
+            } else {
+                cr.DamageBase[DAMAGE_LEFT_LEG] = 1;
+            }
+        } else {
+            if (cr.DamageBase[DAMAGE_LEFT_LEG] > 0 && cr.DamageBase[DAMAGE_RIGHT_LEG] > 0) {
+                cr.DamageBase[DAMAGE_RIGHT_ARM] = 1;
+            } else {
+                cr.DamageBase[DAMAGE_RIGHT_LEG] = 1;
+            }
+        }
+    } else {
+        if (cr.IsPlayer() && cr.GetAccess() >= ACCESS_TESTER) {
+            cr.Say(SAY_NETMSG, "Iron Limbs avoid cripple SUCCESS: roll = " + roll);
+        }
+    }
+
+    if (trap.Accessory == ACCESSORY_HEX) {
+        cr.PlaySound("beartrap.ogg", true);
+        uint16 hexX = 0, hexY = 0;
+        Map@ map = trap.GetMapPosition(hexX, hexY);
+        if (valid(map)) {
+            if (trap.Val4 > 0 || Random(1, 100) > 50) {
+                Item@ sprungBearTrap = map.AddItem(trap.HexX, trap.HexY, PID_BEAR_TRAP_SPRUNG, 1);
+                if (valid(sprungBearTrap)) {
+                    sprungBearTrap.Val4 -= (sprungBearTrap.Val4 > 0 ? Random(0, 1 + trap.Val4 / 10) : 0);
+                    sprungBearTrap.Update();
+                }
+            } else {
+                map.AddItem(hexX, hexY, PID_JUNK, Random(1, 2));
+            }
+        }
+    }
+    DeleteItem(trap);
+    return 0;
+}
+
 /**
  * Sets the spear trap script for the item and assigns its parameters
  * @param     trap			The item to become a spear trap
@@ -144,86 +456,6 @@ void ShootGeneric(Item& trap, Critter& cr)
     InjureCritter(cr, Random(_DmgMin(trap), _DmgMax(trap)), DAMAGE_TYPE_NORMAL, (dir + 3) % 6, 0);
     map.AddItem(cr.HexX, cr.HexY, _Pid(trap), 1);
     return;
-}
-
-bool _TrapUse(Item& trap, Critter& cr, int skill)
-{
-    int result = SkillCheck(cr, SK_TRAPS, skill, null, -_Complexity(trap));
-
-    if (cr.IsPlayer() && cr.GetAccess() >= ACCESS_TESTER) {
-        cr.Say(SAY_NETMSG, "Disarming trap: complexity = " + _Complexity(trap) + ", result = " + result);
-    }
-    if(result == SKILL_CHECK_SUCCESS)
-    {
-        cr.Say(SAY_NETMSG, "You've successfully disarmed the trap.");
-        cr.StatBase[ST_EXPERIENCE] += TRAP_CLEAR_EXPERIENCE(trap);
-        DeleteItem(trap);
-    }
-    else
-    {
-        cr.Say(SAY_NETMSG, "You've accidentally triggered the trap.");
-        trap.EventWalk(cr, true, cr.Dir);
-    }
-    return true;
-}
-
-/**
- * Sets the bear trap script for the item and assigns its parameters
- * @param     trap     The item to become a bear trap
- * @param     complexity       Complexity level for disarming the trap
- * @param     hideSkill     Value of traps skill used to hide the item, 0 to disable
- * @param     bonusDamage       Bonus damage dealt upon the trap activation
- */
-void MakeBearTrap(Item& trap, uint complexity, uint hideSkill, uint bonusDamage)   // export
-{
-    if(hideSkill > 0)
-        trap.TrapValue = TRAPS_HIDE(hideSkill);
-    _BonusDamage(trap) = bonusDamage;
-    _Complexity(trap) = complexity;
-    trap.SetScript("_BearTrapInit");
-}
-
-void _BearTrapInit(Item& item, bool firstTime)
-{
-    if(firstTime)
-        SETFLAG(item.Flags, ITEM_FLAG_TRAP);
-    item.SetEvent(ITEM_EVENT_WALK, "_BearTrapWalk");
-    item.SetEvent(ITEM_EVENT_SKILL, "_TrapUse");
-}
-
-void _BearTrapWalk(Item& item, Critter& cr, bool entered, uint8 dir)
-{
-    if(entered && cr.Stat[ST_LOCOMOTION_TYPE] != LOCOMOTION_FLY && (cr.Perk[PE_LIGHT_STEP] == 0 || Random(0, 1) == 0))
-    {
-        array<uint> data = { item.Id, cr.Id };
-        if(cr.Perk[PE_LIGHT_STEP] == 0 || Random(0, 1) == 0)
-            CreateTimeEvent(ELAPSED_TIME, "e_Clamp", data, false);
-    }
-}
-
-uint e_Clamp(array<uint>@ values)
-{
-    Item@ item = GetItem(values[0]);
-    if(!valid(item))
-        return 0;
-
-    Critter@ cr = GetCritter(values[1]);
-    if(!valid(cr))
-        return 0;
-    InjureCritter(cr, Random(5, 15) + _BonusDamage(item), DAMAGE_TYPE_NORMAL, cr.Dir, 0);
-    if(Random(0, 2) == 0)
-        cr.DamageBase[DAMAGE_LEFT_LEG] = 1;
-    if(Random(0, 2) == 0)
-        cr.DamageBase[DAMAGE_RIGHT_LEG] = 1;
-
-    if(item.Accessory == ACCESSORY_HEX)
-    {
-        uint16 hx = 0;
-        uint16 hy = 0;
-        cr.PlaySound("beartrap.ogg", true);
-    }
-    DeleteItem(item);
-    return 0;
 }
 
 /**

@@ -636,6 +636,7 @@ uint GetCraftingSkillNumByCraftPid(Item& item) {
             case PID_PRIMITIVE_TOOL:
             case PID_RADIO:
             case PID_ROPE:
+            case PID_BEAR_TRAP_SPRUNG:
                 craftSkillNum = SK_OUTDOORSMAN;
                 break;
             default:

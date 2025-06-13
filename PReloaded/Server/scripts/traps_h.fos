@@ -9,7 +9,7 @@
 #define __TRAPS_H__
 
 #define TRAPS_HIDE                # (traps)          ((traps) / 5 + 10)   // TODO!
-#define TRAP_CLEAR_EXPERIENCE     # (_it)            (50 + _Complexity(_it) / 6)
+#define TRAP_CLEAR_EXPERIENCE     # (_it)            (50 + _Complexity(_it))
 
 // shared
 #define _Complexity               # (it)       (it.Val3) // everything
@@ -52,5 +52,6 @@ import void MakeGenericShotTrap(Item& trap, uint complexity, uint hideSkill, uin
 import void MakeBearTrap(Item& trap, uint complexity, uint hideSkill, uint bonusDamage) from "traps";
 import void MakeAlarmTrap(Item& trap, uint complexity, uint hideSkill, uint16 pid, uint8 min, uint8 max, uint16 bag, uint8 level, uint8 entire) from "traps";
 import void ClearWalkTrap(Item& item) from "traps";
+import bool UseBearTrap(Critter& cr, Item& trap) from "traps";
 #endif
 #endif

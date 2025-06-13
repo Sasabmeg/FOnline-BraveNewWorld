@@ -5139,25 +5139,28 @@ Type=5
 ScriptModule=traps
 ScriptFunc=_BearTrapInit
 PicMap=art\items\bear_t2_1.png
+PicInv=art\inven\bearTrapOpen.png
 Flags=402653214
 DisableEgg=1
-Stackable=1
 Weight=5160
 Volume=2
 SoundId=48
-Cost=850
+Cost=85
 Material=1
 
 [Proto]
 ProtoId=9851
 Type=5
-PicMap=art\items\smalbox2.frm
-Flags=268437534
+ScriptModule=traps
+ScriptFunc=_BearTrapClosedInit
+PicMap=art\items\bearTrapClosed.png
+PicInv=art\inven\bearTrapClosed.png
+Flags=402653214
 DisableEgg=1
 Weight=5160
 Volume=2
 SoundId=48
-Cost=850
+Cost=85
 Material=1
 
 [Proto]

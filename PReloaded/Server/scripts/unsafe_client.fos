@@ -755,23 +755,22 @@ void unsafe_PickAll(Critter& target, int, int, int, string@, array<int>@)
         int count = map.GetItems(target.HexX, target.HexY, items);
         if(count > 0)
         {
-            target.StatBase[ST_CURRENT_AP]-=500;
-            if(target.Mode[MODE_HIDE]!=0) target.ModeBase[MODE_HIDE]=0;
+            target.StatBase[ST_CURRENT_AP] -= 500;
+            if (target.Mode[MODE_HIDE] != 0) target.ModeBase[MODE_HIDE] = 0;
 
-            for(uint i = 0, j = items.length(); i < j; i++)
-            {
-            if(!FLAG(items[i].Flags, ITEM_FLAG_CAN_PICKUP)) @items[i] = null;
-            else if(items[i].GetProtoId()==1825) @items[i]=null; // Broc Plant
-            else if(items[i].GetProtoId()==1826) @items[i]=null; // Xander Plant
-            else if(items[i].GetProtoId()==1827) @items[i]=null; // Broc Plant
-            else if(items[i].GetProtoId()==1812) @items[i]=null; // Tobacco Plant
-            else if(items[i].GetProtoId()==9920) @items[i]=null; // Mutated Barley
-            else if(items[i].GetProtoId()==9850) @items[i]=null; // beartrap
-            else if(items[i].GetProtoId()==9851) @items[i]=null; // beartrap
-            else if(items[i].GetProtoId()==1854) @items[i]=null; // shit
-            else if(items[i].GetProtoId()==1855) @items[i]=null; // shit
-            else if(items[i].GetProtoId()==1856) @items[i]=null; // shit
-            else if(items[i].GetProtoId()==1857) @items[i]=null; // shit
+            for (uint i = 0, j = items.length(); i < j; i++) {
+                if (!FLAG(items[i].Flags, ITEM_FLAG_CAN_PICKUP)) @items[i] = null;
+                else if (items[i].GetProtoId() == PID_PROD_BROC) @items[i] = null; // Broc Plant
+                else if (items[i].GetProtoId() == PID_PROD_XANDER) @items[i] = null; // Xander Plant
+                else if (items[i].GetProtoId() == PID_PROD_FLINT) @items[i] = null; // Flint
+                else if (items[i].GetProtoId() == PID_PLANT_TOBACCO) @items[i] = null; // Tobacco Plant
+                else if (items[i].GetProtoId() == PID_PLANT_BARLEY) @items[i] = null; // Mutated Barley
+                else if (items[i].GetProtoId() == PID_BEAR_TRAP) @items[i] = null; // beartrap
+                else if (items[i].GetProtoId() == PID_BEAR_TRAP_SPRUNG) @items[i] = null; // beartrap
+                else if (items[i].GetProtoId() == PID_BRAHMIN_SHIT_1) @items[i] = null; // shit
+                else if (items[i].GetProtoId() == PID_BRAHMIN_SHIT_2) @items[i] = null; // shit
+                else if (items[i].GetProtoId() == PID_BRAHMIN_SHIT_3) @items[i] = null; // shit
+                else if (items[i].GetProtoId() == PID_BRAHMIN_SHIT_4) @items[i] = null; // shit
             }
             target.Say(SAY_NETMSG, "Picking all items.");
             _CritAnimatePickup(target);

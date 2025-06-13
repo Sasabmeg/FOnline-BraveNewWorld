@@ -45,6 +45,7 @@
 #include "reinforcements_h.fos"
 #include "reputations_h.fos"
 #include "town_h.fos"
+#include "traps_h.fos"
 #include "ttg_h.fos"
 #include "utils_h.fos"
 //#include "weather_h.fos"
@@ -1211,6 +1212,10 @@ bool critter_use_item(Critter& cr, Item& item, Critter@ targetCr, Item@ targetIt
         if (pid >= PID_TRAGIC_CARD_DECK && pid < PID_TRAGIC_END) {
             return UseTragicCardOrDeck(cr, item);
         }
+    }
+
+    if (pid == PID_BEAR_TRAP_SPRUNG) {
+        return UseBearTrap(cr, item);
     }
 
     // Drugs
@@ -3509,6 +3514,17 @@ void items_crafted(array<Item@>& items, array<uint>& itemsCount, array<Item@>& r
     GainSkillXp(crafter, craftSkillNum, craftXp);
 
 	TC_CraftCapsReward(crafter, (multiplier * items[0].Proto.Cost));
+
+	//  traps will be given bonus damage when crafted based on crafter traps skill
+	if (items[0].GetProtoId() == PID_BEAR_TRAP_SPRUNG) {
+        for (uint i = 0; i < multiplier; i++) {
+            if (items[i].GetProtoId() == PID_BEAR_TRAP_SPRUNG) {
+                items[i].Val4 = crafter.Skill[SK_TRAPS] / 10;
+                //crafter.Say(SAY_NETMSG, "Adding bonus damage to crafted trap: " + items[i].Val4);
+                items[i].Update();
+            }
+        }
+	}
 
     for(uint8 m = 0; m < multiplier; ++m)
     {
