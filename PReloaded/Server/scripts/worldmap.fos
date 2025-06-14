@@ -2200,6 +2200,13 @@ void FindEncounter(array<Critter@>& group, Item@ car, uint x, uint y, uint& enco
 		_AdminLog(group[i], "Zone [" + zx + "," + zy + "] chance/roll: " + zone.GetChance() + " / " + roll);
 	}
 
+	if (group[0].IsPlayer() && group[0].GetAccess() >= ACCESS_TESTER) {
+        int debugRoll = GetLvar(group[0], LVAR_test_encounter_roll);
+        if (debugRoll != 0) {
+            roll = CLAMP(debugRoll, 0, 100);
+        }
+	}
+
     if((playerCaravan && int(zone.GetChance())>0) || ((roll <= 5 || roll <= int(zone.GetChance()) / (empty ? 2 : 1)) && roll < 95))        // smaller chance with force-entering
 	//if((roll <= 5 || roll <= int(4*zone.GetChance()) / (empty ? 2 : 1)) && roll < 95)        // smaller chance with force-entering // TYLKO DO TESTOW!!!!!!!!!!!!!!!!!!!!!!
     {

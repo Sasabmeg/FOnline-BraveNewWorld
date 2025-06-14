@@ -102,7 +102,8 @@
 #define LVAR_command_tracking                   (4124)
 #define LVAR_authed_char                        (4125)
 #define LVAR_hub_arena_inside                   (4212)
-
+//  VARs to help test stuff where roll is needed to enter
+#define LVAR_test_encounter_roll                (4300)
 
 //
 //	QUEST VARS (200 reserved for each location, 400 for popular/faction zones)
@@ -1008,6 +1009,11 @@
    $	4212	1	hub_arena_inside	0	0	1	0
 **********
    Is/was inside Hub arena?
+**********
+
+   $	4300	1	test_encounter_roll	0	0	65535	0
+**********
+   Random Encounter roll value
 **********
 
    $	4386	1	redding_morton_brothers	0	0	0	4
