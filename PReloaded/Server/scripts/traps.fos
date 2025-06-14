@@ -111,10 +111,15 @@ bool _TrapUse(Item& trap, Critter& cr, int skill) {
         }
         Map@ map = cr.GetMap();
         if (valid(map)) {
-            Item@ newTrap = map.AddItem(trap.HexX, trap.HexY, PID_BEAR_TRAP_SPRUNG, 1);
-            if (valid(newTrap)) {
-                newTrap.Val4 = trap.Val4;
-                newTrap.Update();
+            if (trap.Val4 > 0 || Random(1, 100) > 25) {
+                Item@ newTrap = map.AddItem(trap.HexX, trap.HexY, PID_BEAR_TRAP_SPRUNG, 1);
+                if (valid(newTrap)) {
+                    newTrap.Val4 = trap.Val4 - CLAMP(Random(0, 1 + trap.Val4 / 10), 0, 10);
+                    newTrap.Val4 = newTrap.Val4 > 0 ? newTrap.Val4 : 0;
+                    newTrap.Update();
+                }
+            } else {
+                map.AddItem(trap.HexX, trap.HexY, PID_JUNK, Random(1, 2));
             }
         }
         if (trap.Val9 > 0) {
