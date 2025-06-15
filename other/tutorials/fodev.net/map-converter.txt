@@ -1,0 +1,75 @@
+[color=white][b]FOClassic-Map-Converter[/b][/color]
+
+This is a tool I made to convert map files from other versions of FOnline that are not compatible with FOClassic/SDK2238/Reloaded versions.
+
+Open source in Java on GitHub: https://github.com/Sasabmeg/foclassic-map-converter
+
+For those too laze to try it, or only need it to convert the TLA mk2 maps, here are the converted samples with pictures of each map for convenience:
+Maps: https://github.com/Sasabmeg/foclassic-map-converter/tree/main/sample/out
+Pics: https://github.com/Sasabmeg/foclassic-map-converter/tree/main/sample/pics
+
+Detailed description of the tool [color=white]Soon TM[/color].
+
+First, you need to have [color=white]JRE8[/color] installed. The tool is written in Java, you can run it from console. (f.e.: [color=green]java -jar foclassic-map-converter.jar -h[/color] )
+
+The conversion is a 3 step process:
+[list type=decimal]
+[li]Generate [color=white]item proto mapping file[/color] from generic proto files usually found at [color=white]/server/proto/items/[/color] for both source and target.
+[list]
+[li]This is the more important proto mapping, because this handles more than 90% of an average map. Everything in the fomap file that is in the [color=white][Tiles][/color] section and in [color=white][Objects][/color] section but does [b]not[/b] start with [b]'MapObjType 0'[/b] is not a Critter, so it falls into items proto category.[/li]
+[li]The Item proto mapping is strongly checked against FOClassic structure and will warn in log file if unknown attributes are found.[/li]
+[li]The output of this conversion in a proto mapping file, containing the proto ID's to map in first two columns. It is also verbose, as it contains the art path and filename, to supply information for manual changes if necessary. If you run the [color=white]covnert.bat[/color] this file will be named [color=white]items_verbose.mapping[/color][/li]
+[li]Example: [color=green]java -jar foclassic-map-converter.jar[/color] [color=green]-gipm[/color] [color=white]out\items_verbose.mapping[/color] [color=green]-pms[/color] [color=white]resources\tlamk2\proto\items\ammo.fopro resources\tlamk2\proto\items\armor.fopro[/color] [color=green]-pmt[/color] [color=white]resources\foclassic\proto\items\ammo.fopro resources\foclassic\proto\items\armor.fopro[/color] [color=green]-lp[/color] [color=white]out[/color] [color=green]-ll[/color] [color=gold]error[/color]
+[list]
+[li][color=green]-gipm --generateItemProtoMappingFile[/color] filename and relative path to generate the item proto mapping to.[/li]
+[li][color=green]-pms --protoMultipleSources[/color] item proto mapping source files (map/convert proto from), you can give multiple source files.[/li]
+[li][color=green]-pmt --protoMultipleTargets[/color] item proto mapping target files, (map/convert proto to) you can give multiple target files.[/li]
+[li][color=green]-lp --logPath[/color] logs will be created in this folder.[/li]
+[li][color=green]-ll --logLevel[/color] can be [color=gold]info[/color], [color=gold]warning[/color] or [color=gold]error[/color].[/li]
+[/list]
+[/li]
+[/list][/li]
+
+[li]Generate [color=white]critter proto mapping file[/color] from critter proto files usually found at [color=white]/server/proto/critters/[/color] for both source and target.
+[list]
+[li]This is the less important proto mapping, because critters are more personalized for target maps and also because it's almost impossible to get a good pivot point to connect the two sdk versions. Everything in the fomap file that is in the [color=white][Objects][/color] section and [b]does  start[/b] with [b]'MapObjType 0'[/b] is a Critter, so it falls into this proto category.[/li]
+[li]The critter proto mapping is not checked against FOClassic structure and it will copy over most attributes. The pivot point are two attributes: [b]ST_BASE_CRTYPE[/b] and [b]ST_BODY_TYPE[/b][/li]
+[li]The output of this conversion in a proto mapping file, containing only the proto ID's to map in first two columns. If you run the [color=white]covnert.bat[/color] this file will be named [color=white]critters.mapping[/color][/li]
+[li]Example: [color=green]java -jar foclassic-map-converter.jar[/color] [color=green]-gcpm[/color] [color=white]out\critters.mapping[/color] [color=green]-pms[/color] [color=white]resources\tlamk2\proto\critters\ammo.fopro resources\tlamk2\proto\critters\armor.fopro[/color] [color=green]-pmt[/color] [color=white]resources\foclassic\proto\critters\ammo.fopro resources\foclassic\proto\critters\armor.fopro[/color] [color=green]-lp[/color] [color=white]out[/color] [color=green]-ll[/color] [color=gold]error[/color]
+[list]
+[li][color=green]-gcpm --generateCritterProtoMappingFile[/color] filename and relative path to generate the critter proto mapping to.[/li]
+[li][color=green]-pms --protoMultipleSources[/color] item proto mapping source files (map/convert proto from), you can give multiple source files.[/li]
+[li][color=green]-pmt --protoMultipleTargets[/color] item proto mapping target files, (map/convert proto to) you can give multiple target files.[/li]
+[li][color=green]-lp --logPath[/color] logs will be created in this folder.[/li]
+[li][color=green]-ll --logLevel[/color] can be [color=gold]info[/color], [color=gold]warning[/color] or [color=gold]error[/color].[/li]
+[/list]
+[/li]
+[/list][/li]
+
+[li]Use the two proto mapping files above to convert the [color=white]fomap[/color] file.
+[list]
+[li]Example: [color=green]java -jar foclassic-map-converter.jar[/color] [color=green]-ms[/color] [color=white]resources/tlamk2/maps/barter_ground.fomap[/color] [color=green]-mt[/color] [color=white]out/barter_ground_converted.fomap[/color] [color=green]-ipm[/color] [color=white]out/items_verbose.mapping[/color] [color=green]-cpm[/color] [color=white]out/critters.mapping[/color [color=green]-lp[/color] [color=white]out[/color] [color=green]-mph[/color] [color=gold]remove[/color] [color=green]-ll[/color] [color=gold]error[/color]
+[list]
+[li][color=green]-ms --mapSourceFile[/color] filename and relative path to fomap file to be converted.[/li]
+[li][color=green]-mt --mapTargetFile[/color] filename and relative path to conversion result.[/li]
+[li][color=green]-ipm --itemProtoMapping[/color] item proto mapping file to be used for conversion.[/li]
+[li][color=green]-cpm --critterProtoMapping[/color] critter proto mapping file to be used for conversion.[/li]
+[li][color=green]-lp --logPath[/color] logs will be created in this folder.[/li]
+[li][color=green]-mph --missingProtoHandling[/color] can be [color=gold]ignore[/color], [color=gold]remove[/color] or [color=gold]replace[/color]. Replace not features atm and remove is strongly recommended.[/li]
+[li][color=green]-ll --logLevel[/color] can be [color=gold]info[/color], [color=gold]warning[/color] or [color=gold]error[/color].[/li]
+[/list]
+[/li]
+[/list][/li]
+[/list]
+
+You can use the [color=white]convert.bat[/color] or [color=white]convert_all.bat[/color] to do the whole process in one go. Make sure the follow the folder structure regarding resources and output.
+Examples:
+[list]
+[li][color=green]convert.bat resources\tlamk2\maps\barter_ground.fomap resources\tlamk2\proto resources\foclassic\proto out[/color][/li]
+[li][color=green]convert.bat resources\tlamk2\maps\barter_ground.fomap resources\tlamk2\proto resources\foclassic\proto out[/color][/li]
+[li]Notes:
+[list]
+[li]Both assume that critter and item proto files have fopro textension. In case of FOClassic critters, this is not true, so you might want to rename them manually before setting up this folder structure.[/li]
+[/list][/li]
+[/list]
+
