@@ -74,11 +74,15 @@ class CursorExt {
                 if (valid(chosenWeapon) && chosenWeapon.GetType() == ITEM_TYPE_WEAPON) {
                     weaponMode = chosenWeapon.Mode & 0x0F;
                     if (valid(chosenWeapon.Proto)) {
-                        int toHitOveCap = toHitUncapped(chosen, target, chosenWeapon.Proto, weaponMode);
-                        if (toHitOveCap > 100) {
-                            text += "+" + (toHitOveCap - 100) + "%";
+                        int toHitOverCap = toHitUncapped(chosen, target, chosenWeapon.Proto, weaponMode);
+                        if (toHitOverCap > 100) {
+                            text += "+" + (toHitOverCap - 100) + "%";b
                             if (this.drawOverHitCap) {
                                 DrawText(text, __MouseX + this.drawOverHitCapOffsetX, __MouseY + this.drawOverHitCapOffsetY, 0, 0, this.drawOverHitCapColor, this.drawOverHitCapFont, this.drawOverHitCapFlags);
+                            }
+                        } else if (toHitOverCap == 0) {
+                            if (chosenWeapon.AmmoCount == 0 && chosenWeapon.Proto.Weapon_MaxAmmoCount > 0 && !GUI_IsKeyPressed(DIK_LCONTROL) && !GUI_IsKeyPressed(DIK_LMENU)) {
+                                DrawText("Reload", __MouseX + this.drawOverHitCapOffsetX, __MouseY + this.drawOverHitCapOffsetY, 0, 0, this.drawOverHitCapColor, this.drawOverHitCapFont, this.drawOverHitCapFlags);
                             }
                         }
                     } else {

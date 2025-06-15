@@ -84,7 +84,12 @@ int checkBonus(ItemCl@ it, int bonusType)
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // To-hit chance.
 int to_hit(CritterCl& chosen, CritterCl& target, ProtoItem& weapon, uint8 weaponMode) {
-    return CLAMP(toHitUncapped(chosen, target, weapon, weaponMode), 5, _MaxToHit(chosen));
+    int toHit = toHitUncapped(chosen, target, weapon, weaponMode);
+    if (toHit == 0) {
+        return 0;
+    } else {
+        return CLAMP(toHit, 5, _MaxToHit(chosen));
+    }
 }
 
 
