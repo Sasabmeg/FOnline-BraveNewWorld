@@ -1262,6 +1262,21 @@
 #define PID_PILE_CHEMICALS2                 (22007)
 
 /******************************************************************
+***************         Books (Extended)            ***************
+******************************************************************/
+
+#define PID_BOOK_BIG_GUNS                   (22061)
+#define PID_BOOK_ENERGY_WEAPONS             (22062)
+#define PID_BOOK_CLOSE_COMBAT               (22063)
+#define PID_BOOK_THROWING                   (22064)
+#define PID_BOOK_DOCTOR                     (22065)
+#define PID_BOOK_SNEAKING                   (22066)
+#define PID_BOOK_LOCKPICKING                (22067)
+#define PID_BOOK_STEALING                   (22068)
+#define PID_BOOK_TRAPS                      (22069)
+#define PID_BOOK_SPEECH                     (22070)
+
+/******************************************************************
 ***************         Transfer Objects (23)       ***************
 ******************************************************************/
 

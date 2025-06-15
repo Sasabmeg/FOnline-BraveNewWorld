@@ -17,6 +17,16 @@ bool IsReadableBook(uint16 pid) { // Export
         case PID_SCOUT_HANDBOOK: // Outdoorsman
         case PID_BARTER_BOOK:
         case PID_GUNS_AND_BULLETS: // Small Guns
+        case PID_BOOK_BIG_GUNS:
+        case PID_BOOK_ENERGY_WEAPONS:
+        case PID_BOOK_CLOSE_COMBAT:
+        case PID_BOOK_THROWING:
+        case PID_BOOK_DOCTOR:
+        case PID_BOOK_SNEAKING:
+        case PID_BOOK_LOCKPICKING:
+        case PID_BOOK_STEALING:
+        case PID_BOOK_TRAPS:
+        case PID_BOOK_SPEECH:
         // case PID_CATS_PAW_ISSUE_5: // Energy Weapons
         // case PID_CHEMISTRY_MANUAL:
         // case PID_TECHNICAL_MANUAL:
@@ -56,13 +66,63 @@ void TryReadBook(Critter& cr, Item& book) { // Export
             break; // Outdoorsman
         case PID_BARTER_BOOK:
             skillNum = SK_BARTER;
-            strNum = 10458;
+            strNum = STR_BOOK_READ_BARTER;
             readAlready = LVAR_Book_Barter;
             break;
         case PID_GUNS_AND_BULLETS:
             skillNum = SK_SMALL_GUNS;
             strNum = STR_BOOK_READ_SMALL_GUNS;
             readAlready = LVAR_Book_SmallGuns;
+            break; // Small Guns
+        case PID_BOOK_BIG_GUNS:
+            skillNum = SK_BIG_GUNS;
+            strNum = STR_BOOK_READ_BIG_GUNS;
+            readAlready = LVAR_Book_BigGuns;
+            break; // Small Guns
+        case PID_BOOK_ENERGY_WEAPONS:
+            skillNum = SK_ENERGY_WEAPONS;
+            strNum = STR_BOOK_READ_ENERGY_WEAPONS;
+            readAlready = LVAR_Book_EnergyWeapons;
+            break; // Small Guns
+        case PID_BOOK_CLOSE_COMBAT:
+            skillNum = SK_UNARMED;
+            strNum = STR_BOOK_READ_CLOSE_COMBAT;
+            readAlready = LVAR_Book_CloseCombat;
+            break; // Small Guns
+        case PID_BOOK_THROWING:
+            skillNum = SK_THROWING;
+            strNum = STR_BOOK_READ_THROWING;
+            readAlready = LVAR_Book_Throwing;
+            break; // Small Guns
+        case PID_BOOK_DOCTOR:
+            skillNum = SK_DOCTOR;
+            strNum = STR_BOOK_READ_DOCTOR;
+            readAlready = LVAR_Book_Medic;
+            break; // Small Guns
+        case PID_BOOK_SNEAKING:
+            skillNum = SK_SNEAK;
+            strNum = STR_BOOK_READ_SNEAKING;
+            readAlready = LVAR_Book_Sneak;
+            break; // Small Guns
+        case PID_BOOK_LOCKPICKING:
+            skillNum = SK_LOCKPICK;
+            strNum = STR_BOOK_READ_LOCKPICKING;
+            readAlready = LVAR_Book_Lockpick;
+            break; // Small Guns
+        case PID_BOOK_STEALING:
+            skillNum = SK_STEAL;
+            strNum = STR_BOOK_READ_STEALING;
+            readAlready = LVAR_Book_Stealing;
+            break; // Small Guns
+        case PID_BOOK_TRAPS:
+            skillNum = SK_TRAPS;
+            strNum = STR_BOOK_READ_TRAPS;
+            readAlready = LVAR_Book_Traps;
+            break; // Small Guns
+        case PID_BOOK_SPEECH:
+            skillNum = SK_SPEECH;
+            strNum = STR_BOOK_READ_SPEECH;
+            readAlready = LVAR_Book_Speaking;
             break; // Small Guns
         //case PID_CATS_PAW_ISSUE_5: skillNum=SK_ENERGY_WEAPONS; strNum=STR_BOOK_READ_ENERGY_WEAPONS; readAlready=LVAR_FO2077_Book_EnergyWeapons; break; // Energy Weapons
         //case PID_CHEMISTRY_MANUAL: cr.SayMsg(SAY_NETMSG,TEXTMSG_GAME,STR_BOOK_READ_FAIL);return;
@@ -76,7 +136,7 @@ void TryReadBook(Critter& cr, Item& book) { // Export
 	GameVar@ readAlreadyVar = GetLocalVar(readAlready, cr.Id);
 
 	//  in case someone adds scavenging or gambling book, uncomment those lines and make a variable for it
-	if (skillNum == SK_REPAIR || skillNum == SK_SCIENCE || skillNum == SK_OUTDOORSMAN || skillNum == SK_BARTER /* || skillNum == SK_SCAVEGING || skillNum == SK_GAMBLING */) {
+	if (skillNum == SK_REPAIR || skillNum == SK_SCIENCE || skillNum == SK_OUTDOORSMAN || skillNum == SK_BARTER || skillNum == SK_SCAVENGING || skillNum == SK_GAMBLING) {
         if (valid(readAlreadyVar) && readAlreadyVar.GetValue() < BOOK_READ_LIMIT) {
             GainSkillXp(cr, skillNum, int(BOOK_READ_XP - CLAMP(readAlreadyVar.GetValue() + ((cr.Skill[skillNum] - 100) / 2), 0, 20)));
             cr.SayMsg(SAY_NETMSG,TEXTMSG_GAME,strNum);

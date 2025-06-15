@@ -518,6 +518,16 @@
 #define STR_BOOK_READ_SMALL_GUNS        (10455)
 #define STR_BOOK_READ_ENERGY_WEAPONS    (10456)
 #define STR_BOOK_READ_OUTDOORSMAN       (10457)
+#define STR_BOOK_READ_BARTER            (10458)
+#define STR_BOOK_READ_BIG_GUNS          (10459)
+#define STR_BOOK_READ_CLOSE_COMBAT      (10460)
+#define STR_BOOK_READ_THROWING          (10461)
+#define STR_BOOK_READ_DOCTOR            (10462)
+#define STR_BOOK_READ_SNEAKING          (10463)
+#define STR_BOOK_READ_LOCKPICKING       (10464)
+#define STR_BOOK_READ_STEALING          (10465)
+#define STR_BOOK_READ_TRAPS             (10466)
+#define STR_BOOK_READ_SPEECH            (10467)
 
 // Caliber
 #define STR_CALIBER_(num)               (10900+(num))
