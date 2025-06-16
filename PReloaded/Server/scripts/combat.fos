@@ -1687,7 +1687,7 @@ void ApplyDamage(AttackStruct& attack, Critter& target, uint rounds, bool isCrit
                         dummyInfo += "|" + COLOR_DTEXT_REGULAR + "  vs Stat Resist = |" + COLOR_DTEXT_BONUS + " " + (target.Stat[stat] + statMod) + " |" + COLOR_DTEXT_BONUS + "  RESIST SUCCESS  ";
                     }
 				}
-				// updade KD effect into LT or KO effect in case of head shots
+				// upgrade KD effect into LT or KO effect in case of head shots
 				if (aim == HIT_LOCATION_HEAD && FLAG(eff, HF_KNOCKDOWN) && (effectRoll >= target.Stat[stat] + statMod + HF_RESIST_TRESHOLD_1)) {
                     if (FLAG(eff, HF_KNOCKDOWN) && (effectRoll >= target.Stat[stat] + statMod + HF_RESIST_TRESHOLD_2)) {
                         SETFLAG(eff, HF_KNOCKOUT);
@@ -1924,32 +1924,34 @@ void ApplyDamage(AttackStruct& attack, Critter& target, uint rounds, bool isCrit
                 }
 			}
 
-			if (ironLimbsRank > 0) {
-                int ironLimbsRoll = Random(1, 10);
-			    if (ironLimbsRoll <= target.Stat[ST_STRENGTH] - 5 + 2 * ironLimbsRank) {
+			if (FLAG(eff, HF_DROPPED_WEAPON)) {
+                if (ironLimbsRank > 0) {
+                    int ironLimbsRoll = Random(1, 10);
+                    if (ironLimbsRoll <= target.Stat[ST_STRENGTH] - 5 + 2 * ironLimbsRank) {
+                        UNSETFLAG(eff, HF_DROPPED_WEAPON);
+                        UNSETFLAG(msgEff, HF_DROPPED_WEAPON);
+                        if (isDummyTraining) {
+                            dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , Weap Drop avert by Iron Limbs |" + COLOR_DTEXT_BONUS + " SUCCESS";
+                            dummyInfo += "|" + COLOR_DTEXT_REGULAR + " ( ST = |" + COLOR_DTEXT_BONUS + " " + target.Stat[ST_STRENGTH];
+                            dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , Modifier = |" + COLOR_DTEXT_MALUS + " -5";
+                            dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , IronLimbsRank = |" + COLOR_DTEXT_MALUS + " " + ironLimbsRank + " * 2";
+                            dummyInfo += "|" + COLOR_DTEXT_REGULAR + "  vs Roll = |" + COLOR_DTEXT_ROLL + " " + ironLimbsRoll;
+                        }
+                    } else {
+                        if (isDummyTraining) {
+                            dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , Weap Drop avert by Iron Limbs |" + COLOR_DTEXT_MALUS + " FAIL";
+                            dummyInfo += "|" + COLOR_DTEXT_REGULAR + " ( ST = |" + COLOR_DTEXT_BONUS + " " + target.Stat[ST_STRENGTH];
+                            dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , Modifier = |" + COLOR_DTEXT_MALUS + " -5";
+                            dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , IronLimbsRank = |" + COLOR_DTEXT_MALUS + " " + ironLimbsRank + " * 2";
+                            dummyInfo += "|" + COLOR_DTEXT_REGULAR + "  vs Roll = |" + COLOR_DTEXT_ROLL + " " + ironLimbsRoll;
+                        }
+                    }
+                } else if (target.Mode[MODE_NO_DROP] != 0) {
                     UNSETFLAG(eff, HF_DROPPED_WEAPON);
                     UNSETFLAG(msgEff, HF_DROPPED_WEAPON);
-                    if (isDummyTraining) {
-                        dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , Weap Drop avert by Iron Limbs |" + COLOR_DTEXT_BONUS + " SUCCESS";
-                        dummyInfo += "|" + COLOR_DTEXT_REGULAR + " ( ST = |" + COLOR_DTEXT_BONUS + " " + target.Stat[ST_STRENGTH];
-                        dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , Modifier = |" + COLOR_DTEXT_MALUS + " -5";
-                        dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , IronLimbsRank = |" + COLOR_DTEXT_MALUS + " " + ironLimbsRank + " * 2";
-                        dummyInfo += "|" + COLOR_DTEXT_REGULAR + "  vs Roll = |" + COLOR_DTEXT_ROLL + " " + ironLimbsRoll;
+                    if (isDummyTraining && FLAG(eff, HF_DROPPED_WEAPON)) {
+                        dummyInfo += "|" + COLOR_DTEXT_BONUS + " , Target mode: |" + COLOR_DTEXT_ROLL + " MODE_NO_DROP";
                     }
-                } else {
-                    if (isDummyTraining) {
-                        dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , Weap Drop avert by Iron Limbs |" + COLOR_DTEXT_MALUS + " FAIL";
-                        dummyInfo += "|" + COLOR_DTEXT_REGULAR + " ( ST = |" + COLOR_DTEXT_BONUS + " " + target.Stat[ST_STRENGTH];
-                        dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , Modifier = |" + COLOR_DTEXT_MALUS + " -5";
-                        dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , IronLimbsRank = |" + COLOR_DTEXT_MALUS + " " + ironLimbsRank + " * 2";
-                        dummyInfo += "|" + COLOR_DTEXT_REGULAR + "  vs Roll = |" + COLOR_DTEXT_ROLL + " " + ironLimbsRoll;
-                    }
-                }
-			} else if (target.Mode[MODE_NO_DROP] != 0) {
-                UNSETFLAG(eff, HF_DROPPED_WEAPON);
-                UNSETFLAG(msgEff, HF_DROPPED_WEAPON);
-                if (isDummyTraining && FLAG(eff, HF_DROPPED_WEAPON)) {
-                    dummyInfo += "|" + COLOR_DTEXT_BONUS + " , Target mode: |" + COLOR_DTEXT_ROLL + " MODE_NO_DROP";
                 }
 			}
 
@@ -1962,8 +1964,9 @@ void ApplyDamage(AttackStruct& attack, Critter& target, uint rounds, bool isCrit
                 }
             }
 
-			if (validAttacker && attackerIsPlayer)
+			if (validAttacker && attackerIsPlayer) {
 				AddScore(attacker, SCORE_SNIPER, 1);
+			}
 		}
 	}
 	// isCritical end
