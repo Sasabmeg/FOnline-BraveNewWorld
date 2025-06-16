@@ -370,21 +370,50 @@ void CombatAttack(Critter& cr, Critter& target, ProtoItem& weapon, uint8 weaponM
 
     cr.SetDir(GetDirection(hx, hy, tx, ty));
 
+
+    if (isDummyTraining) {
+        dummyInfo += "|" + COLOR_DTEXT_CAPTION + " Aim location :: ";
+    }
     int aimRoll = Random(-1, 8);
-    if (cr.Trait[TRAIT_FAST_SHOT] != 0 && !isBurst && _WeaponAim(weapon, use))
+    if (cr.Trait[TRAIT_FAST_SHOT] != 0 && !isBurst && _WeaponAim(weapon, use)) {
+        if (isDummyTraining) {
+            dummyInfo += "|" + COLOR_DTEXT_REGULAR + " Fast Shot random hit location.";
+        }
         aim = CLAMP(aimRoll, 0, 8);
+    }
     //  5% eyes, 5% groin and 20% torso, rest is 10%, except un-aimed which will be 20% (rolls: -1 and 0)
     if ((aim == HIT_LOCATION_EYES || aim == HIT_LOCATION_GROIN) && Random(1, 100) > 50) {
         aim == HIT_LOCATION_TORSO;
     }
     // Now we change aim, if applicable
-    if(aim == HIT_LOCATION_EYES && valid(cr) && (cr.Dir + 3) % 6 != target.Dir)
+    //if (aim == HIT_LOCATION_EYES && valid(cr) && isFrontal(cr, target)) {
+    if (aim == HIT_LOCATION_EYES && !IsFrontal(cr, target)) {
+        if (isDummyTraining) {
+            dummyInfo += "|" + COLOR_DTEXT_REGULAR + " Cannot hit eyes from the back. Attacker dir = " + cr.Dir + ", target dir = " + target.Dir;
+        }
         aim = HIT_LOCATION_HEAD;
-    else if(aim == HIT_LOCATION_EYES && valid(target))
-    {
+    } else if (aim == HIT_LOCATION_EYES && valid(target)) {
         Item@ helmet = target.GetItem(0, SLOT_HEAD);
-        if(valid(helmet) && helmet.Proto.Armor_Perk == HELMET_PERK_PROTECT_EYES)
+        if (valid(helmet) && helmet.Proto.Armor_Perk == HELMET_PERK_PROTECT_EYES) {
+            if (isDummyTraining) {
+                dummyInfo += "|" + COLOR_DTEXT_REGULAR + " This helmet protects eye hits.";
+            }
             aim = HIT_LOCATION_HEAD;
+        }
+    }
+    if (isDummyTraining) {
+        switch (aim) {
+            case HIT_LOCATION_NONE: dummyInfo += "|" + COLOR_DTEXT_BONUS + "  NONE."; break;
+            case HIT_LOCATION_HEAD: dummyInfo += "|" + COLOR_DTEXT_BONUS + "  HEAD."; break;
+            case HIT_LOCATION_LEFT_ARM: dummyInfo += "|" + COLOR_DTEXT_BONUS + "  LEFT ARM."; break;
+            case HIT_LOCATION_RIGHT_ARM: dummyInfo += "|" + COLOR_DTEXT_BONUS + "  RIGHT ARM."; break;
+            case HIT_LOCATION_TORSO: dummyInfo += "|" + COLOR_DTEXT_BONUS + " TORSO."; break;
+            case HIT_LOCATION_RIGHT_LEG: dummyInfo += "|" + COLOR_DTEXT_BONUS + "  RIGHT LEG."; break;
+            case HIT_LOCATION_LEFT_LEG: dummyInfo += "|" + COLOR_DTEXT_BONUS + "  LEFT LEG."; break;
+            case HIT_LOCATION_EYES: dummyInfo += "|" + COLOR_DTEXT_BONUS + "  EYES."; break;
+            case HIT_LOCATION_GROIN: dummyInfo += "|" + COLOR_DTEXT_BONUS + "  GROIN."; break;
+            default: dummyInfo += "|" + COLOR_DTEXT_BONUS + "  UNCALLED\n"; break;
+        }
     }
 
     if(cr.Timeout[TO_BATTLE] < int(__TimeoutBattle))
@@ -455,7 +484,7 @@ void CombatAttack(Critter& cr, Critter& target, ProtoItem& weapon, uint8 weaponM
     // baseToHit used for all targets, adjusted for distance and other target-dependent qualities every time it is necessary
     int baseToHit = skillVal - CLAMP(cr.ParamBase[ST_EX_RANGE_PENALTY], 0, 250);
     if (isDummyTraining) {
-        dummyInfo += "|" + COLOR_DTEXT_CAPTION + " Chance to Hit :: ";
+        dummyInfo += "\n|" + COLOR_DTEXT_CAPTION + " Chance to Hit :: ";
         if (_CritHasTrait(cr, TRAIT_GIFTED)) {
             dummyInfo += "|" + COLOR_DTEXT_REGULAR + " Gifted skill penalty = |" + COLOR_DTEXT_MALUS + " " + (-20) + "% , ";
         }
