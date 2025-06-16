@@ -76,7 +76,7 @@ class CursorExt {
                     if (valid(chosenWeapon.Proto)) {
                         int toHitOverCap = toHitUncapped(chosen, target, chosenWeapon.Proto, weaponMode);
                         if (toHitOverCap > 100) {
-                            text += "+" + (toHitOverCap - 100) + "%";b
+                            text += "+" + (toHitOverCap - 100) + "%";
                             if (this.drawOverHitCap) {
                                 DrawText(text, __MouseX + this.drawOverHitCapOffsetX, __MouseY + this.drawOverHitCapOffsetY, 0, 0, this.drawOverHitCapColor, this.drawOverHitCapFont, this.drawOverHitCapFlags);
                             }
