@@ -25,7 +25,8 @@
 // Example: if(valid(ptr))... if(not valid(ptr))...
 #define valid                        # (ptr) (@ptr != null)
 #define invalid                      # (ptr) (@ptr == null)
-
+#define IsFrontal                    # (__cr1, __cr2) (valid(__cr1) && valid(__cr2) && ((__cr1.Dir+2)%6 == __cr2.Dir || (__cr1.Dir+3)%6 == __cr2.Dir || (__cr1.Dir + 4)%6 == __cr2.Dir))
+#define IsFrontalExact               # (__cr1, __cr2) (valid(__cr1) && valid(__cr2) && (__cr1.Dir+3)%6 == __cr2.Dir)
 // Removing every occurance of _v from array
 #define remove_all_from_array                                                \
     # (a, _v) do { uint _len = a.length(); for(uint _i = 0; _i < _len; _i++) \
