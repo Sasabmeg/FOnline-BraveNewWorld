@@ -1145,7 +1145,7 @@ class CTooltips {
                                      + notes
                                      + "\n\u2022 Reduced chance to being critically hit by 5%."
                                      + "\n\u2022 Reduced critical power roll when critically hit by 5."
-                                     + "\n\u2022 3 DT and 10 DR against Brust attacks only."
+                                     + "\n\u2022 3 DT and 15 DR against Burst attacks only."
                                      + requirements
                                      + "\n\t\u2022  None. This perk is free for all players and some boss NPC's."
                                      + "\n\nNotes:"
@@ -1468,7 +1468,11 @@ void SetInventoryDetailText(ItemCl& item) {
                 string str = GetMsgStr(TEXTMSG_GAME, STR_INV_HAS_SHOTS);
                 str = ReplaceText(str, "VALUE", item.AmmoCount);
                 str = ReplaceText(str, "MAX_VALUE", item.Proto.Weapon_MaxAmmoCount);
-                str = ReplaceText(str, "AMMO", GetMsgStr(TEXTMSG_GAME, STR_CALIBER(item.Proto.Weapon_Caliber)));
+                if (item.AmmoCount > 0) {
+                    str = ReplaceText(str, "AMMO", GetMsgStr(TEXTMSG_ITEM, (item.AmmoPid*100)));
+                } else {
+                    str = ReplaceText(str, "AMMO", GetMsgStr(TEXTMSG_GAME, STR_CALIBER(item.Proto.Weapon_Caliber)));
+                }
                 text += str;
                 if (item.AmmoCount > 0) {
                     ProtoItem@ ammo = GetProtoItem(item.AmmoPid);

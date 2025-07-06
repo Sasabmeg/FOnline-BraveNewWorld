@@ -843,6 +843,19 @@ void CombatAttack(Critter& cr, Critter& target, ProtoItem& weapon, uint8 weaponM
     } else {    // If hit
         isHit = true;
         int isCriticalRoll = Random(1, 100);
+        if (attack.Attacker.IsPlayer() && attack.Attacker.GetAccess() >= ACCESS_TESTER) {
+            int debugCriticalChanceRoll = GetLvar(attack.Attacker, LVAR_test_crit_chance_roll);
+            if (debugCriticalChanceRoll > 0) {
+                isCriticalRoll = CLAMP(debugCriticalChanceRoll, 0, 100);
+                if (isDummyTraining && debugCriticalChanceRoll > 0) {
+                    dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , Debug TESTER Crit Chance roll: |" + COLOR_DTEXT_BONUS + " " + isCriticalRoll + "%";
+                }
+                if (target.IsPlayer() && target.GetAccess() == ACCESS_CLIENT) {
+                    target.Say(SAY_NETMSG, "|" + COLOR_DTEXT_REGULAR + " Attacker is a GM/TESTER. Crit Chance roll against you: |" + COLOR_DTEXT_BONUS + " " + isCriticalRoll + "%");
+                }
+            }
+        }
+
         if (isDummyTraining) {
             dummyText += "|" + COLOR_DTEXT_CAPTION + " \nChance to Crit :: ";
         }
@@ -1375,6 +1388,19 @@ void ApplyDamage(AttackStruct& attack, Critter& target, uint rounds, bool isCrit
         }
 
         int roll = Random(0, 100);
+        if (attacker.IsPlayer() && attacker.GetAccess() >= ACCESS_TESTER) {
+            int debugCritPowerRoll = GetLvar(attacker, LVAR_test_crit_power_roll);
+            if (debugCritPowerRoll > 0) {
+                roll = CLAMP(debugCritPowerRoll, 0, 100);
+                if (isDummyTraining && debugCritPowerRoll > 0) {
+                    dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , Debug TESTER Crit Power roll: |" + COLOR_DTEXT_BONUS + " " + debugCritPowerRoll + ", ";
+                }
+                if (target.IsPlayer() && target.GetAccess() == ACCESS_CLIENT) {
+                    target.Say(SAY_NETMSG, "|" + COLOR_DTEXT_REGULAR + " Attacker is a GM/TESTER. Crit Power roll against you: |" + COLOR_DTEXT_BONUS + " " + debugCritPowerRoll);
+                }
+            }
+        }
+
         if (isDummyTraining) {
             dummyInfo += "|" + COLOR_DTEXT_REGULAR + " Power Roll = |" + COLOR_DTEXT_ROLL + " " + roll;
             dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , Weap Bonus = |" + COLOR_DTEXT_BONUS + " " + attack.SelectWeaponBonus(BONUS_WEAPON_CRITICAL_ROLL);
@@ -1590,16 +1616,15 @@ void ApplyDamage(AttackStruct& attack, Critter& target, uint rounds, bool isCrit
 			_dmgMul[0] >>= 2;
             //Log("Critical table offset = " + offset + ", CriticalTable[offset] = " + CriticalTable[offset] + ", _dmgMul[0] = " + _dmgMul[0]);
             //  adjust the critical table here, because otherwise need to change a lot values in the table itself, and I want +0.5 factor for player and +1.5 for npc
-            if (!targetIsPlayer) {
-                _dmgMul[0] = _dmgMul[0] + 6;
-            } else {
-                _dmgMul[0] = _dmgMul[0] + 1;
+            if (target.Perk[PE_WASTELANDERS_RESILIENCE] <= 0) {
+                _dmgMul[0] = _dmgMul[0] + 4;
             }
 		}
 
 		if(isCritical) {
 			eff = CriticalTable[offset + 1];
             if (isDummyTraining) {
+                dummyInfo += "|" + COLOR_DTEXT_ROLL + " , CRITTABLEOFFSET = |" + COLOR_DTEXT_REGULAR + " " + offset;
                 dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , Crit effect = |" + COLOR_DTEXT_REGULAR + " " + eff;
                 if (FLAG(eff, HF_KNOCKOUT)) {
                     dummyInfo += " |" + COLOR_DTEXT_REGULAR + " (|" + COLOR_DTEXT_BONUS + " KO|" + COLOR_DTEXT_REGULAR + " )";
@@ -2309,8 +2334,32 @@ void ApplyDamage(AttackStruct& attack, Critter& target, uint rounds, bool isCrit
     //dmgMul *= attack.DMMod;
     int dmgDiv = attack.DDMod * 4;
 
+    int debugDamageRollMode = 0;
+    int debugDamageRollPercent = -1;
+	if (attacker.IsPlayer() && attacker.GetAccess() >= ACCESS_TESTER) {
+        debugDamageRollMode = GetLvar(attacker, LVAR_test_damage_roll);
+        if (debugDamageRollMode == 1) {
+            debugDamageRollPercent = 0;
+        } else if (debugDamageRollMode == 2) {
+            debugDamageRollPercent = 50;
+        } else if (debugDamageRollMode == 3) {
+            debugDamageRollPercent = 100;
+        }
+        if (isDummyTraining && debugDamageRollMode > 0) {
+            dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , Debug Damage Mode: |" + COLOR_DTEXT_BONUS + " " + debugDamageRollMode;
+            dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , Debug Damage percent: |" + COLOR_DTEXT_BONUS + " " + debugDamageRollPercent + "%";
+        }
+        if (target.IsPlayer() && target.GetAccess() == ACCESS_CLIENT) {
+            target.Say(SAY_NETMSG, "|" + COLOR_DTEXT_REGULAR + " Attacker is GM/TESTER. Debug Min-Max Damage percent: |" + COLOR_DTEXT_BONUS + " " + debugDamageRollPercent + "%");
+        }
+	}
+
     for (uint i = 0; i < rounds; i++) {
-		rawDmg = Random(dmgMin, dmgMax);
+        if (debugDamageRollMode == 0) {
+            rawDmg = Random(dmgMin, dmgMax);
+        } else {
+            rawDmg = dmgMin + (dmgMax - dmgMin) * debugDamageRollPercent / 100;
+        }
         if (isDummyTraining) {
             if (i > 0 && (i % 10 == 0)) {
                 attacker.Say(SAY_NETMSG, dummyInfo);
@@ -2329,22 +2378,47 @@ void ApplyDamage(AttackStruct& attack, Critter& target, uint rounds, bool isCrit
             dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , Attack dmg mod = |" + (attack.DMMod > 0 ? COLOR_DTEXT_BONUS : COLOR_DTEXT_MALUS) + " " + attack.DMMod;
         }
 
-        if (target.IsNpc() && attack.sneakAttack) {
-            //  Silent Death effect
-            int distance = GetDistantion(attacker.HexX, attacker.HexY, target.HexX, target.HexY);
-            float sneakDistanceFactor = float(CLAMP((18 - distance), 1, 15)) / 15;
-            float sneakMultiplier = float(100 + attackerSneakSkill) / 200;
-            if (attacker.Perk[PE_SILENT_DEATH] != 0) {
-                //  NPC max 4.3x on close range (0 - 3)
-                rawDmg *= 2 + sneakDistanceFactor * sneakMultiplier;
-                if (isDummyTraining) {
-                    dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , Silent Death dmg mult on NPC = |" + COLOR_DTEXT_BONUS + " " + (2 + sneakDistanceFactor * sneakMultiplier);
+        //  not a burst attack
+        if (rounds == 1) {
+            if (attack.sneakAttack) {
+                //  Silent Death effect
+                int distance = GetDistantion(attacker.HexX, attacker.HexY, target.HexX, target.HexY);
+                float sneakDistanceFactor = float(CLAMP((18 - distance), 1, 15)) / 15;
+                float sneakMultiplier = float(100 + attackerSneakSkill) / 200;
+                float finalSneakAttackDamageMult = 1;
+                float knifeBonus = 0;
+                if (valid(realWeapon) && valid(realWeapon.Proto)) {
+                    knifeBonus = (realWeapon.Proto.Weapon_Anim1 == ANIM1_KNIFE ? (isThrust ? 2 : 1) : 0);
+                }
+
+                if (target.Perk[PE_WASTELANDERS_RESILIENCE] > 0) {
+                    //  players or player like NPC's (boss, faction units)
+                    if (attacker.Perk[PE_SILENT_DEATH] > 0) {
+                        finalSneakAttackDamageMult = CLAMP((sneakDistanceFactor * sneakMultiplier + knifeBonus) / 2 , 1, 2);
+                        rawDmg *= finalSneakAttackDamageMult;
+                    } else {
+                        finalSneakAttackDamageMult = CLAMP((sneakDistanceFactor * sneakMultiplier + knifeBonus) / 3, 1, 2);
+                        rawDmg *= finalSneakAttackDamageMult;
+                    }
+                    if (isDummyTraining) {
+                        dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , Silent Death dmg mult on Player(like) = |" + COLOR_DTEXT_BONUS + " " + finalSneakAttackDamageMult;
+                    }
+                } else {
+                    //  non-player like NPC's
+                    if (attacker.Perk[PE_SILENT_DEATH] > 0) {
+                        finalSneakAttackDamageMult = CLAMP((1 + sneakDistanceFactor * sneakMultiplier + knifeBonus), 1, 5);
+                        rawDmg *= finalSneakAttackDamageMult;
+                    } else {
+                        finalSneakAttackDamageMult = CLAMP((1 + sneakDistanceFactor * sneakMultiplier + knifeBonus) / 2, 1, 3);
+                        rawDmg *= finalSneakAttackDamageMult;
+                    }
+                    if (isDummyTraining) {
+                        dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , Sneak Attack dmg mult on NPC(like)= |" + COLOR_DTEXT_BONUS + " " + finalSneakAttackDamageMult;
+                    }
                 }
             } else {
-                // NPC max 2.2x on close range (0 - 3)
-                rawDmg *= 1 + sneakDistanceFactor * sneakMultiplier;
                 if (isDummyTraining) {
-                    dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , Sneak Attack dmg mult on NPC = |" + COLOR_DTEXT_BONUS + " " + (1 + sneakDistanceFactor * sneakMultiplier);
+                    dummyInfo += "|" + COLOR_DTEXT_MALUS + " , Not a sneak attack! ";
                 }
             }
         }
