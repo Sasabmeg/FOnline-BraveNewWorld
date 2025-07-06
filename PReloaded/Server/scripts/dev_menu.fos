@@ -18,6 +18,8 @@ import bool GetVarId(const string& in, int& out) from "main";
 import bool GetBaseType(const string& in, int& out) from "main";
 import void ExplodeEx(Map& map, uint16 hexX, uint16 hexY, uint16 effectPid, uint effectRadius, uint damage, uint damageType, uint damageRadius, uint ownerId, uint16 explodePid) from "explode";
 import uint GetRandomDeathAnimation() from "cheats";
+import void SetWear(Item& item, int wearProcent) from "repair";
+
 
 //
 // helper - gets critter from given id, sends appropriate error messages to player
@@ -147,6 +149,25 @@ void unsafe_RemoveItem(Critter& player, int itemId, int p1, int p2, string@ para
         DeleteItem(item);
     LogCommandUsage(player, "removed item");
 }
+
+//
+// Repair item
+//
+void unsafe_RepairItem(Critter& player, int itemId, int p1, int p2, string@ param3, array<int>@ param4) {
+    if (player.GetAccess() < ACCESS_TESTER)
+        return;
+    Item@ item = GetDevItem(player, itemId);
+    if (valid(item) && valid(item.Proto)) {
+        if (item.Proto.Deteriorable) {
+            SetWear(item, 0);
+            player.Say(SAY_NETMSG, "Item Repaired");
+        } else {
+            player.Say(SAY_NETMSG, "Item is not deteriorable.");
+        }
+    }
+    LogCommandUsage(player, "Item Repaired");
+}
+
 
 //
 // Forces critter to say something

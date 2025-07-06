@@ -148,10 +148,10 @@ string[] commandlist =
     "name2id", "netmsg", "normaldeadly", "numplayers",
     "param", "params", "perkadjust", "pickitems", "phase", "phaseteam", "playerkarma",
     "playmusic", "playsound", "playspeech", "poison", "profadjust",
-    "questVars", "qvars",
+    "questVars", "qvars", "vars",
     "registerfaction", "removebankmoney", "removefaction", "removeitems",
     "reservednickname", "resetalldisguises", "resetprices", "resetreputations",
-    "resettown", "resettowns", "respawn", "revive", "respawnall", "reviveall",
+    "resettown", "resettowns", "respawn", "revive", "repair", "respawnall", "reviveall",
     "respawnallplayers", "reviveallplayers", "rotate", "rundialog",
     "saferegen", "say", "sayh", "setexpmod", "setfaction", "setmapdata", "setanim", "sethp",
     "setlexem", "setperk", "setreputation", "setrep", "settimeout", "sto",
@@ -4185,7 +4185,7 @@ void ExecMapListCommand(array<string@>@ command, Critter& player) {
 
 void ExecQuestVarListCommand(array<string@>@ command, Critter& player) {
     if (questVarList.isEmpty()) {
-        player.Say(SAY_NETMSG, "Initializing ITEM list.");
+        player.Say(SAY_NETMSG, "Initializing VAR list.");
         InitQuestVarList();
     }
     if(command.length() > 2)
@@ -6345,6 +6345,30 @@ void ExecRespawnCommand(array<string@>@ command, Critter@ player, Critter@ targe
             _CritUnsetMode(target, MODE_NO_LOOT);
         target.ToLife();
         Heal(target);
+    }
+}
+
+void ExecRepairCommand(array<string@>@ command, Critter@ player, Critter@ target) {
+    player.Say(SAY_NETMSG, "Repairing equipped items!");
+    Item@ head = _CritGetItemHead(player);
+    if (valid(head)) {
+        SetWear(head, 0);
+        head.Update();
+    }
+    Item@ armor = _CritGetItemArmor(player);
+    if (valid(armor)) {
+        SetWear(armor, 0);
+        armor.Update();
+    }
+    Item@ hand1 = _CritGetItemHand(player);
+    if (valid(hand1)) {
+        SetWear(hand1, 0);
+        hand1.Update();
+    }
+    Item@ hand2 = _CritGetItemHandExt(player);
+    if (valid(hand2)) {
+        SetWear(hand2, 0);
+        hand2.Update();
     }
 }
 
@@ -10094,7 +10118,7 @@ bool ExecCommand(Critter& player, string@ commandString)
     {
         ExecMapListCommand(command, player);
     }
-    else if(command[1] == "questvars" || command[1] == "qvars")
+    else if(command[1] == "questvars" || command[1] == "qvars" || command[1] == "vars")
     {
         ExecQuestVarListCommand(command, player);
     }
@@ -10419,6 +10443,10 @@ bool ExecCommand(Critter& player, string@ commandString)
     else if(command[1] == "respawn" || command[1] == "revive")
     {
         ExecRespawnCommand(command, player, target);
+    }
+    else if (command[1] == "repair")
+    {
+        ExecRepairCommand(command, player, target);
     }
     else if(command[1] == "respawnall" || command[1] == "reviveall")
     {

@@ -43,14 +43,14 @@ void InitDevMenu()
     screenMenu.CanMove(true);
     screenMenu.Modal(false);
     screenMenu.Multiinstance(false);
-    
+
     IGUIScreenOpt@ screenXp = GUI_CreateScreen(CLIENT_SCREEN_GIVEXP, "input_box.png");
     screenXp.Control(XpWindow);
     screenXp.SetCallbackShow(XpWindow);
     screenXp.CanMove(true);
     screenXp.Modal(true);
     screenXp.Multiinstance(false);
-    
+
     IGUIScreenOpt@ screenNpc = GUI_CreateScreen(CLIENT_SCREEN_SPAWNNPC, "perk.png");
     screenNpc.Control(SpawnWindow);
     screenNpc.SetCallbackShow(SpawnWindow);
@@ -161,6 +161,31 @@ class CCleanButton : CContextButton
             RunServerScriptUnsafe("dev_menu@unsafe_RemoveCritter", crId, 0, 0, null, null);
         else if(itemId != 0)
             RunServerScriptUnsafe("dev_menu@unsafe_RemoveItem", itemId, 0, 0, null, null);
+        parent.HideWindow();
+    }
+};
+
+//
+// Repairs item
+//  NOTE: These do not work at all, to adjust button for GM tools, edit GMTButtons.txt
+//
+class CRepairButton : CContextButton
+{
+    CRepairButton() {
+        super("Repair");
+    }
+
+    void SetItem(ItemCl@ item) {
+        caption = "Repair item";
+        CContextButton::SetItem(item);
+    }
+    //
+    // Performs repair on the item
+    //
+    void Click() {
+        if (itemId != 0) {
+            RunServerScriptUnsafe("dev_menu@unsafe_RepairItem", itemId, 0, 0, null, null);
+        }
         parent.HideWindow();
     }
 };
@@ -463,6 +488,7 @@ class CContextMenu : Window
     CKillerButton@    killer;
     CPossessButton@   possess;
     CCleanButton@     clean;
+    CRepairButton@    repair;
     CTradeButton@     trade;
     CTeleportButton@  teleport;
     CAirstrikeButton@ airstrike;
@@ -506,6 +532,8 @@ class CContextMenu : Window
         AddControl(@killer);
         @clean = CCleanButton();
         AddControl(@clean);
+        @repair = CRepairButton();
+        AddControl(@repair);
         @teleport = CTeleportButton();
         AddControl(@teleport);
         @airstrike = CAirstrikeButton();
@@ -607,6 +635,9 @@ class CContextMenu : Window
             title.SetCaption("<<Item>>");
             clean.SetItem(item);
             clean.Show();
+
+            repair.SetItem(item);
+            repair.Show();
 
             if(IsPossessMode())
             {
