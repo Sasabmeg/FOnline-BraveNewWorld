@@ -82,12 +82,19 @@ GatherCallback Callback;
 void ChangePic(Item& item)
 {
     float ratio = float(AMOUNT(item)) / float(__WoodCapacity);
-    if(ratio > 0.5)
+    if (ratio > 0.5) {
         item.PicMap = NormalPicHashes.GetRandom();
-    else if(ratio > 0)
+        UNSETFLAG(item.Flags, ITEM_FLAG_SHOOT_THRU);
+        UNSETFLAG(item.Flags, ITEM_FLAG_LIGHT_THRU);
+    } else if(ratio > 0) {
         item.PicMap = GrowingPicHashes.GetRandom();
-    else if(AMOUNT(item) == 0)
+        UNSETFLAG(item.Flags, ITEM_FLAG_SHOOT_THRU);
+        UNSETFLAG(item.Flags, ITEM_FLAG_LIGHT_THRU);
+    } else if(AMOUNT(item) == 0) {
         item.PicMap = ChoppedPicHashes.GetRandom();
+        SETFLAG(item.Flags, ITEM_FLAG_SHOOT_THRU);
+        SETFLAG(item.Flags, ITEM_FLAG_LIGHT_THRU);
+    }
     item.Update();
 }
 bool _UseItemOnTree(Item& item, Critter& cr, Item@ usedItem)
