@@ -32,7 +32,7 @@ array<uint16> Triangles;
    }
  */
 
-void DrawFog() // export
+void DrawFog(bool forcedRefresh) // export
 {
     if(!__ConfigFog)
         return;
@@ -43,7 +43,7 @@ void DrawFog() // export
         MapChanged = true;
         return;
     }
-    RebuildFog(chosen);
+    RebuildFog(chosen, forcedRefresh);
     DrawHexArea(Triangles, true, __ConfigFogColor);
 }
 
@@ -53,7 +53,7 @@ uint16 LastHexX   = uint16(-1);
 uint16 LastHexY   = uint16(-1);
 uint   LastSight  = uint(-1);
 
-void RebuildFog(CritterCl& cr)
+void RebuildFog(CritterCl& cr, bool forcedRefresh)
 {
     uint8  cDir = cr.Dir;
     uint16 cX = cr.HexX;
@@ -90,8 +90,9 @@ void RebuildFog(CritterCl& cr)
     }
 
     // Do not rebuild if there's no need for it
-    if(!MapChanged && LastDir == cDir && LastHexX == cX && LastHexY == cY && LastSight == cSight)
+    if (!forcedRefresh && !MapChanged && LastDir == cDir && LastHexX == cX && LastHexY == cY && LastSight == cSight) {
         return;
+    }
     MapChanged = false;
     LastDir = cDir;
     LastHexX = cX;

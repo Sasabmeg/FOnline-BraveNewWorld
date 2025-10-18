@@ -1356,3 +1356,10 @@ void _OpenTragicDeck(int param1, int param2, int param3, string@ param4, array<i
     string cardName = GetMsgStr(TEXTMSG_ITEM, param1 * 100);
     Message("Opening the tragic deck you found a card in good condition: " + cardName);
 }
+
+import void DrawFog(bool forcedRefresh) from "client_fov";
+
+void _RefreshMapAndFog(int param1, int param2, int param3, string@ param4, array<int>@ data) {
+    RefreshMap(false, false, false);
+    DrawFog(true);
+}

@@ -96,6 +96,16 @@ void ChangePic(Item& item)
         SETFLAG(item.Flags, ITEM_FLAG_LIGHT_THRU);
     }
     item.Update();
+    //  call refresh for players
+    Map@ map = GetMap(item.MapId);
+    if (valid(map)) {
+        array<Critter@> players;
+        uint num = map.GetCrittersHex(item.HexX, item.HexY, 60, FIND_ONLY_PLAYERS | FIND_LIFE, players);
+        for (uint i = 0; i < num; i ++) {
+            players[i].RefreshVisible();
+            players[i].RunClientScript("client_main@_RefreshMapAndFog", 0, 0, 0, null, null);
+        }
+    }
 }
 bool _UseItemOnTree(Item& item, Critter& cr, Item@ usedItem)
 {

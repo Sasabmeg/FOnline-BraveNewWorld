@@ -116,7 +116,7 @@ import string itemBonusColor(uint bonusType, int value) from "item_bonus";
 #define BONUS_WEAPON_MAX_AP                     (105)
 #define BONUS_WEAPON_MAX_RANGE                  (106)
 
-import void DrawFog() from "client_fov";
+import void DrawFog(bool forcedRefresh) from "client_fov";
 import void DrawMsFov() from "client_fov";
 import void DrawCustomBorder() from "client_fov";
 
@@ -508,7 +508,7 @@ void render_iface(uint layer)
     {
         if(__ConfigDisplayTCZones > 0)
             DrawArea(GetCurrentMapPid(), __ConfigDisplayTCZones);
-        DrawFog();
+        DrawFog(false);
         DrawMsFov();
         DrawCustomBorder();
         DrawCarTracker();
