@@ -1349,6 +1349,22 @@
 #define PID_TRAGIC_END                      (27499)
 
 
+/******************************************************************
+***************       Dynamic Environment (28)      ***************
+******************************************************************/
+
+#define PID_DYN_ENV_ROCKS_SMALL_1           (28101)
+#define PID_DYN_ENV_ROCKS_SMALL_2           (28102)
+#define PID_DYN_ENV_ROCKS_BIG_1             (28106)
+#define PID_DYN_ENV_ROCKS_BIG_2             (28107)
+#define PID_DYN_ENV_ROCKS_REMAINS_SMALL_1   (28111)
+#define PID_DYN_ENV_ROCKS_REMAINS_SMALL_2   (28112)
+#define PID_DYN_ENV_ROCKS_REMAINS_SMALL_3   (28113)
+#define PID_DYN_ENV_ROCKS_REMAINS_MEDIUM_1  (28115)
+#define PID_DYN_ENV_ROCKS_REMAINS_BIG_1     (28116)
+#define PID_DYN_ENV_ROCKS_REMAINS_BIG_2     (28117)
+#define PID_DYN_ENV_CRATE_SMALL_1           (28121)
+#define PID_DYN_ENV_CRATE_REMAINS_SMALL_1   (28131)
 
 
 /*

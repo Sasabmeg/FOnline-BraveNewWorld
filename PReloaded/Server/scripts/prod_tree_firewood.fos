@@ -8,6 +8,7 @@
 #include "_macros.fos"
 #include "production_h.fos"
 #include "utils_h.fos"
+#include "_colors.fos"
 
 #define TEXT_CHOPPED      (3016)
 #define TEXT_NONE_LEFT    (3051)
@@ -78,6 +79,33 @@ class GatherCallback : IGatherCallback
     }
 };
 GatherCallback Callback;
+
+void DamageTreeAtHexInRadius(Map@ map, uint16 x, uint16 y, uint16 dist) {
+    array<Item@> trees;
+    uint num = map.GetItems(x, y, dist, 0, trees);
+    if (num > 0) {
+        //map.SetText(x, y, COLOR_DDORANGE, "Found " + num + " items at hex!");
+        for (uint i = 0; i < num; i++) {
+            if (trees[i].GetProtoId() == PID_TREE1_FIREWOOD || trees[i].GetProtoId() == PID_TREE2_FIREWOOD || trees[i].GetProtoId() == PID_TREE3_FIREWOOD) {
+                //map.SetText(trees[i].HexX, trees[i].HexY, COLOR_DDORANGE, "Found a tree at hex with capacity: " + AMOUNT(trees[i]));
+                if (AMOUNT(trees[i]) > 0) {
+                    uint damageAmount = Random(__WoodCapacity / 3, __WoodCapacity);
+                    AMOUNT(trees[i]) = MAX(0, AMOUNT(trees[i]) - damageAmount);
+                    ChangePic(trees[i]);
+                    uint16 tx = trees[i].HexX;
+                    uint16 ty = trees[i].HexY;
+                    uint8 dir = GetDirection(x, y, tx, ty);
+                    //map.SetText(trees[i].HexX, trees[i].HexY, COLOR_DDORANGE, "Shot tree: (" + tx + ", " + ty + ", " + x + "," + y + ") dir = " + dir);
+                    map.MoveHexByDir(tx, ty, dir + Random(-1, 1), Random(1, 2));
+                    Item@ loot = map.AddItem(tx, ty, PID_FIREWOOD, Random(1, damageAmount/5));
+                    loot.Update();
+                }
+            }
+        }
+    } else {
+        //map.SetText(x, y, COLOR_DDORANGE, "No tree at hex!");
+    }
+}
 
 void ChangePic(Item& item)
 {

@@ -1,0 +1,142 @@
+//
+// FOnline: 2238
+// Rotators
+//
+// prod_tree_firewood.fos
+//
+
+#include "_macros.fos"
+#include "production_h.fos"
+#include "utils_h.fos"
+#include "_colors.fos"
+
+
+array<uint> bigRocks = { PID_DYN_ENV_ROCKS_BIG_1, PID_DYN_ENV_ROCKS_BIG_2 };
+array<uint> smallRocks = { PID_DYN_ENV_ROCKS_SMALL_1, PID_DYN_ENV_ROCKS_SMALL_2 };
+array<uint> bigRemains = { PID_DYN_ENV_ROCKS_REMAINS_BIG_1, PID_DYN_ENV_ROCKS_REMAINS_BIG_2 };
+//array<uint> bigRemains = { 3806, 3803 };  //  sceneries do not work :(
+array<uint> smallRemains = { PID_DYN_ENV_ROCKS_REMAINS_SMALL_1, PID_DYN_ENV_ROCKS_REMAINS_SMALL_2, PID_DYN_ENV_ROCKS_REMAINS_SMALL_3 };
+array<uint> lootPidsRockRare = { PID_MINERAL, PID_METAL_ORE };
+array<uint> lootPidsRockVeryRare = { PID_GOLD_NUGGET, PID_URANIUM_ORE };
+
+
+void DamageRockAtHexInRadius(Map@ map, uint16 x, uint16 y, uint16 dist) {
+    array<Item@> rocks;
+    uint num = map.GetItems(x, y, dist, 0, rocks);
+    bool found = false;
+    if (num > 0) {
+        //map.SetText(x, y, COLOR_DDORANGE, "Found " + num + " items at hex!");
+        for (uint i = 0; i < num && !found; i++) {
+            if (bigRocks.find(rocks[i].GetProtoId()) >= 0) {
+                //map.SetText(rocks[i].HexX, rocks[i].HexY, COLOR_DDORANGE, "Found a rock at hex: (" + rocks[i].HexX + " , " + rocks[i].HexY + ")");
+                uint16 hx, hy, tx, ty;
+                tx = hx = rocks[i].HexX;
+                ty = hy = rocks[i].HexY;
+                rocks[i].set_Flags(4124);
+                rocks[i].Update();
+                DeleteItem(rocks[i]);
+                //map.UnblockHex(hx, hy);
+                //map.MoveHexByDir(tx, ty, 2, 1);
+                //map.UnblockHex(tx, ty);
+                //map.MoveHexByDir(tx, ty, 4, 1);
+                //map.UnblockHex(tx, ty);
+                Item@ remains = map.AddItem(hx, hy, random_from_array(bigRemains), 1);
+                remains.Update();
+                for (uint k = 0; k < uint(Random(2, 4)); k++) {
+                    uint lootPid = PID_ROCK;
+                    uint roll = Random(0, 99);
+                    uint amount = Random(1, 5);
+                    if (roll < 5) {
+                        lootPid = random_from_array(lootPidsRockVeryRare);
+                        amount = 1;
+                    } else if (roll < 25) {
+                        lootPid = random_from_array(lootPidsRockRare);
+                        amount = Random(1, 2);
+                    }
+                    tx = hx;
+                    ty = hy;
+                    if (Random(1, 7) > 1) {
+                        map.MoveHexByDir(tx, ty, Random(0, 5), Random(1, 2));
+                    }
+                    Item@ loot = map.AddItem(tx, ty, lootPid, amount);
+                    loot.Update();
+                }
+                //  call refresh for players
+                array<Critter@> players;
+                uint num = map.GetCrittersHex(hx, hy, 60, FIND_ONLY_PLAYERS | FIND_LIFE, players);
+                for (uint j = 0; j < num; j ++) {
+                    players[j].RefreshVisible();
+                    players[j].RunClientScript("client_main@_RefreshMapAndFog", 0, 0, 0, null, null);
+                }
+                found = true;
+            } else if (smallRocks.find(rocks[i].GetProtoId()) >= 0) {
+                uint16 hx, hy, tx, ty;
+                tx = hx = rocks[i].HexX;
+                ty = hy = rocks[i].HexY;
+                rocks[i].set_Flags(4124);
+                rocks[i].Update();
+                DeleteItem(rocks[i]);
+                Item@ remains = map.AddItem(hx, hy, random_from_array(smallRemains), 1);
+                remains.Update();
+                for (uint k = 0; k < uint(Random(1, 2)); k++) {
+                    uint lootPid = PID_ROCK;
+                    uint roll = Random(0, 99);
+                    uint amount = Random(1, 3);
+                    if (roll < 5) {
+                        lootPid = random_from_array(lootPidsRockVeryRare);
+                        amount = 1;
+                    } else if (roll < 25) {
+                        lootPid = random_from_array(lootPidsRockRare);
+                        amount = Random(1, 2);
+                    }
+                    tx = hx;
+                    ty = hy;
+                    if (Random(1, 7) > 1) {
+                        map.MoveHexByDir(tx, ty, Random(0, 5), 1);
+                    }
+                    Item@ loot = map.AddItem(tx, ty, lootPid, amount);
+                    loot.Update();
+                }
+                //  call refresh for players
+                array<Critter@> players;
+                uint num = map.GetCrittersHex(hx, hy, 60, FIND_ONLY_PLAYERS | FIND_LIFE, players);
+                for (uint j = 0; j < num; j ++) {
+                    players[j].RefreshVisible();
+                    players[j].RunClientScript("client_main@_RefreshMapAndFog", 0, 0, 0, null, null);
+                }
+                //found = true;
+            }
+        }
+    } else {
+        //map.SetText(x, y, COLOR_DDORANGE, "No tree at hex!");
+    }
+}
+
+void DamageCrateAtHexInRadius(Map@ map, uint16 x, uint16 y, uint16 dist) {
+    array<Item@> crates;
+    uint num = map.GetItems(x, y, dist, 0, crates);
+    if (num > 0) {
+        //map.SetText(x, y, COLOR_DDORANGE, "Found " + num + " items at hex!");
+        for (uint i = 0; i < num; i++) {
+            if (crates[i].GetProtoId() == PID_DYN_ENV_CRATE_SMALL_1) {
+                uint16 hx, hy, tx, ty;
+                tx = hx = crates[i].HexX;
+                ty = hy = crates[i].HexY;
+                crates[i].set_Flags(4124);
+                crates[i].Update();
+                DeleteItem(crates[i]);
+                Item@ remains = map.AddItem(hx, hy, PID_DYN_ENV_CRATE_REMAINS_SMALL_1, 1);
+                remains.Update();
+                //  call refresh for players
+                array<Critter@> players;
+                uint num = map.GetCrittersHex(hx, hy, 60, FIND_ONLY_PLAYERS | FIND_LIFE, players);
+                for (uint j = 0; j < num; j ++) {
+                    players[j].RefreshVisible();
+                    players[j].RunClientScript("client_main@_RefreshMapAndFog", 0, 0, 0, null, null);
+                }
+            }
+        }
+    } else {
+        //map.SetText(x, y, COLOR_DDORANGE, "No crates at hex!");
+    }
+}

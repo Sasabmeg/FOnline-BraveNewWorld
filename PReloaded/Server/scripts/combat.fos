@@ -4870,10 +4870,16 @@ void CommenceThrown(AttackStruct& attack, Map@ map, uint16 tx, uint16 ty, Critte
     ApplyDamage(attack, realTarget, 1, isCritical, !changedTarget, results, 0);
 }
 
+import void DamageTreeAtHexInRadius(Map@ map, uint16 x, uint16 y, uint16 dist) from "prod_tree_firewood";
+import void DamageRockAtHexInRadius(Map@ map, uint16 x, uint16 y, uint16 dist) from "dynamic_environment";
+import void DamageCrateAtHexInRadius(Map@ map, uint16 x, uint16 y, uint16 dist) from "dynamic_environment";
+
+
 void CommenceExplosion(AttackStruct& attack, Map@ map, uint16 tx, uint16 ty, Critter@ target, uint weapPid, bool isCritical, uint intentionallyId, bool isRocket, array<CombatRes>& results, bool isExplodeRocket) {
     uint radius = 2;
-    if(isRocket) radius = isExplodeRocket?4:3;
-
+    if (isRocket) {
+        radius = isExplodeRocket ? 4 : 3;
+    }
 
     if(weapPid == PID_DYNACORD)
         radius = 4;
@@ -4889,7 +4895,10 @@ void CommenceExplosion(AttackStruct& attack, Map@ map, uint16 tx, uint16 ty, Cri
     } else if (weapPid == PID_PLASMA_GRENADE || weapPid == PID_FAKE_PLASMA_GRENADE) {
         map.RunEffect(PID_EXPLODE_PLASMA, tx, ty, 2);
     } else if (isRocket) {
-        map.RunEffect(PID_EXPLODE_ROCKET, tx, ty, 2);
+        map.RunEffect(PID_EXPLODE_ROCKET, tx, ty, radius);
+        DamageTreeAtHexInRadius(map, tx, ty, radius);
+        DamageRockAtHexInRadius(map, tx, ty, radius);
+        DamageCrateAtHexInRadius(map, tx, ty, radius);
     } else if (weapPid == PID_DYNACORD) {
         map.RunEffect(PID_EXPLODE_FIRE_BIG, tx, ty, 3);
     } else {
