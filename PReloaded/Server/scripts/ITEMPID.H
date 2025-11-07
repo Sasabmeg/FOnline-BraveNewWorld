@@ -1353,18 +1353,35 @@
 ***************       Dynamic Environment (28)      ***************
 ******************************************************************/
 
-#define PID_DYN_ENV_ROCKS_SMALL_1           (28101)
-#define PID_DYN_ENV_ROCKS_SMALL_2           (28102)
-#define PID_DYN_ENV_ROCKS_BIG_1             (28106)
-#define PID_DYN_ENV_ROCKS_BIG_2             (28107)
-#define PID_DYN_ENV_ROCKS_REMAINS_SMALL_1   (28111)
-#define PID_DYN_ENV_ROCKS_REMAINS_SMALL_2   (28112)
-#define PID_DYN_ENV_ROCKS_REMAINS_SMALL_3   (28113)
-#define PID_DYN_ENV_ROCKS_REMAINS_MEDIUM_1  (28115)
-#define PID_DYN_ENV_ROCKS_REMAINS_BIG_1     (28116)
-#define PID_DYN_ENV_ROCKS_REMAINS_BIG_2     (28117)
-#define PID_DYN_ENV_CRATE_SMALL_1           (28121)
-#define PID_DYN_ENV_CRATE_REMAINS_SMALL_1   (28131)
+#define PID_DYN_ENV_INVIS_WALL                  (28001)
+#define PID_DYN_ENV_INVIS_WINDOW                (28002)
+
+#define PID_DYN_ENV_ROCKS_SMALL_1               (28101)
+#define PID_DYN_ENV_ROCKS_SMALL_2               (28102)
+#define PID_DYN_ENV_ROCKS_BIG_1                 (28106)
+#define PID_DYN_ENV_ROCKS_BIG_2                 (28107)
+#define PID_DYN_ENV_ROCKS_REMAINS_SMALL_1       (28111)
+#define PID_DYN_ENV_ROCKS_REMAINS_SMALL_2       (28112)
+#define PID_DYN_ENV_ROCKS_REMAINS_SMALL_3       (28113)
+#define PID_DYN_ENV_ROCKS_REMAINS_MEDIUM_1      (28115)
+#define PID_DYN_ENV_ROCKS_REMAINS_BIG_1         (28116)
+#define PID_DYN_ENV_ROCKS_REMAINS_BIG_2         (28117)
+
+#define PID_DYN_ENV_CRATE_SMALL_1               (28121)
+#define PID_DYN_ENV_CRATE_REMAINS_SMALL_1       (28131)
+
+#define PID_DYN_ENV_BARREL_SMALL_1              (28141)
+
+#define PID_DYN_ENV_RAD_BARREL_SMALL_1          (28151)
+#define PID_DYN_ENV_RAD_PUDDLE_SMALL_1          (28156)
+#define PID_DYN_ENV_RAD_PUDDLE_MEDIUM_1         (28157)
+#define PID_DYN_ENV_RAD_PUDDLE_BIG_1            (28158)
+#define PID_DYN_ENV_RAD_PUDDLE_BIG_2            (28159)
+
+#define PID_DYN_ENV_WIRE_FENCE_SE_GOOD_1        (28201)
+#define PID_DYN_ENV_WIRE_FENCE_SE_HOLE_1        (28202)
+#define PID_DYN_ENV_BRICK_WALL_SE_GOOD_1        (28211)
+#define PID_DYN_ENV_BRICK_WALL_SE_HOLE_1        (28212)
 
 
 /*

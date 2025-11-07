@@ -4873,6 +4873,9 @@ void CommenceThrown(AttackStruct& attack, Map@ map, uint16 tx, uint16 ty, Critte
 import void DamageTreeAtHexInRadius(Map@ map, uint16 x, uint16 y, uint16 dist) from "prod_tree_firewood";
 import void DamageRockAtHexInRadius(Map@ map, uint16 x, uint16 y, uint16 dist) from "dynamic_environment";
 import void DamageCrateAtHexInRadius(Map@ map, uint16 x, uint16 y, uint16 dist) from "dynamic_environment";
+import void DamageBarrelAtHexInRadius(Map@ map, uint16 x, uint16 y, uint16 dist) from "dynamic_environment";
+import void DamageToxicBarrelAtHexInRadius(Map@ map, uint16 x, uint16 y, uint16 dist) from "dynamic_environment";
+import void DamageBrickWallAtHexInRadius(Map@ map, uint16 x, uint16 y, uint16 dist) from "dynamic_environment";
 
 
 void CommenceExplosion(AttackStruct& attack, Map@ map, uint16 tx, uint16 ty, Critter@ target, uint weapPid, bool isCritical, uint intentionallyId, bool isRocket, array<CombatRes>& results, bool isExplodeRocket) {
@@ -4899,6 +4902,9 @@ void CommenceExplosion(AttackStruct& attack, Map@ map, uint16 tx, uint16 ty, Cri
         DamageTreeAtHexInRadius(map, tx, ty, radius);
         DamageRockAtHexInRadius(map, tx, ty, radius);
         DamageCrateAtHexInRadius(map, tx, ty, radius);
+        DamageBarrelAtHexInRadius(map, tx, ty, radius);
+        DamageToxicBarrelAtHexInRadius(map, tx, ty, radius);
+        DamageBrickWallAtHexInRadius(map, tx, ty, radius);
     } else if (weapPid == PID_DYNACORD) {
         map.RunEffect(PID_EXPLODE_FIRE_BIG, tx, ty, 3);
     } else {
@@ -5242,6 +5248,44 @@ uint e_ProcessFireHex( uint[] @ values )
     }
 
     return 0;
+}
+
+void _ToxicWasteWalk(Item& slime, Critter& cr, bool entered, uint8 dir ) {
+    //Log("_ToxicWasteWalk :: Called");
+    //  small toxic slime only damages when entered (later when stay inside), big ones also damage when leaving
+    if (slime.GetProtoId() == PID_DYN_ENV_RAD_PUDDLE_SMALL_1 || slime.GetProtoId() == PID_DYN_ENV_RAD_PUDDLE_MEDIUM_1) {
+        if (!entered) {
+            return;
+        }
+    }
+    array<CombatRes> results;
+
+    AttackStruct     attack;
+    @attack.Attacker = cr;
+    attack.Aim = HIT_LOCATION_UNCALLED;
+    attack.DmgMin = 5;
+    attack.DmgMax = 15;
+    switch (slime.GetProtoId()) {
+        case PID_DYN_ENV_RAD_PUDDLE_SMALL_1:
+            attack.DmgMin = 5;
+            attack.DmgMax = 15;
+            break;
+        case PID_DYN_ENV_RAD_PUDDLE_MEDIUM_1:
+            attack.DmgMin = 20;
+            attack.DmgMax = 45;
+            break;
+        case PID_DYN_ENV_RAD_PUDDLE_BIG_1:
+        case PID_DYN_ENV_RAD_PUDDLE_BIG_2:
+        default:
+            attack.DmgMin = 35;
+            attack.DmgMax = 75;
+            break;
+    }
+    attack.DmgType = DAMAGE_TYPE_PLASMA;
+
+    ApplyDamage(attack, cr, 1, false, true, results, 0);
+
+    FlushResults(results);
 }
 
 void CriticalFailure(Critter& cr, ProtoItem& weapon, uint8 weaponUse, ProtoItem@ ammo, uint eff, array<CombatRes>& results)

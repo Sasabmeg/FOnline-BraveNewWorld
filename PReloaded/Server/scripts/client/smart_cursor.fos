@@ -160,10 +160,33 @@ class SmartCursor
             uint count = chosen.GetItems( collection.Slots[s], items );
 
             // we need a loop here for SLOT_INV...
+            int priority = 10000;
+            int deterioration = -1;
+            int index = -1;
             for( uint i=0; i<count; i++ )
             {
-                if( collection.Tools.find( items[i].Proto.ProtoId ) >= 0 )
-                    return items[i];
+                int newPriority = collection.Tools.find(items[i].Proto.ProtoId);
+                if (newPriority >= 0) {
+                    if (newPriority < priority) {
+                        priority = newPriority;
+                        index = i;
+                        if (items[i].IsDeteriorable()) {
+                            deterioration = items[i].Deterioration;
+                        }
+                        //Message("NEW PRIORITY: Tool with pid: " + items[i].Proto.ProtoId + ", priority: " + priority + " found at: " + index + ", deter.: " + deterioration);
+                    } else if (newPriority == priority && items[i].IsDeteriorable() && int(items[i].Deterioration) > deterioration) {
+                        //Message("SAME PRIORITY: Old deter.:  " + deterioration + ", new deter.: " + items[i].Deterioration + " found at: " + i);
+                        priority = newPriority;
+                        deterioration = items[i].Deterioration;
+                        index = i;
+                        //Message("Tool with pid: " + items[i].Proto.ProtoId + ", priority: " + priority + " found at: " + index);
+                    } else if (newPriority == priority && items[i].IsDeteriorable()) {
+                        //Message("SAME PRIORITY: (not swapped) Newer item deter.:  " + items[i].Deterioration + ", saved deter.: " + deterioration + " found at: " + i);
+                    }
+                }
+            }
+            if (index >= 0) {
+                return items[index];
             }
         }
 
@@ -512,6 +535,8 @@ void InitSmartCursor() // EXPORT
     array<uint16> tool_junk   = { PID_MULTI_TOOL };
     array<uint16> tool_shovel = { PID_OLD_SHOVEL, PID_SHOVEL };
     array<uint16> tool_fishingpole  = { PID_SHARP_SPEAR, PID_SPEAR, PID_SHARPENED_POLE };
+    array<uint16> tool_fence_cutter  = { PID_RIPPER, PID_WAKIZASHI_BLADE, PID_SUPER_TOOL_KIT, PID_LIL_JESUS_WEAPON, PID_MULTI_TOOL, PID_COMBAT_KNIFE, PID_KNIFE, PID_PRIMITIVE_TOOL };
+    array<uint16> tool_fence_repair  = { PID_SUPER_TOOL_KIT, PID_MULTI_TOOL };
 
     ///// targets /////
 
@@ -540,6 +565,9 @@ void InitSmartCursor() // EXPORT
     // Should be merged into one pid...
     array<uint16> wood = { PID_TREE1_FIREWOOD, PID_TREE2_FIREWOOD, PID_TREE3_FIREWOOD };
 
+    array<uint16> wired_fence = { PID_DYN_ENV_WIRE_FENCE_SE_GOOD_1};
+    array<uint16> wired_fence_hole = { PID_DYN_ENV_WIRE_FENCE_SE_HOLE_1 };
+
     array<uint16> fishing_pool = { 26770 };
 
     ///// configuration /////
@@ -566,6 +594,8 @@ void InitSmartCursor() // EXPORT
     smart_cursor.Add( SmartCollection( vein_uranium,    tool_mine_3, slot_all, null, SMART_TEXT, SMART_EXTRACT_URANIUM ));
     smart_cursor.Add( SmartCollection( vein_gold,       tool_mine_3, slot_all, null, SMART_TEXT, SMART_EXTRACT_GOLD ));
     smart_cursor.Add( SmartCollection( fishing_pool,    tool_fishingpole, slot_all, "Throw spear", SMART_TEXT, SMART_EXTRACT_GOLD ));
+    smart_cursor.Add( SmartCollection( wired_fence,     tool_fence_cutter, slot_all, "Cut hole", SMART_TEXT, SMART_EXTRACT_GOLD ));
+    smart_cursor.Add( SmartCollection( wired_fence_hole,tool_fence_repair, slot_all, "Repair fence", SMART_TEXT, SMART_EXTRACT_GOLD ));
 }
 
 void SmartCursorDraw( uint layer ) // EXPORT

@@ -1,8 +1,8 @@
 //
-// FOnline: 2238
-// Rotators
+// FOClassic: Brave New World
+// Sasabmeg / Slowhand
 //
-// prod_tree_firewood.fos
+// dynamic_environment.fos
 //
 
 #include "_macros.fos"
@@ -10,6 +10,15 @@
 #include "utils_h.fos"
 #include "_colors.fos"
 
+import void WearItem(Critter& cr, Item& item, int wearCount) from "repair";
+import bool hasMats(Critter& player, uint[] @ values) from "trainingDummy";
+import bool takeMats(Critter& player, uint[] @ values) from "trainingDummy";
+
+
+
+//  we need to replace the map pics of deleted items with blank ones, if we want them to disappear instantly, else they just fade out
+array<string@> InvisiblePics = { "art\\misc\\block.frm" };
+PicHashes InvisiblePicHashes(InvisiblePics);
 
 array<uint> bigRocks = { PID_DYN_ENV_ROCKS_BIG_1, PID_DYN_ENV_ROCKS_BIG_2 };
 array<uint> smallRocks = { PID_DYN_ENV_ROCKS_SMALL_1, PID_DYN_ENV_ROCKS_SMALL_2 };
@@ -18,7 +27,21 @@ array<uint> bigRemains = { PID_DYN_ENV_ROCKS_REMAINS_BIG_1, PID_DYN_ENV_ROCKS_RE
 array<uint> smallRemains = { PID_DYN_ENV_ROCKS_REMAINS_SMALL_1, PID_DYN_ENV_ROCKS_REMAINS_SMALL_2, PID_DYN_ENV_ROCKS_REMAINS_SMALL_3 };
 array<uint> lootPidsRockRare = { PID_MINERAL, PID_METAL_ORE };
 array<uint> lootPidsRockVeryRare = { PID_GOLD_NUGGET, PID_URANIUM_ORE };
+array<uint> bigToxicSpill = { PID_DYN_ENV_RAD_PUDDLE_BIG_1, PID_DYN_ENV_RAD_PUDDLE_BIG_2 };
 
+#define SLIME_POOL_FLOW_LENGTH_MAX          (7)
+#define SLIME_POOL_FLOW_TIME_MS             (250)
+#define SLIME_POOL_SOAK_TIME_MS_1           (10000)
+#define SLIME_POOL_SOAK_TIME_MS_2           (2500)
+
+#define RETRY_REGEN_AFTER_BLOCKED_SEC       (300)    //  5 minutes
+
+#define WIRED_FENCE_HOLE_REPAIR_VAL_MIN     (35)
+#define WIRED_FENCE_HOLE_REPAIR_VAL_MAX     (65)
+#define WIRED_FENCE_REPAIR_VAL_MIN          (15)
+#define WIRED_FENCE_REPAIR_VAL_MAX          (35)
+#define WIRED_FENCE_INIT_HP_MIN             (35)
+#define WIRED_FENCE_INIT_HP_MAX             (95)
 
 void DamageRockAtHexInRadius(Map@ map, uint16 x, uint16 y, uint16 dist) {
     array<Item@> rocks;
@@ -138,5 +161,803 @@ void DamageCrateAtHexInRadius(Map@ map, uint16 x, uint16 y, uint16 dist) {
         }
     } else {
         //map.SetText(x, y, COLOR_DDORANGE, "No crates at hex!");
+    }
+}
+
+array<string@> EmptyWasteBarrelPics = { "art\\scenery\\barrel6.frm" };
+PicHashes EmptyWasteBarrelPicHashes(EmptyWasteBarrelPics);
+
+array<string@> DepletingWasteBarrelPics1 = { "art\\items\\toxic_barrel2.fofrm" };
+PicHashes DepletingWasteBarrelPicHashes1(DepletingWasteBarrelPics1);
+array<string@> DepletingWasteBarrelPics2 = { "art\\items\\toxic_barrel3.fofrm" };
+PicHashes DepletingWasteBarrelPicHashes2(DepletingWasteBarrelPics2);
+array<string@> DepletingWasteBarrelPics3 = { "art\\items\\toxic_barrel4.fofrm" };
+PicHashes DepletingWasteBarrelPicHashes3(DepletingWasteBarrelPics3);
+
+array<string@> WasteBarrelPics = { "art\\scenery\\barrel7.frm" };
+PicHashes WasteBarrelPicHashes(WasteBarrelPics);
+
+
+void DamageBarrelAtHexInRadius(Map@ map, uint16 x, uint16 y, uint16 dist) {
+    array<Item@> barrels;
+    uint num = map.GetItems(x, y, dist, 0, barrels);
+    if (num > 0) {
+        //map.SetText(x, y, COLOR_DDORANGE, "Found " + num + " items at hex!");
+        for (uint i = 0; i < num; i++) {
+            if (barrels[i].GetProtoId() == PID_DYN_ENV_BARREL_SMALL_1) {
+                uint16 hx, hy, tx, ty;
+                tx = hx = barrels[i].HexX;
+                ty = hy = barrels[i].HexY;
+                barrels[i].set_Flags(4124);
+                barrels[i].PicMap = InvisiblePicHashes.GetRandom();
+                barrels[i].Update();
+                DeleteItem(barrels[i]);
+
+
+                uint8 dir = GetDirection(x, y, tx, ty);
+                int explosionDistance = GetDistantion(x, y, tx, ty);
+                int knockDist = 1;
+                if (explosionDistance <= 1) {
+                    knockDist = Random(4, 5);
+                } else if (explosionDistance <= 2) {
+                    knockDist = Random(2, 3);
+                } else {
+                    knockDist = 1;
+                }
+                //map.SetText(x, y, COLOR_DDORANGE, "Found " + num + " items at hex!");
+
+                map.MoveHexByDir(tx, ty, dir, knockDist);
+                map.GetHexCoordWall(hx, hy, tx, ty, 0.0f, knockDist);
+
+                map.RunFlyEffect(PID_DYN_ENV_BARREL_SMALL_1, null, null, hx, hy, tx, ty);
+
+                Item@ remains = map.AddItem(tx, ty, PID_DYN_ENV_BARREL_SMALL_1, 1);
+                remains.Update();
+
+                //  call refresh for players
+                array<Critter@> players;
+                uint num = map.GetCrittersHex(hx, hy, 60, FIND_ONLY_PLAYERS | FIND_LIFE, players);
+                for (uint j = 0; j < num; j ++) {
+                    players[j].RefreshVisible();
+                    players[j].RunClientScript("client_main@_RefreshMapAndFog", 0, 0, 0, null, null);
+                }
+            }
+        }
+    } else {
+        //map.SetText(x, y, COLOR_DDORANGE, "No barrels at hex!");
+    }
+}
+
+void DamageToxicBarrelAtHexInRadius(Map@ map, uint16 x, uint16 y, uint16 dist) {
+    array<Item@> barrels;
+    uint num = map.GetItems(x, y, dist, 0, barrels);
+    if (num > 0) {
+        //map.SetText(x, y, COLOR_DDORANGE, "Found " + num + " items at hex!");
+        for (uint i = 0; i < num; i++) {
+            if (barrels[i].GetProtoId() == PID_DYN_ENV_RAD_BARREL_SMALL_1 && barrels[i].Val1 == 0) {
+                uint16 hx, hy, tx, ty;
+                tx = hx = barrels[i].HexX;
+                ty = hy = barrels[i].HexY;
+                uint8 dir = GetDirection(x, y, tx, ty);
+                int explosionDistance = GetDistantion(x, y, tx, ty);
+                //map.SetText(x, y, COLOR_DDORANGE, "Found " + num + " items at hex!");
+                //  spill randomly into opposite direction
+                //map.GetHexCoordWall(hx, hy, tx, ty, 0.0f, knockDist);
+
+                array<uint> values = { map.Id, barrels[i].Id };
+
+                map.MoveHexByDir(tx, ty, dir, 1);
+                Item@ spill1 = map.AddItem(tx, ty, PID_DYN_ENV_RAD_PUDDLE_SMALL_1, 1);
+                //spill1.SetEvent(ITEM_EVENT_WALK, "combat@_ToxicWasteWalk");
+                spill1.Update();
+
+                map.MoveHexByDir(tx, ty, dir, 1);
+                Item@ spill2 = map.AddItem(tx, ty, PID_DYN_ENV_RAD_PUDDLE_MEDIUM_1, 1);
+                //spill2.SetEvent(ITEM_EVENT_WALK, "combat@_ToxicWasteWalk");
+                spill2.Update();
+
+                values.insertLast(tx);
+                values.insertLast(ty);
+                values.insertLast(dir);
+                values.insertLast(spill1.Id);
+                values.insertLast(spill2.Id);
+
+                CreateTimeEvent(AFTER(REAL_MS(SLIME_POOL_FLOW_TIME_MS)), "e_SpilledSlimeFlow", values, true);
+
+                //  change barrel pic to empty
+                barrels[i].Val1 = 1;
+                barrels[i].PicMap = DepletingWasteBarrelPicHashes3.GetRandom();
+                barrels[i].Update();
+
+                //  call refresh for players
+                array<Critter@> players;
+                uint num = map.GetCrittersHex(hx, hy, 60, FIND_ONLY_PLAYERS | FIND_LIFE, players);
+                for (uint j = 0; j < num; j ++) {
+                    players[j].RefreshVisible();
+                    players[j].RunClientScript("client_main@_RefreshMapAndFog", 0, 0, 0, null, null);
+                }
+
+                //  add time event to deplete slime pools later
+                //CreateTimeEvent(AFTER(REAL_MS(SLIME_POOL_SOAK_TIME_MS_1)), "e_FadeSpilledSlimePools", values, true);
+            }
+        }
+    } else {
+        //map.SetText(x, y, COLOR_DDORANGE, "No barrels at hex!");
+    }
+}
+
+uint e_SpilledSlimeFlow(array<uint>@ values) {
+    //Log("e_SpilledSlimeFlow() :: called");
+    Map@ map = GetMap(values[0]);
+    if(!valid(map)) {
+        //Log("e_SpilledSlimeFlow - Invalid Map");
+        return 0;
+    }
+    uint barrelId = values[1];
+
+    uint16 hx = values[2];
+    uint16 hy = values[3];
+    uint8 dir = values[4];
+    /*
+    Log("hx = " + hx + ", hy" + hy + ", dir = " + dir);
+    for (uint i = 5; i < values.length(); i++) {
+        Log("Slime pool ID[" + i + "] = " + values[i]);
+    }*/
+
+    array<uint> newValues = { map.Id, barrelId };
+
+    if (Random(0, 99) > 20 && values.length() < 5 + SLIME_POOL_FLOW_LENGTH_MAX) {
+        //Log("SMALL");
+        bool small = (values.length() % 2) == 0;
+        if (small) {
+            map.MoveHexByDir(hx, hy, dir, 1);
+        } else {
+            dir = (dir + Random(5, 7)) % 6;
+            map.MoveHexByDir(hx, hy, dir, 1);
+        }
+        Item@ spill = map.AddItem(hx, hy, small ? PID_DYN_ENV_RAD_PUDDLE_SMALL_1 : PID_DYN_ENV_RAD_PUDDLE_MEDIUM_1, 1);
+        //spill.SetEvent(ITEM_EVENT_WALK, "combat@_ToxicWasteWalk");
+        spill.Update();
+        newValues.insertLast(hx);
+        newValues.insertLast(hy);
+        newValues.insertLast(dir);
+        for (uint i = 5; i < values.length(); i++) {
+            newValues.insertLast(values[i]);
+        }
+        newValues.insertLast(spill.Id);
+        CreateTimeEvent(AFTER(REAL_MS(SLIME_POOL_FLOW_TIME_MS)), "e_SpilledSlimeFlow", newValues, true);
+
+        Item@ barrel = map.GetItem(barrelId);
+        barrel.PicMap = DepletingWasteBarrelPicHashes2.GetRandom();
+        barrel.Update();
+    } else {
+        //Log("BIG");
+        map.MoveHexByDir(hx, hy, dir, 1);
+        Item@ spill = map.AddItem(hx, hy, random_from_array(bigToxicSpill), 1);
+        //spill.SetEvent(ITEM_EVENT_WALK, "combat@_ToxicWasteWalk");
+        spill.Update();
+        newValues.insertLast(hx);
+        newValues.insertLast(hy);
+        newValues.insertLast(dir);
+        for (uint i = 5; i < values.length(); i++) {
+            newValues.insertLast(values[i]);
+        }
+        newValues.insertLast(spill.Id);
+
+        CreateTimeEvent(AFTER(REAL_MS(SLIME_POOL_SOAK_TIME_MS_1)), "e_FadeSpilledSlimePools", newValues, true);
+
+        Item@ barrel = map.GetItem(barrelId);
+        barrel.PicMap = DepletingWasteBarrelPicHashes1.GetRandom();
+        barrel.Update();
+    }
+    return 0;
+}
+
+uint e_FadeSpilledSlimePools(array<uint>@ values) {
+    //Log("e_FadeSpilledSlimePools() :: called");
+    Map@ map = GetMap(values[0]);
+    if(!valid(map)) {
+        //Log("e_FadeSpilledSlimePools - Invalid Map");
+        return 0;
+    }
+
+    uint barrelId = values[1];
+
+    uint16 hx = values[2];
+    uint16 hy = values[3];
+    uint8 dir = values[4];
+    /*
+    Log("hx = " + hx + ", hy" + hy + ", dir = " + dir);
+    for (uint i = 5; i < values.length(); i++) {
+        Log("Slime pool ID[" + i + "] = " + values[i]);
+    }*/
+
+    array<uint> newValues = { map.Id, barrelId };
+    newValues.insertLast(hx);
+    newValues.insertLast(hy);
+    newValues.insertLast(dir);
+
+    bool found = false;
+    for (uint i = 5; i < values.length(); i++) {
+        Item@ spill = map.GetItem(values[i]);
+        //Log("Slime pool ID[" + i + "] = " + values[i]);
+        if (valid(spill)) {
+            //map.SetText(spill.HexX, spill.HexY, COLOR_DDORANGE, "Slime[" + i + "]");
+            if (spill.GetProtoId() == PID_DYN_ENV_RAD_PUDDLE_SMALL_1) {
+                DeleteItem(spill);
+            } else if (spill.GetProtoId() == PID_DYN_ENV_RAD_PUDDLE_MEDIUM_1) {
+                found = true;
+                Item@ smallerSpill = map.AddItem(spill.HexX, spill.HexY, PID_DYN_ENV_RAD_PUDDLE_SMALL_1, 1);
+                smallerSpill.SetEvent(ITEM_EVENT_WALK, "combat@_ToxicWasteWalk");
+                smallerSpill.Update();
+                newValues.insertLast(smallerSpill.Id);
+                DeleteItem(spill);
+            } else {
+                found = true;
+                Item@ smallerSpill = map.AddItem(spill.HexX, spill.HexY, PID_DYN_ENV_RAD_PUDDLE_MEDIUM_1, 1);
+                smallerSpill.SetEvent(ITEM_EVENT_WALK, "combat@_ToxicWasteWalk");
+                smallerSpill.Update();
+                newValues.insertLast(smallerSpill.Id);
+                DeleteItem(spill);
+            }
+        } else {
+            Log("Spill is invalid ID[" + i + "] = " + values[i] + ", on  map with ID = " + values[0] + ", from toxic barrel ID = " + values[1]);
+        }
+    }
+    if (found) {
+        //Log("After " + SLIME_POOL_SOAK_TIME_MS_2 + " ms");
+        CreateTimeEvent(AFTER(REAL_MS(SLIME_POOL_SOAK_TIME_MS_2)), "e_FadeSpilledSlimePools", newValues, true);
+        return 0;
+    } else {
+        Item@ barrel = GetItem(barrelId);
+        barrel.Val1 = 0;
+        barrel.PicMap = WasteBarrelPicHashes.GetRandom();
+        barrel.Update();
+        //Log("After 0 ms");
+        return 0;
+    }
+}
+
+
+void slime_init(Item& item, bool firstTime) {
+    item.SetEvent(ITEM_EVENT_WALK, "combat@_ToxicWasteWalk");
+}
+
+
+/***************************
+****    Wired fence     ****
+***************************/
+
+/// Params:
+/// Val0 stores the maximum HP that the wall has
+/// Val1 stores the current HP that can be reduced with hammer or explosives before hole is made
+/// Val2 stores the regeneration time in REAL_SECONDS for public maps
+
+void wired_fence_good_init(Item& item, bool firstTime) {
+    item.SetEvent(ITEM_EVENT_USE_ON_ME, "_UseItemOnWiredFenceGood");
+    item.SetEvent(ITEM_EVENT_SKILL, "_UseSkillonWiredFenceGood");
+    if (firstTime) {
+        //  give the wall 100 hp if mapper didn't set custom value
+        if (item.Val0 == 0) {
+            item.Val0 = 100;
+            item.Val1 = Random(WIRED_FENCE_INIT_HP_MIN, WIRED_FENCE_INIT_HP_MAX);
+        }
+        //  this cannot be 0 at start, because that means we need to change the item to the hole, which is passable (remove blockers and add where needed)
+        if (item.Val1 == 0) {
+            item.Val1 = Random(WIRED_FENCE_INIT_HP_MIN * item.Val0 / 100, WIRED_FENCE_INIT_HP_MAX * item.Val0 / 100);
+        }
+    }
+    WiredFenceChangePic(item);
+}
+
+bool _UseItemOnWiredFenceGood(Item& item, Critter& cr, Item@ usedItem) {
+    if (!valid(usedItem)) {
+        return false;
+    }
+    Map@ map = GetMap(item.MapId);
+    if (!valid(map)) {
+        Log("Invalid map");
+        return false;
+    }
+
+    uint16 tool_pid = usedItem.GetProtoId();
+    if (    tool_pid == PID_RIPPER          || tool_pid == PID_MULTI_TOOL       || tool_pid == PID_SUPER_TOOL_KIT   || tool_pid == PID_PRIMITIVE_TOOL
+         || tool_pid == PID_WAKIZASHI_BLADE || tool_pid == PID_LIL_JESUS_WEAPON || tool_pid == PID_COMBAT_KNIFE     || tool_pid == PID_KNIFE) {
+        //Log("Used tool (pid: " + tool_pid + ")on wired fence to make hole.");
+
+        uint damageAmount = 1;
+        if (item.Val1 > 0) {
+            switch (tool_pid) {
+                case PID_RIPPER:
+                    cr.Animate(ANIM1_KNIFE, ANIM2_SWING_1H, usedItem, true, true);
+                    damageAmount = Random(1250, 1750);
+                    WearItem(cr, usedItem, (Random(1 * MAX_DETERIORATION / 100, 2 * MAX_DETERIORATION / 100)));
+                    break;
+                case PID_WAKIZASHI_BLADE:
+                    cr.Animate(ANIM1_LONG_SWORD, ANIM2_SWING_1H, usedItem, true, true);
+                case PID_SUPER_TOOL_KIT:
+                    damageAmount = Random(25, 75);
+                    break;
+                case PID_LIL_JESUS_WEAPON:
+                    cr.Animate(ANIM1_KNIFE, ANIM2_SWING_1H, usedItem, true, true);
+                case PID_MULTI_TOOL:
+                    damageAmount = Random(15, 35);
+                    break;
+                case PID_COMBAT_KNIFE:
+                    cr.Animate(ANIM1_KNIFE, ANIM2_SWING_1H, usedItem, true, true);
+                    damageAmount = Random(15, 25);
+                    break;
+                case PID_KNIFE:
+                case PID_PRIMITIVE_TOOL:
+                    damageAmount = Random(5, 15);
+                    break;
+                default:
+                    damageAmount = Random(1, 5);
+            }
+            item.Val1 = MAX(0, item.Val1 - damageAmount);
+        }
+        WiredFenceChangePic(item);
+        return true;
+    }
+    return false;
+}
+
+uint e_RegenWiredFence(array<uint>@ values) {
+    //Log("e_RegenWiredFence() :: called");
+    Map@ map = GetMap(values[0]);
+    if (!valid(map)) {
+        Log("e_RegenWiredFence - Invalid Map");
+        return 0;
+    }
+
+    uint16 hx = values[1];
+    uint16 hy = values[2];
+    uint maxHp = values[3];
+    uint regenTime = values[4];
+    uint holeId = values[5];
+
+    map.UnblockHex(hx, hy);
+    Item@ fence = map.AddItem(hx, hy, PID_DYN_ENV_WIRE_FENCE_SE_GOOD_1, 1);
+    if (valid(fence)) {
+        //Log("Regen Wired Fence.");
+        Item@ hole = map.GetItem(holeId);
+        if (valid(hole)) {
+            //Log("Deleting hole.");
+            DeleteItem(hole);
+        } else {
+            Log("Invalid hole to delete.");
+        }
+        fence.Val0 = maxHp;
+        fence.Val2 = regenTime;
+        fence.Update();
+    } else {
+        Log("Failed to add/regen Wired Fence.");
+        uint retryRegenAfter = MIN(regenTime, RETRY_REGEN_AFTER_BLOCKED_SEC);
+        uint eventId = CreateTimeEvent(AFTER(REAL_SECOND(retryRegenAfter)), "e_RegenWiredFence", values, true);
+        Item@ hole = map.GetItem(holeId);
+        if (valid(hole)) {
+            hole.Val3 = eventId;
+        }
+    }
+
+    return 0;
+}
+
+uint[] wiredFenceGoodRepairMats = {PID_METAL_PARTS, 1, PID_JUNK, 1, PID_FIBER, 1};
+
+bool _UseSkillonWiredFenceGood(Item& item, Critter& cr, int skill) {
+    if (skill == SK_SCIENCE && cr.GetAccess() >= ACCESS_MODER) {
+        cr.Say(SAY_NETMSG, "Fence durability: " + (100*item.Val1/item.Val0) + "%");
+        cr.Say(SAY_WHISP_ON_HEAD, "Fence durability: " + (100*item.Val1/item.Val0) + "% - auto repair time: " + item.Val2);
+        return true;
+    } else if (skill == SK_REPAIR && cr.GetAccess() >= ACCESS_MODER) {
+        cr.Say(SAY_NETMSG, "Admin repair used on fence.");
+        item.Val1 = item.Val0;
+        WiredFenceChangePic(item);
+        return true;
+    } else if (skill == SK_SCIENCE) {
+        cr.Say(SAY_NETMSG, "Fence durability: " + (100*item.Val1/item.Val0) + "%");
+        cr.Say(SAY_WHISP_ON_HEAD, "Fence durability: " + (100*item.Val1/item.Val0) + "%");
+        return true;
+    } else if (skill == SK_REPAIR) {
+        if (cr.CountItem(PID_MULTI_TOOL) > 0 || cr.CountItem(PID_SUPER_TOOL_KIT) > 0) {
+            if (hasMats(cr, wiredFenceGoodRepairMats)) {
+                if (takeMats(cr, wiredFenceGoodRepairMats)) {
+                    int repairValue = Random(WIRED_FENCE_REPAIR_VAL_MIN + cr.Skill[SK_REPAIR] / 10, WIRED_FENCE_REPAIR_VAL_MAX + cr.Skill[SK_REPAIR] / 10);
+                    item.Val1 += repairValue;
+                    if (item.Val1 > item.Val0) {
+                        item.Val1 = item.Val0;
+                    }
+                    cr.Say(SAY_NETMSG, "You managed to improve the condition this wired fence by: " + (100*repairValue/item.Val0) + "!");
+                } else {
+                    cr.Say(SAY_NETMSG, "You failed to improve the condition this wired fence. You'll need 1 metal parts, 1 junk and 1 fibers.");
+                }
+            } else {
+                cr.Say(SAY_NETMSG, "To improve the condition of this wired fence you will need 1 metal parts, 1 junk and 1 fibers.");
+            }
+        } else {
+            cr.Say(SAY_NETMSG, "You'll need some tools to improve the condition of this wired fence.");
+        }
+        return true;
+    }
+    return false;
+}
+
+array<string@> WiredFenceGoodPics = { "art\\walls\\wire_se_good1.fofrm" };
+PicHashes WiredFenceGoodPicHashes(WiredFenceGoodPics);
+array<string@> WiredFenceCrackedPics = { "art\\walls\\wire_se_cracked1.fofrm", "art\\walls\\wire_se_cracked2.fofrm" };
+PicHashes WiredFenceCrackedPicHashes(WiredFenceCrackedPics);
+array<string@> WiredFenceDamagedPics = { "art\\walls\\wire_se_damaged1.fofrm", "art\\walls\\wire_se_damaged2.fofrm", "art\\walls\\wire_se_damaged3.fofrm" };
+PicHashes WiredFenceDamagedPicHashes(WiredFenceDamagedPics);
+
+void WiredFenceChangePic(Item& item) {
+    float ratio = float(item.Val1) / float(item.Val0);
+    if (ratio > 0.8) {
+        item.PicMap = WiredFenceGoodPicHashes.GetRandom();
+    } else if (ratio > 0.4) {
+        item.PicMap = WiredFenceCrackedPicHashes.GetRandom();
+    } else {
+        item.PicMap = WiredFenceDamagedPicHashes.GetRandom();
+    }
+    item.Update();
+
+    if (item.MapId > 0) {
+        Map@ map = GetMap(item.MapId);
+        if (valid(map)) {
+            if (ratio <= 0) {
+                uint16 hx, hy;
+                hx = item.HexX;
+                hy = item.HexY;
+                uint regenTime = item.Val2;
+                uint maxHp = item.Val0;
+                DeleteItem(item);
+                Item@ hole = map.AddItem(hx, hy, PID_DYN_ENV_WIRE_FENCE_SE_HOLE_1, 1);
+                if (valid(hole)) {
+                    hole.Val0 = maxHp;
+                    if (item.Val1 == 0) {
+                        item.Val1 = Random(WIRED_FENCE_INIT_HP_MIN * item.Val0 / 100, WIRED_FENCE_INIT_HP_MAX * item.Val0 / 100);
+                    }
+                    hole.Val2 = regenTime;
+                    hole.Update();
+                    uint holeId = hole.Id;
+                    //  add timed event to regen if public map
+                    //Log("regenTime = " + regenTime);
+                    if (regenTime > 0) {
+                        array<uint> values = { map.Id, hx, hy, maxHp, regenTime, holeId };
+                        uint eventId = CreateTimeEvent(AFTER(REAL_SECOND(regenTime)), "e_RegenWiredFence", values, true);
+                        hole.Val3 = eventId;
+                    }
+                }
+            }
+            //  call refresh for players
+            array<Critter@> players;
+            uint num = map.GetCrittersHex(item.HexX, item.HexY, 60, FIND_ONLY_PLAYERS | FIND_LIFE, players);
+            for (uint i = 0; i < num; i ++) {
+                players[i].RefreshVisible();
+                players[i].RunClientScript("client_main@_RefreshMapAndFog", 0, 0, 0, null, null);
+            }
+        }
+    }
+}
+
+/**
+*   Wired Fence - Hole
+**/
+
+void wired_fence_hole_init(Item& item, bool firstTime) {
+    item.SetEvent(ITEM_EVENT_USE_ON_ME, "_UseItemOnWiredFenceHole");
+    item.SetEvent(ITEM_EVENT_SKILL, "_UseSkillonWiredFenceHole");
+    if (firstTime) {
+        //  give the wall 100 hp if mapper didn't set custom value
+        if (item.Val0 == 0) {
+            item.Val0 = 100;
+            item.Val1 = Random(WIRED_FENCE_INIT_HP_MIN, WIRED_FENCE_INIT_HP_MAX);
+        }
+        //  this cannot be 0 at start, because that means we need to change the item to the hole, which is passable (remove blockers and add where needed)
+        if (item.Val1 == 0) {
+            item.Val1 = Random(WIRED_FENCE_INIT_HP_MIN * item.Val0 / 100, WIRED_FENCE_INIT_HP_MAX * item.Val0 / 100);
+        }
+    }
+}
+
+uint[] wiredFenceHoleRepairMats = {PID_METAL_PARTS, 3, PID_JUNK, 5, PID_FIBER, 2};
+
+bool _UseItemOnWiredFenceHole(Item& item, Critter& cr, Item@ usedItem) {
+    if (!valid(usedItem)) {
+        return false;
+    }
+    Map@ map = GetMap(item.MapId);
+    if (!valid(map)) {
+        Log("Invalid map");
+        return false;
+    }
+
+    uint16 tool_pid = usedItem.GetProtoId();
+    if (tool_pid == PID_MULTI_TOOL || tool_pid == PID_SUPER_TOOL_KIT) {
+        //Log("Used tool (pid: " + tool_pid + ")on wired fence to make hole.");
+        if (hasMats(cr, wiredFenceHoleRepairMats)) {
+            if (takeMats(cr, wiredFenceHoleRepairMats)) {
+                uint16 hx, hy;
+                hx = item.HexX;
+                hy = item.HexY;
+                uint regenTime = item.Val2;
+                uint maxHp = item.Val0;
+                uint eventId = item.Val3;
+                Item@ fence = map.AddItem(hx, hy, PID_DYN_ENV_WIRE_FENCE_SE_GOOD_1, 1);
+                if (valid(fence)) {
+                    fence.Val0 = maxHp;
+                    if (item.Val1 == 0) {
+                        item.Val1 = Random(WIRED_FENCE_HOLE_REPAIR_VAL_MIN * item.Val0 / 100, WIRED_FENCE_HOLE_REPAIR_VAL_MAX * item.Val0 / 100);
+                    }
+                    fence.Val2 = regenTime;
+                    fence.Update();
+                    if (eventId > 0) {
+                        EraseTimeEvent(eventId);
+                    }
+                    DeleteItem(item);
+                }
+                //  call refresh for players
+                array<Critter@> players;
+                uint num = map.GetCrittersHex(item.HexX, item.HexY, 60, FIND_ONLY_PLAYERS | FIND_LIFE, players);
+                for (uint i = 0; i < num; i ++) {
+                    players[i].RefreshVisible();
+                    players[i].RunClientScript("client_main@_RefreshMapAndFog", 0, 0, 0, null, null);
+                }
+            } else {
+                cr.Say(SAY_NETMSG, "You failed to repair this wired fence. You need 3 metal parts, 5 junk and 2 fibers.");
+            }
+        } else {
+            cr.Say(SAY_NETMSG, "To repair this wired fence you will need 3 metal parts, 5 junk and 2 fibers.");
+        }
+
+        return true;
+    }
+    return false;
+}
+
+bool _UseSkillonWiredFenceHole(Item& item, Critter& cr, int skill) {
+    if (skill == SK_SCIENCE && cr.GetAccess() >= ACCESS_MODER) {
+        cr.Say(SAY_NETMSG, "Admin repair used on fence.");
+        return true;
+    } else if (skill == SK_REPAIR && cr.GetAccess() >= ACCESS_MODER) {
+        cr.Say(SAY_NETMSG, "Admin repair used on fence.");
+        WiredFenceChangePic(item);
+        return true;
+    } else if (skill == SK_SCIENCE) {
+        cr.Say(SAY_NETMSG, "Need some tools to repair this fence.");
+    }
+    return false;
+}
+
+
+/***************************
+****    Brick walls     ****
+***************************/
+
+/// Params:
+/// Val0 stores the maximum HP that the wall has
+/// Val1 stores the current HP that can be reduced with hammer or explosives before hole is made
+/// Val2 stores the regeneration time in REAL_SECONDS for public maps
+
+void brick_wall_good_init(Item& item, bool firstTime) {
+    //item.SetEvent(ITEM_EVENT_USE_ON_ME, "_UseItemOnBrickWallGood");
+    //item.SetEvent(ITEM_EVENT_SKILL, "_UseSkillonBrickWallGood");
+    if (firstTime) {
+        //  give the wall 100 hp if mapper didn't set custom value
+        if (item.Val0 == 0) {
+            item.Val0 = 100;
+            item.Val1 = Random(35, 95);
+        }
+        //  this cannot be 0 at start, because that means we need to change the item to the hole, which is passable (remove blockers and add where needed)
+        if (item.Val1 == 0) {
+            item.Val1 = Random(35 * item.Val0 / 100, 95 * item.Val0 / 100);
+        }
+        //Log("Brick Wall HP: " + item.Val1 + " / " + item.Val0 + " (firstTime)");
+        array<uint> values = { item.Id };
+        CreateTimeEvent(AFTER(REAL_MS(1000)), "e_RefreshBrickWall", values, true);
+    } else {
+        //Log("Brick Wall HP: " + item.Val1 + " / " + item.Val0 + " (not first time?)");
+        BrickWallChangePic(item);
+    }
+}
+
+uint e_RefreshBrickWall(array<uint>@ values) {
+    //Log("e_RegenBrickWall() :: called");
+    Item@ wall = GetItem(values[0]);
+    if (!valid(wall)) {
+        Log("e_RefreshBrickWall - Invalid Item");
+        return 0;
+    }
+    Map@ map = GetMap(wall.MapId);
+    if (!valid(map)) {
+        Log("e_RefreshBrickWall - Invalid Map");
+        return 0;
+    }
+    wall.Val1 = Random(35 * wall.Val0 / 100, 95 * wall.Val0 / 100);
+    //Log("Brick Wall HP: " + wall.Val1 + " / " + wall.Val0 + " (e_RefreshBrickWall)");
+    BrickWallChangePic(wall);
+    return 0;
+}
+
+
+array<string@> BrickWallGoodPics = { "art\\walls\\brick_se_good1.fofrm" };
+PicHashes BrickWallGoodPicHashes(BrickWallGoodPics);
+array<string@> BrickWallCracksPics = { "art\\walls\\brick_se_cracks1.fofrm", "art\\walls\\brick_se_cracks2.fofrm", "art\\walls\\brick_se_cracks3.fofrm" };
+PicHashes BrickWallCracksPicHashes(BrickWallCracksPics);
+array<string@> BrickWallDamagedPics = { "art\\walls\\brick_se_damaged1.fofrm", "art\\walls\\brick_se_damaged3.fofrm", "art\\walls\\brick_se_damaged3.fofrm" };
+PicHashes BrickWallDamagedPicHashes(BrickWallDamagedPics);
+array<string@> BrickWallHolePics = { "art\\walls\\brick_se_hole_big1.fofrm" };
+PicHashes BrickWallHolePicHashes(BrickWallHolePics);
+
+void BrickWallChangePic(Item& item) {
+    float ratio = float(item.Val1) / float(item.Val0);
+    if (ratio > 0.8) {
+        item.PicMap = BrickWallGoodPicHashes.GetRandom();
+    } else if (ratio > 0.4) {
+        item.PicMap = BrickWallCracksPicHashes.GetRandom();
+    } else {
+        item.PicMap = BrickWallDamagedPicHashes.GetRandom();
+    }
+    item.Update();
+
+    if (item.MapId > 0) {
+        Map@ map = GetMap(item.MapId);
+        if (valid(map)) {
+            //  add missing hex blockers
+            uint16 tx = item.HexX;
+            uint16 ty = item.HexY;
+            Item@ blocker;
+            map.MoveHexByDir(tx, ty, 0, 1);
+            map.UnblockHex(tx, ty);
+            @blocker = map.GetItem(tx, ty, PID_DYN_ENV_INVIS_WALL);
+            if (!valid(blocker) && ratio > 0) {
+                //Log("Adding wall-hex blocker at: (" + tx + ", " + ty + ")");
+                map.AddItem(tx, ty, PID_DYN_ENV_INVIS_WALL, 1);
+            } else if (valid(blocker) && ratio <= 0) {
+                //Log("Removing wall-hex blocker at: (" + tx + ", " + ty + ")");
+                DeleteItem(blocker);
+            }
+
+            map.MoveHexByDir(tx, ty, 2, 1);
+            map.UnblockHex(tx, ty);
+            if (!valid(map.GetItem(tx, ty, PID_DYN_ENV_INVIS_WALL))) {
+                //Log("Adding wall-hex blocker at: (" + tx + ", " + ty + ")");
+                map.AddItem(tx, ty, PID_DYN_ENV_INVIS_WALL, 1);
+            }
+
+            map.MoveHexByDir(tx, ty, 0, 1);
+            map.UnblockHex(tx, ty);
+            if (!valid(map.GetItem(tx, ty, PID_DYN_ENV_INVIS_WALL))) {
+                //Log("Adding wall-hex blocker at: (" + tx + ", " + ty + ")");
+                map.AddItem(tx, ty, PID_DYN_ENV_INVIS_WALL, 1);
+            } else if (ratio <= 0) {
+                map.RunEffect(PID_EXPLODE_ROCKET, tx, ty, 1);
+            }
+
+            tx = item.HexX;
+            ty = item.HexY;
+            map.MoveHexByDir(tx, ty, 3, 1);
+            map.UnblockHex(tx, ty);
+            @blocker = map.GetItem(tx, ty, PID_DYN_ENV_INVIS_WALL);
+            if (!valid(blocker) && ratio > 0) {
+                //Log("Adding wall-hex blocker at: (" + tx + ", " + ty + ")");
+                map.AddItem(tx, ty, PID_DYN_ENV_INVIS_WALL, 1);
+            } else if (valid(blocker) && ratio <= 0) {
+                //Log("Removing wall-hex blocker at: (" + tx + ", " + ty + ")");
+                DeleteItem(blocker);
+            }
+
+
+            map.MoveHexByDir(tx, ty, 5, 1);
+            map.UnblockHex(tx, ty);
+            @blocker = map.GetItem(tx, ty, PID_DYN_ENV_INVIS_WALL);
+            if (!valid(blocker) && ratio > 0) {
+                //Log("Adding wall-hex blocker at: (" + tx + ", " + ty + ")");
+                map.AddItem(tx, ty, PID_DYN_ENV_INVIS_WALL, 1);
+            } else if (valid(blocker) && ratio <= 0) {
+                //Log("Removing wall-hex blocker at: (" + tx + ", " + ty + ")");
+                DeleteItem(blocker);
+            }
+
+            map.MoveHexByDir(tx, ty, 3, 1);
+            map.UnblockHex(tx, ty);
+            if (!valid(map.GetItem(tx, ty, PID_DYN_ENV_INVIS_WALL))) {
+                map.AddItem(tx, ty, PID_DYN_ENV_INVIS_WALL, 1);
+                //Log("Adding wall-hex blocker at: (" + tx + ", " + ty + ")");
+            }
+
+            if (ratio <= 0) {
+                uint16 hx = item.HexX, hy = item.HexY;
+                uint16 tx = hx, ty = hy;
+                uint regenTime = item.Val2;
+                uint maxHp = item.Val0;
+                item.PicMap = InvisiblePicHashes.GetRandom();
+                item.Update();
+                DeleteItem(item);
+                map.MoveHexByDir(tx, ty, 0, 1);
+                map.MoveHexByDir(tx, ty, 1, 1);
+                map.UnblockHex(tx, ty);
+                @blocker = map.GetItem(tx, ty, PID_DYN_ENV_INVIS_WALL);
+                if (valid(blocker)) {
+                    DeleteItem(blocker);
+                }
+                Item@ hole = map.AddItem(tx, ty, PID_DYN_ENV_BRICK_WALL_SE_HOLE_1, 1);
+                uint holeId = 0;
+                if (valid(hole)) {
+                    //Log("Create brick hole.");
+                    holeId = hole.Id;
+                    hole.PicMap = BrickWallHolePicHashes.GetRandom();
+                    hole.Update();
+                } else {
+                    Log("Couldn't create brick hole.");
+                }
+
+                //  add timed event to regen if public map
+                if (regenTime > 0) {
+                    array<uint> values = { map.Id, hx, hy, maxHp, regenTime, holeId };
+                    CreateTimeEvent(AFTER(REAL_SECOND(regenTime)), "e_RegenBrickWall", values, true);
+                }
+            }
+
+            //  call refresh for players
+            array<Critter@> players;
+            uint num = map.GetCrittersHex(item.HexX, item.HexY, 60, FIND_ONLY_PLAYERS | FIND_LIFE, players);
+            for (uint i = 0; i < num; i ++) {
+                players[i].RefreshVisible();
+                players[i].RunClientScript("client_main@_RefreshMapAndFog", 0, 0, 0, null, null);
+            }
+        }
+    }
+}
+
+uint e_RegenBrickWall(array<uint>@ values) {
+    //Log("e_RegenBrickWall() :: called");
+    Map@ map = GetMap(values[0]);
+    if (!valid(map)) {
+        Log("e_RegenBrickWall - Invalid Map");
+        return 0;
+    }
+
+    uint16 hx = values[1];
+    uint16 hy = values[2];
+    uint maxHp = values[3];
+    uint regenTime = values[4];
+    uint holeId = values[5];
+
+    map.UnblockHex(hx, hy);
+    Item@ wall = map.AddItem(hx, hy, PID_DYN_ENV_BRICK_WALL_SE_GOOD_1, 1);
+    if (valid(wall)) {
+        Item@ hole = map.GetItem(holeId);
+        if (valid(hole)) {
+            DeleteItem(hole);
+        }
+        wall.Val0 = maxHp;
+        wall.Val2 = regenTime;
+        wall.Update();
+    } else {
+        uint retryRegenAfter = MIN(regenTime, RETRY_REGEN_AFTER_BLOCKED_SEC);
+        CreateTimeEvent(AFTER(REAL_SECOND(retryRegenAfter)), "e_RegenBrickWall", values, true);
+    }
+
+    return 0;
+}
+
+void DamageBrickWallAtHexInRadius(Map@ map, uint16 x, uint16 y, uint16 dist) {
+    array<Item@> walls;
+    uint num = map.GetItems(x, y, dist, 0, walls);
+    if (num > 0) {
+        //map.SetText(x, y, COLOR_DDORANGE, "Found " + num + " items at hex!");
+        for (uint i = 0; i < num; i++) {
+            if (walls[i].GetProtoId() == PID_DYN_ENV_BRICK_WALL_SE_GOOD_1) {
+                //map.SetText(walls[i].HexX, walls[i].HexY, COLOR_DDORANGE, "Found a tree at hex with capacity: " + AMOUNT(walls[i]));
+                if (walls[i].Val1 > 0) {
+                    uint damageAmount = Random(25, 75);
+                    walls[i].Val1 = MAX(0, walls[i].Val1 - damageAmount);
+                }
+                BrickWallChangePic(walls[i]);
+            }
+        }
+    } else {
+        //map.SetText(x, y, COLOR_DDORANGE, "No tree at hex!");
     }
 }
