@@ -277,6 +277,8 @@ uint pickupScreenScrollCritter = 0;
 uint pickupScreenScrollFrom = 0;
 bool disableItemMove = false;
 
+uint LastItemClickTime = 0;
+uint LastItemClickId   = 0;
 
 void unsetall_location_combatzone(int, int, int, string@, array<int>@)
 {
@@ -1320,6 +1322,194 @@ string item_description(ItemCl& item, int lookType)
             disableItemMove = false;
         }
 
+        //  Ctrl + Click item move by Lucek
+        if(lookType == ITEM_LOOK_INVENTORY && GUI_GetActiveScreen() == CLIENT_SCREEN_INVENTORY && GUI_IsKeyPressed(DIK_LCONTROL))
+        {
+            if(valid(chosen) && item.CritId == chosen.Id)
+            {
+                if((item.CritSlot >= SLOT_HAND1 && item.CritSlot <= SLOT_ARMOR) || (item.CritSlot >= SLOT_HAND1 && item.CritSlot <= SLOT_HEAD))
+                {
+                    array<uint> action = {CHOSEN_MOVE_ITEM, item.Id, item.GetCount(), SLOT_INV, 0, 0, 0};
+                    SetChosenActions(action);
+                }
+                else if(item.CritSlot == SLOT_INV)
+                {
+                    uint8 toSlot = SLOT_HAND2;
+
+                    if(item.Proto.Type == ITEM_TYPE_ARMOR)
+                    {
+                        if(item.GetProtoId() >= 719 && item.GetProtoId() <= 749)
+                            toSlot = SLOT_HEAD;
+                        else
+                            toSlot = SLOT_ARMOR;
+
+                        array<uint> action = {CHOSEN_MOVE_ITEM, item.Id, item.GetCount(), toSlot, 0, 0, 0};
+                        SetChosenActions(action);
+                    }
+                    else if(item.Proto.Type == ITEM_TYPE_WEAPON)
+                    {
+                        toSlot = SLOT_HAND1;
+                        array<uint> action = {CHOSEN_MOVE_ITEM, item.Id, item.GetCount(), toSlot, 0, 0, 0};
+                        SetChosenActions(action);
+                    }
+                    else if(item.Proto.Type == ITEM_TYPE_DRUG ||
+                        item.GetProtoId() == PID_BIG_BOOK_OF_SCIENCE ||
+                        item.GetProtoId() == PID_DEANS_ELECTRONICS ||
+                        item.GetProtoId() == PID_FIRST_AID_BOOK ||
+                        item.GetProtoId() == PID_SCOUT_HANDBOOK ||
+                        item.GetProtoId() == PID_BARTER_BOOK ||
+                        item.GetProtoId() == PID_GUNS_AND_BULLETS ||
+                        item.GetProtoId() == PID_BOOK_BIG_GUNS ||
+                        item.GetProtoId() == PID_BOOK_ENERGY_WEAPONS ||
+                        item.GetProtoId() == PID_BOOK_CLOSE_COMBAT ||
+                        item.GetProtoId() == PID_BOOK_THROWING ||
+                        item.GetProtoId() == PID_BOOK_DOCTOR ||
+                        item.GetProtoId() == PID_BOOK_SNEAKING ||
+                        item.GetProtoId() == PID_BOOK_LOCKPICKING ||
+                        item.GetProtoId() == PID_BOOK_STEALING ||
+                        item.GetProtoId() == PID_BOOK_TRAPS ||
+                        item.GetProtoId() == PID_BOOK_SPEECH)
+                    {
+                        array<uint> action = {CHOSEN_USE_ITEM, item.Id, item.GetProtoId(), TARGET_SELF, chosen.Id, ITEM_MODE_USE, 0};
+                        SetChosenActions(action);
+                    }
+                    else if(item.Proto.Type == ITEM_TYPE_MISC || item.Proto.Type == ITEM_TYPE_AMMO || item.Proto.Type == ITEM_TYPE_KEY)
+                    {
+                        toSlot = SLOT_HAND2;
+                        array<uint> action = {CHOSEN_MOVE_ITEM, item.Id, item.GetCount(), toSlot, 0, 0, 0};
+                        SetChosenActions(action);
+                    }
+                }
+            }
+            return "";
+        }
+
+        //  Double click inventory by Lucek
+        uint currentTime = GetTick();
+
+		if(lookType == ITEM_LOOK_INVENTORY && GUI_GetActiveScreen() == CLIENT_SCREEN_INVENTORY)
+		{
+			if(LastItemClickId == item.Id && (currentTime - LastItemClickTime) < 250)
+			{
+				if(valid(chosen) && item.CritId == chosen.Id)
+				{
+					if((item.CritSlot >= SLOT_HAND1 && item.CritSlot <= SLOT_ARMOR) || (item.CritSlot >= SLOT_HAND1 && item.CritSlot <= SLOT_HEAD))
+					{
+						array<uint> action = {CHOSEN_MOVE_ITEM, item.Id, item.GetCount(), SLOT_INV, 0, 0, 0};
+						SetChosenActions(action);
+					}
+					else if(item.CritSlot == SLOT_INV)
+					{
+						uint8 toSlot = SLOT_HAND2;
+
+						if(item.Proto.Type == ITEM_TYPE_ARMOR)
+						{
+							if(item.GetProtoId() >= 719 && item.GetProtoId() <= 749)
+								toSlot = SLOT_HEAD;
+							else
+								toSlot = SLOT_ARMOR;
+
+							array<uint> action = {CHOSEN_MOVE_ITEM, item.Id, item.GetCount(), toSlot, 0, 0, 0};
+							SetChosenActions(action);
+						}
+						else if(item.Proto.Type == ITEM_TYPE_WEAPON)
+						{
+							toSlot = SLOT_HAND1;
+							array<uint> action = {CHOSEN_MOVE_ITEM, item.Id, item.GetCount(), toSlot, 0, 0, 0};
+							SetChosenActions(action);
+						}
+						else if(item.Proto.Type == ITEM_TYPE_DRUG ||
+							item.GetProtoId() == PID_BIG_BOOK_OF_SCIENCE ||
+							item.GetProtoId() == PID_DEANS_ELECTRONICS ||
+							item.GetProtoId() == PID_FIRST_AID_BOOK ||
+							item.GetProtoId() == PID_SCOUT_HANDBOOK ||
+							item.GetProtoId() == PID_BARTER_BOOK ||
+							item.GetProtoId() == PID_GUNS_AND_BULLETS ||
+							item.GetProtoId() == PID_BOOK_BIG_GUNS ||
+							item.GetProtoId() == PID_BOOK_ENERGY_WEAPONS ||
+							item.GetProtoId() == PID_BOOK_CLOSE_COMBAT ||
+							item.GetProtoId() == PID_BOOK_THROWING ||
+							item.GetProtoId() == PID_BOOK_DOCTOR ||
+							item.GetProtoId() == PID_BOOK_SNEAKING ||
+							item.GetProtoId() == PID_BOOK_LOCKPICKING ||
+							item.GetProtoId() == PID_BOOK_STEALING ||
+							item.GetProtoId() == PID_BOOK_TRAPS ||
+							item.GetProtoId() == PID_BOOK_SPEECH)
+						{
+							array<uint> action = {CHOSEN_USE_ITEM, item.Id, item.GetProtoId(), TARGET_SELF, chosen.Id, ITEM_MODE_USE, 0};
+							SetChosenActions(action);
+						}
+						else if(item.Proto.Type == ITEM_TYPE_MISC || item.Proto.Type == ITEM_TYPE_AMMO || item.Proto.Type == ITEM_TYPE_KEY)
+						{
+							toSlot = SLOT_HAND2;
+							array<uint> action = {CHOSEN_MOVE_ITEM, item.Id, item.GetCount(), toSlot, 0, 0, 0};
+							SetChosenActions(action);
+						}
+					}
+				}
+				LastItemClickTime = 0;
+				LastItemClickId = 0;
+				return "";
+			}
+
+			LastItemClickTime = currentTime;
+			LastItemClickId = item.Id;
+		}
+
+		if(GUI_GetActiveScreen() == CLIENT_SCREEN_PICKUP)
+		{
+			if(LastItemClickId == item.Id && (currentTime - LastItemClickTime) < 250)
+			{
+				if(valid(chosen))
+				{
+					uint contId = GetContainerId();
+
+					if(contId > 0)
+					{
+						if(!chosen.IsKnockout() && !chosen.IsDead())
+						{
+							pickupScreenScrollCritter = GetScroll(SCROLL_PICKUP);
+							pickupScreenScrollFrom = GetScroll(SCROLL_PICKUP_FROM);
+							if(item.CritId > 0)
+								RunServerScriptUnsafe("unsafe_client@unsafe_MoveItemCrit2Cont", item.Id, contId, 0, "", null);
+							else
+								RunServerScriptUnsafe("unsafe_client@unsafe_MoveItemCont2Crit", item.Id, contId, 0, "", null);
+							if(!chosen.IsAnimPlaying())
+								chosen.Animate(0, ANIM2_PICKUP);
+							return "";
+						}
+					}
+
+					uint bodyId = GetBodyId();
+					if(bodyId > 0)
+					{
+						CritterCl@ body = GetCritter(bodyId);
+						if(valid(body))
+						{
+							if(!chosen.IsKnockout() && !chosen.IsDead() && body.IsDead())
+							{
+								pickupScreenScrollCritter = GetScroll(SCROLL_PICKUP);
+								pickupScreenScrollFrom = GetScroll(SCROLL_PICKUP_FROM);
+								if(item.CritId > 0)
+									RunServerScriptUnsafe("unsafe_client@unsafe_MoveItemCrit2Body", item.Id, bodyId, 0, "", null);
+								else
+									RunServerScriptUnsafe("unsafe_client@unsafe_MoveItemBody2Crit", item.Id, bodyId, 0, "", null);
+								if(!chosen.IsAnimPlaying())
+									chosen.Animate(0, ANIM2_PICKUP);
+								return "";
+							}
+						}
+					}
+				}
+
+				LastItemClickTime = 0;
+				LastItemClickId = 0;
+				return "";
+			}
+
+			LastItemClickTime = currentTime;
+			LastItemClickId = item.Id;
+		}
 
         if(lookType == ITEM_LOOK_INVENTORY || lookType == ITEM_LOOK_BARTER || GUI_GetActiveScreen() == CLIENT_SCREEN_BARTER)
         {
