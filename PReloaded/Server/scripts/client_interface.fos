@@ -43,6 +43,8 @@ import void BroadcastDraw() from "client_broadcast";
 
 import void changedParam_Hide(CritterCl& cr, uint, int oldValue) from "parameters";
 
+import void OnMapLoadInventoryTracker() from "client/client_InventoryTracker";
+
 import void DrawChosenTabs() from "chosen_tabs";
 import void DrawQuestTracker() from "client/client_QuestTracker";
 import void DrawInventoryTracker() from "client/client_InventoryTracker";
@@ -2312,6 +2314,7 @@ void critter_in(CritterCl& cr)
             MoveScreen(GetMapWidth()/2, GetMapHeight()/2, 0);
             SetZoom(MapZoom);
             MoveScreen(cr.HexX, cr.HexY, 0);
+            OnMapLoadInventoryTracker();
 		}
 		else
 		{

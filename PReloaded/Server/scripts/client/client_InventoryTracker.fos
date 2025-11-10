@@ -41,7 +41,8 @@ void InitInventoryTracker() {
     inventoryTracker.colorCounterLost = COLOR_RED;           //  possible?! color of the progress texts, always white for visibility
     inventoryTracker.colorItem = COLOR_RGB(0x88, 0x88, 0x88);
     inventoryTracker.colorBackground = COLOR_CHANGE_ALPHA(COLOR_RGB(0, 0, 0), 150);
-    inventoryTracker.firstActivationDelay = 3000;   //  wait for a few seconds before first activation
+    inventoryTracker.mapLoadTime = 0;   //  wait for a few seconds before first activation
+    inventoryTracker.firstActivationDelay = 1500;   //  wait for a few seconds before first activation
     inventoryTracker.activeDuration = 7000;        //  let's start at 10 seconds
     inventoryTracker.fadeInDuration = 500;
     inventoryTracker.fadeOutDuration = 1500;
@@ -55,30 +56,44 @@ void DrawInventoryTracker() {
 }
 
 //  Exported
+void OnMapLoadInventoryTracker() {
+    inventoryTracker.mapLoadTime = GetTick();
+}
+
+//  Exported
 void ActivateInventoryTracker() {
+    /*
     if (inventoryTracker.creationTime + inventoryTracker.firstActivationDelay < GetTick()) {
         //Message("InventoryTracker - activated");
         inventoryTracker.Activate();
     } else {
         //Message("InventoryTracker - not activated");
     }
+    */
+    inventoryTracker.Activate();
 }
 
 //  Exported
 void AddItemToInventoryTracker(ItemCl& item, int netGain) {
-    //Message("InventoryTracker - item added: " + item.GetProtoId() + " x " + netGain);
-    CInventoryTrackerItem invItem = CInventoryTrackerItem();
-    invItem.activationTime = GetTick();
-    invItem.itemPic = item.Proto.PicInv;
-    invItem.count = netGain;
-    inventoryTracker.items.insertLast(invItem);
+    //Message("InventoryTracker - item added: " + item.GetProtoId() + " x " + netGain + " slot: " + item.CritSlot);
+    if (inventoryTracker.mapLoadTime + inventoryTracker.firstActivationDelay > GetTick()) {
+        return;
+    }
+    if (item.CritSlot == SLOT_INV) {
+        CInventoryTrackerItem invItem = CInventoryTrackerItem();
+        invItem.activationTime = GetTick();
+        invItem.itemPic = item.Proto.PicInv;
+        invItem.count = netGain;
+        inventoryTracker.items.insertLast(invItem);
+    }
 }
 
 //  Exported - Need to export so it activates between two logins
 /**
 *   Need to refresh the creation time, else quests will trigger after fast relogs.
+*   not used?!
 */
-void RefreshQuestTracker() {
+void RefreshInventoryTracker() {
     inventoryTracker.active = false;
     inventoryTracker.creationTime = GetTick();
 }
@@ -95,7 +110,8 @@ class CInventoryTracker {
     bool enabled;                           //  use this to toggle on/off
     bool active;
     uint creationTime;                      //  time stamp to check against before activating
-    uint firstActivationDelay;              //  time to wait before activating, so it does not trigger on log-in
+    uint mapLoadTime;
+    uint firstActivationDelay;              //  time to wait before activating, so it does not trigger on log-in and map load
     uint activationTime;                    //  last activation time stamp
     uint activeDuration;                    //  time in milis to remain visible after quest update shown
     uint fadeInDuration, fadeOutDuration;   //  fade durations
@@ -115,6 +131,7 @@ class CInventoryTracker {
     }
 
     void Draw() {
+
         if (!active)
             return;
 
@@ -128,6 +145,19 @@ class CInventoryTracker {
         ProcessItems();
         SelfDisableAfterDurationExpired();
         DrawPickedItems();
+
+        /*
+        if (GUI_GetActiveMainScreen() != CLIENT_MAIN_SCREEN_GAME)
+            return;
+        CritterCl@ chosen = GetChosen();
+        if (!valid(chosen))
+            return;
+        ProcessItems();
+        SelfDisableAfterDurationExpired();
+        if (active) {
+            DrawPickedItems();
+        }*/
+
     }
 
     void ProcessItems() {
