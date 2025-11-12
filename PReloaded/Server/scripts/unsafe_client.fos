@@ -1697,9 +1697,16 @@ void unsafe_ScienceAtHex(Critter& player, int mode, int, int, string@, array<int
             return;
         }
 
+        if (player.Timeout[TO_SK_SCIENCE] > 0) {
+            player.Say(SAY_NETMSG, "Wait a moment before trying to dismantle stuff again.");
+            return;
+        }
+
         if(player.Stat[ST_CURRENT_AP] < 3)
             return;
         player.StatBase[ST_CURRENT_AP] -= 300;
+
+        _SetTimeout(player, TO_SK_SCIENCE, REAL_MS(500));
 
         player.Wait(__Breaktime);
         _CritAnimateUse(player);
