@@ -24,6 +24,8 @@
 #include "item_misc_h.fos"
 #include "entire.fos"
 
+#define LOOT_MAX_DIST     (1)
+
 #define GETACCESS_FILE    "config\\GetAccess.cfg"
 
 import uint8  access_level(string& access) from "main";
@@ -462,30 +464,47 @@ void unsafe_CancelAttackAnimation(Critter& player, int, int, int, string@, array
 
 }
 
-void unsafe_TakeAll(Critter& target, int contId, int bodyId, int useFilter, string@, array<int>@)
-{
-    if(!target.IsKnockout() && !target.IsDead() && target.Stat[ST_CURRENT_AP] >= 0) //&& !target.IsBusy())
-    {
-        if(target.Mode[MODE_HIDE] != 0 && target.GetAccess() < ACCESS_TESTER)
+void unsafe_TakeAll(Critter& target, int contId, int bodyId, int useFilter, string@, array<int>@) {
+    if (!target.IsKnockout() && !target.IsDead() && target.Stat[ST_CURRENT_AP] >= 0) { //&& !target.IsBusy())
+        if (target.Mode[MODE_HIDE] != 0 && target.GetAccess() < ACCESS_TESTER) {
             target.ModeBase[MODE_HIDE] = 0;
+        }
 
-        Item@ cont;
-        Critter@ body;
+        Item@ cont = null;
+        Critter@ body = null;
 
-        if(contId > 0)
-        {
-            @cont = target.GetMap().GetItem(contId);
-            if(!valid(cont))
-            {
+        if (contId > 0) {
+            Map@ map = target.GetMap();
+            if (!valid(map)) {
                 target.RunClientScript("client_container_addons@_EnableItemsMove", 0, 0, 0, "", null);
                 return;
             }
+
+            @cont = map.GetItem(contId);
+            if (!valid(cont)) {
+                target.RunClientScript("client_container_addons@_EnableItemsMove", 0, 0, 0, "", null);
+                return;
+            }
+
+            // --- MINIMUM GUARD: the container must be unlocked and within reach ---
+            if ((cont.Proto.Container_Changeble && !FLAG(cont.LockerCondition, LOCKER_ISOPEN)) ||
+                    GetDistantion(target.HexX, target.HexY, cont.HexX, cont.HexY) > LOOT_MAX_DIST) {
+                target.ShowScreen(SHOW_SCREEN_CLOSE, 0, "");
+                target.RunClientScript("client_container_addons@_EnableItemsMove", 0, 0, 0, "", null);
+                return;
+            }
+
         }
-        else if(bodyId > 0)
-        {
+        else if (bodyId > 0) {
             @body = GetCritter(bodyId);
-            if(!valid(body))
-            {
+            if (!valid(body)) {
+                target.RunClientScript("client_container_addons@_EnableItemsMove", 0, 0, 0, "", null);
+                return;
+            }
+
+            // body must be on the same map and within range.
+            if (!valid(target.GetMap()) || target.GetMap().Id != body.GetMap().Id ||
+                    GetCrittersDistantion(target, body) > LOOT_MAX_DIST) {
                 target.RunClientScript("client_container_addons@_EnableItemsMove", 0, 0, 0, "", null);
                 return;
             }
@@ -558,8 +577,15 @@ void unsafe_TakeAll(Critter& target, int contId, int bodyId, int useFilter, stri
                 itemsWeight += int(items[i].Proto.Weight) * items[i].GetCount();
         }
 
-        if(items.length() > 0 && !(valid(cont) && cont.Proto.Container_Changeble && !FLAG(cont.LockerCondition, LOCKER_ISOPEN)))
-        {
+        // (optional secondary fuse � if the status changes in the meantime)
+        if (valid(cont) && ( (cont.Proto.Container_Changeble && !FLAG(cont.LockerCondition, LOCKER_ISOPEN)) ||
+                            GetDistantion(target.HexX, target.HexY, cont.HexX, cont.HexY) > LOOT_MAX_DIST )) {
+            target.ShowScreen(SHOW_SCREEN_CLOSE, 0, "");
+            target.RunClientScript("client_container_addons@_EnableItemsMove", 0, 0, 0, "", null);
+            return;
+        }
+
+        if (items.length() > 0) {
             if(freeWeight >= itemsWeight)
                 MoveItems(items, target);
             else
@@ -572,11 +598,17 @@ void unsafe_TakeAll(Critter& target, int contId, int bodyId, int useFilter, stri
                 _CritAnimatePickup(target);
         }
 
-
-        if(valid(cont))
-            target.ShowContainer(null, cont, TRANSFER_FAR_CONT);
-        else if(valid(body))
+        // Reopen only when it's legit (in-range & unlocked)
+        if (valid(cont)) {
+            if (!(cont.Proto.Container_Changeble && !FLAG(cont.LockerCondition, LOCKER_ISOPEN)) &&
+                    GetDistantion(target.HexX, target.HexY, cont.HexX, cont.HexY) <= LOOT_MAX_DIST) {
+                target.ShowContainer(null, cont, TRANSFER_FAR_CONT);
+            } else {
+                target.ShowScreen(SHOW_SCREEN_CLOSE, 0, "");
+            }
+        } else if (valid(body)) {
             target.ShowContainer(body, null, TRANSFER_CRIT_LOOT);
+        }
     }
 
     target.RunClientScript("client_container_addons@_EnableItemsMove", 0, 0, 0, "", null);
