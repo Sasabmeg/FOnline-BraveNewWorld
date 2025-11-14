@@ -621,6 +621,15 @@ bool out_message(string& message, int& sayType)
             return(false);
         }
 
+        if (words.length() >= 1 && (words[0] == "~maxfps" || words[0] == "~fpslimit")) {
+            if (words.length() >= 2) {
+                int val = CLAMP(string2uint(words[1]), 10, 500);
+                Message("Pip-boy :: Setting FPS limit to: " + val);
+                __FixedFPS = val;
+                return false;
+            }
+        }
+
         if (words.length() >= 1 && (words[0] == "~bc" || words[0] == "~broadcast"))
         {
             if (words.length() >= 2 && words[1] == "on") {
@@ -823,6 +832,7 @@ bool out_message(string& message, int& sayType)
             return(false);
         if(ret == 1)
             return(true);
+
 
         if(words.length() > 0 && words[0] == "~combatmode")
         {
