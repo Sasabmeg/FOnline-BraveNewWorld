@@ -78,6 +78,8 @@ import void TimeoutsConfig(string& customConfig) from "client_timeouts";
 import void ClientMessagesConfig(string& customConfig) from "client_messages";
 import void CombatLogConfig() from "client_combat";
 
+import void SmartLootConfig(string& customConfig) from "client/client_smartLoot";
+
 import void InitNameColorizing() from "name_colorizing";
 
 import void InitPerks() from "perks";
@@ -916,6 +918,7 @@ void InitConfig()
     broadcastFilter = 7;
 
     TimeoutsConfig("");
+    SmartLootConfig("");
     ClientMessagesConfig("");
     CombatLogConfig();
 

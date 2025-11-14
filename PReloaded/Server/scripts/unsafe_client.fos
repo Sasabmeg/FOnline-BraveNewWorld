@@ -577,7 +577,7 @@ void unsafe_TakeAll(Critter& target, int contId, int bodyId, int useFilter, stri
                 itemsWeight += int(items[i].Proto.Weight) * items[i].GetCount();
         }
 
-        // (optional secondary fuse ï¿½ if the status changes in the meantime)
+        // (optional secondary fuse – if the status changes in the meantime)
         if (valid(cont) && ( (cont.Proto.Container_Changeble && !FLAG(cont.LockerCondition, LOCKER_ISOPEN)) ||
                             GetDistantion(target.HexX, target.HexY, cont.HexX, cont.HexY) > LOOT_MAX_DIST )) {
             target.ShowScreen(SHOW_SCREEN_CLOSE, 0, "");
@@ -860,7 +860,7 @@ void unsafe_DropAll(Critter& target, int, int, int, string@, array<int>@)
     }
 }
 
-void unsafe_DropOne(Critter& target, int id, int, int, string@, array<int>@)
+void unsafe_DropOne(Critter& target, int id, int count, int, string@, array<int>@)
 {
     if(!target.IsKnockout() && !target.IsDead() && !target.IsBusy() && target.StatBase[ST_CURRENT_AP] > 0)
     {
@@ -869,7 +869,7 @@ void unsafe_DropOne(Critter& target, int id, int, int, string@, array<int>@)
         {
             if(valid(target.GetMap()))
             {
-                MoveItem(itm, itm.GetCount(), target.GetMap(), target.HexX, target.HexY);
+                MoveItem(itm, (count <= 0 ? itm.GetCount() : count), target.GetMap(), target.HexX, target.HexY);
                 target.Wait(100);
             }
             else
@@ -880,13 +880,18 @@ void unsafe_DropOne(Critter& target, int id, int, int, string@, array<int>@)
     target.RunClientScript("client_interface@_EnableItemsMove", 0, 0, 0, "", null);
 }
 
-void unsafe_MoveItemCrit2Cont(Critter& target, int itemId, int contId, int, string@, array<int>@)
+void unsafe_MoveItemCrit2Cont(Critter& target, int itemId, int contId, int itemCount, string@, array<int>@)
 {
     if(!target.IsKnockout() && !target.IsDead() && !target.IsBusy() && target.StatBase[ST_CURRENT_AP] > 0)
     {
         Item@ itm = GetItem(itemId);
         if(valid(itm) && itm.CritId == target.Id)
         {
+            if (itemCount <= 0) {
+                itemCount = itm.GetCount();
+            } else if (itemCount > 1 && itemCount > itm.GetCount()) {
+                itemCount = itm.GetCount();
+            }
             if(valid(target.GetMap()))
             {
                 Item@ cont = target.GetMap().GetItem(contId);
@@ -899,10 +904,10 @@ void unsafe_MoveItemCrit2Cont(Critter& target, int itemId, int contId, int, stri
                         return;
                     }
 
-                    uint playerItemsVolume = itm.Proto.Volume * itm.GetCount();
+                    uint playerItemsVolume = itm.Proto.Volume * itemCount;
                     uint containerItemsVolume = 0;
                     array<Item@> cItems;
-                    uint itemCount = cont.GetItems(0, cItems);
+                    uint itemCountTmp = cont.GetItems(0, cItems);
                     for(uint i = 0, j = cItems.length(); i < j; i++)
                         containerItemsVolume += cItems[i].Proto.Volume * cItems[i].GetCount();
 
@@ -911,13 +916,13 @@ void unsafe_MoveItemCrit2Cont(Critter& target, int itemId, int contId, int, stri
                     {
                         if(target.Mode[MODE_HIDE] != 0 && target.GetAccess() < ACCESS_TESTER)
                         {
-                            int sk = target.Skill[SK_STEAL] - 10 * GRAMM_TO_LBS(itm.Proto.Weight * itm.GetCount());
+                            int sk = target.Skill[SK_STEAL] - 10 * GRAMM_TO_LBS(itm.Proto.Weight * itemCountTmp);
                             sk = CLAMP(sk, 5, 95);
                             if(sk < Random(1, 100))
                                 target.ModeBase[MODE_HIDE] = 0;
                         }
 
-                        MoveItem(itm, itm.GetCount(), cont, 0);
+                        MoveItem(itm, itemCount, cont, 0);
                         cont.Update();
                         itm.Update();
                         target.ShowContainer(null, cont, TRANSFER_FAR_CONT);
@@ -925,7 +930,7 @@ void unsafe_MoveItemCrit2Cont(Critter& target, int itemId, int contId, int, stri
                     }
                     else
                     {
-                        if(itm.GetCount() > 1)
+                        if(itemCount > 1)
                         {
                             int newCnt = (pContainer.Container_Volume - containerItemsVolume);
                             if(itm.Proto.Volume > 0)
@@ -964,13 +969,18 @@ void unsafe_MoveItemCrit2Cont(Critter& target, int itemId, int contId, int, stri
     target.RunClientScript("client_interface@_EnableItemsMove", 0, 0, 0, "", null);
 }
 
-void unsafe_MoveItemCont2Crit(Critter& target, int itemId, int contId, int, string@, array<int>@)
+void unsafe_MoveItemCont2Crit(Critter& target, int itemId, int contId, int itemCount, string@, array<int>@)
 {
     if(!target.IsKnockout() && !target.IsDead() && !target.IsBusy() && target.StatBase[ST_CURRENT_AP] > 0)
     {
         Item@ itm = GetItem(itemId);
         if(valid(itm))
         {
+            if (itemCount <= 0) {
+                itemCount = itm.GetCount();
+            } else if (itemCount > itm.GetCount()) {
+                itemCount = itm.GetCount();
+            }
             if(valid(target.GetMap()))
             {
                 Item@ cont = target.GetMap().GetItem(contId);
@@ -978,7 +988,7 @@ void unsafe_MoveItemCont2Crit(Critter& target, int itemId, int contId, int, stri
                 {
                     int freeWeight = 2*target.Stat[ST_CARRY_WEIGHT] - target.ItemsWeight();
                     int itemWeight = int(itm.Proto.Weight);
-                    int itemCount = itm.GetCount();
+                    //int itemCount = itm.GetCount();
 
                     if(freeWeight < 0)
                         freeWeight = 0;
@@ -1032,7 +1042,7 @@ void unsafe_MoveItemCont2Crit(Critter& target, int itemId, int contId, int, stri
     target.RunClientScript("client_interface@_EnableItemsMove", 0, 0, 0, "", null);
 }
 
-void unsafe_MoveItemBody2Crit(Critter& target, int itemId, int bodyId, int, string@, array<int>@)
+void unsafe_MoveItemBody2Crit(Critter& target, int itemId, int bodyId, int itemCount, string@, array<int>@)
 {
     if(!target.IsKnockout() && !target.IsDead() && !target.IsBusy() && target.StatBase[ST_CURRENT_AP] > 0)
     {
@@ -1045,7 +1055,13 @@ void unsafe_MoveItemBody2Crit(Critter& target, int itemId, int bodyId, int, stri
             {
                 int freeWeight = 2*target.Stat[ST_CARRY_WEIGHT] - target.ItemsWeight();
                 int itemWeight = int(itm.Proto.Weight);
-                int itemCount = itm.GetCount();
+
+                //int itemCount = itm.GetCount();
+                if (itemCount <= 0) {
+                    itemCount = itm.GetCount();
+                } else if (itemCount > itm.GetCount()) {
+                    itemCount = itm.GetCount();
+                }
 
                 if(freeWeight < 0)
                     freeWeight = 0;
@@ -1080,7 +1096,7 @@ void unsafe_MoveItemBody2Crit(Critter& target, int itemId, int bodyId, int, stri
     target.RunClientScript("client_interface@_EnableItemsMove", 0, 0, 0, "", null);
 }
 
-void unsafe_MoveItemCrit2Body(Critter& target, int itemId, int bodyId, int, string@, array<int>@)
+void unsafe_MoveItemCrit2Body(Critter& target, int itemId, int bodyId, int itemCount, string@, array<int>@)
 {
     if(!target.IsKnockout() && !target.IsDead() && !target.IsBusy() && target.StatBase[ST_CURRENT_AP] > 0)
     {
@@ -1093,7 +1109,13 @@ void unsafe_MoveItemCrit2Body(Critter& target, int itemId, int bodyId, int, stri
             {
                 int freeWeight = 2*body.Stat[ST_CARRY_WEIGHT] - body.ItemsWeight();
                 int itemWeight = int(itm.Proto.Weight);
-                int itemCount = itm.GetCount();
+
+                //int itemCount = itm.GetCount();
+                if (itemCount <= 0) {
+                    itemCount = itm.GetCount();
+                } else if (itemCount > itm.GetCount()) {
+                    itemCount = itm.GetCount();
+                }
 
                 if(freeWeight < 0)
                     freeWeight = 0;

@@ -1,0 +1,410 @@
+//
+//  FOClassic: Brave New World
+//  Sasabmeg/Slowhand
+//
+//  client_smartLoot.fos
+//
+
+//  Config for player to set certain amount per proto to be looted based on their preference
+//  For example with PID_STIMPAK 10, whenever players loots with Shift, it would take 10 stimpaks from the stack
+//  ... and other similar solutions.
+
+
+#ifndef __CLIENT_SMART_LOOT__
+#define __CLIENT_SMART_LOOT__
+
+#define __CLIENT
+
+#include "../_defines.fos"
+#include "../_client_defines.fos"
+#include "../_macros.fos"
+#include "../_colors.fos"
+
+#include "../config_file_h.fos"
+#include "../client_utils_h.fos"
+
+#define TO_SECTION                          "SmartLoot"
+
+#define SMART_LOOT_VERBOSE_LOGGING_ALLOWED  (true)
+
+#define CAPS_CAP                            (1000000)
+#define AMMO_CAP                            (10000)
+#define DRUGS_CAP                           (100)
+
+void SmartLootLog(string@ s) {
+    Log("SmartLoot :: " + s);
+    if (SMART_LOOT_VERBOSE_LOGGING_ALLOWED) {
+        Message("SmartLoot :: " + s);
+    }
+}
+
+class CSmartLoot {
+
+    int DefaultValue = 5;   //  used when undefined in config
+
+    int Caps = 5000;        //  how many caps
+
+    int MagMultiplier = 3;  //  how many stacks of a full (highest possible) magazine
+    int Grenades = 5;       //  how many grenades
+    int Flares = 5;         //  how many detection flares
+    int OtherThrown = 20;   //  how many throwing knives or other thrown like pastur spike, poisoned throwing knife, sharpened pole, etc
+    int Rockets = 20;       //  how many rockets
+    int Traps = 5;          //  how many traps
+
+    int Drugs = 2;          //  how many drugs
+    int Psycho = 2;         //  how many Psycho
+    int Jet = 2;            //  how many Jet
+    int JetAntidote = 2;    //  how many Antidote against poison
+    int Antidote = 3;       //  how many Antidote against poison
+    int RadAway = 3;        //  how many Antidote against poison
+    int Fish = 5;           //  how many fish
+    int Alcohol = 2;        //  how many alcohol
+    int NukaCola = 5;       //  how many Nuka Cola
+    int Cigarettes = 5;     //  how many Cigarettes
+    int MutatedFruit = 10;  //  how many Mutated Fruits
+    int HealingDrugs = 5;   //  how many healing drugs
+
+    CSmartLoot() {
+    }
+};
+
+CSmartLoot smartLoot;
+
+void SmartLootConfig(string& customConfig) {
+    SmartLootLog("SmartLootConfig = " + customConfig);
+    string sectioname = (customConfig == "" ? TO_SECTION : TO_SECTION + ":" + customConfig);
+    IConfigSection@ section = GetConfigSection(CONFIG_FILE, sectioname);
+    SmartLootLog("section = " + sectioname);
+
+    if(valid(section)) {
+        string@ val;
+        // Caps
+        @val = GetConfigValue(CONFIG_FILE, sectioname, "Caps");
+        if (valid(val) && val.length() > 0) {
+            smartLoot.Caps = CLAMP(string2uint(val), 0, CAPS_CAP);
+            SmartLootLog("Caps = " + smartLoot.Caps + " (" + val + ")");
+        } else {
+            SmartLootLog("Caps invalid or missing");
+        }
+
+        @val = GetConfigValue(CONFIG_FILE, sectioname, "MagMultiplier");
+        if (valid(val) && val.length() > 0) {
+            smartLoot.MagMultiplier = CLAMP(string2uint(val), 0, AMMO_CAP);
+            SmartLootLog("MagMultiplier = " + smartLoot.MagMultiplier + " (" + val + ")");
+        } else {
+            SmartLootLog("MagMultiplier invalid or missing");
+        }
+
+        @val = GetConfigValue(CONFIG_FILE, sectioname, "Grenades");
+        if (valid(val) && val.length() > 0) {
+            smartLoot.Grenades = CLAMP(string2uint(val), 0, AMMO_CAP);
+            SmartLootLog("Grenades = " + smartLoot.Grenades + " (" + val + ")");
+        } else {
+            SmartLootLog("Grenades invalid or missing");
+        }
+
+        @val = GetConfigValue(CONFIG_FILE, sectioname, "Flares");
+        if (valid(val) && val.length() > 0) {
+            smartLoot.Flares = CLAMP(string2uint(val), 0, AMMO_CAP);
+            SmartLootLog("Flares = " + smartLoot.Flares + " (" + val + ")");
+        } else {
+            SmartLootLog("Flares invalid or missing");
+        }
+
+        @val = GetConfigValue(CONFIG_FILE, sectioname, "OtherThrown");
+        if (valid(val) && val.length() > 0) {
+            smartLoot.OtherThrown = CLAMP(string2uint(val), 0, AMMO_CAP);
+            SmartLootLog("OtherThrown = " + smartLoot.OtherThrown + " (" + val + ")");
+        } else {
+            SmartLootLog("OtherThrown invalid or missing");
+        }
+
+        @val = GetConfigValue(CONFIG_FILE, sectioname, "Rockets");
+        if (valid(val) && val.length() > 0) {
+            smartLoot.Rockets = CLAMP(string2uint(val), 0, AMMO_CAP);
+            SmartLootLog("Rockets = " + smartLoot.Rockets + " (" + val + ")");
+        } else {
+            SmartLootLog("Rockets invalid or missing");
+        }
+
+        @val = GetConfigValue(CONFIG_FILE, sectioname, "Traps");
+        if (valid(val) && val.length() > 0) {
+            smartLoot.Traps = CLAMP(string2uint(val), 0, AMMO_CAP);
+            SmartLootLog("Traps = " + smartLoot.Traps + " (" + val + ")");
+        } else {
+            SmartLootLog("Traps invalid or missing");
+        }
+
+        @val = GetConfigValue(CONFIG_FILE, sectioname, "Drugs");
+        if (valid(val) && val.length() > 0) {
+            smartLoot.Drugs = CLAMP(string2uint(val), 0, DRUGS_CAP);
+            SmartLootLog("Drugs = " + smartLoot.Drugs + " (" + val + ")");
+        } else {
+            SmartLootLog("Drugs invalid or missing");
+        }
+
+        @val = GetConfigValue(CONFIG_FILE, sectioname, "Psycho");
+        if (valid(val) && val.length() > 0) {
+            smartLoot.Psycho = CLAMP(string2uint(val), 0, DRUGS_CAP);
+            SmartLootLog("Psycho = " + smartLoot.Psycho + " (" + val + ")");
+        } else {
+            SmartLootLog("Psycho invalid or missing");
+        }
+
+        @val = GetConfigValue(CONFIG_FILE, sectioname, "Jet");
+        if (valid(val) && val.length() > 0) {
+            smartLoot.Jet = CLAMP(string2uint(val), 0, DRUGS_CAP);
+            SmartLootLog("Jet = " + smartLoot.Jet + " (" + val + ")");
+        } else {
+            SmartLootLog("Jet invalid or missing");
+        }
+
+        @val = GetConfigValue(CONFIG_FILE, sectioname, "JetAntidote");
+        if (valid(val) && val.length() > 0) {
+            smartLoot.JetAntidote = CLAMP(string2uint(val), 0, DRUGS_CAP);
+            SmartLootLog("JetAntidote = " + smartLoot.JetAntidote + " (" + val + ")");
+        } else {
+            SmartLootLog("JetAntidote invalid or missing");
+        }
+
+        @val = GetConfigValue(CONFIG_FILE, sectioname, "Antidote");
+        if (valid(val) && val.length() > 0) {
+            smartLoot.Antidote = CLAMP(string2uint(val), 0, DRUGS_CAP);
+            SmartLootLog("Antidote = " + smartLoot.Antidote + " (" + val + ")");
+        } else {
+            SmartLootLog("Antidote invalid or missing");
+        }
+
+        @val = GetConfigValue(CONFIG_FILE, sectioname, "RadAway");
+        if (valid(val) && val.length() > 0) {
+            smartLoot.RadAway = CLAMP(string2uint(val), 0, DRUGS_CAP);
+            SmartLootLog("RadAway = " + smartLoot.RadAway + " (" + val + ")");
+        } else {
+            SmartLootLog("RadAway invalid or missing");
+        }
+
+        @val = GetConfigValue(CONFIG_FILE, sectioname, "Fish");
+        if (valid(val) && val.length() > 0) {
+            smartLoot.Fish = CLAMP(string2uint(val), 0, DRUGS_CAP);
+            SmartLootLog("Fish = " + smartLoot.Fish + " (" + val + ")");
+        } else {
+            SmartLootLog("Fish invalid or missing");
+        }
+
+        @val = GetConfigValue(CONFIG_FILE, sectioname, "Alcohol");
+        if (valid(val) && val.length() > 0) {
+            smartLoot.Alcohol = CLAMP(string2uint(val), 0, DRUGS_CAP);
+            SmartLootLog("Alcohol = " + smartLoot.Alcohol + " (" + val + ")");
+        } else {
+            SmartLootLog("Alcohol invalid or missing");
+        }
+
+        @val = GetConfigValue(CONFIG_FILE, sectioname, "NukaCola");
+        if (valid(val) && val.length() > 0) {
+            smartLoot.NukaCola = CLAMP(string2uint(val), 0, DRUGS_CAP);
+            SmartLootLog("NukaCola = " + smartLoot.NukaCola + " (" + val + ")");
+        } else {
+            SmartLootLog("NukaCola invalid or missing");
+        }
+
+        @val = GetConfigValue(CONFIG_FILE, sectioname, "Cigarettes");
+        if (valid(val) && val.length() > 0) {
+            smartLoot.Cigarettes = CLAMP(string2uint(val), 0, DRUGS_CAP);
+            SmartLootLog("Cigarettes = " + smartLoot.Cigarettes + " (" + val + ")");
+        } else {
+            SmartLootLog("Cigarettes invalid or missing");
+        }
+
+        @val = GetConfigValue(CONFIG_FILE, sectioname, "MutatedFruit");
+        if (valid(val) && val.length() > 0) {
+            smartLoot.MutatedFruit = CLAMP(string2uint(val), 0, DRUGS_CAP);
+            SmartLootLog("MutatedFruit = " + smartLoot.MutatedFruit + " (" + val + ")");
+        } else {
+            SmartLootLog("MutatedFruit invalid or missing");
+        }
+
+        @val = GetConfigValue(CONFIG_FILE, sectioname, "HealingDrugs");
+        if (valid(val) && val.length() > 0) {
+            smartLoot.HealingDrugs = CLAMP(string2uint(val), 0, DRUGS_CAP);
+            SmartLootLog("HealingDrugs = " + smartLoot.HealingDrugs + " (" + val + ")");
+        } else {
+            SmartLootLog("HealingDrugs invalid or missing");
+        }
+    }
+}
+
+int GetSmartItemMoveCount(ItemCl &item) {
+    int ret = 5;
+    CritterCl@ chosen = GetChosen();
+    if (!valid(chosen)) {
+        return 0;
+    }
+    if (!valid(item)) {
+        return 0;
+    }
+
+    switch (item.GetProtoId()) {
+        //  healing drugs
+        case PID_HYPO:
+        case PID_HEALING_POWDER:
+        case PID_STIMPAK:
+        case PID_SUPER_STIMPAK:
+            ret = smartLoot.HealingDrugs;
+            break;
+        //  long duration drugs
+        case PID_RAD_X:
+        case PID_MENTATS:
+        case PID_BUFFOUT:
+            ret = smartLoot.Drugs;
+            break;
+        case PID_NUKA_COLA:
+            ret = smartLoot.NukaCola;
+            break;
+        case PID_CIGARETTES:
+            ret = smartLoot.Cigarettes;
+            break;
+        case PID_PSYCHO:
+            ret = smartLoot.Psycho;
+            break;
+        case PID_JET:
+            ret = smartLoot.Jet;
+            break;
+        case PID_JET_ANTIDOTE:
+            ret = smartLoot.JetAntidote;
+            break;
+        case PID_ANTIDOTE:
+            ret = smartLoot.Antidote;
+            break;
+        case PID_RADAWAY:
+            ret = smartLoot.RadAway;
+            break;
+        //  fish
+        case PID_FISH_CATFISH:
+        case PID_FISH_TUNA:
+        case PID_FISH_SALMON:
+            ret = smartLoot.Fish;
+            break;
+        //  alcohol
+        case PID_BOOZE:
+        case PID_BEER:
+        case PID_ROENTGEN_RUM:
+        case PID_GAMMA_GULP_BEER:
+        case PID_ROT_GUT:
+            ret = smartLoot.Alcohol;
+            break;
+        //  thrown weapons and ammo
+        case PID_PLASMA_GRENADE:
+        case PID_FRAG_GRENADE:
+        case PID_FIRE_GRENADE:
+        case PID_MOLOTOV_COCKTAIL:
+        case PID_PULSE_GRENADE:
+            ret = smartLoot.Grenades;
+            break;
+        //  flares
+        case PID_FLARE:
+        case PID_FLARE_GREEN:
+        case PID_FLARE_WHITE:
+        case PID_FLARE_YELLOW:
+            ret = smartLoot.Flares;
+            break;
+        case PID_EXPLOSIVE_ROCKET:
+        case PID_ROCKET_AP:
+        case PID_40MM_GRENADE:
+            ret = smartLoot.Rockets;
+            break;
+        //  other thrown
+        case PID_ROCK:
+        case PID_THROWING_KNIFE:
+        case PID_POISONED_THROWING_KNIFE:
+        case PID_PASHTSHUUR_SPIKE:
+        case PID_PLANT_SPIKE:
+        case PID_SPEAR:
+        case PID_SHARP_SPEAR:
+        case PID_SHARPENED_POLE:
+            ret = smartLoot.OtherThrown;
+            break;
+        //  traps
+        case PID_BEAR_TRAP:
+            ret = smartLoot.Traps;
+            break;
+        //  ammo
+        //  SEC -> Laser SMG -> 60
+        case PID_SMALL_ENERGY_CELL:
+            ret = smartLoot.MagMultiplier * 60;
+            break;
+        //  MFC -> Gatling Laser -> 30
+        case PID_MICRO_FUSION_CELL:
+            ret = smartLoot.MagMultiplier * 30;
+            break;
+        //  Shotgun Shells -> Pancor Jackhammer -> 20
+        case PID_SHOTGUN_SHELLS:
+        case PID_SHOTGUN_SHELLS_EMP:
+        case PID_SHOTGUN_SHELLS_FLECHETTE:
+        case PID_SHOTGUN_SHELLS_SLUG:
+        case PID_SHOTGUN_DRAGON_BREATH_SHELLS:
+            ret = smartLoot.MagMultiplier * 20;
+            break;
+        //  Flamethrower Fuel -> Incinerator -> 5
+        case PID_FLAMETHROWER_FUEL:
+        case PID_FLAMETHROWER_FUEL_MK_II:
+            ret = smartLoot.MagMultiplier * 5;
+            break;
+        //  HN Needler Cartridge -> Needler Pistol -> 10
+        case PID_HN_NEEDLER_CARTRIDGE:
+        case PID_HN_AP_NEEDLER_CARTRIDGE:
+            ret = smartLoot.MagMultiplier * 10;
+            break;
+        //  BBS -> Red Ryder BB Gun -> 100
+        case PID_BBS:
+            ret = smartLoot.MagMultiplier * 100;
+            break;
+        //  2mm EC -> M72 Gauss Rifle -> 20
+        case PID_2MM_EC_AMMO:
+            ret = smartLoot.MagMultiplier * 20;
+            break;
+        //  223 FMJ -> LSW -> 30
+        case PID_223_FMJ:
+            ret = smartLoot.MagMultiplier * 30;
+            break;
+        //  .44 Magnum -> Desert Eagle (Exp. Mag.) -> 10
+        case PID_44_MAGNUM_FMJ:
+        case PID_44_MAGNUM_JHP:
+            ret = smartLoot.MagMultiplier * 10;
+            break;
+        //  .45 Caliber -> Tommy Gun -> 75
+        case PID_45_CALIBER_AMMO:
+            ret = smartLoot.MagMultiplier * 75;
+            break;
+        //  4.7mm Caseless -> Vindicator -> 100
+        case PID_4_7MM_CASELESS:
+            ret = smartLoot.MagMultiplier * 100;
+            break;
+        //  5mm -> Minigun -> 120
+        case PID_5MM_AP:
+        case PID_5MM_JHP:
+            ret = smartLoot.MagMultiplier * 120;
+            break;
+        //  7.62mm -> M60 -> 100
+        case PID_7_62MM_AMMO:
+            ret = smartLoot.MagMultiplier * 100;
+            break;
+        //  9mm -> Mauser -> 7
+        case PID_9MM_AMMO:
+        case PID_9MM_BALL:
+            ret = smartLoot.MagMultiplier * 7;
+            break;
+        //  10mm -> HK P90c -> 60
+        case PID_10MM_AP:
+        case PID_10MM_JHP:
+            ret = smartLoot.MagMultiplier * 60;
+            break;
+        //  14mm AP -> 14mm Pistol -> 10
+        case PID_14MM_AP:
+            ret = smartLoot.MagMultiplier * 10;
+            break;
+    }
+    return ret;
+}
+
+
+#endif // __CLIENT_SMART_LOOT__

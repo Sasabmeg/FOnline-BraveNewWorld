@@ -44,10 +44,13 @@ void critter_action(bool localCall, CritterCl& cr, int action, int actionExt, It
             {
                 SetVolumeIndicator(actions[1]);
 
-                if(valid(item))
+                if (valid(item)) {
+                    //Message("Open container ID = " + item.Id);
                     SetContainerBodyId(item.Id, 0);
-                else
+                } else {
+                    //Message("Open container with NULL ID");
                     SetContainerBodyId(0, 0);
+                }
             }
             else if(actions[0] == 11 && actions[2] == SK_STEAL) //open container with steal
             {

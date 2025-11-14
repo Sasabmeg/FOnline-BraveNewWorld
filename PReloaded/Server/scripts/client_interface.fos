@@ -126,6 +126,7 @@ import void ActivateQuestTracker() from "client/client_QuestTracker";
 import void SetQuestTrackerText(string& header, string& progress) from "client/client_QuestTracker";
 import void ActivateInventoryTracker() from "client/client_InventoryTracker";
 import void AddItemToInventoryTracker(Item& item, int netGain) from "client/client_InventoryTracker";
+import int GetSmartItemMoveCount(ItemCl &item) from "client/client_smartLoot";
 
 import string DateTimeToString(uint gameTime) from "time";
 
@@ -1183,6 +1184,7 @@ string generic_description(int descType, int& offsX, int& offsY)
 // Item description. Look types look in _client_defines.fos, Item look types.
 string item_description(ItemCl& item, int lookType)
 {
+    //Message("item_description: lookType = " + lookType + ", disableMouseMove = " + disableItemMove);
     CritterCl@ chosen = GetChosen();
 
     // Default error text
@@ -1225,7 +1227,8 @@ string item_description(ItemCl& item, int lookType)
     // Full info
     else
     {
-        if(lookType == ITEM_LOOK_INVENTORY && GUI_IsKeyPressed(0x2A))
+        //  Inventory + Shift + LMB -> Drop item (whole stack) to ground from inventory
+        if(lookType == ITEM_LOOK_INVENTORY && GUI_IsKeyPressed(DIK_LSHIFT))
         {
             if(item.GetProtoId()==PID_ADVANCED_BENCH || item.GetProtoId()==PID_WORKBENCH_RAIDERS || item.GetProtoId()==PID_AMMO_FACILITY || item.GetProtoId()==PID_WORKBENCH
             || item.GetProtoId()==PID_MED_MACHINE || item.GetProtoId()==PID_WORKBENCH_PRIMITIVE || item.GetProtoId()==PID_CARAVAN_BOX || item.GetProtoId()==PID_ACTIVE_DYNAMITE
@@ -1247,33 +1250,44 @@ string item_description(ItemCl& item, int lookType)
             return "";
         }
 
-        if(GUI_GetActiveScreen() == CLIENT_SCREEN_PICKUP && GUI_IsKeyPressed(0x2A))
-        {
-            if(item.GetProtoId()==PID_ADVANCED_BENCH || item.GetProtoId()==PID_WORKBENCH_RAIDERS || item.GetProtoId()==PID_AMMO_FACILITY || item.GetProtoId()==PID_WORKBENCH
+        //  PickUp + Shift + LMB -> Drop item (whole stack) to ground from pickup screen
+        if (GUI_GetActiveScreen() == CLIENT_SCREEN_PICKUP && GUI_IsKeyPressed(DIK_LSHIFT)) {
+            //Message("CLIENT_SCREEN_PICKUP + Shift");
+            if (item.GetProtoId()==PID_ADVANCED_BENCH || item.GetProtoId()==PID_WORKBENCH_RAIDERS || item.GetProtoId()==PID_AMMO_FACILITY || item.GetProtoId()==PID_WORKBENCH
             || item.GetProtoId()==PID_MED_MACHINE || item.GetProtoId()==PID_WORKBENCH_PRIMITIVE || item.GetProtoId()==PID_CARAVAN_BOX || item.GetProtoId()==PID_ACTIVE_DYNAMITE
-            || item.GetProtoId()==PID_ACTIVE_PLASTIC_EXPLOSIVE || item.GetProtoId()==PID_ACTIVE_MINE || item.GetProtoId() == PID_ACTIVE_PERSONNEL_MINE || item.GetType()==ITEM_TYPE_CONTAINER)
-                return "";
-
-            if(item.CritId > 0)
-            {
-
-                if(disableItemMove)
-                    return "";
-                disableItemMove = true;
-
-                RunServerScriptUnsafe("unsafe_client@unsafe_DropOne", item.Id, 0, 0, "", null);
-                if(!chosen.IsKnockout() && !chosen.IsDead() && !chosen.IsAnimPlaying())
-                {
-                    chosen.Animate(0, ANIM2_PICKUP);
-                }
+            || item.GetProtoId()==PID_ACTIVE_PLASTIC_EXPLOSIVE || item.GetProtoId()==PID_ACTIVE_MINE || item.GetProtoId() == PID_ACTIVE_PERSONNEL_MINE || item.GetType()==ITEM_TYPE_CONTAINER) {
                 return "";
             }
+
+
+            if (disableItemMove) {
+                return "";
+            }
+            disableItemMove = true;
+
+            if (item.CritId > 0) {
+                RunServerScriptUnsafe("unsafe_client@unsafe_DropOne", item.Id, 0, 0, "", null);
+            } else {
+                uint contId = GetContainerId();
+                int itemCount = 3;
+                itemCount = GetSmartItemMoveCount(item);
+                if (contId > 0) {
+                    RunServerScriptUnsafe("unsafe_client@unsafe_MoveItemCont2Crit", item.Id, contId, itemCount, "", null);
+                } else {
+                    disableItemMove = false;
+                }
+            }
+            if (!chosen.IsKnockout() && !chosen.IsDead() && !chosen.IsAnimPlaying()) {
+                chosen.Animate(0, ANIM2_PICKUP);
+            }
+            return "";
         }
 
-
-        if(GUI_GetActiveScreen() == CLIENT_SCREEN_PICKUP && GUI_IsKeyPressed(0x1D))
+        //  PickUp + Ctrl + LMB ->  Get or put whole stack of item from container/body
+        //  PickUp + Alt + LMB -> Get or put only one item (whole stack) to container/body
+        if(GUI_GetActiveScreen() == CLIENT_SCREEN_PICKUP)
         {
-
+            //Message("CLIENT_SCREEN_PICKUP");
             if(item.GetProtoId()==PID_ADVANCED_BENCH || item.GetProtoId()==PID_WORKBENCH_RAIDERS || item.GetProtoId()==PID_AMMO_FACILITY || item.GetProtoId()==PID_WORKBENCH || item.GetProtoId()==PID_MED_MACHINE ||  item.GetProtoId()==PID_WORKBENCH_PRIMITIVE || item.GetType()==ITEM_TYPE_CONTAINER)
                 return "";
 
@@ -1289,13 +1303,21 @@ string item_description(ItemCl& item, int lookType)
                 {
                     pickupScreenScrollCritter = GetScroll(SCROLL_PICKUP);
                     pickupScreenScrollFrom = GetScroll(SCROLL_PICKUP_FROM);
-                    if(item.CritId > 0)
-                        RunServerScriptUnsafe("unsafe_client@unsafe_MoveItemCrit2Cont", item.Id, contId, 0, "", null);
-                    else
-                        RunServerScriptUnsafe("unsafe_client@unsafe_MoveItemCont2Crit", item.Id, contId, 0, "", null);
-                    if(!chosen.IsAnimPlaying())
-                        chosen.Animate(0, ANIM2_PICKUP);
-                    return "";
+                    if (GUI_IsKeyPressed(DIK_LCONTROL) || GUI_IsKeyPressed(DIK_LMENU)) {
+                        //Message("CLIENT_SCREEN_PICKUP + Ctrl or Alt");
+                        int itemCount = GUI_IsKeyPressed(DIK_LCONTROL) ? 0 : 1;
+                        if (item.CritId > 0) {
+                            RunServerScriptUnsafe("unsafe_client@unsafe_MoveItemCrit2Cont", item.Id, contId, itemCount, "", null);
+                        } else {
+                            RunServerScriptUnsafe("unsafe_client@unsafe_MoveItemCont2Crit", item.Id, contId, itemCount, "", null);
+                        }
+                        if (!chosen.IsAnimPlaying()) {
+                            chosen.Animate(0, ANIM2_PICKUP);
+                        }
+                        return "";
+                    } else {
+                        disableItemMove = false;
+                    }
                 }
             }
 
@@ -1310,10 +1332,11 @@ string item_description(ItemCl& item, int lookType)
                     {
                         pickupScreenScrollCritter = GetScroll(SCROLL_PICKUP);
                         pickupScreenScrollFrom = GetScroll(SCROLL_PICKUP_FROM);
+                        int itemCount = GUI_IsKeyPressed(DIK_LCONTROL) ? 0 : 1;
                         if(item.CritId > 0)
-                            RunServerScriptUnsafe("unsafe_client@unsafe_MoveItemCrit2Body", item.Id, bodyId, 0, "", null);
+                            RunServerScriptUnsafe("unsafe_client@unsafe_MoveItemCrit2Body", item.Id, bodyId, itemCount, "", null);
                         else
-                            RunServerScriptUnsafe("unsafe_client@unsafe_MoveItemBody2Crit", item.Id, bodyId, 0, "", null);
+                            RunServerScriptUnsafe("unsafe_client@unsafe_MoveItemBody2Crit", item.Id, bodyId, itemCount, "", null);
                         if(!chosen.IsAnimPlaying())
                             chosen.Animate(0, ANIM2_PICKUP);
                         return "";
@@ -1324,9 +1347,10 @@ string item_description(ItemCl& item, int lookType)
             disableItemMove = false;
         }
 
-        //  Ctrl + Click item move by Lucek
+        //  Ctrl + Click item equip by Lucek, if only inventory is open Ctrl + LMB will equip the item if it can
         if(lookType == ITEM_LOOK_INVENTORY && GUI_GetActiveScreen() == CLIENT_SCREEN_INVENTORY && GUI_IsKeyPressed(DIK_LCONTROL))
         {
+            //Message("ITEM_LOOK_INVENTORY + CLIENT_SCREEN_INVENTORY + Ctrl or Alt");
             if(valid(chosen) && item.CritId == chosen.Id)
             {
                 if((item.CritSlot >= SLOT_HAND1 && item.CritSlot <= SLOT_ARMOR) || (item.CritSlot >= SLOT_HAND1 && item.CritSlot <= SLOT_HEAD))
@@ -1386,11 +1410,12 @@ string item_description(ItemCl& item, int lookType)
             return "";
         }
 
-        //  Double click inventory by Lucek
+        //  Double click equip in inventory by Lucek
         uint currentTime = GetTick();
 
 		if(lookType == ITEM_LOOK_INVENTORY && GUI_GetActiveScreen() == CLIENT_SCREEN_INVENTORY)
 		{
+            //Message("ITEM_LOOK_INVENTORY + CLIENT_SCREEN_INVENTORY");
 			if(LastItemClickId == item.Id && (currentTime - LastItemClickTime) < 250)
 			{
 				if(valid(chosen) && item.CritId == chosen.Id)
@@ -1460,6 +1485,7 @@ string item_description(ItemCl& item, int lookType)
 
 		if(GUI_GetActiveScreen() == CLIENT_SCREEN_PICKUP)
 		{
+            //Message("CLIENT_SCREEN_PICKUP");
 			if(LastItemClickId == item.Id && (currentTime - LastItemClickTime) < 250)
 			{
 				if(valid(chosen))
@@ -1468,6 +1494,7 @@ string item_description(ItemCl& item, int lookType)
 
 					if(contId > 0)
 					{
+                        //Message("CONTAINER");
 						if(!chosen.IsKnockout() && !chosen.IsDead())
 						{
 							pickupScreenScrollCritter = GetScroll(SCROLL_PICKUP);
@@ -1485,6 +1512,7 @@ string item_description(ItemCl& item, int lookType)
 					uint bodyId = GetBodyId();
 					if(bodyId > 0)
 					{
+                        //Message("BODY");
 						CritterCl@ body = GetCritter(bodyId);
 						if(valid(body))
 						{
