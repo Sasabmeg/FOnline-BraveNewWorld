@@ -271,7 +271,7 @@ public:
 	int currentAction;
 	bool IsFree();
     bool IsBusy();
-    void SetBreakTime( uint ms, bool continousBreak = false);
+    void SetBreakTime( uint ms);
     void SetBreakTimeDelta( uint ms );
 
     void SetWait( uint ms );

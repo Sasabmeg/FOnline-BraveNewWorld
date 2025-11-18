@@ -5270,7 +5270,6 @@ void FOClient::Net_OnChosenParam()
         case ST_CURRENT_AP:
         {
             Chosen->ApRegenerationTick = 0;
-			WriteLog("FOClient::Net_OnChosenParam - ST_CURRENT_AP param called, it will set regenTick to 0. apRegenTick = %u\n", Chosen->ApRegenerationTick);
 			break;
         }
         case TO_BATTLE:
@@ -7789,54 +7788,9 @@ void FOClient::CrittersProcess()
             Chosen->Alpha = 0xFF;
     }
 
-	if (Chosen->IsWalkAnim()) {
-		//WriteLog("FOClient::CrittersProcess - WALK ANIM \tap<%u.%u> - gameTick = %u, apRegenTick = %u, gameOpt.ApRegen = %u\n", Chosen->Params[ST_CURRENT_AP] / AP_DIVIDER, Chosen->Params[ST_CURRENT_AP] % AP_DIVIDER, Timer::GameTick(), Chosen->ApRegenerationTick, GameOpt.ApRegeneration);
-		// Ap regeneration while running or walking
-		if (Chosen->GetParam(ST_CURRENT_AP) < Chosen->GetParam(ST_ACTION_POINTS) && !IsTurnBased)
-		{
-			uint tick = Timer::GameTick();
-			if (!Chosen->ApRegenerationTick)
-				Chosen->ApRegenerationTick = tick;
-			else
-			{
-				uint delta = tick - Chosen->ApRegenerationTick;
-				if (delta >= 100)
-				{
-					int regenFactor = 0;
-					if (Chosen->IsRunning) {
-						regenFactor = CLAMP((Chosen->GetParam(ST_AP_REGEN_RATE) / 100) % 100, 0, 100);
-					}
-					else {
-						regenFactor = CLAMP(Chosen->GetParam(ST_AP_REGEN_RATE) % 100, 0, 100);
-					}
-					if (regenFactor > 0) {
-						int max_ap = Chosen->GetParam(ST_ACTION_POINTS) * AP_DIVIDER;
-						Chosen->Params[ST_CURRENT_AP] += regenFactor * max_ap * delta / GameOpt.ApRegeneration / 100;
-						if (Chosen->Params[ST_CURRENT_AP] > max_ap)
-							Chosen->Params[ST_CURRENT_AP] = max_ap;
-					}
-					Chosen->ApRegenerationTick = tick;
-					//WriteLog("FOClient::CrittersProcess - REGEN TICKED WALK\tap<%u.%u> - gameTick = %u, apRegenTick = %u, gameOpt.ApRegen = %u, regenFactor = %u\n", Chosen->Params[ST_CURRENT_AP] / AP_DIVIDER, Chosen->Params[ST_CURRENT_AP] % AP_DIVIDER, Timer::GameTick(), Chosen->ApRegenerationTick, GameOpt.ApRegeneration, regenFactor);
-				}
-			}
-		}
-		if (Chosen->GetParam(ST_CURRENT_AP) > Chosen->GetParam(ST_ACTION_POINTS))
-			Chosen->Params[ST_CURRENT_AP] = Chosen->GetParam(ST_ACTION_POINTS) * AP_DIVIDER;
-	}
-
-	/*
-	//	use item AP regen not implemented yet, do to useful design, one can just reduce the AP cost and have similar effect, ex: Mutant mining costs no AP
-	if (Chosen->IsAnim()) {
-		WriteLog("FOClient::CrittersProcess - USE ITEM ANIM \tap<%u.%u> - gameTick = %u, apRegenTick = %u, gameOpt.ApRegen = %u\n", Chosen->Params[ST_CURRENT_AP] / AP_DIVIDER, Chosen->Params[ST_CURRENT_AP] % AP_DIVIDER, Timer::GameTick(), Chosen->ApRegenerationTick, GameOpt.ApRegeneration);
-	}*/
-
 	// Actions
 	if (!Chosen->IsFree()) {
 		return;
-	}
-
-	if (Chosen->IsWalkAnim()) {
-		WriteLog("FOClient::CrittersProcess - NEVER HAPPENS");
 	}
 
     // Game pause
@@ -8063,10 +8017,7 @@ label_EndMove:
                 {
                     Chosen->Params[ST_CURRENT_AP] -= ap_cost_real;
                 }
-				if (!Chosen->IsWalkAnim()) {
-					WriteLog("FOClient::CrittersProcess - Not walk or run action, okay to set to 0\n");
-					Chosen->ApRegenerationTick = 0;
-				}
+				Chosen->ApRegenerationTick = 0;
 				//    To check if smart cursor is activated, if so, may not redraw to keep move-hex outline on clicked position.
 				if (!LegacyMouseCursor && !SmartMouseLastClick)
 					HexMngr.SetCursorPos(GameOpt.MouseX, GameOpt.MouseY, Keyb::CtrlDwn, true);

@@ -158,21 +158,12 @@ bool Critter::IsBusy()
     return !IsFree();
 }
 
-void Critter::SetBreakTime(uint ms, bool continousBreak)
+void Critter::SetBreakTime(uint ms)
 {
-	ms += 10;
 	breakTime = ms;
     startBreakTime = Timer::GameTick();
-	if (!continousBreak) {
-		ApRegenerationTick = 0;
-		currentAction = -1;
-	}
-
-	/* Use to test AP regen
-	if (IsPlayer()) {
-		WriteLog("Critter::SetBreakTime - \t%s:\tBREAK TIME\tap<%u.%u> - startBreakTime = %u, gameTick = %u, breakTime = %u, continousBreak = %u, IsRunning = %u, currentAction = %d\n", GetName(), Data.Params[ST_CURRENT_AP] / AP_DIVIDER, Data.Params[ST_CURRENT_AP] % AP_DIVIDER, startBreakTime, Timer::GameTick(), breakTime, continousBreak ? 1 : 0, IsRuning ? 1 : 0, currentAction);
-	}
-	*/
+	currentAction = -1;
+	ApRegenerationTick = 0;
 }
 
 void Critter::SetBreakTimeDelta( uint ms )
@@ -184,7 +175,7 @@ void Critter::SetBreakTimeDelta( uint ms )
         dt = 0;
     if( dt > ms )
         dt = 0;
-    SetBreakTime( ms - dt, true );
+    SetBreakTime( ms - dt);
 }
 
 void Critter::SetWait( uint ms )
