@@ -1,0 +1,19 @@
+#ifndef __CLIENT_MISC_CONFIG_H__
+#define __CLIENT_MISC_CONFIG_H__
+
+#define PING_TRESHOLD_YELLOW                (50)
+#define PING_TRESHOLD_ORANGE                (25)
+#define FPS_TRESHOLD_YELLOW                 (100)
+#define FPS_TRESHOLD_ORANGE                 (250)
+
+shared class CMiscConfig {
+    int PingTresholdYellow = PING_TRESHOLD_YELLOW;
+    int PingTresholdOrange = PING_TRESHOLD_ORANGE;
+    int FpsTresholdYellow = FPS_TRESHOLD_YELLOW;
+    int FpsTresholdOrange = FPS_TRESHOLD_ORANGE;
+
+    CMiscConfig() {
+    }
+};
+
+#endif

@@ -25,6 +25,7 @@
 #include "prod_ingredients_h.fos"
 
 #include "client/client_drawing_h.fos"
+#include "client/client_miscConfig_h.fos"
 
 /*
    GMT MARK : add
@@ -101,6 +102,8 @@ import void SmartCursorDraw( uint layer ) from "client/smart_cursor";
 import void CursorExtDraw( uint layer ) from "client/client_cursorExt";
 
 import string itemBonusColor(uint bonusType, int value) from "item_bonus";
+
+import CMiscConfig@ getMiscConfig() from "client/client_miscConfig";
 
 #define AW_COLOR_ARMOR          COLOR_DGREEN
 #define AW_COLOR_HEADGEAR       COLOR_DGREEN
@@ -559,12 +562,37 @@ void render_iface(uint layer)
 			if (__ConfigGameInfo == 1 || __ConfigGameInfo == 3)
 			{
 				yy += 10;
-				DrawText("Ping: " + __Ping, 0, yy, __ScreenWidth - 5, 10, 0, FONT_TYPE_DEFAULT, FONT_FLAG_CENTERR);
+				uint pingColor = 0;
+				if (int(__Ping) < getMiscConfig().PingTresholdYellow) {
+				} else if (int(__Ping) < getMiscConfig().PingTresholdOrange) {
+                    pingColor = COLOR_CONTOUR_YELLOW;
+				} else {
+                    pingColor = COLOR_ORANGE;
+				}
+
+				//DrawText("Ping: " + __Ping, 0, yy, __ScreenWidth - 5, 10, pingColor, FONT_TYPE_DEFAULT, FONT_FLAG_CENTERR);
+				int tw = 0, th = 0, lines = 0;
+				string pingStr = "" + __Ping;
+				GetTextInfo(pingStr, 1000, 10, FONT_TYPE_DEFAULT, FONT_FLAG_CENTERR, tw, th, lines);
+				DrawText("Ping: ", 0, yy, __ScreenWidth - 5 - tw, 10, 0, FONT_TYPE_DEFAULT, FONT_FLAG_CENTERR);
+				DrawText(pingStr, 0, yy, __ScreenWidth - 5, 10, pingColor, FONT_TYPE_DEFAULT, FONT_FLAG_CENTERR);
 			}
 			if (__ConfigGameInfo == 2 || __ConfigGameInfo == 3)
 			{
 				yy += 10;
-				DrawText("Fps: " + __FPS, 0, yy, __ScreenWidth - 5, 10, 0, FONT_TYPE_DEFAULT, FONT_FLAG_CENTERR);
+				uint fpsColor = 0;
+				if (int(__FPS) > getMiscConfig().FpsTresholdYellow) {
+				} else if (int(__FPS) > getMiscConfig().FpsTresholdOrange) {
+                    fpsColor = COLOR_CONTOUR_YELLOW;
+				} else {
+                    fpsColor = COLOR_ORANGE;
+				}
+				//DrawText("Fps: " + __FPS, 0, yy, __ScreenWidth - 5, 10, fpsColor, FONT_TYPE_DEFAULT, FONT_FLAG_CENTERR);
+				int tw = 0, th = 0, lines = 0;
+				string fpsStr = "" + __FPS;
+				GetTextInfo(fpsStr, 1000, 10, FONT_TYPE_DEFAULT, FONT_FLAG_CENTERR, tw, th, lines);
+				DrawText("FPS: ", 0, yy, __ScreenWidth - 5 - tw, 10, 0, FONT_TYPE_DEFAULT, FONT_FLAG_CENTERR);
+				DrawText(fpsStr, 0, yy, __ScreenWidth - 5, 10, fpsColor, FONT_TYPE_DEFAULT, FONT_FLAG_CENTERR);
 			}
         }
 

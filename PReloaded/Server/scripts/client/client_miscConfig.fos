@@ -1,0 +1,86 @@
+//
+//  FOClassic: Brave New World
+//  Sasabmeg/Slowhand
+//
+//  client_config.fos
+//
+
+//  Config for anythhing that is not specific and doesn't need a new file
+
+
+#ifndef __CLIENT_MISC_CONFIG__
+#define __CLIENT_MISC_CONFIG__
+
+#define __CLIENT
+
+#include "client_miscConfig_h.fos"
+#include "../_defines.fos"
+#include "../_client_defines.fos"
+#include "../_macros.fos"
+#include "../_colors.fos"
+
+#include "../config_file_h.fos"
+#include "../client_utils_h.fos"
+
+#define TO_SECTION                          "Misc"
+
+#define CONFIG_VERBOSE_LOGGING_ALLOWED  	(false)
+
+void CMiscConfigLog(string@ s) {
+    Log("Config :: " + s);
+    if (CONFIG_VERBOSE_LOGGING_ALLOWED) {
+        Message("Config :: " + s);
+    }
+}
+
+CMiscConfig miscConfig;
+
+CMiscConfig@ getMiscConfig() {
+    return miscConfig;
+}
+
+//  export
+void MiscConfig(string& customConfig) {
+    CMiscConfigLog("MiscConfig = " + customConfig);
+    string sectioname = (customConfig == "" ? TO_SECTION : TO_SECTION + ":" + customConfig);
+    IConfigSection@ section = GetConfigSection(CONFIG_FILE, sectioname);
+    CMiscConfigLog("section = " + sectioname);
+
+    if(valid(section)) {
+        string@ val;
+        // Ping
+        @val = GetConfigValue(CONFIG_FILE, sectioname, "PingTresholdYellow");
+        if (valid(val) && val.length() > 0) {
+            miscConfig.PingTresholdYellow = CLAMP(string2uint(val), 0, 1000);
+            CMiscConfigLog("PingTresholdYellow = " + miscConfig.PingTresholdYellow + " (" + val + ")");
+        } else {
+            CMiscConfigLog("PingTresholdYellow invalid or missing");
+        }
+        // Ping
+        @val = GetConfigValue(CONFIG_FILE, sectioname, "PingTresholdOrange");
+        if (valid(val) && val.length() > 0) {
+            miscConfig.PingTresholdOrange = CLAMP(string2uint(val), 0, 1000);
+            CMiscConfigLog("PingTresholdOrange = " + miscConfig.PingTresholdOrange + " (" + val + ")");
+        } else {
+            CMiscConfigLog("PingTresholdOrange invalid or missing");
+        }
+        // FPS
+        @val = GetConfigValue(CONFIG_FILE, sectioname, "FpsTresholdYellow");
+        if (valid(val) && val.length() > 0) {
+            miscConfig.FpsTresholdYellow = CLAMP(string2uint(val), 0, 500);
+            CMiscConfigLog("FpsTresholdYellow = " + miscConfig.FpsTresholdYellow + " (" + val + ")");
+        } else {
+            CMiscConfigLog("FpsTresholdYellow invalid or missing");
+        }
+        // FPS
+        @val = GetConfigValue(CONFIG_FILE, sectioname, "FpsTresholdOrange");
+        if (valid(val) && val.length() > 0) {
+            miscConfig.FpsTresholdOrange = CLAMP(string2uint(val), 0, 500);
+            CMiscConfigLog("FpsTresholdOrange = " + miscConfig.FpsTresholdOrange + " (" + val + ")");
+        } else {
+            CMiscConfigLog("FpsTresholdOrange invalid or missing");
+        }
+    }
+}
+
+#endif // __CLIENT_MISC_CONFIG__

@@ -79,6 +79,7 @@ import void ClientMessagesConfig(string& customConfig) from "client_messages";
 import void CombatLogConfig() from "client_combat";
 
 import void SmartLootConfig(string& customConfig) from "client/client_smartLoot";
+import void MiscConfig(string& customConfig) from "client/client_miscConfig";
 
 import void InitNameColorizing() from "name_colorizing";
 
@@ -919,6 +920,7 @@ void InitConfig()
 
     TimeoutsConfig("");
     SmartLootConfig("");
+    MiscConfig("");
     ClientMessagesConfig("");
     CombatLogConfig();
 
