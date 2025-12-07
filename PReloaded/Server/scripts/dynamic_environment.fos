@@ -580,7 +580,8 @@ bool _UseSkillonWiredFenceGood(Item& item, Critter& cr, int skill) {
         }
         return true;
     }
-    return false;
+    cr.Say(SAY_NETMSG, "You could cut a hole in this fence with something sharp.");
+    return true;
 }
 
 array<string@> WiredFenceGoodPics = { "art\\walls\\wire_se_good1.fofrm" };
@@ -726,7 +727,8 @@ bool _UseSkillonWiredFenceHole(Item& item, Critter& cr, int skill) {
     } else if (skill == SK_SCIENCE) {
         cr.Say(SAY_NETMSG, "Need some tools to repair this fence.");
     }
-    return false;
+    cr.Say(SAY_NETMSG, "You could repair the hole in the fence with some tools.");
+    return true;
 }
 
 
@@ -740,7 +742,7 @@ bool _UseSkillonWiredFenceHole(Item& item, Critter& cr, int skill) {
 /// Val2 stores the regeneration time in REAL_SECONDS for public maps
 
 void brick_wall_good_init(Item& item, bool firstTime) {
-    //item.SetEvent(ITEM_EVENT_USE_ON_ME, "_UseItemOnBrickWallGood");
+    item.SetEvent(ITEM_EVENT_USE_ON_ME, "_UseItemOnBrickWallGood");
     //item.SetEvent(ITEM_EVENT_SKILL, "_UseSkillonBrickWallGood");
     if (firstTime) {
         //  give the wall 100 hp if mapper didn't set custom value
@@ -760,6 +762,80 @@ void brick_wall_good_init(Item& item, bool firstTime) {
         BrickWallChangePic(item);
     }
 }
+
+bool _UseItemOnBrickWallGood(Item& item, Critter& cr, Item@ usedItem) {
+    if (!valid(usedItem)) {
+        return false;
+    }
+    Map@ map = GetMap(item.MapId);
+    if (!valid(map)) {
+        Log("Invalid map");
+        return false;
+    }
+
+    uint16 tool_pid = usedItem.GetProtoId();
+    if (tool_pid == PID_SLEDGEHAMMER || tool_pid == PID_SUPER_SLEDGE) {
+        Log("Used tool (pid: " + tool_pid + ")on wired fence to make hole.");
+        uint damageAmount = 1;
+        if (item.Val1 > 0) {
+            switch (tool_pid) {
+                case PID_SLEDGEHAMMER:
+                    damageAmount = Random(5, 15);
+                    if (item.Val1 > int(damageAmount)) {
+                        cr.Say(SAY_NETMSG, "You open up some small cracks in the wall.");
+                    } else {
+                        if (Random(0, 9) > 0) {
+                            cr.Say(SAY_NETMSG, "With a final smash you break down the wall.");
+                        } else {
+                            cr.Say(SAY_NETMSG, "The bombs didn't do justice around here, but here comes death, destroyer of walls!");
+                        }
+                    }
+                    //WearItem(cr, usedItem, (Random(1 * MAX_DETERIORATION / 100, 2 * MAX_DETERIORATION / 100)));
+                    cr.Animate(ANIM1_HAMMER, ANIM2_SWING_2H, usedItem, true, true);
+                    break;
+                case PID_SUPER_SLEDGE:
+                    damageAmount = Random(15, 35);
+                    if (item.Val1 > int(damageAmount)) {
+                        cr.Say(SAY_NETMSG, "You open up some small cracks in the wall.");
+                    } else {
+                        if (Random(0, 9) > 0) {
+                            cr.Say(SAY_NETMSG, "With a final smash you break down the wall.");
+                        } else {
+                            cr.Say(SAY_NETMSG, "The bombs didn't do justice around here, but here comes death, destroyer of walls!");
+                        }
+                    }
+                    cr.Animate(ANIM1_HAMMER, ANIM2_SWING_2H, usedItem, true, true);
+                    break;
+            }
+            item.Val1 = MAX(0, item.Val1 - damageAmount);
+        }
+        array<uint> values = { item.Id };
+        CreateTimeEvent(AFTER(REAL_MS(350)), "e_UpdateBrickWallPic", values, true);
+        //BrickWallChangePic(item);
+        return true;
+    } else {
+
+    }
+    return false;
+}
+
+uint e_UpdateBrickWallPic(array<uint>@ values) {
+    //Log("e_UpdateBrickWallPic() :: called");
+    Item@ wall = GetItem(values[0]);
+    if (!valid(wall)) {
+        Log("e_UpdateBrickWallPic - Invalid Item");
+        return 0;
+    }
+    Map@ map = GetMap(wall.MapId);
+    if (!valid(map)) {
+        Log("e_UpdateBrickWallPic - Invalid Map");
+        return 0;
+    }
+    Log("Brick Wall HP: " + wall.Val1 + " / " + wall.Val0 + " (e_UpdateBrickWallPic)");
+    BrickWallChangePic(wall);
+    return 0;
+}
+
 
 uint e_RefreshBrickWall(array<uint>@ values) {
     //Log("e_RegenBrickWall() :: called");

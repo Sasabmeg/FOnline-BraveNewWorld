@@ -517,8 +517,6 @@ void InitSmartCursor() // EXPORT
 {
     smart_cursor.drawLayer = 2; // ugh
 
-
-
     ///// slots /////
 
     array<uint8> slot_all    = { SLOT_HAND1, SLOT_HAND2, SLOT_INV };
@@ -537,6 +535,7 @@ void InitSmartCursor() // EXPORT
     array<uint16> tool_fishingpole  = { PID_SHARP_SPEAR, PID_SPEAR, PID_SHARPENED_POLE };
     array<uint16> tool_fence_cutter  = { PID_RIPPER, PID_WAKIZASHI_BLADE, PID_SUPER_TOOL_KIT, PID_LIL_JESUS_WEAPON, PID_MULTI_TOOL, PID_COMBAT_KNIFE, PID_KNIFE, PID_PRIMITIVE_TOOL };
     array<uint16> tool_fence_repair  = { PID_SUPER_TOOL_KIT, PID_MULTI_TOOL };
+    array<uint16> tool_brick_wall  = { PID_SUPER_SLEDGE, PID_SLEDGEHAMMER };
 
     ///// targets /////
 
@@ -567,6 +566,7 @@ void InitSmartCursor() // EXPORT
 
     array<uint16> wired_fence = { PID_DYN_ENV_WIRE_FENCE_SE_GOOD_1};
     array<uint16> wired_fence_hole = { PID_DYN_ENV_WIRE_FENCE_SE_HOLE_1 };
+    array<uint16> brick_wall = { PID_DYN_ENV_BRICK_WALL_SE_GOOD_1 };
 
     array<uint16> fishing_pool = { 26770 };
 
@@ -596,6 +596,7 @@ void InitSmartCursor() // EXPORT
     smart_cursor.Add( SmartCollection( fishing_pool,    tool_fishingpole, slot_all, "Throw spear", SMART_TEXT, SMART_EXTRACT_GOLD ));
     smart_cursor.Add( SmartCollection( wired_fence,     tool_fence_cutter, slot_all, "Cut hole", SMART_TEXT, SMART_EXTRACT_GOLD ));
     smart_cursor.Add( SmartCollection( wired_fence_hole,tool_fence_repair, slot_all, "Repair fence", SMART_TEXT, SMART_EXTRACT_GOLD ));
+    smart_cursor.Add( SmartCollection( brick_wall,      tool_brick_wall, slot_all, "Me smash!", SMART_TEXT, SMART_EXTRACT_GOLD ));
 }
 
 void SmartCursorDraw( uint layer ) // EXPORT
