@@ -355,6 +355,8 @@ void r_ChangeSpecial(Critter& player, Critter@ npc, int val1, int val2, int val3
     if (canChangeSpecial(player, val1, val2, 0, reason) && canChangeSpecial(player, val3, val4, 0, reason)) {
         changeSpecial(player, val1, val2);
         changeSpecial(player, val3, val4);
+        int maxLife = recalcMaxLife(player);
+        player.StatBase[ST_MAX_LIFE] = maxLife;
     }
 }
 
@@ -2849,6 +2851,43 @@ bool isCharPointsChecksumOk(Critter& player, string& reason) {
         return false;
     }
     return true;
+}
+
+int recalcMaxLife(Critter& cr) {
+    int life = 0;
+    //  base life at character creation
+
+
+    //Log("Critter <" + cr.Name + ">");
+    //Log("\t\t+155 flat");
+    life += 155;
+    if (cr.TraitBase[TRAIT_BRUTISH_HULK] != 0) {
+        //Log("\t\t+12 (Brutish Hulk)");
+        life += 12;
+    }
+
+    for (int level = 2; level <= cr.StatBase[ST_LEVEL]; level++) {
+        //  extra life per level
+        int enduranceBonus = 30 + cr.StatBase[ST_ENDURANCE];
+        //Log("\t\t+" + (enduranceBonus / 8) + " (enduranceBonus / 8)");
+        life += enduranceBonus / 8;                 // Add max hp
+        if (level <= int(__LevelCap) && (level % 8 != 0) && (level % 8 <= enduranceBonus % 8)) {
+            //Log("\t\t\t+1 (level = " + level + ", enduranceBonus = " + enduranceBonus + "(30 + EN = " + cr.StatBase[ST_ENDURANCE] + ") )");
+            life += 1;  // Add additional 1 HP when odd EN numbers, so minimal max HP difference between EN 9 and EN 10
+        }
+    }
+
+    //Log("Critter <" + cr.Name + ">: StatBase[ST_MAX_LIFE] = " + cr.StatBase[ST_MAX_LIFE] + ", life = " + life + " (StatBase[ST_MAX_LIFE] = " + cr.StatBase[ST_MAX_LIFE_EXT] + ")");
+    //Log("\t\t2*ST = " + cr.StatBase[ST_STRENGTH]*2 + ", EN = " + cr.StatBase[ST_ENDURANCE] + " -> " + (life + cr.StatBase[ST_STRENGTH]*2 + cr.StatBase[ST_ENDURANCE]) + " == " + cr.Stat[ST_MAX_LIFE]);
+    /*
+    //  safety check if some of the stat bonuses are skewed
+    for (uint i = ST_STRENGTH_EXT; i <= ST_POISON_RESISTANCE_EXT; i++) {
+        if (cr.StatBase[i] > 0) {
+            Log("\t\t\tStatBase[" + i + "] = " + cr.StatBase[i]);
+        }
+    }
+    */
+    return life;
 }
 
 #endif 	//	__MUTATION_FEATURE__
