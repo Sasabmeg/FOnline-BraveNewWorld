@@ -379,6 +379,10 @@ void DropDrugEffects(Critter& cr, bool dropAddictions)
     if (dropAddictions)
         for (uint i = ADDICTION_BEGIN; i <= ADDICTION_END; i++)
             cr.AddictionBase[i] = 0;
+
+    if (cr.ParamBase[ST_TO_MUTATE_TIMER] > 0) {
+        cr.ParamBase[ST_TO_MUTATE_TIMER] = 0;
+    }
 }
 
 void SetDrug(Critter& cr, uint16 drugPid, int bonus) {

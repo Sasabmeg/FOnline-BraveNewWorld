@@ -1872,14 +1872,17 @@ LightColor=-16777216
 
 [Proto]
 ProtoId=329
-Type=5
-PicMap=art\items\bpack2.frm
+Type=2
+ScriptModule=item_misc
+ScriptFunc=_MutationKit
+PicMap=art\items\drugs\stimpack.fofrm
 PicInv=art\inven\mutasyrm.frm
 Flags=150994974
 DisableEgg=1
 Stackable=1
 Volume=1
 SoundId=48
+Cost=17500
 Material=2
 LightColor=-16777216
 
@@ -6687,7 +6690,7 @@ PicMap=art\walls\brick_se_good1.fofrm
 PicInv=art\inven\reserved.frm
 ScriptModule=dynamic_environment
 ScriptFunc=brick_wall_good_init
-Flags=4608
+Flags=268440064
 BlockLines=413101110111
 DisableEgg=1
 SoundId=48

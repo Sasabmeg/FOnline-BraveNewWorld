@@ -19,6 +19,14 @@
 
 #include "item_misc_h.fos"
 
+import void FlushScreen(Critter& cr, bool fadeOut, uint timeMs) from "effects";
+import bool IsBase(Map@ map) from "world_common";
+import bool IsTent(Map@ map) from "world_common";
+
+#define MUTIE_DRUG_FADE_IN_MS           (1000)
+#define MUTIE_DRUG_FADE_OUT_MS          (2500)
+#define MUTIE_DRUG_DURATION_MINUTES     (30)
+
 void _Waterpipe(Item& item, bool firstTime)
 {
     item.SetEvent(ITEM_EVENT_SKILL, "_SkillWaterpipe");
@@ -236,5 +244,107 @@ bool ReadMapToLocationSilently(Item& item, Critter& cr) {
         return true;
     }
 }
+
+void _MutationKit(Item& item, bool firstTime) {
+    // bind use event
+    item.SetEvent(ITEM_EVENT_USE, "_UseMutationKit");
+
+    if (firstTime) {
+        SETFLAG(item.Flags, ITEM_FLAG_CAN_USE);
+    }
+}
+
+bool _UseMutationKit(Item& item, Critter& cr, Critter@ onCritter, Item@ onItem, Scenery@ onScenery) {
+
+    if (!cr.IsPlayer()) {
+        return true;
+    }
+
+    if (valid(onCritter) || valid(onItem) || valid(onScenery)) {
+        cr.Say(SAY_NETMSG, "Self medication only!");
+        return true;
+    }
+
+    if (cr.Stat[ST_CURRENT_HP] <= 0) {
+        cr.Say(SAY_NETMSG, "Not while you are dead!");
+        return true;
+    }
+
+    if (IS_TURN_BASED_TIMEOUT(cr)) {
+        cr.SayMsg(SAY_NETMSG, TEXTMSG_GAME, STR_TIMEOUT_BATTLE_WAIT);
+        return true;
+    }
+
+    Map@ map = cr.GetMap();
+    if (!valid(map)) {
+        cr.Say(SAY_NETMSG, "Not while traveling!");
+        return true;
+    }
+
+    if (cr.ParamBase[ST_TO_MUTATE_TIMER] > int(GetTick())) {
+        cr.Say(SAY_NETMSG, "You are already under the effect of mutation!");
+        return true;
+    }
+
+    //  let's see how players can abuse this in PVE or PVP situations, this drug is rare/expensive, right?
+    /*
+    bool safeLoc = IsTent(map) || IsBase(map);
+    if (!safeLoc) {
+        cr.Say(SAY_NETMSG, "You need to be in a safe area (tent/base) to apply the mutation kit.");
+        return true;
+    }*/
+
+    cr.PlaySound("Stimpack.ogg", true);
+    cr.StatBase[ST_CURRENT_AP] = (cr.Perk[PE_QUICK_RECOVERY] > 0 ? (-100 * cr.Stat[ST_ACTION_POINTS]) / 3 : -100 * cr.Stat[ST_ACTION_POINTS]);
+    cr.StatBase[ST_MOVE_AP] = 0;
+    cr.ToKnockout(KNOCKOUT_ANIM2_DEFAULT(true), cr.Perk[PE_QUICK_RECOVERY] != 0 ? 1 : 3, cr.HexX, cr.HexY);
+    //FlushScreen(cr, false, 1000);
+
+    cr.ParamBase[ST_TO_MUTATE_TIMER] = int(GetTick()) + MUTIE_DRUG_DURATION_MINUTES * 60000;
+
+    FlushScreen(cr, false, MUTIE_DRUG_FADE_IN_MS);
+    FlushScreen(cr, true, MUTIE_DRUG_FADE_OUT_MS);
+
+    // small wait to feel effect (server wait)
+    cr.Wait(500);
+
+    //RunDialog(cr, DIALOG_feat_mutie, cr.HexX, cr.HexY, true);
+    RunDialogDelayed(cr, DIALOG_feat_mutie, MUTIE_DRUG_FADE_IN_MS + MUTIE_DRUG_FADE_OUT_MS / 2);
+
+    if (item.IsStackable()) {
+        cr.DeleteItem(item.GetProtoId(), 1);
+    } else {
+        DeleteItem(item);
+    }
+    if (Random(0, 99) < 50) {
+        cr.AddItem(PID_HYPODERMIC_NEEDLE, 1);
+    }
+
+    return true;
+}
+
+void RunDialogDelayed(Critter& player, uint dialogId, uint afterDelayRealMS) {
+    //  close inventory if open
+    player.RunClientScript("client_interface@_CloseInventory", 0, 0, 0, null, null);
+
+    //  run dialog after the feint effect
+    array<uint> values = { player.Id, dialogId};
+    CreateTimeEvent(AFTER(REAL_MS(afterDelayRealMS)), "e_RunDialog", values, false);
+}
+
+uint e_RunDialog(array<uint>@ values) {
+    Critter@ player = GetCritter(values[0]);
+    if (!valid(player)) {
+        return 0;
+    }
+
+    uint dialogId = values[1];
+
+    RunDialog(player, dialogId, player.HexX, player.HexY, true);
+    return 0;
+}
+
+
+
 
 #endif // __ITEM_MISC__ //

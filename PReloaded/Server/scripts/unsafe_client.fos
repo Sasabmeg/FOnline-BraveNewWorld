@@ -23,6 +23,8 @@
 #include "map_tent_h.fos"
 #include "item_misc_h.fos"
 #include "entire.fos"
+#include "_defines.fos"
+#include "MsgStr.h"
 
 #define LOOT_MAX_DIST     (1)
 
@@ -449,6 +451,30 @@ void unsafe_PartyPoints(Critter& player, int, int, int, string@, array<int>@)   
 void unsafe_WeaponMode(Critter& player, int mode, int, int, string@, array<int>@)
 {
     player.ModeBase[MODE_LAST_WPN_MODE] = mode;
+}
+
+void unsafe_RunMutateDialog(Critter& player, int, int, int, string@, array<int>@) {
+    if (player.ParamBase[ST_TO_MUTATE_TIMER] > int(GetTick())) {
+        if (!player.IsPlayer()) {
+            return;
+        }
+        if (player.Stat[ST_CURRENT_HP] <= 0) {
+            player.Say(SAY_NETMSG, "Not while youre dead!");
+            return;
+        }
+
+        if (IS_TURN_BASED_TIMEOUT(player)) {
+            player.SayMsg(SAY_NETMSG, TEXTMSG_GAME, STR_TIMEOUT_BATTLE_WAIT);
+            return;
+        }
+
+        Map@ map = player.GetMap();
+        if (!valid(map)) {
+            player.Say(SAY_NETMSG, "You cannot use that while traveling!");
+            return;
+        }
+        RunDialog(player, DIALOG_feat_mutie, player.HexX, player.HexY, true);
+    }
 }
 
 void unsafe_CancelAttackAnimation(Critter& player, int, int, int, string@, array<int>@) {
@@ -889,7 +915,7 @@ void unsafe_MoveItemCrit2Cont(Critter& target, int itemId, int contId, int itemC
         {
             if (itemCount <= 0) {
                 itemCount = itm.GetCount();
-            } else if (itemCount > 1 && itemCount > itm.GetCount()) {
+            } else if (itemCount > 1 && itemCount > int(itm.GetCount())) {
                 itemCount = itm.GetCount();
             }
             if(valid(target.GetMap()))
@@ -978,7 +1004,7 @@ void unsafe_MoveItemCont2Crit(Critter& target, int itemId, int contId, int itemC
         {
             if (itemCount <= 0) {
                 itemCount = itm.GetCount();
-            } else if (itemCount > itm.GetCount()) {
+            } else if (itemCount > int(itm.GetCount())) {
                 itemCount = itm.GetCount();
             }
             if(valid(target.GetMap()))
@@ -1059,7 +1085,7 @@ void unsafe_MoveItemBody2Crit(Critter& target, int itemId, int bodyId, int itemC
                 //int itemCount = itm.GetCount();
                 if (itemCount <= 0) {
                     itemCount = itm.GetCount();
-                } else if (itemCount > itm.GetCount()) {
+                } else if (itemCount > int(itm.GetCount())) {
                     itemCount = itm.GetCount();
                 }
 
@@ -1113,7 +1139,7 @@ void unsafe_MoveItemCrit2Body(Critter& target, int itemId, int bodyId, int itemC
                 //int itemCount = itm.GetCount();
                 if (itemCount <= 0) {
                     itemCount = itm.GetCount();
-                } else if (itemCount > itm.GetCount()) {
+                } else if (itemCount > int(itm.GetCount())) {
                     itemCount = itm.GetCount();
                 }
 

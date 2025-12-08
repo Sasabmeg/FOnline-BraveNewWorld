@@ -91,6 +91,25 @@ void DrawChosenTabs() // Export
     if(chosen.Mode[MODE_HIDE] != 0)
         DrawTab(GetMsgStr(TEXTMSG_GAME, STR_HIDEMODE_TITLE), COLOR_DGREEN);
 
+    if (chosen.ParamBase[ST_TO_MUTATE_TIMER] > int(GetTick())) {
+        string@ ex = "";
+        uint color = COLOR_DGREEN;
+        //  cr.ParamBase[ST_TO_MUTATE_TIMER]  > int(GetTick())
+        int time = chosen.ParamBase[ST_TO_MUTATE_TIMER] - int(GetTick());
+        ex = "You are affected by a mutagen: ";
+        int minute = time / 60000;
+        int second = (time / 1000) % 60;
+        ex += "" + minute + ":";
+        if (second > 9) {
+            ex += "" + second;
+        } else {
+            ex += "0" + second;
+        }
+        //Message("Tick = " + int(GetTick()) + ", ParamBase = " + chosen.ParamBase[ST_TO_MUTATE_TIMER] + ", time = " + time + ", minute = " + minute + ", second = " + second);
+        string@ caption = "Mutate!";
+        DrawTab(caption, color, ex);
+    }
+
     if(LevelUp)
     {
         string ex = "";
@@ -217,4 +236,21 @@ void DrawTab(string@ text, int value, uint color, string@ onText = null, uint on
     if(valid(text))
         text = ReplaceText(text, "VALUE", value);
     DrawTab(text, color, onText, onColor);
+}
+
+//  export
+bool IsMouseInMutateTabDrawArea() {
+    CritterCl@ chosen = GetChosen();
+    if (!valid(chosen))
+        return false;
+    if (chosen.Param[ST_TO_MUTATE_TIMER] > int(GetTick())) {
+        int x1 = Position[0];
+        int x2 = x1 + TabPic.Width;
+        int y1 = Position[1];
+        int y2 = y1 + TabPic.Height;
+        if ((__MouseX > x1 && __MouseX < x2) && (__MouseY > y1 && __MouseY < y2)) {
+            return true;
+        }
+    }
+    return false;
 }

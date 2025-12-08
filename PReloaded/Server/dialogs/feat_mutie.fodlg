@@ -1,0 +1,450 @@
+[comment]
+
+
+[data]
+lang=engl
+
+[dialog]
+&
+1 1000 None 1 #
+5 1010 @
+5 2000 None 0 #
+300 2010 #
+0 2020 @
+300 3000 None 0 #
+301 3010 #
+302 3020 #
+303 3030 #
+304 3040 #
+305 3050 #
+313 3060 D _script mutationFeature@d_IsTaggedSkill 1 200 #
+313 3070 D _script mutationFeature@d_IsTaggedSkill 1 201 #
+313 3080 D _script mutationFeature@d_IsTaggedSkill 1 202 #
+313 3090 D _script mutationFeature@d_IsTaggedSkill 1 203 #
+313 3100 D _script mutationFeature@d_IsTaggedSkill 1 205 #
+313 3110 D _script mutationFeature@d_IsTaggedSkill 1 207 #
+313 3120 D _script mutationFeature@d_IsTaggedSkill 1 210 #
+313 3130 D _script mutationFeature@d_IsTaggedSkill 1 211 #
+5 3140 @
+301 4000 mutationFeature@dlg_RemoveTraitList 0 #
+301 4010 D _script mutationFeature@d_CanRemoveTrait 1 550 R _script mutationFeature@r_RemoveTrait 1 550 #
+301 4020 D _script mutationFeature@d_CanRemoveTrait 1 551 R _script mutationFeature@r_RemoveTrait 1 551 #
+301 4030 D _script mutationFeature@d_CanRemoveTrait 1 552 R _script mutationFeature@r_RemoveTrait 1 552 #
+301 4040 D _script mutationFeature@d_CanRemoveTrait 1 553 R _script mutationFeature@r_RemoveTrait 1 553 #
+301 4050 D _script mutationFeature@d_CanRemoveTrait 1 554 R _script mutationFeature@r_RemoveTrait 1 554 #
+301 4060 D _script mutationFeature@d_CanRemoveTrait 1 555 R _script mutationFeature@r_RemoveTrait 1 555 #
+301 4070 D _script mutationFeature@d_CanRemoveTrait 1 556 R _script mutationFeature@r_RemoveTrait 1 556 #
+301 4080 D _script mutationFeature@d_CanRemoveTrait 1 557 R _script mutationFeature@r_RemoveTrait 1 557 #
+301 4090 D _script mutationFeature@d_CanRemoveTrait 1 558 R _script mutationFeature@r_RemoveTrait 1 558 #
+301 4100 D _script mutationFeature@d_CanRemoveTrait 1 559 R _script mutationFeature@r_RemoveTrait 1 559 #
+301 4110 D _script mutationFeature@d_CanRemoveTrait 1 560 R _script mutationFeature@r_RemoveTrait 1 560 #
+301 4120 D _script mutationFeature@d_CanRemoveTrait 1 561 R _script mutationFeature@r_RemoveTrait 1 561 #
+301 4130 D _script mutationFeature@d_CanRemoveTrait 1 562 R _script mutationFeature@r_RemoveTrait 1 562 #
+301 4140 D _script mutationFeature@d_CanRemoveTrait 1 563 R _script mutationFeature@r_RemoveTrait 1 563 #
+301 4150 D _script mutationFeature@d_CanRemoveTrait 1 564 R _script mutationFeature@r_RemoveTrait 1 564 #
+301 4160 D _script mutationFeature@d_CanRemoveTrait 1 565 R _script mutationFeature@r_RemoveTrait 1 565 #
+300 4170 @
+302 5000 mutationFeature@dlg_AvailableTraitList 0 #
+302 5010 D _script mutationFeature@d_CanAddTrait 1 550 R _script mutationFeature@r_AddTrait 1 550 #
+302 5020 D _script mutationFeature@d_CanAddTrait 1 551 R _script mutationFeature@r_AddTrait 1 551 #
+302 5030 D _script mutationFeature@d_CanAddTrait 1 552 R _script mutationFeature@r_AddTrait 1 552 #
+302 5040 D _script mutationFeature@d_CanAddTrait 1 553 R _script mutationFeature@r_AddTrait 1 553 #
+302 5050 D _script mutationFeature@d_CanAddTrait 1 554 R _script mutationFeature@r_AddTrait 1 554 #
+302 5060 D _script mutationFeature@d_CanAddTrait 1 555 R _script mutationFeature@r_AddTrait 1 555 #
+302 5070 D _script mutationFeature@d_CanAddTrait 1 556 R _script mutationFeature@r_AddTrait 1 556 #
+302 5080 D _script mutationFeature@d_CanAddTrait 1 557 R _script mutationFeature@r_AddTrait 1 557 #
+302 5090 D _script mutationFeature@d_CanAddTrait 1 558 R _script mutationFeature@r_AddTrait 1 558 #
+302 5100 D _script mutationFeature@d_CanAddTrait 1 559 R _script mutationFeature@r_AddTrait 1 559 #
+302 5110 D _script mutationFeature@d_CanAddTrait 1 560 R _script mutationFeature@r_AddTrait 1 560 #
+302 5120 D _script mutationFeature@d_CanAddTrait 1 561 R _script mutationFeature@r_AddTrait 1 561 #
+302 5130 D _script mutationFeature@d_CanAddTrait 1 562 R _script mutationFeature@r_AddTrait 1 562 #
+302 5140 D _script mutationFeature@d_CanAddTrait 1 563 R _script mutationFeature@r_AddTrait 1 563 #
+302 5150 D _script mutationFeature@d_CanAddTrait 1 564 R _script mutationFeature@r_AddTrait 1 564 #
+302 5160 D _script mutationFeature@d_CanAddTrait 1 565 R _script mutationFeature@r_AddTrait 1 565 #
+300 5170 @
+303 6000 mutationFeature@dlg_RemovePerkList 0 #
+303 6010 D _script mutationFeature@d_CanRemovePerk 1 309 R _script mutationFeature@r_RemovePerk 1 309 #
+303 6020 D _script mutationFeature@d_CanRemovePerk 1 407 R _script mutationFeature@r_RemovePerk 1 407 #
+303 6030 D _script mutationFeature@d_CanRemovePerk 1 380 R _script mutationFeature@r_RemovePerk 1 380 #
+303 6040 D _script mutationFeature@d_CanRemovePerk 1 403 R _script mutationFeature@r_RemovePerk 1 403 #
+303 6050 D _script mutationFeature@d_CanRemovePerk 1 429 R _script mutationFeature@r_RemovePerk 1 429 #
+303 6060 D _script mutationFeature@d_CanRemovePerk 1 418 R _script mutationFeature@r_RemovePerk 1 418 #
+303 6070 D _script mutationFeature@d_CanRemovePerk 1 439 R _script mutationFeature@r_RemovePerk 1 439 #
+303 6080 D _script mutationFeature@d_CanRemovePerk 1 349 R _script mutationFeature@r_RemovePerk 1 349 #
+303 6090 D _script mutationFeature@d_CanRemovePerk 1 424 R _script mutationFeature@r_RemovePerk 1 424 #
+303 6100 D _script mutationFeature@d_CanRemovePerk 1 444 R _script mutationFeature@r_RemovePerk 1 444 #
+303 6110 D _script mutationFeature@d_CanRemovePerk 1 316 R _script mutationFeature@r_RemovePerk 1 316 #
+303 6120 D _script mutationFeature@d_CanRemovePerk 1 313 R _script mutationFeature@r_RemovePerk 1 313 #
+303 6130 D _script mutationFeature@d_CanRemovePerk 1 427 R _script mutationFeature@r_RemovePerk 1 427 #
+303 6140 D _script mutationFeature@d_CanRemovePerk 1 405 R _script mutationFeature@r_RemovePerk 1 405 #
+303 6150 D _script mutationFeature@d_CanRemovePerk 1 315 R _script mutationFeature@r_RemovePerk 1 315 #
+303 6160 D _script mutationFeature@d_CanRemovePerk 1 305 R _script mutationFeature@r_RemovePerk 1 305 #
+303 6170 D _script mutationFeature@d_CanRemovePerk 1 402 R _script mutationFeature@r_RemovePerk 1 402 #
+303 6180 D _script mutationFeature@d_CanRemovePerk 1 438 R _script mutationFeature@r_RemovePerk 1 438 #
+303 6190 D _script mutationFeature@d_CanRemovePerk 1 333 R _script mutationFeature@r_RemovePerk 1 333 #
+303 6200 D _script mutationFeature@d_CanRemovePerk 1 336 R _script mutationFeature@r_RemovePerk 1 336 #
+303 6210 D _script mutationFeature@d_CanRemovePerk 1 303 R _script mutationFeature@r_RemovePerk 1 303 #
+303 6220 D _script mutationFeature@d_CanRemovePerk 1 322 R _script mutationFeature@r_RemovePerk 1 322 #
+303 6230 D _script mutationFeature@d_CanRemovePerk 1 329 R _script mutationFeature@r_RemovePerk 1 329 #
+303 6240 D _script mutationFeature@d_CanRemovePerk 1 339 R _script mutationFeature@r_RemovePerk 1 339 #
+303 6250 D _script mutationFeature@d_CanRemovePerk 1 327 R _script mutationFeature@r_RemovePerk 1 327 #
+303 6260 D _script mutationFeature@d_CanRemovePerk 1 385 R _script mutationFeature@r_RemovePerk 1 385 #
+303 6270 D _script mutationFeature@d_CanRemovePerk 1 386 R _script mutationFeature@r_RemovePerk 1 386 #
+303 6280 D _script mutationFeature@d_CanRemovePerk 1 387 R _script mutationFeature@r_RemovePerk 1 387 #
+303 6290 D _script mutationFeature@d_CanRemovePerk 1 388 R _script mutationFeature@r_RemovePerk 1 388 #
+303 6300 D _script mutationFeature@d_CanRemovePerk 1 389 R _script mutationFeature@r_RemovePerk 1 389 #
+303 6310 D _script mutationFeature@d_CanRemovePerk 1 390 R _script mutationFeature@r_RemovePerk 1 390 #
+303 6320 D _script mutationFeature@d_CanRemovePerk 1 391 R _script mutationFeature@r_RemovePerk 1 391 #
+303 6330 D _script mutationFeature@d_CanRemovePerk 1 428 R _script mutationFeature@r_RemovePerk 1 428 #
+303 6340 D _script mutationFeature@d_CanRemovePerk 1 423 R _script mutationFeature@r_RemovePerk 1 423 #
+303 6350 D _script mutationFeature@d_CanRemovePerk 1 320 R _script mutationFeature@r_RemovePerk 1 320 #
+303 6360 D _script mutationFeature@d_CanRemovePerk 1 306 R _script mutationFeature@r_RemovePerk 1 306 #
+303 6370 D _script mutationFeature@d_CanRemovePerk 1 325 R _script mutationFeature@r_RemovePerk 1 325 #
+303 6380 D _script mutationFeature@d_CanRemovePerk 1 326 R _script mutationFeature@r_RemovePerk 1 326 #
+300 6390 @
+304 7000 mutationFeature@dlg_AvailablePerkList 0 #
+304 7010 D _script mutationFeature@d_CanAddPerk 1 309 R _script mutationFeature@r_AddPerk 1 309 #
+304 7020 D _script mutationFeature@d_CanAddPerk 1 407 R _script mutationFeature@r_AddPerk 1 407 #
+304 7030 D _script mutationFeature@d_CanAddPerk 1 380 R _script mutationFeature@r_AddPerk 1 380 #
+304 7040 D _script mutationFeature@d_CanAddPerk 1 403 R _script mutationFeature@r_AddPerk 1 403 #
+304 7050 D _script mutationFeature@d_CanAddPerk 1 429 R _script mutationFeature@r_AddPerk 1 429 #
+304 7060 D _script mutationFeature@d_CanAddPerk 1 418 R _script mutationFeature@r_AddPerk 1 418 #
+304 7070 D _script mutationFeature@d_CanAddPerk 1 439 R _script mutationFeature@r_AddPerk 1 439 #
+304 7080 D _script mutationFeature@d_CanAddPerk 1 349 R _script mutationFeature@r_AddPerk 1 349 #
+304 7090 D _script mutationFeature@d_CanAddPerk 1 424 R _script mutationFeature@r_AddPerk 1 424 #
+304 7100 D _script mutationFeature@d_CanAddPerk 1 444 R _script mutationFeature@r_AddPerk 1 444 #
+304 7110 D _script mutationFeature@d_CanAddPerk 1 316 R _script mutationFeature@r_AddPerk 1 316 #
+304 7120 D _script mutationFeature@d_CanAddPerk 1 313 R _script mutationFeature@r_AddPerk 1 313 #
+304 7130 D _script mutationFeature@d_CanAddPerk 1 427 R _script mutationFeature@r_AddPerk 1 427 #
+304 7140 D _script mutationFeature@d_CanAddPerk 1 405 R _script mutationFeature@r_AddPerk 1 405 #
+304 7150 D _script mutationFeature@d_CanAddPerk 1 315 R _script mutationFeature@r_AddPerk 1 315 #
+304 7160 D _script mutationFeature@d_CanAddPerk 1 305 R _script mutationFeature@r_AddPerk 1 305 #
+304 7170 D _script mutationFeature@d_CanAddPerk 1 402 R _script mutationFeature@r_AddPerk 1 402 #
+304 7180 D _script mutationFeature@d_CanAddPerk 1 438 R _script mutationFeature@r_AddPerk 1 438 #
+304 7190 D _script mutationFeature@d_CanAddPerk 1 333 R _script mutationFeature@r_AddPerk 1 333 #
+304 7200 D _script mutationFeature@d_CanAddPerk 1 336 R _script mutationFeature@r_AddPerk 1 336 #
+304 7210 D _script mutationFeature@d_CanAddPerk 1 303 R _script mutationFeature@r_AddPerk 1 303 #
+304 7220 D _script mutationFeature@d_CanAddPerk 1 322 R _script mutationFeature@r_AddPerk 1 322 #
+304 7230 D _script mutationFeature@d_CanAddPerk 1 329 R _script mutationFeature@r_AddPerk 1 329 #
+304 7240 D _script mutationFeature@d_CanAddPerk 1 339 R _script mutationFeature@r_AddPerk 1 339 #
+304 7250 D _script mutationFeature@d_CanAddPerk 1 327 R _script mutationFeature@r_AddPerk 1 327 #
+304 7260 D _script mutationFeature@d_CanAddPerk 1 385 R _script mutationFeature@r_AddPerk 1 385 #
+304 7270 D _script mutationFeature@d_CanAddPerk 1 386 R _script mutationFeature@r_AddPerk 1 386 #
+304 7280 D _script mutationFeature@d_CanAddPerk 1 387 R _script mutationFeature@r_AddPerk 1 387 #
+304 7290 D _script mutationFeature@d_CanAddPerk 1 388 R _script mutationFeature@r_AddPerk 1 388 #
+304 7300 D _script mutationFeature@d_CanAddPerk 1 389 R _script mutationFeature@r_AddPerk 1 389 #
+304 7310 D _script mutationFeature@d_CanAddPerk 1 390 R _script mutationFeature@r_AddPerk 1 390 #
+304 7320 D _script mutationFeature@d_CanAddPerk 1 391 R _script mutationFeature@r_AddPerk 1 391 #
+304 7330 D _script mutationFeature@d_CanAddPerk 1 428 R _script mutationFeature@r_AddPerk 1 428 #
+304 7340 D _script mutationFeature@d_CanAddPerk 1 423 R _script mutationFeature@r_AddPerk 1 423 #
+304 7350 D _script mutationFeature@d_CanAddPerk 1 320 R _script mutationFeature@r_AddPerk 1 320 #
+304 7360 D _script mutationFeature@d_CanAddPerk 1 306 R _script mutationFeature@r_AddPerk 1 306 #
+304 7370 D _script mutationFeature@d_CanAddPerk 1 325 R _script mutationFeature@r_AddPerk 1 325 #
+304 7380 D _script mutationFeature@d_CanAddPerk 1 326 R _script mutationFeature@r_AddPerk 1 326 #
+300 7390 @
+305 8000 mutationFeature@dlg_SpecialList 0 #
+306 8010 D _script mutationFeature@d_CanChangeSpecial 2 0 -1 #
+307 8020 D _script mutationFeature@d_CanChangeSpecial 2 1 -1 #
+308 8030 D _script mutationFeature@d_CanChangeSpecial 2 2 -1 #
+309 8040 D _script mutationFeature@d_CanChangeSpecial 2 3 -1 #
+310 8050 D _script mutationFeature@d_CanChangeSpecial 2 4 -1 #
+311 8060 D _script mutationFeature@d_CanChangeSpecial 2 5 -1 #
+312 8070 D _script mutationFeature@d_CanChangeSpecial 2 6 -1 #
+300 8080 @
+306 9000 mutationFeature@dlg_SpecialList 0 #
+305 9010 D _script mutationFeature@d_CanChangeSpecial 2 1 1 R _script mutationFeature@r_ChangeSpecial 4 0 -1 1 1 #
+305 9020 D _script mutationFeature@d_CanChangeSpecial 2 2 1 R _script mutationFeature@r_ChangeSpecial 4 0 -1 2 1 #
+305 9030 D _script mutationFeature@d_CanChangeSpecial 2 3 1 R _script mutationFeature@r_ChangeSpecial 4 0 -1 3 1 #
+305 9040 D _script mutationFeature@d_CanChangeSpecial 2 4 1 R _script mutationFeature@r_ChangeSpecial 4 0 -1 4 1 #
+305 9050 D _script mutationFeature@d_CanChangeSpecial 2 5 1 R _script mutationFeature@r_ChangeSpecial 4 0 -1 5 1 #
+305 9060 D _script mutationFeature@d_CanChangeSpecial 2 6 1 R _script mutationFeature@r_ChangeSpecial 4 0 -1 6 1 #
+305 9070 @
+307 10000 mutationFeature@dlg_SpecialList 0 #
+305 10010 D _script mutationFeature@d_CanChangeSpecial 2 0 1 R _script mutationFeature@r_ChangeSpecial 4 1 -1 0 1 #
+305 10020 D _script mutationFeature@d_CanChangeSpecial 2 2 1 R _script mutationFeature@r_ChangeSpecial 4 1 -1 2 1 #
+305 10030 D _script mutationFeature@d_CanChangeSpecial 2 3 1 R _script mutationFeature@r_ChangeSpecial 4 1 -1 3 1 #
+305 10040 D _script mutationFeature@d_CanChangeSpecial 2 4 1 R _script mutationFeature@r_ChangeSpecial 4 1 -1 4 1 #
+305 10050 D _script mutationFeature@d_CanChangeSpecial 2 5 1 R _script mutationFeature@r_ChangeSpecial 4 1 -1 5 1 #
+305 10060 D _script mutationFeature@d_CanChangeSpecial 2 6 1 R _script mutationFeature@r_ChangeSpecial 4 1 -1 6 1 #
+305 10070 @
+308 11000 mutationFeature@dlg_SpecialList 0 #
+305 11010 D _script mutationFeature@d_CanChangeSpecial 2 0 1 R _script mutationFeature@r_ChangeSpecial 4 2 -1 0 1 #
+305 11020 D _script mutationFeature@d_CanChangeSpecial 2 1 1 R _script mutationFeature@r_ChangeSpecial 4 2 -1 1 1 #
+305 11030 D _script mutationFeature@d_CanChangeSpecial 2 3 1 R _script mutationFeature@r_ChangeSpecial 4 2 -1 3 1 #
+305 11040 D _script mutationFeature@d_CanChangeSpecial 2 4 1 R _script mutationFeature@r_ChangeSpecial 4 2 -1 4 1 #
+305 11050 D _script mutationFeature@d_CanChangeSpecial 2 5 1 R _script mutationFeature@r_ChangeSpecial 4 2 -1 5 1 #
+305 11060 D _script mutationFeature@d_CanChangeSpecial 2 6 1 R _script mutationFeature@r_ChangeSpecial 4 2 -1 6 1 #
+305 11070 @
+309 12000 mutationFeature@dlg_SpecialList 0 #
+305 12010 D _script mutationFeature@d_CanChangeSpecial 2 0 1 R _script mutationFeature@r_ChangeSpecial 4 3 -1 0 1 #
+305 12020 D _script mutationFeature@d_CanChangeSpecial 2 1 1 R _script mutationFeature@r_ChangeSpecial 4 3 -1 1 1 #
+305 12030 D _script mutationFeature@d_CanChangeSpecial 2 2 1 R _script mutationFeature@r_ChangeSpecial 4 3 -1 2 1 #
+305 12040 D _script mutationFeature@d_CanChangeSpecial 2 4 1 R _script mutationFeature@r_ChangeSpecial 4 3 -1 4 1 #
+305 12050 D _script mutationFeature@d_CanChangeSpecial 2 5 1 R _script mutationFeature@r_ChangeSpecial 4 3 -1 5 1 #
+305 12060 D _script mutationFeature@d_CanChangeSpecial 2 6 1 R _script mutationFeature@r_ChangeSpecial 4 3 -1 6 1 #
+305 12070 @
+310 13000 mutationFeature@dlg_SpecialList 0 #
+305 13010 D _script mutationFeature@d_CanChangeSpecial 2 0 1 R _script mutationFeature@r_ChangeSpecial 4 4 -1 0 1 #
+305 13020 D _script mutationFeature@d_CanChangeSpecial 2 1 1 R _script mutationFeature@r_ChangeSpecial 4 4 -1 1 1 #
+305 13030 D _script mutationFeature@d_CanChangeSpecial 2 2 1 R _script mutationFeature@r_ChangeSpecial 4 4 -1 2 1 #
+305 13040 D _script mutationFeature@d_CanChangeSpecial 2 3 1 R _script mutationFeature@r_ChangeSpecial 4 4 -1 3 1 #
+305 13050 D _script mutationFeature@d_CanChangeSpecial 2 5 1 R _script mutationFeature@r_ChangeSpecial 4 4 -1 5 1 #
+305 13060 D _script mutationFeature@d_CanChangeSpecial 2 6 1 R _script mutationFeature@r_ChangeSpecial 4 4 -1 6 1 #
+305 13070 @
+311 14000 mutationFeature@dlg_SpecialList 0 #
+305 14010 D _script mutationFeature@d_CanChangeSpecial 2 0 1 R _script mutationFeature@r_ChangeSpecial 4 5 -1 0 1 #
+305 14020 D _script mutationFeature@d_CanChangeSpecial 2 1 1 R _script mutationFeature@r_ChangeSpecial 4 5 -1 1 1 #
+305 14030 D _script mutationFeature@d_CanChangeSpecial 2 2 1 R _script mutationFeature@r_ChangeSpecial 4 5 -1 2 1 #
+305 14040 D _script mutationFeature@d_CanChangeSpecial 2 3 1 R _script mutationFeature@r_ChangeSpecial 4 5 -1 3 1 #
+305 14050 D _script mutationFeature@d_CanChangeSpecial 2 4 1 R _script mutationFeature@r_ChangeSpecial 4 5 -1 4 1 #
+305 14060 D _script mutationFeature@d_CanChangeSpecial 2 6 1 R _script mutationFeature@r_ChangeSpecial 4 5 -1 6 1 #
+305 14070 @
+312 15000 mutationFeature@dlg_SpecialList 0 #
+305 15010 D _script mutationFeature@d_CanChangeSpecial 2 0 1 R _script mutationFeature@r_ChangeSpecial 4 6 -1 0 1 #
+305 15020 D _script mutationFeature@d_CanChangeSpecial 2 1 1 R _script mutationFeature@r_ChangeSpecial 4 6 -1 1 1 #
+305 15030 D _script mutationFeature@d_CanChangeSpecial 2 2 1 R _script mutationFeature@r_ChangeSpecial 4 6 -1 2 1 #
+305 15040 D _script mutationFeature@d_CanChangeSpecial 2 3 1 R _script mutationFeature@r_ChangeSpecial 4 6 -1 3 1 #
+305 15050 D _script mutationFeature@d_CanChangeSpecial 2 4 1 R _script mutationFeature@r_ChangeSpecial 4 6 -1 4 1 #
+305 15060 D _script mutationFeature@d_CanChangeSpecial 2 5 1 R _script mutationFeature@r_ChangeSpecial 4 6 -1 5 1 #
+305 15070 @
+313 16000 mutationFeature@dlg_TagSkillList 0 #
+313 16010 D _script mutationFeature@d_CanSwapTagSkill 1 200 R _script mutationFeature@r_SwapTagSkill 1 200 #
+313 16020 D _script mutationFeature@d_CanSwapTagSkill 1 201 R _script mutationFeature@r_SwapTagSkill 1 201 #
+313 16030 D _script mutationFeature@d_CanSwapTagSkill 1 202 R _script mutationFeature@r_SwapTagSkill 1 202 #
+313 16040 D _script mutationFeature@d_CanSwapTagSkill 1 203 R _script mutationFeature@r_SwapTagSkill 1 203 #
+313 16050 D _script mutationFeature@d_CanSwapTagSkill 1 205 R _script mutationFeature@r_SwapTagSkill 1 205 #
+313 16060 D _script mutationFeature@d_CanSwapTagSkill 1 207 R _script mutationFeature@r_SwapTagSkill 1 207 #
+313 16070 D _script mutationFeature@d_CanSwapTagSkill 1 208 R _script mutationFeature@r_SwapTagSkill 1 208 #
+313 16080 D _script mutationFeature@d_CanSwapTagSkill 1 211 R _script mutationFeature@r_SwapTagSkill 1 211 #
+300 16090 &
+
+[engl]
+{100}{}{none}
+{1000}{}{Predialogue installations}
+{1010}{}{Show}
+{2000}{}{Before the needle, there is only the quiet hum of desperation and the hope of becoming more. After, the mind is the first battlefield. The drug doesn't just change the body; it hijacks the brain. The initial rush isn't euphoria, but a tidal wave of pure, unfiltered information.@@Your own thoughts are drowned out by a cascade of alien instincts, predatory hungers, and sensory data you have no context for.@@First comes the tingling, a pins-and-needles sensation that radiates from the injection site, not like a limb falling asleep, but like a million tiny insects burrowing under your skin. It's a deep, cellular itch you can't scratch.@@The cold spreads, a wave of arctic frost washing through your torso, down your legs, up into your skull. Just as you're sure you'll freeze from the inside out, the fire ignites. It’s a fever that boils the marrow, a heat so intense your vision whites out.@@Your own heartbeat becomes a deafening, painful drum. You can feel your own anatomy shifting-a joint popping where no joint should be, the strange sensation of new vertebrae clicking into place along your spine, the phantom feeling of an organ that didn't exist an hour ago humming to life deep within your gut.@@It starts with the sharp, sterile prick, a pinpoint of reality in a haze of desperation. Then, the pressure. A slow, deliberate push as the plunger forces the change into you. The liquid itself feels alien, not warm like blood, but a thick, crawling cold that invades the vein.}
+{2010}{}{[Sit back and reflect on the past]}
+{2020}{}{[Clench your teeth and fists. Force yourself back to reality]}
+{3000}{}{You sit back and reflect on your past actions, your childhood, the ways Karma have affected you.  You were told that the only way to get rid of your Karma is to fulfll it.  But what about your self awareness, moments like these..}
+{3010}{}{If I would become to be less like this... [Remove Traits]}
+{3020}{}{If I would become to be more like this... [Add Traits]}
+{3030}{}{If I would focus less on this... [Remove Perks]}
+{3040}{}{If I would focus more on this... [Add Perks]}
+{3050}{}{Is that a tree growing on my head? This radiation is killing me... [Change S.P.E.C.I.A.L.]}
+{3060}{}{Hm, Small Guns... they are so small. [Change Tagged Skill]}
+{3070}{}{Are really Flamers my thing? [Change Tagged Skill]@@Is it really the Bozar that I dream of? [Change Tagged Skill]}
+{3080}{}{Is it really the Laser Riffle that I love the most? [Change Tagged Skill]}
+{3090}{}{Getting up close and personal with all the mutated abominations in the wastland? Really? [Change Tagged Skill]}
+{3100}{}{Do I really want to gather all the knives and spears I throw at people? [Change Tagged Skill]}
+{3110}{}{Dealing with crippled people all the time... depressing! [Change Tagged Skill]}
+{3120}{}{Let's just enter the front door this time. With guns blazing of course! [Change Tagged Skill]}
+{3130}{}{Traps. Bah. Who am I? Some hobo from Kalamath? [Change Tagged Skill]}
+{3140}{}{[Back]}
+{4000}{}{That was never really me! It was just an illusion...@lex removableTraits@}
+{4010}{}{[Remove Fast Metabolism]}
+{4020}{}{[Remove Bruiser]
+}
+{4030}{}{[Remove One Hander]
+}
+{4040}{}{[Remove Finesse]
+}
+{4050}{}{[Remove Kamikaze]
+}
+{4060}{}{[Remove Heavy Handed]
+}
+{4070}{}{[Remove Fast Shot]
+}
+{4080}{}{[Remove Double Tap]
+}
+{4090}{}{[Remove Bloody Mess]
+}
+{4100}{}{[Remove Jinxed]
+}
+{4110}{}{[Remove Good Natured]
+}
+{4120}{}{[Remove Chem Reliant]
+}
+{4130}{}{[Remove Brutish Hulk]
+}
+{4140}{}{[Remove Cautious Nature]
+}
+{4150}{}{[Remove Gifted]
+}
+{4160}{}{[Remove Loner]
+}
+{4170}{}{[Back]}
+{5000}{}{This is how I always really have been...@lex availableTraits@}
+{5010}{}{[Add Fast Meabolism]}
+{5020}{}{[Add Bruiser]}
+{5030}{}{[Add One Hander]}
+{5040}{}{[Add Finesse]}
+{5050}{}{[Add Kamikaze]}
+{5060}{}{[Add Heavy Handed]}
+{5070}{}{[Add Fast Shot]}
+{5080}{}{[Add Double Tap]}
+{5090}{}{[Add Bloody Mess]}
+{5100}{}{[Add Jinxed]}
+{5110}{}{[Add Good Natured]}
+{5120}{}{[Add Chem Reliant]}
+{5130}{}{[Add Brutish Hulk]}
+{5140}{}{[Add Cautious Nature]}
+{5150}{}{[Add Gifted]}
+{5160}{}{[Add Loner]}
+{5170}{}{[Back]}
+{6000}{}{I think I should focus less on... @lex removablePerks@}
+{6010}{}{[Remove level 3 perk: More Criticals]}
+{6020}{}{[Remove level 3 perk: Weapon Handling]}
+{6030}{}{[Remove level 3 perk: Adrenaline Rush]}
+{6040}{}{[Remove level 3 perk: Quick Recovery]}
+{6050}{}{[Remove level 3 perk: Livewire]}
+{6060}{}{[Remove level 3 perk: Way of the Fruit]}
+{6070}{}{[Remove level 3 perk: Healer]}
+{6080}{}{[Remove level 3 perk: Quick Pockets]}
+{6090}{}{[Remove level 6 perk: Even More Criticals]}
+{6100}{}{[Remove level 6 perk: In Your Face]}
+{6110}{}{[Remove level 6 perk: Silent Running]}
+{6120}{}{[Remove level 6 perk: Toughness]}
+{6130}{}{[Remove level 6 perk: Spray and Pray]}
+{6140}{}{[Remove level 9 perk: Stonewall]}
+{6150}{}{[Remove level 9 perk: Sharpshooter]}
+{6160}{}{[Remove level 9 perk: Bonus Ranged Damage]}
+{6170}{}{[Remove level 9 perk: Pyromaniac]}
+{6180}{}{[Remove level 9 perk: Even Tougher]}
+{6190}{}{[Remove level 9 perk: Medic]}
+{6200}{}{[Remove level 9 perk: Heave Ho!]}
+{6210}{}{[Remove level 9 perk: Close Combat Master]}
+{6220}{}{[Remove level 12 perk: Better Criticals]}
+{6230}{}{[Remove level 12 perk: Lifegiver]}
+{6240}{}{[Remove level 12 perk: Ghost]}
+{6250}{}{[Remove level 12 perk: Action Boy]}
+{6260}{}{[Remove level 12 perk: Gain Strength]}
+{6270}{}{[Remove level 12 perk: Gain Perception]}
+{6280}{}{[Remove level 12 perk: Gain Endurance]}
+{6290}{}{[Remove level 12 perk: Gain Charisma]}
+{6300}{}{[Remove level 12 perk: Gain Intellect]}
+{6310}{}{[Remove level 12 perk: Gain Agility]}
+{6320}{}{[Remove level 12 perk: Gain Luck]}
+{6330}{}{[Remove level 15 perk: More Ranged Damage]}
+{6340}{}{[Remove level 15 perk: Man of Steel]}
+{6350}{}{[Remove level 15 perk: Field Medic]}
+{6360}{}{[Remove level 18 perk: Bonus Rate of Attack]}
+{6370}{}{[Remove level 18 perk: Sniper]}
+{6380}{}{[Remove level 18 perk: Silent Death]}
+{6390}{}{[Back]}
+{7000}{}{I think I should focus more on... @lex availablePerks@
+}
+{7010}{}{[Add level 3 perk: More Criticals]}
+{7020}{}{[Add level 3 perk: Weapon Handling]}
+{7030}{}{[Add level 3 perk: Adrenaline Rush]}
+{7040}{}{[Add level 3 perk: Quick Recovery]}
+{7050}{}{[Add level 3 perk: Livewire]}
+{7060}{}{[Add level 3 perk: Way of the Fruit]}
+{7070}{}{[Add level 3 perk: Healer]}
+{7080}{}{[Add level 3 perk: Quick Pockets]}
+{7090}{}{[Add level 6 perk: Even More Criticals]}
+{7100}{}{[Add level 6 perk: In Your Face]}
+{7110}{}{[Add level 6 perk: Silent Running]}
+{7120}{}{[Add level 6 perk: Toughness]}
+{7130}{}{[Add level 6 perk: Spray and Pray]}
+{7140}{}{[Add level 9 perk: Stonewall]}
+{7150}{}{[Add level 9 perk: Sharpshooter]}
+{7160}{}{[Add level 9 perk: Bonus Ranged Damage]}
+{7170}{}{[Add level 9 perk: Pyromaniac]}
+{7180}{}{[Add level 9 perk: Even Tougher]}
+{7190}{}{[Add level 9 perk: Medic]}
+{7200}{}{[Add level 9 perk: Heave Ho!]}
+{7210}{}{[Add level 9 perk: Close Combat Master]}
+{7220}{}{[Add level 12 perk: Better Criticals]}
+{7230}{}{[Add level 12 perk: Lifegiver]}
+{7240}{}{[Add level 12 perk: Ghost]}
+{7250}{}{[Add level 12 perk: Action Boy]}
+{7260}{}{[Add level 12 perk: Gain Strength]}
+{7270}{}{[Add level 12 perk: Gain Perception]}
+{7280}{}{[Add level 12 perk: Gain Endurance]}
+{7290}{}{[Add level 12 perk: Gain Charisma]}
+{7300}{}{[Add level 12 perk: Gain Intellect]}
+{7310}{}{[Add level 12 perk: Gain Agility]}
+{7320}{}{[Add level 12 perk: Gain Luck]}
+{7330}{}{[Add level 15 perk: More Ranged Damage]}
+{7340}{}{[Add level 15 perk: Man of Steel]}
+{7350}{}{[Add level 15 perk: Field Medic]}
+{7360}{}{[Add level 18 perk: Bonus Rate of Attack]}
+{7370}{}{[Add level 18 perk: Sniper]}
+{7380}{}{[Add level 18 perk: Silent Death]}
+{7390}{}{[Back]}
+{8000}{}{@lex specials@}
+{8010}{}{I feel weaker already... [Swap 1 Strength]}
+{8020}{}{Was there some noise? [Swap 1 Perception]}
+{8030}{}{Will this cut ever heal? [Swap 1 Endurance]}
+{8040}{}{Do I look older? [Swap 1 Charisma]}
+{8050}{}{Are we dividing by zero? [Swap 1 Intellect]}
+{8060}{}{Damn my fat fingers... [Swap 1 Agility]}
+{8070}{}{Did I just step into brahmin dung? [Swap 1 Luck]}
+{8080}{}{[Back]}
+{9000}{}{[Swap 1 Strength for:] @lex specials@}
+{9010}{}{I can spot a rat from two miles now! [Gain 1 Perception]}
+{9020}{}{These wounds seems to be healing much faster now! [Gain 1 Endurance]}
+{9030}{}{**Puff out your chest** [Gain 1 Charisma]}
+{9040}{}{Mentats, yum! [Gain 1 Intellect]}
+{9050}{}{**Singing: Speed, is all I need.** [Gain 1 Agility]}
+{9060}{}{Time to take that lucky dice rolling again! [Gain 1 Luck]}
+{9070}{}{[Back]}
+{10000}{}{[Swap 1 Perception for:] @lex specials@}
+{10010}{}{This pile of junk felt heavier before! [Gain 1 Strength]}
+{10020}{}{These wounds seems to be healing much faster now! [Gain 1 Endurance]}
+{10030}{}{**Puff out your chest** [Gain 1 Charisma]}
+{10040}{}{Mentats, yum! [Gain 1 Intellect]}
+{10050}{}{**Singing: Speed, is all I need.** [Gain 1 Agility]}
+{10060}{}{Time to take that lucky dice rolling again! [Gain 1 Luck]}
+{10070}{}{[Back]}
+{11000}{}{[Swap 1 Endurance for:] @lex specials@}
+{11010}{}{This pile of junk felt heavier before! [Gain 1 Strength]}
+{11020}{}{I can spot a rat from two miles now! [Gain 1 Perception]}
+{11030}{}{**Puff out your chest** [Gain 1 Charisma]}
+{11040}{}{Mentats, yum! [Gain 1 Intellect]}
+{11050}{}{**Singing: Speed, is all I need.** [Gain 1 Agility]}
+{11060}{}{Time to take that lucky dice rolling again! [Gain 1 Luck]}
+{11070}{}{[Back]}
+{12000}{}{[Swap 1 Charisma for:] @lex specials@}
+{12010}{}{This pile of junk felt heavier before! [Gain 1 Strength]}
+{12020}{}{I can spot a rat from two miles now! [Gain 1 Perception]}
+{12030}{}{These wounds seems to be healing much faster now! [Gain 1 Endurance]}
+{12040}{}{Mentats, yum! [Gain 1 Intellect]}
+{12050}{}{**Singing: Speed, is all I need.** [Gain 1 Agility]}
+{12060}{}{Time to take that lucky dice rolling again! [Gain 1 Luck]}
+{12070}{}{[Back]}
+{13000}{}{[Swap 1 Intellect for:] @lex specials@}
+{13010}{}{This pile of junk felt heavier before! [Gain 1 Strength]}
+{13020}{}{I can spot a rat from two miles now! [Gain 1 Perception]}
+{13030}{}{These wounds seems to be healing much faster now! [Gain 1 Endurance]}
+{13040}{}{**Puff out your chest** [Gain 1 Charisma]}
+{13050}{}{**Singing: Speed, is all I need.** [Gain 1 Agility]}
+{13060}{}{Time to take that lucky dice rolling again! [Gain 1 Luck]}
+{13070}{}{[Back]}
+{14000}{}{[Swap 1 Agility for:] @lex specials@}
+{14010}{}{This pile of junk felt heavier before! [Gain 1 Strength]}
+{14020}{}{I can spot a rat from two miles now! [Gain 1 Perception]}
+{14030}{}{These wounds seems to be healing much faster now! [Gain 1 Endurance]}
+{14040}{}{**Puff out your chest** [Gain 1 Charisma]}
+{14050}{}{Mentats, yum! [Gain 1 Intellect]}
+{14060}{}{Time to take that lucky dice rolling again! [Gain 1 Luck]}
+{14070}{}{[Back]}
+{15000}{}{[Swap 1 Luck for:] @lex specials@}
+{15010}{}{This pile of junk felt heavier before! [Gain 1 Strength]}
+{15020}{}{I can spot a rat from two miles now! [Gain 1 Perception]}
+{15030}{}{These wounds seems to be healing much faster now! [Gain 1 Endurance]}
+{15040}{}{**Puff out your chest** [Gain 1 Charisma]}
+{15050}{}{Mentats, yum! [Gain 1 Intellect]}
+{15060}{}{**Singing: Speed, is all I need.** [Gain 1 Agility]}
+{15070}{}{[Back]}
+{16000}{}{It be better if I retrain myself to be better at.. [Change Tag Skill] @lex tagSkill@}
+{16010}{}{Small Guns. [Swap Tag skill to Small Guns]}
+{16020}{}{Big Guns. [Swap Tag skill to Big Guns]}
+{16030}{}{Energy Weapons. [Swap Tag skill to Energy Weapons]}
+{16040}{}{Close Combat. [Swap Tag skill to Close Combat]}
+{16050}{}{Throwing. [Swap Tag skill to Throwing]}
+{16060}{}{Doctor. [Swap Tag skill to Doctor]}
+{16070}{}{Sneak. [Swap Tag skill to Sneak]}
+{16080}{}{Traps. [Swap Tag skill to Traps]}
+{16090}{}{[Back]}
+

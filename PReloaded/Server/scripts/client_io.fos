@@ -60,6 +60,9 @@ import bool GuiImageCatchMouseRelease(int click) from "client/client_GuiImage";
 import bool CharacterTooltipCatchMouseRelease(int click) from "client/client_GuiTooltip";
 import bool GuiImageUpdateMousePositionChange(int x, int y) from "client/client_GuiImage";
 
+import bool IsMouseInMutateTabDrawArea() from "chosen_tabs";
+
+
 #define LeftCtrl        GUI_IsKeyPressed(DIK_LCONTROL)
 #define RightCtrl       GUI_IsKeyPressed(DIK_RCONTROL)
 #define AnyCtrl         (LeftCtrl || RightCtrl)
@@ -227,7 +230,6 @@ bool key_up(uint8 key,string& keyText)
     return GUI_KeyUp(key,keyText);
 }
 
-
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Mouse behaviours. Click states look in _client_defines.fos, Mouse click states.
 // Return true to disable engine events.
@@ -246,6 +248,10 @@ bool mouse_down(int click)
         return true;
 
     IndicatorMouse(true, click);
+
+    if (GUI_GetActiveScreen() == CLIENT_MAIN_SCREEN_GAME && click == MOUSE_CLICK_LEFT && IsMouseInMutateTabDrawArea()) {
+        RunServerScriptUnsafe( "unsafe_client@unsafe_RunMutateDialog", 0, 0, 0, null, null );
+    }
 
     if(IsGMTEnabled() && GMToolsMenu() &&
        GUI_GetActiveScreen() == CLIENT_MAIN_SCREEN_GAME && LeftCtrl)           // show gmtools menu

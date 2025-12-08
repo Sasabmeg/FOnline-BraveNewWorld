@@ -2391,6 +2391,18 @@ void critter_out(CritterCl& cr)
 		crFade.insertLast( cr.Id );
 	}
 }
+/**
+ *  Closes the inventory, in case it was open.
+ *  Ex: after using mutie drug and before popping up the dialog
+ */
+void _CloseInventory(int param1, int param2, int param3, string@ param4, array<int>@ param5) {
+    //uint sc = GUI_GetActiveScreen();
+    //uint mainsc = GUI_GetActiveMainScreen();
+    //if (sc == CLIENT_SCREEN_INVENTORY) {
+    //    GUI_HideScreen(CLIENT_SCREEN_INVENTORY, 0, 0, 0);
+    //}
+    GUI_HideScreen(CLIENT_SCREEN_INVENTORY, 0, 0, 0);
+}
 
 /**
  * Sets color basing on groups status and reputation.
