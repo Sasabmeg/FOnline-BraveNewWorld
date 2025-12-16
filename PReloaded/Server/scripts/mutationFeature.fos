@@ -1758,7 +1758,7 @@ void dlg_RemovePerkList(Critter& player, Critter@ npc, string@ text) {
     }
     if (player.Perk[PE_CLOSE_COMBAT_MASTER] > 0) {
         str += listPrefix + "[Close Combat Master: ";
-        if (canRemovePerk(player, PE_LIVEWIRE, reason)) {
+        if (canRemovePerk(player, PE_CLOSE_COMBAT_MASTER, reason)) {
             str += removable + "]\n";
         } else {
             str += reason + "]\n";
@@ -1957,7 +1957,7 @@ void dlg_AvailablePerkList(Critter& player, Critter@ npc, string@ text) {
         str += listPrefix + "[Toughness]\n";
     }
     if (player.Perk[PE_SPRAY_AND_PRAY] > 0) {
-        str += listPrefix + "[Adrenaline Rush]\n";
+        str += listPrefix + "[Spray and Pray]\n";
     }
 
     //  level 9 perks
@@ -2174,7 +2174,7 @@ bool canAddPerk(Critter& player, uint perkIndex, string@ reason) {
         reason = "Cannot have more than 8 leveling Perks.";
         return false;
     }
-    if (totalPerkCount(player) > player.Stat[ST_LEVEL] / 3) {
+    if (totalPerkCount(player) >= player.Stat[ST_LEVEL] / 3) {
         reason = "Cannot have more than " + (player.Stat[ST_LEVEL] / 3) + " leveling Perks at level " + player.Stat[ST_LEVEL] + ".";
         return false;
     }
