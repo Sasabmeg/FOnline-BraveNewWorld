@@ -24,6 +24,11 @@ import void GuardMultihexMove(Item& item, uint8 fromSlot, uint8 toSlot) from "mu
 # define Item       ItemCl
 #endif
 
+
+#ifdef __CLIENT
+import void RefreshTooltipsDelayed(uint delayInMs) from "client/client_GuiTooltip";
+#endif // __CLIENT
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Call on something critter want move item from one slot to another.
 // Return true to allow transaction, false to disallow.
@@ -31,6 +36,12 @@ import void GuardMultihexMove(Item& item, uint8 fromSlot, uint8 toSlot) from "mu
 bool critter_check_move_item(Critter& cr, Item& item, uint8 toSlot, Item@ itemSwap)
 {
     uint8 fromSlot = item.CritSlot;
+
+    //  refresh client, but I think this one works only when dropping armor, not equipping one
+    #ifdef __CLIENT
+    //Message("NOW");
+    RefreshTooltipsDelayed(750);
+    #endif // __CLIENT
 
     // Guarding not legit items - although transaction is allowed it will delete item if not legit
     #ifdef __SERVER
@@ -127,7 +138,7 @@ bool critter_check_move_item(Critter& cr, Item& item, uint8 toSlot, Item@ itemSw
         if(toSlot == SLOT_TROPHY && cr.IsPlayer())           // add ST_BASE_CRTYPE here?
             return(false);
     }
-        
+
     #ifdef __SERVER
     if(handsSwap && valid(itemSwap))
     {
@@ -138,10 +149,10 @@ bool critter_check_move_item(Critter& cr, Item& item, uint8 toSlot, Item@ itemSw
 
             if(itemSwap.CritSlot == SLOT_HAND2)
                 cr.ParamBase[ST_BONUS_LOOK] += 6;
-            
+
             if(valid(cr.GetMap()))
                 cr.RefreshVisible();
-        }    
+        }
     }
     #endif
 
@@ -320,7 +331,7 @@ void critter_move_item(Critter& cr, Item& item, uint8 fromSlot)
 
         if((fromSlot == SLOT_HAND1 || toSlot == SLOT_HAND1) && valid(cr.GetMap()))
             cr.RefreshVisible();
-    }        
+    }
 
     // Slot modifiers
 // SLOT_PERK_MIRROR_SHADES // +1 charisma

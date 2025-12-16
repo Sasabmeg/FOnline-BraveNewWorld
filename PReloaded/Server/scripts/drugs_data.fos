@@ -153,11 +153,11 @@ const int[] DrugEffects =
     ST_EX_RANGE_PENALTY,       50,    -50,      0,      0,      0,
     // (18) PID_ROENTGEN_RUM
     ADDICTION_BEER,             0,    600,      0,      0,      0,
-    ST_NORMAL_RESIST,           2,     -2,      0,      0,      0,
+    ST_NORMAL_ABSORB,           3,     -3,      0,      0,      0,
     ST_PERCEPTION,             -1,      1,      0,      0,      0,
-    ST_NORMAL_ABSORB,           1,     -1,      0,      0,      0,
     ST_RADIATION_LEVEL,        10,      1,      1,      0,      0,
     ST_EX_RANGE_PENALTY,       50,    -50,      0,      0,      0,
+    -1,                         0,      0,      0,      0,      0,
     // (19) PID_HYPO_POISON
     -1,                         0,      0,      0,      0,      0,
     -1,                         0,      0,      0,      0,      0,
@@ -250,21 +250,21 @@ const int[] DrugEffects =
     -1,                         0,      0,      0,      0,      0,
     -1,                         0,      0,      0,      0,      0,
     // (32) PID_FISH_SALMON
-    -1,                         0,    600,      0,      0,      0,
+    -1,                         0,    100,      0,      0,      0,
     ST_STRENGTH,                1,     -1,      0,      0,      0,
     ST_CURRENT_HP,              4,      0,      0,      0,      0,
     -1,                         0,      0,      0,      0,      0,
     -1,                         0,      0,      0,      0,      0,
     -1,                         0,      0,      0,      0,      0,
     // (33) PID_FISH_TUNA
-    -1,                         0,    600,      0,      0,      0,
+    -1,                         0,    100,      0,      0,      0,
     ST_ENDURANCE,               1,     -1,      0,      0,      0,
     ST_CURRENT_HP,              4,      0,      0,      0,      0,
     -1,                         0,      0,      0,      0,      0,
     -1,                         0,      0,      0,      0,      0,
     -1,                         0,      0,      0,      0,      0,
     // (34) PID_FISH_CATFISH
-    -1,                         0,    600,      0,      0,      0,
+    -1,                         0,    100,      0,      0,      0,
     ST_AGILITY,                 1,     -1,      0,      0,      0,
     ST_CURRENT_HP,              4,      0,      0,      0,      0,
     -1,                         0,      0,      0,      0,      0,

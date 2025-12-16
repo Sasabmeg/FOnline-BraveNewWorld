@@ -248,6 +248,17 @@ void InitializeGame()                  // Export
 
     # ifdef __CLIENT
     // for(uint i=GOOD_EVIL_LIST_BEGIN;i<=GOOD_EVIL_LIST_END;i++) SetParameterChangeBehaviour(i,"parameters@changedParam_GoodEvilList"); (not used)
+    for (uint i = ST_STRENGTH; i <= ST_LUCK; i++) {
+        SetParameterChangeBehaviour(i, "parameters@changedParam_Special");
+    }
+    for (uint i = ST_STRENGTH_EXT; i <= ST_LUCK_EXT; i++) {
+        SetParameterChangeBehaviour(i, "parameters@changedParam_AnyJustRefreshTooltips");
+    }
+    SetParameterChangeBehaviour(ST_RADIATION_LEVEL, "parameters@changedParam_AnyJustRefreshTooltips");
+    SetParameterChangeBehaviour(ST_POISONING_LEVEL, "parameters@changedParam_AnyJustRefreshTooltips");
+    SetParameterChangeBehaviour(ST_CURRENT_ARMOR_PERK, "parameters@changedParam_AnyJustRefreshTooltips");
+    SetParameterChangeBehaviour(ST_CURRENT_HELMET_PERK, "parameters@changedParam_AnyJustRefreshTooltips");
+
     SetParameterChangeBehaviour(ST_LEVEL, "parameters@changedParam_Level");
     SetParameterChangeBehaviour(ST_EXPERIENCE, "parameters@changedParam_Experience");
     SetParameterChangeBehaviour(ST_UNSPENT_PERKS, "parameters@changedParam_UnspentPerks");

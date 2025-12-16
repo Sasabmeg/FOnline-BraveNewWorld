@@ -21,13 +21,37 @@
 #include "client_InterfaceTextbox.fos"
 #include "client_InterfaceWindow.fos"
 #include "../lexems_h.fos"
+#include "client_buffs_h.fos"
 
 import string showItemBonus(ItemCl& it, int type, int value) from "client_interface";
 import bool IsDetectHiddenWeapon(ItemMutual& item) from "hexThrow";
+/*
+import uint GetRadiationStage(int level) from "client/client_buffs";
+import int GetStatLossForRadiationLevel(int stat, int level) from "client/client_buffs";
+import uint GetRadiationLevelColor(int level) from "client/client_buffs";
+import uint PercentColor(uint percent, bool clamp = true) from "client/client_buffs";
+*/
+
+#define STR_POISON_PROCESS      (12811)
+
+#define COLOR_REGULAR           (COLOR_GREEN)
+#define COLOR_BUFF              (COLOR_GOLDEN_YELLOW)
+#define COLOR_DEBUFF            (COLOR_DORANGE)
+
+#define TOOLTIPS_DEBUG_LOGGING  (false)
+
+void LogToolTips(string& str) {
+    if (TOOLTIPS_DEBUG_LOGGING) {
+        Message("Tooltips :: " + str);
+    }
+}
 
 CGuiTooltip characterTooltip;
 CGuiTooltip inventoryTooltip;
 CTooltips tooltipKeyValue;
+bool chosenIsInvalid = true;
+uint lastInventoryItemId;
+uint tooltipRefreshDelay = 0;
 
 class CTooltips {
     array<uint>     tooltipsKey;
@@ -61,6 +85,7 @@ class CTooltips {
         string pipText = "\n\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t   \u00ABVault-Tec Pip-Info\u2122\u00BB";
         string jjJournal = "\nJournal entry:";
         string jjText = "\n\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t  - Chief Gadgeteer 'Jinxed' Jack -";
+        string pipStatus = "\nPIP-STATUS:\n";
         string pipReference = "\n|" + COLOR_GREEN + " Extended Pip-boy database search results:\n";
         string notes = "";//"\nNotes:";
         string requirements = "\n\nRequirements:";
@@ -68,12 +93,254 @@ class CTooltips {
         string tldr = "\n\nTLDR:";
         string noData = "- No additional information available.";
         string @bullet = EncodeUTF8(0x2022);
+
+        string strengthExt = "";
+        string perceptionExt = "";
+        string enduranceExt = "";
+        string charismaExt = "";
+        string intellectExt = "";
+        string agilityExt = "";
+        string luckExt = "";
+        string resistExt = "";
+        string healingRateExt = "";
+        string radiatedExt = "";
+        string poisonedExt = "";
+        CritterCl@ chosen = GetChosen();
+        if (valid(chosen)) {
+            //Message("InitTooltips :: chosen valid");
+            int helmetNormalDT = chosen.Stat[ST_NORMAL_ABSORB];
+            int helmetNormalDR = chosen.Stat[ST_NORMAL_RESIST];
+            int helmetLaserDT = chosen.Stat[ST_LASER_ABSORB];
+            int helmetLaserDR = chosen.Stat[ST_LASER_RESIST];
+            int helmetFireDT = chosen.Stat[ST_FIRE_ABSORB];
+            int helmetFireDR = chosen.Stat[ST_FIRE_RESIST];
+            int helmetPlasmaDT = chosen.Stat[ST_PLASMA_ABSORB];
+            int helmetPlasmaDR = chosen.Stat[ST_PLASMA_RESIST];
+            int helmetElectrDT = chosen.Stat[ST_ELECTRO_ABSORB];
+            int helmetElectrDR = chosen.Stat[ST_ELECTRO_RESIST];
+            int helmetExplodeDT = chosen.Stat[ST_EXPLODE_ABSORB];
+            int helmetExplodeDR = chosen.Stat[ST_EXPLODE_RESIST];
+
+            ItemCl@ helmet = chosen.GetItem(0, SLOT_HEAD);
+            ItemCl@ bodyArmor = chosen.GetItem(0, SLOT_ARMOR);
+
+            if (valid(bodyArmor)) {
+                helmetNormalDT -= bodyArmor.Proto.Armor_DTNormal;
+                helmetNormalDR -= bodyArmor.Proto.Armor_DRNormal;
+                helmetLaserDT -= bodyArmor.Proto.Armor_DTLaser;
+                helmetLaserDR -= bodyArmor.Proto.Armor_DRLaser;
+                helmetFireDT -= bodyArmor.Proto.Armor_DTFire;
+                helmetFireDR -= bodyArmor.Proto.Armor_DRFire;
+                helmetPlasmaDT -= bodyArmor.Proto.Armor_DTPlasma;
+                helmetPlasmaDR -= bodyArmor.Proto.Armor_DRPlasma;
+                helmetElectrDT -= bodyArmor.Proto.Armor_DTElectr;
+                helmetElectrDR -= bodyArmor.Proto.Armor_DRElectr;
+                helmetExplodeDT -= bodyArmor.Proto.Armor_DTExplode;
+                helmetExplodeDR -= bodyArmor.Proto.Armor_DRExplode;
+            }
+            if (valid(helmet)) {
+                helmetNormalDT += helmet.Proto.Armor_DTNormal;
+                helmetNormalDR += helmet.Proto.Armor_DRNormal;
+                helmetLaserDT += helmet.Proto.Armor_DTLaser;
+                helmetLaserDR += helmet.Proto.Armor_DRLaser;
+                helmetFireDT += helmet.Proto.Armor_DTFire;
+                helmetFireDR += helmet.Proto.Armor_DRFire;
+                helmetPlasmaDT += helmet.Proto.Armor_DTPlasma;
+                helmetPlasmaDR += helmet.Proto.Armor_DRPlasma;
+                helmetElectrDT += helmet.Proto.Armor_DTElectr;
+                helmetElectrDR += helmet.Proto.Armor_DRElectr;
+                helmetExplodeDT += helmet.Proto.Armor_DTExplode;
+                helmetExplodeDR += helmet.Proto.Armor_DRExplode;
+            }
+
+            resistExt = "\nBase:\t\t\t\t\t\tBuff:\t\t\t\t\t\tBody:\t\t\t\t\t\tHead:"
+                         + "\n\tNormal: \u00A0\u00A0\u00A0" + chosen.StatBase[ST_NORMAL_ABSORB] + "/" + chosen.StatBase[ST_NORMAL_RESIST]
+                         + (chosen.StatBase[ST_NORMAL_ABSORB] > 9 ? "" : " ") + (chosen.StatBase[ST_NORMAL_RESIST] > 9 ? "" : " ")
+                         + "\t\tNormal: \u00A0\u00A0\u00A0" + chosen.StatBase[ST_NORMAL_ABSORB_EXT] + "/" + chosen.StatBase[ST_NORMAL_RESIST_EXT]
+                         + (chosen.StatBase[ST_NORMAL_ABSORB_EXT] > 9 || chosen.StatBase[ST_NORMAL_ABSORB_EXT] < 0 ? "" : " ")
+                         + (chosen.StatBase[ST_NORMAL_RESIST_EXT] > 9 || chosen.StatBase[ST_NORMAL_RESIST_EXT] < 0 ? "" : " ")
+                         + "\t\tNormal: \u00A0\u00A0\u00A0" + chosen.Stat[ST_NORMAL_ABSORB] + "/" + chosen.Stat[ST_NORMAL_RESIST]
+                         + (chosen.Stat[ST_NORMAL_ABSORB] > 9 ? "" : " ") + (chosen.Stat[ST_NORMAL_RESIST] > 9 ? "" : " ")
+                         + "\t\tNormal: \u00A0\u00A0\u00A0" + helmetNormalDT + "/" + helmetNormalDR
+                         + "\n\tLaser:     \u00A0" + chosen.StatBase[ST_LASER_ABSORB] + "/" + chosen.StatBase[ST_LASER_RESIST]
+                         + (chosen.StatBase[ST_LASER_ABSORB] > 9 ? "" : " ") + (chosen.StatBase[ST_LASER_RESIST] > 9 ? "" : " ")
+                         + "\t\tLaser:     \u00A0" + chosen.StatBase[ST_LASER_ABSORB_EXT] + "/" + chosen.Stat[ST_LASER_RESIST_EXT]
+                         + (chosen.StatBase[ST_LASER_ABSORB_EXT] > 9 || chosen.StatBase[ST_LASER_ABSORB_EXT] < 0 ? "" : " ")
+                         + (chosen.StatBase[ST_LASER_RESIST_EXT] > 9 || chosen.StatBase[ST_LASER_RESIST_EXT] < 0 ? "" : " ")
+                         + "\t\tLaser:     \u00A0" + chosen.Stat[ST_LASER_ABSORB] + "/" + chosen.Stat[ST_LASER_RESIST]
+                         + (chosen.Stat[ST_LASER_ABSORB] > 9 ? "" : " ") + (chosen.Stat[ST_LASER_RESIST] > 9 ? "" : " ")
+                         + "\t\tLaser:     \u00A0" + helmetLaserDT + "/" + helmetLaserDR
+                         + "\n\tFire:         " + chosen.StatBase[ST_FIRE_ABSORB] + "/" + chosen.StatBase[ST_FIRE_RESIST]
+                         + (chosen.StatBase[ST_FIRE_ABSORB] > 9 ? "" : " ") + (chosen.StatBase[ST_FIRE_RESIST] > 9 ? "" : " ")
+                         + "\t\tFire:         " + chosen.StatBase[ST_FIRE_ABSORB_EXT] + "/" + chosen.StatBase[ST_FIRE_RESIST_EXT]
+                         + (chosen.StatBase[ST_FIRE_ABSORB_EXT] > 9 || chosen.StatBase[ST_FIRE_ABSORB_EXT] < 0 ? "" : " ")
+                         + (chosen.StatBase[ST_FIRE_RESIST_EXT] > 9 || chosen.StatBase[ST_FIRE_RESIST_EXT] < 0 ? "" : " ")
+                         + "\t\tFire:         " + chosen.Stat[ST_FIRE_ABSORB] + "/" + chosen.Stat[ST_FIRE_RESIST]
+                         + (chosen.Stat[ST_FIRE_ABSORB] > 9 ? "" : " ") + (chosen.Stat[ST_FIRE_RESIST] > 9 ? "" : " ")
+                         + "\t\tFire:         " + helmetLaserDT + "/" + helmetFireDR
+                         + "\n\tPlasma:  \u00A0\u00A0" + chosen.StatBase[ST_PLASMA_ABSORB] + "/" + chosen.StatBase[ST_PLASMA_RESIST]
+                         + (chosen.StatBase[ST_PLASMA_ABSORB] > 9 ? "" : " ") + (chosen.StatBase[ST_PLASMA_RESIST] > 9 ? "" : " ")
+                         + "\t\tPlasma:  \u00A0\u00A0" + chosen.StatBase[ST_PLASMA_ABSORB_EXT] + "/" + chosen.StatBase[ST_PLASMA_RESIST_EXT]
+                         + (chosen.StatBase[ST_PLASMA_ABSORB_EXT] > 9 || chosen.StatBase[ST_PLASMA_ABSORB_EXT] < 0 ? "" : " ")
+                         + (chosen.StatBase[ST_PLASMA_RESIST_EXT] > 9 || chosen.StatBase[ST_PLASMA_RESIST_EXT] < 0 ? "" : " ")
+                         + "\t\tPlasma:  \u00A0\u00A0" + chosen.Stat[ST_PLASMA_ABSORB] + "/" + chosen.Stat[ST_PLASMA_RESIST]
+                         + (chosen.Stat[ST_PLASMA_ABSORB] > 9 ? "" : " ") + (chosen.Stat[ST_PLASMA_RESIST] > 9 ? "" : " ")
+                         + "\t\tPlasma:  \u00A0\u00A0" + helmetNormalDT + "/" + helmetPlasmaDR
+                         + "\n\tElectric:  \u00A0" + chosen.StatBase[ST_ELECTRO_ABSORB] + "/" + chosen.StatBase[ST_ELECTRO_RESIST]
+                         + (chosen.StatBase[ST_ELECTRO_ABSORB] > 9 ? "" : " ") + (chosen.StatBase[ST_ELECTRO_RESIST] > 9 ? "" : " ")
+                         + "\t\tElectric:  \u00A0" + chosen.StatBase[ST_ELECTRO_ABSORB_EXT] + "/" + chosen.StatBase[ST_ELECTRO_RESIST_EXT]
+                         + (chosen.StatBase[ST_ELECTRO_ABSORB_EXT] > 9 || chosen.StatBase[ST_ELECTRO_ABSORB_EXT] < 0 ? "" : " ")
+                         + (chosen.StatBase[ST_ELECTRO_RESIST_EXT] > 9 || chosen.StatBase[ST_ELECTRO_RESIST_EXT] < 0 ? "" : " ")
+                         + "\t\tElectric:  \u00A0" + chosen.Stat[ST_ELECTRO_ABSORB] + "/" + chosen.Stat[ST_ELECTRO_RESIST]
+                         + (chosen.Stat[ST_ELECTRO_ABSORB] > 9 ? "" : " ") + (chosen.Stat[ST_ELECTRO_RESIST] > 9 ? "" : " ")
+                         + "\t\tElectric:  \u00A0" + helmetElectrDT + "/" + helmetElectrDR
+                         + "\n\tExplode:  \u00A0" + chosen.StatBase[ST_EXPLODE_ABSORB] + "/" + chosen.StatBase[ST_EXPLODE_RESIST]
+                         + (chosen.StatBase[ST_EXPLODE_ABSORB] > 9 ? "" : " ") + (chosen.StatBase[ST_EXPLODE_RESIST] > 9 ? "" : " ")
+                         + "\t\tExplode:  \u00A0" + chosen.StatBase[ST_EXPLODE_ABSORB_EXT] + "/" + chosen.StatBase[ST_EXPLODE_RESIST_EXT]
+                         + (chosen.StatBase[ST_EXPLODE_ABSORB_EXT] > 9 || chosen.StatBase[ST_EXPLODE_ABSORB_EXT] < 0 ? "" : " ")
+                         + (chosen.StatBase[ST_EXPLODE_RESIST_EXT] > 9 || chosen.StatBase[ST_EXPLODE_RESIST_EXT] < 0 ? "" : " ")
+                         + "\t\tExplode:  \u00A0" + chosen.Stat[ST_EXPLODE_ABSORB] + "/" + chosen.Stat[ST_EXPLODE_RESIST]
+                         + (chosen.Stat[ST_EXPLODE_ABSORB] > 9 ? "" : " ") + (chosen.Stat[ST_EXPLODE_RESIST] > 9 ? "" : " ")
+                         + "\t\tExplode:  \u00A0" + helmetExplodeDT + "/" + helmetElectrDR + "\n";
+            int strDif = chosen.Stat[ST_STRENGTH] - chosen.StatBase[ST_STRENGTH];
+            int perDif = chosen.Stat[ST_PERCEPTION] - chosen.StatBase[ST_PERCEPTION];
+            int endDif = chosen.Stat[ST_ENDURANCE] - chosen.StatBase[ST_ENDURANCE];
+            int chaDif = chosen.Stat[ST_CHARISMA] - chosen.StatBase[ST_CHARISMA];
+            int intDif = chosen.Stat[ST_INTELLECT] - chosen.StatBase[ST_INTELLECT];
+            int agiDif = chosen.Stat[ST_AGILITY] - chosen.StatBase[ST_AGILITY];
+            int luckDif = chosen.Stat[ST_LUCK] - chosen.StatBase[ST_LUCK];
+            int healingRateBase = chosen.StatBase[ST_HEALING_RATE] + 7 + chosen.Stat[ST_ENDURANCE] / 2;
+            //Message("healing rate: " + chosen.StatBase[ST_HEALING_RATE] + ", 7, " + chosen.Stat[ST_ENDURANCE] / 2);
+            int healingRateDif = chosen.Stat[ST_HEALING_RATE] - healingRateBase;
+            int radiationLevel = chosen.Stat[ST_RADIATION_LEVEL];
+            int poisoningLevel = chosen.Stat[ST_POISONING_LEVEL];
+            strengthExt = "\n\u2022 Base: " + chosen.StatBase[ST_STRENGTH]
+                        + "\n\u2022 Effects: " + (strDif < 0 ? ("|" + COLOR_DEBUFF + " ") : ("|" + COLOR_BUFF + " +")) + strDif + "|" + COLOR_GREEN + " ";
+                        if (radiationLevel > 0) {
+                            int statLoss = GetStatLossForRadiationLevel(ST_STRENGTH, radiationLevel);
+                            strengthExt += "\n\t\u2022 " + (statLoss > 0 ? ("|" + COLOR_DEBUFF + " -" + statLoss):("|" + COLOR_BUFF + " " + statLoss)) + "|" + COLOR_REGULAR + "  from radiation";
+                        }
+                        if (chosen.Param[TO_BUFFOUT] > 0) {
+                            strengthExt += "\n\t\u2022 " + "|" + COLOR_BUFF + " +1" + "|" + COLOR_REGULAR + "  from Buffout";
+                        }
+                        if (chosen.Param[TO_MENTATS] > 0) {
+                            strengthExt += "\n\t\u2022 " + "|" + COLOR_DEBUFF + " -1" + "|" + COLOR_REGULAR + "  from Mentats";
+                        }
+                        if (GetClientBuffsTimeout(CLIENT_BUFFS_SALMON) > 0) {
+                            strengthExt += "\n\t\u2022 " + "|" + COLOR_BUFF + " +1" + "|" + COLOR_REGULAR + "  from Salmon";
+                        }
+            perceptionExt = "\n\u2022 Base: " + chosen.StatBase[ST_PERCEPTION]
+                            + "\n\u2022 Effects: " + (perDif < 0 ? ("|" + COLOR_DEBUFF + " ") : ("|" + COLOR_BUFF + " +")) + perDif + "|" + COLOR_GREEN + " ";
+                            if (radiationLevel > 0) {
+                                int statLoss = GetStatLossForRadiationLevel(ST_PERCEPTION, radiationLevel);
+                                perceptionExt += "\n\t\u2022 " + (statLoss > 0 ? ("|" + COLOR_DEBUFF + " -" + statLoss):("|" + COLOR_BUFF + " " + statLoss)) + "|" + COLOR_REGULAR + "  from radiation";
+                            }
+            enduranceExt = "\n\u2022 Base: " + chosen.StatBase[ST_ENDURANCE]
+                            + "\n\u2022 Effects: " + (endDif < 0 ? ("|" + COLOR_DEBUFF + " ") : ("|" + COLOR_BUFF + " +")) + endDif + "|" + COLOR_GREEN + " ";
+                            if (radiationLevel > 0) {
+                                int statLoss = GetStatLossForRadiationLevel(ST_ENDURANCE, radiationLevel);
+                                enduranceExt += "\n\t\u2022 " + (statLoss > 0 ? ("|" + COLOR_DEBUFF + " -" + statLoss):("|" + COLOR_BUFF + " " + statLoss)) + "|" + COLOR_REGULAR + "  from radiation";
+                            }
+                            if (chosen.Param[TO_BUFFOUT] > 0) {
+                                enduranceExt += "\n\t\u2022 " + "|" + COLOR_BUFF + " +1" + "|" + COLOR_REGULAR + "  from Buffout";
+                            }
+                            if (GetClientBuffsTimeout(CLIENT_BUFFS_TUNA) > 0) {
+                                enduranceExt += "\n\t\u2022 " + "|" + COLOR_BUFF + " +1" + "|" + COLOR_REGULAR + "  from Tuna";
+                            }
+            charismaExt = "\n\u2022 Base: " + chosen.StatBase[ST_CHARISMA]
+                            + "\n\u2022 Effects: " + (chaDif < 0 ? ("|" + COLOR_DEBUFF + " ") : ("|" + COLOR_BUFF + " +")) + chaDif + "|" + COLOR_GREEN + " ";
+                            if (radiationLevel > 0) {
+                                int statLoss = GetStatLossForRadiationLevel(ST_CHARISMA, radiationLevel);
+                                charismaExt += "\n\t\u2022 " + (statLoss > 0 ? ("|" + COLOR_DEBUFF + " -" + statLoss):("|" + COLOR_BUFF + " " + statLoss)) + "|" + COLOR_REGULAR + "  from radiation";
+                            }
+                            if (chosen.Param[TO_MENTATS] > 0) {
+                                charismaExt += "\n\t\u2022 " + "|" + COLOR_BUFF + " +1" + "|" + COLOR_REGULAR + "  from Mentats";
+                            }
+            intellectExt = "\n\u2022 Base: " + chosen.StatBase[ST_INTELLECT]
+                            + "\n\u2022 Effects: " + (intDif < 0 ? ("|" + COLOR_DEBUFF + " ") : ("|" + COLOR_BUFF + " +")) + intDif + "|" + COLOR_GREEN + " ";
+                            if (radiationLevel > 0) {
+                                int statLoss = GetStatLossForRadiationLevel(ST_INTELLECT, radiationLevel);
+                                intellectExt += "\n\t\u2022 " + (statLoss > 0 ? ("|" + COLOR_DEBUFF + " -" + statLoss):("|" + COLOR_BUFF + " " + statLoss)) + "|" + COLOR_REGULAR + "  from radiation";
+                            }
+                            if (chosen.Param[TO_BUFFOUT] > 0) {
+                                intellectExt += "\n\t\u2022 " + "|" + COLOR_DEBUFF + " -1" + "|" + COLOR_REGULAR + "  from Buffout";
+                            }
+                            if (chosen.Param[TO_MENTATS] > 0) {
+                                intellectExt += "\n\t\u2022 " + "|" + COLOR_BUFF + " +1" + "|" + COLOR_REGULAR + "  from Mentats";
+                            }
+            agilityExt = "\n\u2022 Base: " + chosen.StatBase[ST_AGILITY]
+                        + "\n\u2022 Effects: " + (agiDif < 0 ? ("|" + COLOR_DEBUFF + " ") : ("|" + COLOR_BUFF + " +")) + agiDif + "|" + COLOR_GREEN + " ";
+                        if (radiationLevel > 0) {
+                            int statLoss = GetStatLossForRadiationLevel(ST_AGILITY, radiationLevel);
+                            agilityExt += "\n\t\u2022 " + (statLoss > 0 ? ("|" + COLOR_DEBUFF + " -" + statLoss):("|" + COLOR_BUFF + " " + statLoss)) + "|" + COLOR_REGULAR + "  from radiation";
+                        }
+                        if (chosen.Param[TO_NUKA_COLA] > 0) {
+                            agilityExt += "\n\t\u2022 " + "|" + COLOR_BUFF + " +1" + "|" + COLOR_REGULAR + "  from Nuka Cola";
+                        }
+                        if (GetClientBuffsTimeout(CLIENT_BUFFS_CATFISH) > 0) {
+                            agilityExt += "\n\t\u2022 " + "|" + COLOR_BUFF + " +1" + "|" + COLOR_REGULAR + "  from Catfish";
+                        }
+            luckExt = "\nCurrent:"
+                    + "\n\u2022 Base: " + chosen.StatBase[ST_LUCK]
+                    + "\n\u2022 Effects: " + (luckDif < 0 ? ("|" + COLOR_DEBUFF + " ") : ("|" + COLOR_BUFF + " +")) + luckDif + "|" + COLOR_GREEN + " ";
+
+            healingRateExt = "\n\u2022 Base: " + healingRateBase
+                            + "\n\u2022 Effects: " + (healingRateDif < 0 ? ("|" + COLOR_DEBUFF + " ") : ("|" + COLOR_BUFF + " +")) + healingRateDif + "|" + COLOR_GREEN + " ";
+                            if (radiationLevel > 0) {
+                                int statLoss = GetStatLossForRadiationLevel(RADIATION_HR_INDEX, radiationLevel);
+                                healingRateExt += "\n\t\u2022 " + (statLoss > 0 ? ("|" + COLOR_DEBUFF + " -" + statLoss):("|" + COLOR_BUFF + " " + statLoss)) + "|" + COLOR_REGULAR + "  from radiation";
+                            }
+                            healingRateExt += "\n\n";
+
+            radiatedExt = "\n\t\u2022 Stage: |" + GetRadiationLevelColor(radiationLevel) + " " + GetRadiationStage(radiationLevel) + "|" + COLOR_REGULAR + " "
+                            + "\n\t\u2022 Level: |" + GetRadiationLevelColor(radiationLevel) + " " + radiationLevel + " Rem." + "|" + COLOR_REGULAR + " "
+                            + "\n\t\u2022 Effects: |" + COLOR_REGULAR + " " + (GetRadiationStage(radiationLevel) > 0 ? GetMsgStr(TEXTMSG_GAME, 12799 + GetRadiationStage(radiationLevel)) : "None.") + "|" + COLOR_REGULAR + " \n\n";
+
+            poisonedExt = "\n\t\u2022 Poisoning level: |" + PercentColor(poisoningLevel) + " " + poisoningLevel + "|" + COLOR_REGULAR + " "
+                            + "\n\t\u2022 Effects: |" + COLOR_REGULAR + " " + (poisoningLevel > 0 ? GetMsgStr(TEXTMSG_GAME, STR_POISON_PROCESS) : "None.") + "|" + COLOR_REGULAR + " \n\n";
+
+            if (valid(bodyArmor)) {
+                if (chosen.Param[ST_CURRENT_ARMOR_PERK] > 0) {
+                    switch(chosen.Param[ST_CURRENT_ARMOR_PERK]) {
+                        case ARMOR_PERK_POWERED:
+                        case ARMOR_PERK_ADVANCED_I:
+                        case ARMOR_PERK_ADVANCED_II:
+                        case ARMOR_PERK_METAL:
+                        case ARMOR_PERK_TESLA:
+                            agilityExt += "\n\t\u2022 " + "|" + COLOR_DEBUFF + " -3" + "|" + COLOR_REGULAR + "  from Heavy Armor";
+                            break;
+                        case ARMOR_PERK_LEATHER_JACKET:
+                        case ARMOR_PERK_LEATHER_ARMOR:
+                        case ARMOR_PERK_THERMAL_LEATHER:
+                            agilityExt += "\n\t\u2022 " + "|" + COLOR_DEBUFF + " -1" + "|" + COLOR_REGULAR + "  from Medium Armor";
+                            break;
+                        case ARMOR_PERK_COMBAT:
+                            agilityExt += "\n\t\u2022 " + "|" + COLOR_BUFF + " +1" + "|" + COLOR_REGULAR + "  from Light Armor";
+                            break;
+                        case ARMOR_PERK_CAMOUFLAGE_HP:
+                        default:
+                            break;
+                    }
+                }
+            }
+            strengthExt += "\n\n";
+            perceptionExt += "\n\n";
+            enduranceExt += "\n\n";
+            charismaExt += "\n\n";
+            intellectExt += "\n\n";
+            agilityExt += "\n\n";
+            luckExt += "\n\n";
+
+            //Message("Character IS valid when init tooltip.");
+        } else {
+            //Message("Character NOT valid when init tooltip.");
+        }
         //   special stats
         tooltipsKey.insertLast(ST_STRENGTH);
         tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(ST_STRENGTH)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(ST_STRENGTH))
                                  + pipText + jjJournal
                                  + "\n\n\"There is a small mining town to north in the mountains, Broken Hills. I saw a huge super-mutant drinking at the local tap house who wanted to arm wrestle every newcomer, I bet he could lift a whole caravan cart with his right arm.\""
-                                 + jjText);
+                                 + jjText + pipStatus + strengthExt);
         tooltipsValueExt.insertLast(pipReference
                                  + "\n\u2022 Initial Hit Points: (55 + 2*ST + EN)"
                                  + "\n\u2022 Melee Damage: (ST - 5) with a minimum of 1."
@@ -90,7 +357,7 @@ class CTooltips {
         tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(ST_PERCEPTION)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(ST_PERCEPTION))
                                  + pipText + jjJournal
                                  + "\n\n\"Just when I ran out of smokes, I found a tobacco plantation along the shore to the west. It even had a working press machine! So much about me being 'Jinxed' he-he, oh no.... a pack of floaters are swarming to the north, gotta leave quick, damn, where do these creatures even come from?\""
-                                 + jjText);
+                                 + jjText + pipStatus + perceptionExt);
         tooltipsValueExt.insertLast(pipReference
                                  + "\n\u2022 Sight range: Base(20) + 3*PE + Sharpshooter(6) + Binoculars(6)"
                                  + "\n\u2022 Ranged chance to hit bonus: 2*PE, (if weapon perk LongRange 4*PE, if Scope 5*PE)"
@@ -99,7 +366,7 @@ class CTooltips {
         tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(ST_ENDURANCE)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(ST_ENDURANCE))
                                  + pipText + jjJournal
                                  + "\n\n\"Today I saw a skin-n-bones human like creature being eaten by dogs until another one scared the dogs off with a shotgun. After a short time he woke up and walked away like nothing happened. The radiation must have increased the natural regeneration of these creatures to a level where they simply cannot die. Some of them were even glowing! It was to the north-east at the huge metropolitan ruins, better avoid for now.\""
-                                 + jjText);
+                                 + jjText + pipStatus + enduranceExt);
         tooltipsValueExt.insertLast(pipReference
                                  + "\n\u2022 Hit Points: (Initial: 55 + 2*ST + EN) + (Per level: (30 + EN)/8)"
                                  + "\n\u2022 Stonewall KD/KO resist: (clamp(ST, 1, CH+4) + clamp(EN, 1, CH+6) )*3 + 15*stonewallRank vs 1d100"
@@ -109,7 +376,7 @@ class CTooltips {
         tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(ST_CHARISMA)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(ST_CHARISMA))
                                  + pipText + jjJournal
                                  + "\n\n\"A group of travelers were gossiping about a special lady in New Reno today. It seems that she is able to turn even the most unfriendly punks to do her bidding. I was wondering if it was her Magnetic Personality or something else, after all New Reno is also famous of addictive substances like Jet.\""
-                                 + jjText);
+                                 + jjText + pipStatus + charismaExt);
         tooltipsValueExt.insertLast(pipReference
                                  + "\n\u2022 Stonewall: ST clamped with CH+4, EN clamped with CH+6 (ex: 9 ST with 1 CH means 5 ST in calculations)"
                                  + "\n\u2022 Confident Shooter (old More Ranged Damage) Perk damage bonus (per bullet):"
@@ -124,7 +391,7 @@ class CTooltips {
         tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(ST_INTELLECT)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(ST_INTELLECT))
                                  + pipText + jjJournal
                                  + "\n\n\"There is a very old and knowledgeable woman in the Hub working in a bookshop at the market square between the caravan offices. She had some good advice on technical books, but they were out of the 3rd volume of Big Books of Science. If I were to return there I sure will check that bookstore out again.\""
-                                 + jjText);
+                                 + jjText + pipStatus + intellectExt);
         tooltipsValueExt.insertLast(pipReference
                                  + "\n\u2022 Effectiveness of combat skills: (in combat calculations)"
                                  + "\n\t\u2022 4% skill penalty for every point below 5 IN"
@@ -145,7 +412,7 @@ class CTooltips {
         tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(ST_AGILITY)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(ST_AGILITY))
                                  + pipText + jjJournal
                                  + "\n\n\"I saw some children yesterday playing around gecko traps in Klamath, far to the north-west, without triggering any them. Must be good to be young and agile.\""
-                                 + jjText);
+                                 + jjText + pipStatus + agilityExt);
         tooltipsValueExt.insertLast(pipReference
                                  + "\n\u2022 Armor Class: +3*AG (double with Livewire perk)"
                                  + "\n\u2022 Action Points factor changed: (5 + 2*AG) -> (5 + (13+AG)/4)"
@@ -159,7 +426,7 @@ class CTooltips {
         tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(ST_LUCK)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(ST_LUCK))
                                  + pipText + jjJournal
                                  + "\n\n\"Finally I found some kind of abandoned theme-park with a working Nuka-Cola machine to the north-east but I didn't have any full water bags left to feed the machine. I shall not forget to pick some mutated fruits for the flavor before I return with fresh water.\""
-                                 + jjText);
+                                 + jjText + pipStatus + luckExt);
         tooltipsValueExt.insertLast(pipReference
                                  + "\n\u2022 Critical Chance on all attacks: 1*LK as crit. chance"
                                  + "\n\u2022 Reduce chance to be critically hit: LK/2 as crit. chance reduce"
@@ -432,40 +699,51 @@ class CTooltips {
         tooltipsKey.insertLast(SK_GAMBLING);
         tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(SK_GAMBLING)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(SK_GAMBLING))
                                  + pipText);
-        tooltipsValueExt.insertLast(pipReference
-                                 + notes
-                                 + "\n\u2022 Passive non-combat skill, can be leveled by related activity up to a maximum of 200."
-                                 + "\n\u2022 Raise this skill by:"
-                                 + "\n\t\u2022 TODO: Various Gambling activities."
-                                 + modifies
-                                 + "\n\u2022 Gambling outcomes.");
+        tooltipsValueExt.insertLast(pipReference + notes
+                                    + "\n\u2022 Passive non-combat skill, can be leveled by related activity up to a maximum of 200."
+                                    + "\n\u2022 Raise this skill by:"
+                                    + "\n\t\u2022 TODO: Various Gambling activities."
+                                    + modifies
+                                    + "\n\u2022 Gambling outcomes.");
 
         tooltipsKey.insertLast(SK_OUTDOORSMAN);
         tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(SK_OUTDOORSMAN)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(SK_OUTDOORSMAN))
-                                 + pipText);
-        tooltipsValueExt.insertLast(pipReference
-                                 + notes
-                                 + "\n\u2022 Passive non-combat skill, can be leveled by related activity up to a maximum of 200."
-                                 + "\n\u2022 Raise this skill by:"
-                                 + "\n\t\u2022 Traveling on world map."
-                                 + "\n\t\u2022 Crafting traveling gear (spears, leather armor and such)."
-                                 + "\n\t\u2022 Spearfishing, cooking."
-                                 + "\n\t\t\u2022 NOTE: Craft XP is based on components used in the craft."
-                                 + modifies
-                                 + "\n\u2022 Chance to be able to evade encounters while traveling."
-                                 + "\n\u2022 Spearfishing, cooking and such.");
+                                    + pipText);
+        tooltipsValueExt.insertLast(pipReference + notes
+                                    + "\n\u2022 Passive non-combat skill, can be leveled by related activity up to a maximum of 200."
+                                    + "\n\u2022 Raise this skill by:"
+                                    + "\n\t\u2022 Traveling on world map."
+                                    + "\n\t\u2022 Crafting traveling gear (spears, leather armor and such)."
+                                    + "\n\t\u2022 Spearfishing, cooking."
+                                    + "\n\t\t\u2022 NOTE: Craft XP is based on components used in the craft."
+                                    + modifies
+                                    + "\n\u2022 Chance to be able to evade encounters while traveling."
+                                    + "\n\u2022 Spearfishing, cooking and such.");
         //  Hit Points and Damaged parts
         tooltipsKey.insertLast(ST_MAX_LIFE);
         tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(ST_MAX_LIFE)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(ST_MAX_LIFE)) + pipText);
         tooltipsValueExt.insertLast(pipReference + noData);
 
         tooltipsKey.insertLast(DAMAGE_POISONED);
-        tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(DAMAGE_POISONED)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(DAMAGE_POISONED)) + pipText);
-        tooltipsValueExt.insertLast(pipReference + noData);
+        tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(DAMAGE_POISONED)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(DAMAGE_POISONED)) + pipText
+                                 + pipStatus + poisonedExt);
+        tooltipsValueExt.insertLast(pipReference + notes
+                                    + "\n\u2022 Poison damage every 8-9 seconds, decreasing poisoning level by 2% every tick."
+                                    + "\n\u2022 Poison damage per tick is: (poisoning level / 3) + 1");
 
         tooltipsKey.insertLast(DAMAGE_RADIATED);
-        tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(DAMAGE_RADIATED)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(DAMAGE_RADIATED)) + pipText);
-        tooltipsValueExt.insertLast(pipReference + noData);
+        tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(DAMAGE_RADIATED)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(DAMAGE_RADIATED)) + pipText
+                                    + pipStatus + radiatedExt);
+        tooltipsValueExt.insertLast(pipReference + notes
+                                    + "\n\u2022 The human body can withstand roughly 1800 Roentgen equivalent man (Rem) radiation units."
+                                    + "\n\u2022 Radiation effects occur at different stages:"
+                                    + "\n\t\u2022 Stage 1 at   100 Rem: -1 ST, -1 AG and -3 HR."
+                                    + "\n\t\u2022 Stage 2 at  200 Rem: -2 ST, -1 PE, -1 CH, -1 IN, -2 AG and -5 HR."
+                                    + "\n\t\u2022 Stage 3 at  400 Rem: -3 ST, -2 PE, -1 EN, -3 CH, -2 IN, -3 AG and -7 HR."
+                                    + "\n\t\u2022 Stage 4 at  600 Rem: -5 ST, -3 PE, -3 EN, -4 CH, -4 IN, -5 AG and -10 HR."
+                                    + "\n\t\u2022 Stage 5 at 1200 Rem: -7 ST, -5 PE, -5 EN, -7 CH, -4 IN, -7 AG and -15 HR."
+                                    + "\n\t\u2022 Stage 6 at 1800 Rem: Death."
+                                    + "");
 
         tooltipsKey.insertLast(DAMAGE_EYE);
         tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(DAMAGE_EYE)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(DAMAGE_EYE)) + pipText);
@@ -514,7 +792,7 @@ class CTooltips {
 
         tooltipsKey.insertLast(ST_NORMAL_RESIST);
         tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(ST_NORMAL_RESIST)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(ST_NORMAL_RESIST)) + pipText);
-        tooltipsValueExt.insertLast(pipReference + noData);
+        tooltipsValueExt.insertLast(pipReference + resistExt);
 
         tooltipsKey.insertLast(ST_POISON_RESISTANCE);
         tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(ST_POISON_RESISTANCE)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(ST_POISON_RESISTANCE)) + pipText);
@@ -529,7 +807,7 @@ class CTooltips {
         tooltipsValueExt.insertLast(pipReference + noData);
 
         tooltipsKey.insertLast(ST_HEALING_RATE);
-        tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(ST_HEALING_RATE)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(ST_HEALING_RATE)) + pipText);
+        tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(ST_HEALING_RATE)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(ST_HEALING_RATE)) + pipText + pipStatus + healingRateExt);
         tooltipsValueExt.insertLast(pipReference
                                      + notes
                                      + "\n\u2022 Base Healing Rate frequency: 60 sec"
@@ -537,7 +815,6 @@ class CTooltips {
                                      + "\n\u2022 Healing Rate min is 3% of max hp per tick."
                                      + "\n\u2022 Healing Rate caps at 10% of max hp per tick."
                                      + "\n\u2022 You will get '+[HealAmount]' text over head and the message 'Regeneration' when this happens.");
-
 
         tooltipsKey.insertLast(ST_CRITICAL_CHANCE);
         tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(ST_CRITICAL_CHANCE)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(ST_CRITICAL_CHANCE)) + pipText);
@@ -1314,6 +1591,35 @@ class CTooltips {
     }
 };
 
+//  Exported - client_interface
+void RefreshTooltips(bool forced) {
+    //  forced refresh, in case of special ext change to reflect that on tooltips
+    if (forced) {
+        InitCharacterTooltip();
+        LogToolTips("Tooltips refresh FORCED!");
+        return;
+    }
+    //  this ensures that tooltips are refreshed after character is loaded fully after it was unloaded or not initialized yet on client side
+    CritterCl@ chosen = GetChosen();
+    if (!valid(chosen)) {
+        chosenIsInvalid = false;
+    } else if (!chosenIsInvalid) {
+        chosenIsInvalid = true;
+        InitCharacterTooltip();
+        LogToolTips("Tooltips refreshed!");
+    }
+}
+
+//  Exported - client_interface
+#define TOOLTIPS_REFRESH_DELAY      (1000)
+void RefreshTooltipsDelayed(uint delayInMs) {
+    if (tooltipRefreshDelay < GetTick()) {
+        tooltipRefreshDelay = GetTick() + delayInMs;
+        LogToolTips("Tooltips refresh DELAYED!");
+        RefreshTooltips(true);
+    }
+}
+
 //  Exported - client_main
 void InitCharacterTooltip() {
     tooltipKeyValue = CTooltips();
@@ -1369,12 +1675,20 @@ void UpdateCharacterTooltip(int tooltipId, int posX, int posY) {
 //  Exported - client_interface
 void UpdateInventoryTooltip(ItemCl& item, int left, int right, int top, int bottom, bool preferLeft) {
     if (!valid(inventoryTooltip)) {
+        lastInventoryItemId = 0;
         return;
     }
     if (!valid(item)) {
+        lastInventoryItemId = 0;
         inventoryTooltip.enabled = false;
         return;
     }
+    if (item.Id == lastInventoryItemId) {
+        return;
+    } else {
+        lastInventoryItemId = item.Id;
+    }
+
 
     inventoryTooltip = CGuiTooltip();
 
@@ -1394,8 +1708,16 @@ void UpdateInventoryTooltip(ItemCl& item, int left, int right, int top, int bott
     inventoryTooltip.interfaceTextbox = CInterfaceTextbox(10, 10, 300, 800);
     inventoryTooltip.interfaceTextbox.Init();
     inventoryTooltip.interfaceTextbox.textColor = COLOR_RGB(0, 0xD8, 0);
+
+    inventoryTooltip.interfaceTextboxComparison = CInterfaceTextbox(10, 10, 100, 200);
+    inventoryTooltip.interfaceTextboxComparison.Init();
+    inventoryTooltip.interfaceTextboxComparison.textColor = COLOR_RGB(0, 0xD8, 0);
+
+    //Message("UpdateInventoryTooltip() :: " + (GetTick() / 1000) + "." + (GetTick() % 1000));
     SetInventoryDetailText(item);
     inventoryTooltip.interfaceWindow.childControls.insertLast(inventoryTooltip.interfaceTextbox);
+    inventoryTooltip.interfaceWindow.childControls.insertLast(inventoryTooltip.interfaceTextboxComparison);
+
     inventoryTooltip.interfaceWindow.FitScreen(left, right, top, bottom, preferLeft);
     inventoryTooltip.enabled = true;
     //__HideCursor = true;
@@ -1425,6 +1747,7 @@ void SetInventoryDetailText(ItemCl& item) {
         }
 	}
 
+	string textComparison = "";
     string text = "" + itemQualityPrefix;
     if (valid(item)) {
         text += GetMsgStr(TEXTMSG_ITEM, STR_ITEM_INFO(item)) + "\n\n";
@@ -1500,6 +1823,32 @@ void SetInventoryDetailText(ItemCl& item) {
         } else if (item.GetType() == ITEM_TYPE_ARMOR) {
             string radResistStr = "";
             string perkStr = "";
+            ItemCl@ equippedArmor;
+            int armorNormalDTDiff = item.Proto.Armor_DTNormal, armorNormalDRDiff = item.Proto.Armor_DRNormal;
+            int armorLaserDTDiff = item.Proto.Armor_DTLaser, armorLaserDRDiff = item.Proto.Armor_DRLaser;
+            int armorFireDTDiff = item.Proto.Armor_DTFire, armorFireDRDiff = item.Proto.Armor_DRFire;
+            int armorPlasmaDTDiff = item.Proto.Armor_DTPlasma, armorPlasmaDRDiff = item.Proto.Armor_DRPlasma;
+            int armorElectrDTDiff = item.Proto.Armor_DTElectr, armorElectrDRDiff = item.Proto.Armor_DRElectr;
+            int armorExplodeDTDiff = item.Proto.Armor_DTExplode, armorExplodeDRDiff = item.Proto.Armor_DRExplode;
+            if (item.Proto.Slot == SLOT_ARMOR) {
+                @equippedArmor = chosen.GetItem(0, SLOT_ARMOR);
+            } else if (item.Proto.Slot == SLOT_HEAD) {
+                @equippedArmor = chosen.GetItem(0, SLOT_HEAD);
+            }
+            if (valid(equippedArmor)) {
+                armorNormalDTDiff  -= equippedArmor.Proto.Armor_DTNormal;
+                armorNormalDRDiff  -= equippedArmor.Proto.Armor_DRNormal;
+                armorLaserDTDiff   -= equippedArmor.Proto.Armor_DTLaser;
+                armorLaserDRDiff   -= equippedArmor.Proto.Armor_DRLaser;
+                armorFireDTDiff    -= equippedArmor.Proto.Armor_DTFire;
+                armorFireDRDiff    -= equippedArmor.Proto.Armor_DRFire;
+                armorPlasmaDTDiff  -= equippedArmor.Proto.Armor_DTPlasma;
+                armorPlasmaDRDiff  -= equippedArmor.Proto.Armor_DRPlasma;
+                armorElectrDTDiff  -= equippedArmor.Proto.Armor_DTElectr;
+                armorElectrDRDiff  -= equippedArmor.Proto.Armor_DRElectr;
+                armorExplodeDTDiff -= equippedArmor.Proto.Armor_DTExplode;
+                armorExplodeDRDiff -= equippedArmor.Proto.Armor_DRExplode;
+            }
             if (item.Proto.Armor_Perk != 0) {
                 if (item.Proto.Slot == SLOT_ARMOR) {
                     switch (item.Proto.Armor_Perk) {
@@ -1527,6 +1876,7 @@ void SetInventoryDetailText(ItemCl& item) {
                     }
                 }
             }
+
             text += "\nArmor Class: " + item.Proto.Armor_AC;
             text += "\nDamage resistances: (DT/DR)";
             if (item.GetProtoId() == PID_FRONT_PLATED_METAL_ARMOR || item.GetProtoId() == PID_FRONT_PLATED_METAL_HELMET) {
@@ -1541,12 +1891,47 @@ void SetInventoryDetailText(ItemCl& item) {
                 text += "\n\tCrit power mod: " + (item.Proto.Armor_CMCritPower - 10);
                 text += "\nBack:";
             }
-            text += "\n\tNormal: \u00A0\u00A0\u00A0" + item.Proto.Armor_DTNormal + "/" + item.Proto.Armor_DRNormal;
+
+            int w = 0, h = 0, l = 0;
+            GetTextInfo(text, 300, 800, FONT_TYPE_DEFAULT, FONT_FLAG_BORDERED, w, h, l);
+            inventoryTooltip.interfaceTextboxComparison.SetPosY(h + 10);
+            string widthText;
+            text += widthText = "\n\tNormal: \u00A0\u00A0\u00A0" + item.Proto.Armor_DTNormal + "/" + item.Proto.Armor_DRNormal;
+            GetTextInfo(widthText, 300, 800, FONT_TYPE_DEFAULT, FONT_FLAG_BORDERED, w, h, l);
+            inventoryTooltip.interfaceTextboxComparison.SetPosX(w);
+
+            if (valid(equippedArmor) && item.Id != equippedArmor.Id) {
+                textComparison += "    \t" + (armorNormalDTDiff < 0 ? ("|" + COLOR_DORANGE + " ") : ("|" + COLOR_GOLDEN_YELLOW + " +")) + armorNormalDTDiff
+                     + "|" + COLOR_DGREEN + " /" + (armorNormalDRDiff < 0 ? "|" + COLOR_DORANGE + " " : "|" + COLOR_GOLDEN_YELLOW + " +") + armorNormalDRDiff + "|" + COLOR_GREEN + " \n";
+            }
             text += "\n\tLaser:     \u00A0" + item.Proto.Armor_DTLaser + "/" + item.Proto.Armor_DRLaser;
+            if (valid(equippedArmor) && item.Id != equippedArmor.Id) {
+                textComparison += "    \t" + (armorLaserDTDiff < 0 ? ("|" + COLOR_DORANGE + " ") : ("|" + COLOR_GOLDEN_YELLOW + " +")) + armorLaserDTDiff
+                     + "|" + COLOR_DGREEN + " /" + (armorLaserDRDiff < 0 ? "|" + COLOR_DORANGE + " " : "|" + COLOR_GOLDEN_YELLOW + " +") + armorLaserDRDiff + "|" + COLOR_GREEN + " \n";
+            }
             text += "\n\tFire:         " + item.Proto.Armor_DTFire + "/" + item.Proto.Armor_DRFire;
+            if (valid(equippedArmor) && item.Id != equippedArmor.Id) {
+                textComparison += "    \t" + (armorFireDTDiff < 0 ? ("|" + COLOR_DORANGE + " ") : ("|" + COLOR_GOLDEN_YELLOW + " +")) + armorFireDTDiff
+                     + "|" + COLOR_DGREEN + " /" + (armorFireDRDiff < 0 ? "|" + COLOR_DORANGE + " " : "|" + COLOR_GOLDEN_YELLOW + " +") + armorFireDRDiff + "|" + COLOR_GREEN + " \n";
+            }
             text += "\n\tPlasma:  \u00A0\u00A0" + item.Proto.Armor_DTPlasma + "/" + item.Proto.Armor_DRPlasma;
+            if (valid(equippedArmor) && item.Id != equippedArmor.Id) {
+                textComparison += "    \t" + (armorPlasmaDTDiff < 0 ? ("|" + COLOR_DORANGE + " ") : ("|" + COLOR_GOLDEN_YELLOW + " +")) + armorPlasmaDTDiff
+                     + "|" + COLOR_DGREEN + " /" + (armorPlasmaDRDiff < 0 ? "|" + COLOR_DORANGE + " " : "|" + COLOR_GOLDEN_YELLOW + " +") + armorPlasmaDRDiff + "|" + COLOR_GREEN + " \n";
+            }
             text += "\n\tElectric:  \u00A0" + item.Proto.Armor_DTElectr + "/" + item.Proto.Armor_DRElectr;
+            if (valid(equippedArmor) && item.Id != equippedArmor.Id) {
+                textComparison += "    \t" + (armorElectrDTDiff < 0 ? ("|" + COLOR_DORANGE + " ") : ("|" + COLOR_GOLDEN_YELLOW + " +")) + armorElectrDTDiff
+                     + "|" + COLOR_DGREEN + " /" + (armorElectrDRDiff < 0 ? "|" + COLOR_DORANGE + " " : "|" + COLOR_GOLDEN_YELLOW + " +") + armorElectrDRDiff + "|" + COLOR_GREEN + " \n";
+            }
             text += "\n\tExplode:  \u00A0" + item.Proto.Armor_DTExplode + "/" + item.Proto.Armor_DRExplode;
+            if (valid(equippedArmor) && item.Id != equippedArmor.Id) {
+                textComparison += "    \t" + (armorExplodeDTDiff < 0 ? ("|" + COLOR_DORANGE + " ") : ("|" + COLOR_GOLDEN_YELLOW + " +")) + armorExplodeDTDiff
+                     + "|" + COLOR_DGREEN + " /" + (armorExplodeDRDiff < 0 ? "|" + COLOR_DORANGE + " " : "|" + COLOR_GOLDEN_YELLOW + " +") + armorExplodeDRDiff + "|" + COLOR_GREEN + " \n";
+            }
+
+            inventoryTooltip.interfaceTextboxComparison.setText(textComparison);
+
             if (radResistStr.length() > 0) {
                 text += "\n\tRadiation Resist: " + radResistStr;
             }
@@ -1584,9 +1969,280 @@ void SetInventoryDetailText(ItemCl& item) {
             if (item.Proto.Misc_ChargeMax > 0) {
                 text += "\nCharges: "+item.Charge+"/"+item.Proto.Misc_ChargeMax;
             }
-        } else if(item.GetType() == ITEM_TYPE_KEY) {
+        } else if (item.GetType() == ITEM_TYPE_KEY) {
             // Key id
             text += "\n" + ReplaceText(GetMsgStr(TEXTMSG_GAME, STR_INV_KEY_NUMBER), "KEY_ID", item.LockerId);
+        } else if (item.GetType() == ITEM_TYPE_DRUG) {
+            text += "\nEffects:";
+            switch (item.GetProtoId()) {
+                //  combat drugs
+                case PID_PSYCHO:
+                    text += "\n\t\u2022 First phase:";
+                    text += "\n\t\t\u2022 Reduced damage by 50%.";
+                    text += "\n\t\t\u2022 Rage limits vision of friend/hostile status.";
+                    if (chosen.Trait[TRAIT_CHEM_RELIANT] > 0) {
+                        text += "\n\t\t\u2022 Duration: 20 sec (Chem Reliant)";
+                    } else {
+                        text += "\n\t\t\u2022 Duration: 30 sec";
+                    }
+                    text += "\n\t\u2022 Second phase:";
+                    text += "\n\t\t\u2022 Damage reduced from first phase applied over time as hemorrhage.";
+                    if (chosen.Trait[TRAIT_CHEM_RELIANT] > 0) {
+                        text += "\n\t\t\u2022 Duration: 40 sec (Chem Reliant)";
+                    } else {
+                        text += "\n\t\t\u2022 Duration: 1.5 min";
+                    }
+                    break;
+                case PID_JET:
+                    text += "\n\t\u2022 Action Points: +2";
+                    text += "\n\t\u2022 Strength: -2";
+                    text += "\n\t\u2022 Intellect: -1";
+                    text += "\n\t\u2022 Normal DR: -15%";
+                    if (chosen.Trait[TRAIT_FAST_METABOLISM] > 0) {
+                        text += "\n\t\u2022 Duration: 30 min (Fast Metabolism)";
+                    } else {
+                        text += "\n\t\u2022 Duration: 60 min";
+                    }
+                    break;
+                //  usual buffs
+                case PID_BUFFOUT:
+                    text += "\n\t\u2022 Strength: +1";
+                    text += "\n\t\u2022 Endurance: +1";
+                    text += "\n\t\u2022 Intellect: -1";
+                    if (chosen.Trait[TRAIT_FAST_METABOLISM] > 0) {
+                        text += "\n\t\u2022 Duration: 30 min (Fast Metabolism)";
+                    } else {
+                        text += "\n\t\u2022 Duration: 60 min";
+                    }
+                    break;
+                case PID_MENTATS:
+                    text += "\n\t\u2022 Intellect: +1";
+                    text += "\n\t\u2022 Charisma: +1";
+                    text += "\n\t\u2022 Strength: -1";
+                    if (chosen.Trait[TRAIT_FAST_METABOLISM] > 0) {
+                        text += "\n\t\u2022 Duration: 30 min";
+                    } else {
+                        text += "\n\t\u2022 Duration: 60 min";
+                    }
+                    break;
+                case PID_RAD_X:
+                    text += "\n\t\u2022 Radiation resistance: +25";
+                    if (chosen.Trait[TRAIT_FAST_METABOLISM] > 0) {
+                        text += "\n\t\u2022 Duration: 30 min (Fast Metabolism)";
+                    } else {
+                        text += "\n\t\u2022 Duration: 60 min";
+                    }
+                    break;
+                //  alcohol and cigarettes
+                case PID_BEER:
+                    text += "\n\t\u2022 Normal DR: +4%";
+                    text += "\n\t\u2022 Strength: +1";
+                    text += "\n\t\u2022 Perception: -1";
+                    text += "\n\t\u2022 Range penalty: -50 combat skill";
+                    if (chosen.Trait[TRAIT_FAST_METABOLISM] > 0) {
+                        text += "\n\t\u2022 Duration: 30 min (Fast Metabolism)";
+                    } else {
+                        text += "\n\t\u2022 Duration: 60 min";
+                    }
+                    break;
+                case PID_BOOZE:
+                    text += "\n\t\u2022 Normal DR: +3%";
+                    text += "\n\t\u2022 Charisma: +1";
+                    text += "\n\t\u2022 Perception: -1";
+                    text += "\n\t\u2022 Range penalty: -50 combat skill";
+                    if (chosen.Trait[TRAIT_FAST_METABOLISM] > 0) {
+                        text += "\n\t\u2022 Duration: 30 min (Fast Metabolism)";
+                    } else {
+                        text += "\n\t\u2022 Duration: 60 min";
+                    }
+                    break;
+                case PID_GAMMA_GULP_BEER:
+                    text += "\n\t\u2022 Normal DR: +3%";
+                    text += "\n\t\u2022 Radiation Resist.: +10";
+                    text += "\n\t\u2022 Perception: -1";
+                    text += "\n\t\u2022 Radiation level: +10 Rem";
+                    text += "\n\t\u2022 Range penalty: -50 combat skill";
+                    if (chosen.Trait[TRAIT_FAST_METABOLISM] > 0) {
+                        text += "\n\t\u2022 Duration: 30 min (Fast Metabolism)";
+                    } else {
+                        text += "\n\t\u2022 Duration: 60 min";
+                    }
+                    break;
+                case PID_ROENTGEN_RUM:
+                    text += "\n\t\u2022 Normal DT: +3";
+                    text += "\n\t\u2022 Perception: -1";
+                    text += "\n\t\u2022 Radiation level: +10 Rem";
+                    text += "\n\t\u2022 Range penalty: -50 combat skill";
+                    if (chosen.Trait[TRAIT_FAST_METABOLISM] > 0) {
+                        text += "\n\t\u2022 Duration: 30 min (Fast Metabolism)";
+                    } else {
+                        text += "\n\t\u2022 Duration: 60 min";
+                    }
+                    break;
+                case PID_ROT_GUT:
+                    text += "\n\t\u2022 Normal DR: +3%";
+                    text += "\n\t\u2022 Perception: -1";
+                    text += "\n\t\u2022 Fire DR: -10";
+                    text += "\n\t\u2022 Laser DR: +5";
+                    text += "\n\t\u2022 Range penalty: -50 combat skill";
+                    if (chosen.Trait[TRAIT_FAST_METABOLISM] > 0) {
+                        text += "\n\t\u2022 Duration: 30 min (Fast Metabolism)";
+                    } else {
+                        text += "\n\t\u2022 Duration: 60 min";
+                    }
+                    break;
+                case PID_CIGARETTES:
+                    text += "\n\t\u2022 Perception: +1";
+                    if (chosen.Trait[TRAIT_FAST_METABOLISM] > 0) {
+                        text += "\n\t\u2022 Duration: 30 min (Fast Metabolism)";
+                    } else {
+                        text += "\n\t\u2022 Duration: 60 min";
+                    }
+                    break;
+                //  radiation, poison healing and drug effect remove
+                case PID_RADAWAY:
+                    text += "\n\t\u2022 Radiation level: -25";
+                    text += "\n\t\u2022 Radiation level: -50 after 2 min.";
+                    text += "\n\t\u2022 Radiation level: -75 after 4 min.";
+                    break;
+                case PID_WATERBAG:
+                case PID_BOTTLE_FULL:
+                    text += "\n\t\u2022 Initial and over time:";
+                    text += "\n\t\t\u2022 Chance to reduce radiation by small amount.";
+                    text += "\n\t\t\u2022 Small chance to increase radiation instead.";
+                    break;
+                case PID_ANTIDOTE:
+                    text += "\n\t\u2022 Poisoning level: -25";
+                    text += "\n\t\u2022 Poisoning level: -25 after 10 seconds.";
+                    text += "\n\t\u2022 Poisoning level: -25 after 20 seconds.";
+                    break;
+                case PID_JET_ANTIDOTE:
+                    text += "\n\t\u2022 Cures of all drug effect";
+                    text += "\n\t\u2022 Neutralizes ongoing mutation effects.";
+                    break;
+                //  healing
+                case PID_HYPO:
+                    if (chosen.Trait[TRAIT_CHEM_RELIANT] > 0) {
+                        text += "\n\t\u2022 Initial heal: 75-112 HP";
+                        text += "\n\t\u2022 Heal over time:";
+                        text += "\n\t\t\u2022 37-56 HP after 2 sec";
+                        text += "\n\t\t\u2022 37-56 HP after 6 sec";
+                        text += "\n\t\u2022 (Chem Reliant values shown)";
+                        text += "\n\t\u2022 Does not stack, overwrites old effect.";
+                    } else {
+                        text += "\n\t\u2022 Heal: 100-150 HP";
+                    }
+                    break;
+                case PID_SUPER_STIMPAK:
+                    if (chosen.Trait[TRAIT_CHEM_RELIANT] > 0) {
+                        text += "\n\t\u2022 Initial heal: 60 HP";
+                        text += "\n\t\u2022 Heal over time:";
+                        text += "\n\t\t\u2022 30 HP after 2 sec";
+                        text += "\n\t\t\u2022 30 HP after 6 sec";
+                        text += "\n\t\u2022 (Chem Reliant values shown)";
+                        text += "\n\t\u2022 Does not stack, overwrites old effect.";
+                    } else {
+                        text += "\n\t\u2022 Heal: 80 HP";
+                    }
+                    break;
+                case PID_STIMPAK:
+                    if (chosen.Trait[TRAIT_CHEM_RELIANT] > 0) {
+                        text += "\n\t\u2022 Initial heal: 9-18 HP";
+                        text += "\n\t\u2022 Heal over time:";
+                        text += "\n\t\t\u2022 16-31 HP after 3 sec";
+                        text += "\n\t\t\u2022 12-18 HP after 6 sec";
+                        text += "\n\t\t\u2022  8-18 HP after 9 sec";
+                        text += "\n\t\t\u2022  8-12 HP after 12 sec";
+                        text += "\n\t\u2022 (Chem Reliant values shown)";
+                    } else {
+                        text += "\n\t\u2022 Initial heal: 13-25 HP";
+                        text += "\n\t\u2022 Heal over time:";
+                        text += "\n\t\t\u2022 13-25 HP after 3 sec";
+                        text += "\n\t\t\u2022 10-15 HP after 6 sec";
+                        text += "\n\t\t\u2022  7-15 HP after 9 sec";
+                        text += "\n\t\t\u2022  7-10 HP after 12 sec";
+                    }
+                    text += "\n\t\u2022 Does not stack, overwrites old effect.";
+                    break;
+                case PID_HEALING_POWDER:
+                    if (chosen.Trait[TRAIT_CHEM_RELIANT] > 0) {
+                        text += "\n\t\u2022 Initial heal: 5-11 HP";
+                        text += "\n\t\u2022 Heal over time:";
+                        text += "\n\t\t\u2022  8-18 HP after 10 sec";
+                        text += "\n\t\t\u2022 12-25 HP after 20 sec";
+                        text += "\n\t\t\u2022 16-31 HP after 30 sec";
+                        text += "\n\t\t\u2022 16-31 HP after 40 sec";
+                        text += "\n\t\u2022 (Chem Reliant values shown)";
+                    } else {
+                        text += "\n\t\u2022 Initial heal: 7-15 HP";
+                        text += "\n\t\u2022 Heal over time:";
+                        text += "\n\t\t\u2022  7-15 HP after 10 sec";
+                        text += "\n\t\t\u2022 10-20 HP after 20 sec";
+                        text += "\n\t\t\u2022 13-25 HP after 30 sec";
+                        text += "\n\t\t\u2022 13-25 HP after 40 sec";
+                    }
+                    text += "\n\t\u2022 Does not stack, overwrites old effect.";
+                    break;
+                case PID_WEAK_HEALING_POWDER:
+                    text += "\n\t\u2022 Heal: 20 HP";
+                    text += "\n\t\u2022 Perception: -1";
+                    break;
+                //  food
+                case PID_NUKA_COLA:
+                    text += "\n\t\u2022 Agility: +1";
+                    if (chosen.Trait[TRAIT_FAST_METABOLISM] > 0) {
+                        text += "\n\t\u2022 Duration: 30 min (Fast Metabolism)";
+                    } else {
+                        text += "\n\t\u2022 Duration: 60 min";
+                    }
+                    break;
+                case PID_MUTATED_FRUIT:
+                    text += "\n\t\u2022 Heal: 1-4 HP";
+                    text += "\n\t\u2022 Radiation level: +6";
+                    text += "\n\t\u2022 Faster healing rate. (60 sec -> 40 sec)";
+                    if (chosen.Trait[TRAIT_FAST_METABOLISM] > 0) {
+                        text += "\n\t\u2022 Duration: 15 min (Fast Metabolism)";
+                    } else {
+                        text += "\n\t\u2022 Duration: 30 min";
+                    }
+                    break;
+                case PID_IGUANA_ON_A_STICK:
+                    text += "\n\t\u2022 Heal: 4-20 HP";
+                    break;
+                case PID_MEAT_ON_A_STICK:
+                    text += "\n\t\u2022 Current HP: 4-20 HP";
+                    break;
+                case PID_FISH_SALMON:
+                    text += "\n\t\u2022 Heal: 4 HP";
+                    text += "\n\t\u2022 Strength: +1";
+                    if (chosen.Trait[TRAIT_FAST_METABOLISM] > 0) {
+                        text += "\n\t\u2022 Duration: 30 min (Fast Metabolism)";
+                    } else {
+                        text += "\n\t\u2022 Duration: 60 min";
+                    }
+                    break;
+                case PID_FISH_TUNA:
+                    text += "\n\t\u2022 Heal: 4 HP";
+                    text += "\n\t\u2022 Endurance: +1";
+                    if (chosen.Trait[TRAIT_FAST_METABOLISM] > 0) {
+                        text += "\n\t\u2022 Duration: 30 min (Fast Metabolism)";
+                    } else {
+                        text += "\n\t\u2022 Duration: 60 min";
+                    }
+                    break;
+                case PID_FISH_CATFISH:
+                    text += "\n\t\u2022 Heal: 4 HP";
+                    text += "\n\t\u2022 Agility: +1";
+                    if (chosen.Trait[TRAIT_FAST_METABOLISM] > 0) {
+                        text += "\n\t\u2022 Duration: 15 min (Fast Metabolism)";
+                    } else {
+                        text += "\n\t\u2022 Duration: 30 min";
+                    }
+                    break;
+                default:
+                    text += "\nUnknown?!\n";
+            }
+            text += "\n\t";
         }
 
         // Show bonuses
@@ -1723,6 +2379,7 @@ class CGuiTooltip {
     int posX, posY;
     CInterfaceWindow interfaceWindow;
     CInterfaceTextbox interfaceTextbox;
+    CInterfaceTextbox interfaceTextboxComparison;
 
     CGuiTooltip() {
         enabled = false;
@@ -1744,12 +2401,5 @@ class CGuiTooltip {
 
 /// TOOLS
 
-/*
-string adjustText(string& adjust, int length) {
-    int curLength = 0;
-    for (int i = 0; i < adjust.length; i++) {
-        curLength += adjust
-    }
-}*/
 
 #endif 	//	__GUI_TOOLTIP__

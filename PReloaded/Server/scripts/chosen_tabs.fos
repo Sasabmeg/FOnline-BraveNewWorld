@@ -21,6 +21,8 @@ import     array<int>@ GetIniValues2(string & iniKey, array<int>@ defaultValues)
 import bool Critter_IsOverweight(CritterCl& cr) from "parameters";
 
 import int stringReplaceText(string& s, string@ f, string@ t) from "config_file";
+import uint GetRadiationLevelColor(int level) from "client/client_buffs";
+import uint GetRadiationStage(int level) from "client/client_buffs";
 
 Sprite     TabPic;
 array<int> Position;
@@ -124,8 +126,14 @@ void DrawChosenTabs() // Export
         DrawTab(GetMsgStr(TEXTMSG_GAME, STR_LEVELUP_TITLE), COLOR_DGREEN, ex);
     }
 
-    if( Critter_IsOverweight( chosen ))
-        DrawTab(GetMsgStr(TEXTMSG_GAME, STR_OVERWEIGHT_TITLE), COLOR_DRED);
+    if (Critter_IsOverweight(chosen)) {
+        bool isDouble = chosen.ItemsWeight() > uint(chosen.Stat[ST_CARRY_WEIGHT]) * 2;
+        int excess = chosen.ItemsWeight() - (uint(chosen.Stat[ST_CARRY_WEIGHT]));
+        string ex = "";
+        ex = "|" + (isDouble ? COLOR_DRED : COLOR_DORANGE) + " " + chosen.ItemsWeight()/1000 + " / " + uint(chosen.Stat[ST_CARRY_WEIGHT])/1000
+            + " kg (+" + excess/1000 + " kg)";
+        DrawTab(GetMsgStr(TEXTMSG_GAME, STR_OVERWEIGHT_TITLE), isDouble ? COLOR_DRED : COLOR_DORANGE, ex);
+    }
 
     if(chosen.Damage[DAMAGE_POISONED] != 0)
     {
@@ -145,11 +153,15 @@ void DrawChosenTabs() // Export
     {
         string ex = "";
         uint   color = COLOR_DRED, percent = 0;
-
-        if((percent = (chosen.Stat[ST_RADIATION_LEVEL] * 100) / RADIATION_DEATH) > 0)
+        int radiationLevel = chosen.Stat[ST_RADIATION_LEVEL];
+        if((percent = (radiationLevel * 100) / RADIATION_DEATH) > 0)
         {
-            ex = "Radiation level: " + percent + "%";
-            color = PercentColor(percent);
+            //  nice feature of color usage, but having it based on stages is just better for players
+            //color = PercentColor(percent);
+
+            color = GetRadiationLevelColor(radiationLevel);
+
+            ex = "|" + color + " Radiation level: " + percent + "% (Stage " + GetRadiationStage(radiationLevel) + ": " + radiationLevel + " Rem)";
         }
 
         DrawTab(GetMsgStr(TEXTMSG_GAME, STR_RADIATED_TITLE), color, ex);

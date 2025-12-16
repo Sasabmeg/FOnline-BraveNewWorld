@@ -59,7 +59,10 @@ import void ApplyDamage(AttackStruct& attack, Critter& target, uint rounds, bool
                                                      || (_pid) == PID_FISH_SALMON || (_pid) == PID_FISH_TUNA || (_pid) == PID_FISH_CATFISH                      \
                                                     )
 
-#define DRUGS_DEBUG_LOGGING_ALLOWED     (false)
+#define DRUGS_DEBUG_LOGGING_ALLOWED     (true)
+
+array<uint> foodDrugPids = {PID_MEAT_ON_A_STICK, PID_IGUANA_ON_A_STICK, PID_FISH_SALMON, PID_FISH_TUNA, PID_FISH_CATFISH};
+
 
 void DrugsLog(string@ s) {
     if (DRUGS_DEBUG_LOGGING_ALLOWED) {
@@ -460,6 +463,18 @@ void SetDrug(Critter& cr, uint16 drugPid, int bonus) {
         return;
     }
 
+    if (foodDrugPids.find(drugPid) >= 0) {
+        array<int>  identifiers;
+        array<uint> rates;
+        uint count = cr.GetTimeEvents(DrugsIdentifiers, identifiers, null, null, rates);
+        for (uint i = 0; i < count; i++) {
+            if (foodDrugPids.find(identifiers[i]) >= 0) {
+                DrugsLog("FOOD - DropDrug( + " + cr.Name + ", " + identifiers[i] + ")");
+                DropDrug(cr, identifiers[i], RATE_TO_STAGE(rates[i]));
+                cr.EraseTimeEvents(identifiers[i]);
+            }
+        }
+    }
 
     // Chem flags
     uint flags = 0;
@@ -884,7 +899,6 @@ uint cte_Psycho(Critter& cr, int identifier, uint& rate) {
 
 void SetDrugTimer(Critter& cr, uint16 drugPid, uint timer)
 {
-
     switch(drugPid)
     {
     case PID_MENTATS:
@@ -917,25 +931,28 @@ void SetDrugTimer(Critter& cr, uint16 drugPid, uint timer)
     case PID_FISH_SALMON:
         if (timer > 0) {
             cr.RunClientScript("client_timeouts@_add_unsafe", timer / __TimeMultiplier, 0, 0, "Salmon", null);
-            DrugsLog("SetDrugTimer() --- Salmon Test: timer = " + timer + ", multiplier = " + __TimeMultiplier + ", now.GetTick() = " + GetTick());
+            DrugsLog("SetDrugTimer() --- Salmon Test: timer = " + (timer/__TimeMultiplier/60) + ":" + ((timer/__TimeMultiplier)%60) + ", multiplier = " + __TimeMultiplier + ", now.GetTick() = " + GetTick());
         } else {
             cr.RunClientScript("client_timeouts@remove_unsafe", 0, 0, 0, "Salmon", null);
-            DrugsLog("!DropDrugTimer() --- Salmon Test: timer = " + timer + ", multiplier = " + __TimeMultiplier + ", now.GetTick() = " + GetTick());
+            DrugsLog("!DropDrugTimer() --- Salmon Test: timer = " + (timer/__TimeMultiplier/60) + ":" + ((timer/__TimeMultiplier)%60) + ", multiplier = " + __TimeMultiplier + ", now.GetTick() = " + GetTick());
         }
         break;
     case PID_FISH_TUNA:
         if (timer > 0) {
             cr.RunClientScript("client_timeouts@_add_unsafe", timer / __TimeMultiplier, 0, 0, "Tuna", null);
+            DrugsLog("SetDrugTimer() --- Tuna Test: timer = " + (timer/__TimeMultiplier/60) + ":" + ((timer/__TimeMultiplier)%60) + ", multiplier = " + __TimeMultiplier + ", now.GetTick() = " + GetTick());
         } else {
             cr.RunClientScript("client_timeouts@remove_unsafe", 0, 0, 0, "Tuna", null);
-            DrugsLog("!DropDrugTimer() --- Tuna Test: timer = " + timer + ", multiplier = " + __TimeMultiplier + ", now.GetTick() = " + GetTick());
+            DrugsLog("!DropDrugTimer() --- Tuna Test: timer = " + (timer/__TimeMultiplier/60) + ":" + ((timer/__TimeMultiplier)%60) + ", multiplier = " + __TimeMultiplier + ", now.GetTick() = " + GetTick());
         }
         break;
     case PID_FISH_CATFISH:
         if (timer > 0) {
             cr.RunClientScript("client_timeouts@_add_unsafe", timer / __TimeMultiplier, 0, 0, "Catfish", null);
+            DrugsLog("SetDrugTimer() --- Catfish Test: timer = " + (timer/__TimeMultiplier/60) + ":" + ((timer/__TimeMultiplier)%60) + ", multiplier = " + __TimeMultiplier + ", now.GetTick() = " + GetTick());
         } else {
             cr.RunClientScript("client_timeouts@remove_unsafe", 0, 0, 0, "Catfish", null);
+            DrugsLog("!DropDrugTimer() --- Catfish Test: timer = " + (timer/__TimeMultiplier/60) + ":" + ((timer/__TimeMultiplier)%60) + ", multiplier = " + __TimeMultiplier + ", now.GetTick() = " + GetTick());
         }
         break;
     case PID_BOOZE:

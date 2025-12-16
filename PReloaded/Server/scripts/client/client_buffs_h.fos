@@ -1,0 +1,27 @@
+#ifndef __CLIENT_BUFFS_H__
+#define __CLIENT_BUFFS_H__
+
+#define CLIENT_BUFFS_SALMON             (0)
+#define CLIENT_BUFFS_TUNA               (1)
+#define CLIENT_BUFFS_CATFISH            (2)
+#define CLIENT_BUFFS_BOOZE              (3)
+#define CLIENT_BUFFS_G_G_BEER           (4)
+#define CLIENT_BUFFS_ROE_RUM            (5)
+#define CLIENT_BUFFS_ROT_GUT            (6)
+#define CLIENT_BUFFS_WATER              (7)
+
+#define RADIATION_HP_INDEX    (6)
+#define RADIATION_HR_INDEX    (7)
+
+
+#ifndef __CLIENT_BUFFS__
+import uint GetRadiationStage(int level) from "client/client_buffs";
+import int GetStatLossForRadiationLevel(int stat, int level) from "client/client_buffs";
+import uint GetRadiationLevelColor(int level) from "client/client_buffs";
+import uint PercentColor(uint percent, bool clamp = true) from "client/client_buffs";
+import uint GetClientBuffsTimeout(uint index) from "client/client_buffs";
+import void SetClientBuffsTimeout(uint index, uint value) from "client/client_buffs";
+import void SetClientBuffsTimeoutByName(string& name, uint value) from "client/client_buffs";
+#endif 	//	__CLIENT_BUFFS__
+
+#endif 	//	__CLIENT_BUFFS_H__

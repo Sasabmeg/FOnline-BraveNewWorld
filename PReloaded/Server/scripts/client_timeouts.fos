@@ -27,6 +27,8 @@
 
 #include "config_file_h.fos"
 #include "client_utils_h.fos"
+#include "client/client_buffs_h.fos"
+
 
 #define CUSTOM_TIMEOUTS
 
@@ -700,13 +702,20 @@ void screen_timeouts_add(string& name, int value, int tick)
 
 void _add_unsafe(int value, int, int, string@ name, array<int>@)
 {
-    if(valid(name) && name != "" && value > 0)
+    if (valid(name) && name != "" && value > 0) {
         screen_timeouts_add(name, value);
-
+    }
+    if (valid(name) && name != "") {
+        SetClientBuffsTimeoutByName(name, value);
+    }
     return;
 };
 
 void remove_unsafe(int value, int, int, string@ name, array<int>@ unused) {
+    if (valid(name) && name != "") {
+        SetClientBuffsTimeoutByName(name, 0);
+        Message("Setting client buffs timout by name: " + name + " to " + 0);
+    }
     if (MyTimeouts.length() > 0)
     {
         for (uint i = 0; i < MyTimeouts.length(); i++)

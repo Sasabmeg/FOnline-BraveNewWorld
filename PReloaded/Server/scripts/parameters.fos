@@ -246,6 +246,24 @@ int NextLevelNeedExp(Critter& cr)   // Export
 #endif
 
 #ifdef __CLIENT
+import void RefreshTooltips(bool forced) from "client/client_GuiTooltip";
+import void RefreshTooltipsDelayed(uint delayInMs) from "client/client_GuiTooltip";
+
+void changedParam_AnyJustRefreshTooltips(CritterCl& cr, uint, int) { // client
+    CritterCl@ chosen = GetChosen();
+    if  (!valid(chosen) || chosen.Id != cr.Id)
+        return;
+    RefreshTooltips(true);
+    RefreshTooltipsDelayed(250);
+}
+
+void changedParam_Special(CritterCl& cr, uint, int) { // client
+    CritterCl@ chosen = GetChosen();
+    if  (!valid(chosen) || chosen.Id != cr.Id)
+        return;
+    RefreshTooltips(true);
+}
+
 void changedParam_Alpha( CritterCl& cr, uint, int ) // client
 {
 	cr.Alpha = CLAMP( cr.Stat[ST_ALPHA], 0, 255 );

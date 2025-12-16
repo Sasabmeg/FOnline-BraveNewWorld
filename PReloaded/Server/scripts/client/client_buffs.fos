@@ -1,0 +1,143 @@
+/**
+*   FO version:     FOClassic: Brave New World
+*   Contributor:    Sasabazmeg
+*   File:           client_buffs.fos
+*
+*   Description:    Radiation helper for client, to be able to track effects for chosenTabs and guiTooltips.
+*/
+
+#ifndef __CLIENT_BUFFS__
+#define __CLIENT_BUFFS__
+
+#include "../_macros.fos"
+#include "../_colors.fos"
+#include "client_buffs_h.fos"
+
+
+
+//  mostly copy over from server radiation, it should be the same
+//  Note: stage in client starts from 0 and up to 5, instead of 1 to 6 as in server
+const int[] RadiationEffects = {
+                        1,  100,  200,  400,  600, 1200,             /*stages values*/
+    ST_STRENGTH,        0,    1,    2,    3,    5,    7,             /*stats amount*/
+    ST_PERCEPTION,      0,    0,    1,    2,    3,    5,
+    ST_ENDURANCE,       0,    0,    0,    1,    3,    5,
+    ST_CHARISMA,        0,    0,    1,    3,    4,    7,
+    ST_INTELLECT,       0,    0,    1,    2,    3,    4,
+    ST_AGILITY,         0,    1,    2,    3,    5,    7,
+    ST_CURRENT_HP,      0,    1,    3,    5,   15,   30,
+    ST_HEALING_RATE,    0,    3,    5,    7,   10,   15,
+};
+
+
+#define RADIATION_STAGES           (6)
+#define RADIATION_STATS            (8)
+#define RADIATION_DURATION         (10080)
+#define RADIATION_DAMAGE_VALUE     (66)
+#define RADIATION_HIGH_DOSE        (66)
+#define RADIATION_DEAD_DOSE        (1800)
+
+// Table offsets
+#define TABLE_STAGE_VALUE          # (stage)            RadiationEffects[(stage)]
+#define TABLE_STAT_INDEX           # (stat)             RadiationEffects[6 + (stat) * 7]
+#define TABLE_STAT_AMOUNT          # (stat, stage)      RadiationEffects[6 + (stat) * 7 + (stage + 1)]
+
+uint GetRadiationStage(int level) {
+    if (level < RadiationEffects[0]) {
+        return 0;
+    }
+    for (uint i = RADIATION_STAGES - 1; i >= 0; i--) {
+        if (level >= TABLE_STAGE_VALUE(i)) {
+            return i;
+        }
+    }
+    return 0;
+}
+
+int GetStatLossForRadiationLevel(int index, int level) {
+    //Message("GetStatLossForRadiationLevel(" + index + ", " + level + ")");
+    if (index < 0 || index >= RADIATION_STATS) {
+        Message("<index out of bounds at> :: GetStatLossForRadiationLevel(" + index + ", " + level + ")");
+        return 0;
+    }
+    return TABLE_STAT_AMOUNT(index, GetRadiationStage(level));
+}
+
+uint GetRadiationLevelColor(int level) {
+    switch (GetRadiationStage(level)) {
+        case 1: return COLOR_GREEN;
+        case 2: return COLOR_YELLOW;
+        case 3: return COLOR_DDORANGE;
+        case 4: return COLOR_DORANGE;
+        case 5: return COLOR_RED;
+    }
+    return COLOR_GREEN;
+}
+
+//  for poison
+uint PercentColor(uint percent, bool clamp = true) {
+    if (!clamp || (clamp && percent < 100)) {
+        return(COLOR_RGB((0xFF * percent) / 100, (0xFF * (100 - percent)) / 100, 0));
+    } else {
+        return(COLOR_RGB(0xFF, 0, 0));
+    }
+}
+
+
+//  client buffs
+uint[] timeouts = { 0,  //  CLIENT_BUFFS_SALMON
+                    0,  //  CLIENT_BUFFS_TUNA
+                    0,  //  CLIENT_BUFFS_TUNA
+                    0,  //  CLIENT_BUFFS_BOOZE
+                    0,  //  CLIENT_BUFFS_G_G_BEER
+                    0,  //  CLIENT_BUFFS_ROE_RUM
+                    0,  //  CLIENT_BUFFS_ROT_GUT
+                    0,  //  CLIENT_BUFFS_WATER
+                  };
+
+
+uint GetClientBuffsTimeout(uint index) {
+    if (index >= timeouts.length()) {
+        return 0;
+    } else {
+        return timeouts[index];
+    }
+}
+
+import void RefreshTooltips(bool forced) from "client/client_GuiTooltip";
+
+void SetClientBuffsTimeout(uint index, uint value) {
+    if (index >= timeouts.length()) {
+        Log("Client buffs timeout out of bounds. <" + index + ">. Please report to developers.");
+        Message("Client buffs timeout out of bounds. <" + index + ">. Please report to developers.");
+    } else {
+        //Message("Client buffs timeout set: <" + index + ", " + value + ">");
+        timeouts[index] = value;
+        RefreshTooltips(true);
+    }
+}
+
+void SetClientBuffsTimeoutByName(string& name, uint value) {
+    if (name == "Salmon") {
+        SetClientBuffsTimeout(CLIENT_BUFFS_SALMON, value);
+    } else if (name == "Tuna") {
+        SetClientBuffsTimeout(CLIENT_BUFFS_TUNA, value);
+    } else if (name == "Catfish") {
+        SetClientBuffsTimeout(CLIENT_BUFFS_CATFISH, value);
+    } else if (name == "Booze") {
+        SetClientBuffsTimeout(CLIENT_BUFFS_BOOZE, value);
+    } else if (name == "G. G. Beer") {
+        SetClientBuffsTimeout(CLIENT_BUFFS_G_G_BEER, value);
+    } else if (name == "Roe. Rum") {
+        SetClientBuffsTimeout(CLIENT_BUFFS_ROE_RUM, value);
+    } else if (name == "Rot Gut") {
+        SetClientBuffsTimeout(CLIENT_BUFFS_ROT_GUT, value);
+    } else if (name == "Water") {
+        SetClientBuffsTimeout(CLIENT_BUFFS_WATER, value);
+    } else {
+        Log("Not recognized timeout: <" + name + ", " + value + ">. Please report to developers.");
+        Message("Not recognized timeout: <" + name + ", " + value + ">. Please report to developers.");
+    }
+}
+
+#endif 	//	__CLIENT_BUFFS__

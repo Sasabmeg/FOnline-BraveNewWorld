@@ -51,6 +51,8 @@ import void DrawQuestTracker() from "client/client_QuestTracker";
 import void DrawInventoryTracker() from "client/client_InventoryTracker";
 import void DrawCarTracker() from "client/client_CarTracker";
 import void DrawGuiImage() from "client/client_GuiImage";
+import void RefreshTooltips(bool forced) from "client/client_GuiTooltip";
+import void RefreshTooltipsDelayed(uint delayInMs) from "client/client_GuiTooltip";
 import void DrawCharacterTooltip() from "client/client_GuiTooltip";
 import void DrawInventoryTooltip() from "client/client_GuiTooltip";
 import void DrawPsychoImage() from "client/client_psychoFx";
@@ -880,6 +882,7 @@ void render_iface(uint layer)
 		DrawQuestTracker();
         DrawInventoryTracker();
         DrawMapGreeterMessage();
+        RefreshTooltips(false);
         DisableZoomText();
 
         // weapon muzzle and rays by Vice Dice (bulet tracers)
@@ -942,8 +945,10 @@ string generic_description(int descType, int& offsX, int& offsY)
 
     if(descType == DESC_INVENTORY_MAIN)
     {
-        result += chosen.Name + "\n";
+        result += "Name:\t" + chosen.Name + "\n";
         result += "---------------------\n";
+        result += "" + GetMsgStr(TEXTMSG_GAME, STR_INV_HP) + ": " + chosen.Stat[ST_CURRENT_HP] + "/" + chosen.Stat[ST_MAX_LIFE] + "\n";
+        result += "\n";
         result += GetMsgStr(TEXTMSG_GAME, STR_INV_SHORT_SPECIAL(ST_STRENGTH)) + "\n";
         result += GetMsgStr(TEXTMSG_GAME, STR_INV_SHORT_SPECIAL(ST_PERCEPTION)) + "\n";
         result += GetMsgStr(TEXTMSG_GAME, STR_INV_SHORT_SPECIAL(ST_ENDURANCE)) + "\n";
@@ -951,7 +956,7 @@ string generic_description(int descType, int& offsX, int& offsY)
         result += GetMsgStr(TEXTMSG_GAME, STR_INV_SHORT_SPECIAL(ST_INTELLECT)) + "\n";
         result += GetMsgStr(TEXTMSG_GAME, STR_INV_SHORT_SPECIAL(ST_AGILITY)) + "\n";
         result += GetMsgStr(TEXTMSG_GAME, STR_INV_SHORT_SPECIAL(ST_LUCK)) + "\n";
-        result += "\n\n---------------------\n";
+        result += "\n---------------------\n";
 
         ItemCl@ weaponMain = chosen.GetItem(0, SLOT_HAND1);
         if(valid(weaponMain))
@@ -1165,44 +1170,52 @@ string generic_description(int descType, int& offsX, int& offsY)
     else if(descType == DESC_INVENTORY_SPECIAL)
     {
         offsX = 23;
-        result += "\n\n";
-        result += chosen.Stat[ST_STRENGTH] + "\n";
-        result += chosen.Stat[ST_PERCEPTION] + "\n";
-        result += chosen.Stat[ST_ENDURANCE] + "\n";
-        result += chosen.Stat[ST_CHARISMA] + "\n";
-        result += chosen.Stat[ST_INTELLECT] + "\n";
-        result += chosen.Stat[ST_AGILITY] + "\n";
-        result += chosen.Stat[ST_LUCK];
+        result += "\n\n\n\n";
+        int stDif = chosen.Stat[ST_STRENGTH] - chosen.StatBase[ST_STRENGTH];
+        int peDif = chosen.Stat[ST_PERCEPTION] - chosen.StatBase[ST_PERCEPTION];
+        int enDif = chosen.Stat[ST_ENDURANCE] - chosen.StatBase[ST_ENDURANCE];
+        int chDif = chosen.Stat[ST_CHARISMA] - chosen.StatBase[ST_CHARISMA];
+        int inDif = chosen.Stat[ST_INTELLECT] - chosen.StatBase[ST_INTELLECT];
+        int agDif = chosen.Stat[ST_AGILITY] - chosen.StatBase[ST_AGILITY];
+        int lkDif = chosen.Stat[ST_LUCK] - chosen.StatBase[ST_LUCK];
+        result += (stDif < 0 ? ("|" + COLOR_DEBUFF + " ") : (stDif > 0 ? "|" + COLOR_BUFF + " " : "|" + COLOR_REGULAR + " ")) + chosen.Stat[ST_STRENGTH] + "|" + COLOR_REGULAR + " \n";
+        result += (peDif < 0 ? ("|" + COLOR_DEBUFF + " ") : (peDif > 0 ? "|" + COLOR_BUFF + " " : "|" + COLOR_REGULAR + " ")) + chosen.Stat[ST_PERCEPTION] + "|" + COLOR_REGULAR + " \n";
+        result += (enDif < 0 ? ("|" + COLOR_DEBUFF + " ") : (enDif > 0 ? "|" + COLOR_BUFF + " " : "|" + COLOR_REGULAR + " ")) + chosen.Stat[ST_ENDURANCE] + "|" + COLOR_REGULAR + " \n";
+        result += (chDif < 0 ? ("|" + COLOR_DEBUFF + " ") : (chDif > 0 ? "|" + COLOR_BUFF + " " : "|" + COLOR_REGULAR + " ")) + chosen.Stat[ST_CHARISMA] + "|" + COLOR_REGULAR + " \n";
+        result += (inDif < 0 ? ("|" + COLOR_DEBUFF + " ") : (inDif > 0 ? "|" + COLOR_BUFF + " " : "|" + COLOR_REGULAR + " ")) + chosen.Stat[ST_INTELLECT] + "|" + COLOR_REGULAR + " \n";
+        result += (agDif < 0 ? ("|" + COLOR_DEBUFF + " ") : (agDif > 0 ? "|" + COLOR_BUFF + " " : "|" + COLOR_REGULAR + " ")) + chosen.Stat[ST_AGILITY] + "|" + COLOR_REGULAR + " \n";
+        result += (lkDif < 0 ? ("|" + COLOR_DEBUFF + " ") : (lkDif > 0 ? "|" + COLOR_BUFF + " " : "|" + COLOR_REGULAR + " ")) + chosen.Stat[ST_LUCK] + "|" + COLOR_REGULAR + " \n";
     }
     else if(descType == DESC_INVENTORY_STATS)
     {
         offsX = 39;
         result += "\n\n";
-        result += GetMsgStr(TEXTMSG_GAME, STR_INV_HP) + " ";
-        result += chosen.Stat[ST_CURRENT_HP] + "/" + chosen.Stat[ST_MAX_LIFE] + "\n";
+        result += "\n";
+        /*
         if(_DescHead)
             result += "Headgear:\n";
         else
-            result += "Body Armor:\n";
-        result += GetMsgStr(TEXTMSG_GAME, STR_INV_AC) + " ";
-        result += chosen.GetAC(_DescHead) + "\n";
-        result += GetMsgStr(TEXTMSG_GAME, STR_INV_NORMAL) + "\n";
-        result += GetMsgStr(TEXTMSG_GAME, STR_INV_LASER) + "\n";
-        result += GetMsgStr(TEXTMSG_GAME, STR_INV_FIRE) + "\n";
-        result += GetMsgStr(TEXTMSG_GAME, STR_INV_PLASMA) + "\n";
-        result += "  Electro\n";
-        result += GetMsgStr(TEXTMSG_GAME, STR_INV_EXPLODE);
+            result += "Body Armor:\n";*/
+        result += "\t\tBody:\n";
+        result += "AC:\t " + chosen.GetAC(false) + "\n";
+        result += "NL:   " + chosen.GetDT(DAMAGE_TYPE_NORMAL, false) + "/" + chosen.GetDR(DAMAGE_TYPE_NORMAL, false) + "%\n";
+        result += "LS:   " + chosen.GetDT(DAMAGE_TYPE_LASER, false) + "/" + chosen.GetDR(DAMAGE_TYPE_LASER, false) + "%\n";
+        result += "FR:   " + chosen.GetDT(DAMAGE_TYPE_FIRE, false) + "/" + chosen.GetDR(DAMAGE_TYPE_FIRE, false) + "%\n";
+        result += "PL:   " + chosen.GetDT(DAMAGE_TYPE_PLASMA, false) + "/" + chosen.GetDR(DAMAGE_TYPE_PLASMA, false) + "%\n";
+        result += "ER:   " + chosen.GetDT(DAMAGE_TYPE_ELECTR, false) + "/" + chosen.GetDR(DAMAGE_TYPE_ELECTR, false) + "%\n";
+        result += "EP:   " + chosen.GetDT(DAMAGE_TYPE_EXPLODE, false) + "/" + chosen.GetDR(DAMAGE_TYPE_EXPLODE, false) + "%";
     }
     else if(descType == DESC_INVENTORY_RESIST)
     {
-        offsX = 103;
-        result += "\n\n\n\n\n";
-        result += chosen.GetDT(DAMAGE_TYPE_NORMAL, _DescHead) + "/" + chosen.GetDR(DAMAGE_TYPE_NORMAL, _DescHead) + "%\n";
-        result += chosen.GetDT(DAMAGE_TYPE_LASER, _DescHead) + "/" + chosen.GetDR(DAMAGE_TYPE_LASER, _DescHead) + "%\n";
-        result += chosen.GetDT(DAMAGE_TYPE_FIRE, _DescHead) + "/" + chosen.GetDR(DAMAGE_TYPE_FIRE, _DescHead) + "%\n";
-        result += chosen.GetDT(DAMAGE_TYPE_PLASMA, _DescHead) + "/" + chosen.GetDR(DAMAGE_TYPE_PLASMA, _DescHead) + "%\n";
-        result += chosen.GetDT(DAMAGE_TYPE_ELECTR, _DescHead) + "/" + chosen.GetDR(DAMAGE_TYPE_ELECTR, _DescHead) + "%\n";
-        result += chosen.GetDT(DAMAGE_TYPE_EXPLODE, _DescHead) + "/" + chosen.GetDR(DAMAGE_TYPE_EXPLODE, _DescHead) + "%";
+        offsX = 120;
+        result += "\n\n\nHead:\n";
+        result += "  " + chosen.GetAC(true) + "\n";
+        result += chosen.GetDT(DAMAGE_TYPE_NORMAL, true) + "/" + chosen.GetDR(DAMAGE_TYPE_NORMAL, true) + "%\n";
+        result += chosen.GetDT(DAMAGE_TYPE_LASER, true) + "/" + chosen.GetDR(DAMAGE_TYPE_LASER, true) + "%\n";
+        result += chosen.GetDT(DAMAGE_TYPE_FIRE, true) + "/" + chosen.GetDR(DAMAGE_TYPE_FIRE, true) + "%\n";
+        result += chosen.GetDT(DAMAGE_TYPE_PLASMA, true) + "/" + chosen.GetDR(DAMAGE_TYPE_PLASMA, true) + "%\n";
+        result += chosen.GetDT(DAMAGE_TYPE_ELECTR, true) + "/" + chosen.GetDR(DAMAGE_TYPE_ELECTR, true) + "%\n";
+        result += chosen.GetDT(DAMAGE_TYPE_EXPLODE, true) + "/" + chosen.GetDR(DAMAGE_TYPE_EXPLODE, true) + "%";
     }
 
     return result;
