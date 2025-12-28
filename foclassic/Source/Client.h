@@ -28,6 +28,8 @@ public:
 	int dialogFont;
 	int fixboyFont;
 	int messboxFont;
+	int characterFont;
+	int inventoryFont;
 	FontManager fontManager;
     static FOClient* Self;
     FOClient();

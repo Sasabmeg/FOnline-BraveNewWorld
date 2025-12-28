@@ -847,10 +847,10 @@
 
 // Additional fonts
 #define FONT_TYPE_DIALOG                                  (9) // used on dialog/barter screen only
-#define FONT_TYPE_DEFAULT_125                            (10) // used when increasing/decreasing font at dialogs, pip boy, etc.
-#define FONT_TYPE_DEFAULT_125_THIN                       (11) // used when increasing/decreasing font at dialogs, pip boy, etc.
-#define FONT_TYPE_DEFAULT_150                            (20) 
-#define FONT_TYPE_DEFAULT_200                            (30) 
+#define FONT_TYPE_DEFAULT_12							 (10) // used when increasing/decreasing font at dialogs, pip boy, etc.
+#define FONT_TYPE_DEFAULT_14							 (11) // used when increasing/decreasing font at dialogs, pip boy, etc.
+#define FONT_TYPE_DEFAULT_16                             (12) 
+#define FONT_TYPE_DEFAULT_18                             (13) 
 
 
 #define GENDER_MALE                                       (0)

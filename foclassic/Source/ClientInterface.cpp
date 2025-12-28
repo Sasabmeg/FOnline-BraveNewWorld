@@ -6415,7 +6415,12 @@ void FOClient::ChaDraw( bool is_reg )
         Str::Format( str, "%02d", val );
         if( val < 1 || val > 10 )
             Str::ChangeValue( str, 0x10 );
-        SprMngr.DrawStr( Rect( ChaWSpecialValue, ChaX + ChaWSpecialNextX * i, ChaY + ChaWSpecialNextY * i ), str, FONT_FLAG_NOBREAK, COLOR_IFACE, FONT_TYPE_BIG_NUM );
+		uint specialColor = COLOR_IFACE;
+		if (!is_reg) {
+			int specialDif = CHA_PARAM(32 + param);
+			specialColor = specialDif > 0 ? COLOR_IFACE_GREEN: (specialDif < 0 ? COLOR_IFACE_RED : COLOR_IFACE);
+		}
+        SprMngr.DrawStr( Rect( ChaWSpecialValue, ChaX + ChaWSpecialNextX * i, ChaY + ChaWSpecialNextY * i ), str, FONT_FLAG_NOBREAK, specialColor, FONT_TYPE_BIG_NUM );
 
         // Str level
         if( is_reg )

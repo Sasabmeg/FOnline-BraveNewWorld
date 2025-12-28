@@ -137,11 +137,15 @@ bool FOClient::Init()
 	dialogFont = FONT_TYPE_DEFAULT;
 	fixboyFont = FONT_TYPE_DEFAULT;
 	messboxFont = FONT_TYPE_DEFAULT;
+	characterFont = FONT_TYPE_DEFAULT;
+	inventoryFont = FONT_TYPE_DEFAULT;
 
 	fontManager = FontManager();
 	fontManager.add(FONT_TYPE_DEFAULT);
-	fontManager.add(FONT_TYPE_DEFAULT_125_THIN);
-	fontManager.add(FONT_TYPE_DEFAULT_125);
+	fontManager.add(FONT_TYPE_DEFAULT_12);
+	fontManager.add(FONT_TYPE_DEFAULT_14);
+	fontManager.add(FONT_TYPE_DEFAULT_16);
+	fontManager.add(FONT_TYPE_DEFAULT_18);
 
 	showTimestamps = false;
 
@@ -347,23 +351,23 @@ bool FOClient::Init()
             return false;
     }
 
-	if (!SprMngr.LoadFontFO(FONT_TYPE_DEFAULT_125, "Default_125")) {
-		if (!SprMngr.LoadFontFO(FONT_TYPE_DEFAULT_125, "Default"))
+	if (!SprMngr.LoadFontFO(FONT_TYPE_DEFAULT_12, "foclassic-dialog_12")) {
+		if (!SprMngr.LoadFontFO(FONT_TYPE_DEFAULT_12, "Default"))
 			return false;
 	}
 
-	if (!SprMngr.LoadFontFO(FONT_TYPE_DEFAULT_125_THIN, "Default_125_thin")) {
-		if (!SprMngr.LoadFontFO(FONT_TYPE_DEFAULT_125_THIN, "Default"))
+	if (!SprMngr.LoadFontFO(FONT_TYPE_DEFAULT_14, "foclassic-dialog_14")) {
+		if (!SprMngr.LoadFontFO(FONT_TYPE_DEFAULT_14, "Default"))
 			return false;
 	}
 
-	if (!SprMngr.LoadFontFO(FONT_TYPE_DEFAULT_150, "Default_150")) {
-		if (!SprMngr.LoadFontFO(FONT_TYPE_DEFAULT_150, "Default"))
+	if (!SprMngr.LoadFontFO(FONT_TYPE_DEFAULT_16, "foclassic-dialog_16")) {
+		if (!SprMngr.LoadFontFO(FONT_TYPE_DEFAULT_16, "Default"))
 			return false;
 	}
 
-	if (!SprMngr.LoadFontFO(FONT_TYPE_DEFAULT_200, "Default_200")) {
-		if (!SprMngr.LoadFontFO(FONT_TYPE_DEFAULT_200, "Default"))
+	if (!SprMngr.LoadFontFO(FONT_TYPE_DEFAULT_18, "foclassic-dialog_18")) {
+		if (!SprMngr.LoadFontFO(FONT_TYPE_DEFAULT_18, "Default"))
 			return false;
 	}
 
@@ -2329,11 +2333,11 @@ void FOClient::ProcessMouseWheel( int data )
 		if( !r.IsZero() && IsCurInRect( r ) )
         {
 			if (Keyb::CtrlDwn) {
-				if (data > 0) {
+				if (data < 0) {
 					messboxFont = fontManager.getPrev(messboxFont);
 					MessBoxGenerate();
 				}
-				if (data < 0) {
+				if (data > 0) {
 					messboxFont = fontManager.getNext(messboxFont);
 					MessBoxGenerate();
 				}
@@ -2443,15 +2447,15 @@ void FOClient::ProcessMouseWheel( int data )
 		if (Keyb::CtrlDwn) {
 			
 			if (IsCurInRect(DlgWText, DlgX, DlgY) || IsCurInRect(DlgAnswText, DlgX, DlgY)) {
-				//	scrolled up
-				if (data > 0) {
+				//	scrolled down
+				if (data < 0) {
 					dialogFont = fontManager.getPrev(dialogFont);
 					RecalcDlgMainTextLinesRect();
 					RecalcDlgMainTextLinesReal();
 					RecalcDlgAnswerPositions();
 				}
-				//	scrolled down
-				if (data < 0) {
+				//	scrolled up
+				if (data > 0) {
 					dialogFont = fontManager.getNext(dialogFont);
 					RecalcDlgMainTextLinesRect();
 					RecalcDlgMainTextLinesReal();
@@ -2480,14 +2484,14 @@ void FOClient::ProcessMouseWheel( int data )
 		if (Keyb::CtrlDwn) {
 
 			if (IsCurInRect(DlgWText, DlgX, DlgY)) {
-				//	scrolled up
-				if (data > 0) {
+				//	scrolled down
+				if (data < 0) {
 					dialogFont = fontManager.getPrev(dialogFont);
 					RecalcDlgMainTextLinesRect();
 					RecalcDlgMainTextLinesReal();
 				}
-				//	scrolled down
-				if (data < 0) {
+				//	scrolled up
+				if (data > 0) {
 					dialogFont = fontManager.getNext(dialogFont);
 					RecalcDlgMainTextLinesRect();
 					RecalcDlgMainTextLinesReal();
@@ -2571,12 +2575,12 @@ void FOClient::ProcessMouseWheel( int data )
             {
 				if (Keyb::CtrlDwn) {
 
-					//	scrolled up
-					if (data > 0) {
-						pipboyFont = fontManager.getPrev(pipboyFont);
-					}
 					//	scrolled down
 					if (data < 0) {
+						pipboyFont = fontManager.getPrev(pipboyFont);
+					}
+					//	scrolled up
+					if (data > 0) {
 						pipboyFont = fontManager.getNext(pipboyFont);
 					}
 					return;
@@ -2614,14 +2618,14 @@ void FOClient::ProcessMouseWheel( int data )
 		{
 			//	font increase/decrease
 			if (Keyb::CtrlDwn) {
-				//	scrolled up
-				if (data > 0) {
+				//	scrolled down
+				if (data < 0) {
 					fixboyFont = fontManager.getPrev(fixboyFont);
 					if (FixMode == FIX_MODE_LIST)
 						FixGenerate(FIX_MODE_LIST);
 				}
-				//	scrolled down
-				if (data < 0) {
+				//	scrolled up
+				if (data > 0) {
 					fixboyFont = fontManager.getNext(fixboyFont);
 					if (FixMode == FIX_MODE_LIST)
 						FixGenerate(FIX_MODE_LIST);
