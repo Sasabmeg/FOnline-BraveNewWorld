@@ -1056,6 +1056,33 @@ bool SpriteManager::DrawStr( const Rect& r, const char* str, uint flags, uint co
     if( !font )
         return false;
 
+	if (font->LineHeight > (r.B - r.T + 1) && num_font > FONT_TYPE_DEFAULT && num_font <= FONT_TYPE_DEFAULT_18) {
+		if (num_font == FONT_TYPE_DEFAULT_18 && font->LineHeight > r.H()) {
+			num_font = FONT_TYPE_DEFAULT_16;
+			font = GetFont(num_font);
+			if (!font)
+				return false;
+		}
+		if (num_font == FONT_TYPE_DEFAULT_16 && font->LineHeight > r.H()) {
+			num_font = FONT_TYPE_DEFAULT_14;
+			font = GetFont(num_font);
+			if (!font)
+				return false;
+		}
+		if (num_font == FONT_TYPE_DEFAULT_14 && font->LineHeight > r.H()) {
+			num_font = FONT_TYPE_DEFAULT_12;
+			font = GetFont(num_font);
+			if (!font)
+				return false;
+		}
+		if (num_font == FONT_TYPE_DEFAULT_12 && font->LineHeight > r.H()) {
+			num_font = FONT_TYPE_DEFAULT;
+			font = GetFont(num_font);
+			if (!font)
+				return false;
+		}
+	}
+
     // FormatBuf
     if( !color && DefFontColor )
         color = DefFontColor;

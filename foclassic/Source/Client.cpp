@@ -133,12 +133,15 @@ bool FOClient::Init()
 {
     WriteLog( "Engine initialization...\n" );
 
+	//	these default values should be overwriten from faction.ini config
 	pipboyFont = FONT_TYPE_DEFAULT;
 	dialogFont = FONT_TYPE_DEFAULT;
 	fixboyFont = FONT_TYPE_DEFAULT;
 	messboxFont = FONT_TYPE_DEFAULT;
+	loginFont = FONT_TYPE_DEFAULT;
 	characterFont = FONT_TYPE_DEFAULT;
 	inventoryFont = FONT_TYPE_DEFAULT;
+	mapFont = FONT_TYPE_DEFAULT;
 
 	fontManager = FontManager();
 	fontManager.add(FONT_TYPE_DEFAULT);

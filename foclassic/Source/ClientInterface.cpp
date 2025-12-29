@@ -193,6 +193,16 @@ int FOClient::InitIface()
     IfaceHold = IFACE_NONE;
     TargetSmth.Clear();
 
+	//	default fonts
+	pipboyFont = IfaceIni.GetInt("PipBoyFont", FONT_TYPE_DEFAULT);
+	dialogFont = IfaceIni.GetInt("DialogFont", FONT_TYPE_DEFAULT);
+	fixboyFont = IfaceIni.GetInt("FixboyFont", FONT_TYPE_DEFAULT);
+	messboxFont = IfaceIni.GetInt("MessboxFont", FONT_TYPE_DEFAULT);
+	loginFont = IfaceIni.GetInt("LoginFont", FONT_TYPE_DEFAULT);
+	characterFont = IfaceIni.GetInt("CharacterFont", FONT_TYPE_DEFAULT);
+	inventoryFont = IfaceIni.GetInt("InventoryFont", FONT_TYPE_DEFAULT);
+	mapFont = IfaceIni.GetInt("MapFont", FONT_TYPE_DEFAULT);
+
     // Inventory
     IfaceLoadRect( InvWMain, "InvMain" );
     IfaceLoadRect( InvWInv, "InvInv" );
@@ -1453,7 +1463,7 @@ void FOClient::ContainerDraw( const Rect& pos, int height, int scroll, ItemVec& 
         if( i >= scroll && i < scroll + pos.H() / height )
         {
 			if (item.GetCount() > 1)
-				SprMngr.DrawStr(Rect(pos.L, pos.T + (i2 * height), pos.R, pos.T + (i2 * height) + height), Str::FormatBuf("x%u", item.GetCount()), 0, COLOR_TEXT_WHITE);
+				SprMngr.DrawStr(Rect(pos.L, pos.T + (i2 * height), pos.R, pos.T + (i2 * height) + height), Str::FormatBuf("x%u", item.GetCount()), 0, COLOR_TEXT_WHITE, inventoryFont);
 			
 			//	enable this to show deterioration in client inventory
 			int brokenCount = 100 - item.Data.BrokenCount;
@@ -1467,7 +1477,7 @@ void FOClient::ContainerDraw( const Rect& pos, int height, int scroll, ItemVec& 
 			}
 			uint color = (currentDura > 66 ? COLOR_TEXT_DDGREEN : (currentDura > 33 ? COLOR_TEXT_SAND : (currentDura > 0 ? COLOR_TEXT_DDRED : COLOR_XRGB(90, 90, 90))));
 			if (currentDura < 100 && HexMngr.ShowItemDurability)
-				SprMngr.DrawStr(Rect(pos.L + 28 + pixelCorrect, pos.T + (i2 * height) + height - 8, pos.R, pos.T + (i2 * height) + height), (color != COLOR_XRGB(90, 90, 90) ? Str::FormatBuf("%u/%u", currentDura, brokenCount) : Str::FormatBuf("Broken")), FONT_FLAG_BORDERED, color);
+				SprMngr.DrawStr(Rect(pos.L + 28 + pixelCorrect, pos.T + (i2 * height) + height - 8, pos.R, pos.T + (i2 * height) + height), (color != COLOR_XRGB(90, 90, 90) ? Str::FormatBuf("%u/%u", currentDura, brokenCount) : Str::FormatBuf("Broken")), FONT_FLAG_BORDERED, color, inventoryFont);
             i2++;
         }
         i++;
@@ -1682,21 +1692,21 @@ void FOClient::InvDraw()
         int         ox, oy;
         const char* result = FmtGenericDesc( DESC_INVENTORY_MAIN, ox, oy );
         if( result )
-            SprMngr.DrawStr( Rect( InvWText, InvX + ox, InvY + oy ), result, FONT_FLAG_NOBREAK_LINE );
+            SprMngr.DrawStr( Rect( InvWText, InvX + ox, InvY + oy ), result, FONT_FLAG_NOBREAK_LINE, 0U, inventoryFont );
         result = FmtGenericDesc( DESC_INVENTORY_SPECIAL, ox, oy );
         if( result )
-            SprMngr.DrawStr( Rect( InvWText, InvX + ox, InvY + oy ), result, FONT_FLAG_NOBREAK_LINE );
+            SprMngr.DrawStr( Rect( InvWText, InvX + ox, InvY + oy ), result, FONT_FLAG_NOBREAK_LINE, 0U, inventoryFont);
         result = FmtGenericDesc( DESC_INVENTORY_STATS, ox, oy );
         if( result )
-            SprMngr.DrawStr( Rect( InvWText, InvX + ox, InvY + oy ), result, FONT_FLAG_NOBREAK_LINE );
+            SprMngr.DrawStr( Rect( InvWText, InvX + ox, InvY + oy ), result, FONT_FLAG_NOBREAK_LINE, 0U, inventoryFont);
         result = FmtGenericDesc( DESC_INVENTORY_RESIST, ox, oy );
         if( result )
-            SprMngr.DrawStr( Rect( InvWText, InvX + ox, InvY + oy ), result, FONT_FLAG_NOBREAK_LINE );
+            SprMngr.DrawStr( Rect( InvWText, InvX + ox, InvY + oy ), result, FONT_FLAG_NOBREAK_LINE, 0U, inventoryFont);
     }
     else
     {
         // Item info
-        SprMngr.DrawStr( Rect( InvWText, InvX, InvY ), InvItemInfo.c_str(), FONT_FLAG_SKIPLINES( InvItemInfoScroll ) );
+        SprMngr.DrawStr( Rect( InvWText, InvX, InvY ), InvItemInfo.c_str(), FONT_FLAG_SKIPLINES( InvItemInfoScroll ), 0U, inventoryFont);
     }
 }
 
@@ -2209,7 +2219,7 @@ void FOClient::ConsoleDraw()
 
         char* buf = (char*)Str::FormatBuf( "%s", ConsoleStr.c_str() );
         Str::Insert( &buf[ConsoleCur], Timer::FastTick() % 800 < 400 ? "!" : "." );
-        SprMngr.DrawStr( rect, buf, FONT_FLAG_NOBREAK );
+        SprMngr.DrawStr( rect, buf, FONT_FLAG_NOBREAK, 0U, messboxFont);
     }
 
     // Help info
@@ -2229,18 +2239,18 @@ void FOClient::ConsoleDraw()
                                  "cr_hx<%u>, cr_hy<%u>,\nhx<%u>, hy<%u>,\ncur_x<%d>, cur_y<%d>\nCond<%u>\nox<%d>, oy<%d>\nFarDir<%d>\n3dXY<%f,%f>",
                                  Chosen->HexX, Chosen->HexY, hx, hy, GameOpt.MouseX, GameOpt.MouseY, Chosen->Cond, GameOpt.ScrOx, GameOpt.ScrOy,
                                  GetFarDir( Chosen->HexX, Chosen->HexY, hx, hy ), p.X, p.Y
-                                 ), FONT_FLAG_CENTERX, COLOR_XRGB( 255, 240, 0 ) );
+                                 ), FONT_FLAG_CENTERX, COLOR_XRGB( 255, 240, 0 ), messboxFont );
 
             SprMngr.DrawStr( Rect( 450, 5, 650, 300 ), Str::FormatBuf(
                                  "Anim info: cur_id %d, cur_ox %d, cur_oy %d\nFileld offset: x<%d>, y<%d>",
                                  Chosen->SprId, Chosen->SprOx, Chosen->SprOy, HexMngr.GetField( hx, hy ).ScrX, HexMngr.GetField( hx, hy ).ScrY
-                                 ), FONT_FLAG_CENTERX, COLOR_XRGB( 255, 240, 0 ) );
+                                 ), FONT_FLAG_CENTERX, COLOR_XRGB( 255, 240, 0 ), messboxFont);
 
             SprMngr.DrawStr( Rect( 650, 5, 800, 300 ), Str::FormatBuf(
                                  "Time:%02d:%02d %02d:%02d:%04d x%02d\nFixedFPS:%d\nSound:%d\nMusic:%d",
                                  GameOpt.Hour, GameOpt.Minute, GameOpt.Day, GameOpt.Month, GameOpt.Year, GameOpt.TimeMultiplier,
                                  GameOpt.FixedFPS, SndMngr.GetSoundVolume(), SndMngr.GetMusicVolume()
-                                 ), FONT_FLAG_CENTERX, COLOR_XRGB( 255, 240, 0 ) );
+                                 ), FONT_FLAG_CENTERX, COLOR_XRGB( 255, 240, 0 ), messboxFont);
         }
 
         SprMngr.DrawStr( Rect( 10, 10, MODE_WIDTH, MODE_HEIGHT ), Str::FormatBuf(
@@ -2466,7 +2476,7 @@ void FOClient::GameDraw()
                 }
             }
 
-            SprMngr.DrawStr( Rect( x, y, x + 200, y + 70 ), mt.Text.c_str(), FONT_FLAG_CENTERX | FONT_FLAG_BOTTOM | FONT_FLAG_BORDERED, color );
+            SprMngr.DrawStr( Rect( x, y, x + 200, y + 70 ), mt.Text.c_str(), FONT_FLAG_CENTERX | FONT_FLAG_BOTTOM | FONT_FLAG_BORDERED, color, mapFont );
             it++;
         }
     }
@@ -3357,15 +3367,15 @@ void FOClient::LogDraw()
     SprMngr.DrawStr( LogBOptionsText, MsgGame->GetStr( STR_LOGIN_OPTIONS ), FONT_FLAG_CENTERY | FONT_FLAG_NOBREAK, COLOR_TEXT_SAND, FONT_TYPE_FAT );
     SprMngr.DrawStr( LogBCreditsText, MsgGame->GetStr( STR_LOGIN_CREDITS ), FONT_FLAG_CENTERY | FONT_FLAG_NOBREAK, COLOR_TEXT_SAND, FONT_TYPE_FAT );
     SprMngr.DrawStr( LogBExitText, MsgGame->GetStr( STR_LOGIN_EXIT ), FONT_FLAG_CENTERY | FONT_FLAG_NOBREAK, COLOR_TEXT_SAND, FONT_TYPE_FAT );
-    SprMngr.DrawStr( LogWVersion, MsgGame->GetStr( STR_VERSION_INFO ), FONT_FLAG_CENTERY, COLOR_TEXT_WHITE, FONT_TYPE_DEFAULT );
+    SprMngr.DrawStr( LogWVersion, MsgGame->GetStr( STR_VERSION_INFO ), FONT_FLAG_CENTERY, COLOR_TEXT_WHITE, loginFont);
 
     if( !Singleplayer )
     {
-        SprMngr.DrawStr( LogWName, GameOpt.Name.c_str(), FONT_FLAG_CENTERX | FONT_FLAG_CENTERY | FONT_FLAG_NOBREAK, LogFocus == IFACE_LOG_NAME ? COLOR_TEXT_LGREEN : COLOR_TEXT_DGREEN );
+        SprMngr.DrawStr( LogWName, GameOpt.Name.c_str(), FONT_FLAG_CENTERX | FONT_FLAG_CENTERY | FONT_FLAG_NOBREAK, LogFocus == IFACE_LOG_NAME ? COLOR_TEXT_LGREEN : COLOR_TEXT_DGREEN, loginFont);
 
         if( Keyb::CtrlDwn || !GameOpt.HidePassword )
         {
-            SprMngr.DrawStr( LogWPass, Password.c_str(), FONT_FLAG_CENTERX | FONT_FLAG_CENTERY | FONT_FLAG_NOBREAK, LogFocus == IFACE_LOG_PASS ? COLOR_TEXT_LGREEN : COLOR_TEXT_DGREEN );
+            SprMngr.DrawStr( LogWPass, Password.c_str(), FONT_FLAG_CENTERX | FONT_FLAG_CENTERY | FONT_FLAG_NOBREAK, LogFocus == IFACE_LOG_PASS ? COLOR_TEXT_LGREEN : COLOR_TEXT_DGREEN, loginFont);
         }
         else
         {
@@ -3374,7 +3384,7 @@ void FOClient::LogDraw()
             for( uint i = 0, j = min( (uint)MAX_NAME, pass_len ); i < j; i++ )
                 mask[i] = '#';
             mask[min( (uint)MAX_NAME, pass_len )] = '\0';
-            SprMngr.DrawStr( LogWPass, mask, FONT_FLAG_CENTERX | FONT_FLAG_CENTERY | FONT_FLAG_NOBREAK, LogFocus == IFACE_LOG_PASS ? COLOR_TEXT_LGREEN : COLOR_TEXT_DGREEN );
+            SprMngr.DrawStr( LogWPass, mask, FONT_FLAG_CENTERX | FONT_FLAG_CENTERY | FONT_FLAG_NOBREAK, LogFocus == IFACE_LOG_PASS ? COLOR_TEXT_LGREEN : COLOR_TEXT_DGREEN, loginFont);
         }
     }
 }
@@ -4257,7 +4267,7 @@ void FOClient::LMenuMouseUp()
                         {
                             InvItemInfo = str;
                             InvItemInfoScroll = 0;
-                            InvItemInfoMaxScroll = SprMngr.GetLinesCount( InvWText.W(), 0, str ) - SprMngr.GetLinesCount( 0, InvWText.H(), NULL );
+                            InvItemInfoMaxScroll = SprMngr.GetLinesCount( InvWText.W(), 0, str, inventoryFont ) - SprMngr.GetLinesCount( 0, InvWText.H(), NULL );
                         }
                     }
                     else if( GetActiveScreen() == CLIENT_SCREEN_BARTER )
@@ -5348,7 +5358,7 @@ void FOClient::GmapDraw()
     if( car )
     {
         SprMngr.DrawSpriteSize( car->GetCurSprId(), WorldmapWCar.L, WorldmapWCar.T, (float)WorldmapWCar.W(), (float)WorldmapWCar.H(), false, true );
-        SprMngr.DrawStr( WorldmapWCar, FmtItemLook( car, ITEM_LOOK_WM_CAR ), FONT_FLAG_CENTERX | FONT_FLAG_BOTTOM, COLOR_TEXT, FONT_TYPE_DEFAULT );
+        SprMngr.DrawStr( WorldmapWCar, FmtItemLook( car, ITEM_LOOK_WM_CAR ), FONT_FLAG_CENTERX | FONT_FLAG_BOTTOM, COLOR_TEXT, mapFont );
     }
 
     // Day time
@@ -5367,7 +5377,7 @@ void FOClient::GmapDraw()
     for( auto it = HexMngr.GetCritters().begin(); it != HexMngr.GetCritters().end(); it++, pos++ )
     {
         CritterCl* cr = (*it).second;
-        SprMngr.DrawStr( Rect( WorldmapWName, WorldmapWNameStepX * pos, WorldmapWNameStepY * pos ), cr->GetName(), FONT_FLAG_NOBREAK | FONT_FLAG_CENTERY, cr->IsGmapRule() ? COLOR_TEXT_DGREEN : COLOR_TEXT );
+        SprMngr.DrawStr( Rect( WorldmapWName, WorldmapWNameStepX * pos, WorldmapWNameStepY * pos ), cr->GetName(), FONT_FLAG_NOBREAK | FONT_FLAG_CENTERY, cr->IsGmapRule() ? COLOR_TEXT_DGREEN : COLOR_TEXT, mapFont );
         SprMngr.DrawStr( Rect( WorldmapWName, WorldmapWNameStepX * pos, WorldmapWNameStepY * pos ), cr->IsOffline() ? "offline" : "online", FONT_FLAG_NOBREAK | FONT_FLAG_CENTERR, cr->IsOffline() ? COLOR_TEXT_DDRED : COLOR_TEXT_DDGREEN, FONT_TYPE_SPECIAL );
     }
 
@@ -5397,12 +5407,12 @@ void FOClient::GmapDraw()
             {
                 SprMngr.DrawStr( Rect( GameOpt.MouseX + si->Width, GameOpt.MouseY + si->Height, GameOpt.MouseX + si->Width + 200, GameOpt.MouseY + si->Height + 500 ), cur_loc ?
                                  FmtGameText( STR_GMAP_CUR_LOC_INFO, cx, cy, GM_ZONE( cx ), GM_ZONE( cy ), MsgGM->GetStr( STR_GM_NAME_( cur_loc->LocPid ) ), MsgGM->GetStr( STR_GM_INFO_( cur_loc->LocPid ) ) ) :
-                                 FmtGameText( STR_GMAP_CUR_INFO, cx, cy, GM_ZONE( cx ), GM_ZONE( cy ) ), 0 );
+                                 FmtGameText( STR_GMAP_CUR_INFO, cx, cy, GM_ZONE( cx ), GM_ZONE( cy ) ), 0, mapFont );
             }
             else if( cur_loc )
             {
                 SprMngr.DrawStr( Rect( GameOpt.MouseX + si->Width, GameOpt.MouseY + si->Height, GameOpt.MouseX + si->Width + 200, GameOpt.MouseY + si->Height + 500 ),
-                                 FmtGameText( STR_GMAP_LOC_INFO, MsgGM->GetStr( STR_GM_NAME_( cur_loc->LocPid ) ), MsgGM->GetStr( STR_GM_INFO_( cur_loc->LocPid ) ) ), 0 );
+                                 FmtGameText( STR_GMAP_LOC_INFO, MsgGM->GetStr( STR_GM_NAME_( cur_loc->LocPid ) ), MsgGM->GetStr( STR_GM_INFO_( cur_loc->LocPid ) ) ), 0, mapFont );
             }
         }
     }
@@ -5463,7 +5473,7 @@ void FOClient::GmapTownDraw()
     {
         if( GmapTownLoc.LocId != WorldmapShowEntrancesLocId || !WorldmapShowEntrances[i] )
             continue;
-        SprMngr.DrawStr( GmapTownTextPos[i], GmapTownText[i].c_str(), 0 );
+        SprMngr.DrawStr( GmapTownTextPos[i], GmapTownText[i].c_str(), 0, mapFont );
     }
 }
 
@@ -6380,7 +6390,7 @@ void FOClient::ChaDraw( bool is_reg )
                 if( i < scroll )
                     continue;
                 SwitchElement& e = text[i];
-                SprMngr.DrawStr( Rect( ChaTSwitch, ChaX, ChaY + (i - scroll) * 11 ), Str::FormatBuf( "%s%s", MsgGame->GetStr( e.NameStrNum ), e.Addon ), e.DrawFlags );
+                SprMngr.DrawStr( Rect( ChaTSwitch, ChaX, ChaY + (i - scroll) * 11 ), Str::FormatBuf( "%s%s", MsgGame->GetStr( e.NameStrNum ), e.Addon ), e.DrawFlags, 0U, characterFont );
             }
         }
         // Kills
@@ -6394,8 +6404,8 @@ void FOClient::ChaDraw( bool is_reg )
                     continue;
 
                 SwitchElement& e = text[i];
-                SprMngr.DrawStr( Rect( ChaTSwitch, ChaX, ChaY + (i - scroll) * 11 ), MsgGame->GetStr( e.NameStrNum ), e.DrawFlags );
-                SprMngr.DrawStr( Rect( Rect( ChaTSwitch[2] - 35, ChaTSwitch[1], ChaTSwitch[2], ChaTSwitch[3] ), ChaX, ChaY + (i - scroll) * 11 ), e.Addon, 0 );
+                SprMngr.DrawStr( Rect( ChaTSwitch, ChaX, ChaY + (i - scroll) * 11 ), MsgGame->GetStr( e.NameStrNum ), e.DrawFlags, 0U, characterFont );
+                SprMngr.DrawStr( Rect( Rect( ChaTSwitch[2] - 35, ChaTSwitch[1], ChaTSwitch[2], ChaTSwitch[3] ), ChaX, ChaY + (i - scroll) * 11 ), e.Addon, 0, 0U, characterFont );
             }
         }
     }
@@ -6424,9 +6434,9 @@ void FOClient::ChaDraw( bool is_reg )
 
         // Str level
         if( is_reg )
-            SprMngr.DrawStr( Rect( ChaWSpecialLevel, ChaX + ChaWSpecialNextX * i, ChaY + ChaWSpecialNextY * i ), MsgGame->GetStr( STR_STAT_LEVEL_ABB_( val ) ), FONT_FLAG_NOBREAK | FONT_FLAG_CENTERY );
+            SprMngr.DrawStr( Rect( ChaWSpecialLevel, ChaX + ChaWSpecialNextX * i, ChaY + ChaWSpecialNextY * i ), MsgGame->GetStr( STR_STAT_LEVEL_ABB_( val ) ), FONT_FLAG_NOBREAK | FONT_FLAG_CENTERY, 0U, characterFont );
         else
-            SprMngr.DrawStr( Rect( ChaWSpecialLevel, ChaX + ChaWSpecialNextX * i, ChaY + ChaWSpecialNextY * i ), MsgGame->GetStr( STR_STAT_LEVEL_( val ) ), FONT_FLAG_NOBREAK | FONT_FLAG_CENTERY );
+            SprMngr.DrawStr( Rect( ChaWSpecialLevel, ChaX + ChaWSpecialNextX * i, ChaY + ChaWSpecialNextY * i ), MsgGame->GetStr( STR_STAT_LEVEL_( val ) ), FONT_FLAG_NOBREAK | FONT_FLAG_CENTERY, 0U, characterFont );
     }
 
     // Unspent
@@ -6446,9 +6456,9 @@ void FOClient::ChaDraw( bool is_reg )
     {
         int offs = i - SKILL_BEGIN;
         // Name
-        SprMngr.DrawStr( Rect( ChaWSkillName, ChaX + ChaWSkillNextX * offs, ChaY + ChaWSkillNextY * offs ), MsgGame->GetStr( STR_PARAM_NAME_( i ) ), FONT_FLAG_NOBREAK, cr->IsTagSkill( i ) ? 0xFFAAAAAA : COLOR_TEXT );
+        SprMngr.DrawStr( Rect( ChaWSkillName, ChaX + ChaWSkillNextX * offs, ChaY + ChaWSkillNextY * offs ), MsgGame->GetStr( STR_PARAM_NAME_( i ) ), FONT_FLAG_NOBREAK, cr->IsTagSkill( i ) ? 0xFFAAAAAA : COLOR_TEXT, characterFont );
         // Value
-        SprMngr.DrawStr( Rect( ChaWSkillValue, ChaX + ChaWSkillNextX * offs, ChaY + ChaWSkillNextY * offs ), Str::FormatBuf( "%d%%", CLAMP( CHA_PARAM( i ) + (is_reg ? 0 : ChaSkillUp[offs]), -MAX_SKILL_VAL, MAX_SKILL_VAL ) ), FONT_FLAG_NOBREAK, cr->IsTagSkill( i ) ? 0xFFAAAAAA : COLOR_TEXT );
+        SprMngr.DrawStr( Rect( ChaWSkillValue, ChaX + ChaWSkillNextX * offs, ChaY + ChaWSkillNextY * offs ), Str::FormatBuf( "%d%%", CLAMP( CHA_PARAM( i ) + (is_reg ? 0 : ChaSkillUp[offs]), -MAX_SKILL_VAL, MAX_SKILL_VAL ) ), FONT_FLAG_NOBREAK, cr->IsTagSkill( i ) ? 0xFFAAAAAA : COLOR_TEXT, characterFont );
     }
 
     if( is_reg )
@@ -6465,14 +6475,14 @@ void FOClient::ChaDraw( bool is_reg )
 
     // Tips
     SprMngr.DrawStr( Rect( ChaWName, ChaX, ChaY ), ChaName, 0, COLOR_TEXT_BLACK, FONT_TYPE_THIN );
-    SprMngr.DrawStr( Rect( ChaWDesc, ChaX, ChaY ), ChaDesc, 0, COLOR_TEXT_BLACK );
+    SprMngr.DrawStr( Rect( ChaWDesc, ChaX, ChaY ), ChaDesc, 0, COLOR_TEXT_BLACK, characterFont );
 
     // Level
     if( !is_reg )
     {
-        SprMngr.DrawStr( Rect( ChaWLevel, ChaX, ChaY ), FmtGameText( STR_CHA_LEVEL, cr->GetParam( ST_LEVEL ) ), 0 );
-        SprMngr.DrawStr( Rect( ChaWExp, ChaX, ChaY ), FmtGameText( STR_CHA_EXPERIENCE, cr->GetParam( ST_EXPERIENCE ) ), 0 );
-        SprMngr.DrawStr( Rect( ChaWNextLevel, ChaX, ChaY ), FmtGameText( STR_CHA_NEXT_LEVEL, NumericalNumber( cr->GetParam( ST_LEVEL ) ) * 1000 ), 0 );
+        SprMngr.DrawStr( Rect( ChaWLevel, ChaX, ChaY ), FmtGameText( STR_CHA_LEVEL, cr->GetParam( ST_LEVEL ) ), 0, 0U, characterFont);
+        SprMngr.DrawStr( Rect( ChaWExp, ChaX, ChaY ), FmtGameText( STR_CHA_EXPERIENCE, cr->GetParam( ST_EXPERIENCE ) ), 0, 0U, characterFont);
+        SprMngr.DrawStr( Rect( ChaWNextLevel, ChaX, ChaY ), FmtGameText( STR_CHA_NEXT_LEVEL, NumericalNumber( cr->GetParam( ST_LEVEL ) ) * 1000 ), 0, 0U, characterFont);
     }
 
     // Name
@@ -6490,9 +6500,9 @@ void FOClient::ChaDraw( bool is_reg )
     // Damage
     // Life
     if( is_reg )
-        SprMngr.DrawStr( Rect( ChaWDmgLife, ChaX, ChaY ), FmtGameText( STR_DMG_LIFE, cr->Params[ST_MAX_LIFE], cr->Params[ST_MAX_LIFE] ), FONT_FLAG_NOBREAK );
+        SprMngr.DrawStr( Rect( ChaWDmgLife, ChaX, ChaY ), FmtGameText( STR_DMG_LIFE, cr->Params[ST_MAX_LIFE], cr->Params[ST_MAX_LIFE] ), FONT_FLAG_NOBREAK, 0U, characterFont);
     else
-        SprMngr.DrawStr( Rect( ChaWDmgLife, ChaX, ChaY ), FmtGameText( STR_DMG_LIFE, cr->GetParam( ST_CURRENT_HP ), cr->GetParam( ST_MAX_LIFE ) ), FONT_FLAG_NOBREAK );
+        SprMngr.DrawStr( Rect( ChaWDmgLife, ChaX, ChaY ), FmtGameText( STR_DMG_LIFE, cr->GetParam( ST_CURRENT_HP ), cr->GetParam( ST_MAX_LIFE ) ), FONT_FLAG_NOBREAK, 0U, characterFont);
 
     // Body damages
     for( uint i = DAMAGE_BEGIN; i <= DAMAGE_END; ++i )
@@ -6505,14 +6515,14 @@ void FOClient::ChaDraw( bool is_reg )
             color = (CHA_PARAM( ST_POISONING_LEVEL ) ? COLOR_TEXT : COLOR_TEXT_DARK);
         else
             color = (CHA_PARAM( i ) ? COLOR_TEXT : COLOR_TEXT_DARK);
-        SprMngr.DrawStr( Rect( ChaWDmg, ChaX + ChaWDmgNextX * offs, ChaY + ChaWDmgNextY * offs ), MsgGame->GetStr( STR_PARAM_NAME_( i ) ), FONT_FLAG_NOBREAK, color );
+        SprMngr.DrawStr( Rect( ChaWDmg, ChaX + ChaWDmgNextX * offs, ChaY + ChaWDmgNextY * offs ), MsgGame->GetStr( STR_PARAM_NAME_( i ) ), FONT_FLAG_NOBREAK, color, characterFont);
     }
 
     // Secondary stats
     for( int i = 0; i < ShowStatsCnt; ++i )
     {
         // Name
-        SprMngr.DrawStr( Rect( ChaWStatsName, ChaX + ChaWStatsNextX * i, ChaY + ChaWStatsNextY * i ), MsgGame->GetStr( STR_PARAM_NAME_SHORT_( ShowStats[i] ) ), FONT_FLAG_NOBREAK, COLOR_TEXT );
+        SprMngr.DrawStr( Rect( ChaWStatsName, ChaX + ChaWStatsNextX * i, ChaY + ChaWStatsNextY * i ), MsgGame->GetStr( STR_PARAM_NAME_SHORT_( ShowStats[i] ) ), FONT_FLAG_NOBREAK, COLOR_TEXT, characterFont);
         // Value
         int val = CHA_PARAM( ShowStats[i] );
         const char* str;
@@ -6529,7 +6539,7 @@ void FOClient::ChaDraw( bool is_reg )
                 str = Str::FormatBuf( "%d", val );
                 break;
         }
-        SprMngr.DrawStr( Rect( ChaWStatsValue, ChaX + ChaWStatsNextX * i, ChaY + ChaWStatsNextY * i ), str, FONT_FLAG_NOBREAK, COLOR_TEXT );
+        SprMngr.DrawStr( Rect( ChaWStatsValue, ChaX + ChaWStatsNextX * i, ChaY + ChaWStatsNextY * i ), str, FONT_FLAG_NOBREAK, COLOR_TEXT, characterFont);
     }
 
     // Traits text
@@ -6537,11 +6547,11 @@ void FOClient::ChaDraw( bool is_reg )
     {
         // Left
         for( uint i = TRAIT_BEGIN, k = 0; i < TRAIT_BEGIN + TRAIT_COUNT / 2; ++i, ++k )
-            SprMngr.DrawStr( Rect( RegWTraitL, RegTraitNextX * k + ChaX, RegTraitNextY * k + ChaY ), MsgGame->GetStr( STR_PARAM_NAME_( i ) ), FONT_FLAG_NOBREAK, CHA_PARAM( i ) ? 0xFFAAAAAA : COLOR_TEXT );
+            SprMngr.DrawStr( Rect( RegWTraitL, RegTraitNextX * k + ChaX, RegTraitNextY * k + ChaY ), MsgGame->GetStr( STR_PARAM_NAME_( i ) ), FONT_FLAG_NOBREAK, CHA_PARAM( i ) ? 0xFFAAAAAA : COLOR_TEXT, characterFont);
 
         // Right
         for( uint i = TRAIT_BEGIN + TRAIT_COUNT / 2, k = 0; i <= TRAIT_END; ++i, ++k )
-            SprMngr.DrawStr( Rect( RegWTraitR, RegTraitNextX * k + ChaX, RegTraitNextY * k + ChaY ), MsgGame->GetStr( STR_PARAM_NAME_( i ) ), FONT_FLAG_NOBREAK, CHA_PARAM( i ) ? 0xFFAAAAAA : COLOR_TEXT );
+            SprMngr.DrawStr( Rect( RegWTraitR, RegTraitNextX * k + ChaX, RegTraitNextY * k + ChaY ), MsgGame->GetStr( STR_PARAM_NAME_( i ) ), FONT_FLAG_NOBREAK, CHA_PARAM( i ) ? 0xFFAAAAAA : COLOR_TEXT, characterFont);
     }
 
     // Slider
@@ -7364,12 +7374,12 @@ void FOClient::ChaNameDraw()
     SprMngr.DrawSprite( Singleplayer ? ChaNameSingleplayerMainPic : ChaNameMainPic, ChaNameX, ChaNameY );
 
     SprMngr.DrawStr( Rect( ChaNameWNameText, ChaNameX, ChaNameY ), MsgGame->GetStr( STR_CHA_NAME_NAME ), FONT_FLAG_NOBREAK | FONT_FLAG_CENTERY, COLOR_TEXT_SAND, FONT_TYPE_FAT );
-    SprMngr.DrawStr( Rect( ChaNameWName, ChaNameX, ChaNameY ), cr->GetName(), FONT_FLAG_NOBREAK | FONT_FLAG_CENTERY, IfaceHold == IFACE_CHA_NAME_NAME ? COLOR_TEXT_LGREEN : COLOR_TEXT_DGREEN );
+    SprMngr.DrawStr( Rect( ChaNameWName, ChaNameX, ChaNameY ), cr->GetName(), FONT_FLAG_NOBREAK | FONT_FLAG_CENTERY, IfaceHold == IFACE_CHA_NAME_NAME ? COLOR_TEXT_LGREEN : COLOR_TEXT_DGREEN, characterFont);
 
     if( !Singleplayer )
     {
         SprMngr.DrawStr( Rect( ChaNameWPassText, ChaNameX, ChaNameY ), MsgGame->GetStr( STR_CHA_NAME_PASS ), FONT_FLAG_NOBREAK | FONT_FLAG_CENTERY, COLOR_TEXT_SAND, FONT_TYPE_FAT );
-        SprMngr.DrawStr( Rect( ChaNameWPass, ChaNameX, ChaNameY ), cr->GetPass(), FONT_FLAG_NOBREAK | FONT_FLAG_CENTERY, IfaceHold == IFACE_CHA_NAME_PASS ? COLOR_TEXT_LGREEN : COLOR_TEXT_DGREEN );
+        SprMngr.DrawStr( Rect( ChaNameWPass, ChaNameX, ChaNameY ), cr->GetPass(), FONT_FLAG_NOBREAK | FONT_FLAG_CENTERY, IfaceHold == IFACE_CHA_NAME_PASS ? COLOR_TEXT_LGREEN : COLOR_TEXT_DGREEN, characterFont);
     }
 }
 
@@ -7647,11 +7657,11 @@ void FOClient::PerkDraw()
         uint col = COLOR_TEXT;
         if( PerkCollection[i] == PerkCurPerk )
             col = COLOR_TEXT_DGREEN;
-        SprMngr.DrawStr( Rect( PerkWPerks, PerkX + PerkNextX * k, PerkY + PerkNextY * k ), MsgGame->GetStr( STR_PARAM_NAME_( PerkCollection[i] ) ), 0, col );
+        SprMngr.DrawStr( Rect( PerkWPerks, PerkX + PerkNextX * k, PerkY + PerkNextY * k ), MsgGame->GetStr( STR_PARAM_NAME_( PerkCollection[i] ) ), 0, col, characterFont);
     }
 
     if( PerkCurPerk >= 0 )
-        SprMngr.DrawStr( Rect( PerkWText, PerkX, PerkY ), MsgGame->GetStr( STR_PARAM_DESC_( PerkCurPerk ) ), 0, COLOR_TEXT_BLACK );
+        SprMngr.DrawStr( Rect( PerkWText, PerkX, PerkY ), MsgGame->GetStr( STR_PARAM_DESC_( PerkCurPerk ) ), 0, COLOR_TEXT_BLACK, characterFont);
 }
 
 void FOClient::PerkLMouseDown()
@@ -8452,36 +8462,36 @@ void FOClient::AimDraw()
 
     if( GameOpt.ApCostAimArms == GameOpt.ApCostAimTorso && GameOpt.ApCostAimTorso == GameOpt.ApCostAimLegs && GameOpt.ApCostAimLegs == GameOpt.ApCostAimGroin && GameOpt.ApCostAimGroin == GameOpt.ApCostAimEyes && GameOpt.ApCostAimEyes == GameOpt.ApCostAimHead )
     {
-        SprMngr.DrawStr( Rect( AimWHeadT, AimX, AimY ), Str::FormatBuf( "%s", MsgCombat->GetStr( 1000 + cr->GetCrTypeAlias() * 10 + HIT_LOCATION_HEAD - 1 ) ), FONT_FLAG_NOBREAK, IfaceHold == IFACE_AIM_HEAD ? COLOR_TEXT_RED : COLOR_TEXT );
-        SprMngr.DrawStr( Rect( AimWLArmT, AimX, AimY ), Str::FormatBuf( "%s", MsgCombat->GetStr( 1000 + cr->GetCrTypeAlias() * 10 + HIT_LOCATION_LEFT_ARM - 1 ) ), FONT_FLAG_NOBREAK | FONT_FLAG_CENTERR, IfaceHold == IFACE_AIM_LARM ? COLOR_TEXT_RED : COLOR_TEXT );
-        SprMngr.DrawStr( Rect( AimWRArmT, AimX, AimY ), Str::FormatBuf( "%s", MsgCombat->GetStr( 1000 + cr->GetCrTypeAlias() * 10 + HIT_LOCATION_RIGHT_ARM - 1 ) ), FONT_FLAG_NOBREAK, IfaceHold == IFACE_AIM_RARM ? COLOR_TEXT_RED : COLOR_TEXT );
-        SprMngr.DrawStr( Rect( AimWTorsoT, AimX, AimY ), Str::FormatBuf( "%s", MsgCombat->GetStr( 1000 + cr->GetCrTypeAlias() * 10 + HIT_LOCATION_TORSO - 1 ) ), FONT_FLAG_NOBREAK | FONT_FLAG_CENTERR, IfaceHold == IFACE_AIM_TORSO ? COLOR_TEXT_RED : COLOR_TEXT );
-        SprMngr.DrawStr( Rect( AimWRLegT, AimX, AimY ), Str::FormatBuf( "%s", MsgCombat->GetStr( 1000 + cr->GetCrTypeAlias() * 10 + HIT_LOCATION_RIGHT_LEG - 1 ) ), FONT_FLAG_NOBREAK, IfaceHold == IFACE_AIM_RLEG ? COLOR_TEXT_RED : COLOR_TEXT );
-        SprMngr.DrawStr( Rect( AimWLLegT, AimX, AimY ), Str::FormatBuf( "%s", MsgCombat->GetStr( 1000 + cr->GetCrTypeAlias() * 10 + HIT_LOCATION_LEFT_LEG - 1 ) ), FONT_FLAG_NOBREAK | FONT_FLAG_CENTERR, IfaceHold == IFACE_AIM_LLEG ? COLOR_TEXT_RED : COLOR_TEXT );
-        SprMngr.DrawStr( Rect( AimWEyesT, AimX, AimY ), Str::FormatBuf( "%s", MsgCombat->GetStr( 1000 + cr->GetCrTypeAlias() * 10 + HIT_LOCATION_EYES - 1 ) ), FONT_FLAG_NOBREAK, IfaceHold == IFACE_AIM_EYES ? COLOR_TEXT_RED : COLOR_TEXT );
-        SprMngr.DrawStr( Rect( AimWGroinT, AimX, AimY ), Str::FormatBuf( "%s", MsgCombat->GetStr( 1000 + cr->GetCrTypeAlias() * 10 + HIT_LOCATION_GROIN - 1 ) ), FONT_FLAG_NOBREAK | FONT_FLAG_CENTERR, IfaceHold == IFACE_AIM_GROIN ? COLOR_TEXT_RED : COLOR_TEXT );
+        SprMngr.DrawStr( Rect( AimWHeadT, AimX, AimY ), Str::FormatBuf( "%s", MsgCombat->GetStr( 1000 + cr->GetCrTypeAlias() * 10 + HIT_LOCATION_HEAD - 1 ) ), FONT_FLAG_NOBREAK, IfaceHold == IFACE_AIM_HEAD ? COLOR_TEXT_RED : COLOR_TEXT, characterFont);
+        SprMngr.DrawStr( Rect( AimWLArmT, AimX, AimY ), Str::FormatBuf( "%s", MsgCombat->GetStr( 1000 + cr->GetCrTypeAlias() * 10 + HIT_LOCATION_LEFT_ARM - 1 ) ), FONT_FLAG_NOBREAK | FONT_FLAG_CENTERR, IfaceHold == IFACE_AIM_LARM ? COLOR_TEXT_RED : COLOR_TEXT, characterFont);
+        SprMngr.DrawStr( Rect( AimWRArmT, AimX, AimY ), Str::FormatBuf( "%s", MsgCombat->GetStr( 1000 + cr->GetCrTypeAlias() * 10 + HIT_LOCATION_RIGHT_ARM - 1 ) ), FONT_FLAG_NOBREAK, IfaceHold == IFACE_AIM_RARM ? COLOR_TEXT_RED : COLOR_TEXT, characterFont);
+        SprMngr.DrawStr( Rect( AimWTorsoT, AimX, AimY ), Str::FormatBuf( "%s", MsgCombat->GetStr( 1000 + cr->GetCrTypeAlias() * 10 + HIT_LOCATION_TORSO - 1 ) ), FONT_FLAG_NOBREAK | FONT_FLAG_CENTERR, IfaceHold == IFACE_AIM_TORSO ? COLOR_TEXT_RED : COLOR_TEXT, characterFont);
+        SprMngr.DrawStr( Rect( AimWRLegT, AimX, AimY ), Str::FormatBuf( "%s", MsgCombat->GetStr( 1000 + cr->GetCrTypeAlias() * 10 + HIT_LOCATION_RIGHT_LEG - 1 ) ), FONT_FLAG_NOBREAK, IfaceHold == IFACE_AIM_RLEG ? COLOR_TEXT_RED : COLOR_TEXT, characterFont);
+        SprMngr.DrawStr( Rect( AimWLLegT, AimX, AimY ), Str::FormatBuf( "%s", MsgCombat->GetStr( 1000 + cr->GetCrTypeAlias() * 10 + HIT_LOCATION_LEFT_LEG - 1 ) ), FONT_FLAG_NOBREAK | FONT_FLAG_CENTERR, IfaceHold == IFACE_AIM_LLEG ? COLOR_TEXT_RED : COLOR_TEXT, characterFont);
+        SprMngr.DrawStr( Rect( AimWEyesT, AimX, AimY ), Str::FormatBuf( "%s", MsgCombat->GetStr( 1000 + cr->GetCrTypeAlias() * 10 + HIT_LOCATION_EYES - 1 ) ), FONT_FLAG_NOBREAK, IfaceHold == IFACE_AIM_EYES ? COLOR_TEXT_RED : COLOR_TEXT, characterFont);
+        SprMngr.DrawStr( Rect( AimWGroinT, AimX, AimY ), Str::FormatBuf( "%s", MsgCombat->GetStr( 1000 + cr->GetCrTypeAlias() * 10 + HIT_LOCATION_GROIN - 1 ) ), FONT_FLAG_NOBREAK | FONT_FLAG_CENTERR, IfaceHold == IFACE_AIM_GROIN ? COLOR_TEXT_RED : COLOR_TEXT, characterFont);
     }
     else
     {
-        SprMngr.DrawStr( Rect( AimWHeadT, AimX, AimY ), Str::FormatBuf( "%s (%u)", MsgCombat->GetStr( 1000 + cr->GetCrTypeAlias() * 10 + HIT_LOCATION_HEAD - 1 ), GameOpt.ApCostAimHead ), FONT_FLAG_NOBREAK, IfaceHold == IFACE_AIM_HEAD ? COLOR_TEXT_RED : COLOR_TEXT );
-        SprMngr.DrawStr( Rect( AimWLArmT, AimX, AimY ), Str::FormatBuf( "(%u) %s", GameOpt.ApCostAimArms, MsgCombat->GetStr( 1000 + cr->GetCrTypeAlias() * 10 + HIT_LOCATION_LEFT_ARM - 1 ) ), FONT_FLAG_NOBREAK | FONT_FLAG_CENTERR, IfaceHold == IFACE_AIM_LARM ? COLOR_TEXT_RED : COLOR_TEXT );
-        SprMngr.DrawStr( Rect( AimWRArmT, AimX, AimY ), Str::FormatBuf( "%s (%u)", MsgCombat->GetStr( 1000 + cr->GetCrTypeAlias() * 10 + HIT_LOCATION_RIGHT_ARM - 1 ), GameOpt.ApCostAimArms ), FONT_FLAG_NOBREAK, IfaceHold == IFACE_AIM_RARM ? COLOR_TEXT_RED : COLOR_TEXT );
-        SprMngr.DrawStr( Rect( AimWTorsoT, AimX, AimY ), Str::FormatBuf( "(%u) %s", GameOpt.ApCostAimTorso, MsgCombat->GetStr( 1000 + cr->GetCrTypeAlias() * 10 + HIT_LOCATION_TORSO - 1 ) ), FONT_FLAG_NOBREAK | FONT_FLAG_CENTERR, IfaceHold == IFACE_AIM_TORSO ? COLOR_TEXT_RED : COLOR_TEXT );
-        SprMngr.DrawStr( Rect( AimWRLegT, AimX, AimY ), Str::FormatBuf( "%s (%u)", MsgCombat->GetStr( 1000 + cr->GetCrTypeAlias() * 10 + HIT_LOCATION_RIGHT_LEG - 1 ), GameOpt.ApCostAimLegs ), FONT_FLAG_NOBREAK, IfaceHold == IFACE_AIM_RLEG ? COLOR_TEXT_RED : COLOR_TEXT );
-        SprMngr.DrawStr( Rect( AimWLLegT, AimX, AimY ), Str::FormatBuf( "(%u) %s", GameOpt.ApCostAimLegs, MsgCombat->GetStr( 1000 + cr->GetCrTypeAlias() * 10 + HIT_LOCATION_LEFT_LEG - 1 ) ), FONT_FLAG_NOBREAK | FONT_FLAG_CENTERR, IfaceHold == IFACE_AIM_LLEG ? COLOR_TEXT_RED : COLOR_TEXT );
-        SprMngr.DrawStr( Rect( AimWEyesT, AimX, AimY ), Str::FormatBuf( "%s (%u)", MsgCombat->GetStr( 1000 + cr->GetCrTypeAlias() * 10 + HIT_LOCATION_EYES - 1 ), GameOpt.ApCostAimEyes ), FONT_FLAG_NOBREAK, IfaceHold == IFACE_AIM_EYES ? COLOR_TEXT_RED : COLOR_TEXT );
-        SprMngr.DrawStr( Rect( AimWGroinT, AimX, AimY ), Str::FormatBuf( "(%u) %s", GameOpt.ApCostAimGroin, MsgCombat->GetStr( 1000 + cr->GetCrTypeAlias() * 10 + HIT_LOCATION_GROIN - 1 ) ), FONT_FLAG_NOBREAK | FONT_FLAG_CENTERR, IfaceHold == IFACE_AIM_GROIN ? COLOR_TEXT_RED : COLOR_TEXT );
+        SprMngr.DrawStr( Rect( AimWHeadT, AimX, AimY ), Str::FormatBuf( "%s (%u)", MsgCombat->GetStr( 1000 + cr->GetCrTypeAlias() * 10 + HIT_LOCATION_HEAD - 1 ), GameOpt.ApCostAimHead ), FONT_FLAG_NOBREAK, IfaceHold == IFACE_AIM_HEAD ? COLOR_TEXT_RED : COLOR_TEXT, characterFont);
+        SprMngr.DrawStr( Rect( AimWLArmT, AimX, AimY ), Str::FormatBuf( "(%u) %s", GameOpt.ApCostAimArms, MsgCombat->GetStr( 1000 + cr->GetCrTypeAlias() * 10 + HIT_LOCATION_LEFT_ARM - 1 ) ), FONT_FLAG_NOBREAK | FONT_FLAG_CENTERR, IfaceHold == IFACE_AIM_LARM ? COLOR_TEXT_RED : COLOR_TEXT, characterFont);
+        SprMngr.DrawStr( Rect( AimWRArmT, AimX, AimY ), Str::FormatBuf( "%s (%u)", MsgCombat->GetStr( 1000 + cr->GetCrTypeAlias() * 10 + HIT_LOCATION_RIGHT_ARM - 1 ), GameOpt.ApCostAimArms ), FONT_FLAG_NOBREAK, IfaceHold == IFACE_AIM_RARM ? COLOR_TEXT_RED : COLOR_TEXT, characterFont);
+        SprMngr.DrawStr( Rect( AimWTorsoT, AimX, AimY ), Str::FormatBuf( "(%u) %s", GameOpt.ApCostAimTorso, MsgCombat->GetStr( 1000 + cr->GetCrTypeAlias() * 10 + HIT_LOCATION_TORSO - 1 ) ), FONT_FLAG_NOBREAK | FONT_FLAG_CENTERR, IfaceHold == IFACE_AIM_TORSO ? COLOR_TEXT_RED : COLOR_TEXT, characterFont);
+        SprMngr.DrawStr( Rect( AimWRLegT, AimX, AimY ), Str::FormatBuf( "%s (%u)", MsgCombat->GetStr( 1000 + cr->GetCrTypeAlias() * 10 + HIT_LOCATION_RIGHT_LEG - 1 ), GameOpt.ApCostAimLegs ), FONT_FLAG_NOBREAK, IfaceHold == IFACE_AIM_RLEG ? COLOR_TEXT_RED : COLOR_TEXT, characterFont);
+        SprMngr.DrawStr( Rect( AimWLLegT, AimX, AimY ), Str::FormatBuf( "(%u) %s", GameOpt.ApCostAimLegs, MsgCombat->GetStr( 1000 + cr->GetCrTypeAlias() * 10 + HIT_LOCATION_LEFT_LEG - 1 ) ), FONT_FLAG_NOBREAK | FONT_FLAG_CENTERR, IfaceHold == IFACE_AIM_LLEG ? COLOR_TEXT_RED : COLOR_TEXT, characterFont);
+        SprMngr.DrawStr( Rect( AimWEyesT, AimX, AimY ), Str::FormatBuf( "%s (%u)", MsgCombat->GetStr( 1000 + cr->GetCrTypeAlias() * 10 + HIT_LOCATION_EYES - 1 ), GameOpt.ApCostAimEyes ), FONT_FLAG_NOBREAK, IfaceHold == IFACE_AIM_EYES ? COLOR_TEXT_RED : COLOR_TEXT, characterFont);
+        SprMngr.DrawStr( Rect( AimWGroinT, AimX, AimY ), Str::FormatBuf( "(%u) %s", GameOpt.ApCostAimGroin, MsgCombat->GetStr( 1000 + cr->GetCrTypeAlias() * 10 + HIT_LOCATION_GROIN - 1 ) ), FONT_FLAG_NOBREAK | FONT_FLAG_CENTERR, IfaceHold == IFACE_AIM_GROIN ? COLOR_TEXT_RED : COLOR_TEXT, characterFont);
     }
 
     bool zero = !HexMngr.TraceBullet( Chosen->GetHexX(), Chosen->GetHexY(), cr->GetHexX(), cr->GetHexY(), Chosen->GetAttackDist(), 0.0f, cr, false, NULL, 0, NULL, NULL, NULL, true );
-    SprMngr.DrawStr( Rect( AimWHeadP, AimX, AimY ), Str::ItoA( zero ? 0 : ScriptGetHitProc( cr, HIT_LOCATION_HEAD ) ), FONT_FLAG_NOBREAK | FONT_FLAG_CENTERX );
-    SprMngr.DrawStr( Rect( AimWLArmP, AimX, AimY ), Str::ItoA( zero ? 0 : ScriptGetHitProc( cr, HIT_LOCATION_LEFT_ARM ) ), FONT_FLAG_NOBREAK | FONT_FLAG_CENTERX );
-    SprMngr.DrawStr( Rect( AimWRArmP, AimX, AimY ), Str::ItoA( zero ? 0 : ScriptGetHitProc( cr, HIT_LOCATION_RIGHT_ARM ) ), FONT_FLAG_NOBREAK | FONT_FLAG_CENTERX );
-    SprMngr.DrawStr( Rect( AimWTorsoP, AimX, AimY ), Str::ItoA( zero ? 0 : ScriptGetHitProc( cr, HIT_LOCATION_TORSO ) ), FONT_FLAG_NOBREAK | FONT_FLAG_CENTERX );
-    SprMngr.DrawStr( Rect( AimWRLegP, AimX, AimY ), Str::ItoA( zero ? 0 : ScriptGetHitProc( cr, HIT_LOCATION_RIGHT_LEG ) ), FONT_FLAG_NOBREAK | FONT_FLAG_CENTERX );
-    SprMngr.DrawStr( Rect( AimWLLegP, AimX, AimY ), Str::ItoA( zero ? 0 : ScriptGetHitProc( cr, HIT_LOCATION_LEFT_LEG ) ), FONT_FLAG_NOBREAK | FONT_FLAG_CENTERX );
-    SprMngr.DrawStr( Rect( AimWEyesP, AimX, AimY ), Str::ItoA( zero ? 0 : ScriptGetHitProc( cr, HIT_LOCATION_EYES ) ), FONT_FLAG_NOBREAK | FONT_FLAG_CENTERX );
-    SprMngr.DrawStr( Rect( AimWGroinP, AimX, AimY ), Str::ItoA( zero ? 0 : ScriptGetHitProc( cr, HIT_LOCATION_GROIN ) ), FONT_FLAG_NOBREAK | FONT_FLAG_CENTERX );
+    SprMngr.DrawStr( Rect( AimWHeadP, AimX, AimY ), Str::ItoA( zero ? 0 : ScriptGetHitProc( cr, HIT_LOCATION_HEAD ) ), FONT_FLAG_NOBREAK | FONT_FLAG_CENTERX, 0U, characterFont);
+    SprMngr.DrawStr( Rect( AimWLArmP, AimX, AimY ), Str::ItoA( zero ? 0 : ScriptGetHitProc( cr, HIT_LOCATION_LEFT_ARM ) ), FONT_FLAG_NOBREAK | FONT_FLAG_CENTERX, 0U, characterFont);
+    SprMngr.DrawStr( Rect( AimWRArmP, AimX, AimY ), Str::ItoA( zero ? 0 : ScriptGetHitProc( cr, HIT_LOCATION_RIGHT_ARM ) ), FONT_FLAG_NOBREAK | FONT_FLAG_CENTERX, 0U, characterFont);
+    SprMngr.DrawStr( Rect( AimWTorsoP, AimX, AimY ), Str::ItoA( zero ? 0 : ScriptGetHitProc( cr, HIT_LOCATION_TORSO ) ), FONT_FLAG_NOBREAK | FONT_FLAG_CENTERX, 0U, characterFont);
+    SprMngr.DrawStr( Rect( AimWRLegP, AimX, AimY ), Str::ItoA( zero ? 0 : ScriptGetHitProc( cr, HIT_LOCATION_RIGHT_LEG ) ), FONT_FLAG_NOBREAK | FONT_FLAG_CENTERX, 0U, characterFont);
+    SprMngr.DrawStr( Rect( AimWLLegP, AimX, AimY ), Str::ItoA( zero ? 0 : ScriptGetHitProc( cr, HIT_LOCATION_LEFT_LEG ) ), FONT_FLAG_NOBREAK | FONT_FLAG_CENTERX, 0U, characterFont);
+    SprMngr.DrawStr( Rect( AimWEyesP, AimX, AimY ), Str::ItoA( zero ? 0 : ScriptGetHitProc( cr, HIT_LOCATION_EYES ) ), FONT_FLAG_NOBREAK | FONT_FLAG_CENTERX, 0U, characterFont);
+    SprMngr.DrawStr( Rect( AimWGroinP, AimX, AimY ), Str::ItoA( zero ? 0 : ScriptGetHitProc( cr, HIT_LOCATION_GROIN ) ), FONT_FLAG_NOBREAK | FONT_FLAG_CENTERX, 0U, characterFont);
 }
 
 void FOClient::AimLMouseDown()
@@ -9158,7 +9168,7 @@ void FOClient::CurDraw()
             Str::Format( str, "%d%%", hit );
 
             SprMngr.Flush();
-            SprMngr.DrawStr( Rect( GameOpt.MouseX + 6, GameOpt.MouseY + 6, x + 500, y + 500 ), str, FONT_FLAG_BORDERED, COLOR_TEXT_RED );
+            SprMngr.DrawStr( Rect( GameOpt.MouseX + 6, GameOpt.MouseY + 6, x + 500, y + 500 ), str, FONT_FLAG_BORDERED, COLOR_TEXT_RED, mapFont );
             break;
         }
         case CURSOR_USE_ITEM:
@@ -9313,14 +9323,14 @@ void FOClient::DlgboxDraw()
     }
 
     SprMngr.DrawSprite( DlgboxWTopPicNone, DlgboxWTop[0] + DlgboxX, DlgboxWTop[1] + DlgboxY );
-    SprMngr.DrawStr( Rect( DlgboxWText, DlgboxX, DlgboxY ), DlgboxText, 0 );
+    SprMngr.DrawStr( Rect( DlgboxWText, DlgboxX, DlgboxY ), DlgboxText, 0, 0U, dialogFont);
     uint y_offs = DlgboxWTop.H();
     for( uint i = 0; i < DlgboxButtonsCount; i++ )
     {
         SprMngr.DrawSprite( DlgboxWMiddlePicNone, DlgboxWMiddle[0] + DlgboxX, DlgboxWMiddle[1] + DlgboxY + y_offs );
         if( IfaceHold == IFACE_DIALOG_BTN && i == DlgboxSelectedButton )
             SprMngr.DrawSprite( DlgboxBButtonPicDown, DlgboxBButton[0] + DlgboxX, DlgboxBButton[1] + DlgboxY + y_offs );
-        SprMngr.DrawStr( Rect( DlgboxBButtonText, DlgboxX, DlgboxY + y_offs ), DlgboxButtonText[i].c_str(), FONT_FLAG_NOBREAK | FONT_FLAG_CENTERY, COLOR_TEXT_SAND, FONT_TYPE_FAT );
+        SprMngr.DrawStr( Rect( DlgboxBButtonText, DlgboxX, DlgboxY + y_offs ), DlgboxButtonText[i].c_str(), FONT_FLAG_NOBREAK | FONT_FLAG_CENTERY, COLOR_TEXT_SAND, FONT_TYPE_FAT);
         y_offs += DlgboxWMiddle.H();
     }
     SprMngr.DrawSprite( DlgboxWBottomPicNone, DlgboxWTop[0] + DlgboxX, DlgboxWTop[1] + DlgboxY + y_offs );
@@ -9684,7 +9694,7 @@ void FOClient::SayDraw()
     SprMngr.DrawStr( Rect( SayWMainText, SayX, SayY ), SayTitle.c_str(), FONT_FLAG_CENTERX | FONT_FLAG_CENTERY, COLOR_TEXT_SAND, FONT_TYPE_FAT );
     SprMngr.DrawStr( Rect( SayBOkText, SayX, SayY ), MsgGame->GetStr( STR_SAY_OK ), FONT_FLAG_CENTERX | FONT_FLAG_CENTERY, COLOR_TEXT_SAND, FONT_TYPE_FAT );
     SprMngr.DrawStr( Rect( SayBCancelText, SayX, SayY ), MsgGame->GetStr( STR_SAY_CANCEL ), FONT_FLAG_CENTERX | FONT_FLAG_CENTERY, COLOR_TEXT_SAND, FONT_TYPE_FAT );
-    SprMngr.DrawStr( Rect( SayWSay, SayX, SayY ), SayText.c_str(), FONT_FLAG_NOBREAK | FONT_FLAG_CENTERY );
+    SprMngr.DrawStr( Rect( SayWSay, SayX, SayY ), SayText.c_str(), FONT_FLAG_NOBREAK | FONT_FLAG_CENTERY, 0U, dialogFont );
 }
 
 void FOClient::SayLMouseDown()
@@ -10617,14 +10627,14 @@ void FOClient::FixDraw()
             {
                 FixDrawComponent* c = FixDrawComp[i];
 				if (c->IsText) {
-					SprMngr.DrawStr(Rect(c->Place, FixX, FixY), c->Text.c_str(), FONT_FLAG_CENTERX);
+					SprMngr.DrawStr(Rect(c->Place, FixX, FixY), c->Text.c_str(), FONT_FLAG_CENTERX, 0U, fixboyFont);
 				}
             }
             break;
         }
         case FIX_MODE_RESULT:
         {
-            SprMngr.DrawStr( Rect( FixWWin, FixX, FixY ), FixResultStr.c_str(), FONT_FLAG_CENTERX);
+            SprMngr.DrawStr( Rect( FixWWin, FixX, FixY ), FixResultStr.c_str(), FONT_FLAG_CENTERX, 0U, fixboyFont);
             break;
         }
         default:
