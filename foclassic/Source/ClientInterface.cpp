@@ -5407,12 +5407,12 @@ void FOClient::GmapDraw()
             {
                 SprMngr.DrawStr( Rect( GameOpt.MouseX + si->Width, GameOpt.MouseY + si->Height, GameOpt.MouseX + si->Width + 200, GameOpt.MouseY + si->Height + 500 ), cur_loc ?
                                  FmtGameText( STR_GMAP_CUR_LOC_INFO, cx, cy, GM_ZONE( cx ), GM_ZONE( cy ), MsgGM->GetStr( STR_GM_NAME_( cur_loc->LocPid ) ), MsgGM->GetStr( STR_GM_INFO_( cur_loc->LocPid ) ) ) :
-                                 FmtGameText( STR_GMAP_CUR_INFO, cx, cy, GM_ZONE( cx ), GM_ZONE( cy ) ), 0, mapFont );
+                                 FmtGameText( STR_GMAP_CUR_INFO, cx, cy, GM_ZONE( cx ), GM_ZONE( cy ) ), 0, 0, mapFont );
             }
             else if( cur_loc )
             {
                 SprMngr.DrawStr( Rect( GameOpt.MouseX + si->Width, GameOpt.MouseY + si->Height, GameOpt.MouseX + si->Width + 200, GameOpt.MouseY + si->Height + 500 ),
-                                 FmtGameText( STR_GMAP_LOC_INFO, MsgGM->GetStr( STR_GM_NAME_( cur_loc->LocPid ) ), MsgGM->GetStr( STR_GM_INFO_( cur_loc->LocPid ) ) ), 0, mapFont );
+                                 FmtGameText( STR_GMAP_LOC_INFO, MsgGM->GetStr( STR_GM_NAME_( cur_loc->LocPid ) ), MsgGM->GetStr( STR_GM_INFO_( cur_loc->LocPid ) ) ), 0, 0, mapFont );
             }
         }
     }
@@ -5473,7 +5473,7 @@ void FOClient::GmapTownDraw()
     {
         if( GmapTownLoc.LocId != WorldmapShowEntrancesLocId || !WorldmapShowEntrances[i] )
             continue;
-        SprMngr.DrawStr( GmapTownTextPos[i], GmapTownText[i].c_str(), 0, mapFont );
+        SprMngr.DrawStr( GmapTownTextPos[i], GmapTownText[i].c_str(), 0, 0, mapFont );
     }
 }
 
