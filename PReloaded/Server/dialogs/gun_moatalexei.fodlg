@@ -1,5 +1,6 @@
 [comment]
 
+
 [data]
 lang=engl
 
@@ -20,9 +21,17 @@ lang=engl
 4 4000 None 0 @
 5 5000 None 0 @
 6 6000 None 0 @
-7 7000 None 0 @
+7 7000 None 0 #
+500 7010 D _script mutationFeature@d_CanSwapTagSkill 1 202 D _item p PID_LASER_RIFLE > 0 #
+500 7020 D _item p PID_LASER_RIFLE_EXT_CAP > 0 D _script mutationFeature@d_CanSwapTagSkill 1 202 #
+0 7030 @
 9 8000 None 0 @
-10 9000 None 0 &
+10 9000 None 0 @
+500 10000 None 0 #
+501 10010 D _script mutationFeature@d_CanSwapTagSkill 1 202 D _item p PID_BOTTLE_CAPS } 1000 R _script mutationFeature@r_SwapTagSkill 1 202 R _item p PID_BOTTLE_CAPS - 1000 #
+0 10020 @
+501 11000 None 0 #
+0 11010 &
 
 [engl]
 {100}{}{Alexei}
@@ -44,6 +53,14 @@ lang=engl
 {5000}{}{I see, very good. Talk to Ralph, he'll set you up with anything you need.}
 {6000}{}{I don't like nosy people. Go away blow your head off.}
 {7000}{}{Yeah, I remember you.  Go on in.}
+{7010}{}{Say, would you know what this red button on the laser rifle do?}
+{7020}{}{Say, how do I eject the extended mags from this laser rifle?}
+{7030}{}{On my way.}
 {8000}{}{What the hell is wrong with your face? You look worse than a mutant! Get the fuck out of here you freak!}
 {9000}{}{I can tell just by looking at you that you've no skill whatsoever, come back when you've trained some.}
+{10000}{}{That will take some time. My time! But you for 1000 caps, I'll give you some pointers on energy weaponry.}
+{10010}{}{Let's play! [Swap Tag skill to Energy Weapons]}
+{10020}{}{Thanks, but I have changed my mind.}
+{11000}{}{Look, if you were long enough in this business as I am, you'd know it yourself already. Now, all I usually do is... [Listen to Alexei and learn]}
+{11010}{}{Thanks, I really needed this,}
 

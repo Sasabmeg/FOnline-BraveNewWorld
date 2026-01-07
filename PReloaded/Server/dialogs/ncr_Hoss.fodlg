@@ -23,13 +23,15 @@ lang=engl
 501 6010 D _script perks@d_PerkCheck 1 301 R _param p PE_AWARENESS = 1 #
 501 6020 D _script perks@d_PerkCheck 1 381 R _param p PE_CAUTIOUS_NATURE = 1 #
 501 6030 D _script perks@d_PerkCheck 1 344 R _param p PE_PATHFINDER = 1 #
-6 6040 @
+600 6040 D _script mutationFeature@d_CanSwapTagSkill 1 203 R _param p ST_CURRENT_HP - 200 R _script mutationFeature@r_SwapTagSkill 1 203 #
+6 6050 @
 501 7000 None 0 #
 510 7010 #
 6 7020 @
 510 8000 None 0 #
 65507 8010 #
-6 8020 &
+6 8020 @
+600 9000 None 0 &
 
 [engl]
 {100}{}{Hoss}
@@ -53,11 +55,13 @@ lang=engl
 {6010}{}{Can you teach me how to estimate the level of a threat that I encounter? [Awareness]}
 {6020}{}{You know, I was always wondering how to approach a threat more cautiously... [Cautious Nature]}
 {6030}{}{I bet you couldn't find the shortest route between any of the two given map points! [Pathfinder]}
-{6040}{}{Well, not sure where I should begin... I'll drop by later!}
+{6040}{}{Can the Fist be more deadly than the Gun? [Swap Tag skill to Close Combat]}
+{6050}{}{Well, not sure where I should begin... I'll drop by later!}
 {7000}{}{Hah! That's easy! All you have to do is... [The lesson takes a while, but you feel like it was well worth it]}
 {7010}{}{Thanks, Hoss - you're the Boss!}
 {7020}{}{That was some jabber! I think I'm ready for a health cure after this one, see you later Hoss!}
 {8000}{}{Fuck you, brown-noser! Is there anything else you wanted from me or are you going to keep wasting my time, spineless insect?}
 {8010}{}{You'll regret it big-mouth! [Attack]}
 {8020}{}{Nope, I was just about to leave... [Leave]}
+{9000}{}{Hit' em hard in the kidney!@@They will lean into your blow!@@Go for the eyes, Boo!@@My favourite, kick in the groin!}
 

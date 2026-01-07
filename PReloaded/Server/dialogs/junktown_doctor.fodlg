@@ -19,11 +19,12 @@ lang=engl
 14 2010 D _script dialog@d_IsToHeal 0  #
 7 2020 #
 6 2030 #
-80 2040 D _param p PE_PROFESSION_DOCTOR < 2 #
-60 2050 D _var p q_jt_sneakeater = 0 #
-63 2060 D _var p q_jt_sneakeater = 1 D _item p PID_SCORPION_EGG } 5 R _param p ST_EXPERIENCE + 1250 R _var p q_jt_sneakeater = 3 R _item p PID_ANTIDOTE + 3 R _item p PID_SCORPION_EGG - 5 R _script quest_jt_scorpion@r_DeleteMap 0  R _script dialog@r_AddMoney 1 400 #
-64 2070 D _var p q_jt_sneakeater_perk = 0 D _var p q_jt_sneakeater = 3 #
-0 2080 @
+500 2040 D _script mutationFeature@d_CanSwapTagSkill 1 207 #
+80 2050 D _param p PE_PROFESSION_DOCTOR < 2 #
+60 2060 D _var p q_jt_sneakeater = 0 #
+63 2070 D _var p q_jt_sneakeater = 1 D _item p PID_SCORPION_EGG } 5 R _param p ST_EXPERIENCE + 1250 R _var p q_jt_sneakeater = 3 R _item p PID_ANTIDOTE + 3 R _item p PID_SCORPION_EGG - 5 R _script quest_jt_scorpion@r_DeleteMap 0  R _script dialog@r_AddMoney 1 400 #
+64 2080 D _var p q_jt_sneakeater_perk = 0 D _var p q_jt_sneakeater = 3 #
+0 2090 @
 3 3000 None 0 #
 2 3010 @
 4 4000 None 0 #
@@ -88,7 +89,13 @@ lang=engl
 0 24040 @
 66 25000 None 0 #
 2 25010 #
-0 25020 &
+0 25020 @
+500 26000 None 0 #
+501 26010 D _script mutationFeature@d_CanSwapTagSkill 1 207 D _item p PID_XANDER_ROOT } 10 D _item p PID_BROC_FLOWER } 10 R _script mutationFeature@r_SwapTagSkill 1 207 R _item p PID_XANDER_ROOT - 10 R _item p PID_BROC_FLOWER - 10 #
+0 26020 #
+0 26030 @
+501 27000 None 0 #
+0 27010 &
 
 [engl]
 {100}{}{Doc Larrikin}
@@ -108,11 +115,12 @@ lang=engl
 {2010}{}{Thanks, Doc. How much will this cost?}
 {2020}{}{I just wanted to try to buy some supplies.}
 {2030}{}{I don't need healing right now so much as some answers to some questions.}
-{2040}{}{Actually, I am quite interested into medicine myself, and this is the reason I am visiting you today. My hopes are that you could share some of your knowledge and experience with me...}
-{2050}{}{Do you have any work you need done?}
-{2060}{}{Here are the scorpion eggs you've wanted.}
-{2070}{}{What can you tell me about the scorpions poison?}
-{2080}{}{Nice to meet you, but I don't think any healing's needed right now. Thanks anyway, Doc. Goodbye.}
+{2040}{}{Say doc, do you think I could become a doctor myself? I was thinking more on the lines of being a Field Medic.}
+{2050}{}{Actually, I am quite interested into medicine myself, and this is the reason I am visiting you today. My hopes are that you could share some of your knowledge and experience with me...}
+{2060}{}{Do you have any work you need done?}
+{2070}{}{Here are the scorpion eggs you've wanted.}
+{2080}{}{What can you tell me about the scorpions poison?}
+{2090}{}{Nice to meet you, but I don't think any healing's needed right now. Thanks anyway, Doc. Goodbye.}
 {3000}{}{Looks like you got caught on the short end of the stick. I can patch you up if you want.}
 {3010}{}{Well, I...}
 {4000}{}{Got yourself all scraped up, huh? Well, let me take a look at that. Easy now, I'm a professional.}
@@ -178,4 +186,10 @@ lang=engl
 {25000}{}{Now if you realize that you are developing various symptoms such as numbness or tingling of extremities or face, blurry vision, or muscle twitching, maybe even roving eye movements, you really have to get yourself antidote as fast as possible.}
 {25010}{}{Thanks for the information, Doc. There is still something else I have...}
 {25020}{}{That's all I need to know for the moment. See you later, Doc.}
+{26000}{}{That will take some time. You know what? Why don't we start with a bit of basic herbalism? Gather 10 broc flowers and 10 xander root for me and I show you what you need to know.}
+{26010}{}{Here, I got them already! [Swap Tag skill to Doctor]}
+{26020}{}{All right. I'll be back with the herbs doc!}
+{26030}{}{Another time perhaps.}
+{27000}{}{Look, if you were long enough in this business as I am, you'd know it yourself already. Now, all I usually do is... [Listen to doc Larrikin and learn]}
+{27010}{}{Thanks doc, I really needed this!}
 

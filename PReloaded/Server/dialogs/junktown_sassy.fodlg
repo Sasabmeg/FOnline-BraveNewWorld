@@ -25,7 +25,8 @@ lang=engl
 5 5000 None 0 #
 13 5010 D _item p PID_SPEAR } 1 #
 14 5020 D _item p PID_SHARP_SPEAR } 1 #
-0 5030 @
+500 5030 D _script mutationFeature@d_CanSwapTagSkill 1 205 R _script mutationFeature@r_SwapTagSkill 1 205 #
+0 5040 @
 6 6000 None 0 #
 0 6010 D _item p PID_SPEAR } 1 R _item p PID_SPEAR - 1 R _param p ST_EXPERIENCE + 10 R _script dialog@r_AddMoney 1 50 @
 7 7000 None 0 #
@@ -54,7 +55,9 @@ lang=engl
 12 15030 #
 12 15040 @
 12 16000 None 0 @
-10 17000 None 0 &
+10 17000 None 0 @
+500 18000 None 0 #
+0 18010 &
 
 [engl]
 {100}{}{Sassy Givins}
@@ -82,7 +85,8 @@ lang=engl
 {5000}{}{Hi there @pname@, have you any spears for me today?}
 {5010}{}{Sure do, have a spear.}
 {5020}{}{I have a few sharpened spears.}
-{5030}{}{No not today, sorry. Goodbye.}
+{5030}{}{Say, are those spears any good for throwing as well? [Swap Tag skill to Throwing]}
+{5040}{}{No not today, sorry. Goodbye.}
 {6000}{}{Thanks, here's 50 caps for it. Keep them coming please! And we'll make sure to keep the walls intact.}
 {6010}{}{Thanks, goodbye}
 {7000}{}{I'll take one, thanks. Here's 60 caps for it. Keep them coming please! We'll make sure the bar is always stocked!}
@@ -112,4 +116,6 @@ lang=engl
 {15040}{}{Derrrrr!}
 {16000}{}{Ahh! Get away from me you freak!}
 {17000}{}{Sassy Givins sweetie, I'll be seeing you! Just make sure to bring me plenty of spears okay?}
+{18000}{}{Sure thing hun. Here is what you should do...}
+{18010}{}{Thanks. I really needed this.}
 

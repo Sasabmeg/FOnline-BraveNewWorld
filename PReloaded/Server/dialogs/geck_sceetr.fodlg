@@ -18,7 +18,8 @@ lang=engl
 5 4010 R _var n acquaintance = 1 #
 80 4020 D _param p PE_PROFESSION_GUNSMITH_S < 2 D _var n acquaintance = 1 #
 90 4030 D _var p q_necro_elmer_holo = 1 D _script dialog@d_HasHolodisk 1 43 D or D _var p q_necro_elmer_holo = 1 D _script dialog@d_HasHoloInfo 1 43 #
-0 4040 @
+500 4040 D _script mutationFeature@d_CanSwapTagSkill 1 205 R _script mutationFeature@r_SwapTagSkill 1 205 #
+0 4050 @
 5 5000 None 0 #
 4 5010 #
 80 5020 D _param p PE_PROFESSION_GUNSMITH_S < 2 #
@@ -39,7 +40,11 @@ lang=engl
 91 10010 @
 91 11000 None 0 #
 92 11010 R _var p q_necro_elmer_holo = 2 R _script dialog@r_GiveHolodisk 1 44 @
-92 12000 None 0 &
+92 12000 None 0 @
+500 13000 None 0 #
+501 13010 @
+501 14000 None 0 #
+0 14010 &
 
 [engl]
 {100}{}{Skeeter}
@@ -58,7 +63,8 @@ lang=engl
 {4010}{}{What do you do here?}
 {4020}{}{Let's talk about guns, I've got a few questions for you.}
 {4030}{}{Elmer in Necropolis sent me with this.}
-{4040}{}{Uh, I was just looking around. Goodbye.}
+{4040}{}{Say, would you know anything about throwing grenades? [Swap Tag skill to Throwing]}
+{4050}{}{Uh, I was just looking around. Goodbye.}
 {5000}{}{Mostly I jist sorta tinker with things. Take 'em apart an try to put 'em all back t'gether' mostly. Make 'em work better' sometimes. Keepin' myself outta trouble. Know what I mean?}
 {5010}{}{I guess. Let me ask you something else.}
 {5020}{}{I bet you're skilful with guns and their modifications -- I had a few questions, if you don't mind.}
@@ -80,4 +86,8 @@ lang=engl
 {11000}{}{If we can manage, we'll send some ghouls to help them defend, or at the very least, send them some supplies. I've put all this information on this holodisk. Bring it back to Necropolis..}
 {11010}{}{I'll do that. Thanks Skeeter.}
 {12000}{}{Good luck.}
+{13000}{}{Grenades? Let old Skeeter show you how to throw a rock first! You'll need the right quality, try to find one made by Granite Inc., and then...}
+{13010}{}{Gran.. what?}
+{14000}{}{He-he, just kidding! The heavier the stone, the better... [Listen to Skeeter and learn]}
+{14010}{}{Thanks, I needed that.}
 

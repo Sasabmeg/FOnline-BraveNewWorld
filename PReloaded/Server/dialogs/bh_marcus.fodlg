@@ -18,12 +18,13 @@ lang=engl
 7 4020 #
 75 4030 D _script town@d_IsControllingTown 1 1 #
 11 4040 #
-80 4050 D _param p PE_PROFESSION_GUNSMITH_B < 2 D _var n name_mem_npc_player = 1 #
-4 4060 D _script town@d_IsNotControllingTown 1 1 D _script dialog@d_IsGangMember 0  D _script town@d_CanTakeOver 0  R _script town@r_ClaimControl 1 0 #
-50 4070 D _script town@d_CanRecruitMilitia 0  #
-120 4080 D _script town@d_IsControllingTown 1 1 #
-500 4090 D _script town@d_CanChangeLaws 0  #
-0 4100 @
+600 4050 D _script mutationFeature@d_CanSwapTagSkill 1 201 #
+80 4060 D _param p PE_PROFESSION_GUNSMITH_B < 2 D _var n name_mem_npc_player = 1 #
+4 4070 D _script town@d_IsNotControllingTown 1 1 D _script dialog@d_IsGangMember 0  D _script town@d_CanTakeOver 0  R _script town@r_ClaimControl 1 0 #
+50 4080 D _script town@d_CanRecruitMilitia 0  #
+120 4090 D _script town@d_IsControllingTown 1 1 #
+500 4100 D _script town@d_CanChangeLaws 0  #
+0 4110 @
 5 5000 None 0 #
 7 5010 #
 7 5020 #
@@ -106,7 +107,14 @@ lang=engl
 440 31000 None 0 @
 450 32000 None 0 #
 0 32010 @
-330 33000 None 0 &
+330 33000 None 0 @
+600 34000 None 0 #
+601 34010 D _script mutationFeature@d_CanSwapTagSkill 1 201 D _item p PID_MINIGUN > 0 R _script mutationFeature@r_SwapTagSkill 1 201 #
+601 34020 D _item p PID_AVENGER_MINIGUN > 0 D _script mutationFeature@d_CanSwapTagSkill 1 201 R _script mutationFeature@r_SwapTagSkill 1 201 #
+601 34030 D _item p PID_LIGHT_SUPPORT_WEAPON > 0 D _script mutationFeature@d_CanSwapTagSkill 1 201 R _script mutationFeature@r_SwapTagSkill 1 201 #
+0 34040 @
+601 35000 None 0 #
+0 35010 &
 
 [engl]
 {100}{}{Marcus}
@@ -126,12 +134,13 @@ lang=engl
 {4020}{}{What's the story with this place?}
 {4030}{}{I want to talk about our allies.}
 {4040}{}{Why aren't you mutants attacking me?}
-{4050}{}{I was wondering, you carrying that big gun around and all... Maybe you could show me a few tricks about big guns.}
-{4060}{}{Do some good, earn some scratch. Got myself a little gang, and we get hungry and bored if we don't have anything to do or any pay coming our way.}
-{4070}{}{We need some volunteers to secure the town.}
-{4080}{}{Where is our cut of the profits?}
-{4090}{}{Let's discuss the law in this place.}
-{4100}{}{Bye.}
+{4050}{}{I want to be better handling really big guns, can you help me?}
+{4060}{}{I was wondering, you carrying that big gun around and all... Maybe you could show me a few tricks about big guns.}
+{4070}{}{Do some good, earn some scratch. Got myself a little gang, and we get hungry and bored if we don't have anything to do or any pay coming our way.}
+{4080}{}{We need some volunteers to secure the town.}
+{4090}{}{Where is our cut of the profits?}
+{4100}{}{Let's discuss the law in this place.}
+{4110}{}{Bye.}
 {5000}{}{I'm Marcus, helped build the place. Now I'm sheriff.}
 {5010}{}{You helped build this place? That must have been a long time ago...}
 {5020}{}{Bullshit. How could you have been around that long?}
@@ -218,4 +227,11 @@ Attacking criminals on sight: @lex attackflagged@}
 {32000}{}{Are you crazy? We are in the middle of an ongoing attack, start protecting us instead of jerking around in here!}
 {32010}{}{Uh, sure!}
 {33000}{}{Guards, get those retards!}
+{34000}{}{He, he, small one. Do you even have a big gun?}
+{34010}{}{Is this Minigun big enough?}
+{34020}{}{Is this Avenger big enough?}
+{34030}{}{Is this LSW big enough?}
+{34040}{}{I'll be back.}
+{35000}{}{Look, if you were long enough in this business as I am, you'd know it yourself already. Now, all I usually do is... [Listen to Marcus and learn]}
+{35010}{}{Thanks, I really needed this,}
 

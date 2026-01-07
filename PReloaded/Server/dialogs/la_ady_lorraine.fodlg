@@ -1,5 +1,6 @@
 [comment]
 
+
 [data]
 lang=engl
 
@@ -27,14 +28,15 @@ lang=engl
 8 6010 R _var p name_mem_npc_player = 1 @
 7 7000 None 0 #
 8 7010 D _var p q_la_ady_lorraine_pistol = 0 #
-80 7020 #
-50 7030 #
-100 7040 D _var p q_la_ady_lorraine_fornication = 0 D _param p ST_CHARISMA < 7 #
-101 7050 D _var p q_la_ady_lorraine_fornication = 0 D _param p ST_CHARISMA > 6 #
-22 7060 D _var p q_la_ady_lorraine_pistol = 1 #
-103 7070 D _var p q_la_ady_lorraine_fornication = 1 #
-24 7080 D _var p q_la_ady_lorraine_pistol = 2 D _item p PID_10MM_PISTOL } 2 #
-0 7090 @
+500 7020 D _script mutationFeature@d_CanSwapTagSkill 1 200 R _script mutationFeature@r_SwapTagSkill 1 200 #
+80 7030 #
+50 7040 #
+100 7050 D _var p q_la_ady_lorraine_fornication = 0 D _param p ST_CHARISMA < 7 #
+101 7060 D _var p q_la_ady_lorraine_fornication = 0 D _param p ST_CHARISMA > 6 #
+22 7070 D _var p q_la_ady_lorraine_pistol = 1 #
+103 7080 D _var p q_la_ady_lorraine_fornication = 1 #
+24 7090 D _var p q_la_ady_lorraine_pistol = 2 D _item p PID_10MM_PISTOL } 2 #
+0 7100 @
 8 8000 None 0 #
 9 8010 #
 7 8020 @
@@ -159,7 +161,9 @@ lang=engl
 7 52020 R _var p q_la_ady_lorraine_pistol = 2 @
 24 53000 None 0 #
 65505 53010 D _item p PID_10MM_PISTOL } 1 R _var p q_la_ady_lorraine_pistol = 3 R _item p PID_10MM_PISTOL - 1 R _item p PID_10MM_JHP + 350 R _param p ST_EXPERIENCE + 1350 #
-65505 53020 &
+65505 53020 @
+500 54000 None 0 #
+0 54010 &
 
 [engl]
 {100}{}{Lorraine}
@@ -187,14 +191,15 @@ lang=engl
 {6010}{}{Likewise}
 {7000}{}{So what's up?@@How's it goin'?@@What's new?@@Didja need somethin'?}
 {7010}{}{What's wrong with your handgun?}
-{7020}{}{What can you tell me about New Adytum}
-{7030}{}{What do you do here?}
-{7040}{}{What would you say to you and I getting to know each other a little better?}
+{7020}{}{I want to be better handling small arms, can you help me? [Swap Tag skill to Small Guns]}
+{7030}{}{What can you tell me about New Adytum}
+{7040}{}{What do you do here?}
 {7050}{}{What would you say to you and I getting to know each other a little better?}
-{7060}{}{Lorraine, about that scaving you wanted me to do...}
-{7070}{}{Hey girl, feel like partying?}
-{7080}{}{I finished making those pistols. You were right, it's not that hard to do at all.}
-{7090}{}{Gotta run Lorraine, see you around.}
+{7060}{}{What would you say to you and I getting to know each other a little better?}
+{7070}{}{Lorraine, about that scaving you wanted me to do...}
+{7080}{}{Hey girl, feel like partying?}
+{7090}{}{I finished making those pistols. You were right, it's not that hard to do at all.}
+{7100}{}{Gotta run Lorraine, see you around.}
 {8000}{}{[Lorraine grips her weapon in her outstretched hand, wistfully admiring it] Yeah, this ole girl has saved my ass plenty of times. But she's starting to show her age and I'm gonna have to break her down soon, try to salvage her for parts.}
 {8010}{}{Break her down for parts? Why not just repair your gun?}
 {8020}{}{I'm sorry to hear that, but their was something else I wanted to ask you about.}
@@ -320,4 +325,6 @@ lang=engl
 {53000}{}{[Lorraine takes one of the pistols from you and gives it a stern appraisal] Nice work you've done here. I still need to replace my current pistol, would you be willing to trade this one to me? I can offer you 50 rounds of 10mm JHP.}
 {53010}{}{Sure, a new toy is useless without batteries. Let's trade.}
 {53020}{}{Let me think about it and get back to you with that.}
+{54000}{}{Look, if you were long enough in this business as I am, you'd know it yourself already. Now, all I usually do is... [Listen to Lorraine and learn]}
+{54010}{}{Thanks, I really needed that.}
 

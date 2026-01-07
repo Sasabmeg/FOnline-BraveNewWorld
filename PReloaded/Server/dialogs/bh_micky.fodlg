@@ -17,9 +17,10 @@ lang=engl
 10 3010 #
 4 3020 D _var n acquaintance = 0 R _var n acquaintance = 1 #
 500 3030 D _var n acquaintance = 1 D _script perks@d_PerkCheck 1 459 #
-0 3040 D _var n acquaintance = 2 D _item p PID_BOTTLE_CAPS > 49 R _script dialog@r_RemoveMoney 1 50 #
-0 3050 D _var n acquaintance = 3 #
-0 3060 D _var n name_mem_npc_player < 3 @
+501 3040 D _script mutationFeature@d_CanSwapTagSkill 1 208 D _item p PID_NECKLACE > 0 R _script mutationFeature@r_SwapTagSkill 1 208 R _item p PID_NECKLACE - 1 #
+0 3050 D _var n acquaintance = 2 D _item p PID_BOTTLE_CAPS > 49 R _script dialog@r_RemoveMoney 1 50 #
+0 3060 D _var n acquaintance = 3 #
+0 3070 D _var n name_mem_npc_player < 3 @
 4 4000 None 0 #
 6 4010 #
 0 4020 @
@@ -63,9 +64,10 @@ lang=engl
 {3010}{}{No, not today. If I run across any, I'll let you know, though.}
 {3020}{}{What's your name?}
 {3030}{}{No, but how about you tell me how do you find these *treasures* yourself? [Treasure Hunter]}
-{3040}{}{Actually, I happened to stumble upon some of those the other day. Selling them for a fair price brought me a small fortune, so I felt I owe you your share. There you go, partner! [Give $50]}
-{3050}{}{Hey Mickey, how's your *treasure hunt* going? Hahahaha! [You walk away laughing]}
-{3060}{}{Never mind.}
+{3040}{}{I have a necklace, but it's not caps I seek. Can you move around without anyone noticing? Could you show it to me? [Swap Tag skill to Stealth]}
+{3050}{}{Actually, I happened to stumble upon some of those the other day. Selling them for a fair price brought me a small fortune, so I felt I owe you your share. There you go, partner! [Give $50]}
+{3060}{}{Hey Mickey, how's your *treasure hunt* going? Hahahaha! [You walk away laughing]}
+{3070}{}{Never mind.}
 {4000}{}{Me? I'm Micky, suave and debonaire Treasure Hunter of Broken Hills.}
 {4010}{}{Treasure Hunter?}
 {4020}{}{How nice. Good day.}

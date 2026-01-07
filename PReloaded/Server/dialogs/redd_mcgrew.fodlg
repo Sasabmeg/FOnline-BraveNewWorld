@@ -64,9 +64,10 @@ lang=engl
 16 15020 #
 14 15030 #
 80 15040 D _param p PE_PROFESSION_DEMOLITION_EXPERT < 2 #
-0 15050 #
-30 15060 D _script trader_mcgrew@d_HasStock 0  #
-32 15070 D _script trader_mcgrew@d_HasNotStock 0  @
+600 15050 D _script mutationFeature@d_CanSwapTagSkill 1 211 #
+0 15060 #
+30 15070 D _script trader_mcgrew@d_HasStock 0  #
+32 15080 D _script trader_mcgrew@d_HasNotStock 0  @
 16 16000 None 0 #
 17 16010 #
 500 16020 D _script perks@d_PerkCheck 1 401 R _param p PE_PACK_RAT = 1 @
@@ -117,7 +118,10 @@ lang=engl
 0 34010 @
 500 35000 None 0 #
 15 35010 #
-0 35020 &
+0 35020 @
+600 36000 None 0 #
+500 36010 D _script mutationFeature@d_CanSwapTagSkill 1 211 D _item p PID_DETONATOR_PARTS > 0 D _item p PID_JET > 0 R _script mutationFeature@r_SwapTagSkill 1 211 R _item p PID_DETONATOR_PARTS - 1 R _item p PID_JET - 1 #
+0 36020 &
 
 [engl]
 {100}{}{Dan McGrew}
@@ -182,9 +186,10 @@ lang=engl
 {15020}{}{Why do they call you *Dangerous* Dan McGrew?}
 {15030}{}{What's going on here in town lately?}
 {15040}{}{You must be one of the experts when it comes to blowing things up.}
-{15050}{}{I was just moving through. Goodbye.}
-{15060}{}{Do you have any Detonator parts for sale?}
+{15050}{}{Say, would you know how to make really big detonations?}
+{15060}{}{I was just moving through. Goodbye.}
 {15070}{}{Do you have any Detonator parts for sale?}
+{15080}{}{Do you have any Detonator parts for sale?}
 {16000}{}{Cause I'm nothing but the biggest, toughest, mine-crawling, gullywumpin', snake-eatin' buck in these here parts. *Dangerous* Dan McGrew; that's me, all right.}
 {16010}{}{You don't look so damn tough to me.}
 {16020}{}{I see. Blowing things up requires carrying a lot of equipment. I'm pretty sure you know how to arrange your backpack efficiently. Can you explain me your method? [Pack Rat]}
@@ -238,4 +243,7 @@ lang=engl
 {35000}{}{Yeah, lemme show ya.. [You listen for a while]}
 {35010}{}{You are the man, Dangerous Dan. I would never figure it out myself. Let me ask you about something else.}
 {35020}{}{That's what I wanted to know. I've got to go, bye!}
+{36000}{}{Sure thing. I'll need detonator parts and some jet. Are you ready?}
+{36010}{}{Here you go. [Swap Tag skill to Traps and Explosives]}
+{36020}{}{I'll be back.}
 

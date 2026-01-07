@@ -25,11 +25,12 @@ lang=engl
 2 2000 None 0 #
 3 2010 #
 4 2020 #
-9 2030 D _var p q_mod_meat_jerky = 1 D _item p PID_MEAT_BAG > 0 R _var p q_mod_meat_jerky = 2 R _item p PID_MEAT_BAG - 1 R _param p ST_EXPERIENCE + 745 R _script dialog@r_AddMoney 1 350 #
-11 2040 D _var p q_hub_iguana_pete_message = 0 #
-13 2050 D _var p q_hub_iguana_pete_message = 10 #
-19 2060 D _var p q_hub_iguana_pete_message = 5 #
-0 2070 @
+500 2030 D _script mutationFeature@d_CanSwapTagSkill 1 211 #
+9 2040 D _var p q_mod_meat_jerky = 1 D _item p PID_MEAT_BAG > 0 R _var p q_mod_meat_jerky = 2 R _item p PID_MEAT_BAG - 1 R _param p ST_EXPERIENCE + 745 R _script dialog@r_AddMoney 1 350 #
+11 2050 D _var p q_hub_iguana_pete_message = 0 #
+13 2060 D _var p q_hub_iguana_pete_message = 10 #
+19 2070 D _var p q_hub_iguana_pete_message = 5 #
+0 2080 @
 3 3000 None 0 #
 6 3010 #
 4 3020 #
@@ -82,7 +83,12 @@ lang=engl
 19 20000 None 0 #
 20 20010 R _param p ST_EXPERIENCE + 600 R _var p q_hub_iguana_pete_message = 7 R _script dialog@r_AddMoney 1 400 @
 20 21000 None 0 #
-0 21010 &
+0 21010 @
+500 22000 None 0 #
+501 22010 D _script mutationFeature@d_CanSwapTagSkill 1 211 D _item p PID_GOLDEN_GECKO_PELT > 1 D _item p PID_MEAT > 9 R _script mutationFeature@r_SwapTagSkill 1 211 R _item p PID_GOLDEN_GECKO_PELT - 2 R _item p PID_MEAT - 10 #
+0 22020 @
+501 23000 None 0 #
+0 23010 &
 
 [engl]
 {100}{}{Iguana Pete}
@@ -96,11 +102,12 @@ lang=engl
 {2000}{}{You want some iguana-on-a stick? Some iguana-on-a-stick, we have only iguana-on-a-stick, you want some? Yeah?}
 {2010}{}{Iguana Bob?}
 {2020}{}{Yeah, I'd love an iguana-on-a-stick!}
-{2030}{}{I'm actually here with a delivery of meat jerky from Modoc. Grisham sent me.}
-{2040}{}{Why so glum?}
-{2050}{}{Still looking for your son?}
-{2060}{}{I'm sorry Pete. Your son was squished by a by a Super Mutant and strung up at Golgotha. The wasteland can be harsh sometimes.}
-{2070}{}{Uhm no, thanks. I have other stuff to do.}
+{2030}{}{Say, would you know how to trap geckos?}
+{2040}{}{I'm actually here with a delivery of meat jerky from Modoc. Grisham sent me.}
+{2050}{}{Why so glum?}
+{2060}{}{Still looking for your son?}
+{2070}{}{I'm sorry Pete. Your son was squished by a by a Super Mutant and strung up at Golgotha. The wasteland can be harsh sometimes.}
+{2080}{}{Uhm no, thanks. I have other stuff to do.}
 {3000}{}{Bob? No, my name is not Bob. My name is Pete. Iguana Pete! I come from a small settlement called Rattleville in the east of here.}
 {3010}{}{So... uhm... Pete. Why is Bob's Iguana Bits written on the board?}
 {3020}{}{Oh, ok. Then give me an iguana-on-a-stick, Pete.}
@@ -154,6 +161,11 @@ lang=engl
 {20010}{}{Hey! What about my caps?}
 {21000}{}{Okay fine.. here, take it.. but please, just go.}
 {21010}{}{Goodbye Pete...}
+{22000}{}{First things first. Show me you got the stomack for it. Get me 2 golden gecko pelts and 10 chunks of meat and I'll teach you to set up traps properly.}
+{22010}{}{There you go. Now let's play with the springs a bit. [Swap Tag skill to Traps and Explosives]}
+{22020}{}{I'll be back!}
+{23000}{}{Look, if you were long enough in this business as I am, you'd know it yourself already. Now, all I usually do is... [Listen to Pete and learn]}
+{23010}{}{Thanks, I really needed this.}
 {100000001}{}{IGUANA! Fresh Iguana-on-a-stick! Buy some IGUANA!}
 {100000002}{}{IGUANA! BUY IGUANA!}
 {100000003}{}{People, fresh Iguana-on-a-stick! Buy Iguana-on-a-stick now!}

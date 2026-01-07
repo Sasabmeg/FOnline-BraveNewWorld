@@ -24,8 +24,9 @@ lang=engl
 0 5020 @
 6 6000 None 0 #
 500 6010 #
-80 6020 D _param p PE_PROFESSION_GUNSMITH_S < 2 #
-0 6030 @
+501 6020 D _script mutationFeature@d_CanSwapTagSkill 1 200 R _script mutationFeature@r_SwapTagSkill 1 200 #
+80 6030 D _param p PE_PROFESSION_GUNSMITH_S < 2 #
+0 6040 @
 7 7000 None 0 #
 500 7010 #
 80 7020 D _param p PE_PROFESSION_GUNSMITH_S < 2 #
@@ -78,8 +79,9 @@ lang=engl
 {5020}{}{I see. Gotta go now, bye!}
 {6000}{}{Yeah, right to the point. I can fix almost anything, but lately I've been doing only firearms. Brings a lot of caps, and there's always enough guns to repair, with all these thugs running through the town...}
 {6010}{}{Hey, then you probably *are* the best person to talk about repairing antique stuff and salvaging all kind of junk.}
-{6020}{}{That's exactly what I wanted to hear, because I had some questions about firearms...}
-{6030}{}{Yes, that makes sense already. I have to go now, bye!}
+{6020}{}{I want to be better handling small arms, can you help me? [Swap Tag skill to Small Guns]}
+{6030}{}{That's exactly what I wanted to hear, because I had some questions about firearms...}
+{6040}{}{Yes, that makes sense already. I have to go now, bye!}
 {7000}{}{What is it now, rumbler?}
 {7010}{}{I thought you must be the best person around here to talk about repairing antique stuff and salvaging all kind of junk.}
 {7020}{}{I had some questions about firearms...}

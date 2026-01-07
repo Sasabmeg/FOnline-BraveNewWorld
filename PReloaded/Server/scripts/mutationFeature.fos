@@ -15,6 +15,31 @@ string colorWarn = "|" + COLOR_DORANGE + " ";
 string colorAlreadyHave = "|" + COLOR_GOLDEN_YELLOW + " ";
 string colorNormal = "|" + COLOR_LGREEN + " ";
 
+#define MUTATION_FEATURE_DEBUG_LOGGING_ENABLED  (true)
+
+void MutationLog(string@ str) {
+    if (MUTATION_FEATURE_DEBUG_LOGGING_ENABLED) {
+        Log("MUTATION:\t" + str);
+    }
+}
+
+
+import bool     HasItem(Critter@ cr, uint pid) from "utils";
+
+bool d_HasItemExt(Critter& player, Critter@ npc, int val1, int val2) {
+    Item@ existItem = player.GetItem(val1, -1);
+    if (valid(existItem)) {
+        if (int(existItem.GetCount()) >= val2) {
+            return true;
+        }
+    }
+    return false;
+}
+
+void r_RemoveItemExt(Critter& player, Critter@ npc, int val1, int val2) {
+    player.DeleteItem(val1, val2);
+}
+
 
 ///
 ///     TAGGED SKILL
@@ -129,7 +154,7 @@ void dlg_TagSkillList(Critter& player, Critter@ npc, string@ text) {
 
 bool canSwapTag(Critter& player, uint skillIndex, string@ reason) {
     uint currentTagIndex = player.Param[TAG_SKILL1];
-    Log("SWAP TAG: " + getSkillName(currentTagIndex) + " -> " + getSkillName(skillIndex));
+    MutationLog("CAN SWAP TAG: " + getSkillName(currentTagIndex) + " -> " + getSkillName(skillIndex));
     if (player.Param[TAG_SKILL1] < int(SKILL_BEGIN) || player.Param[TAG_SKILL1] > int(SKILL_END)) {
         reason = "Error: Tag skill N/A.?!";
         return false;
@@ -151,7 +176,7 @@ bool canSwapTag(Critter& player, uint skillIndex, string@ reason) {
                 return false;
             }
         }
-        Log("Both Ranged skill. OK");
+        //MutationLog("Both Ranged skill. OK");
         return true;
     }
 
@@ -786,10 +811,10 @@ void changeSpecial(Critter& player, uint specialIndex, int byValue) {
     if (canChangeSpecial(player, specialIndex, byValue, 0, reason)) {
         player.StatBase[specialIndex] += byValue;
         if (player.StatBase[specialIndex] > 10 || player.StatBase[specialIndex] < 1) {
-            Log("MUTATIN FEATURE: ERROR: Invalid SPECIAL base for player/critter. Investigate. (" + player.Name + ", " + getSpecialName(specialIndex) + ", " + player.StatBase[specialIndex]);
+            MutationLog("ERROR: Invalid SPECIAL base for player/critter. Investigate. (" + player.Name + ", " + getSpecialName(specialIndex) + ", " + player.StatBase[specialIndex]);
         }
     } else {
-        Log("MUTATIN FEATURE: ERROR: Try to change special code reached but special cannot be changed. Investigate.");
+        MutationLog("ERROR: Try to change special code reached but special cannot be changed. Investigate.");
     }
 }
 
@@ -2053,10 +2078,10 @@ bool d_CanRemovePerk(Critter& player, Critter@ npc, int val) {
     uint perkIndex = uint(val);
     string reason = "";
     if (canRemovePerk(player, perkIndex, reason)) {
-        Log("DEMAND - PERK REMOVE OK: " + getPerkName(perkIndex) + ", player: " + player.Name + ", reason: " + reason);
+        MutationLog("DEMAND - PERK REMOVE OK: " + getPerkName(perkIndex) + ", player: " + player.Name + ", reason: " + reason);
         return true;
     } else {
-        Log("DEMAND - CANNOT REMOVE PERK: " + getPerkName(perkIndex) + ", player: " + player.Name + ", reason: " + reason);
+        MutationLog("DEMAND - CANNOT REMOVE PERK: " + getPerkName(perkIndex) + ", player: " + player.Name + ", reason: " + reason);
         return false;
     }
 }
@@ -2065,10 +2090,10 @@ bool d_CanAddPerk(Critter& player, Critter@ npc, int val) {
     uint perkIndex = uint(val);
     string reason = "";
     if (canAddPerk(player, perkIndex, reason)) {
-        Log("DEMAND - PERK ADD OK: " + getPerkName(perkIndex) + ", player: " + player.Name + ", reason: " + reason);
+        MutationLog("DEMAND - PERK ADD OK: " + getPerkName(perkIndex) + ", player: " + player.Name + ", reason: " + reason);
         return true;
     } else {
-        Log("DEMAND - CANNOT ADD PERK: " + getPerkName(perkIndex) + ", player: " + player.Name + ", reason: " + reason);
+        MutationLog("DEMAND - CANNOT ADD PERK: " + getPerkName(perkIndex) + ", player: " + player.Name + ", reason: " + reason);
         return false;
     }
 }
@@ -2079,7 +2104,7 @@ void r_RemovePerk(Critter& player, Critter@ npc, int val) {
     if (canRemovePerk(player, perkIndex, reason)) {
         removePerk(player, perkIndex);
     } else {
-        Log("MUTATION DIALONG ERROR: RESULT - CANNOT REMOVE PERK: " + getPerkName(perkIndex) + ", player: " + player.Name + ", reason: " + reason);
+        MutationLog("MUTATION DIALONG ERROR: RESULT - CANNOT REMOVE PERK: " + getPerkName(perkIndex) + ", player: " + player.Name + ", reason: " + reason);
     }
 }
 
@@ -2089,7 +2114,7 @@ void r_AddPerk(Critter& player, Critter@ npc, int val) {
     if (canAddPerk(player, perkIndex, reason)) {
         addPerk(player, perkIndex);
     } else {
-        Log("MUTATION DIALOG ERROR: RESULT - CANNOT ADD PERK: " + getPerkName(perkIndex) + ", player: " + player.Name + ", reason: " + reason);
+        MutationLog("MUTATION DIALOG ERROR: RESULT - CANNOT ADD PERK: " + getPerkName(perkIndex) + ", player: " + player.Name + ", reason: " + reason);
     }
 }
 
@@ -2104,7 +2129,7 @@ bool canRemovePerk(Critter& player, uint perkIndex, string@ reason) {
     }
 
     int highestPerk = getHighestPerkWithout(player, perkIndex);
-    //Log("MUTATION DIALOG - canRemovePerk() -> highestPerk:" + getPerkName(highestPerk) + ", player: " + player.Name);
+    //MutationLog("MUTATION DIALOG - canRemovePerk() -> highestPerk:" + getPerkName(highestPerk) + ", player: " + player.Name);
     if (highestPerk > 0) {
         if (!hasPerkLevelsForWithout(player, highestPerk, perkIndex, reason)) {
             return false;
@@ -2858,32 +2883,32 @@ int recalcMaxLife(Critter& cr) {
     //  base life at character creation
 
 
-    //Log("Critter <" + cr.Name + ">");
-    //Log("\t\t+155 flat");
+    //MutationLog("Critter <" + cr.Name + ">");
+    //MutationLog("\t\t+155 flat");
     life += 155;
     if (cr.TraitBase[TRAIT_BRUTISH_HULK] != 0) {
-        //Log("\t\t+12 (Brutish Hulk)");
+        //MutationLog("\t\t+12 (Brutish Hulk)");
         life += 12;
     }
 
     for (int level = 2; level <= cr.StatBase[ST_LEVEL]; level++) {
         //  extra life per level
         int enduranceBonus = 30 + cr.StatBase[ST_ENDURANCE];
-        //Log("\t\t+" + (enduranceBonus / 8) + " (enduranceBonus / 8)");
+        //MutationLog("\t\t+" + (enduranceBonus / 8) + " (enduranceBonus / 8)");
         life += enduranceBonus / 8;                 // Add max hp
         if (level <= int(__LevelCap) && (level % 8 != 0) && (level % 8 <= enduranceBonus % 8)) {
-            //Log("\t\t\t+1 (level = " + level + ", enduranceBonus = " + enduranceBonus + "(30 + EN = " + cr.StatBase[ST_ENDURANCE] + ") )");
+            //MutationLog("\t\t\t+1 (level = " + level + ", enduranceBonus = " + enduranceBonus + "(30 + EN = " + cr.StatBase[ST_ENDURANCE] + ") )");
             life += 1;  // Add additional 1 HP when odd EN numbers, so minimal max HP difference between EN 9 and EN 10
         }
     }
 
-    //Log("Critter <" + cr.Name + ">: StatBase[ST_MAX_LIFE] = " + cr.StatBase[ST_MAX_LIFE] + ", life = " + life + " (StatBase[ST_MAX_LIFE] = " + cr.StatBase[ST_MAX_LIFE_EXT] + ")");
-    //Log("\t\t2*ST = " + cr.StatBase[ST_STRENGTH]*2 + ", EN = " + cr.StatBase[ST_ENDURANCE] + " -> " + (life + cr.StatBase[ST_STRENGTH]*2 + cr.StatBase[ST_ENDURANCE]) + " == " + cr.Stat[ST_MAX_LIFE]);
+    //MutationLog("Critter <" + cr.Name + ">: StatBase[ST_MAX_LIFE] = " + cr.StatBase[ST_MAX_LIFE] + ", life = " + life + " (StatBase[ST_MAX_LIFE] = " + cr.StatBase[ST_MAX_LIFE_EXT] + ")");
+    //MutationLog("\t\t2*ST = " + cr.StatBase[ST_STRENGTH]*2 + ", EN = " + cr.StatBase[ST_ENDURANCE] + " -> " + (life + cr.StatBase[ST_STRENGTH]*2 + cr.StatBase[ST_ENDURANCE]) + " == " + cr.Stat[ST_MAX_LIFE]);
     /*
     //  safety check if some of the stat bonuses are skewed
     for (uint i = ST_STRENGTH_EXT; i <= ST_POISON_RESISTANCE_EXT; i++) {
         if (cr.StatBase[i] > 0) {
-            Log("\t\t\tStatBase[" + i + "] = " + cr.StatBase[i]);
+            MutationLog("\t\t\tStatBase[" + i + "] = " + cr.StatBase[i]);
         }
     }
     */

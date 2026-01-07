@@ -1,0 +1,56 @@
+[comment]
+
+
+[data]
+lang=engl
+
+[dialog]
+&
+1 1000 None 0 #
+3 1010 D _param p ST_LEVEL < 12 #
+2 1020 D _var n name_mem_npc_player = 0 R _var n name_mem_npc_player = 1 #
+4 1030 D _var n name_mem_npc_player = 1 @
+2 2000 None 0 #
+4 2010 #
+5 2020 #
+3 2030 @
+3 3000 None 0 @
+4 4000 None 0 #
+5 4010 #
+500 4020 D _script mutationFeature@d_CanSwapTagSkill 1 201 #
+0 4030 @
+5 5000 None 0 #
+0 5010 @
+500 6000 None 0 #
+501 6010 D _script mutationFeature@d_CanSwapTagSkill 1 201 D _item p PID_BOTTLE_CAPS } 1000 R _script mutationFeature@r_SwapTagSkill 1 201 R _item p PID_BOTTLE_CAPS - 1000 #
+0 6020 @
+501 7000 None 0 #
+4 7010 #
+0 7020 &
+
+[engl]
+{100}{}{Regulator Hood}
+{200}{}{You see a Regulator.}
+{210}{}{You see a bigger than average Regulator.}
+{1000}{}{Predialogue installations}
+{1010}{}{Level too low}
+{1020}{}{normal}
+{1030}{}{normal, known}
+{2000}{}{Hello, stranger! Do you have what it takes?}
+{2010}{}{What?}
+{2020}{}{Yeah, sure I do!}
+{2030}{}{Guess not! [Exit]}
+{3000}{}{Get out of here.@@No weakling for this job.@@Door's right behind you.}
+{4000}{}{We clear a batch of abominations in the city ruins. Floaters, Centaurs, Deathclaws, you name it. High risk, high reward. You want in?}
+{4010}{}{Yeah, sure I do!}
+{4020}{}{I think I will need bigger guns for that. Can you show me how to use them?}
+{4030}{}{No thanks, I'm out.}
+{5000}{}{All right. I have no job for you at the moment, but there are always new sightings of abominations in the city ruins, why don't you check back in a bit later.}
+{5010}{}{All right.}
+{6000}{}{Yeah, why not. The bigger guns you take against the Centaurs, the more of them you kill, hehe. But time is money, gimme 1000 caps and you wil handle really big guns in no time.}
+{6010}{}{I got the caps!}
+{6020}{}{Maybe another time.}
+{7000}{}{Look, if you were long enough in this business as I am, you'd know it yourself already. Now, all I usually do is... [Listen to Jacob and learn]}
+{7010}{}{So, about that task...}
+{7020}{}{Thanks, I really needed this.}
+

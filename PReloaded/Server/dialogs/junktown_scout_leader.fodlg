@@ -1,0 +1,52 @@
+[comment]
+
+
+[data]
+lang=engl
+
+[dialog]
+&
+1 1000 None 0 #
+2 1010 D _param p ST_INTELLECT > 3 #
+3 1020 D _param p ST_INTELLECT < 4 @
+2 2000 None 0 #
+10 2010 #
+0 2020 @
+3 3000 None 0 #
+10 3010 #
+0 3020 @
+10 4000 None 0 #
+500 4010 D _script mutationFeature@d_CanSwapTagSkill 1 203 @
+500 5000 None 0 #
+501 5010 D _script mutationFeature@d_CanSwapTagSkill 1 203 R _script mutationFeature@r_SwapTagSkill 1 203 #
+502 5020 @
+501 6000 None 0 #
+0 6010 @
+502 7000 None 0 &
+
+[engl]
+{100}{}{Scout Leader}
+{200}{}{You see the scout leader of Junktown.}
+{240}{}{You see the dead scout leader of Junktown.}
+{260}{}{You see the slain scout leader of Junktown.}
+{1000}{}{Predialogue installations}
+{1010}{}{Answer text}
+{1020}{}{Stupid?}
+{2000}{}{You'd better watch yourself here.@@Behave, and we won't have to get nasty.@@You're OK.@@Nice day, isn't it?@@We are from Junktown. Nice place to live, as long as you stay on our good side.@@Keep out of trouble.}
+{2010}{}{Hey, I have some questions.}
+{2020}{}{Bye.}
+{3000}{}{You'd better watch yourself here.@@This isn't a good town to get in trouble in.@@Behave, and we won't have to get nasty.@@You're OK.@@Nice day, isn't it?@@We come from Junktown. Nice place to live, as long as you stay on our good side.@@Keep out of trouble.}
+{3010}{}{Hey, I have some questions.}
+{3020}{}{Bye.}
+{4000}{}{What do you want to know?}
+{4010}{}{You seem like someone who can handle themselves if things get up close and personal. Can you give me some advice?}
+{5000}{}{Ah, you want to go balls deep into action eh? So, the first most important thing is... }
+{5010}{}{Balls deep it is!}
+{5020}{}{Maybe... some other time.}
+{6000}{}{.. and now, all I usually do is this and they are done. [Listen to Scout Leader and learn]}
+{6010}{}{Thanks, I really needed this,}
+{7000}{}{Chicken!@@Bhawk, bhaawk!@@Bok-boook!@@Coward!}
+{100000001}{}{Welcome to Junktown, traveller!}
+{100000002}{}{I'm sorry, the gates are closed for the night. Come back in the morning.}
+{100000003}{}{Guys, get him!}
+

@@ -30,8 +30,9 @@ lang=engl
 7 7000 None 0 #
 5 7010 #
 3 7020 #
-80 7030 D _var n name_mem_npc_player = 1 D _script dialog@d_CheckProfession 1 0 #
-0 7040 @
+500 7030 D _script mutationFeature@d_CanSwapTagSkill 1 202 D _item p PID_GATLING_LASER > 0 #
+80 7040 D _var n name_mem_npc_player = 1 D _script dialog@d_CheckProfession 1 0 #
+0 7050 @
 20 8000 None 0 #
 0 8010 @
 80 9000 None 0 #
@@ -45,7 +46,12 @@ lang=engl
 83 11010 D _item p PID_BOTTLE_CAPS > 2999 R _script dialog@r_RemoveMoney 1 3000 R _param p PE_PROFESSION_ENERGY_EXPERT = 2 #
 0 11020 @
 83 12000 None 0 #
-0 12010 &
+0 12010 @
+500 13000 None 0 #
+501 13010 D _script mutationFeature@d_CanSwapTagSkill 1 202 R _script mutationFeature@r_SwapTagSkill 1 202 #
+0 13020 @
+501 14000 None 0 #
+0 14010 &
 
 [engl]
 {100}{}{Brian}
@@ -76,8 +82,9 @@ lang=engl
 {7000}{}{Whaddya want now?}
 {7010}{}{What is this place?}
 {7020}{}{Who are you?}
-{7030}{}{Say, since you look like the right person to ask... I'm interested in energy production and storage, maybe you could help me with it?}
-{7040}{}{Bye.}
+{7030}{}{Say, would you know how this big pile of pipes with disco effects work?}
+{7040}{}{Say, since you look like the right person to ask... I'm interested in energy production and storage, maybe you could help me with it?}
+{7050}{}{Bye.}
 {8000}{}{Hey! Don't touch anything! This is delicate equipment! Out! Outside! Go on! Go home!}
 {8010}{}{Ooooh! Butunz!}
 {9000}{}{Energy production and storage? You hit the right place, smoothie. Anyway, what did you want to know exactly?}
@@ -92,4 +99,9 @@ lang=engl
 {11020}{}{Okay, let me fetch it for you... Be right back.}
 {12000}{}{Well, glad to see you got everything we need to start with, hehe... [Puts the money into one of his small pockets] Okay, let's start with it then. [Brian explains you everything you wanted to know. It takes a while.]}
 {12010}{}{Thank you for sharing that knowledge with me, Brian. See you around!}
+{13000}{}{That is called an Gatling Laser, haven't seen one in a while...  it's best if you understand what you are dealing with, are you sure you are up for it?}
+{13010}{}{Let's play! [Swap Tag skill to Energy Weapons]}
+{13020}{}{Thanks, but I've changed my mind.}
+{14000}{}{Look, if you were long enough in this business as I am, you'd know it yourself already. Now, all I usually do is... [Listen to Jacob and learn]}
+{14010}{}{Thanks, I really needed this,}
 

@@ -30,12 +30,14 @@ lang=engl
 0 4040 @
 5 5000 None 0 #
 80 5010 #
-65506 5020 #
-0 5030 @
+500 5020 D _script mutationFeature@d_CanSwapTagSkill 1 201 #
+65506 5030 #
+0 5040 @
 80 6000 None 0 #
 81 6010 D _script dialog@d_CheckProfession 1 0 D _script dialog@d_CheckGunsmithB0 1 0 #
 82 6020 D _script dialog@d_CheckGunsmithB1 1 0 #
-0 6030 @
+500 6030 D _script mutationFeature@d_CanSwapTagSkill 1 201 #
+0 6040 @
 81 7000 None 0 #
 83 7010 D _item p PID_BOTTLE_CAPS > 1499 R _item p PID_GUNS_AND_BULLETS + 1 R _param p PE_PROFESSION_GUNSMITH_B = 1 R _script dialog@r_RemoveMoney 1 1500 #
 0 7020 @
@@ -107,7 +109,12 @@ lang=engl
 71 29120 D _item p PID_BOTTLE_CAPS > 24999 R _script dialog@r_RemoveMoney 1 25000 R _item p PID_BLUEPRINT_IMPROVED_FLAMETHROWER + 1 #
 0 29130 @
 71 30000 None 0 #
-0 30010 &
+0 30010 @
+500 31000 None 0 #
+501 31010 D _script mutationFeature@d_CanSwapTagSkill 1 201 D _item p PID_BOTTLE_CAPS } 1000 R _script mutationFeature@r_SwapTagSkill 1 201 R _item p PID_BOTTLE_CAPS - 1000 #
+0 31020 @
+501 32000 None 0 #
+0 32010 &
 
 [engl]
 {100}{}{Jacob}
@@ -138,12 +145,14 @@ lang=engl
 {4040}{}{Very informative. Gotta go, bye!}
 {5000}{}{Well, I'll tinker with big guns from time to time. If you got any questions about them, I should be the first one in the Hub you should ask.}
 {5010}{}{Great, I was just looking for a person like you! I had some questions, you see...}
-{5020}{}{I think I'll take a look at your merchandise first.}
-{5030}{}{Right, I'll keep that in mind. Bye!}
+{5020}{}{I want to be better handling really big guns, can you help me?}
+{5030}{}{I think I'll take a look at your merchandise first.}
+{5040}{}{Right, I'll keep that in mind. Bye!}
 {6000}{}{What's on your mind?}
 {6010}{}{I would like to know how they work, what they're made of... technical stuff.}
 {6020}{}{I thought you could clarify some things about the construction and usage of big guns to me.}
-{6030}{}{Erhm... Actually, nothing right now. I better be going.}
+{6030}{}{I want to be better handling really big guns, can you help me?}
+{6040}{}{Erhm... Actually, nothing right now. I better be going.}
 {7000}{}{I really hope you know what you're talking about, otherwise it'll be a waste of time. And I need something in return. I'm always short on caps, maybe you could bring me... Let's say $1500.}
 {7010}{}{Okay, I think I've got fifteen hundred right here. Why don't you take it, so we can start right away? [Give him $1500]}
 {7020}{}{Too bad, I don't have that much on me right now. Maybe some other time then.}
@@ -216,4 +225,9 @@ lang=engl
 {29130}{}{Maybe some other time.}
 {30000}{}{Here's your blueprint. Come back if you need another one.}
 {30010}{}{Sure. Thanks!}
+{31000}{}{That will take some time. My time! But you are in luck,the last delivery still needs testing.I'll show you how to and let you play around with it for a mere 1000 caps.}
+{31010}{}{Let's play! [Swap Tag skill to Big Guns]}
+{31020}{}{Thanks, but I've changed my mind.}
+{32000}{}{Look, if you were long enough in this business as I am, you'd know it yourself already. Now, all I usually do is... [Listen to Jacob and learn]}
+{32010}{}{Thanks, I really needed this,}
 
