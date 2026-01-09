@@ -15,14 +15,25 @@ string colorWarn = "|" + COLOR_DORANGE + " ";
 string colorAlreadyHave = "|" + COLOR_GOLDEN_YELLOW + " ";
 string colorNormal = "|" + COLOR_LGREEN + " ";
 
-#define MUTATION_FEATURE_DEBUG_LOGGING_ENABLED  (true)
+#define MUTATION_LOGGING_LEVEL  (3)     //  0 = no logging, 1 = only errors, 2 = warnings too, 3 = log everything (for debugging local use only)
 
 void MutationLog(string@ str) {
-    if (MUTATION_FEATURE_DEBUG_LOGGING_ENABLED) {
+    if (MUTATION_LOGGING_LEVEL > 2) {
         Log("MUTATION:\t" + str);
     }
 }
 
+void MutationLogWarn(string@ str) {
+    if (MUTATION_LOGGING_LEVEL > 1) {
+        Log("MUTATION ERROR:\t" + str);
+    }
+}
+
+void MutationLogError(string@ str) {
+    if (MUTATION_LOGGING_LEVEL > 0) {
+        Log("MUTATION ERROR:\t" + str);
+    }
+}
 
 import bool     HasItem(Critter@ cr, uint pid) from "utils";
 
@@ -620,6 +631,10 @@ bool canChangeSpecial(Critter& player, uint specialIndex, int byValue, uint igno
             }
             break;
         case ST_ENDURANCE:
+            if (player.Perk[PE_IRON_LIMBS] > 0 && player.StatBase[ST_ENDURANCE] + byValue < 6) {
+                reason = colorWarn + "Blocked by Iron Limbs perk." + colorNormal;
+                return false;
+            }
             if (player.Perk[PE_TOUGHNESS] > 0 && player.StatBase[ST_ENDURANCE] + byValue < 4) {
                 reason = colorWarn + "Blocked by Toughness perk." + colorNormal;
                 return false;
@@ -811,10 +826,10 @@ void changeSpecial(Critter& player, uint specialIndex, int byValue) {
     if (canChangeSpecial(player, specialIndex, byValue, 0, reason)) {
         player.StatBase[specialIndex] += byValue;
         if (player.StatBase[specialIndex] > 10 || player.StatBase[specialIndex] < 1) {
-            MutationLog("ERROR: Invalid SPECIAL base for player/critter. Investigate. (" + player.Name + ", " + getSpecialName(specialIndex) + ", " + player.StatBase[specialIndex]);
+            MutationLogWarn("Invalid SPECIAL base for player/critter. Investigate. (" + player.Name + ", " + getSpecialName(specialIndex) + ", " + player.StatBase[specialIndex]);
         }
     } else {
-        MutationLog("ERROR: Try to change special code reached but special cannot be changed. Investigate.");
+        MutationLogError("Try to change special code reached but special cannot be changed. Investigate.");
     }
 }
 
@@ -841,6 +856,8 @@ void r_RemoveTrait(Critter& player, Critter@ npc, int val) {
     if (canRemoveTrait(player, traitIndex, reason)) {
         removeTrait(player, traitIndex);
     }
+    int maxLife = recalcMaxLife(player);
+    player.StatBase[ST_MAX_LIFE] = maxLife;
 }
 
 void r_AddTrait(Critter& player, Critter@ npc, int val) {
@@ -849,6 +866,8 @@ void r_AddTrait(Critter& player, Critter@ npc, int val) {
     if (canAddTrait(player, traitIndex, reason)) {
         addTrait(player, traitIndex);
     }
+    int maxLife = recalcMaxLife(player);
+    player.StatBase[ST_MAX_LIFE] = maxLife;
 }
 
 bool canRemoveTrait(Critter& player, uint traitIndex, string@ reason) {
@@ -1717,6 +1736,14 @@ void dlg_RemovePerkList(Critter& player, Critter@ npc, string@ text) {
     }
 
     //  level 9 perks
+    if (player.Perk[PE_IRON_LIMBS] > 0) {
+        str += listPrefix + "[Iron Limbs: ";
+        if (canRemovePerk(player, PE_IRON_LIMBS, reason)) {
+            str += removable + "]\n";
+        } else {
+            str += reason + "]\n";
+        }
+    }
     if (player.Perk[PE_STONEWALL] > 0) {
         str += listPrefix + "[Stonewall: ";
         if (canRemovePerk(player, PE_STONEWALL, reason)) {
@@ -1986,6 +2013,9 @@ void dlg_AvailablePerkList(Critter& player, Critter@ npc, string@ text) {
     }
 
     //  level 9 perks
+    if (player.Perk[PE_IRON_LIMBS] > 0) {
+        str += listPrefix + "[Iron Limbs]\n";
+    }
     if (player.Perk[PE_STONEWALL] > 0) {
         str += listPrefix + "[Stonewall]\n";
     }
@@ -2103,6 +2133,8 @@ void r_RemovePerk(Critter& player, Critter@ npc, int val) {
     string reason = "";
     if (canRemovePerk(player, perkIndex, reason)) {
         removePerk(player, perkIndex);
+        int maxLife = recalcMaxLife(player);
+        player.StatBase[ST_MAX_LIFE] = maxLife;
     } else {
         MutationLog("MUTATION DIALONG ERROR: RESULT - CANNOT REMOVE PERK: " + getPerkName(perkIndex) + ", player: " + player.Name + ", reason: " + reason);
     }
@@ -2113,6 +2145,8 @@ void r_AddPerk(Critter& player, Critter@ npc, int val) {
     string reason = "";
     if (canAddPerk(player, perkIndex, reason)) {
         addPerk(player, perkIndex);
+        int maxLife = recalcMaxLife(player);
+        player.StatBase[ST_MAX_LIFE] = maxLife;
     } else {
         MutationLog("MUTATION DIALOG ERROR: RESULT - CANNOT ADD PERK: " + getPerkName(perkIndex) + ", player: " + player.Name + ", reason: " + reason);
     }
@@ -2302,6 +2336,12 @@ bool canAddPerk(Critter& player, uint perkIndex, string@ reason) {
             }
             return true;
         //  level 9 perks
+        case PE_IRON_LIMBS:
+            if (player.StatBase[ST_ENDURANCE] < 6) {
+                reason = colorWarn + "Endurance must be at least 6!" + colorNormal;
+                return false;
+            }
+            return true;
         case PE_STONEWALL:
             if (player.StatBase[ST_STRENGTH] < 6) {
                 reason = colorWarn + "Strength must be at least 6!" + colorNormal;
@@ -2384,6 +2424,10 @@ bool canAddPerk(Critter& player, uint perkIndex, string@ reason) {
             }
             return true;
         case PE_LIFEGIVER:
+            if (player.PerkBase[PE_LIFEGIVER] > 2) {
+                reason = colorWarn + "Can have more ranks than 3." + colorNormal;
+                return false;
+            }
             return true;
         case PE_GHOST:
             if (player.Skill[SK_SNEAK] < 125) {
@@ -2392,7 +2436,10 @@ bool canAddPerk(Critter& player, uint perkIndex, string@ reason) {
             }
             return true;
         case PE_ACTION_BOY:
-            if (player.Perk[PE_ACTION_BOY] > 0) {
+            if (player.Perk[PE_ACTION_BOY] > 1) {
+                    reason = colorWarn + "Cannot have more ranks than 2!" + colorNormal;
+                    return false;
+            } else if (player.Perk[PE_ACTION_BOY] > 0) {
                 if (player.StatBase[ST_AGILITY] < 7) {
                     reason = colorWarn + "Agility must be at least 7!" + colorNormal;
                     return false;
@@ -2493,11 +2540,53 @@ bool canAddPerk(Critter& player, uint perkIndex, string@ reason) {
 }
 
 void removePerk(Critter& player, uint perkIndex) {
-    player.PerkBase[perkIndex] = 0;
+    if (isMultiRankPerk(perkIndex)) {
+        if (perkIndex == PE_LIFEGIVER) {
+            if (player.PerkBase[perkIndex] > 0) {
+                player.PerkBase[perkIndex] -= 1;
+                MutationLog("Reducing player's LIFEGIVER perk rank to " + player.PerkBase[perkIndex]);
+            } else {
+                MutationLogError("ERROR: Cannot have less than 0 ranks in LIFEGIVER perk. (This code should not be reachable)");
+            }
+        } else if (perkIndex == PE_ACTION_BOY) {
+            if (player.PerkBase[perkIndex] > 0) {
+                player.PerkBase[perkIndex] -= 1;
+                MutationLog("Reducing player's ACTION BOY perk rank to " + player.PerkBase[perkIndex]);
+            } else {
+                MutationLogError("ERROR: Cannot have less than 0 ranks in ACTION BOY perk. (This code should not be reachable)");
+            }
+        } else {
+            MutationLogError("ERROR: Unhandled multi rank perk: " + getPerkName(perkIndex));
+        }
+    } else {
+        MutationLog("Removing player's perk: " + getPerkName(perkIndex));
+        player.PerkBase[perkIndex] = 0;
+    }
 }
 
 void addPerk(Critter& player, uint perkIndex) {
-    player.PerkBase[perkIndex] = 1;
+    if (isMultiRankPerk(perkIndex)) {
+        if (perkIndex == PE_LIFEGIVER) {
+            if (player.PerkBase[perkIndex] < 3) {
+                player.PerkBase[perkIndex] += 1;
+                MutationLog("Increasing player's LIFEGIVER perk rank to " + player.PerkBase[perkIndex]);
+            } else {
+                MutationLogError("ERROR: Cannot have more than 3 ranks in LIFEGIVER perk.");
+            }
+        } else if (perkIndex == PE_ACTION_BOY) {
+            if (player.PerkBase[perkIndex] < 2) {
+                player.PerkBase[perkIndex] += 1;
+                MutationLog("Increasing player's ACTION BOY perk rank to " + player.PerkBase[perkIndex]);
+            } else {
+                MutationLogError("ERROR: Cannot have more than 2 ranks in ACTION BOY perk.");
+            }
+        } else {
+            MutationLogError("ERROR: Unhandled multi rank perk with index = " + getPerkName(perkIndex));
+        }
+    } else {
+        MutationLog("Adding " + getPerkName(perkIndex) + " to player.");
+        player.PerkBase[perkIndex] = 1;
+    }
 }
 
 int totalPerkCount(Critter& player) {
@@ -2539,6 +2628,24 @@ bool hasPerkLevelsForWithout(Critter& player, uint perkIndexFor, uint perkIndexW
     reason = "N/A";
     int level = 3;
     int perkLevel = levelOfPerk(perkIndexFor);
+    if (isMultiRankPerk(perkIndexFor)) {
+        if (perkIndexFor == PE_LIFEGIVER) {
+            if (player.PerkBase[perkIndexFor] == 3) {
+                perkLevel = 15;
+            } else if (player.PerkBase[perkIndexFor] == 2) {
+                perkLevel = 12;
+            } else {
+                perkLevel = 9;
+            }
+        }
+        if (perkIndexFor == PE_ACTION_BOY) {
+            if (player.PerkBase[perkIndexFor] == 2) {
+                perkLevel = 12;
+            } else {
+                perkLevel = 9;
+            }
+        }
+    }
 
     //  level 3 perks always true
     if (perkLevel == 3) {
@@ -2657,7 +2764,7 @@ uint[] multiRankPerks = {PE_LIFEGIVER, PE_ACTION_BOY};
 
 uint[] level3Perks = {PE_MORE_CRITICALS, PE_WEAPON_HANDLING, PE_ADRENALINE_RUSH, PE_QUICK_RECOVERY, PE_LIVEWIRE, PE_WAY_OF_THE_FRUIT, PE_HEALER_II, PE_QUICK_POCKETS};
 uint[] level6Perks = {PE_EVEN_MORE_CRITICALS, PE_IN_YOUR_FACE, PE_SILENT_RUNNING, PE_TOUGHNESS, PE_SPRAY_AND_PRAY};
-uint[] level9Perks = {PE_MORE_RANGED_DAMAGE, PE_STONEWALL, PE_SHARPSHOOTER, PE_BONUS_RANGED_DAMAGE, PE_PYROMANIAC, PE_EVEN_TOUGHER, PE_MEDIC, PE_HEAVE_HO, PE_CLOSE_COMBAT_MASTER};
+uint[] level9Perks = {PE_MORE_RANGED_DAMAGE, PE_IRON_LIMBS, PE_STONEWALL, PE_SHARPSHOOTER, PE_BONUS_RANGED_DAMAGE, PE_PYROMANIAC, PE_EVEN_TOUGHER, PE_MEDIC, PE_HEAVE_HO, PE_CLOSE_COMBAT_MASTER};
 uint[] level12Perks = {PE_BETTER_CRITICALS, PE_LIFEGIVER, PE_GHOST, PE_ACTION_BOY, PE_GAIN_STRENGTH, PE_GAIN_PERCEPTION,
                        PE_GAIN_ENDURANCE, PE_GAIN_CHARISMA, PE_GAIN_INTELLIGENCE, PE_GAIN_AGILITY, PE_GAIN_LUCK};
 uint[] level15Perks = {PE_MAN_OF_STEEL, PE_FIELD_MEDIC};
@@ -2724,6 +2831,7 @@ string getPerkName(uint perkIndex) {
         case PE_TOUGHNESS:              return "Toughness";
         case PE_SPRAY_AND_PRAY:         return "Spray and Pray";
         //  level 9 perks
+        case PE_IRON_LIMBS:             return "Iron Limbs";
         case PE_STONEWALL:              return "Stonewall";
         case PE_SHARPSHOOTER:           return "Sharpshooter";
         case PE_BONUS_RANGED_DAMAGE:    return "Bonus Ranged Damage";
@@ -2883,35 +2991,41 @@ int recalcMaxLife(Critter& cr) {
     //  base life at character creation
 
 
-    //MutationLog("Critter <" + cr.Name + ">");
-    //MutationLog("\t\t+155 flat");
-    life += 155;
+    MutationLog("Critter <" + cr.Name + ">");
+    MutationLog("\t\t+168 flat");
+    life += 168;
     if (cr.TraitBase[TRAIT_BRUTISH_HULK] != 0) {
-        //MutationLog("\t\t+12 (Brutish Hulk)");
+        MutationLog("\t\t+12 (Brutish Hulk)");
         life += 12;
     }
 
+    int level = cr.StatBase[ST_LEVEL] <= int(__LevelCap) ? cr.StatBase[ST_LEVEL] : int(__LevelCap);
+    life += 4 * (level - 1);
+    MutationLog("\t\t+" + 4*(level-1) + " = 4 * (level - 1)");
+    /*
     for (int level = 2; level <= cr.StatBase[ST_LEVEL]; level++) {
         //  extra life per level
-        int enduranceBonus = 30 + cr.StatBase[ST_ENDURANCE];
-        //MutationLog("\t\t+" + (enduranceBonus / 8) + " (enduranceBonus / 8)");
-        life += enduranceBonus / 8;                 // Add max hp
-        if (level <= int(__LevelCap) && (level % 8 != 0) && (level % 8 <= enduranceBonus % 8)) {
-            //MutationLog("\t\t\t+1 (level = " + level + ", enduranceBonus = " + enduranceBonus + "(30 + EN = " + cr.StatBase[ST_ENDURANCE] + ") )");
-            life += 1;  // Add additional 1 HP when odd EN numbers, so minimal max HP difference between EN 9 and EN 10
+        if (level <= int(__LevelCap)) {
+            MutationLog("\t\t+" + (enduranceBonus / 8) + " (enduranceBonus / 8)");
+            life += 4;                 // Add max hp
         }
-    }
+    }*/
 
-    //MutationLog("Critter <" + cr.Name + ">: StatBase[ST_MAX_LIFE] = " + cr.StatBase[ST_MAX_LIFE] + ", life = " + life + " (StatBase[ST_MAX_LIFE] = " + cr.StatBase[ST_MAX_LIFE_EXT] + ")");
-    //MutationLog("\t\t2*ST = " + cr.StatBase[ST_STRENGTH]*2 + ", EN = " + cr.StatBase[ST_ENDURANCE] + " -> " + (life + cr.StatBase[ST_STRENGTH]*2 + cr.StatBase[ST_ENDURANCE]) + " == " + cr.Stat[ST_MAX_LIFE]);
-    /*
+    if (cr.PerkBase[PE_LIFEGIVER] > 0)
+    for (int i = 1; i <= cr.PerkBase[PE_LIFEGIVER]; i++) {
+        life += 30;
+        MutationLog("\t\t+30 from Lifegiver(" + i + ")");
+    }
+    MutationLog("Critter <" + cr.Name + ">: StatBase[ST_MAX_LIFE] = " + cr.StatBase[ST_MAX_LIFE] + ", life = " + life + " (StatBase[ST_MAX_LIFE] = " + cr.StatBase[ST_MAX_LIFE_EXT] + ")");
+    MutationLog("\t\t2*ST = " + cr.StatBase[ST_STRENGTH]*2 + ", 3*EN = " + cr.StatBase[ST_ENDURANCE]*3 + " -> " + (life + cr.StatBase[ST_STRENGTH]*2 + cr.StatBase[ST_ENDURANCE]*3) + " == " + cr.Stat[ST_MAX_LIFE]);
+
     //  safety check if some of the stat bonuses are skewed
     for (uint i = ST_STRENGTH_EXT; i <= ST_POISON_RESISTANCE_EXT; i++) {
         if (cr.StatBase[i] > 0) {
             MutationLog("\t\t\tStatBase[" + i + "] = " + cr.StatBase[i]);
         }
     }
-    */
+
     return life;
 }
 

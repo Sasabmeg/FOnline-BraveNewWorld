@@ -294,7 +294,7 @@ EXPORT int getParam_Hp(CritterMutual& cr, uint)
 
 EXPORT int getParam_MaxLife(CritterMutual& cr, uint)
 {
-	int val = cr.Params[ST_MAX_LIFE] + cr.Params[ST_MAX_LIFE_EXT] + cr.Params[ST_STRENGTH] * 2 + cr.Params[ST_ENDURANCE];
+	int val = cr.Params[ST_MAX_LIFE] + cr.Params[ST_MAX_LIFE_EXT] + cr.Params[ST_STRENGTH] * 2 + cr.Params[ST_ENDURANCE] * 3;
 	return CLAMP(val, 1, 9999);
 }
 
