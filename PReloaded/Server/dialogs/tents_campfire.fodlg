@@ -110,17 +110,18 @@ lang=engl
 302 34020 #
 303 34030 #
 304 34040 #
-65505 34050 D _item p PID_RADAWAY < 3 #
-305 34060 D _item p PID_RADAWAY } 3 R _item p PID_RADAWAY - 3 #
-313 34070 D _script mutationFeature@d_IsTaggedSkill 1 200 #
-313 34080 D _script mutationFeature@d_IsTaggedSkill 1 201 #
-313 34090 D _script mutationFeature@d_IsTaggedSkill 1 202 #
-313 34100 D _script mutationFeature@d_IsTaggedSkill 1 203 #
-313 34110 D _script mutationFeature@d_IsTaggedSkill 1 205 #
-313 34120 D _script mutationFeature@d_IsTaggedSkill 1 207 #
-313 34130 D _script mutationFeature@d_IsTaggedSkill 1 210 #
-313 34140 D _script mutationFeature@d_IsTaggedSkill 1 211 #
-5 34150 @
+65505 34050 D _item p PID_RADAWAY < 3 D _param p ST_LEVEL > 24 #
+305 34060 D _param p ST_LEVEL { 24 #
+305 34070 D _item p PID_RADAWAY } 3 D _param p ST_LEVEL > 24 R _item p PID_RADAWAY - 3 #
+313 34080 D _script mutationFeature@d_IsTaggedSkill 1 200 #
+313 34090 D _script mutationFeature@d_IsTaggedSkill 1 201 #
+313 34100 D _script mutationFeature@d_IsTaggedSkill 1 202 #
+313 34110 D _script mutationFeature@d_IsTaggedSkill 1 203 #
+313 34120 D _script mutationFeature@d_IsTaggedSkill 1 205 #
+313 34130 D _script mutationFeature@d_IsTaggedSkill 1 207 #
+313 34140 D _script mutationFeature@d_IsTaggedSkill 1 210 #
+313 34150 D _script mutationFeature@d_IsTaggedSkill 1 211 #
+5 34160 @
 301 35000 mutationFeature@dlg_RemoveTraitList 0 #
 301 35010 D _script mutationFeature@d_CanRemoveTrait 1 550 R _script mutationFeature@r_RemoveTrait 1 550 #
 301 35020 D _script mutationFeature@d_CanRemoveTrait 1 551 R _script mutationFeature@r_RemoveTrait 1 551 #
@@ -433,16 +434,17 @@ Make sure you secure all items and move all followers to other place before you 
 {34030}{}{If I would focus less on this... [Remove Perks]}
 {34040}{}{If I would focus more on this... [Add Perks]}
 {34050}{}{Is that a tree growing on my head? This radiation is killing me... if only I had a dozzen Radaway to gubble up...}
-{34060}{}{Is that a tree growing on my head? This radiation is killing me... oh, look, a dozzen Radaway to gubble up! [Change S.P.E.C.I.A.L.]}
-{34070}{}{Hm, Small Guns... they are so small. [Change Tagged Skill]}
-{34080}{}{Are really Flamers my thing? [Change Tagged Skill]@@Is it really the Bozar that I dream of? [Change Tagged Skill]}
-{34090}{}{Is it really the Laser Riffle that I love the most? [Change Tagged Skill]}
-{34100}{}{Getting up close and personal with all the mutated abominations in the wastland? Really? [Change Tagged Skill]}
-{34110}{}{Do I really want to gather all the knives and spears I throw at people? [Change Tagged Skill]}
-{34120}{}{Dealing with crippled people all the time... depressing! [Change Tagged Skill]}
-{34130}{}{Let's just enter the front door this time. With guns blazing of course! [Change Tagged Skill]}
-{34140}{}{Traps. Bah. Who am I? Some hobo from Kalamath? [Change Tagged Skill]}
-{34150}{}{[Back]}
+{34060}{}{Is that a tree growing on my head? I better cut it out while it's still growing! [Change S.P.E.C.I.A.L.]}
+{34070}{}{Is that a tree growing on my head? This radiation is killing me... oh, look, a dozzen Radaway to gubble up! [Change S.P.E.C.I.A.L.]}
+{34080}{}{Hm, Small Guns... they are so small. [Change Tagged Skill]}
+{34090}{}{Are really Flamers my thing? [Change Tagged Skill]@@Is it really the Bozar that I dream of? [Change Tagged Skill]}
+{34100}{}{Is it really the Laser Riffle that I love the most? [Change Tagged Skill]}
+{34110}{}{Getting up close and personal with all the mutated abominations in the wastland? Really? [Change Tagged Skill]}
+{34120}{}{Do I really want to gather all the knives and spears I throw at people? [Change Tagged Skill]}
+{34130}{}{Dealing with crippled people all the time... depressing! [Change Tagged Skill]}
+{34140}{}{Let's just enter the front door this time. With guns blazing of course! [Change Tagged Skill]}
+{34150}{}{Traps. Bah. Who am I? Some hobo from Kalamath? [Change Tagged Skill]}
+{34160}{}{[Back]}
 {35000}{}{That was never really me! It was just an illusion...@lex removableTraits@}
 {35010}{}{[Remove Fast Metabolism]}
 {35020}{}{[Remove Bruiser]
