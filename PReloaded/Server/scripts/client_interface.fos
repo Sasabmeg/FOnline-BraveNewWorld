@@ -956,7 +956,7 @@ string generic_description(int descType, int& offsX, int& offsY)
         result += GetMsgStr(TEXTMSG_GAME, STR_INV_SHORT_SPECIAL(ST_INTELLECT)) + "\n";
         result += GetMsgStr(TEXTMSG_GAME, STR_INV_SHORT_SPECIAL(ST_AGILITY)) + "\n";
         result += GetMsgStr(TEXTMSG_GAME, STR_INV_SHORT_SPECIAL(ST_LUCK)) + "\n";
-        result += "\n---------------------\n";
+        result += "---------------------\n";
 
         ItemCl@ weaponMain = chosen.GetItem(0, SLOT_HAND1);
         if(valid(weaponMain))
@@ -1162,7 +1162,8 @@ string generic_description(int descType, int& offsX, int& offsY)
             result += "\n\n";
         }
 
-        result += "\n";
+        result += "---------------------\n";
+        //result += "\n";
         result += GetMsgStr(TEXTMSG_GAME, STR_INV_TOTAL_WEIGHT) + " ";
         result += chosen.ItemsWeight() / 1000 + "/";
         result += chosen.Stat[ST_CARRY_WEIGHT] / 1000 + ".";
