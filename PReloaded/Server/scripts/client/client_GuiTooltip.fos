@@ -762,33 +762,67 @@ class CTooltips {
 
         tooltipsKey.insertLast(DAMAGE_RIGHT_ARM);
         tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(DAMAGE_RIGHT_ARM)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(DAMAGE_RIGHT_ARM)) + pipText);
-        tooltipsValueExt.insertLast(pipReference + noData);
+        tooltipsValueExt.insertLast(pipReference + notes
+                                 + "\n\u2022 Limited weapon use:"
+                                 + "\n\t\u2022 You can only use one handed weapons, as long as your other arm is ok."
+                                 + "\n\t\u2022 You cannot attack if both of your arms are crippled."
+                                 + "\n\u2022 Limited agility:"
+                                 + "\n\t\u2022 If you are crippled on one arm only, you loose -3 AG."
+                                 + "\n\t\u2022 If you are crippled on both arms, your AG is set to 1.");
 
         tooltipsKey.insertLast(DAMAGE_LEFT_ARM);
         tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(DAMAGE_LEFT_ARM)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(DAMAGE_LEFT_ARM)) + pipText);
-        tooltipsValueExt.insertLast(pipReference + noData);
+        tooltipsValueExt.insertLast(pipReference + notes
+                                 + "\n\u2022 Limited weapon use:"
+                                 + "\n\t\u2022 You can only use one handed weapons, as long as your other arm is ok."
+                                 + "\n\t\u2022 You cannot attack if both of your arms are crippled."
+                                 + "\n\u2022 Limited agility:"
+                                 + "\n\t\u2022 If you are crippled on one arm only, you loose -3 AG."
+                                 + "\n\t\u2022 If you are crippled on both arms, your AG is set to 1.");
 
         tooltipsKey.insertLast(DAMAGE_RIGHT_LEG);
         tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(DAMAGE_RIGHT_LEG)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(DAMAGE_RIGHT_LEG)) + pipText);
-        tooltipsValueExt.insertLast(pipReference + noData);
+        tooltipsValueExt.insertLast(pipReference + notes
+                                 + "\n\u2022 Limited strength:"
+                                 + "\n\t\u2022 Suffer -1 ST if other leg is not crippled."
+                                 + "\n\t\u2022 Suffer -3 ST if both legs are crippled."
+                                 + "\n\u2022 Limited movement:"
+                                 + "\n\t\u2022 If you are crippled on only one leg, you can walk, but you cannot run."
+                                 + "\n\t\u2022 If you are crippled on both legs, your movement is paused after every hex.");
 
         tooltipsKey.insertLast(DAMAGE_LEFT_LEG);
         tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(DAMAGE_LEFT_LEG)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(DAMAGE_LEFT_LEG)) + pipText);
-        tooltipsValueExt.insertLast(pipReference + noData);
+        tooltipsValueExt.insertLast(pipReference + notes
+                                 + "\n\u2022 Limited strength:"
+                                 + "\n\t\u2022 Suffer -1 ST if other leg is not crippled."
+                                 + "\n\t\u2022 Suffer -3 ST if both legs are crippled."
+                                 + "\n\u2022 Limited movement:"
+                                 + "\n\t\u2022 If you are crippled on only one leg, you can walk, but you cannot run."
+                                 + "\n\t\u2022 If you are crippled on both legs, your movement is paused after every hex.");
 
         //  Secondary stats
         tooltipsKey.insertLast(ST_ARMOR_CLASS);
         tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(ST_ARMOR_CLASS)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(ST_ARMOR_CLASS)) + pipText);
-        tooltipsValueExt.insertLast(pipReference + noData);
+        tooltipsValueExt.insertLast(pipReference + notes
+                                 + "\n\u2022 This number reflects how hard you are to hit, the higher the better."
+                                 + "\n\u2022 Base armor Class: +3*AG (double with Livewire perk)"
+                                 + "\n\u2022 From armors:"
+                                 + "\n\t\u2022 Light Armors give most"
+                                 + "\n\t\u2022 Medium Armors give moderate amount"
+                                 + "\n\t\u2022 Heavy Armors give the least");
+
 
         tooltipsKey.insertLast(ST_ACTION_POINTS);
         tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(ST_ACTION_POINTS)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(ST_ACTION_POINTS)) + pipText);
-        tooltipsValueExt.insertLast(pipReference + noData);
+        tooltipsValueExt.insertLast(pipReference + notes
+                                 + "\n\u2022 Base formula: (78 + AG) / 8"
+                                 + "\n\t\u2022 Final AG = 1     -> 9 base AP"
+                                 + "\n\t\u2022 Final AG = 2-9 -> 10 base AP"
+                                 + "\n\t\u2022 Final AG = 10   -> 11 base AP");
 
         tooltipsKey.insertLast(ST_CARRY_WEIGHT);
         tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(ST_CARRY_WEIGHT)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(ST_CARRY_WEIGHT)) + pipText);
-        tooltipsValueExt.insertLast(pipReference
-                                 + notes
+        tooltipsValueExt.insertLast(pipReference + notes
                                  + "\n\u2022 This value is used to determine if you can carry your inventory or not. Once your reach your carry capacity, you will not be able to run but you are still able to walk.  Once you load double of this amount, your carried weight is simply too heavy and you will not be able to move at all, until you drop some stuff."
                                  + "\n\u2022 Base formula: [(25 + (Strength*25)) / 2.2] + 20"
                                  + "\n\u2022 Affected by:"
