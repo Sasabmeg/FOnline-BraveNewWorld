@@ -10352,7 +10352,7 @@ void FOClient::FixGenerate( int fix_mode )
         UInt8Vec tmp_vec;            // Temp vector
         for( uint i = 0; i < craft->OutItems.size(); i++ )
             tmp_vec.push_back( 0 );  // Push AND
-        FixGenerateItems( craft->OutItems, craft->OutItemsVal, tmp_vec, str, r, x, FixResultImageWidth, FixResultImageHeight);
+        FixGenerateItems( craft->OutItems, craft->OutItemsVal, tmp_vec, str, r, x, FixResultImageWidth, FixResultImageHeight, true);
 
         // About
         if( craft->Info.length() )
@@ -10384,10 +10384,14 @@ void FOClient::FixGenerate( int fix_mode )
                     str += "%";
 
                 // You have
-                str += " (";
+				if (Chosen->GetParam(craft->NeedPNum[i]) < craft->NeedPVal[i]) {
+					str += "|4290797568 ";
+				}
+				str += " (";
                 str += MsgGame->GetStr( STR_FIX_YOUHAVE );
                 str += Str::ItoA( Chosen->GetParam( craft->NeedPNum[i] ) );
                 str += ")";
+				//str += "|4290797568 ";
 
                 // And, or
                 if( i == j - 1 )
@@ -10446,19 +10450,19 @@ void FOClient::FixGenerate( int fix_mode )
 
 void FOClient::FixGenerateStrLine( string& str, Rect& r )
 {
-    r.B += SprMngr.GetLinesHeight( FixWWin.W(), 0, str.c_str() );
+    r.B += SprMngr.GetLinesHeight( FixWWin.W(), 0, str.c_str(), pipboyFont );
     FixDrawComp.push_back( new FixDrawComponent( r, str ) );
     r.T = r.B;
 }
 
-void FOClient::FixGenerateItems( UInt16Vec& items_vec, UIntVec& val_vec, UInt8Vec& or_vec, string& str, Rect& r, int& x, int width, int height)
+void FOClient::FixGenerateItems( UInt16Vec& items_vec, UIntVec& val_vec, UInt8Vec& or_vec, string& str, Rect& r, int& x, int width, int height, bool ignoreNeedColoring)
 {
     str = "";
     for( uint i = 0, j = (uint)items_vec.size(); i < j; i++ )
     {
         uint color = COLOR_TEXT;
-        if( Chosen->CountItemPid( items_vec[i] ) < val_vec[i] )
-            color = COLOR_TEXT_DGREEN;
+		if (Chosen->CountItemPid(items_vec[i]) < val_vec[i] && !ignoreNeedColoring)
+			color = COLOR_ARGB(0xFF, 0xA0, 0x60, 0x00);
 
 		
         str += "|";
@@ -10596,7 +10600,7 @@ void FOClient::FixDraw()
                 uint col = COLOR_TEXT;
 				if (!scraft->IsTrue) {
 					if (scraft->HaveMats)
-						col = 0xFFEA4600;		//	COLOR_DARKORANGE
+						col = 0xFFCA6600;		//	COLOR_DARKISHORANGE
 					else
 						col = COLOR_TEXT_DRED;
 				}

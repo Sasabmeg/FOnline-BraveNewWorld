@@ -1627,7 +1627,7 @@ public:
 
     void       FixGenerate( int fix_mode );
     void       FixGenerateStrLine( std::string& str, Rect& r );
-    void       FixGenerateItems( UInt16Vec& items_vec, UIntVec& val_vec, UInt8Vec& or_vec, std::string& str, Rect& r, int& x, int width, int height);
+    void       FixGenerateItems( UInt16Vec& items_vec, UIntVec& val_vec, UInt8Vec& or_vec, std::string& str, Rect& r, int& x, int width, int height, bool ignoreNeedColoring = false);
     int        GetMouseCraft();
     SCraftVec* GetCurSCrafts();
 
