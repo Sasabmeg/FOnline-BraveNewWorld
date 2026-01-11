@@ -10460,22 +10460,33 @@ void FOClient::FixGenerateItems( UInt16Vec& items_vec, UIntVec& val_vec, UInt8Ve
     str = "";
     for( uint i = 0, j = (uint)items_vec.size(); i < j; i++ )
     {
-        uint color = COLOR_TEXT;
-		if (Chosen->CountItemPid(items_vec[i]) < val_vec[i] && !ignoreNeedColoring)
-			color = COLOR_ARGB(0xFF, 0xA0, 0x60, 0x00);
-
-		
+        uint color = COLOR_TEXT_LGREEN;
         str += "|";
         str += Str::FormatBuf( "%u", color );
         str += " ";
-		
-        if( i > 0 )
+				
+		if( i > 0 )
         {
-            if( or_vec[i - 1] )
+			color = COLOR_TEXT_DGREEN;
+			str += "|";
+			str += Str::FormatBuf("%u", color);
+			str += " ";
+			if( or_vec[i - 1] )
                 str += MsgGame->GetStr( STR_OR );
             else
                 str += MsgGame->GetStr( STR_AND );
         }
+
+		if (!ignoreNeedColoring) {
+			if (Chosen->CountItemPid(items_vec[i]) < val_vec[i]) {
+				color = COLOR_ARGB(0xFF, 0xAA, 0x66, 0x00);
+			} else {
+				color = COLOR_TEXT_LGREEN;
+			}
+			str += "|";
+			str += Str::FormatBuf("%u", color);
+			str += " ";
+		}
 
         ProtoItem* proto = ItemMngr.GetProtoItem( items_vec[i] );
         if( !proto )
