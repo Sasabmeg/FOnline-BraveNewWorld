@@ -415,12 +415,17 @@ class CTooltips {
                                  + jjText + pipStatus + agilityExt);
         tooltipsValueExt.insertLast(pipReference
                                  + "\n\u2022 Armor Class: +3*AG (double with Livewire perk)"
-                                 + "\n\u2022 Action Points factor changed: (5 + 2*AG) -> (5 + (13+AG)/4)"
-                                 + "\n\t\u2022 ex: 7AG-10AG -> 10AP, 3AG-6AG -> 9AP, 1AG-2AG -> 8AP"
+                                 + "\n\u2022 Action Points calculation changed:"
+                                 + "\n\t\u2022 Final AG = 1     -> 9 base AP"
+                                 + "\n\t\u2022 Final AG = 2-9 -> 10 base AP"
+                                 + "\n\t\u2022 Final AG = 10   -> 11 base AP"
+                                 + "\n\u2022 Damaged arms reduces AG:"
+                                 + "\n\t\u2022 Only left or only right: -3 AG"
+                                 + "\n\t\u2022 Both left and right: AG set to 1"
                                  + "\n\u2022 Equipped Armor's can change AG level:"
-                                 + "\n\t\u2022 Light Armor +1AG bonus (Leather Armor types and also give Quick Pockets Perk)"
-                                 + "\n\t\u2022 Medium Armor -1AG malus (Combat Armor types and also give Iron Limbs Perk)"
-                                 + "\n\t\u2022 Heavy Armor -3AG malus (Metal Armor types and also give Stonewall Perk)");
+                                 + "\n\t\u2022 Light Armor: +1 AG bonus (Leather Armor types and also give Quick Pockets Perk)"
+                                 + "\n\t\u2022 Medium Armor: -1 AG malus (Combat Armor types and also give Iron Limbs Perk)"
+                                 + "\n\t\u2022 Heavy Armor: -3 AG malus (Metal Armor types and also give Stonewall Perk)");
 
         tooltipsKey.insertLast(ST_LUCK);
         tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(ST_LUCK)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(ST_LUCK))
@@ -722,7 +727,13 @@ class CTooltips {
         //  Hit Points and Damaged parts
         tooltipsKey.insertLast(ST_MAX_LIFE);
         tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(ST_MAX_LIFE)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(ST_MAX_LIFE)) + pipText);
-        tooltipsValueExt.insertLast(pipReference + noData);
+        tooltipsValueExt.insertLast(pipReference + notes
+                                    + "\n\u2022 Formula:"
+                                    + "\n\t\u2022 168 base HP for players"
+                                    + "\n\t\u2022 +4 HP per level until level 24"
+                                    + "\n\t\u2022 +2 HP for each ST special (dynamic)"
+                                    + "\n\t\u2022 +3 HP for each EN special (dynamic)"
+                                    + "\n\t\u2022 +30 HP for each Lifegiver perk rank");
 
         tooltipsKey.insertLast(DAMAGE_POISONED);
         tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(DAMAGE_POISONED)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(DAMAGE_POISONED)) + pipText
@@ -1148,6 +1159,19 @@ class CTooltips {
                                      + "\n\t\u2022  Luck >= 3");
 
         //  Level 9 Perks
+        tooltipsKey.insertLast(PE_IRON_LIMBS);
+        tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(PE_STONEWALL)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(PE_STONEWALL)) + pipText);
+        tooltipsValueExt.insertLast(pipReference
+                                     + notes
+                                     + "\n\u2022 Gives ability to resist Knockdowns and Knockbacks."
+                                     + "\n\t\u2022 Adds character +1 Stonewall rank and stack with Heavy Armor Perk."
+                                     + "\n\t\u2022 Does not protect against Head/Eyes attacks KD/KO effects."
+                                     + "\n\u2022 KO that are not from Head/Eyes can be downgraded to KD instead:"
+                                     + "\n\t\u2022 3 * (CLAMP(ST, 1, CH+4) + CLAMP(EN, 1, CH+6)) + 15 * StonewallRank vs 1d100"
+                                     + "\n\t\u2022 Final damage is increased by 20% and not per bullet."
+                                     + requirements
+                                     + "\n\t\u2022  Strength >= 6");
+
         tooltipsKey.insertLast(PE_STONEWALL);
         tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(PE_STONEWALL)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(PE_STONEWALL)) + pipText);
         tooltipsValueExt.insertLast(pipReference
@@ -1660,6 +1684,7 @@ void UpdateCharacterTooltip(int tooltipId, int posX, int posY) {
 
     characterTooltip.interfaceTextbox = CInterfaceTextbox(10, 10, 600, 800);
     characterTooltip.interfaceTextbox.Init();
+    characterTooltip.interfaceTextbox.SetFont(FONT_TYPE_DEFAULT);
     characterTooltip.interfaceTextbox.textColor = COLOR_LGREEN;
 
     SetCharacterDetailText(tooltipKeyValue.getToolTip(tooltipId));
@@ -1709,6 +1734,7 @@ void UpdateInventoryTooltip(ItemCl& item, int left, int right, int top, int bott
     inventoryTooltip.interfaceTextbox = CInterfaceTextbox(10, 10, 300, 800);
     inventoryTooltip.interfaceTextbox.Init();
     inventoryTooltip.interfaceTextbox.textColor = COLOR_RGB(0, 0xD8, 0);
+    inventoryTooltip.interfaceTextbox.SetFont(FONT_TYPE_DEFAULT);
 
     inventoryTooltip.interfaceTextboxComparison = CInterfaceTextbox(10, 10, 100, 200);
     inventoryTooltip.interfaceTextboxComparison.Init();

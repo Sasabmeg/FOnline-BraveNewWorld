@@ -14,6 +14,7 @@ class CInterfaceTextbox : CInterfaceControl {
     array<string> lines;
     string text;
     uint currentLineToDrawIndex, lastLineToDrawIndex;
+    int textFont;
     int oneLineHeight;
 
 
@@ -23,11 +24,12 @@ class CInterfaceTextbox : CInterfaceControl {
         width = w;
         height = h;
         hasBackground = false;
+        textFont = FONT_TYPE_DEFAULT;
     }
 
     int setText(string oneLineText) {
         int w = 0, h = 0, l = 0;
-        GetTextInfo(oneLineText, width, height, FONT_TYPE_DEFAULT, 0, w, h, l);
+        GetTextInfo(oneLineText, width, height, textFont, 0, w, h, l);
         text = oneLineText;
         //Message("setText:: (" + width + ", " + height + ") -> lineHeight = " + h);
         //SetHeight(h);
@@ -40,8 +42,12 @@ class CInterfaceTextbox : CInterfaceControl {
         backgroundColor = COLOR_RGBA(0, 0, 0, 150);
         textColor = COLOR_DGREEN;
         int w = 0, h = 0, l = 0;
-        GetTextInfo("OneLineHeight", width, height, FONT_TYPE_DEFAULT, 0, w, h, l);
+        GetTextInfo("OneLineHeight", width, height, textFont, 0, w, h, l);
         oneLineHeight = h;
+    }
+
+    void SetFont(int font) {
+        textFont = font;
     }
 
     void SetLines(array<string> lines_) {
@@ -103,13 +109,13 @@ class CInterfaceTextbox : CInterfaceControl {
     void drawText(int offsetX, int offsetY) {
         int x = offsetX + posX;
         int y = offsetY + posY;
-        DrawText(text, x, y, width, height, textColor, FONT_TYPE_DEFAULT, 0);
+        DrawText(text, x, y, width, height, textColor, textFont, 0);
     }
 
     void drawTextByLine(int offsetX, int offsetY) {
         int x = offsetX + posX;
         int y = offsetY + posY;
-        DrawText(text, x, y, width, height, textColor, FONT_TYPE_DEFAULT, 0);
+        DrawText(text, x, y, width, height, textColor, textFont, 0);
     }
 
     void Update() {
@@ -119,7 +125,7 @@ class CInterfaceTextbox : CInterfaceControl {
             text += lines[i] + "\n";
         }
         int w = 0, h = 0, l = 0;
-        GetTextInfo(text, width, height, FONT_TYPE_DEFAULT, 0, w, h, l);
+        GetTextInfo(text, width, height, textFont, 0, w, h, l);
         //Message("width=" + w + ", height=" + h + ", lines=" + l + ", lastIndex=" + currentLineToDrawIndex);
     }
 
@@ -131,7 +137,7 @@ class CInterfaceTextbox : CInterfaceControl {
         } else {
             bool found = false;
             while (!found) {
-                GetTextInfo(lines[index], width, height, FONT_TYPE_DEFAULT, 0, w, h, l);
+                GetTextInfo(lines[index], width, height, textFont, 0, w, h, l);
                 currentHeight -= h + 1;
                 //Message("width=" + w + ", height=" + h + ", currH=" + currentHeight + ", lines=" + l + ", index=" + index);
                 if (currentHeight <= oneLineHeight || index <= 0) {
