@@ -8077,6 +8077,7 @@ label_EndMove:
             }
             Chosen->SetDir( dir );
             Net_SendDir();
+			RebuildLookBorders = true;
             break;
         }
         case CHOSEN_USE_ITEM:
