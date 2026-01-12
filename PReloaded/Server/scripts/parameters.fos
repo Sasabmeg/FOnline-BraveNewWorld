@@ -316,6 +316,11 @@ void changedParam_Reputation(CritterCl& cr, uint reputationParamId, int oldValue
         default:
             repStatus = "|0xEEEEEE N/A";
     }
+
+    if (change < -1000000 || change > 1000000) {
+        Message("|0x4DA996 You are now known to |0xEEEEEE " + factionName + "|0x4DA996  and their status towards you is " + repStatus + "|0x4DA996 .");
+        return;
+    }
     if (change > 0) {
         if (oldIndex == newIndex) {
             Message("|0x4DA996 You have gained |0x00C800 " + change + " |0x4DA996 reputation points with |0xEEEEEE " + factionName + "|0x4DA996 .");
