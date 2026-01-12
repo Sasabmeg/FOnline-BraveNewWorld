@@ -25,6 +25,7 @@
 
 import string showItemBonus(ItemCl& it, int type, int value) from "client_interface";
 import bool IsDetectHiddenWeapon(ItemMutual& item) from "hexThrow";
+
 /*
 import uint GetRadiationStage(int level) from "client/client_buffs";
 import int GetStatLossForRadiationLevel(int stat, int level) from "client/client_buffs";
@@ -229,6 +230,15 @@ class CTooltips {
                         if (GetClientBuffsTimeout(CLIENT_BUFFS_SALMON) > 0) {
                             strengthExt += "\n\t\u2022 " + "|" + COLOR_BUFF + " +1" + "|" + COLOR_REGULAR + "  from Salmon";
                         }
+                        if (chosen.Param[DAMAGE_LEFT_LEG] > 0 || chosen.Param[DAMAGE_RIGHT_LEG] > 0) {
+                            if (chosen.Param[DAMAGE_LEFT_LEG] == 0) {
+                                strengthExt += "\n\t\u2022 " + "|" + COLOR_DEBUFF + " -1" + "|" + COLOR_REGULAR + "  from Damaged Right Leg";
+                            } else if (chosen.Param[DAMAGE_RIGHT_LEG] == 0) {
+                                strengthExt += "\n\t\u2022 " + "|" + COLOR_DEBUFF + " -1" + "|" + COLOR_REGULAR + "  from Damaged Left Leg";
+                            } else {
+                                strengthExt += "\n\t\u2022 " + "|" + COLOR_DEBUFF + " -3 " + "|" + COLOR_REGULAR + " from both legs crippled";
+                            }
+                        }
             perceptionExt = "\n\u2022 Base: " + chosen.StatBase[ST_PERCEPTION]
                             + "\n\u2022 Effects: " + (perDif < 0 ? ("|" + COLOR_DEBUFF + " ") : ("|" + COLOR_BUFF + " +")) + perDif + "|" + COLOR_GREEN + " ";
                             if (radiationLevel > 0) {
@@ -279,6 +289,15 @@ class CTooltips {
                         }
                         if (GetClientBuffsTimeout(CLIENT_BUFFS_CATFISH) > 0) {
                             agilityExt += "\n\t\u2022 " + "|" + COLOR_BUFF + " +1" + "|" + COLOR_REGULAR + "  from Catfish";
+                        }
+                        if (chosen.Param[DAMAGE_LEFT_ARM] > 0 || chosen.Param[DAMAGE_RIGHT_ARM] > 0) {
+                            if (chosen.Param[DAMAGE_LEFT_ARM] == 0) {
+                                agilityExt += "\n\t\u2022 " + "|" + COLOR_DEBUFF + " -3" + "|" + COLOR_REGULAR + "  from Damaged Right Arm";
+                            } else if (chosen.Param[DAMAGE_RIGHT_ARM] == 0) {
+                                agilityExt += "\n\t\u2022 " + "|" + COLOR_DEBUFF + " -3" + "|" + COLOR_REGULAR + "  from Damaged Left Arm";
+                            } else {
+                                agilityExt += "\n\t\u2022 " + "|" + COLOR_DEBUFF + " AG 1 " + "|" + COLOR_REGULAR + " because both arms crippled";
+                            }
                         }
             luckExt = "\nCurrent:"
                     + "\n\u2022 Base: " + chosen.StatBase[ST_LUCK]
@@ -564,6 +583,8 @@ class CTooltips {
                                  + "\n\u2022 This is an active combat specialization skill, leveled by spending Skill Points."
                                  + "\n\t\u2022 Max: 200 (if this is tagged as your combat specialization then Max: 300)"
                                  + modifies
+                                 + "\n\u2022 Combat special:"
+                                 + "\n\t\u2022 Attacking with Needler Pistol will use Doctor skill if bigger than SG skill."
                                  + "\n\u2022 Doctor's Bag efficiency:"
                                  + "\n\t\u2022 Max use: 5 + ((doctorSkill-200)/10) + 5(Medic) + 5(Field Medic)"
                                  + "\n\t\u2022 Tool use counter is per character and not tool."
@@ -758,7 +779,14 @@ class CTooltips {
 
         tooltipsKey.insertLast(DAMAGE_EYE);
         tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(DAMAGE_EYE)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(DAMAGE_EYE)) + pipText);
-        tooltipsValueExt.insertLast(pipReference + noData);
+        tooltipsValueExt.insertLast(pipReference + notes
+                                 + "\n\u2022 Limited sight:"
+                                 + "\n\t\u2022 You can only see around you and as your PE is reduced to 1."
+                                 + "\n\u2022 Limited agility:"
+                                 + "\n\t\u2022 If you are crippled on one arm only, you loose -3 AG."
+                                 + "\n\t\u2022 If you are crippled on both arms, your AG is set to 1."
+                                 + "\n\u2022 Limited skill usages:"
+                                 + "\n\t\u2022 Damaged eyes reduces the chance of doctor success on yourself.");
 
         tooltipsKey.insertLast(DAMAGE_RIGHT_ARM);
         tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(DAMAGE_RIGHT_ARM)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(DAMAGE_RIGHT_ARM)) + pipText);
@@ -768,7 +796,9 @@ class CTooltips {
                                  + "\n\t\u2022 You cannot attack if both of your arms are crippled."
                                  + "\n\u2022 Limited agility:"
                                  + "\n\t\u2022 If you are crippled on one arm only, you loose -3 AG."
-                                 + "\n\t\u2022 If you are crippled on both arms, your AG is set to 1.");
+                                 + "\n\t\u2022 If you are crippled on both arms, your AG is set to 1."
+                                 + "\n\u2022 Limited skill usages:"
+                                 + "\n\t\u2022 Damaged right arm reduces the chance of doctor success on yourself.");
 
         tooltipsKey.insertLast(DAMAGE_LEFT_ARM);
         tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(DAMAGE_LEFT_ARM)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(DAMAGE_LEFT_ARM)) + pipText);
@@ -778,7 +808,9 @@ class CTooltips {
                                  + "\n\t\u2022 You cannot attack if both of your arms are crippled."
                                  + "\n\u2022 Limited agility:"
                                  + "\n\t\u2022 If you are crippled on one arm only, you loose -3 AG."
-                                 + "\n\t\u2022 If you are crippled on both arms, your AG is set to 1.");
+                                 + "\n\t\u2022 If you are crippled on both arms, your AG is set to 1."
+                                 + "\n\u2022 Limited skill usages:"
+                                 + "\n\t\u2022 Damaged left arm reduces the chance of doctor success on yourself.");
 
         tooltipsKey.insertLast(DAMAGE_RIGHT_LEG);
         tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(DAMAGE_RIGHT_LEG)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(DAMAGE_RIGHT_LEG)) + pipText);
@@ -1658,6 +1690,12 @@ void RefreshTooltips(bool forced) {
         LogToolTips("Tooltips refresh FORCED!");
         return;
     }
+    if (tooltipRefreshDelay > 0 && tooltipRefreshDelay < GetTick()) {
+        tooltipRefreshDelay = 0;
+        InitCharacterTooltip();
+        LogToolTips("Tooltips refreshed by delay!");
+        return;
+    }
     //  this ensures that tooltips are refreshed after character is loaded fully after it was unloaded or not initialized yet on client side
     CritterCl@ chosen = GetChosen();
     if (!valid(chosen)) {
@@ -1674,8 +1712,10 @@ void RefreshTooltips(bool forced) {
 void RefreshTooltipsDelayed(uint delayInMs) {
     if (tooltipRefreshDelay < GetTick()) {
         tooltipRefreshDelay = GetTick() + delayInMs;
-        LogToolTips("Tooltips refresh DELAYED!");
+        LogToolTips("Tooltips refresh DELAYED by: " + delayInMs);
         RefreshTooltips(true);
+    } else {
+        LogToolTips("Tooltips refresh already under DELAYED effect!");
     }
 }
 
@@ -1881,6 +1921,7 @@ void SetInventoryDetailText(ItemCl& item) {
                 string str = GetMsgStr(TEXTMSG_GAME, STR_WEAPON_PERK(item.Proto.Weapon_Perk));
                 text += "\nPerk: " + str + ".";
             }
+            text += "\nWeapon size category: " + getWeaponSizeRankDescription(getWeaponSizeRank(item.Proto)) + "\n";
         } else if (item.GetType() == ITEM_TYPE_ARMOR) {
             string radResistStr = "";
             string perkStr = "";
@@ -2462,5 +2503,97 @@ class CGuiTooltip {
 
 /// TOOLS
 
+//  warning: duplicate code, bc I couldn't link it form util.fos
+
+#define HEX_BURST_WEAPON_RANK_UNRANKED      (0)
+#define HEX_BURST_WEAPON_RANK_MELEE         (1)
+#define HEX_BURST_WEAPON_RANK_LIGHT         (2)
+#define HEX_BURST_WEAPON_RANK_MEDIUM        (3)
+#define HEX_BURST_WEAPON_RANK_HEAVY         (4)
+int getWeaponSizeRank(ProtoItem& item) {
+    int weaponRank = HEX_BURST_WEAPON_RANK_UNRANKED;
+    if (!valid(item)) {
+        return weaponRank;
+    }
+
+    int skill = item.Weapon_Skill_0;
+    //Log("SKILL = " + SkillName(skill) + " (" + skill + ")");
+    switch (skill) {
+        case SK_UNARMED:
+        case SK_THROWING:
+            weaponRank = HEX_BURST_WEAPON_RANK_MELEE;
+            break;
+        case SK_SMALL_GUNS:
+            weaponRank = HEX_BURST_WEAPON_RANK_MEDIUM;
+            break;
+        case SK_ENERGY_WEAPONS:
+            weaponRank = HEX_BURST_WEAPON_RANK_MEDIUM;
+            break;
+        case SK_BIG_GUNS:
+            weaponRank = HEX_BURST_WEAPON_RANK_HEAVY;
+            break;
+    }
+
+    uint itemPid = item.ProtoId;
+    switch (itemPid) {
+        //  small weapons or point blank burst weapons, like SMG's - need to set these here
+        case PID_10MM_SMG:
+        case PID_HK_P90C:
+        case PID_GREASE_GUN:
+        case PID_HK_G11:
+        case PID_HK_G11E:
+        case PID_10MM_PISTOL:
+        case PID_14MM_PISTOL:
+        case PID_9MM_MAUSER:
+        case PID_DESERT_EAGLE:
+        case PID_DESERT_EAGLE_EXT_MAG:
+        case PID_223_PISTOL:
+        case PID_44_MAGNUM_REVOLVER:
+        case PID_44_MAGNUM_SPEEDLOADER:
+        case PID_NEEDLER_PISTOL:
+        case PID_ZIP_GUN:
+        case PID_PK12_GAUSS_PISTOL:
+        //  small energy
+        case PID_LASER_PISTOL:
+        case PID_MAGNETO_LASER_PISTOL:
+        case PID_PLASMA_PISTOL:
+        case PID_PLASMA_PISTOL_EXT_CART:
+        case PID_ALIEN_LASER_PISTOL:
+        case PID_YK32_PULSE_PISTOL:
+        case PID_SOLAR_SCORCHER:
+        case PID_PHAZER:
+        case PID_LASER_SMG:
+            weaponRank = HEX_BURST_WEAPON_RANK_LIGHT;
+            break;
+
+        //  medium sized weapons, need to set Flamer here, else they would fall into heavy category
+        case PID_FLAMER:
+        case PID_IMPROVED_FLAMETHROWER:
+            weaponRank = HEX_BURST_WEAPON_RANK_MEDIUM;
+            break;
+
+        //  big guns, even if energy weapons
+        case PID_GATLING_LASER:
+            weaponRank = HEX_BURST_WEAPON_RANK_HEAVY;
+            break;
+    }
+    return weaponRank;
+}
+
+string getWeaponSizeRankDescription(int value) {
+    switch (value) {
+        case 1: return "Melee";
+        case 2: return "Light";
+        case 3: return "Medium";
+        case 4: return "Heavy";
+    }
+    return "Unranked";
+}
+
+#define HEX_BURST_WEAPON_RANK_UNRANKED      (0)
+#define HEX_BURST_WEAPON_RANK_MELEE         (1)
+#define HEX_BURST_WEAPON_RANK_LIGHT         (2)
+#define HEX_BURST_WEAPON_RANK_MEDIUM        (3)
+#define HEX_BURST_WEAPON_RANK_HEAVY         (4)
 
 #endif 	//	__GUI_TOOLTIP__

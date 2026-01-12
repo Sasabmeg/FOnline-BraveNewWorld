@@ -254,6 +254,9 @@ void InitializeGame()                  // Export
     for (uint i = ST_STRENGTH_EXT; i <= ST_LUCK_EXT; i++) {
         SetParameterChangeBehaviour(i, "parameters@changedParam_AnyJustRefreshTooltips");
     }
+    for (uint i = DAMAGE_BEGIN; i <= DAMAGE_END; i++) {
+        SetParameterChangeBehaviour(i, "parameters@changedParam_AnyJustRefreshTooltips");
+    }
     SetParameterChangeBehaviour(ST_RADIATION_LEVEL, "parameters@changedParam_AnyJustRefreshTooltips");
     SetParameterChangeBehaviour(ST_POISONING_LEVEL, "parameters@changedParam_AnyJustRefreshTooltips");
     SetParameterChangeBehaviour(ST_CURRENT_ARMOR_PERK, "parameters@changedParam_AnyJustRefreshTooltips");
