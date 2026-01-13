@@ -856,6 +856,15 @@ bool CraftManager::IsTrueCraft( CritterCl* cr, uint num )
            IsTrueItems( cr, craft->NeedTools, craft->NeedToolsVal, craft->NeedToolsOr ) && \
            IsTrueItems( cr, craft->NeedItems, craft->NeedItemsVal, craft->NeedItemsOr );
 }
+
+bool CraftManager::IsTrueSkillCraft(CritterCl* cr, uint num)
+{
+	CraftItem* craft = GetCraft(num);
+	if (!craft)
+		return false;
+
+	return IsTrueParams(cr, craft->NeedPNum, craft->NeedPVal, craft->NeedPOr);
+}
 # endif
 # ifdef FOCLASSIC_SERVER
 void CraftManager::GetTrueCrafts( Critter* cr, CraftItemVec& craft_vec )

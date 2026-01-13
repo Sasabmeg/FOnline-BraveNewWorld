@@ -1563,15 +1563,17 @@ public:
         uint        Num;
         bool        IsTrue;
 		bool		HaveMats;
+		bool		HaveSkill;
 		uint		MaxPossibleCrafts;
 
-        SCraft( Rect& pos, std::string& name, uint num, bool is_true, bool haveMats, uint maxPossibleCrafts)
+        SCraft( Rect& pos, std::string& name, uint num, bool is_true, bool haveMats, bool haveSkill, uint maxPossibleCrafts)
         {
             Pos = pos;
             Name = name;
             Num = num;
             IsTrue = is_true;
 			HaveMats = haveMats;
+			HaveSkill = haveSkill;
 			MaxPossibleCrafts = maxPossibleCrafts;
         }
         SCraft( const SCraft& _right )
@@ -1581,6 +1583,7 @@ public:
             Num = _right.Num;
             IsTrue = _right.IsTrue;
 			HaveMats = _right.HaveMats;
+			HaveSkill = _right.HaveSkill;
 			MaxPossibleCrafts = _right.MaxPossibleCrafts;
 		}
         SCraft& operator=( const SCraft& _right )
@@ -1590,6 +1593,7 @@ public:
             Num = _right.Num;
             IsTrue = _right.IsTrue;
 			HaveMats = _right.HaveMats;
+			HaveSkill = _right.HaveSkill;
 			MaxPossibleCrafts = _right.MaxPossibleCrafts;
 			return *this;
         }

@@ -136,8 +136,9 @@ private:
 public:
     bool IsShowCraft( CritterCl* cr, uint num );
     void GetShowCrafts( CritterCl* cr, CraftItemVec& craft_vec );
-    bool IsTrueCraft( CritterCl* cr, uint num);
-    void GetTrueCrafts( CritterCl* cr, CraftItemVec& craft_vec );
+	bool IsTrueCraft(CritterCl* cr, uint num);
+	bool IsTrueSkillCraft(CritterCl* cr, uint num);
+	void GetTrueCrafts( CritterCl* cr, CraftItemVec& craft_vec );
 	bool IsTrueItems(CritterCl* cr, UInt16Vec& pid_vec, UIntVec& count_vec, UInt8Vec& or_vec);
 	uint GetMaxNumCrafts(CritterCl* cr, UInt16Vec& pid_vec, UIntVec& count_vec);
 private:

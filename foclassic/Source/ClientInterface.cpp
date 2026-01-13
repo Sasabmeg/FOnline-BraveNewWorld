@@ -10313,8 +10313,10 @@ void FOClient::FixGenerate( int fix_mode )
                 cur_height = line_height;
             }
 
+			bool needSkill = true;
+			needSkill = MrFixit.IsTrueSkillCraft(Chosen, craft->Num);
             scraft_vec.push_back( SCraft( pos, craft->Name, craft->Num, MrFixit.IsTrueCraft( Chosen, craft->Num ),
-				MrFixit.IsTrueItems(Chosen, craft->NeedItems, craft->NeedItemsVal, craft->NeedItemsOr), MrFixit.GetMaxNumCrafts(Chosen, craft->NeedItems, craft->NeedItemsVal) ) );
+				MrFixit.IsTrueItems(Chosen, craft->NeedItems, craft->NeedItemsVal, craft->NeedItemsOr), needSkill, MrFixit.GetMaxNumCrafts(Chosen, craft->NeedItems, craft->NeedItemsVal) ) );
         }
 
         if( !scraft_vec.empty() )
@@ -10610,10 +10612,13 @@ void FOClient::FixDraw()
                 SCraft* scraft = &(*cur_vec)[i];
                 uint col = COLOR_TEXT;
 				if (!scraft->IsTrue) {
-					if (scraft->HaveMats)
+					if (!scraft->HaveSkill) {
+						col = 0xFF404040;		//	darkgrey
+					} else if (scraft->HaveMats) {
 						col = 0xFFCA6600;		//	COLOR_DARKISHORANGE
-					else
+					} else {
 						col = COLOR_TEXT_DRED;
+					}
 				}
                 if( i == (uint)FixCurCraft )
                 {
