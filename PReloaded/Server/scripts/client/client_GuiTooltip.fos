@@ -106,6 +106,7 @@ class CTooltips {
         string healingRateExt = "";
         string radiatedExt = "";
         string poisonedExt = "";
+        string carryWeightExt = "";
         CritterCl@ chosen = GetChosen();
         if (valid(chosen)) {
             //Message("InitTooltips :: chosen valid");
@@ -215,6 +216,11 @@ class CTooltips {
             int healingRateDif = chosen.Stat[ST_HEALING_RATE] - healingRateBase;
             int radiationLevel = chosen.Stat[ST_RADIATION_LEVEL];
             int poisoningLevel = chosen.Stat[ST_POISONING_LEVEL];
+            int carryWeightBase = chosen.StatBase[ST_CARRY_WEIGHT] + chosen.StatBase[ST_CARRY_WEIGHT_EXT];
+            carryWeightBase += 453 * (25 + chosen.Stat[ST_STRENGTH] * 25);
+            carryWeightBase += 20000;
+            int carryWeightDif = chosen.Stat[ST_CARRY_WEIGHT] - carryWeightBase;
+
             strengthExt = "\n\u2022 Base: " + chosen.StatBase[ST_STRENGTH]
                         + "\n\u2022 Effects: " + (strDif < 0 ? ("|" + COLOR_DEBUFF + " ") : ("|" + COLOR_BUFF + " +")) + strDif + "|" + COLOR_GREEN + " ";
                         if (radiationLevel > 0) {
@@ -317,6 +323,10 @@ class CTooltips {
 
             poisonedExt = "\n\t\u2022 Poisoning level: |" + PercentColor(poisoningLevel) + " " + poisoningLevel + "|" + COLOR_REGULAR + " "
                             + "\n\t\u2022 Effects: |" + COLOR_REGULAR + " " + (poisoningLevel > 0 ? GetMsgStr(TEXTMSG_GAME, STR_POISON_PROCESS) : "None.") + "|" + COLOR_REGULAR + " \n\n";
+            carryWeightExt = "\nCurrent:"
+                           + "\n\u2022 Base: " + (carryWeightBase / 1000) + " kg"
+                           + "\n\u2022 Effects: " + (carryWeightDif < 0 ? ("|" + COLOR_DEBUFF + " ") : ("|" + COLOR_BUFF + " +")) + (carryWeightDif/1000) + " kg" + "|" + COLOR_GREEN + " ";
+                           carryWeightExt += "\n\n";
 
             if (valid(bodyArmor)) {
                 if (chosen.Param[ST_CURRENT_ARMOR_PERK] > 0) {
@@ -331,10 +341,10 @@ class CTooltips {
                         case ARMOR_PERK_LEATHER_JACKET:
                         case ARMOR_PERK_LEATHER_ARMOR:
                         case ARMOR_PERK_THERMAL_LEATHER:
-                            agilityExt += "\n\t\u2022 " + "|" + COLOR_DEBUFF + " -1" + "|" + COLOR_REGULAR + "  from Medium Armor";
+                            agilityExt += "\n\t\u2022 " + "|" + COLOR_BUFF + " +1" + "|" + COLOR_REGULAR + "  from Light Armor";
                             break;
                         case ARMOR_PERK_COMBAT:
-                            agilityExt += "\n\t\u2022 " + "|" + COLOR_BUFF + " +1" + "|" + COLOR_REGULAR + "  from Light Armor";
+                            agilityExt += "\n\t\u2022 " + "|" + COLOR_DEBUFF + " -1" + "|" + COLOR_REGULAR + "  from Medium Armor";
                             break;
                         case ARMOR_PERK_CAMOUFLAGE_HP:
                         default:
@@ -853,7 +863,8 @@ class CTooltips {
                                  + "\n\t\u2022 Final AG = 10   -> 11 base AP");
 
         tooltipsKey.insertLast(ST_CARRY_WEIGHT);
-        tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(ST_CARRY_WEIGHT)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(ST_CARRY_WEIGHT)) + pipText);
+        tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(ST_CARRY_WEIGHT)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(ST_CARRY_WEIGHT)) + pipText
+                                 + pipStatus + carryWeightExt);
         tooltipsValueExt.insertLast(pipReference + notes
                                  + "\n\u2022 This value is used to determine if you can carry your inventory or not. Once your reach your carry capacity, you will not be able to run but you are still able to walk.  Once you load double of this amount, your carried weight is simply too heavy and you will not be able to move at all, until you drop some stuff."
                                  + "\n\u2022 Base formula: [(25 + (Strength*25)) / 2.2] + 20"
@@ -1229,14 +1240,16 @@ class CTooltips {
         tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(PE_STONEWALL)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(PE_STONEWALL)) + pipText);
         tooltipsValueExt.insertLast(pipReference
                                      + notes
-                                     + "\n\u2022 Gives ability to resist Knockdowns and Knockbacks."
-                                     + "\n\t\u2022 Adds character +1 Stonewall rank and stack with Heavy Armor Perk."
-                                     + "\n\t\u2022 Does not protect against Head/Eyes attacks KD/KO effects."
-                                     + "\n\u2022 KO that are not from Head/Eyes can be downgraded to KD instead:"
-                                     + "\n\t\u2022 3 * (CLAMP(ST, 1, CH+4) + CLAMP(EN, 1, CH+6)) + 15 * StonewallRank vs 1d100"
-                                     + "\n\t\u2022 Final damage is increased by 20% and not per bullet."
+                                     + "\n\u2022 Gives ability to resist against arm and leg cripples."
+                                     + "\n\t\u2022 Critical failure: (self)"
+                                     + "\n\t\t\u2022 ST-4 vs 1d10 to resist weapon drop effect."
+                                     + "\n\t\t\u2022 EN-3 vs 1d10 to resist cripple arms or legs effect."
+                                     + "\n\t\u2022 Critical hit:"
+                                     + "\n\t\t\u2022 (EN - 7 + 2 * Iron Limbs rank) vs 1d10 to resist cripple arms or legs effect."
+                                     + "\n\t\t\u2022 (ST - 5 + 2 * Iron Limbs rank) vs 1d10 to resist weapon drop effect."
+                                     + "\n\t\t\t\u2022 Note: Iron Limbs rank is 2 with combat armor perk, else only 1."
                                      + requirements
-                                     + "\n\t\u2022  Strength >= 6");
+                                     + "\n\t\u2022  Endurance >= 6");
 
         tooltipsKey.insertLast(PE_STONEWALL);
         tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(PE_STONEWALL)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(PE_STONEWALL)) + pipText);
