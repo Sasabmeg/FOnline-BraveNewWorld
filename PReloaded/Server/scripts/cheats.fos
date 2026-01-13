@@ -4234,14 +4234,14 @@ void ExecParamListCommand(array<string@>@ command, Critter& player) {
         player.Say(SAY_NETMSG, "Initializing Param list.");
         InitParamList();
     }
-    if(command.length() > 2)
-    {
+    if (command.length() > 2) {
         player.Say(SAY_NETMSG, "\nListing Param ID's with filter '" + command[2] + "':");
         for (uint i = 0; i < paramList.length(); i++) {
             if (findFirst(paramList[i], upperCase(command[2]), 3) > -1) {
                 player.Say(SAY_NETMSG, paramList[i]);
             }
         }
+        player.Say(SAY_NETMSG, "Current tick: " + GetTick());
     } else {
         player.Say(SAY_NETMSG, "\nListing Param ID's without filter (top 30):");
         for (uint i = 0; i < paramList.length(); i++) {
