@@ -87,7 +87,7 @@ bool UseFirstAidOnCritter(Critter& cr, Critter& targetCr, Item@ item)
     }
 
     if (!isSelf && cr.Param[MODE_HIDE] != 0 && cr.GetAccess() < ACCESS_TESTER) {
-        if (cr.Param[PE_MEDIC] == 0 || CLAMP((cr.Skill[SK_SNEAK] + cr.Skill[SK_FIRST_AID]) / 3, 1, 95) < Random(1, 100)) {
+        if ((cr.Param[PE_MEDIC] == 0 && cr.Param[PE_GHOST] == 0) || CLAMP((cr.Skill[SK_SNEAK] + cr.Skill[SK_FIRST_AID]) / 3, 1, 95) < Random(1, 100)) {
             cr.ParamBase[MODE_HIDE] = 0;
         }
     }
@@ -302,9 +302,10 @@ bool UseDoctorOnCritter(Critter& cr, Critter& targetCr, Item@ item)
     if (targetCr.Timeout[TO_SK_DOCTOR] > 0) {
         if (isKo && isMedic ) {     //can heal KO even with cooldown with Medic perk
             targetCr.StatBase[ST_CURRENT_AP] = 0;
-
-        if (!isSelf && cr.Param[MODE_HIDE] != 0 && cr.GetAccess() < ACCESS_TESTER)
-            if (cr.Param[PE_FIELD_MEDIC] == 0 || CLAMP((cr.Skill[SK_SNEAK] + cr.Skill[SK_DOCTOR]) / 4, 1, 95) < Random(1, 100)) {
+        }
+        if (!isSelf && cr.Param[MODE_HIDE] != 0 && cr.GetAccess() < ACCESS_TESTER) {
+            //  if ghost or field medic perk, they can heal from sneak undetected, otherwise skill dependent if unsneak or not
+            if ((cr.Param[PE_FIELD_MEDIC] == 0 && cr.Param[PE_GHOST] == 0) || CLAMP((cr.Skill[SK_SNEAK] + cr.Skill[SK_DOCTOR]) / 4, 1, 95) < Random(1, 100)) {
                 cr.ParamBase[MODE_HIDE] = 0;
             }
         }
@@ -315,7 +316,8 @@ bool UseDoctorOnCritter(Critter& cr, Critter& targetCr, Item@ item)
     }
 
     if (!isSelf && cr.Param[MODE_HIDE] != 0 && cr.GetAccess() < ACCESS_TESTER) {
-        if (cr.Param[PE_FIELD_MEDIC] == 0 || CLAMP((cr.Skill[SK_SNEAK] + cr.Skill[SK_DOCTOR]) / 4, 1, 95) < Random(1, 100)) {
+        //  if ghost or field medic perk, they can heal from sneak undetected, otherwise skill dependent if unsneak or not
+        if ((cr.Param[PE_FIELD_MEDIC] == 0 && cr.Param[PE_GHOST] == 0) || CLAMP((cr.Skill[SK_SNEAK] + cr.Skill[SK_DOCTOR]) / 4, 1, 95) < Random(1, 100)) {
             cr.ParamBase[MODE_HIDE] = 0;
         }
     }
