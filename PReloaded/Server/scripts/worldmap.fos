@@ -2576,6 +2576,8 @@ void InviteToEncounter(array<Critter@>& group, Item@ car, uint encounterDescript
             if (player.Perk[PE_GHOST] > 0) {
                 //Log("Hiding player!");
                 _EnableSneak(player);
+            } else {
+                _Desneak(player);
             }
         }
     }

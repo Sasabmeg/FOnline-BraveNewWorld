@@ -3084,6 +3084,15 @@ void map_critter_in(Map& map, Critter& cr)
         }
     }
 
+    if (cr.IsPlayer() && cr.GetAccess() <= ACCESS_CLIENT) {
+        if (cr.Perk[PE_GHOST] > 0) {
+            //Log("Hiding cr!");
+            _EnableSneak(cr);
+        } else {
+            _Desneak(cr);
+        }
+    }
+
     if(cr.EventExtMapIn(map))
         return;
     if(cr.IsPlayer() && cr.GetAccess() < ACCESS_TESTER)
