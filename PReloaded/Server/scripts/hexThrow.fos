@@ -364,8 +364,9 @@ void CommenceSpearHexThrowing(Critter& attacker, Critter& target, Map& map, Item
     uint8 dir = GetDirection(attacker.HexX, attacker.HexY, tx, ty);
     attacker.SetDir(dir);
     if(attacker.Mode[MODE_HIDE] != 0) {
-        if(!attacker.IsPlayer() || attacker.GetAccess() == ACCESS_CLIENT)
-            attacker.ModeBase[MODE_HIDE] = 0;
+        if (!attacker.IsPlayer() || attacker.GetAccess() == ACCESS_CLIENT)
+            //attacker.Say(SAY_NORM, "Desneak - Throwing spear!");
+            _Desneak(attacker);
     }
     attacker.Wait(__Breaktime);
     if (!ignoreApCost) {
@@ -445,7 +446,8 @@ void CommenceHexThrowingEffectAfterAnimation(Critter& cr, Map& map, Item& item, 
         cr.SetDir(dir);
         if(cr.Mode[MODE_HIDE] != 0) {
             if(!cr.IsPlayer() || cr.GetAccess() == ACCESS_CLIENT)
-                cr.ModeBase[MODE_HIDE] = 0;
+                //cr.Say(SAY_NORM, "Desneak - Throwing grenade!");
+                _Desneak(cr);
         }
         cr.Wait(__Breaktime);
         if (!ignoreApCost) {
@@ -833,7 +835,7 @@ void RevealHidden(Map& map, uint16 tx, uint16 ty, int radius) {
             map.GetCrittersPath(crits[i].HexX, crits[i].HexY, tx, ty, 0.0f, 0, 0, null, pbx, pby, bx, by);
             if (bx == tx && by == ty) {
                 //crits[i].Say(SAY_NORM, "I was hiding! (" + flare.Id + ")");
-                crits[i].ModeBase[MODE_HIDE] = 0;
+                _Desneak(crits[i]);
             } else {
                 //crits[i].Say(SAY_NORM, "Hiding behind wall! (" + flare.Id + ")");
             }

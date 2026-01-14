@@ -1443,8 +1443,9 @@ bool critter_use_skill(Critter& cr, int skill, Critter@ targetCr, Item@ targetIt
                 {
                     int sk = cr.Skill[SK_STEAL] - 10 * GRAMM_TO_LBS(item.Proto.Weight * item.GetCount());
                     sk = CLAMP(sk, 5, 95);
-                    if(sk < Random(1, 100))
-                        cr.ModeBase[MODE_HIDE] = 0;
+                    if (sk < Random(1, 100)) {
+                        _Desneak(cr);
+                    }
                 }
             }
             else
@@ -1457,8 +1458,9 @@ bool critter_use_skill(Critter& cr, int skill, Critter@ targetCr, Item@ targetIt
                     {
                         int sk = cr.Skill[SK_STEAL] - 10 * GRAMM_TO_LBS(item.Proto.Weight * MAX(int(freeWeight / item.Proto.Weight), int(item.GetCount())));
                         sk = CLAMP(sk, 5, 95);
-                        if(sk < Random(1, 100))
-                            cr.ModeBase[MODE_HIDE] = 0;
+                        if (sk < Random(1, 100)) {
+                            _Desneak(cr);
+                        }
                     }
                 }
                 // Overweight
@@ -1499,16 +1501,17 @@ bool critter_use_skill(Critter& cr, int skill, Critter@ targetCr, Item@ targetIt
         {
             int sk = cr.Skill[SK_STEAL] - 10 * GRAMM_TO_LBS(targetItem.Proto.Weight * targetItem.GetCount());
             sk = CLAMP(sk, 5, 95);
-            if(sk < Random(1, 100))
-                cr.ModeBase[MODE_HIDE] = 0;
+            if (sk < Random(1, 100)) {
+                _Desneak(cr);
+            }
         }
         return false;
     }
     case SKILL_TAKE_ALL_CONT:     // Take all items from critter or item container
     {
-        if(cr.Mode[MODE_HIDE] != 0 && cr.GetAccess() < ACCESS_TESTER)
-            cr.ModeBase[MODE_HIDE] = 0;
-
+        if (cr.Mode[MODE_HIDE] != 0 && cr.GetAccess() < ACCESS_TESTER) {
+            _Desneak(cr);
+        }
         return true;                     // Don't allow - hardcoded take all is replaced by unsafe_TakeAll called from button injected at position of original one
         //return false;                  // Allow transactions
     }
@@ -1521,8 +1524,9 @@ bool critter_use_skill(Critter& cr, int skill, Critter@ targetCr, Item@ targetIt
         CritterTrophy(targetCr, cr);   // Critters like brahmins should drop meat, skin etc		cr.ShowContainer(targetCr,null,TRANSFER_CRIT_LOOT);
         cr.Action(CRITTER_ACTION_PICK_CRITTER, 0, null);
         cr.ShowContainer(targetCr, null, TRANSFER_CRIT_LOOT);
-        if(cr.Mode[MODE_HIDE] != 0 && Random(0, 1) == 1 && cr.GetAccess() < ACCESS_TESTER)
-            cr.ModeBase[MODE_HIDE] = 0;
+        if (cr.Mode[MODE_HIDE] != 0 && Random(0, 1) == 1 && cr.GetAccess() < ACCESS_TESTER) {
+            _Desneak(cr);
+        }
         return true;
     }
     case SKILL_PUSH_CRITTER:     // Push critter, only targetCr is valid
@@ -1590,18 +1594,17 @@ bool critter_use_skill(Critter& cr, int skill, Critter@ targetCr, Item@ targetIt
     break;
     case SK_SNEAK:     ////////////////////////////////////////////////////
     {
-        if(cr.Mode[MODE_HIDE] != 0)
-            cr.ModeBase[MODE_HIDE] = 0;
-        else if(!isPlayer)
+        if (cr.Mode[MODE_HIDE] != 0) {
+            //cr.Say(SAY_NORM, "Desneak - Pressed SNEAK hotkey");
+            _Desneak(cr);
+        } else if(!isPlayer) {
             cr.ModeBase[MODE_HIDE] = 1;
-        else
-        {
-            if(cr.Timeout[TO_SNEAK] > 0)
+        } else {
+            if (cr.Timeout[TO_SNEAK] > 0) {
                 cr.SayMsg(SAY_NETMSG, TEXTMSG_GAME, STR_TIMEOUT_SNEAK_WAIT);
-            else if(IS_TURN_BASED_TIMEOUT(cr))
+            } else if (IS_TURN_BASED_TIMEOUT(cr)) {
                 cr.SayMsg(SAY_NETMSG, TEXTMSG_GAME, STR_TIMEOUT_BATTLE_WAIT);
-            else if(_IsRealPlayer(cr))
-            {
+            } else if(_IsRealPlayer(cr)) {
                 // heavy armors = no sneak
                 Item@ armor = _CritGetItemArmor(cr);
                 if(valid(armor))
@@ -1726,15 +1729,19 @@ bool critter_use_skill(Critter& cr, int skill, Critter@ targetCr, Item@ targetIt
             {
                 CritterTrophy(targetCr, cr);
                 cr.Action(CRITTER_ACTION_PICK_CRITTER, 0, null);
-                if(cr.Mode[MODE_HIDE] != 0 && Random(0, 1) == 1 && cr.GetAccess() < ACCESS_TESTER)
-                    cr.ModeBase[MODE_HIDE] = 0;
+                if (cr.Mode[MODE_HIDE] != 0 && Random(0, 1) == 1 && cr.GetAccess() < ACCESS_TESTER) {
+                    //cr.Say(SAY_NORM, "Desneak - Radnom looting. 50%");
+                    _Desneak(cr);
+                }
                 cr.ShowContainer(targetCr, null, TRANSFER_CRIT_LOOT);
             }
             else if(targetCr.Stat[ST_CURRENT_HP] <= 0 || targetCr.Cond == CRITTER_CONDITION_KNOCKOUT)
             {
                 cr.Action(CRITTER_ACTION_PICK_CRITTER, 0, null);
-                if(cr.Mode[MODE_HIDE] != 0 && Random(0, 1) == 1 && cr.GetAccess() < ACCESS_TESTER)
-                    cr.ModeBase[MODE_HIDE] = 0;
+                if (cr.Mode[MODE_HIDE] != 0 && Random(0, 1) == 1 && cr.GetAccess() < ACCESS_TESTER) {
+                    //cr.Say(SAY_NORM, "Desneak - Radnom looting. 50%");
+                    _Desneak(cr);
+                }
                 cr.ShowContainer(targetCr, null, TRANSFER_CRIT_LOOT);
             }
             // Steal
@@ -3874,6 +3881,7 @@ void turn_based_process(Map& map, Critter& cr, bool beginTurn)
     else
     {
         //always desneak at the end of turn
+        //cr.Say(SAY_NORM, "Desneak - End of TB turn.");
         _Desneak(cr);
 
         /*

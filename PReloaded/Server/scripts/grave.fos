@@ -65,7 +65,7 @@ void GraveOpen(Item@ grave, Critter@ cr, Item@ shovel)
 
     if(valid(cr))
     {
-        cr.ParamBase[MODE_HIDE] = 0;
+        _Desneak(cr);
 
         if(cr.IsPlayer())
         {
@@ -138,7 +138,7 @@ void GraveClose(Item@ grave, Critter@ cr, Item@ shovel)
     GraveRandomPic(grave);
     if(valid(cr))
     {
-        cr.ParamBase[MODE_HIDE] = 0;
+        _Desneak(cr);
         cr.Say(SAY_NETMSG, "You covered the grave.");
     }
 }
@@ -180,7 +180,7 @@ uint e_Init(array<uint>@ values)
         if(valid(map))
         {
             uint16 p = map.GetProtoId();
-            
+
         }
     }
     return 0;

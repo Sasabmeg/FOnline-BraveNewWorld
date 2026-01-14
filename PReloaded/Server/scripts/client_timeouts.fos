@@ -472,9 +472,9 @@ void TimeoutsDraw() // client_main@render_iface
 
     for(uint z = (goUp ? uint(1) : uint(19)); z != (goUp ? uint(20) : uint(0)); (goUp ? z++ : z--))
     {
-        if(z == 1 && critter.Timeout[TO_GATHERING] > 0)
+        if(z == 1 && critter.Timeout[TO_SNEAK] > 0)
         {
-            y = screen_timeouts_draw(critter, TO_GATHERING, "Gathering", x, y, z, TimeoutsCustom[z].CustomMode);
+            y = screen_timeouts_draw(critter, TO_SNEAK, "Sneak", x, y, z, TimeoutsCustom[z].CustomMode);
         }
         if(z == 2 && critter.Timeout[TO_REPLICATION] > 0)
         {

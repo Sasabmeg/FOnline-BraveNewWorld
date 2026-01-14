@@ -356,16 +356,30 @@ void CombatAttack(Critter& cr, Critter& target, ProtoItem& weapon, uint8 weaponM
     if (cr.Mode[MODE_HIDE] != 0) {
         if (!cr.IsPlayer() || cr.GetAccess() == ACCESS_CLIENT) {
             if (cr.IsPlayer() && target.IsNpc()) {
-                //  this will be handled when we know if NPC died or KO.
+                //  We need to handle when we know if NPC died or KO, after we know damage calculations
+
+                //  Set timeout here, just in case
+                _SetTimeout(cr, TO_SNEAK, 10 - (cr.Param[SK_SNEAK]/75) - (cr.Param[PE_GHOST] > 0 ? 2 : 0));
+                //  but attacking from front should always desneak
+                if (IsFrontal(cr, target)) {
+                    //cr.Say(SAY_NORM, "Frontal desneak!");
+                    _Desneak(cr);
+                }
+                if(cr.Timeout[TO_BATTLE] < int(__TimeoutBattle)) {
+                    _SetTimeout(cr, TO_BATTLE, __TimeoutBattle);
+                }
             } else {
-                cr.ModeBase[MODE_HIDE] = 0;
+                cr.Say(SAY_NORM, "Attacking other player desneak!");
+                //_Desneak(cr);
             }
         }
         isSneak = true;
     }
 
+    //  desneak the target
     if (!target.IsPlayer() || target.GetAccess() == ACCESS_CLIENT) {
-        target.ModeBase[MODE_HIDE] = 0;
+        //target.Say(SAY_NORM, "Desneak - Being hit!");
+        _Desneak(target);
     }
 
     cr.SetDir(GetDirection(hx, hy, tx, ty));
@@ -1007,7 +1021,7 @@ void CombatAttack(Critter& cr, Critter& target, ProtoItem& weapon, uint8 weaponM
             attack.Tx = tx;
             attack.Ty = ty;
             attack.set_Aim(HIT_LOCATION_UNCALLED);
-            realTarget.ModeBase[MODE_HIDE] = 0;           // done here to allow combat notifications later
+            _Desneak(realTarget);   // done here to allow combat notifications later
             NotifyOops(cr, target, realTarget, results);
         }
     } else {
@@ -1369,8 +1383,10 @@ void ApplyDamage(AttackStruct& attack, Critter& target, uint rounds, bool isCrit
         return;
     }
 
-    if(target.Mode[MODE_HIDE] != 0 && (!target.IsPlayer() || target.GetAccess() == ACCESS_CLIENT))
-        target.ModeBase[MODE_HIDE] = 0;
+    if (target.Mode[MODE_HIDE] != 0 && (!target.IsPlayer() || target.GetAccess() == ACCESS_CLIENT)) {
+        //target.Say(SAY_NORM, "Desneak - Being hit2!");
+        _Desneak(target);
+    }
 
     if(target.Timeout[TO_BATTLE] < int(__TimeoutBattle))
         _SetTimeout(target, TO_BATTLE, __TimeoutBattle);
@@ -3362,7 +3378,8 @@ void ApplyDamage(AttackStruct& attack, Critter& target, uint rounds, bool isCrit
     else if(!(target.IsKnockout() || FLAG(target.Mode[MODE_EXT], MODE_EXT_NO_HIT_ANIM)))
     {
         //  here we need to disable sneak, because of new mechanics of SD
-        attacker.ModeBase[MODE_HIDE] = 0;
+        //attacker.Say(SAY_NORM, "Desneak - No knockout, alive!");
+        _Desneak(attacker);
         // Animate hit
         if (attack.ShowHitAnimForce)
             target.Action(CRITTER_ACTION_DAMAGE_FORCE, attackFront ? 0 : 1, null);
@@ -3404,6 +3421,9 @@ void ApplyDamage(AttackStruct& attack, Critter& target, uint rounds, bool isCrit
                 break;
             }
         }
+    } else {
+        //attacker.Say(SAY_NORM, "Desneak - ELSE!");
+        _Desneak(attacker);
     }
 
     bool isAimed = (aim != HIT_LOCATION_NONE) && (aim != HIT_LOCATION_UNCALLED);

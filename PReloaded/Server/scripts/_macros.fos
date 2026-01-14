@@ -245,7 +245,7 @@
 #define _EndTurn                     # (cr) do { if(cr.GetMap().IsTurnBased() && cr.Param[ST_CURRENT_AP] > 0) { cr.ParamBase[ST_CURRENT_AP] = 0; cr.ParamBase[ST_MOVE_AP] = 0; } } while(false)
 
 // Desneak (real players only)
-#define _Desneak                     # (cr) if(cr.Mode[MODE_HIDE] != 0 && _IsRealPlayer(cr)) { cr.ModeBase[MODE_HIDE] = 0; }
+#define _Desneak                     # (cr) if(cr.Mode[MODE_HIDE] != 0 && _IsRealPlayer(cr)) { cr.ModeBase[MODE_HIDE] = 0; _SetTimeout(cr, TO_SNEAK, 20*(10 - (cr.Param[SK_SNEAK]/75) - (cr.Param[PE_GHOST] > 0 ? 2 : 0))); }
 
 
 // ************** Items ***************************//

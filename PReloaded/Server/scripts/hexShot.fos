@@ -273,7 +273,7 @@ void CommenceHexShotingEffectAfterAnimation(Critter& cr, Map& map, Item& item, u
     }
     if (cr.Mode[MODE_HIDE] != 0) {
         if (!cr.IsPlayer() || cr.GetAccess() == ACCESS_CLIENT) {
-            cr.ModeBase[MODE_HIDE] = 0;
+            _Desneak(cr);
         }
     }
     cr.Wait(__Breaktime);
