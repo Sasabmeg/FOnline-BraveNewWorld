@@ -380,10 +380,10 @@ void CombatAttack(Critter& cr, Critter& target, ProtoItem& weapon, uint8 weaponM
             dummyInfo += "|" + COLOR_DTEXT_REGULAR + " Fast Shot random hit location.";
         }
         aim = CLAMP(aimRoll, 0, 8);
-    }
-    //  5% eyes, 5% groin and 20% torso, rest is 10%, except un-aimed which will be 20% (rolls: -1 and 0)
-    if ((aim == HIT_LOCATION_EYES || aim == HIT_LOCATION_GROIN) && Random(1, 100) > 50) {
-        aim == HIT_LOCATION_TORSO;
+        //  5% eyes, 5% groin and 20% torso, rest is 10%, except un-aimed which will be 20% (rolls: -1 and 0)
+        if ((aim == HIT_LOCATION_EYES || aim == HIT_LOCATION_GROIN) && Random(1, 100) > 50) {
+            aim == HIT_LOCATION_TORSO;
+        }
     }
     // Now we change aim, if applicable
     //if (aim == HIT_LOCATION_EYES && valid(cr) && isFrontal(cr, target)) {
