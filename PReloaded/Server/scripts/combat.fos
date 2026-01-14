@@ -369,8 +369,8 @@ void CombatAttack(Critter& cr, Critter& target, ProtoItem& weapon, uint8 weaponM
                     _SetTimeout(cr, TO_BATTLE, __TimeoutBattle);
                 }
             } else {
-                cr.Say(SAY_NORM, "Attacking other player desneak!");
-                //_Desneak(cr);
+                //cr.Say(SAY_NORM, "Attacking other player desneak!");
+                _Desneak(cr);
             }
         }
         isSneak = true;
@@ -1494,20 +1494,24 @@ void ApplyDamage(AttackStruct& attack, Critter& target, uint rounds, bool isCrit
             }
             if (attack.sneakAttack) {
                 //  Silent Death effect
+                float knifeBonus = 0;
+                if (valid(realWeapon) && valid(realWeapon.Proto)) {
+                    knifeBonus = (realWeapon.Proto.Weapon_Anim1 == ANIM1_KNIFE ? (isThrust ? 1 : 0) : 0);
+                }
                 if (attacker.Perk[PE_SILENT_DEATH] != 0) {
                     int distance = GetDistantion(attacker.HexX, attacker.HexY, target.HexX, target.HexY);
-                    int sdBonus = 15 + CLAMP((18 - distance) * 3, 0, 45);
-                    if (!targetIsPlayer && !isDummyTraining) {
+                    int sdBonus = 5 + CLAMP((18 - distance), 0, 15) + 20 * knifeBonus;
+                    if (!targetIsPlayer && !isDummyTraining && target.Param[PE_WASTELANDERS_RESILIENCE] == 0) {
                         sdBonus *= 2;
                     }
                     roll += sdBonus;
                     if (isDummyTraining) {
-                        dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , Silent Death perk Crit Power bonus (15 + (18 - distance) * 3) = |" + COLOR_DTEXT_BONUS + " " + sdBonus;
+                        dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , Silent Death perk Crit Power bonus (15 + (18 - distance)) = |" + COLOR_DTEXT_BONUS + " " + sdBonus;
                     }
                 } else {
                     int distance = GetDistantion(attacker.HexX, attacker.HexY, target.HexX, target.HexY);
-                    int sneakAttackBonus = 5 + CLAMP((18 - distance), 0, 15);
-                    if (!targetIsPlayer && !isDummyTraining) {
+                    int sneakAttackBonus = 5 + CLAMP((18 - distance), 0, 15) + 10 * knifeBonus;
+                    if (!targetIsPlayer && !isDummyTraining && target.Param[PE_WASTELANDERS_RESILIENCE] == 0) {
                         sneakAttackBonus *= 2;
                     }
                     roll += sneakAttackBonus;
@@ -2404,16 +2408,20 @@ void ApplyDamage(AttackStruct& attack, Critter& target, uint rounds, bool isCrit
                 float finalSneakAttackDamageMult = 1;
                 float knifeBonus = 0;
                 if (valid(realWeapon) && valid(realWeapon.Proto)) {
-                    knifeBonus = (realWeapon.Proto.Weapon_Anim1 == ANIM1_KNIFE ? (isThrust ? 2 : 1) : 0);
+                    knifeBonus = (realWeapon.Proto.Weapon_Anim1 == ANIM1_KNIFE ? (isThrust ? 1 : 0) : 0);
                 }
 
                 if (target.Perk[PE_WASTELANDERS_RESILIENCE] > 0) {
                     //  players or player like NPC's (boss, faction units)
                     if (attacker.Perk[PE_SILENT_DEATH] > 0) {
-                        finalSneakAttackDamageMult = CLAMP((sneakDistanceFactor * sneakMultiplier + knifeBonus) / 2 , 1, 2);
+                        finalSneakAttackDamageMult = CLAMP((sneakDistanceFactor * sneakMultiplier + knifeBonus) , 1, 1.4);
+                        rawDmg += 10 * knifeBonus;
                         rawDmg *= finalSneakAttackDamageMult;
+                        if (isDummyTraining) {
+                            dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , Silent Death knife damage bonus on Player(like) = |" + COLOR_DTEXT_BONUS + " " + 10 * knifeBonus;
+                        }
                     } else {
-                        finalSneakAttackDamageMult = CLAMP((sneakDistanceFactor * sneakMultiplier + knifeBonus) / 3, 1, 2);
+                        finalSneakAttackDamageMult = CLAMP((sneakDistanceFactor * sneakMultiplier + knifeBonus), 1, 1.4);
                         rawDmg *= finalSneakAttackDamageMult;
                     }
                     if (isDummyTraining) {
@@ -2422,11 +2430,19 @@ void ApplyDamage(AttackStruct& attack, Critter& target, uint rounds, bool isCrit
                 } else {
                     //  non-player like NPC's
                     if (attacker.Perk[PE_SILENT_DEATH] > 0) {
-                        finalSneakAttackDamageMult = CLAMP((1 + sneakDistanceFactor * sneakMultiplier + knifeBonus), 1, 5);
+                        finalSneakAttackDamageMult = CLAMP((1 + sneakDistanceFactor * sneakMultiplier + knifeBonus), 1, 2);
+                        rawDmg += 20 * knifeBonus;
                         rawDmg *= finalSneakAttackDamageMult;
+                        if (isDummyTraining) {
+                            dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , Silent Death knife dmg bonus on NPC(like)= |" + COLOR_DTEXT_BONUS + " " + 20 * knifeBonus;
+                        }
                     } else {
-                        finalSneakAttackDamageMult = CLAMP((1 + sneakDistanceFactor * sneakMultiplier + knifeBonus) / 2, 1, 3);
+                        finalSneakAttackDamageMult = CLAMP((1 + sneakDistanceFactor * sneakMultiplier + knifeBonus), 1, 2);
+                        rawDmg += 10 * knifeBonus;
                         rawDmg *= finalSneakAttackDamageMult;
+                        if (isDummyTraining) {
+                            dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , Sneak Attack knife dmg bonus on NPC(like)= |" + COLOR_DTEXT_BONUS + " " + 10 * knifeBonus;
+                        }
                     }
                     if (isDummyTraining) {
                         dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , Sneak Attack dmg mult on NPC(like)= |" + COLOR_DTEXT_BONUS + " " + finalSneakAttackDamageMult;
