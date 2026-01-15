@@ -1596,7 +1596,10 @@ bool critter_use_skill(Critter& cr, int skill, Critter@ targetCr, Item@ targetIt
     {
         if (cr.Mode[MODE_HIDE] != 0) {
             //cr.Say(SAY_NORM, "Desneak - Pressed SNEAK hotkey");
+            //  desneak players and give them some CD
             _Desneak(cr);
+            //  desneak admins and anyone else that is not a regular player
+            cr.ModeBase[MODE_HIDE] = 0;
         } else if(!isPlayer) {
             cr.ModeBase[MODE_HIDE] = 1;
         } else {
