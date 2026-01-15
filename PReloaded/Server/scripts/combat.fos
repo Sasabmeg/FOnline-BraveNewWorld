@@ -2303,6 +2303,40 @@ void ApplyDamage(AttackStruct& attack, Critter& target, uint rounds, bool isCrit
         }
 	}
 
+	//   special case to handle rocket explosion, because Traps and Explosives skill increases armor piercing
+	if (ammoPid == PID_EXPLOSIVE_ROCKET || ammoPid == PID_ROCKET_AP) {
+        int rocketDRBonus = 0;
+        int explosionDistance = 0;
+        explosionDistance = GetDistantion(attack.Hx, attack.Hy, target.HexX, target.HexY);
+        if (isDummyTraining) {
+            dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , Explosion distance = |" + COLOR_DTEXT_BONUS + " " + explosionDistance;
+        }
+        if (ammoPid == PID_EXPLOSIVE_ROCKET) {
+            if (valid(attacker)) {
+                rocketDRBonus = 10 + CLAMP(attacker.Skill[SK_TRAPS]/15, 0, 20);
+            } else {
+                rocketDRBonus = 15;
+            }
+            if (isDummyTraining) {
+                dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , Explosive Rocket DR bonus = |" + COLOR_DTEXT_BONUS + " " + rocketDRBonus;
+            }
+            targetDR -= rocketDRBonus;
+        }
+        if (ammoPid == PID_ROCKET_AP) {
+            if (valid(attacker)) {
+                rocketDRBonus = 10 + CLAMP(attacker.Skill[SK_TRAPS]/10, 0, 30);
+            } else {
+                rocketDRBonus = 30;
+            }
+            rocketDRBonus -= explosionDistance * 10;
+            if (isDummyTraining) {
+                dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , AP Rocket DR bonus = |" + COLOR_DTEXT_BONUS + " " + rocketDRBonus;
+            }
+            targetDR -= rocketDRBonus;
+        }
+
+	}
+
     if (validAttacker && attacker.Trait[TRAIT_FINESSE] != 0 && !isBurst) {
         targetDR += 30;
         partialBypassDR += 30;
@@ -2659,6 +2693,30 @@ void ApplyDamage(AttackStruct& attack, Critter& target, uint rounds, bool isCrit
             int resistFactor = ((CLAMP(target.Stat[ST_STRENGTH], 1, 4 + target.Stat[ST_CHARISMA])
                                 + CLAMP(target.Stat[ST_ENDURANCE], 1, 6 + target.Stat[ST_CHARISMA]))
                                  * 3) + 15 * stonewallRank;
+            int explosiveRocketPenalty = 0;
+            int armorPiercingRocketPenalty = 0;
+            int explosionDistance = 0;
+            if (ammoPid == PID_EXPLOSIVE_ROCKET) {
+                if (valid(attacker)) {
+                    explosiveRocketPenalty = CLAMP(attacker.Skill[SK_TRAPS]/10, 0, 30);
+                } else {
+                    explosiveRocketPenalty = 15;
+                }
+                explosionDistance = GetDistantion(attack.Hx, attack.Hy, target.HexX, target.HexY);
+                explosiveRocketPenalty -= explosionDistance * 7;
+                resistFactor -= CLAMP(explosiveRocketPenalty, 0, 30);
+            }
+            if (ammoPid == PID_ROCKET_AP) {
+                if (valid(attacker)) {
+                    armorPiercingRocketPenalty = CLAMP(30 - attacker.Skill[SK_TRAPS]/10, 0, 30);
+                } else {
+                    armorPiercingRocketPenalty = 15;
+                }
+                explosionDistance = GetDistantion(attack.Hx, attack.Hy, target.HexX, target.HexY);
+                armorPiercingRocketPenalty += explosionDistance * 7;
+                resistFactor += CLAMP(armorPiercingRocketPenalty, 0, 30);
+            }
+
 			if (resistFactor > stonewallRoll) {
 			    isKo = false;
                 if (isDummyTraining) {
@@ -2666,6 +2724,14 @@ void ApplyDamage(AttackStruct& attack, Critter& target, uint rounds, bool isCrit
                     dummyInfo += "|" + COLOR_DTEXT_REGULAR + "  ( ST = |" + COLOR_DTEXT_BONUS + " " + target.Stat[ST_STRENGTH];
                     dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , EN = |" + COLOR_DTEXT_BONUS + " " + target.Stat[ST_ENDURANCE];
                     dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , CH = |" + COLOR_DTEXT_BONUS + " " + target.Stat[ST_CHARISMA];
+                    if (ammoPid == PID_EXPLOSIVE_ROCKET) {
+                        dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , Explosive Rocket bonus = |" + COLOR_DTEXT_BONUS + " " + explosiveRocketPenalty;
+                        dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , distance = |" + COLOR_DTEXT_MALUS + " " + explosionDistance;
+                    }
+                    if (ammoPid == PID_ROCKET_AP) {
+                        dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , Armor Piercing Rocket penalty = |" + COLOR_DTEXT_MALUS + " " + armorPiercingRocketPenalty;
+                        dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , distance = |" + COLOR_DTEXT_MALUS + " " + explosionDistance;
+                    }
                     dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , Formula = |" + COLOR_DTEXT_BONUS + " 3 * (CLAMP(ST, 1, CH+4) + CLAMP(EN, 1, CH+6)) + 15*StonewallRank";
                     dummyInfo += "|" + COLOR_DTEXT_REGULAR + "  ) Resist Factor = |" + COLOR_DTEXT_BONUS + " " + resistFactor;
                     dummyInfo += "|" + COLOR_DTEXT_REGULAR + "  vs Roll = |" + COLOR_DTEXT_ROLL + " " + stonewallRoll;
@@ -2677,6 +2743,14 @@ void ApplyDamage(AttackStruct& attack, Critter& target, uint rounds, bool isCrit
                     dummyInfo += "|" + COLOR_DTEXT_REGULAR + "  ( ST = |" + COLOR_DTEXT_BONUS + " " + target.Stat[ST_STRENGTH];
                     dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , EN = |" + COLOR_DTEXT_BONUS + " " + target.Stat[ST_ENDURANCE];
                     dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , CH = |" + COLOR_DTEXT_BONUS + " " + target.Stat[ST_CHARISMA];
+                    if (ammoPid == PID_EXPLOSIVE_ROCKET) {
+                        dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , Explosive Rocket bonus = |" + COLOR_DTEXT_BONUS + " " + explosiveRocketPenalty;
+                        dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , distance = |" + COLOR_DTEXT_MALUS + " " + explosionDistance;
+                    }
+                    if (ammoPid == PID_ROCKET_AP) {
+                        dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , Armor Piercing Rocket penalty = |" + COLOR_DTEXT_MALUS + " " + armorPiercingRocketPenalty;
+                        dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , distance = |" + COLOR_DTEXT_BONUS + " " + explosionDistance;
+                    }
                     dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , Formula = |" + COLOR_DTEXT_BONUS + " 3 * (CLAMP(ST, 1, CH+4) + CLAMP(EN, 1, CH+6)) + 15*StonewallRank";
                     dummyInfo += "|" + COLOR_DTEXT_REGULAR + "  ) Resist Factor = |" + COLOR_DTEXT_BONUS + " " + resistFactor;
                     dummyInfo += "|" + COLOR_DTEXT_REGULAR + "  vs Roll = |" + COLOR_DTEXT_ROLL + " " + stonewallRoll;
@@ -4971,9 +5045,11 @@ void CommenceExplosion(AttackStruct& attack, Map@ map, uint16 tx, uint16 ty, Cri
     attack.Hx = tx;
     attack.Hy = ty;
 
-    for(int i = 0, j = critsHit.length(); i < j; i++)
-        if(!validTarget || targetId != critsHit[i].Id)
+    for (int i = 0, j = critsHit.length(); i < j; i++) {
+        if (!validTarget || targetId != critsHit[i].Id) {
             ApplyDamage(attack, critsHit[i], 1, false, intentionally, results, 0);
+        }
+    }
 
     if(weapPid == PID_MOLOTOV_COCKTAIL || weapPid == PID_FIRE_GRENADE || weapPid == PID_FAKE_FIRE_GRENADE)
         CommenceFireHex(attack.Attacker, map, tx, ty, radius);
@@ -5015,15 +5091,16 @@ void CommenceExplosionHexEx(Critter@ attacker, Map@ map, uint16 tx, uint16 ty, C
 
         ProtoItem@ ammo = GetProtoItem(ammoPid);
         // Ammo
-        if(valid(ammo))
-        {
+        if (valid(ammo)) {
             attack.DRMod = ammo.Ammo_DrMod;
             attack.DMMod = ammo.Ammo_DmgMult;
             attack.DDMod = ammo.Ammo_DmgDiv;
-            if(attack.DMMod == 0)
+            if (attack.DMMod == 0) {
                 attack.DMMod = 1;
-            if(attack.DDMod == 0)
+            }
+            if (attack.DDMod == 0) {
                 attack.DDMod = 1;
+            }
         }
     }
 
