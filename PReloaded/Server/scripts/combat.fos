@@ -2324,11 +2324,11 @@ void ApplyDamage(AttackStruct& attack, Critter& target, uint rounds, bool isCrit
         }
         if (ammoPid == PID_ROCKET_AP) {
             if (valid(attacker)) {
-                rocketDRBonus = 10 + CLAMP(attacker.Skill[SK_TRAPS]/10, 0, 30);
+                rocketDRBonus = 10 + CLAMP(attacker.Skill[SK_TRAPS]/7.5, 0, 40);
             } else {
                 rocketDRBonus = 30;
             }
-            rocketDRBonus -= explosionDistance * 10;
+            rocketDRBonus -= explosionDistance * 15;
             if (isDummyTraining) {
                 dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , AP Rocket DR bonus = |" + COLOR_DTEXT_BONUS + " " + rocketDRBonus;
             }
@@ -2708,13 +2708,13 @@ void ApplyDamage(AttackStruct& attack, Critter& target, uint rounds, bool isCrit
             }
             if (ammoPid == PID_ROCKET_AP) {
                 if (valid(attacker)) {
-                    armorPiercingRocketPenalty = CLAMP(30 - attacker.Skill[SK_TRAPS]/10, 0, 30);
+                    armorPiercingRocketPenalty = CLAMP(15 - attacker.Skill[SK_TRAPS]/10, 0, 30);
                 } else {
-                    armorPiercingRocketPenalty = 15;
+                    armorPiercingRocketPenalty = 0;
                 }
                 explosionDistance = GetDistantion(attack.Hx, attack.Hy, target.HexX, target.HexY);
                 armorPiercingRocketPenalty += explosionDistance * 7;
-                resistFactor += CLAMP(armorPiercingRocketPenalty, 0, 30);
+                resistFactor += CLAMP(armorPiercingRocketPenalty, -15, 30);
             }
 
 			if (resistFactor > stonewallRoll) {

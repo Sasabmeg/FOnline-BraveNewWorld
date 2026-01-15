@@ -605,14 +605,20 @@ void RenderHexShoting() // export
 
     DrawHexArea(radiusVert, false, RADIUS_BORDER);
 
-    if(hasAp && hasAmmo)
+    string ammoType = (item.AmmoPid == PID_ROCKET_AP) ? "AP" : "Expl.";
+    int correctAp = ap; // + 1; // since we remove 1 AP for animation start, then the rest, or maybe not?
+
+    if(hasAp && hasAmmo) {
         DrawText(tohit + "%", x + 20, y - 10, 40, 20, COLOR_GREEN, FONT_TYPE_DEFAULT, FONT_FLAG_BORDERED);
-    else
-    {
-        if(hasAmmo)
+        DrawText(correctAp + " AP " + ammoType, x + 20, y, 40, 20, COLOR_WHITE, FONT_TYPE_DEFAULT, FONT_FLAG_BORDERED);
+    } else {
+        if (hasAmmo) {
             DrawText(tohit + "%", x + 20, y - 10, 40, 20, COLOR_RED, FONT_TYPE_DEFAULT, FONT_FLAG_BORDERED);
-        else
+            DrawText(correctAp + " AP " + ammoType, x + 20, y, 40, 20, COLOR_WHITE, FONT_TYPE_DEFAULT, FONT_FLAG_BORDERED);
+        } else {
             DrawText("Reload", x + 20, y - 10, 40, 20, COLOR_RED, FONT_TYPE_DEFAULT, FONT_FLAG_BORDERED);
+            DrawText(correctAp + " AP " + ammoType, x + 20, y, 40, 20, COLOR_WHITE, FONT_TYPE_DEFAULT, FONT_FLAG_BORDERED);
+        }
     }
 
 }
