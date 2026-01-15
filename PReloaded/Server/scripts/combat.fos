@@ -1212,6 +1212,7 @@ void ApplyDamage(AttackStruct& attack, Critter& target, uint rounds, bool isCrit
     uint     extraMessageSelf = 0;
     bool     isShotgun = (valid(attack.Ammo) && (attack.Ammo.Ammo_Caliber == 11));
     bool     isBurst = (rounds > 1);
+    bool     isGrenade = attack.WeaponSubtype == WS_THROWING && (attack.DmgType == DAMAGE_TYPE_PLASMA || attack.DmgType == DAMAGE_TYPE_EMP || attack.DmgType == DAMAGE_TYPE_EXPLODE || attack.DmgType == DAMAGE_TYPE_FIRE);   // like in fo2
 	bool     isSpearThrow = (valid(realWeapon) ? (realWeapon.Proto.ProtoId == PID_SHARPENED_POLE || realWeapon.Proto.ProtoId == PID_SPEAR || realWeapon.Proto.ProtoId == PID_SHARP_SPEAR) : false);
 	//bool     isFireGeckoShell = (valid(attack.Ammo) && (attack.Ammo.ProtoId == PID_SHOTGUN_DRAGON_BREATH_SHELLS));
 	uint16   ammoPid = attack.ammoPid;
@@ -2304,8 +2305,10 @@ void ApplyDamage(AttackStruct& attack, Critter& target, uint rounds, bool isCrit
 	}
 
 	//   special case to handle rocket explosion, because Traps and Explosives skill increases armor piercing
-	if (ammoPid == PID_EXPLOSIVE_ROCKET || ammoPid == PID_ROCKET_AP) {
+	if (ammoPid == PID_EXPLOSIVE_ROCKET || ammoPid == PID_ROCKET_AP || ammoPid == PID_40MM_GRENADE || isGrenade) {
         int rocketDRBonus = 0;
+        int grenadeLauncherBonus = 0;
+        int grenadeDRBonus = 0;
         int explosionDistance = 0;
         explosionDistance = GetDistantion(attack.Hx, attack.Hy, target.HexX, target.HexY);
         if (isDummyTraining) {
@@ -2334,7 +2337,30 @@ void ApplyDamage(AttackStruct& attack, Critter& target, uint rounds, bool isCrit
             }
             targetDR -= rocketDRBonus;
         }
-
+        if (ammoPid == PID_40MM_GRENADE) {
+            if (valid(attacker)) {
+                grenadeLauncherBonus = 10 + CLAMP(attacker.Skill[SK_TRAPS]/15, 0, 20);
+            } else {
+                grenadeLauncherBonus = 15;
+            }
+            if (isDummyTraining) {
+                dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , Grenade launcher/pistol DR bonus = |" + COLOR_DTEXT_BONUS + " " + grenadeLauncherBonus;
+            }
+            targetDR -= grenadeLauncherBonus;
+        }
+        if (isGrenade) {
+            if (dmgType == DAMAGE_TYPE_EXPLODE || dmgType == DAMAGE_TYPE_FIRE || dmgType == DAMAGE_TYPE_PLASMA) {
+                if (valid(attacker)) {
+                    grenadeDRBonus = CLAMP(attacker.Skill[SK_TRAPS]/10, 0, 30);
+                } else {
+                    grenadeDRBonus = 15;
+                }
+                if (isDummyTraining) {
+                    dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , Grenade DR bonus = |" + COLOR_DTEXT_BONUS + " " + grenadeDRBonus;
+                }
+                targetDR -= grenadeDRBonus;
+            }
+        }
 	}
 
     if (validAttacker && attacker.Trait[TRAIT_FINESSE] != 0 && !isBurst) {
@@ -2716,7 +2742,6 @@ void ApplyDamage(AttackStruct& attack, Critter& target, uint rounds, bool isCrit
                 armorPiercingRocketPenalty += explosionDistance * 7;
                 resistFactor += CLAMP(armorPiercingRocketPenalty, -15, 30);
             }
-
 			if (resistFactor > stonewallRoll) {
 			    isKo = false;
                 if (isDummyTraining) {

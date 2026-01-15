@@ -443,15 +443,15 @@ uint e_HexShotExplode(array<uint>@ values)     // map id, tx, ty, pid, attacker 
     if(!valid(map) || !valid(cr))
         return 0;
 
-    bool isRocket = (values[5] == PID_ROCKET_AP
-                    || values[5] == PID_EXPLOSIVE_ROCKET
-                    || values[5] == PID_40MM_GRENADE);
-    bool isExplodeRocket = (values[5] == PID_EXPLOSIVE_ROCKET) || (values[5] == PID_40MM_GRENADE);
-
     Item@ usedWeapon = _CritGetItemHand(cr);
     if(!valid(usedWeapon))
         return 0;
     int   skillVal = cr.Skill[_WeaponSkill(usedWeapon.Proto, 0)];
+
+    bool isRocket = (values[5] == PID_ROCKET_AP
+                    || values[5] == PID_EXPLOSIVE_ROCKET
+                    || values[5] == PID_40MM_GRENADE);
+    bool isExplodeRocket = (values[5] == PID_EXPLOSIVE_ROCKET) || (values[5] == PID_40MM_GRENADE && usedWeapon.GetProtoId() == PID_GRENADE_LAUNCHER);
 
     if(usedWeapon.IsDeteriorable() && !_CritHasExtMode(cr, MODE_EXT_NO_DETERIORATION))
         WearItem(cr, usedWeapon, (MAX_SKILL_VAL - MIN(skillVal,200)) / 6);
@@ -578,7 +578,7 @@ void RenderHexShoting() // export
     if(!GetHexPos(hx, hy, x, y))
         return;                           // should not happen
 
-    int radius = (item.AmmoPid == PID_ROCKET_AP)?3:4;
+    int radius = (item.AmmoPid == PID_ROCKET_AP || item.GetProtoId() == PID_GRENADE_PISTOL) ? 3 : 4;
 
     uint tohit = ::HexShotingToHit(chosen, hx, hy, item.Proto, item);
     int  ap = ::HexShotActionPointsCost(item, chosen);
@@ -605,19 +605,24 @@ void RenderHexShoting() // export
 
     DrawHexArea(radiusVert, false, RADIUS_BORDER);
 
-    string ammoType = (item.AmmoPid == PID_ROCKET_AP) ? "AP" : "Expl.";
+    string ammoType = (item.AmmoPid == PID_40MM_GRENADE ? "Ammo: 40mm" : (item.AmmoPid == PID_ROCKET_AP) ? "Ammo: AP" : "Ammo: Expl.");
     int correctAp = ap; // + 1; // since we remove 1 AP for animation start, then the rest, or maybe not?
 
     if(hasAp && hasAmmo) {
-        DrawText(tohit + "%", x + 20, y - 10, 40, 20, COLOR_GREEN, FONT_TYPE_DEFAULT, FONT_FLAG_BORDERED);
-        DrawText(correctAp + " AP " + ammoType, x + 20, y, 40, 20, COLOR_WHITE, FONT_TYPE_DEFAULT, FONT_FLAG_BORDERED);
+        DrawText(tohit + "%", x + 20, y - 20, 40, 20, COLOR_GREEN, FONT_TYPE_DEFAULT, FONT_FLAG_BORDERED);
+        DrawText(correctAp + " AP", x + 20, y - 10, 40, 20, COLOR_WHITE, FONT_TYPE_DEFAULT, FONT_FLAG_BORDERED);
+        DrawText(ammoType, x + 20, y, 80, 20, COLOR_WHITE, FONT_TYPE_DEFAULT, FONT_FLAG_BORDERED);
+        //int sprite = LoadSprite(GetProtoItem(item.AmmoPid).PicInv, 0);
+        //::DrawSprite(sprite, -1, x - 50, y - 15, 50, 30, false, false, COLOR_WHITE);
     } else {
         if (hasAmmo) {
-            DrawText(tohit + "%", x + 20, y - 10, 40, 20, COLOR_RED, FONT_TYPE_DEFAULT, FONT_FLAG_BORDERED);
-            DrawText(correctAp + " AP " + ammoType, x + 20, y, 40, 20, COLOR_WHITE, FONT_TYPE_DEFAULT, FONT_FLAG_BORDERED);
+            DrawText(tohit + "%", x + 20, y - 20, 40, 20, COLOR_RED, FONT_TYPE_DEFAULT, FONT_FLAG_BORDERED);
+            DrawText(correctAp + " AP", x + 20, y - 10, 40, 20, COLOR_WHITE, FONT_TYPE_DEFAULT, FONT_FLAG_BORDERED);
+            DrawText(ammoType, x + 20, y, 80, 20, COLOR_WHITE, FONT_TYPE_DEFAULT, FONT_FLAG_BORDERED);
         } else {
-            DrawText("Reload", x + 20, y - 10, 40, 20, COLOR_RED, FONT_TYPE_DEFAULT, FONT_FLAG_BORDERED);
-            DrawText(correctAp + " AP " + ammoType, x + 20, y, 40, 20, COLOR_WHITE, FONT_TYPE_DEFAULT, FONT_FLAG_BORDERED);
+            DrawText("Reload", x + 20, y - 20, 40, 20, COLOR_RED, FONT_TYPE_DEFAULT, FONT_FLAG_BORDERED);
+            DrawText(correctAp + " AP", x + 20, y - 10, 40, 20, COLOR_WHITE, FONT_TYPE_DEFAULT, FONT_FLAG_BORDERED);
+            DrawText(ammoType, x + 20, y, 80, 20, COLOR_WHITE, FONT_TYPE_DEFAULT, FONT_FLAG_BORDERED);
         }
     }
 
