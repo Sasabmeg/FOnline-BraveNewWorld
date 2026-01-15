@@ -93,6 +93,7 @@ void DrawChosenTabs() // Export
     if(chosen.Mode[MODE_HIDE] != 0)
         DrawTab(GetMsgStr(TEXTMSG_GAME, STR_HIDEMODE_TITLE), COLOR_DGREEN);
 
+    /*
     if (chosen.ParamBase[ST_TO_MUTATE_TIMER] > int(GetTick())) {
         string@ ex = "";
         uint color = COLOR_DGREEN;
@@ -111,6 +112,7 @@ void DrawChosenTabs() // Export
         string@ caption = "Mutate!";
         DrawTab(caption, color, ex);
     }
+    */
 
     if(LevelUp)
     {
