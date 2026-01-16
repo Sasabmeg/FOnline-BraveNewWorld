@@ -160,7 +160,7 @@ uint GetNumberOfMercs(Critter& player)
  */
 uint GetPartyPointsMax(Critter& player)
 {
-    return (player.Stat[ST_CHARISMA] * 10) + (player.Skill[SK_SPEECH] / 3) + (player.Perk[PE_MAGNETIC_PERSONALITY] * 50) + (player.Trait[TRAIT_GOOD_NATURED] * 50);
+    return (player.Stat[ST_CHARISMA] * 10) + (player.Skill[SK_SPEECH] / 2) + (player.Perk[PE_MAGNETIC_PERSONALITY] * 50) + (player.Trait[TRAIT_GOOD_NATURED] * 50);
 }
 
 /**
