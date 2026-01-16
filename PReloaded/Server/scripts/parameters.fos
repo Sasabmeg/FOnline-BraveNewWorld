@@ -557,6 +557,14 @@ bool CritterGenerateCheck(array<int>& data)     // Export to client_main@player_
         }
     }
 
+    if (   (data[TRAIT_FINESSE] != 0 && (data[TRAIT_KAMIKAZE] != 0 || data[TRAIT_FAST_SHOT] != 0 || data[TRAIT_DOUBLE_TAP] != 0 || data[TRAIT_CAUTIOUS_NATURE] != 0))
+        || (data[TRAIT_KAMIKAZE] != 0 && (data[TRAIT_FAST_SHOT] != 0 || data[TRAIT_DOUBLE_TAP] != 0 || data[TRAIT_CAUTIOUS_NATURE] != 0))
+        || (data[TRAIT_FAST_SHOT] != 0 && (data[TRAIT_DOUBLE_TAP] != 0 || data[TRAIT_CAUTIOUS_NATURE] != 0))
+        || (data[TRAIT_DOUBLE_TAP] != 0 && (data[TRAIT_CAUTIOUS_NATURE] != 0))) {
+            Message("|0xC85050 The following traits are mutually exclusive: Finesse, Kamikaze, Fast Shot, Double Tap and Cautious Nature");
+            return false;
+    }
+
     if(special != __StartSpecialPoints)
     {
         Message(GetMsgStr(TEXTMSG_GAME, STR_NET_WRONG_SPECIAL));
