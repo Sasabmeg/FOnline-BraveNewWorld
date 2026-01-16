@@ -1318,9 +1318,10 @@ int[][] PerksData =
     },
     #endif
 
-    { 425, 2, 1 }, // Right Between the Eyes, Disabled, 1 ranks
-    {              // level 1 requirements
-        77, 1, 15, // Level at least 15
+    { 425, 2, 1 }, // Right Between the Eyes [PE_ENERGY_GIRL], Leveling, 1 ranks
+    {               // level 1 requirements
+        77, 1, 3,   // Level at least 3
+        202, 1, 50, // Energy Weapons at least 50
     },
     #ifdef __SERVER
     array<int>(0),              // level 1 perk up effects

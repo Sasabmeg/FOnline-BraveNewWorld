@@ -2257,10 +2257,10 @@ void ApplyDamage(AttackStruct& attack, Critter& target, uint rounds, bool isCrit
 
     if (target.Perk[PE_WASTELANDERS_RESILIENCE] > 0 && isBurst) {
         targetDR += 10;
-        targetDT += 3;
+        //targetDT += 3;
         if (isDummyTraining) {
             dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , Perk Wastelander's Resilience DR |" + COLOR_DTEXT_MALUS + " +10";
-            dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , Perk Wastelander's Resilience DT |" + COLOR_DTEXT_MALUS + " +3";
+            //dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , Perk Wastelander's Resilience DT |" + COLOR_DTEXT_MALUS + " +3";
         }
     }
 
@@ -2359,6 +2359,39 @@ void ApplyDamage(AttackStruct& attack, Critter& target, uint rounds, bool isCrit
                     dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , Grenade DR bonus = |" + COLOR_DTEXT_BONUS + " " + grenadeDRBonus;
                 }
                 targetDR -= grenadeDRBonus;
+            }
+        }
+	}
+
+	//  handle energy girl perk
+	if (attacker.Perk[PE_ENERGY_GIRL] > 0 && (dmgType == DAMAGE_TYPE_LASER || dmgType == DAMAGE_TYPE_PLASMA || dmgType == DAMAGE_TYPE_ELECTR)) {
+        //  reduce DT for any energy weapon damage
+        targetDT /= 3;
+        if (isDummyTraining) {
+            dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , Perk Energy Girl Target DT div |" + COLOR_DTEXT_MALUS + " 3";
+        }
+        //  reduce DR for lasers only
+        if (dmgType == DAMAGE_TYPE_LASER) {
+            if (target.Param[TO_EX_IRREMEDIABLE] + PLASMA_EFFECT_LINGER_TIME > int(GetTick())) {
+                targetDR -= 5;
+                partialBypassDR -= 5;
+                if (isDummyTraining) {
+                    dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , Perk Energy Girl Irremediable DR penalty: |" + COLOR_DTEXT_MALUS + " -5";
+                }
+            }
+            if (target.Param[TO_EX_BURNT] + BURN_EFFECT_LINGER_TIME > int(GetTick())) {
+                targetDR -= 5;
+                partialBypassDR -= 5;
+                if (isDummyTraining) {
+                    dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , Perk Energy Girl Burnt DR penalty: |" + COLOR_DTEXT_MALUS + " -5";
+                }
+            }
+            if (target.Param[MODE_NO_RUN] > 0 || target.Param[DAMAGE_RIGHT_LEG] > 0 || target.Param[DAMAGE_LEFT_LEG] > 0 ) {
+                targetDR -= 5;
+                partialBypassDR -= 5;
+                if (isDummyTraining) {
+                    dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , Perk Energy Girl No Run DR penalty: |" + COLOR_DTEXT_MALUS + " -5";
+                }
             }
         }
 	}
