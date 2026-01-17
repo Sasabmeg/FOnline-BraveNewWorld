@@ -107,6 +107,7 @@ class CTooltips {
         string radiatedExt = "";
         string poisonedExt = "";
         string carryWeightExt = "";
+        string radiationResistExt = "";
         CritterCl@ chosen = GetChosen();
         if (valid(chosen)) {
             //Message("InitTooltips :: chosen valid");
@@ -122,6 +123,7 @@ class CTooltips {
             int helmetElectrDR = chosen.Stat[ST_ELECTRO_RESIST];
             int helmetExplodeDT = chosen.Stat[ST_EXPLODE_ABSORB];
             int helmetExplodeDR = chosen.Stat[ST_EXPLODE_RESIST];
+            int armorRadResist = 0;
 
             ItemCl@ helmet = chosen.GetItem(0, SLOT_HEAD);
             ItemCl@ bodyArmor = chosen.GetItem(0, SLOT_ARMOR);
@@ -139,6 +141,19 @@ class CTooltips {
                 helmetElectrDR -= bodyArmor.Proto.Armor_DRElectr;
                 helmetExplodeDT -= bodyArmor.Proto.Armor_DTExplode;
                 helmetExplodeDR -= bodyArmor.Proto.Armor_DRExplode;
+                switch (bodyArmor.Proto.Armor_Perk) {
+                    case ARMOR_PERK_POWERED: armorRadResist = 35; break;
+                    case ARMOR_PERK_ADVANCED_I:
+                    case ARMOR_PERK_ADVANCED_II: armorRadResist = 40; break;
+                    case ARMOR_PERK_LEATHER_JACKET: armorRadResist = 5; break;
+                    case ARMOR_PERK_LEATHER_ARMOR: armorRadResist = 10; break;
+                    case ARMOR_PERK_THERMAL_LEATHER: armorRadResist = 35; break;
+                    case ARMOR_PERK_COMBAT: armorRadResist = 25; break;
+                    case ARMOR_PERK_METAL: armorRadResist = 15; break;
+                    case ARMOR_PERK_TESLA: armorRadResist = 35; break;
+                    case ARMOR_PERK_CAMOUFLAGE_HP: armorRadResist = 10; break;
+                }
+
             }
             if (valid(helmet)) {
                 helmetNormalDT += helmet.Proto.Armor_DTNormal;
@@ -220,6 +235,7 @@ class CTooltips {
             carryWeightBase += 453 * (25 + chosen.Stat[ST_STRENGTH] * 25);
             carryWeightBase += 20000;
             int carryWeightDif = chosen.Stat[ST_CARRY_WEIGHT] - carryWeightBase;
+            int radiationResistDif = chosen.Stat[ST_RADIATION_RESISTANCE] - chosen.StatBase[ST_RADIATION_RESISTANCE] - chosen.Stat[ST_ENDURANCE]*2;
 
             strengthExt = "\n\u2022 Base: " + chosen.StatBase[ST_STRENGTH]
                         + "\n\u2022 Effects: " + (strDif < 0 ? ("|" + COLOR_DEBUFF + " ") : ("|" + COLOR_BUFF + " +")) + strDif + "|" + COLOR_GREEN + " ";
@@ -327,6 +343,24 @@ class CTooltips {
                            + "\n\u2022 Base: " + (carryWeightBase / 1000) + " kg"
                            + "\n\u2022 Effects: " + (carryWeightDif < 0 ? ("|" + COLOR_DEBUFF + " ") : ("|" + COLOR_BUFF + " +")) + (carryWeightDif/1000) + " kg" + "|" + COLOR_GREEN + " ";
                            carryWeightExt += "\n\n";
+
+            radiationResistExt = "\nCurrent: " + "|" + COLOR_BUFF + " " +  chosen.Stat[ST_RADIATION_RESISTANCE] + "|" + COLOR_GREEN + " "
+                            + "\n\u2022 Base: " + (chosen.StatBase[ST_RADIATION_RESISTANCE] + chosen.Stat[ST_ENDURANCE]*2) + ""
+                            + "\n\t\u2022 " + "|" + COLOR_BUFF + " +" + chosen.Stat[ST_ENDURANCE]*2 + "|" + COLOR_REGULAR + "  from Endurance";
+                            if (chosen.Perk[PE_SNAKEATER] > 0) {
+                                radiationResistExt += "\n\t\u2022 " + "|" + COLOR_BUFF + " +5" + "|" + COLOR_REGULAR + "  from Snakeater perk";
+                            }
+                            if (chosen.Perk[PE_RAD_RESISTANCE] > 0) {
+                                radiationResistExt += "\n\t\u2022 " + "|" + COLOR_BUFF + " +30" + "|" + COLOR_REGULAR + "  from Rad Resistance perk";
+                            }
+            radiationResistExt += "\n\u2022 Effects: " + (radiationResistDif < 0 ? ("|" + COLOR_DEBUFF + " ") : ("|" + COLOR_BUFF + " +")) + radiationResistDif + "|" + COLOR_GREEN + " ";
+                            if (armorRadResist != 0) {
+                                radiationResistExt += "\n\t\u2022 " + "|" + COLOR_BUFF + " +" + armorRadResist + "|" + COLOR_REGULAR + "  from Armor";
+                            }
+                            if (chosen.Timeout[TO_RAD_X] > 0) {
+                                radiationResistExt += "\n\t\u2022 " + "|" + COLOR_BUFF + " +25" + "|" + COLOR_REGULAR + "  from Rad-X";
+                            }
+                            radiationResistExt += "\n\n";
 
             if (valid(bodyArmor)) {
                 if (chosen.Param[ST_CURRENT_ARMOR_PERK] > 0) {
@@ -887,7 +921,8 @@ class CTooltips {
         tooltipsValueExt.insertLast(pipReference + noData);
 
         tooltipsKey.insertLast(ST_RADIATION_RESISTANCE);
-        tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(ST_RADIATION_RESISTANCE)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(ST_RADIATION_RESISTANCE)) + pipText);
+        tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(ST_RADIATION_RESISTANCE)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(ST_RADIATION_RESISTANCE)) + pipText
+                                 + pipStatus + radiationResistExt);
         tooltipsValueExt.insertLast(pipReference + noData);
 
         tooltipsKey.insertLast(ST_SEQUENCE);
@@ -1028,7 +1063,7 @@ class CTooltips {
                                      + notes
                                      + "\n\u2022 -1 Luck. (penalty)"
                                      + "\n\u2022 50% chance for critical failure to happen on missed attacks. (both for you and your opponents)"
-                                     + "\n\u2022 50% chance for combat calculations to use Luck = 1(both for you and your opponents)");
+                                     + "\n\u2022 50% chance for combat calculations to use Luck = 1 (both for you and your opponents)");
 
         tooltipsKey.insertLast(TRAIT_GOOD_NATURED);
         tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(TRAIT_GOOD_NATURED)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(TRAIT_GOOD_NATURED)) + pipText);
@@ -1095,7 +1130,7 @@ class CTooltips {
         tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(PE_ADRENALINE_RUSH)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(PE_ADRENALINE_RUSH)) + pipText);
         tooltipsValueExt.insertLast(pipReference
                                      + notes
-                                     + "\n\u2022 Receive 1 DT and 5 DR for each 25% missing HP."
+                                     + "\n\u2022 Receive 2 DT and 6 DR when bellow half max HP."
                                      + requirements
                                      + "\n\t\u2022 Strength >= 5");
 

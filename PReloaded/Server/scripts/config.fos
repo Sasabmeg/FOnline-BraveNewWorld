@@ -259,6 +259,10 @@ void InitializeGame()                  // Export
     }
     SetParameterChangeBehaviour(ST_RADIATION_LEVEL, "parameters@changedParam_AnyJustRefreshTooltips");
     SetParameterChangeBehaviour(ST_POISONING_LEVEL, "parameters@changedParam_AnyJustRefreshTooltips");
+    SetParameterChangeBehaviour(ST_RADIATION_RESISTANCE, "parameters@changedParam_AnyJustRefreshTooltips");
+    SetParameterChangeBehaviour(ST_RADIATION_RESISTANCE_EXT, "parameters@changedParam_AnyJustRefreshTooltips");
+    SetParameterChangeBehaviour(ST_POISON_RESISTANCE, "parameters@changedParam_AnyJustRefreshTooltips");
+    SetParameterChangeBehaviour(ST_POISON_RESISTANCE_EXT, "parameters@changedParam_AnyJustRefreshTooltips");
     SetParameterChangeBehaviour(ST_CURRENT_ARMOR_PERK, "parameters@changedParam_AnyJustRefreshTooltips");
     SetParameterChangeBehaviour(ST_CURRENT_HELMET_PERK, "parameters@changedParam_AnyJustRefreshTooltips");
 

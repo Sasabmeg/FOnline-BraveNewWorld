@@ -2264,6 +2264,15 @@ void ApplyDamage(AttackStruct& attack, Critter& target, uint rounds, bool isCrit
         }
     }
 
+    if (target.Perk[PE_ADRENALINE_RUSH] > 0 && target.Stat[ST_CURRENT_HP] < target.Stat[ST_MAX_LIFE] / 2) {
+        //  This is handled in extensions, but we write the dummy info here
+        //  targetDT += 2;
+        //  targetDR += 6;
+        if (isDummyTraining) {
+            dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , Adrenaline Rush DT/DR |" + COLOR_DTEXT_BONUS + " +2/6";
+        }
+    }
+
     int partialBypassDR = targetDR - armorDR + (armorDR / 4);
     int partialBypassDT = targetDT - armorDT + (armorDT / 4);
 

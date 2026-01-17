@@ -197,6 +197,10 @@ EXPORT int getParam_Strength(CritterMutual& cr, uint)
 		}
 	}
 
+	if (cr.Params[PE_ADRENALINE_RUSH] > 0 && cr.Params[ST_CURRENT_HP] < getParam_MaxLife(cr, 0)) {
+		val += 3;
+	}
+
 	return CLAMP(val, 1, 10);
 }
 
@@ -804,10 +808,10 @@ int GetRawDR(CritterMutual& cr, int dmgType)
 
 	if(cr.Params[PE_ADRENALINE_RUSH]) // Adrenaline rush perk
 	{
-		int max_life=getParam_MaxLife(cr,0);
-		if(cr.Params[ST_CURRENT_HP] <= max_life/4) val+=15;
-		else if(cr.Params[ST_CURRENT_HP] <= max_life/2) val+=10;
-		else if(cr.Params[ST_CURRENT_HP] <= 3*max_life/4) val+=5;
+		int max_life = getParam_MaxLife(cr, 0);
+		if (cr.Params[ST_CURRENT_HP] <= max_life / 2) {
+			val += 6;
+		}
 	}
 
 	return val;
@@ -833,9 +837,9 @@ int GetRawDT(CritterMutual& cr, int dmgType)
 	if(cr.Params[PE_ADRENALINE_RUSH]) // Adrenaline rush perk
 	{
 		int max_life=getParam_MaxLife(cr,0);
-		if(cr.Params[ST_CURRENT_HP] <= max_life/4) val+=3;
-		else if(cr.Params[ST_CURRENT_HP] <= max_life/2) val+=2;
-		else if(cr.Params[ST_CURRENT_HP] <= 3*max_life/4) val+=1;
+		if (cr.Params[ST_CURRENT_HP] <= max_life / 2) {
+			val += 2;
+		}
 	}
 
 	return val;
