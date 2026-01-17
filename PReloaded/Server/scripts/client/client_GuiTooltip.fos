@@ -108,6 +108,11 @@ class CTooltips {
         string poisonedExt = "";
         string carryWeightExt = "";
         string radiationResistExt = "";
+        string poisonResistExt = "";
+        string maxLifeExt = "";
+        string armorClassExt = "";
+        string ActionPointsExt = "";
+        string meleeDamageExt = "";
         CritterCl@ chosen = GetChosen();
         if (valid(chosen)) {
             //Message("InitTooltips :: chosen valid");
@@ -226,16 +231,13 @@ class CTooltips {
             int intDif = chosen.Stat[ST_INTELLECT] - chosen.StatBase[ST_INTELLECT];
             int agiDif = chosen.Stat[ST_AGILITY] - chosen.StatBase[ST_AGILITY];
             int luckDif = chosen.Stat[ST_LUCK] - chosen.StatBase[ST_LUCK];
-            int healingRateBase = chosen.StatBase[ST_HEALING_RATE] + 7 + chosen.Stat[ST_ENDURANCE] / 2;
             //Message("healing rate: " + chosen.StatBase[ST_HEALING_RATE] + ", 7, " + chosen.Stat[ST_ENDURANCE] / 2);
-            int healingRateDif = chosen.Stat[ST_HEALING_RATE] - healingRateBase;
             int radiationLevel = chosen.Stat[ST_RADIATION_LEVEL];
             int poisoningLevel = chosen.Stat[ST_POISONING_LEVEL];
             int carryWeightBase = chosen.StatBase[ST_CARRY_WEIGHT] + chosen.StatBase[ST_CARRY_WEIGHT_EXT];
             carryWeightBase += 453 * (25 + chosen.Stat[ST_STRENGTH] * 25);
             carryWeightBase += 20000;
             int carryWeightDif = chosen.Stat[ST_CARRY_WEIGHT] - carryWeightBase;
-            int radiationResistDif = chosen.Stat[ST_RADIATION_RESISTANCE] - chosen.StatBase[ST_RADIATION_RESISTANCE] - chosen.Stat[ST_ENDURANCE]*2;
 
             strengthExt = "\n\u2022 Base: " + chosen.StatBase[ST_STRENGTH]
                         + "\n\u2022 Effects: " + (strDif < 0 ? ("|" + COLOR_DEBUFF + " ") : ("|" + COLOR_BUFF + " +")) + strDif + "|" + COLOR_GREEN + " ";
@@ -323,13 +325,47 @@ class CTooltips {
                         }
             luckExt = "\nCurrent:"
                     + "\n\u2022 Base: " + chosen.StatBase[ST_LUCK]
-                    + "\n\u2022 Effects: " + (luckDif < 0 ? ("|" + COLOR_DEBUFF + " ") : ("|" + COLOR_BUFF + " +")) + luckDif + "|" + COLOR_GREEN + " ";
+                    + "\n\u2022 Effects: " + (luckDif < 0 ? ("|" + COLOR_DEBUFF + " ") : ("|" + COLOR_BUFF + " +")) + luckDif + "|" + COLOR_REGULAR + " ";
 
-            healingRateExt = "\n\u2022 Base: " + healingRateBase
-                            + "\n\u2022 Effects: " + (healingRateDif < 0 ? ("|" + COLOR_DEBUFF + " ") : ("|" + COLOR_BUFF + " +")) + healingRateDif + "|" + COLOR_GREEN + " ";
+            int healingRateBase = chosen.StatBase[ST_HEALING_RATE] + 7 + chosen.Stat[ST_ENDURANCE] / 2;
+            int healingRateDif = chosen.Stat[ST_HEALING_RATE] - healingRateBase;
+            healingRateExt = "\nCurrent: " + "|" + COLOR_BUFF + " " +  CLAMP(chosen.Stat[ST_HEALING_RATE], 3, 10) + "% |" + COLOR_REGULAR + " max life every ";
+                            if (chosen.Param[TRAIT_FAST_METABOLISM] > 0) {
+                                if (chosen.Param[PE_WAY_OF_THE_FRUIT] > 0) {
+                                    healingRateExt += "|" + COLOR_BUFF + " 20 seconds|" + COLOR_REGULAR + "  (if recently eaten fruit)";
+                                } else {
+                                    healingRateExt += "|" + COLOR_BUFF + " 30 seconds|" + COLOR_REGULAR + " ";
+                                }
+                            } else {
+                                if (chosen.Param[PE_WAY_OF_THE_FRUIT] > 0) {
+                                    healingRateExt += "|" + COLOR_BUFF + " 40 seconds |" + COLOR_REGULAR + " (if recently eaten fruit)";
+                                } else {
+                                    healingRateExt += "|" + COLOR_BUFF + " 60 seconds |" + COLOR_REGULAR + " ";
+                                }
+                            }
+            healingRateExt += "\n\u2022 Base: " + "|" + COLOR_BUFF + " " + healingRateBase + "% |" + COLOR_REGULAR + " max life every |" + COLOR_BUFF + " 60 seconds|" + COLOR_REGULAR + " "
+                            + "\n\t\u2022 " + "|" + COLOR_BUFF + " +" + 7 + "% |" + COLOR_REGULAR + "  from Base"
+                            + "\n\t\u2022 " + "|" + COLOR_BUFF + " +" + (chosen.Stat[ST_ENDURANCE]/2) + "% |" + COLOR_REGULAR + "  from Endurance"
+                            + "\n\u2022 Effects: " + (healingRateDif < 0 ? ("|" + COLOR_DEBUFF + " ") : ("|" + COLOR_BUFF + " +")) + healingRateDif + "% |" + COLOR_REGULAR + " ";
                             if (radiationLevel > 0) {
                                 int statLoss = GetStatLossForRadiationLevel(RADIATION_HR_INDEX, radiationLevel);
-                                healingRateExt += "\n\t\u2022 " + (statLoss > 0 ? ("|" + COLOR_DEBUFF + " -" + statLoss):("|" + COLOR_BUFF + " " + statLoss)) + "|" + COLOR_REGULAR + "  from radiation";
+                                healingRateExt += "\n\t\u2022 " + (statLoss > 0 ? ("|" + COLOR_DEBUFF + " -" + statLoss + "%"):("|" + COLOR_BUFF + " " + statLoss + "%")) + "|" + COLOR_REGULAR + "  from radiation";
+                            }
+                            if (chosen.Stat[ST_HEALING_RATE] > 10) {
+                                healingRateExt += "\n\t\u2022 " + "|" + COLOR_DEBUFF + " fixed +10% |" + COLOR_REGULAR + " because max is 10% of max life.";
+                            }
+                            if (chosen.Stat[ST_HEALING_RATE] < 3) {
+                                healingRateExt += "\n\t\u2022 " + "|" + COLOR_DEBUFF + " fixed +3% |" + COLOR_REGULAR + " because min is 3% of max life";
+                            }
+                            if (chosen.Param[TRAIT_FAST_METABOLISM] > 0) {
+                                healingRateExt += "\n\t\u2022 " + "|" + COLOR_BUFF + " -30 seconds|" + COLOR_REGULAR + "  because of Fast Metabolism";
+                            }
+                            if (chosen.Param[PE_WAY_OF_THE_FRUIT] > 0) {
+                                if (chosen.Param[TRAIT_FAST_METABOLISM] > 0) {
+                                    healingRateExt += "\n\t\u2022 " + "|" + COLOR_BUFF + " -10 seconds|" + COLOR_REGULAR + "  because of Way of the Fruit (if recently eaten fruit)";
+                                } else {
+                                    healingRateExt += "\n\t\u2022 " + "|" + COLOR_BUFF + " -20 seconds|" + COLOR_REGULAR + "  because of Way of the Fruit (if recently eaten fruit)";
+                                }
                             }
                             healingRateExt += "\n\n";
 
@@ -344,14 +380,15 @@ class CTooltips {
                            + "\n\u2022 Effects: " + (carryWeightDif < 0 ? ("|" + COLOR_DEBUFF + " ") : ("|" + COLOR_BUFF + " +")) + (carryWeightDif/1000) + " kg" + "|" + COLOR_GREEN + " ";
                            carryWeightExt += "\n\n";
 
+            int radiationResistDif = chosen.Stat[ST_RADIATION_RESISTANCE] - chosen.StatBase[ST_RADIATION_RESISTANCE] - chosen.Stat[ST_ENDURANCE]*2;
             radiationResistExt = "\nCurrent: " + "|" + COLOR_BUFF + " " +  chosen.Stat[ST_RADIATION_RESISTANCE] + "|" + COLOR_GREEN + " "
-                            + "\n\u2022 Base: " + (chosen.StatBase[ST_RADIATION_RESISTANCE] + chosen.Stat[ST_ENDURANCE]*2) + ""
+                            + "\n\u2022 Base: " + "|" + COLOR_BUFF + " " + (chosen.StatBase[ST_RADIATION_RESISTANCE] + chosen.Stat[ST_ENDURANCE]*2) + "|" + COLOR_GREEN + " "
                             + "\n\t\u2022 " + "|" + COLOR_BUFF + " +" + chosen.Stat[ST_ENDURANCE]*2 + "|" + COLOR_REGULAR + "  from Endurance";
                             if (chosen.Perk[PE_SNAKEATER] > 0) {
                                 radiationResistExt += "\n\t\u2022 " + "|" + COLOR_BUFF + " +5" + "|" + COLOR_REGULAR + "  from Snakeater perk";
                             }
                             if (chosen.Perk[PE_RAD_RESISTANCE] > 0) {
-                                radiationResistExt += "\n\t\u2022 " + "|" + COLOR_BUFF + " +30" + "|" + COLOR_REGULAR + "  from Rad Resistance perk";
+                                radiationResistExt += "\n\t\u2022 " + "|" + COLOR_BUFF + " +10" + "|" + COLOR_REGULAR + "  from Rad Resistance perk";
                             }
             radiationResistExt += "\n\u2022 Effects: " + (radiationResistDif < 0 ? ("|" + COLOR_DEBUFF + " ") : ("|" + COLOR_BUFF + " +")) + radiationResistDif + "|" + COLOR_GREEN + " ";
                             if (armorRadResist != 0) {
@@ -361,6 +398,19 @@ class CTooltips {
                                 radiationResistExt += "\n\t\u2022 " + "|" + COLOR_BUFF + " +25" + "|" + COLOR_REGULAR + "  from Rad-X";
                             }
                             radiationResistExt += "\n\n";
+
+            int posionResistDif = chosen.Stat[ST_POISON_RESISTANCE] - chosen.StatBase[ST_POISON_RESISTANCE] - chosen.Stat[ST_ENDURANCE]*3;
+            poisonResistExt = "\nCurrent: " + "|" + COLOR_BUFF + " " +  chosen.Stat[ST_POISON_RESISTANCE] + "|" + COLOR_GREEN + " "
+                            + "\n\u2022 Base: " + "|" + COLOR_BUFF + " " + (chosen.StatBase[ST_POISON_RESISTANCE] + chosen.Stat[ST_ENDURANCE]*3) + "|" + COLOR_GREEN + " "
+                            + "\n\t\u2022 " + "|" + COLOR_BUFF + " +" + chosen.Stat[ST_ENDURANCE]*3 + "|" + COLOR_REGULAR + "  from Endurance";
+                            if (chosen.Perk[PE_SNAKEATER] > 0) {
+                                poisonResistExt += "\n\t\u2022 " + "|" + COLOR_BUFF + " +10" + "|" + COLOR_REGULAR + "  from Snakeater perk";
+                            }
+                            if (chosen.Perk[PE_RAD_RESISTANCE] > 0) {
+                                poisonResistExt += "\n\t\u2022 " + "|" + COLOR_BUFF + " +5" + "|" + COLOR_REGULAR + "  from Rad Resistance perk";
+                            }
+            poisonResistExt += "\n\u2022 Effects: " + (posionResistDif < 0 ? ("|" + COLOR_DEBUFF + " ") : ("|" + COLOR_BUFF + " +")) + posionResistDif + "|" + COLOR_GREEN + " ";
+                            poisonResistExt += "\n\n";
 
             if (valid(bodyArmor)) {
                 if (chosen.Param[ST_CURRENT_ARMOR_PERK] > 0) {
@@ -917,7 +967,8 @@ class CTooltips {
         tooltipsValueExt.insertLast(pipReference + resistExt);
 
         tooltipsKey.insertLast(ST_POISON_RESISTANCE);
-        tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(ST_POISON_RESISTANCE)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(ST_POISON_RESISTANCE)) + pipText);
+        tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(ST_POISON_RESISTANCE)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(ST_POISON_RESISTANCE)) + pipText
+                                 + pipStatus + poisonResistExt);
         tooltipsValueExt.insertLast(pipReference + noData);
 
         tooltipsKey.insertLast(ST_RADIATION_RESISTANCE);

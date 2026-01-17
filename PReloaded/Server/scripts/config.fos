@@ -251,6 +251,13 @@ void InitializeGame()                  // Export
     for (uint i = ST_STRENGTH; i <= ST_LUCK; i++) {
         SetParameterChangeBehaviour(i, "parameters@changedParam_Special");
     }
+    SetParameterChangeBehaviour(ST_MAX_LIFE, "parameters@changedParam_AnyJustRefreshTooltips");
+    SetParameterChangeBehaviour(ST_MAX_LIFE_EXT, "parameters@changedParam_AnyJustRefreshTooltips");
+    SetParameterChangeBehaviour(ST_ACTION_POINTS, "parameters@changedParam_AnyJustRefreshTooltips");
+    SetParameterChangeBehaviour(ST_ACTION_POINTS_EXT, "parameters@changedParam_AnyJustRefreshTooltips");
+    SetParameterChangeBehaviour(ST_MAX_MOVE_AP, "parameters@changedParam_AnyJustRefreshTooltips");
+    SetParameterChangeBehaviour(ST_MELEE_DAMAGE, "parameters@changedParam_AnyJustRefreshTooltips");
+
     for (uint i = ST_STRENGTH_EXT; i <= ST_LUCK_EXT; i++) {
         SetParameterChangeBehaviour(i, "parameters@changedParam_AnyJustRefreshTooltips");
     }
