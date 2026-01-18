@@ -393,6 +393,10 @@ void r_ChangeSpecial(Critter& player, Critter@ npc, int val1, int val2, int val3
         changeSpecial(player, val3, val4);
         int maxLife = recalcMaxLife(player);
         player.StatBase[ST_MAX_LIFE] = maxLife;
+        int radiationResistBase = recalcRadiationResistBase(player);
+        player.StatBase[ST_RADIATION_RESISTANCE] = radiationResistBase;
+        int radiationResistExt = recalcRadiationResistExt(player);
+        player.StatBase[ST_RADIATION_RESISTANCE_EXT] = radiationResistExt;
     }
 }
 
@@ -858,6 +862,10 @@ void r_RemoveTrait(Critter& player, Critter@ npc, int val) {
     }
     int maxLife = recalcMaxLife(player);
     player.StatBase[ST_MAX_LIFE] = maxLife;
+    int radiationResistBase = recalcRadiationResistBase(player);
+    player.StatBase[ST_RADIATION_RESISTANCE] = radiationResistBase;
+    int radiationResistExt = recalcRadiationResistExt(player);
+    player.StatBase[ST_RADIATION_RESISTANCE_EXT] = radiationResistExt;
 }
 
 void r_AddTrait(Critter& player, Critter@ npc, int val) {
@@ -868,6 +876,10 @@ void r_AddTrait(Critter& player, Critter@ npc, int val) {
     }
     int maxLife = recalcMaxLife(player);
     player.StatBase[ST_MAX_LIFE] = maxLife;
+    int radiationResistBase = recalcRadiationResistBase(player);
+    player.StatBase[ST_RADIATION_RESISTANCE] = radiationResistBase;
+    int radiationResistExt = recalcRadiationResistExt(player);
+    player.StatBase[ST_RADIATION_RESISTANCE_EXT] = radiationResistExt;
 }
 
 bool canRemoveTrait(Critter& player, uint traitIndex, string@ reason) {
@@ -3008,7 +3020,7 @@ int recalcMaxLife(Critter& cr) {
             MutationLog("\t\t+30 from Lifegiver(" + i + ")");
         }
     }
-    MutationLog("Critter <" + cr.Name + ">: StatBase[ST_MAX_LIFE] = " + cr.StatBase[ST_MAX_LIFE] + ", life = " + life + " (StatBase[ST_MAX_LIFE] = " + cr.StatBase[ST_MAX_LIFE_EXT] + ")");
+    MutationLog("Critter <" + cr.Name + ">: StatBase[ST_MAX_LIFE] = " + cr.StatBase[ST_MAX_LIFE] + ", life = " + life + " (StatBase[ST_MAX_LIFE_EXT] = " + cr.StatBase[ST_MAX_LIFE_EXT] + ")");
     MutationLog("\t\t2*ST = " + cr.StatBase[ST_STRENGTH]*2 + ", 3*EN = " + cr.StatBase[ST_ENDURANCE]*3 + " -> " + (life + cr.StatBase[ST_STRENGTH]*2 + cr.StatBase[ST_ENDURANCE]*3) + " == " + cr.Stat[ST_MAX_LIFE]);
 
     //  safety check if some of the stat bonuses are skewed
@@ -3020,5 +3032,51 @@ int recalcMaxLife(Critter& cr) {
 
     return life;
 }
+
+int recalcRadiationResistBase(Critter& cr) {
+    int base = 0;
+    //  EN does not need to calculated because it's part of the extensions and dynamic
+    if (cr.Perk[PE_SNAKEATER] > 0) {
+        base += 5;
+    }
+    if (cr.Perk[PE_RAD_RESISTANCE] > 0) {
+        base += 10;
+    }
+    MutationLog("Critter <" + cr.Name + ">: RADIATION STATS");
+    MutationLog("\tStatBase[ST_RAD_RESIST] = " + cr.StatBase[ST_RADIATION_RESISTANCE] + " vs " + base + " calculated as base");
+    return base;
+}
+
+int recalcRadiationResistExt(Critter& cr) {
+    int ext = 0;
+    //  armor bonus is calculated via extensions so it's dynamic, but not armor base resist
+    int armorRadResist = 0;
+    Item@ bodyArmor = cr.GetItem(0, SLOT_ARMOR);
+    if (valid(bodyArmor)) {
+        switch (bodyArmor.Proto.Armor_Perk) {
+            case ARMOR_PERK_POWERED: armorRadResist = 35; break;
+            case ARMOR_PERK_ADVANCED_I:
+            case ARMOR_PERK_ADVANCED_II: armorRadResist = 40; break;
+            case ARMOR_PERK_LEATHER_JACKET: armorRadResist = 5; break;
+            case ARMOR_PERK_LEATHER_ARMOR: armorRadResist = 10; break;
+            case ARMOR_PERK_THERMAL_LEATHER: armorRadResist = 35; break;
+            case ARMOR_PERK_COMBAT: armorRadResist = 25; break;
+            case ARMOR_PERK_METAL: armorRadResist = 15; break;
+            case ARMOR_PERK_TESLA: armorRadResist = 35; break;
+            case ARMOR_PERK_CAMOUFLAGE_HP: armorRadResist = 10; break;
+        }
+    }
+    if (armorRadResist != 0) {
+        ext += armorRadResist;
+    }
+    if (cr.Timeout[TO_RAD_X] > 0) {
+        ext += 25;
+    }
+    MutationLog("Critter <" + cr.Name + ">: RADIATION STATS");
+    MutationLog("\tStatBase[ST_RAD_RESIST_EXT] = " + cr.StatBase[ST_RADIATION_RESISTANCE_EXT] + " vs " + ext + " calculated as ext");
+    return ext;
+}
+
+
 
 #endif 	//	__MUTATION_FEATURE__
