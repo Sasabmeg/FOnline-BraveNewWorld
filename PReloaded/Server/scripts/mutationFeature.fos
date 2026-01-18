@@ -2134,7 +2134,7 @@ void r_RemovePerk(Critter& player, Critter@ npc, int val) {
     if (canRemovePerk(player, perkIndex, reason)) {
         removePerk(player, perkIndex);
         int maxLife = recalcMaxLife(player);
-        player.StatBase[ST_MAX_LIFE] = maxLife;
+        //player.StatBase[ST_MAX_LIFE] = maxLife;
     } else {
         MutationLog("MUTATION DIALONG ERROR: RESULT - CANNOT REMOVE PERK: " + getPerkName(perkIndex) + ", player: " + player.Name + ", reason: " + reason);
     }
@@ -2146,7 +2146,7 @@ void r_AddPerk(Critter& player, Critter@ npc, int val) {
     if (canAddPerk(player, perkIndex, reason)) {
         addPerk(player, perkIndex);
         int maxLife = recalcMaxLife(player);
-        player.StatBase[ST_MAX_LIFE] = maxLife;
+        //player.StatBase[ST_MAX_LIFE] = maxLife;
     } else {
         MutationLog("MUTATION DIALOG ERROR: RESULT - CANNOT ADD PERK: " + getPerkName(perkIndex) + ", player: " + player.Name + ", reason: " + reason);
     }
@@ -2990,7 +2990,6 @@ int recalcMaxLife(Critter& cr) {
     int life = 0;
     //  base life at character creation
 
-
     MutationLog("Critter <" + cr.Name + ">");
     MutationLog("\t\t+168 flat");
     life += 168;
@@ -3002,19 +3001,12 @@ int recalcMaxLife(Critter& cr) {
     int level = cr.StatBase[ST_LEVEL] <= int(__LevelCap) ? cr.StatBase[ST_LEVEL] : int(__LevelCap);
     life += 4 * (level - 1);
     MutationLog("\t\t+" + 4*(level-1) + " = 4 * (level - 1)");
-    /*
-    for (int level = 2; level <= cr.StatBase[ST_LEVEL]; level++) {
-        //  extra life per level
-        if (level <= int(__LevelCap)) {
-            MutationLog("\t\t+" + (enduranceBonus / 8) + " (enduranceBonus / 8)");
-            life += 4;                 // Add max hp
-        }
-    }*/
 
-    if (cr.PerkBase[PE_LIFEGIVER] > 0)
-    for (int i = 1; i <= cr.PerkBase[PE_LIFEGIVER]; i++) {
-        life += 30;
-        MutationLog("\t\t+30 from Lifegiver(" + i + ")");
+    if (cr.PerkBase[PE_LIFEGIVER] > 0) {
+        for (int i = 1; i <= cr.PerkBase[PE_LIFEGIVER]; i++) {
+            life += 30;
+            MutationLog("\t\t+30 from Lifegiver(" + i + ")");
+        }
     }
     MutationLog("Critter <" + cr.Name + ">: StatBase[ST_MAX_LIFE] = " + cr.StatBase[ST_MAX_LIFE] + ", life = " + life + " (StatBase[ST_MAX_LIFE] = " + cr.StatBase[ST_MAX_LIFE_EXT] + ")");
     MutationLog("\t\t2*ST = " + cr.StatBase[ST_STRENGTH]*2 + ", 3*EN = " + cr.StatBase[ST_ENDURANCE]*3 + " -> " + (life + cr.StatBase[ST_STRENGTH]*2 + cr.StatBase[ST_ENDURANCE]*3) + " == " + cr.Stat[ST_MAX_LIFE]);

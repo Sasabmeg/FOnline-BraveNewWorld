@@ -327,6 +327,30 @@ class CTooltips {
                     + "\n\u2022 Base: " + chosen.StatBase[ST_LUCK]
                     + "\n\u2022 Effects: " + (luckDif < 0 ? ("|" + COLOR_DEBUFF + " ") : ("|" + COLOR_BUFF + " +")) + luckDif + "|" + COLOR_REGULAR + " ";
 
+            int maxLifeBase = chosen.StatBase[ST_MAX_LIFE] + chosen.Stat[ST_ENDURANCE]*3 + chosen.Stat[ST_STRENGTH]*2;
+            int maxLifeDif = chosen.Stat[ST_MAX_LIFE] - maxLifeBase;
+            maxLifeExt = "\nCurrent: " + "|" + COLOR_BUFF + " " + chosen.Stat[ST_MAX_LIFE] + "|" + COLOR_GREEN + " "
+                        + "\n\u2022 Base: " + "|" + COLOR_BUFF + " " + maxLifeBase + "|" + COLOR_GREEN + " "
+                        + "\n\t\u2022 " + "|" + COLOR_BUFF + " +168|" + COLOR_REGULAR + "  from Base"
+                        + "\n\t\t\u2022 " + "|" + COLOR_REGULAR + " +15|" + COLOR_REGULAR + "  for all creatures"
+                        + "\n\t\t\u2022 " + "|" + COLOR_REGULAR + " +40|" + COLOR_REGULAR + "  for all humanoids"
+                        + "\n\t\t\u2022 " + "|" + COLOR_REGULAR + " +113|" + COLOR_REGULAR + "  for all players";
+                        if (chosen.Stat[ST_LEVEL] > 1) {
+                            maxLifeExt += "\n\t\u2022 " + "|" + COLOR_BUFF + " +" + (CLAMP(chosen.Stat[ST_LEVEL] - 1, 0, 23) * 4) + "|" + COLOR_REGULAR + "  from level up";
+                        }
+                        maxLifeExt += "\n\t\u2022 " + "|" + COLOR_BUFF + " +" + chosen.Stat[ST_STRENGTH]*2 + "|" + COLOR_REGULAR + "  from Strength"
+                        + "\n\t\u2022 " + "|" + COLOR_BUFF + " +" + chosen.Stat[ST_ENDURANCE]*3 + "|" + COLOR_REGULAR + "  from Endurance";
+                        if (chosen.Param[TRAIT_BRUTISH_HULK] > 0) {
+                            maxLifeExt += "\n\t\u2022 " + "|" + COLOR_BUFF + " +12|" + COLOR_REGULAR + "  from Brutish Hulk trait";
+                        }
+                        if (chosen.Perk[PE_LIFEGIVER] == 1) {
+                            maxLifeExt += "\n\t\u2022 " + "|" + COLOR_BUFF + " +" + (chosen.Perk[PE_LIFEGIVER]*30) + "|" + COLOR_REGULAR + "  from Lifegiver perk";
+                        } else if (chosen.Perk[PE_LIFEGIVER] > 1) {
+                            maxLifeExt += "\n\t\u2022 " + "|" + COLOR_BUFF + " +" + (chosen.Perk[PE_LIFEGIVER]*30) + "|" + COLOR_REGULAR + "  from Lifegiver(" + chosen.Perk[PE_LIFEGIVER] + ") perks";
+                        }
+            maxLifeExt += "\n\u2022 Effects: " + (maxLifeDif < 0 ? ("|" + COLOR_DEBUFF + " ") : ("|" + COLOR_BUFF + " +")) + maxLifeDif + "|" + COLOR_GREEN + " ";
+                        maxLifeExt += "\n\n";
+
             int healingRateBase = chosen.StatBase[ST_HEALING_RATE] + 7 + chosen.Stat[ST_ENDURANCE] / 2;
             int healingRateDif = chosen.Stat[ST_HEALING_RATE] - healingRateBase;
             healingRateExt = "\nCurrent: " + "|" + COLOR_BUFF + " " +  CLAMP(chosen.Stat[ST_HEALING_RATE], 3, 10) + "% |" + COLOR_REGULAR + " max life every ";
@@ -841,13 +865,15 @@ class CTooltips {
                                     + "\n\u2022 Spearfishing, cooking and such.");
         //  Hit Points and Damaged parts
         tooltipsKey.insertLast(ST_MAX_LIFE);
-        tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(ST_MAX_LIFE)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(ST_MAX_LIFE)) + pipText);
+        tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(ST_MAX_LIFE)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(ST_MAX_LIFE)) + pipText
+                                    + pipStatus + maxLifeExt);
         tooltipsValueExt.insertLast(pipReference + notes
                                     + "\n\u2022 Formula:"
                                     + "\n\t\u2022 168 base HP for players"
                                     + "\n\t\u2022 +4 HP per level until level 24"
                                     + "\n\t\u2022 +2 HP for each ST special (dynamic)"
                                     + "\n\t\u2022 +3 HP for each EN special (dynamic)"
+                                    + "\n\t\u2022 +12 HP Brutish Hulk trait"
                                     + "\n\t\u2022 +30 HP for each Lifegiver perk rank");
 
         tooltipsKey.insertLast(DAMAGE_POISONED);
