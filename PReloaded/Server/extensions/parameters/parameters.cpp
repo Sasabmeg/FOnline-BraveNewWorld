@@ -197,7 +197,7 @@ EXPORT int getParam_Strength(CritterMutual& cr, uint)
 		}
 	}
 
-	if (cr.Params[PE_ADRENALINE_RUSH] > 0 && cr.Params[ST_CURRENT_HP] < getParam_MaxLife(cr, 0)) {
+	if (cr.Params[PE_ADRENALINE_RUSH] > 0 && cr.Params[ST_CURRENT_HP] < getParam_MaxLife(cr, 0) / 2) {
 		val += 3;
 	}
 
