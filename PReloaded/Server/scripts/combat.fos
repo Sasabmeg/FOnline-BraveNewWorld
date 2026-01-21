@@ -1210,6 +1210,7 @@ void ApplyDamage(AttackStruct& attack, Critter& target, uint rounds, bool isCrit
     uint     aim = attack.Aim;
     uint     extraMessage = 0;
     uint     extraMessageSelf = 0;
+	bool     isHeadAttack = attack.AimHead;
     bool     isShotgun = (valid(attack.Ammo) && (attack.Ammo.Ammo_Caliber == 11));
     bool     isBurst = (rounds > 1);
     bool     isGrenade = attack.WeaponSubtype == WS_THROWING && (attack.DmgType == DAMAGE_TYPE_PLASMA || attack.DmgType == DAMAGE_TYPE_EMP || attack.DmgType == DAMAGE_TYPE_EXPLODE || attack.DmgType == DAMAGE_TYPE_FIRE);   // like in fo2
@@ -1254,13 +1255,27 @@ void ApplyDamage(AttackStruct& attack, Critter& target, uint rounds, bool isCrit
 
     //  BNW STONEWALL REWORKS - HEAVY ARMOR GIVES STONEWALL OR IMPROVES PERK IF TAKEN
     uint stonewallRank = 0;
+    uint stonewallRankHead = 0;
     if (target.PerkBase[PE_STONEWALL] > 0) {
         stonewallRank++;
+        stonewallRankHead++;
     }
     if (valid(usedArmor)) {
         uint armorPerk = usedArmor.Proto.Armor_Perk;
         if (armorPerk < 10 || (armorPerk >= ARMOR_PERK_METAL  && armorPerk < ARMOR_PERK_METAL + 10) || armorPerk == ARMOR_PERK_HEAVY) {
             stonewallRank++;
+        }
+        //  head
+        if (isHeadAttack) {
+            switch (usedArmor.GetProtoId()) {
+                case PID_METAL_HELMET:
+                case PID_METAL_HELMET_MK2:
+                case PID_FRONT_PLATED_METAL_HELMET:
+                case PID_TESLA_HELMET:
+                case PID_POWER_HELMET:
+                    stonewallRankHead++;
+                    break;
+            }
         }
     }
 
@@ -1271,7 +1286,7 @@ void ApplyDamage(AttackStruct& attack, Critter& target, uint rounds, bool isCrit
     }
     if (valid(usedArmor)) {
         uint armorPerk = usedArmor.Proto.Armor_Perk;
-        if ((armorPerk >= ARMOR_PERK_COMBAT  && armorPerk < ARMOR_PERK_COMBAT + 10) || armorPerk == ARMOR_PERK_MEDIUM) {
+        if ((armorPerk >= ARMOR_PERK_COMBAT && armorPerk < ARMOR_PERK_COMBAT + 10) || armorPerk == ARMOR_PERK_MEDIUM) {
             ironLimbsRank++;
         }
     }
@@ -1803,21 +1818,19 @@ void ApplyDamage(AttackStruct& attack, Critter& target, uint rounds, bool isCrit
                 if (isDummyTraining) {
                     dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , Target is already KO";
                 }
-			} else if (FLAG(eff, HF_KNOCKDOWN) && stonewallRank > 0) {
+			} else if (FLAG(eff, HF_KNOCKDOWN) && (stonewallRank > 0 || stonewallRankHead > 0)) {
+                int stonewallRoll = Random(1, 100);
 			    if (aim != HIT_LOCATION_EYES && aim != HIT_LOCATION_HEAD) {
-                    int stonewallRoll = Random(1, 100);
-                    int resistFactor = ((CLAMP(target.Stat[ST_STRENGTH], 1, 4 + target.Stat[ST_CHARISMA])
-                                        + CLAMP(target.Stat[ST_ENDURANCE], 1, 6 + target.Stat[ST_CHARISMA]))
-                                         * 3) + 15 * stonewallRank;
+                    int resistFactor = (target.Param[PE_WASTELANDERS_RESILIENCE] > 0 ? 25 : 0) + ((CLAMP(target.Stat[ST_STRENGTH], 1, 5 + target.Stat[ST_CHARISMA])) * 5) + 20 * stonewallRank;
+                    resistFactor = CLAMP(resistFactor, 0, 95);
                     if (resistFactor > stonewallRoll) {
                         UNSETFLAG(eff, HF_KNOCKDOWN);
                         if (isDummyTraining) {
                             dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , Knockdown avert by Stonewall: |" + COLOR_DTEXT_BONUS + " SUCCESS";
                             dummyInfo += "|" + COLOR_DTEXT_REGULAR + "  ( ST = |" + COLOR_DTEXT_BONUS + " " + target.Stat[ST_STRENGTH];
-                            dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , EN = |" + COLOR_DTEXT_BONUS + " " + target.Stat[ST_ENDURANCE];
                             dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , CH = |" + COLOR_DTEXT_BONUS + " " + target.Stat[ST_CHARISMA];
                             dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , StonewallRank (armor + perk) = |" + COLOR_DTEXT_BONUS + " " + stonewallRank;
-                            dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , Formula = |" + COLOR_DTEXT_BONUS + " 3 * (CLAMP(ST, 1, CH+4) + CLAMP(EN, 1, CH+6)) + 15*StonewallRank";
+                            dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , Formula = |" + COLOR_DTEXT_BONUS + " WR(25) + (CLAMP(ST, 1, CH+4) + 20*StonewallRank";
                             dummyInfo += "|" + COLOR_DTEXT_REGULAR + "  ) Resist Factor = |" + COLOR_DTEXT_BONUS + " " + resistFactor;
                             dummyInfo += "|" + COLOR_DTEXT_REGULAR + "  vs Roll = |" + COLOR_DTEXT_ROLL + " " + stonewallRoll;
                         }
@@ -1825,16 +1838,35 @@ void ApplyDamage(AttackStruct& attack, Critter& target, uint rounds, bool isCrit
                         if (isDummyTraining) {
                             dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , Knockdown avert by Stonewall: |" + COLOR_DTEXT_MALUS + " FAIL";
                             dummyInfo += "|" + COLOR_DTEXT_REGULAR + "  ( ST = |" + COLOR_DTEXT_BONUS + " " + target.Stat[ST_STRENGTH];
-                            dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , EN = |" + COLOR_DTEXT_BONUS + " " + target.Stat[ST_ENDURANCE];
                             dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , CH = |" + COLOR_DTEXT_BONUS + " " + target.Stat[ST_CHARISMA];
-                            dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , Formula = |" + COLOR_DTEXT_BONUS + " 3 * (CLAMP(ST, 1, CH+4) + CLAMP(EN, 1, CH+6)) + 15*StonewallRank";
+                            dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , StonewallRank (armor + perk) = |" + COLOR_DTEXT_BONUS + " " + stonewallRank;
+                            dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , Formula = |" + COLOR_DTEXT_BONUS + " WR(25) + (CLAMP(ST, 1, CH+4) + 20*StonewallRank";
                             dummyInfo += "|" + COLOR_DTEXT_REGULAR + "  ) Resist Factor = |" + COLOR_DTEXT_BONUS + " " + resistFactor;
                             dummyInfo += "|" + COLOR_DTEXT_REGULAR + "  vs Roll = |" + COLOR_DTEXT_ROLL + " " + stonewallRoll;
                         }
                     }
 			    } else {
-                    if (isDummyTraining) {
-                        dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , Stonewall not applicable for head shot knockdowns";
+                    int resistFactorHead = (target.Param[PE_WASTELANDERS_RESILIENCE] > 0 ? 5 : 0) + target.Stat[ST_LUCK] + (target.Param[PE_MAN_OF_STEEL] > 0 ? 5 : 0) + 10 * stonewallRankHead;
+                    resistFactorHead = CLAMP(resistFactorHead, 0, 35);
+                    if (resistFactorHead > stonewallRoll) {
+                        UNSETFLAG(eff, HF_KNOCKDOWN);
+                        if (isDummyTraining) {
+                            dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , Knockdown avert by Stonewall: |" + COLOR_DTEXT_BONUS + " SUCCESS";
+                            dummyInfo += "|" + COLOR_DTEXT_REGULAR + "  ( LK = |" + COLOR_DTEXT_BONUS + " " + target.Stat[ST_LUCK];
+                            dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , StonewallRankHead (helmet + perk) = |" + COLOR_DTEXT_BONUS + " " + stonewallRankHead;
+                            dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , Formula = |" + COLOR_DTEXT_BONUS + " WR(5) + LK + MoS(5) + 10*StonewallRankHead CAP(35)";
+                            dummyInfo += "|" + COLOR_DTEXT_REGULAR + "  ) Resist Factor = |" + COLOR_DTEXT_BONUS + " " + resistFactorHead;
+                            dummyInfo += "|" + COLOR_DTEXT_REGULAR + "  vs Roll = |" + COLOR_DTEXT_ROLL + " " + stonewallRoll;
+                        }
+                    } else {
+                        if (isDummyTraining) {
+                            dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , Knockdown avert by Stonewall: |" + COLOR_DTEXT_MALUS + " FAIL";
+                            dummyInfo += "|" + COLOR_DTEXT_REGULAR + "  ( LK = |" + COLOR_DTEXT_BONUS + " " + target.Stat[ST_LUCK];
+                            dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , StonewallRankHead (helmet + perk) = |" + COLOR_DTEXT_BONUS + " " + stonewallRankHead;
+                            dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , Formula = |" + COLOR_DTEXT_BONUS + " WR(5) + LK + MoS(5) + 10*StonewallRankHead CAP(35)";
+                            dummyInfo += "|" + COLOR_DTEXT_REGULAR + "  ) Resist Factor = |" + COLOR_DTEXT_BONUS + " " + resistFactorHead;
+                            dummyInfo += "|" + COLOR_DTEXT_REGULAR + "  vs Roll = |" + COLOR_DTEXT_ROLL + " " + stonewallRoll;
+                        }
                     }
 			    }
 			}
@@ -1848,29 +1880,26 @@ void ApplyDamage(AttackStruct& attack, Critter& target, uint rounds, bool isCrit
             } else if (FLAG(eff, HF_KNOCKOUT) && stonewallRank > 0) {
 			    if (aim != HIT_LOCATION_EYES && aim != HIT_LOCATION_HEAD) {
                     int stonewallRoll = Random(1, 100);
-                    int resistFactor = ((CLAMP(target.Stat[ST_STRENGTH], 1, 4 + target.Stat[ST_CHARISMA])
-                                        + CLAMP(target.Stat[ST_ENDURANCE], 1, 6 + target.Stat[ST_CHARISMA]))
-                                         * 3) + 15 * stonewallRank;
+                    int resistFactor = (target.Param[PE_WASTELANDERS_RESILIENCE] > 0 ? 25 : 0) + ((CLAMP(target.Stat[ST_INTELLECT], 1, 5 + target.Stat[ST_CHARISMA])) * 5) + 20 * stonewallRank;
+                    resistFactor = CLAMP(resistFactor, 0, 95);
                     if (resistFactor > stonewallRoll) {
                         UNSETFLAG(eff, HF_KNOCKOUT);
                         SETFLAG(eff, HF_KNOCKDOWN);
                         if (isDummyTraining) {
                             dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , Knockout avert by Stonewall: |" + COLOR_DTEXT_BONUS + " SUCCESS - reduced KO effect to KD";
-                            dummyInfo += "|" + COLOR_DTEXT_REGULAR + "  ( ST = |" + COLOR_DTEXT_BONUS + " " + target.Stat[ST_STRENGTH];
-                            dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , EN = |" + COLOR_DTEXT_BONUS + " " + target.Stat[ST_ENDURANCE];
+                            dummyInfo += "|" + COLOR_DTEXT_REGULAR + "  ( IN = |" + COLOR_DTEXT_BONUS + " " + target.Stat[ST_INTELLECT];
                             dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , CH = |" + COLOR_DTEXT_BONUS + " " + target.Stat[ST_CHARISMA];
                             dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , StonewallRank (armor + perk) = |" + COLOR_DTEXT_BONUS + " " + stonewallRank;
-                            dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , Formula = |" + COLOR_DTEXT_BONUS + " 3 * (CLAMP(ST, 1, CH+4) + CLAMP(EN, 1, CH+6)) + 15*StonewallRank";
+                            dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , Formula = |" + COLOR_DTEXT_BONUS + " 25 + (CLAMP(IN, 1, CH+5) + 20*StonewallRank";
                             dummyInfo += "|" + COLOR_DTEXT_REGULAR + "  ) Resist Factor = |" + COLOR_DTEXT_BONUS + " " + resistFactor;
                             dummyInfo += "|" + COLOR_DTEXT_REGULAR + "  vs Roll = |" + COLOR_DTEXT_ROLL + " " + stonewallRoll;
                         }
                     } else {
                         if (isDummyTraining) {
                             dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , Knockout avert by Stonewall: |" + COLOR_DTEXT_MALUS + " FAIL";
-                            dummyInfo += "|" + COLOR_DTEXT_REGULAR + "  ( ST = |" + COLOR_DTEXT_BONUS + " " + target.Stat[ST_STRENGTH];
-                            dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , EN = |" + COLOR_DTEXT_BONUS + " " + target.Stat[ST_ENDURANCE];
+                            dummyInfo += "|" + COLOR_DTEXT_REGULAR + "  ( IN = |" + COLOR_DTEXT_BONUS + " " + target.Stat[ST_INTELLECT];
                             dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , CH = |" + COLOR_DTEXT_BONUS + " " + target.Stat[ST_CHARISMA];
-                            dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , Formula = |" + COLOR_DTEXT_BONUS + " 3 * (CLAMP(ST, 1, CH+4) + CLAMP(EN, 1, CH+6)) + 15*StonewallRank";
+                            dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , Formula = |" + COLOR_DTEXT_BONUS + " 25 + (CLAMP(IN, 1, CH+5) + 20*StonewallRank";
                             dummyInfo += "|" + COLOR_DTEXT_REGULAR + "  ) Resist Factor = |" + COLOR_DTEXT_BONUS + " " + resistFactor;
                             dummyInfo += "|" + COLOR_DTEXT_REGULAR + "  vs Roll = |" + COLOR_DTEXT_ROLL + " " + stonewallRoll;
                         }
@@ -2091,15 +2120,15 @@ void ApplyDamage(AttackStruct& attack, Critter& target, uint rounds, bool isCrit
 
     if (validAttacker && (weaponPerk == WEAPON_PERK_KNOCKBACK)) {
         int knockbackRoll = Random(1, 100);
-        int knockbackMagnitude = 45 + attacker.Stat[ST_STRENGTH] * 5 - target.Stat[ST_STRENGTH] * 3 - stonewallRank * 30;
-		if (knockbackRoll <= knockbackMagnitude) {
+        int knockbackMagnitude = (target.Param[PE_WASTELANDERS_RESILIENCE] > 0 ? 15 : 45) + attacker.Stat[ST_STRENGTH] * 5 - target.Stat[ST_STRENGTH] * 3 - stonewallRank * 15;
+		if (knockbackMagnitude >= knockbackRoll) {
             SETFLAG(eff, HF_KNOCKDOWN);
             if (isDummyTraining) {
                 dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , Weap Perk Enhanced Knockout |" + COLOR_DTEXT_BONUS + " SUCCESS";
                 dummyInfo += "|" + COLOR_DTEXT_REGULAR + " ( Attacker ST = |" + COLOR_DTEXT_BONUS + " " + attacker.Stat[ST_STRENGTH];
                 dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , Defender ST = |" + COLOR_DTEXT_MALUS + " " + target.Stat[ST_STRENGTH];
                 dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , StonewallRank = |" + COLOR_DTEXT_MALUS + " " + stonewallRank;
-                dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , Formula: 45 + 5*ST_Att - 3*ST_Tar - 30*StonewallRank ) = |" + COLOR_DTEXT_BONUS + " " + knockbackMagnitude;
+                dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , Formula: WR(15) + 5*ST_Att - 3*ST_Tar - 15*StonewallRank ) = |" + COLOR_DTEXT_BONUS + " " + knockbackMagnitude;
                 dummyInfo += "|" + COLOR_DTEXT_REGULAR + "  vs Roll = |" + COLOR_DTEXT_ROLL + " " + knockbackRoll + " )";
             }
 		} else {
@@ -2108,7 +2137,7 @@ void ApplyDamage(AttackStruct& attack, Critter& target, uint rounds, bool isCrit
                 dummyInfo += "|" + COLOR_DTEXT_REGULAR + " ( Attacker ST = |" + COLOR_DTEXT_BONUS + " " + attacker.Stat[ST_STRENGTH];
                 dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , Defender ST = |" + COLOR_DTEXT_MALUS + " " + target.Stat[ST_STRENGTH];
                 dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , StonewallRank = |" + COLOR_DTEXT_MALUS + " " + stonewallRank;
-                dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , Formula: 45 + 5*ST_Att - 3*ST_Tar - 30*StonewallRank ) = |" + COLOR_DTEXT_BONUS + " " + knockbackMagnitude;
+                dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , Formula: WR(15) + 5*ST_Att - 3*ST_Tar - 15*StonewallRank ) = |" + COLOR_DTEXT_BONUS + " " + knockbackMagnitude;
                 dummyInfo += "|" + COLOR_DTEXT_REGULAR + "  vs Roll = |" + COLOR_DTEXT_ROLL + " " + knockbackRoll + " )";
             }
 		}
@@ -2117,41 +2146,41 @@ void ApplyDamage(AttackStruct& attack, Critter& target, uint rounds, bool isCrit
 
     // Heavy Handed Trait
     if (validAttacker && attack.IsUnarmed && attacker.Trait[TRAIT_HEAVY_HANDED] > 0) {
-        int heavyHandedStrengthMalus = -8;
+        int heavyHandedStrengthMalus = -30;
         if (valid(realWeapon)) {
             switch(realWeapon.Proto.ProtoId) {
                 case PID_SPIKED_KNUCKLES:
-                    heavyHandedStrengthMalus = -6;
+                    heavyHandedStrengthMalus = -20;
                     break;
                 case PID_BRASS_KNUCKLES:
-                    heavyHandedStrengthMalus = -4;
+                    heavyHandedStrengthMalus = -10;
                     break;
                 case PID_POWER_FIST:
-                    heavyHandedStrengthMalus = -2;
+                    heavyHandedStrengthMalus = 0;
                     break;
                 case PID_MEGA_POWER_FIST:
-                    heavyHandedStrengthMalus = -2;
+                    heavyHandedStrengthMalus = 0;
                     break;
             }
         }
-        int heavyHandedRoll = Random(1, 20);
-        int finalHeavyHandedValue = 10 + attacker.Stat[ST_STRENGTH] + heavyHandedStrengthMalus - 5 * stonewallRank;
+        int heavyHandedRoll = Random(1, 100);
+        int finalHeavyHandedValue = (target.Param[PE_WASTELANDERS_RESILIENCE] > 0 ? 50 : 90) + (attacker.Stat[ST_STRENGTH]*5 - target.Stat[ST_STRENGTH]*3) + heavyHandedStrengthMalus - 30 * stonewallRank;
         if (finalHeavyHandedValue >= heavyHandedRoll) {
             SETFLAG(eff, HF_KNOCKDOWN);
             if (isDummyTraining) {
                 dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , Trait Heavy Handed |" + COLOR_DTEXT_BONUS + " SUCCESS";
-                dummyInfo += "|" + COLOR_DTEXT_REGULAR + " ( 10 + Attacker ST = |" + COLOR_DTEXT_BONUS + " " + attacker.Stat[ST_STRENGTH];
-                dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , Weapon Modifier = |" + COLOR_DTEXT_MALUS + " " + heavyHandedStrengthMalus;
-                dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , 5 * Stonewall Rank = |" + COLOR_DTEXT_MALUS + " " + stonewallRank;
+                dummyInfo += "|" + COLOR_DTEXT_REGULAR + " ( WR(50) + Attacker ST = |" + COLOR_DTEXT_BONUS + " " + attacker.Stat[ST_STRENGTH];
+                dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , + Weapon Modifier = |" + COLOR_DTEXT_MALUS + " " + heavyHandedStrengthMalus;
+                dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , - 30 * Stonewall Rank = |" + COLOR_DTEXT_MALUS + " " + stonewallRank;
                 dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , Final Value = |" + COLOR_DTEXT_BONUS + " " + finalHeavyHandedValue;
                 dummyInfo += "|" + COLOR_DTEXT_REGULAR + "  vs Roll = |" + COLOR_DTEXT_ROLL + " " + heavyHandedRoll;
             }
         } else {
             if (isDummyTraining) {
                 dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , Trait Heavy Handed |" + COLOR_DTEXT_MALUS + " FAIL";
-                dummyInfo += "|" + COLOR_DTEXT_REGULAR + " ( 10 + Attacker ST = |" + COLOR_DTEXT_BONUS + " " + attacker.Stat[ST_STRENGTH];
-                dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , Weapon Modifier = |" + COLOR_DTEXT_MALUS + " " + heavyHandedStrengthMalus;
-                dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , 5 * Stonewall Rank = |" + COLOR_DTEXT_MALUS + " " + stonewallRank;
+                dummyInfo += "|" + COLOR_DTEXT_REGULAR + " ( WR(50) + Attacker ST = |" + COLOR_DTEXT_BONUS + " " + attacker.Stat[ST_STRENGTH];
+                dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , + Weapon Modifier = |" + COLOR_DTEXT_MALUS + " " + heavyHandedStrengthMalus;
+                dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , - 30 * Stonewall Rank = |" + COLOR_DTEXT_MALUS + " " + stonewallRank;
                 dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , Final Value = |" + COLOR_DTEXT_BONUS + " " + finalHeavyHandedValue;
                 dummyInfo += "|" + COLOR_DTEXT_REGULAR + "  vs Roll = |" + COLOR_DTEXT_ROLL + " " + heavyHandedRoll;
             }
@@ -2167,14 +2196,14 @@ void ApplyDamage(AttackStruct& attack, Critter& target, uint rounds, bool isCrit
             burntKdBonus = target.Param[ST_EX_BURNT];
         }
         if (weapPid == PID_FLAMER) {
-            knockdownMagnitude = CLAMP((50 + burntKdBonus) / (stonewallRank + 1), 0, 50);
+            knockdownMagnitude = CLAMP(((target.Param[PE_WASTELANDERS_RESILIENCE] > 0 ? 25 : 75) + burntKdBonus) / (stonewallRank + 1), 0, (target.Param[PE_WASTELANDERS_RESILIENCE] > 0 ? 50 : 75));
         }
         if (weapPid == PID_IMPROVED_FLAMETHROWER) {
-            knockdownMagnitude = CLAMP((75 + burntKdBonus) / (stonewallRank + 1), 0, 75);
+            knockdownMagnitude = CLAMP(((target.Param[PE_WASTELANDERS_RESILIENCE] > 0 ? 50 : 100) + burntKdBonus) / (stonewallRank + 1), 0, (target.Param[PE_WASTELANDERS_RESILIENCE] > 0 ? 75 : 95));
         }
         Item@ bodyArmor = target.GetItem(0, SLOT_ARMOR);
         if (valid(bodyArmor) && bodyArmor.GetProtoId() == PID_THERMAL_LEATHER_ARMOR) {
-            knockdownMagnitude /= 2;
+            knockdownMagnitude /= 3;
         }
 		if (knockdownRoll <= knockdownMagnitude) {
             SETFLAG(eff, HF_KNOCKDOWN);
@@ -2182,7 +2211,7 @@ void ApplyDamage(AttackStruct& attack, Critter& target, uint rounds, bool isCrit
                 dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , Flamer Weap Knockdown |" + COLOR_DTEXT_BONUS + " SUCCESS";
                 dummyInfo += "|" + COLOR_DTEXT_REGULAR + "  ( Defender Burnt bonus = |" + COLOR_DTEXT_BONUS + " " + burntKdBonus;
                 dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , StonewallRank = |" + COLOR_DTEXT_MALUS + " " + stonewallRank;
-                dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , Formula: (Flamer(50)/Incinerator(75) + burntBonus) / (1 + StonewallRank) / ThermalLeather(2) = |" + COLOR_DTEXT_BONUS + " " + knockdownMagnitude;
+                dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , Formula: (Flamer(50)/Incinerator(75) + burntBonus) / (1 + StonewallRank) / ThermalLeather(3) = |" + COLOR_DTEXT_BONUS + " " + knockdownMagnitude;
                 dummyInfo += "|" + COLOR_DTEXT_REGULAR + "  vs Roll = |" + COLOR_DTEXT_ROLL + " " + knockdownRoll + " |" + COLOR_DTEXT_REGULAR + " )";
             }
 		} else {
@@ -2190,7 +2219,7 @@ void ApplyDamage(AttackStruct& attack, Critter& target, uint rounds, bool isCrit
                 dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , Flamer Weap Knockdown |" + COLOR_DTEXT_MALUS + " FAIL";
                 dummyInfo += "|" + COLOR_DTEXT_REGULAR + " ( Defender Burnt bonus = |" + COLOR_DTEXT_BONUS + " " + burntKdBonus;
                 dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , StonewallRank = |" + COLOR_DTEXT_MALUS + " " + stonewallRank;
-                dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , Formula: (Flamer(50)/Incinerator(100) + burntBonus) / (1 + StonewallRank) / ThermalLeather(2) = |" + COLOR_DTEXT_BONUS + " " + knockdownMagnitude;
+                dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , Formula: (Flamer(50)/Incinerator(100) + burntBonus) / (1 + StonewallRank) / ThermalLeather(3) = |" + COLOR_DTEXT_BONUS + " " + knockdownMagnitude;
                 dummyInfo += "|" + COLOR_DTEXT_REGULAR + "  vs Roll = |" + COLOR_DTEXT_ROLL + " " + knockdownRoll + " |" + COLOR_DTEXT_REGULAR + " )";
             }
 		}
@@ -2758,9 +2787,7 @@ void ApplyDamage(AttackStruct& attack, Critter& target, uint rounds, bool isCrit
             //  ST-5 *20 > random(1, 105) vs explosion/shotgun KD roll changed to ST-2 *10 > random(1, 100) roll
             //  meaning chance to avoid such KD changed for chars with 10 -> 6 ST from 95%, 76%, 57%, 38%, 19% into 80%, 70%, 60%, 50%, 40%
             int stonewallRoll = Random(1, 100);
-            int resistFactor = ((CLAMP(target.Stat[ST_STRENGTH], 1, 4 + target.Stat[ST_CHARISMA])
-                                + CLAMP(target.Stat[ST_ENDURANCE], 1, 6 + target.Stat[ST_CHARISMA]))
-                                 * 3) + 15 * stonewallRank;
+            int resistFactor = (target.Param[PE_WASTELANDERS_RESILIENCE] > 0 ? 25 : 0) + ((CLAMP(target.Stat[ST_STRENGTH], 1, 5 + target.Stat[ST_CHARISMA])) * 5) + 20 * stonewallRank;
             int explosiveRocketPenalty = 0;
             int armorPiercingRocketPenalty = 0;
             int explosionDistance = 0;
@@ -2799,7 +2826,7 @@ void ApplyDamage(AttackStruct& attack, Critter& target, uint rounds, bool isCrit
                         dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , Armor Piercing Rocket penalty = |" + COLOR_DTEXT_MALUS + " " + armorPiercingRocketPenalty;
                         dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , distance = |" + COLOR_DTEXT_MALUS + " " + explosionDistance;
                     }
-                    dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , Formula = |" + COLOR_DTEXT_BONUS + " 3 * (CLAMP(ST, 1, CH+4) + CLAMP(EN, 1, CH+6)) + 15*StonewallRank";
+                    dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , Formula = |" + COLOR_DTEXT_BONUS + " 25 * (CLAMP(ST, 1, CH+5) + 20*StonewallRank";
                     dummyInfo += "|" + COLOR_DTEXT_REGULAR + "  ) Resist Factor = |" + COLOR_DTEXT_BONUS + " " + resistFactor;
                     dummyInfo += "|" + COLOR_DTEXT_REGULAR + "  vs Roll = |" + COLOR_DTEXT_ROLL + " " + stonewallRoll;
                 }
@@ -2818,7 +2845,7 @@ void ApplyDamage(AttackStruct& attack, Critter& target, uint rounds, bool isCrit
                         dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , Armor Piercing Rocket penalty = |" + COLOR_DTEXT_MALUS + " " + armorPiercingRocketPenalty;
                         dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , distance = |" + COLOR_DTEXT_BONUS + " " + explosionDistance;
                     }
-                    dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , Formula = |" + COLOR_DTEXT_BONUS + " 3 * (CLAMP(ST, 1, CH+4) + CLAMP(EN, 1, CH+6)) + 15*StonewallRank";
+                    dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , Formula = |" + COLOR_DTEXT_BONUS + " 25 * (CLAMP(ST, 1, CH+5) + 20*StonewallRank";
                     dummyInfo += "|" + COLOR_DTEXT_REGULAR + "  ) Resist Factor = |" + COLOR_DTEXT_BONUS + " " + resistFactor;
                     dummyInfo += "|" + COLOR_DTEXT_REGULAR + "  vs Roll = |" + COLOR_DTEXT_ROLL + " " + stonewallRoll;
                 }
@@ -2839,22 +2866,24 @@ void ApplyDamage(AttackStruct& attack, Critter& target, uint rounds, bool isCrit
             }
             if (stonewallRank > 0) {
                 int stonewallRoll = Random(1, 100);
-                if ((target.Stat[ST_STRENGTH] - 3 + stonewallRank) * 10 > stonewallRoll) {
+                int resistShotgunRounds = (target.Param[PE_WASTELANDERS_RESILIENCE] > 0 ? 15 : 0) + (5 * target.Stat[ST_STRENGTH]) + 15 * stonewallRank;
+
+                if ((target.Param[PE_WASTELANDERS_RESILIENCE] > 0 ? 15 : -15) + 5 * target.Stat[ST_STRENGTH] + 15 * stonewallRank > stonewallRoll) {
                     isKo = false;
                     if (isDummyTraining) {
                         dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , Shotgun KD avert by Stonewall: |" + COLOR_DTEXT_BONUS + " SUCCESS";
-                        dummyInfo += "|" + COLOR_DTEXT_REGULAR + " ( ST = |" + COLOR_DTEXT_BONUS + " " + target.Stat[ST_STRENGTH];
-                        dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , Modifier = |" + COLOR_DTEXT_MALUS + " -3";
-                        dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , StonewallRank (armor + perk) = |" + COLOR_DTEXT_BONUS + " " + stonewallRank;
+                        dummyInfo += "|" + COLOR_DTEXT_REGULAR + " ( WR(15) ";
+                        dummyInfo += "|" + COLOR_DTEXT_REGULAR + " + 5 * ST = |" + COLOR_DTEXT_BONUS + " " + target.Stat[ST_STRENGTH];
+                        dummyInfo += "|" + COLOR_DTEXT_REGULAR + " + 15 * StonewallRank (armor + perk) = |" + COLOR_DTEXT_BONUS + " " + stonewallRank;
                         dummyInfo += "|" + COLOR_DTEXT_REGULAR + "  vs Roll = |" + COLOR_DTEXT_ROLL + " " + stonewallRoll + "|" + COLOR_DTEXT_REGULAR + "  )";
                     }
                 } else {
                     isKo = true;
                     if (isDummyTraining) {
                         dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , Shotgun KD avert by Stonewall: |" + COLOR_DTEXT_MALUS + " FAIL";
-                        dummyInfo += "|" + COLOR_DTEXT_REGULAR + " ( ST = |" + COLOR_DTEXT_BONUS + " " + target.Stat[ST_STRENGTH];
-                        dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , Modifier = |" + COLOR_DTEXT_MALUS + " -3";
-                        dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , StonewallRank (armor + perk) = |" + COLOR_DTEXT_BONUS + " " + stonewallRank;
+                        dummyInfo += "|" + COLOR_DTEXT_REGULAR + " ( WR(15) ";
+                        dummyInfo += "|" + COLOR_DTEXT_REGULAR + " + 5 * ST = |" + COLOR_DTEXT_BONUS + " " + target.Stat[ST_STRENGTH];
+                        dummyInfo += "|" + COLOR_DTEXT_REGULAR + " + 15 * StonewallRank (armor + perk) = |" + COLOR_DTEXT_BONUS + " " + stonewallRank;
                         dummyInfo += "|" + COLOR_DTEXT_REGULAR + "  vs Roll = |" + COLOR_DTEXT_ROLL + " " + stonewallRoll + "|" + COLOR_DTEXT_REGULAR + "  )";
                     }
                 }

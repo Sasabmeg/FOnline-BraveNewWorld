@@ -113,7 +113,9 @@ class CTooltips {
         string armorClassExt = "";
         string ActionPointsExt = "";
         string meleeDamageExt = "";
+        string stonewallExt = "";
         CritterCl@ chosen = GetChosen();
+
         if (valid(chosen)) {
             //Message("InitTooltips :: chosen valid");
             int helmetNormalDT = chosen.Stat[ST_NORMAL_ABSORB];
@@ -129,6 +131,13 @@ class CTooltips {
             int helmetExplodeDT = chosen.Stat[ST_EXPLODE_ABSORB];
             int helmetExplodeDR = chosen.Stat[ST_EXPLODE_RESIST];
             int armorRadResist = 0;
+            int stonewallRank = 0;
+            int stonewallRankHead = 0;
+            if (chosen.Param[PE_STONEWALL] > 0) {
+                stonewallRank = 1;
+                stonewallRankHead = 1;
+            }
+            int thermalLeatherArmorFlamerResist = 1;
 
             ItemCl@ helmet = chosen.GetItem(0, SLOT_HEAD);
             ItemCl@ bodyArmor = chosen.GetItem(0, SLOT_ARMOR);
@@ -147,18 +156,20 @@ class CTooltips {
                 helmetExplodeDT -= bodyArmor.Proto.Armor_DTExplode;
                 helmetExplodeDR -= bodyArmor.Proto.Armor_DRExplode;
                 switch (bodyArmor.Proto.Armor_Perk) {
-                    case ARMOR_PERK_POWERED: armorRadResist = 35; break;
+                    case ARMOR_PERK_POWERED: armorRadResist = 35; stonewallRank += 1; break;
                     case ARMOR_PERK_ADVANCED_I:
                     case ARMOR_PERK_ADVANCED_II: armorRadResist = 40; break;
                     case ARMOR_PERK_LEATHER_JACKET: armorRadResist = 5; break;
                     case ARMOR_PERK_LEATHER_ARMOR: armorRadResist = 10; break;
                     case ARMOR_PERK_THERMAL_LEATHER: armorRadResist = 35; break;
                     case ARMOR_PERK_COMBAT: armorRadResist = 25; break;
-                    case ARMOR_PERK_METAL: armorRadResist = 15; break;
-                    case ARMOR_PERK_TESLA: armorRadResist = 35; break;
+                    case ARMOR_PERK_METAL: armorRadResist = 15; stonewallRank += 1; break;
+                    case ARMOR_PERK_TESLA: armorRadResist = 35; stonewallRank += 1; break;
                     case ARMOR_PERK_CAMOUFLAGE_HP: armorRadResist = 10; break;
                 }
-
+                if (bodyArmor.GetProtoId() == PID_THERMAL_LEATHER_ARMOR) {
+                    thermalLeatherArmorFlamerResist = 3;
+                }
             }
             if (valid(helmet)) {
                 helmetNormalDT += helmet.Proto.Armor_DTNormal;
@@ -173,6 +184,16 @@ class CTooltips {
                 helmetElectrDR += helmet.Proto.Armor_DRElectr;
                 helmetExplodeDT += helmet.Proto.Armor_DTExplode;
                 helmetExplodeDR += helmet.Proto.Armor_DRExplode;
+                switch (helmet.GetProtoId()) {
+                    case PID_METAL_HELMET:
+                    case PID_METAL_HELMET_MK2:
+                    case PID_FRONT_PLATED_METAL_HELMET:
+                    case PID_TESLA_HELMET:
+                    case PID_POWER_HELMET:
+                        stonewallRankHead++;
+                        break;
+                }
+
             }
 
             resistExt = "\nBase:\t\t\t\t\t\tBuff:\t\t\t\t\t\tBody:\t\t\t\t\t\tHead:"
@@ -323,6 +344,31 @@ class CTooltips {
                                 agilityExt += "\n\t\u2022 " + "|" + COLOR_DEBUFF + " AG 1 " + "|" + COLOR_REGULAR + " because both arms crippled";
                             }
                         }
+                        if (valid(bodyArmor)) {
+                            if (chosen.Param[ST_CURRENT_ARMOR_PERK] > 0) {
+                                switch(chosen.Param[ST_CURRENT_ARMOR_PERK]) {
+                                    case ARMOR_PERK_POWERED:
+                                    case ARMOR_PERK_ADVANCED_I:
+                                    case ARMOR_PERK_ADVANCED_II:
+                                    case ARMOR_PERK_METAL:
+                                    case ARMOR_PERK_TESLA:
+                                        agilityExt += "\n\t\u2022 " + "|" + COLOR_DEBUFF + " -3" + "|" + COLOR_REGULAR + "  from Heavy Armor";
+                                        break;
+                                    case ARMOR_PERK_LEATHER_JACKET:
+                                    case ARMOR_PERK_LEATHER_ARMOR:
+                                    case ARMOR_PERK_THERMAL_LEATHER:
+                                        agilityExt += "\n\t\u2022 " + "|" + COLOR_BUFF + " +1" + "|" + COLOR_REGULAR + "  from Light Armor";
+                                        break;
+                                    case ARMOR_PERK_COMBAT:
+                                        agilityExt += "\n\t\u2022 " + "|" + COLOR_DEBUFF + " -1" + "|" + COLOR_REGULAR + "  from Medium Armor";
+                                        break;
+                                    case ARMOR_PERK_CAMOUFLAGE_HP:
+                                    default:
+                                        break;
+                                }
+                            }
+                        }
+
             luckExt = "\nCurrent:"
                     + "\n\u2022 Base: " + chosen.StatBase[ST_LUCK]
                     + "\n\u2022 Effects: " + (luckDif < 0 ? ("|" + COLOR_DEBUFF + " ") : ("|" + COLOR_BUFF + " +")) + luckDif + "|" + COLOR_REGULAR + " ";
@@ -332,9 +378,9 @@ class CTooltips {
             maxLifeExt = "\nCurrent: " + "|" + COLOR_BUFF + " " + chosen.Stat[ST_MAX_LIFE] + "|" + COLOR_GREEN + " "
                         + "\n\u2022 Base: " + "|" + COLOR_BUFF + " " + maxLifeBase + "|" + COLOR_GREEN + " "
                         + "\n\t\u2022 " + "|" + COLOR_BUFF + " +168|" + COLOR_REGULAR + "  from Base"
-                        + "\n\t\t\u2022 " + "|" + COLOR_REGULAR + " +15|" + COLOR_REGULAR + "  for all creatures"
-                        + "\n\t\t\u2022 " + "|" + COLOR_REGULAR + " +40|" + COLOR_REGULAR + "  for all humanoids"
-                        + "\n\t\t\u2022 " + "|" + COLOR_REGULAR + " +113|" + COLOR_REGULAR + "  for all players";
+                        + "\n\t\t\u2022 " + "|" + COLOR_LGREEN + " +15|" + COLOR_REGULAR + "  for all creatures"
+                        + "\n\t\t\u2022 " + "|" + COLOR_LGREEN + " +40|" + COLOR_REGULAR + "  for all humanoids"
+                        + "\n\t\t\u2022 " + "|" + COLOR_LGREEN + " +113|" + COLOR_REGULAR + "  for all players";
                         if (chosen.Stat[ST_LEVEL] > 1) {
                             maxLifeExt += "\n\t\u2022 " + "|" + COLOR_BUFF + " +" + (CLAMP(chosen.Stat[ST_LEVEL] - 1, 0, 23) * 4) + "|" + COLOR_REGULAR + "  from level up";
                         }
@@ -436,30 +482,74 @@ class CTooltips {
             poisonResistExt += "\n\u2022 Effects: " + (posionResistDif < 0 ? ("|" + COLOR_DEBUFF + " ") : ("|" + COLOR_BUFF + " +")) + posionResistDif + "|" + COLOR_GREEN + " ";
                             poisonResistExt += "\n\n";
 
-            if (valid(bodyArmor)) {
-                if (chosen.Param[ST_CURRENT_ARMOR_PERK] > 0) {
-                    switch(chosen.Param[ST_CURRENT_ARMOR_PERK]) {
-                        case ARMOR_PERK_POWERED:
-                        case ARMOR_PERK_ADVANCED_I:
-                        case ARMOR_PERK_ADVANCED_II:
-                        case ARMOR_PERK_METAL:
-                        case ARMOR_PERK_TESLA:
-                            agilityExt += "\n\t\u2022 " + "|" + COLOR_DEBUFF + " -3" + "|" + COLOR_REGULAR + "  from Heavy Armor";
-                            break;
-                        case ARMOR_PERK_LEATHER_JACKET:
-                        case ARMOR_PERK_LEATHER_ARMOR:
-                        case ARMOR_PERK_THERMAL_LEATHER:
-                            agilityExt += "\n\t\u2022 " + "|" + COLOR_BUFF + " +1" + "|" + COLOR_REGULAR + "  from Light Armor";
-                            break;
-                        case ARMOR_PERK_COMBAT:
-                            agilityExt += "\n\t\u2022 " + "|" + COLOR_DEBUFF + " -1" + "|" + COLOR_REGULAR + "  from Medium Armor";
-                            break;
-                        case ARMOR_PERK_CAMOUFLAGE_HP:
-                        default:
-                            break;
-                    }
-                }
-            }
+            // stonewall body resists
+            int stonewallResistKnockdown = 25 + ((CLAMP(chosen.Stat[ST_STRENGTH], 1, 5 + chosen.Stat[ST_CHARISMA])) * 5) + 20 * stonewallRank;
+            int stonewallDowngradeKnockout = 10 + ((CLAMP(chosen.Stat[ST_INTELLECT], 1, 5 + chosen.Stat[ST_CHARISMA])) * 3) + 10 * stonewallRank;
+            int stonewallFlamerResist0 = 100 - CLAMP(25 / (stonewallRank + 1) / thermalLeatherArmorFlamerResist, 0, 50);
+            int stonewallFlamerResist100 = 100 - CLAMP(125 / (stonewallRank + 1) / thermalLeatherArmorFlamerResist, 0, 50);
+            int stonewallIncineratorResist0 = 100 - CLAMP(50 / (stonewallRank + 1) / thermalLeatherArmorFlamerResist, 0, 75);
+            int stonewallIncineratorResist100 = 100 - CLAMP(150 / (stonewallRank + 1) / thermalLeatherArmorFlamerResist, 0, 75);
+            int knockbackWeaponPerkResist = CLAMP(100 - (15 + 10 * 5 - chosen.Param[ST_STRENGTH] * 3 - stonewallRank * 15), 0, 100);
+            int heavyHandedResist = 100 - (50 + (10*5 - chosen.Stat[ST_STRENGTH]*3) + 0 - 30 * stonewallRank);
+            int resistShotgunRounds = 15 + (5 * chosen.Stat[ST_STRENGTH]) + 15 * stonewallRank;
+            int spearThrowResist = 100 - 100 / (1+ stonewallRank);
+            //  stonewall head resist
+            int resistFactorHead = 5 + chosen.Stat[ST_LUCK] + (chosen.Param[PE_MAN_OF_STEEL] > 0 ? 5 : 0) + 15 * stonewallRankHead;
+
+            stonewallExt = ""
+                            + "\n\n\u2022 Stonewall resists values for: |" + COLOR_BUFF +" Body|" + COLOR_REGULAR + " "
+                            + "\n\t\u2022 " + "|" + COLOR_BUFF + " +" + CLAMP(stonewallResistKnockdown, 0, 95) + "%|" + COLOR_REGULAR + "  resist most Knockdowns (Explosion/Critical)" + (stonewallResistKnockdown > 95 ? " (reached cap of 95%)" : "")
+                            + "\n\t\t\u2022 " + "|" + COLOR_LGREEN + " +" + 25 + "%|" + COLOR_REGULAR + "  from Wastelander's Resilience"
+                            + "\n\t\t\u2022 " + "|" + COLOR_LGREEN + " +" + (CLAMP(chosen.Stat[ST_STRENGTH], 1, 5 + chosen.Stat[ST_CHARISMA]) * 5) + "%|" + COLOR_REGULAR + "  from Strength" + (chosen.Stat[ST_STRENGTH] > 5 + chosen.Stat[ST_CHARISMA] ? (" (capped by Charisma to " + (CLAMP(chosen.Stat[ST_STRENGTH], 1, 5 + chosen.Stat[ST_CHARISMA])) + " ST)") : "")
+                            + "\n\t\t\u2022 " + "|" + COLOR_LGREEN + " +" + (20 * stonewallRank) + "%|" + COLOR_REGULAR + "  from Stonewall" + (stonewallRank > 1 ? "(2)" : "")
+                            + "\n\t\u2022 " + "|" + COLOR_BUFF + " +" + stonewallDowngradeKnockout + "%|" + COLOR_REGULAR + "  downgrade Knockout to Knockdown"
+                            + "\n\t\t\u2022 " + "|" + COLOR_LGREEN + " +" + 10 + "%|" + COLOR_REGULAR + "  from Wastelander's Resilience"
+                            + "\n\t\t\u2022 " + "|" + COLOR_LGREEN + " +" + ((CLAMP(chosen.Stat[ST_INTELLECT], 1, 5 + chosen.Stat[ST_CHARISMA])) * 3) + "%|" + COLOR_REGULAR + "  from Intellect" + (chosen.Stat[ST_INTELLECT] > 5 + chosen.Stat[ST_CHARISMA] ? " (capped by Charisma to " + (CLAMP(chosen.Stat[ST_INTELLECT], 1, 5 + chosen.Stat[ST_CHARISMA])) + " IN)" : "")
+                            + "\n\t\t\u2022 " + "|" + COLOR_LGREEN + " +" + (10 * stonewallRank) + "%|" + COLOR_REGULAR + "  from Stonewall" + (stonewallRank > 1 ? "(2)" : "")
+                            + "\n\t\u2022 " + "|" + COLOR_BUFF + " +" + stonewallFlamerResist0 + "%-" + stonewallFlamerResist100 + "%|" + COLOR_REGULAR + "  Flamer resist (0% - 100% fire vulnerability)"
+                            + "\n\t\u2022 " + "|" + COLOR_BUFF + " +" + stonewallIncineratorResist0 + "%-" + stonewallIncineratorResist100 + "%|" + COLOR_REGULAR + "  Incinerator resist (0% - 100% fire vulnerability)"
+                            + "\n\t\u2022 " + "|" + COLOR_BUFF + " +" + knockbackWeaponPerkResist + "%|" + COLOR_REGULAR + "  Weapon Perk: Knockback resist (vs 10 ST attacker)"
+                            + "\n\t\t\u2022 " + "|" + COLOR_LGREEN + "  " + 55 + "%|" + COLOR_REGULAR + "  base chance to resist Weapon Perk: Knockback"
+                            + "\n\t\t\u2022 " + "|" + COLOR_DDGREEN + " -" + 50 + "%|" + COLOR_REGULAR + "  from attacker's Strength (10)"
+                            + "\n\t\t\u2022 " + "|" + COLOR_LGREEN + " +" + 30 + "%|" + COLOR_REGULAR + "  from Wastelander's Resilience"
+                            + "\n\t\t\u2022 " + "|" + COLOR_LGREEN + " +" + (3 * chosen.Stat[ST_STRENGTH]) + "%|" + COLOR_REGULAR + "  from Strength"
+                            + "\n\t\t\u2022 " + "|" + COLOR_LGREEN + " +" + (15 * stonewallRank) + "%|" + COLOR_REGULAR + "  from Stonewall" + (stonewallRank > 1 ? "(2)" : "")
+                            + "\n\t\u2022 " + "|" + COLOR_BUFF + " +" + heavyHandedResist + "%|" + COLOR_REGULAR + "  Heavy Handed resist (vs 10 ST attacker with Power Fist)"
+                            + "\n\t\t\u2022 " + "|" + COLOR_LGREEN + "  " + 10 + "%|" + COLOR_REGULAR + "  base chance to resist Heavy Handed"
+                            + "\n\t\t\u2022 " + "|" + COLOR_DDGREEN + " -" + 50 + "%|" + COLOR_REGULAR + "  from attacker's Strength (10)"
+                            + "\n\t\t\u2022 " + "|" + COLOR_LGREEN + " +" + 40 + "%|" + COLOR_REGULAR + "  from Wastelander's Resilience"
+                            + "\n\t\t\u2022 " + "|" + COLOR_LGREEN + " +" + (3 * chosen.Stat[ST_STRENGTH]) + "%|" + COLOR_REGULAR + "  from Strength"
+                            + "\n\t\t\u2022 " + "|" + COLOR_LGREEN + " +" + (30 * stonewallRank) + "%|" + COLOR_REGULAR + "  from Stonewall" + (stonewallRank > 1 ? "(2)" : "")
+                            + "\n\t\u2022 " + "|" + COLOR_BUFF + " +" + resistShotgunRounds + "%|" + COLOR_REGULAR + "  Shotgun Knockback resist"
+                            + "\n\t\t\u2022 " + "|" + COLOR_LGREEN + " +" + 15 + "%|" + COLOR_REGULAR + "  from Wastelander's Resilience"
+                            + "\n\t\t\u2022 " + "|" + COLOR_LGREEN + " +" + (5 * chosen.Stat[ST_STRENGTH]) + "%|" + COLOR_REGULAR + "  from Strength"
+                            + "\n\t\t\u2022 " + "|" + COLOR_LGREEN + " +" + (15 * stonewallRank) + "%|" + COLOR_REGULAR + "  from Stonewall" + (stonewallRank > 1 ? "(2)" : "")
+                            + "\n\t\u2022 " + "|" + COLOR_BUFF + " +" + spearThrowResist + "%|" + COLOR_REGULAR + "  Spear Throw direct hit Knockback resist"
+                            + "\n\n\u2022 Stonewall resists values for: |" + COLOR_BUFF +" Head|" + COLOR_REGULAR + " "
+                            + "\n\t\u2022 " + "|" + COLOR_BUFF + " +" + CLAMP(resistFactorHead, 0, 33) + "%|" + COLOR_REGULAR + "  resist Knockdowns from critical head shots" + (resistFactorHead > 33 ? " (reached cap of 33%)" : "")
+                            + "\n\t\t\u2022 " + "|" + COLOR_LGREEN + " +" + 5 + "%|" + COLOR_REGULAR + "  from Wastelander's Resilience"
+                            + "\n\t\t\u2022 " + "|" + COLOR_LGREEN + " +" + chosen.Stat[ST_LUCK] + "%|" + COLOR_REGULAR + "  from Luck";
+                            if (chosen.Param[PE_MAN_OF_STEEL] > 0) {
+                                stonewallExt += "\n\t\t\u2022 " + "|" + COLOR_LGREEN + " +" + 5 + "%|" + COLOR_REGULAR + "  from Man of Steel perk";
+                            }
+                            stonewallExt += "\n\t\t\u2022 " + "|" + COLOR_LGREEN + " +" + (15*stonewallRankHead) + "%|" + COLOR_REGULAR + "  from Stonewall Head" + (stonewallRankHead > 1 ? "(2)" : "")
+
+                            ;
+
+            stonewallExt += "\n\n\u2022 Effects: "
+                            + "\n\t\u2022 " + "|" + COLOR_BUFF + " +1|" + COLOR_REGULAR + "  Stonewall (both body and head) rank from Perk";
+                            if (stonewallRank > 1) {
+                                stonewallExt += "\n\t\u2022 " + "|" + COLOR_BUFF + " +1|" + COLOR_REGULAR + "  Stonewall rank from Heavy Armor";
+                            }
+                            if (thermalLeatherArmorFlamerResist > 1) {
+                                stonewallExt += "\n\t\u2022 " + "|" + COLOR_BUFF + " +" + thermalLeatherArmorFlamerResist + "|" + COLOR_REGULAR + "  Flame Attack Knockdown effect divider from Thermal Leather Armor";
+                            }
+                            if (stonewallRankHead > 1) {
+                                stonewallExt += "\n\t\u2022 " + "|" + COLOR_BUFF + " +1|" + COLOR_REGULAR + "  Stonewall head rank from Heavy Helmet";
+                            }
+                            stonewallExt += "\n\n";
+
+
             strengthExt += "\n\n";
             perceptionExt += "\n\n";
             enduranceExt += "\n\n";
@@ -485,7 +575,7 @@ class CTooltips {
                                  + "\n\u2022 Throwing Distance: 3*ST to reach weapon max. distance (+6 with Heave Ho!)"
                                  + "\n\u2022 Throwing Damage: min. ST/2, max. ST (more with Heave Ho!)"
                                  + "\n\u2022 To hit chance: if lower than weapon ST requirement then -20 To Hit for each missing ST"
-                                 + "\n\u2022 Stonewall Knockdown/Knockout resist: (clamp(ST, 1, CH+4) + clamp(EN, 1, CH+6) )*3 + 15*stonewallRank vs 1d100"
+                                 + "\n\u2022 Stonewall Knockdown/Knockout resist: 25 + 5*(CLAMP(ST, 1, CH+5) + 20*stonewallRank vs 1d100"
                                  + "\n\u2022 Iron Limbs Weapon Drop resist: (ST - 5) + 2*ironLimbsRank vs 1d10"
                                  + "\n\u2022 Heavy Handed Trait Knockdown chance: "
                                  + "\n\u2022 Electric Shock effect (cannot run) duration reduce: ");
@@ -506,7 +596,7 @@ class CTooltips {
                                  + jjText + pipStatus + enduranceExt);
         tooltipsValueExt.insertLast(pipReference
                                  + "\n\u2022 Hit Points: (Initial: 55 + 2*ST + EN) + (Per level: (30 + EN)/8)"
-                                 + "\n\u2022 Stonewall KD/KO resist: (clamp(ST, 1, CH+4) + clamp(EN, 1, CH+6) )*3 + 15*stonewallRank vs 1d100"
+                                 + "\n\u2022 Iron Limbs weapon drop/cripple resist: (clamp(ST, 1, CH+4) + clamp(EN, 1, CH+6) )*3 + 15*stonewallRank vs 1d100"
                                  + "\n\u2022 Enhanced Knockout Weapon perk resist factor.");
 
         tooltipsKey.insertLast(ST_CHARISMA);
@@ -515,7 +605,7 @@ class CTooltips {
                                  + "\n\n\"A group of travelers were gossiping about a special lady in New Reno today. It seems that she is able to turn even the most unfriendly punks to do her bidding. I was wondering if it was her Magnetic Personality or something else, after all New Reno is also famous of addictive substances like Jet.\""
                                  + jjText + pipStatus + charismaExt);
         tooltipsValueExt.insertLast(pipReference
-                                 + "\n\u2022 Stonewall: ST clamped with CH+4, EN clamped with CH+6 (ex: 9 ST with 1 CH means 5 ST in calculations)"
+                                 + "\n\u2022 Stonewall: ST clamped with CH+5(ex: 9 ST with 1 CH means 5 ST in calculations)"
                                  + "\n\u2022 Confident Shooter (old More Ranged Damage) Perk damage bonus (per bullet):"
                                  + "\n\t\u2022 1 + CLAMP(attacker.CH - (((target.CH + 1) * 2) / 3), 0, 4)"
                                  + "\n\t\u2022 ex: Att. CH6, Tar. CH5 bonus: 3"
@@ -1098,7 +1188,7 @@ class CTooltips {
                                      + notes
                                      + "\n\u2022 +1 Strength bonus."
                                      + "\n\u2022 Chance to knock down opponents with unarmed attacks."
-                                     + "\n\t\u2022 10 + ST + WeaponMalus - 5*StonewallRank vs 1d20"
+                                     + "\n\t\u2022 10 + ST + WeaponMalus - 7*StonewallRank vs 1d20"
                                      + "\n\t\u2022 StonewallRank: +1 from heavy armor and +1 from Stonewall perk, can be a total of 2."
                                      + "\n\t\u2022 WeaponMalus:"
                                      + "\n\t\t\u2022 Unarmed: -8, SpikedK: -6, BrassK: -4, PowerFists: -2"
@@ -1349,7 +1439,7 @@ class CTooltips {
 
         //  Level 9 Perks
         tooltipsKey.insertLast(PE_IRON_LIMBS);
-        tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(PE_STONEWALL)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(PE_STONEWALL)) + pipText);
+        tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(PE_IRON_LIMBS)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(PE_STONEWALL)) + pipText);
         tooltipsValueExt.insertLast(pipReference
                                      + notes
                                      + "\n\u2022 Gives ability to resist against arm and leg cripples."
@@ -1364,15 +1454,18 @@ class CTooltips {
                                      + "\n\t\u2022  Endurance >= 6");
 
         tooltipsKey.insertLast(PE_STONEWALL);
-        tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(PE_STONEWALL)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(PE_STONEWALL)) + pipText);
+        tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(PE_STONEWALL)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(PE_STONEWALL)) + pipText
+                                     + pipStatus + stonewallExt);
         tooltipsValueExt.insertLast(pipReference
                                      + notes
                                      + "\n\u2022 Gives ability to resist Knockdowns and Knockbacks."
                                      + "\n\t\u2022 Adds character +1 Stonewall rank and stack with Heavy Armor Perk."
                                      + "\n\t\u2022 Does not protect against Head/Eyes attacks KD/KO effects."
+                                     + "\n\u2022 Knockdown resist formula: 25 + 5*(CLAMP(ST, 1, CH+5) + 20*stonewallRank vs 1d100"
                                      + "\n\u2022 KO that are not from Head/Eyes can be downgraded to KD instead:"
-                                     + "\n\t\u2022 3 * (CLAMP(ST, 1, CH+4) + CLAMP(EN, 1, CH+6)) + 15 * StonewallRank vs 1d100"
-                                     + "\n\t\u2022 Final damage is increased by 20% and not per bullet."
+                                     + "\n\t\u2022 25 + 5*(CLAMP(IN, 1, CH+5) + 20*StonewallRank vs 1d100"
+                                     + "\n\u2022 KD that are not from Head/Eyes can be protected by wearing a helmet:"
+                                     + "\n\t\u2022 20 + 2*(CLAMP(IN, 1, CH+5) + LK vs 1d100"
                                      + requirements
                                      + "\n\t\u2022  Strength >= 6");
 
@@ -2550,6 +2643,18 @@ void SetInventoryDetailText(ItemCl& item) {
         }
         text += "\nBase price: " + item.Proto.Cost;
 
+        if (item.Proto.NeedBlueprint > 0) {
+            text += "\nNeeds blueprint!";
+            text += "\n\tChosen param[" + item.Proto.Blueprint_Param + "]: " + chosen.Param[item.Proto.Blueprint_Param];
+            text += "\n\tBlueprint ID = " + item.Proto.Blueprint_Id;
+            if (FLAG(chosen.Param[item.Proto.Blueprint_Param], (1 << item.Proto.Blueprint_Id))) {
+                text += "FLAG() = true";
+            } else {
+                text += "FLAG() = false";
+            }
+        } else {
+            text += "\nDoes NOT need blueprint!";
+        }
         // Weight
         string weightString = GetMsgStr(TEXTMSG_GAME, STR_ITEM_WEIGHT_GRAMM);
         if (item.Proto.Weight * item.GetCount() == 1) {
