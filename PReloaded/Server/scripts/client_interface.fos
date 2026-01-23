@@ -2597,7 +2597,7 @@ int getIntWMain_Y2() {
 
 void InitIndicators() // export
 {
-    Message("InitIndicators()");
+    //Message("InitIndicators()");
     IndicatorDraw = __IndicatorType != 1;
     CounterDraw = __IndicatorType != 0;
     __IndicatorType = 3;   // none
