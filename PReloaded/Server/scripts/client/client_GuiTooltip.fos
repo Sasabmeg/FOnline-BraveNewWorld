@@ -2643,6 +2643,7 @@ void SetInventoryDetailText(ItemCl& item) {
         }
         text += "\nBase price: " + item.Proto.Cost;
 
+        /*
         if (item.Proto.NeedBlueprint > 0) {
             text += "\nNeeds blueprint!";
             text += "\n\tChosen param[" + item.Proto.Blueprint_Param + "]: " + chosen.Param[item.Proto.Blueprint_Param];
@@ -2654,7 +2655,7 @@ void SetInventoryDetailText(ItemCl& item) {
             }
         } else {
             text += "\nDoes NOT need blueprint!";
-        }
+        }*/
         // Weight
         string weightString = GetMsgStr(TEXTMSG_GAME, STR_ITEM_WEIGHT_GRAMM);
         if (item.Proto.Weight * item.GetCount() == 1) {
