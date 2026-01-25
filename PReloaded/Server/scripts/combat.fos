@@ -414,6 +414,17 @@ void CombatAttack(Critter& cr, Critter& target, ProtoItem& weapon, uint8 weaponM
             }
             aim = HIT_LOCATION_HEAD;
         }
+        if (!isHthAttack) {
+            //  cannot aim eyes, without sharpshooter
+            if (cr.Param[PE_SHARPSHOOTER] == 0) {
+                if (isDummyTraining) {
+                    dummyInfo += "|" + COLOR_DTEXT_REGULAR + " Cannot hit eyes without sharpshooter. ";
+                }
+                aim = HIT_LOCATION_HEAD;
+            }
+        } else {
+            //  only weapons with knife animation in thrust mode can aim eyes, but we solve this later
+        }
     }
     if (isDummyTraining) {
         switch (aim) {
@@ -1215,6 +1226,7 @@ void ApplyDamage(AttackStruct& attack, Critter& target, uint rounds, bool isCrit
     bool     isBurst = (rounds > 1);
     bool     isGrenade = attack.WeaponSubtype == WS_THROWING && (attack.DmgType == DAMAGE_TYPE_PLASMA || attack.DmgType == DAMAGE_TYPE_EMP || attack.DmgType == DAMAGE_TYPE_EXPLODE || attack.DmgType == DAMAGE_TYPE_FIRE);   // like in fo2
 	bool     isSpearThrow = (valid(realWeapon) ? (realWeapon.Proto.ProtoId == PID_SHARPENED_POLE || realWeapon.Proto.ProtoId == PID_SPEAR || realWeapon.Proto.ProtoId == PID_SHARP_SPEAR) : false);
+    bool     isHthAttack = (attack.WeaponSubtype == WS_UNARMED);
 	//bool     isFireGeckoShell = (valid(attack.Ammo) && (attack.Ammo.ProtoId == PID_SHOTGUN_DRAGON_BREATH_SHELLS));
 	uint16   ammoPid = attack.ammoPid;
     if(valid(attack.Ammo)) ammoPid = attack.Ammo.ProtoId;
@@ -1365,6 +1377,34 @@ void ApplyDamage(AttackStruct& attack, Critter& target, uint rounds, bool isCrit
 			isSwing=false;
 			isThrust=true;
 		}
+	}
+
+    bool isKnifeAnimation = realWeapon.Proto.Weapon_Anim1 == ANIM1_KNIFE;
+    bool isSpearAnimation = realWeapon.Proto.Weapon_Anim1 == ANIM1_SPEAR;
+    bool isClubAnimation = realWeapon.Proto.Weapon_Anim1 == ANIM1_CLUB;
+    bool isCattleProdVariant = realWeapon.GetProtoId() == PID_CATTLE_PROD || realWeapon.GetProtoId() == PID_SUPER_CATTLE_PROD;
+    bool isSpikedFistVariant = realWeapon.GetProtoId() == PID_SPIKED_KNUCKLES;
+	if (aim == HIT_LOCATION_EYES) {
+        //  only melee weapon is thrust attack can aim for eyes
+        if (isHthAttack) {
+            if (isThrust || isSpikedFistVariant) {
+                if (isKnifeAnimation || isSpearAnimation || isCattleProdVariant || isSpikedFistVariant) {
+                    if (isDummyTraining) {
+                        dummyInfo += "|" + COLOR_DTEXT_REGULAR + " Aim eyes for melee: Thrust attack for knives, spears, spiked knuckles or cattle prods is allowed! \n";
+                    }
+                } else {
+                    aim = HIT_LOCATION_HEAD;
+                    if (isDummyTraining) {
+                        dummyInfo += "|" + COLOR_DTEXT_MALUS + " Aim eyes for non-knife melee: Not allowed! \n";
+                    }
+                }
+            } else {
+                aim = HIT_LOCATION_HEAD;
+                if (isDummyTraining) {
+                    dummyInfo += "|" + COLOR_DTEXT_MALUS + " Aim eyes for melee: Not a thrust attack! \n";
+                }
+            }
+        }
 	}
 
 	/*  // 30-08-2011 Cubik: bron spear itp w trybie Throwing NIE jest traktowana jako attack.WeaponSubtype == WS_MELEE!!! wiec ponizsze instrukcje sa niepotrzebne
@@ -2256,17 +2296,6 @@ void ApplyDamage(AttackStruct& attack, Critter& target, uint rounds, bool isCrit
 		//targetDT/=0.15;
 	//}
 
-	if (isThrust) {  // works similarly to AP ammo according to the original formula
-		attack.DMMod = 4;
-		attack.DDMod = 5;
-		attack.DRMod = -40;
-		//targetDR-=40;
-		//targetDR=CLAMP(targetDR,0,100);
-		//targetDT/=2;
-	}
-	// swing:thrust END
-
-
     int targetDR = target.GetDR(dmgType, attack.AimHead);
     int targetDT = target.GetDT(dmgType, attack.AimHead);
 
@@ -2275,7 +2304,6 @@ void ApplyDamage(AttackStruct& attack, Critter& target, uint rounds, bool isCrit
     int armorDR = target.GetArmorDR(dmgType, attack.AimHead);
     int armorDT = target.GetArmorDT(dmgType, attack.AimHead);
 
-
     if (isDummyTraining) {
         dummyInfo += "\n";
         dummyInfo += "|" + COLOR_DTEXT_CAPTION + " Damage Calculations :: ";
@@ -2283,6 +2311,26 @@ void ApplyDamage(AttackStruct& attack, Critter& target, uint rounds, bool isCrit
         dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , Target DT = |" + COLOR_DTEXT_BONUS + " " + targetDT;
         dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , DR = |" + COLOR_DTEXT_BONUS + " " + targetDR;
     }
+
+
+	if ((isThrust && (isKnifeAnimation || isSpearAnimation)) || isSpikedFistVariant) {
+        // OLD:
+        //works similarly to AP ammo according to the original formula
+        //targetDR-=40;
+        //targetDR=CLAMP(targetDR,0,100);
+        //targetDT/=2;
+
+        //  BNW:
+        //  only with piercing weapons, knives or spears
+        attack.DMMod = 4;
+        attack.DDMod = 5;
+        attack.DRMod = -40;
+        if (isDummyTraining) {
+            dummyInfo += "|" + COLOR_DTEXT_REGULAR + "  :: Thrust attack dmage mod: 4/5, -40 DR :: ";
+        }
+
+	}
+	// swing:thrust END
 
     if (target.Perk[PE_WASTELANDERS_RESILIENCE] > 0 && isBurst) {
         targetDR += 10;
@@ -2534,8 +2582,8 @@ void ApplyDamage(AttackStruct& attack, Critter& target, uint rounds, bool isCrit
             if (attack.sneakAttack) {
                 //  Silent Death effect
                 int distance = GetDistantion(attacker.HexX, attacker.HexY, target.HexX, target.HexY);
-                float sneakDistanceFactor = float(CLAMP((18 - distance), 1, 15)) / 15;
-                float sneakMultiplier = float(100 + attackerSneakSkill) / 200;
+                //float sneakDistanceFactor = float(CLAMP((18 - distance), 1, 15)) / 15;
+                float sneakMultiplier = 100 + float(attackerSneakSkill - 100) / 10;
                 float finalSneakAttackDamageMult = 1;
                 float knifeBonus = 0;
                 if (valid(realWeapon) && valid(realWeapon.Proto)) {
@@ -2545,14 +2593,14 @@ void ApplyDamage(AttackStruct& attack, Critter& target, uint rounds, bool isCrit
                 if (target.Perk[PE_WASTELANDERS_RESILIENCE] > 0) {
                     //  players or player like NPC's (boss, faction units)
                     if (attacker.Perk[PE_SILENT_DEATH] > 0) {
-                        finalSneakAttackDamageMult = CLAMP((sneakDistanceFactor * sneakMultiplier + knifeBonus) , 1, 1.4);
+                        finalSneakAttackDamageMult = CLAMP((sneakMultiplier), 100, 120) / 100;
                         rawDmg += 10 * knifeBonus;
                         rawDmg *= finalSneakAttackDamageMult;
                         if (isDummyTraining) {
                             dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , Silent Death knife damage bonus on Player(like) = |" + COLOR_DTEXT_BONUS + " " + 10 * knifeBonus;
                         }
                     } else {
-                        finalSneakAttackDamageMult = CLAMP((sneakDistanceFactor * sneakMultiplier + knifeBonus), 1, 1.4);
+                        finalSneakAttackDamageMult = CLAMP((sneakMultiplier), 100, 120) / 100;
                         rawDmg *= finalSneakAttackDamageMult;
                     }
                     if (isDummyTraining) {
@@ -2561,14 +2609,14 @@ void ApplyDamage(AttackStruct& attack, Critter& target, uint rounds, bool isCrit
                 } else {
                     //  non-player like NPC's
                     if (attacker.Perk[PE_SILENT_DEATH] > 0) {
-                        finalSneakAttackDamageMult = CLAMP((1 + sneakDistanceFactor * sneakMultiplier + knifeBonus), 1, 2);
+                        finalSneakAttackDamageMult = CLAMP((sneakMultiplier + 20), 100, 140) / 100;
                         rawDmg += 20 * knifeBonus;
                         rawDmg *= finalSneakAttackDamageMult;
                         if (isDummyTraining) {
                             dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , Silent Death knife dmg bonus on NPC(like)= |" + COLOR_DTEXT_BONUS + " " + 20 * knifeBonus;
                         }
                     } else {
-                        finalSneakAttackDamageMult = CLAMP((1 + sneakDistanceFactor * sneakMultiplier + knifeBonus), 1, 2);
+                        finalSneakAttackDamageMult = CLAMP((sneakMultiplier + 20), 100, 140) / 100;
                         rawDmg += 10 * knifeBonus;
                         rawDmg *= finalSneakAttackDamageMult;
                         if (isDummyTraining) {
@@ -3561,11 +3609,8 @@ void ApplyDamage(AttackStruct& attack, Critter& target, uint rounds, bool isCrit
     }
 
     // Damage
-    else if(!(target.IsKnockout() || FLAG(target.Mode[MODE_EXT], MODE_EXT_NO_HIT_ANIM)))
+    else if (!(target.IsKnockout() || FLAG(target.Mode[MODE_EXT], MODE_EXT_NO_HIT_ANIM)))
     {
-        //  here we need to disable sneak, because of new mechanics of SD
-        //attacker.Say(SAY_NORM, "Desneak - No knockout, alive!");
-        _Desneak(attacker);
         // Animate hit
         if (attack.ShowHitAnimForce)
             target.Action(CRITTER_ACTION_DAMAGE_FORCE, attackFront ? 0 : 1, null);

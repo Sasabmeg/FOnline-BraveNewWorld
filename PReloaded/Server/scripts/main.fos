@@ -3062,6 +3062,11 @@ void critter_respawn(Critter& cr)
     }
 }
 
+import int recalcMaxLife(Critter& cr) from "mutationFeature";
+import int recalcRadiationResistBase(Critter& cr) from "mutationFeature";
+import int recalcRadiationResistExt(Critter& cr) from "mutationFeature";
+
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Called when a critter enters a map.
 void map_critter_in(Map& map, Critter& cr)
@@ -3202,6 +3207,11 @@ void map_critter_in(Map& map, Critter& cr)
             cr.ParamBase[TO_BATTLE] = 0;
         }
         /*
+        if (cr.ParamBase[ST_TO_MUTATE_TIMER] > int(AFTER(REAL_MINUTE(1)))) {
+            Log("Mutate timer :: " + cr.ParamBase[ST_TO_MUTATE_TIMER]);
+            cr.ParamBase[ST_TO_MUTATE_TIMER] = int(AFTER(REAL_MINUTE(30)));
+        }*/
+        /*
         //  TODO: refactor this to be better before uncomment
         //  drug timeouts, max 1 hours, if any drugs would last longer, reset everything
         for (uint i = TO_CIGARETTES; i <= TO_RAD_X; i++) {
@@ -3214,6 +3224,14 @@ void map_critter_in(Map& map, Critter& cr)
         if (cr.Param[TO_EX_ANIM_INTERRUPT] > int(GetTick())) {
             cr.ParamBase[TO_EX_ANIM_INTERRUPT] = 0;
         }
+
+        //  try to recalc stats, because we had bug before and we do not know how
+        int maxLife = recalcMaxLife(cr);
+        cr.StatBase[ST_MAX_LIFE] = maxLife;
+        int radiationResistBase = recalcRadiationResistBase(cr);
+        cr.StatBase[ST_RADIATION_RESISTANCE] = radiationResistBase;
+        int radiationResistExt = recalcRadiationResistExt(cr);
+        cr.StatBase[ST_RADIATION_RESISTANCE_EXT] = radiationResistExt;
     }
 
     //  refresh car info for player entering the map
@@ -3344,7 +3362,7 @@ void map_critter_out(Map& map, Critter& cr)
         }
     }
 
-    if(cr.IsPlayer()) {
+    if (cr.IsPlayer()) {
         if (valid(map)) {
             SendCarInfoToPlayersOnMap(map);
         }
