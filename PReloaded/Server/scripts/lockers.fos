@@ -214,8 +214,14 @@ bool HandleLocker(Critter& cr, Map@ map, Item& locker, bool disregardKey)   // e
         // Change state
         if(FLAG(locker.LockerCondition, LOCKER_ISOPEN))
         {
-            LockerClose(locker);
-            OnClose(locker);
+            //  check for door close CD, should be 3 seconds?
+            if (locker.Val9 < int(ELAPSED_TIME)) {
+                //cr.Say(SAY_NETMSG, "Closing door: ( " + TIME_TEXT(REAL_TIME_VALUE(locker.Val9)) + " vs " + TIME_TEXT(REAL_ELAPSED_TIME) + " )");
+                LockerClose(locker);
+                OnClose(locker);
+            } else {
+                cr.Say(SAY_NETMSG, "I cannot close that door just yet.");
+            }
         }
         else
         {
@@ -227,10 +233,11 @@ bool HandleLocker(Critter& cr, Map@ map, Item& locker, bool disregardKey)   // e
                     LockerBudge(locker);
                     return true;
                 }
-                ;
             }
 
-
+            //  set CD on close, so cannot be griefed
+            //cr.Say(SAY_NETMSG, "Opening door: ( " + TIME_TEXT(REAL_TIME_VALUE(locker.Val9)) + " vs " + TIME_TEXT(REAL_ELAPSED_TIME) + " )");
+            locker.Val9 = AFTER(REAL_SECOND(3));
             LockerOpen(locker);
             if(IsAutoDoor(locker))
                 OnOpenAutoDoor(locker, not_auto_door);

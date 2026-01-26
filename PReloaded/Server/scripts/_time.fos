@@ -10,6 +10,8 @@
 
 // Time
 #define ELAPSED_TIME          (__FullSecond)
+#define REAL_ELAPSED_TIME     (__FullSecond / __TimeMultiplier)
+#define REAL_TIME_VALUE       # (x)              ((x) / __TimeMultiplier)
 
 #define REAL_MS               # (x)              ((x) * __TimeMultiplier / 1000)
 #define REAL_SECOND           # (x)          ((x) * __TimeMultiplier)
@@ -19,6 +21,9 @@
 #define REAL_WEEK             # (x)            ((x) * __TimeMultiplier * 604800)
 #define REAL_MONTH            # (x)           ((x) * __TimeMultiplier * 2592000)
 #define REAL_YEAR             # (x)            ((x) * __TimeMultiplier * 31536000)
+
+#define TIME_TEXT             # (x)            ("Day: " + ((x)/86400) + " Time: " + (((x)/3600)%24) + ":" + (((x)/60)%60) + ":"  + ((x)%60))
+
 
 #define GAME_SECOND           # (x)          ((x))
 #define GAME_MINUTE           # (x)          ((x) * 60)
