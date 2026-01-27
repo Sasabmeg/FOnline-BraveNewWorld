@@ -2460,9 +2460,9 @@ void ApplyDamage(AttackStruct& attack, Critter& target, uint rounds, bool isCrit
         }
         if (ammoPid == PID_ROCKET_AP) {
             if (valid(attacker)) {
-                rocketDRBonus = 10 + CLAMP(attacker.Skill[SK_TRAPS]/7.5, 0, 40);
+                rocketDRBonus = 10 + CLAMP(attacker.Skill[SK_TRAPS]/10, 0, 30);
             } else {
-                rocketDRBonus = 30;
+                rocketDRBonus = 25;
             }
             rocketDRBonus -= explosionDistance * 15;
             if (isDummyTraining) {
