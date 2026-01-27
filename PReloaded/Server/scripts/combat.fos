@@ -952,6 +952,23 @@ void CombatAttack(Critter& cr, Critter& target, ProtoItem& weapon, uint8 weaponM
                 //if(cr.Perk[PE_SPRAY_AND_PRAY] != 0 && (attack.Aim == HIT_LOCATION_UNCALLED || attack.Aim == HIT_LOCATION_NONE))
                 //    addchance = 0;
                 //else
+                bool isFrontPlatedArmor = false;
+                if (valid(usedArmor)) {
+                    switch (usedArmor.GetProtoId()) {
+                        case PID_FRONT_PLATED_METAL_ARMOR:
+                        case PID_FRONT_PLATED_METAL_HELMET:
+                            isFrontPlatedArmor = true;
+                            break;
+                    }
+                }
+                if (isFrontPlatedArmor && !IsFrontal(cr, target)) {
+                    addchance -= 10;
+                    if (isDummyTraining) {
+                        dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , Front Plated from back penalty: ";
+                        dummyInfo += "|" + COLOR_DTEXT_REGULAR + " Crit chance += |" + COLOR_DTEXT_MALUS + " +10";
+                    }
+                }
+
                 if (isDummyTraining) {
                     dummyText += "|" + COLOR_DTEXT_REGULAR + " , Target Armor modifier = |" + COLOR_DTEXT_MALUS + " " + usedArmor.Proto.Armor_CMCritChance;
                 }
@@ -1265,6 +1282,17 @@ void ApplyDamage(AttackStruct& attack, Critter& target, uint rounds, bool isCrit
 	int skillIntModPercent = (20 + attacker.Stat[ST_INTELLECT] - (_CritHasTrait(attacker, TRAIT_GIFTED) ? 5 : 0 ) ) * 4;
 	int attackerSneakSkill = (attacker.Skill[SK_SNEAK] * skillIntModPercent) / 100;
 
+    //  BNW - Front plated metal armor/helmet: -3/-10 DT/DR from back
+    bool isFrontPlatedArmor = false;
+    if (valid(usedArmor)) {
+        switch (usedArmor.GetProtoId()) {
+            case PID_FRONT_PLATED_METAL_ARMOR:
+            case PID_FRONT_PLATED_METAL_HELMET:
+                isFrontPlatedArmor = true;
+                break;
+        }
+    }
+
     //  BNW STONEWALL REWORKS - HEAVY ARMOR GIVES STONEWALL OR IMPROVES PERK IF TAKEN
     uint stonewallRank = 0;
     uint stonewallRankHead = 0;
@@ -1503,9 +1531,17 @@ void ApplyDamage(AttackStruct& attack, Critter& target, uint rounds, bool isCrit
         }
 
         if (valid(usedArmor)) {
-            roll += usedArmor.Proto.Armor_CMCritPower;
+            int armorCritPowerbonus = usedArmor.Proto.Armor_CMCritPower;
+            if (isFrontPlatedArmor && !IsFrontal(attacker, target)) {
+                armorCritPowerbonus += 10;
+                if (isDummyTraining) {
+                    dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , Front Plated from back penalty: ";
+                    dummyInfo += "|" + COLOR_DTEXT_REGULAR + " Crit power malus += |" + COLOR_DTEXT_MALUS + " +10";
+                }
+            }
+            roll += armorCritPowerbonus;
             if (isDummyTraining) {
-                dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , Armor CritPower Mod = |" + COLOR_DTEXT_MALUS + " " + usedArmor.Proto.Armor_CMCritPower;
+                dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , Armor CritPower Mod = |" + COLOR_DTEXT_MALUS + " " + armorCritPowerbonus;
             }
 			roll -= SelectArmorBonus(usedArmor, BONUS_ARMOR_CRIT_POWER);
             if (isDummyTraining) {
@@ -2312,6 +2348,17 @@ void ApplyDamage(AttackStruct& attack, Critter& target, uint rounds, bool isCrit
         dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , DR = |" + COLOR_DTEXT_BONUS + " " + targetDR;
     }
 
+    if (isFrontPlatedArmor && !IsFrontal(attacker, target)) {
+        targetDT -= 3;
+        targetDR -= 10;
+        armorDT -= 3;
+        armorDR -= 10;
+        if (isDummyTraining) {
+            dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , Front Plated from back penalty: ";
+            dummyInfo += "|" + COLOR_DTEXT_REGULAR + " DT -= |" + COLOR_DTEXT_MALUS + " 3";
+            dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , DR -= |" + COLOR_DTEXT_MALUS + " 10";
+        }
+    }
 
 	if ((isThrust && (isKnifeAnimation || isSpearAnimation)) || isSpikedFistVariant) {
         // OLD:

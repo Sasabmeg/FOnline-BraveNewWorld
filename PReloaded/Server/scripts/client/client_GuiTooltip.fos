@@ -2201,15 +2201,6 @@ void SetInventoryDetailText(ItemCl& item) {
             text += "\nDamage resistances: (DT/DR)";
             if (item.GetProtoId() == PID_FRONT_PLATED_METAL_ARMOR || item.GetProtoId() == PID_FRONT_PLATED_METAL_HELMET) {
                 text += "\nFront:";
-                text += "\n\tNormal: \u00A0\u00A0\u00A0" + (item.Proto.Armor_DTNormal + 3) + "/" + (item.Proto.Armor_DRNormal + 10);
-                text += "\n\tLaser:     \u00A0" + (item.Proto.Armor_DTLaser + 3) + "/" + (item.Proto.Armor_DRLaser + 10);
-                text += "\n\tFire:         " + (item.Proto.Armor_DTFire + 3) + "/" + (item.Proto.Armor_DRFire + 10);
-                text += "\n\tPlasma:  \u00A0\u00A0" + (item.Proto.Armor_DTPlasma + 3) + "/" + (item.Proto.Armor_DRPlasma + 10);
-                text += "\n\tElectric:  \u00A0" + (item.Proto.Armor_DTElectr + 3) + "/" + (item.Proto.Armor_DRElectr + 10);
-                text += "\n\tExplode:  \u00A0" + (item.Proto.Armor_DTExplode + 3) + "/" + (item.Proto.Armor_DRExplode + 10);
-                text += "\n\tCrit chance mod: " + (item.Proto.Armor_CMCritChance - 10);
-                text += "\n\tCrit power mod: " + (item.Proto.Armor_CMCritPower - 10);
-                text += "\nBack:";
             }
 
             int w = 0, h = 0, l = 0;
@@ -2221,33 +2212,75 @@ void SetInventoryDetailText(ItemCl& item) {
             inventoryTooltip.interfaceTextboxComparison.SetPosX(w);
 
             if (valid(equippedArmor) && item.Id != equippedArmor.Id) {
-                textComparison += "    \t" + (armorNormalDTDiff < 0 ? ("|" + COLOR_DORANGE + " ") : ("|" + COLOR_GOLDEN_YELLOW + " +")) + armorNormalDTDiff
-                     + "|" + COLOR_DGREEN + " /" + (armorNormalDRDiff < 0 ? "|" + COLOR_DORANGE + " " : "|" + COLOR_GOLDEN_YELLOW + " +") + armorNormalDRDiff + "|" + COLOR_GREEN + " \n";
+                int comparisonColorDT = armorNormalDTDiff < 0 ? COLOR_DORANGE : (armorNormalDTDiff > 0 ? COLOR_GOLDEN_YELLOW : COLOR_GREEN);
+                int comparisonColorDR = armorNormalDRDiff < 0 ? COLOR_DORANGE : (armorNormalDRDiff > 0 ? COLOR_GOLDEN_YELLOW : COLOR_GREEN);
+                string comparisonValueDT =  armorNormalDTDiff < 0 ? ("" + armorNormalDTDiff) : ("+" + armorNormalDTDiff);
+                string comparisonValueDR =  armorNormalDRDiff < 0 ? ("" + armorNormalDRDiff) : ("+" + armorNormalDRDiff);
+                if (armorNormalDTDiff != 0 || armorNormalDRDiff != 0) {
+                    textComparison += "    \t|" + comparisonColorDT + " " + comparisonValueDT + "|" + COLOR_DGREEN + " /|" + comparisonColorDR + " " + comparisonValueDR + "\n";
+                } else {
+                    textComparison += "\n";
+                }
             }
             text += "\n\tLaser:     \u00A0" + item.Proto.Armor_DTLaser + "/" + item.Proto.Armor_DRLaser;
             if (valid(equippedArmor) && item.Id != equippedArmor.Id) {
-                textComparison += "    \t" + (armorLaserDTDiff < 0 ? ("|" + COLOR_DORANGE + " ") : ("|" + COLOR_GOLDEN_YELLOW + " +")) + armorLaserDTDiff
-                     + "|" + COLOR_DGREEN + " /" + (armorLaserDRDiff < 0 ? "|" + COLOR_DORANGE + " " : "|" + COLOR_GOLDEN_YELLOW + " +") + armorLaserDRDiff + "|" + COLOR_GREEN + " \n";
+                int comparisonColorDT = armorLaserDTDiff < 0 ? COLOR_DORANGE : (armorLaserDTDiff > 0 ? COLOR_GOLDEN_YELLOW : COLOR_GREEN);
+                int comparisonColorDR = armorLaserDRDiff < 0 ? COLOR_DORANGE : (armorLaserDRDiff > 0 ? COLOR_GOLDEN_YELLOW : COLOR_GREEN);
+                string comparisonValueDT =  armorLaserDTDiff < 0 ? ("" + armorLaserDTDiff) : ("+" + armorLaserDTDiff);
+                string comparisonValueDR =  armorLaserDRDiff < 0 ? ("" + armorLaserDRDiff) : ("+" + armorLaserDRDiff);
+                if (armorLaserDTDiff != 0 || armorLaserDRDiff != 0) {
+                    textComparison += "    \t|" + comparisonColorDT + " " + comparisonValueDT + "|" + COLOR_DGREEN + " /|" + comparisonColorDR + " " + comparisonValueDR + "\n";
+                } else {
+                    textComparison += "\n";
+                }
             }
             text += "\n\tFire:         " + item.Proto.Armor_DTFire + "/" + item.Proto.Armor_DRFire;
             if (valid(equippedArmor) && item.Id != equippedArmor.Id) {
-                textComparison += "    \t" + (armorFireDTDiff < 0 ? ("|" + COLOR_DORANGE + " ") : ("|" + COLOR_GOLDEN_YELLOW + " +")) + armorFireDTDiff
-                     + "|" + COLOR_DGREEN + " /" + (armorFireDRDiff < 0 ? "|" + COLOR_DORANGE + " " : "|" + COLOR_GOLDEN_YELLOW + " +") + armorFireDRDiff + "|" + COLOR_GREEN + " \n";
+                int comparisonColorDT = armorFireDTDiff < 0 ? COLOR_DORANGE : (armorFireDTDiff > 0 ? COLOR_GOLDEN_YELLOW : COLOR_GREEN);
+                int comparisonColorDR = armorFireDRDiff < 0 ? COLOR_DORANGE : (armorFireDRDiff > 0 ? COLOR_GOLDEN_YELLOW : COLOR_GREEN);
+                string comparisonValueDT =  armorFireDTDiff < 0 ? ("" + armorFireDTDiff) : ("+" + armorFireDTDiff);
+                string comparisonValueDR =  armorFireDRDiff < 0 ? ("" + armorFireDRDiff) : ("+" + armorFireDRDiff);
+                if (armorFireDTDiff != 0 || armorFireDRDiff != 0) {
+                    textComparison += "    \t|" + comparisonColorDT + " " + comparisonValueDT + "|" + COLOR_DGREEN + " /|" + comparisonColorDR + " " + comparisonValueDR + "\n";
+                } else {
+                    textComparison += "\n";
+                }
             }
             text += "\n\tPlasma:  \u00A0\u00A0" + item.Proto.Armor_DTPlasma + "/" + item.Proto.Armor_DRPlasma;
             if (valid(equippedArmor) && item.Id != equippedArmor.Id) {
-                textComparison += "    \t" + (armorPlasmaDTDiff < 0 ? ("|" + COLOR_DORANGE + " ") : ("|" + COLOR_GOLDEN_YELLOW + " +")) + armorPlasmaDTDiff
-                     + "|" + COLOR_DGREEN + " /" + (armorPlasmaDRDiff < 0 ? "|" + COLOR_DORANGE + " " : "|" + COLOR_GOLDEN_YELLOW + " +") + armorPlasmaDRDiff + "|" + COLOR_GREEN + " \n";
+                int comparisonColorDT = armorPlasmaDTDiff < 0 ? COLOR_DORANGE : (armorPlasmaDTDiff > 0 ? COLOR_GOLDEN_YELLOW : COLOR_GREEN);
+                int comparisonColorDR = armorPlasmaDRDiff < 0 ? COLOR_DORANGE : (armorPlasmaDRDiff > 0 ? COLOR_GOLDEN_YELLOW : COLOR_GREEN);
+                string comparisonValueDT =  armorPlasmaDTDiff < 0 ? ("" + armorPlasmaDTDiff) : ("+" + armorPlasmaDTDiff);
+                string comparisonValueDR =  armorPlasmaDRDiff < 0 ? ("" + armorPlasmaDRDiff) : ("+" + armorPlasmaDRDiff);
+                if (armorPlasmaDTDiff != 0 || armorPlasmaDRDiff != 0) {
+                    textComparison += "    \t|" + comparisonColorDT + " " + comparisonValueDT + "|" + COLOR_DGREEN + " /|" + comparisonColorDR + " " + comparisonValueDR + "\n";
+                } else {
+                    textComparison += "\n";
+                }
             }
             text += "\n\tElectric:  \u00A0" + item.Proto.Armor_DTElectr + "/" + item.Proto.Armor_DRElectr;
             if (valid(equippedArmor) && item.Id != equippedArmor.Id) {
-                textComparison += "    \t" + (armorElectrDTDiff < 0 ? ("|" + COLOR_DORANGE + " ") : ("|" + COLOR_GOLDEN_YELLOW + " +")) + armorElectrDTDiff
-                     + "|" + COLOR_DGREEN + " /" + (armorElectrDRDiff < 0 ? "|" + COLOR_DORANGE + " " : "|" + COLOR_GOLDEN_YELLOW + " +") + armorElectrDRDiff + "|" + COLOR_GREEN + " \n";
+                int comparisonColorDT = armorElectrDTDiff < 0 ? COLOR_DORANGE : (armorElectrDTDiff > 0 ? COLOR_GOLDEN_YELLOW : COLOR_GREEN);
+                int comparisonColorDR = armorElectrDRDiff < 0 ? COLOR_DORANGE : (armorElectrDRDiff > 0 ? COLOR_GOLDEN_YELLOW : COLOR_GREEN);
+                string comparisonValueDT =  armorElectrDTDiff < 0 ? ("" + armorElectrDTDiff) : ("+" + armorElectrDTDiff);
+                string comparisonValueDR =  armorElectrDRDiff < 0 ? ("" + armorElectrDRDiff) : ("+" + armorElectrDRDiff);
+                if (armorElectrDTDiff != 0 || armorElectrDRDiff != 0) {
+                    textComparison += "    \t|" + comparisonColorDT + " " + comparisonValueDT + "|" + COLOR_DGREEN + " /|" + comparisonColorDR + " " + comparisonValueDR + "\n";
+                } else {
+                    textComparison += "\n";
+                }
             }
             text += "\n\tExplode:  \u00A0" + item.Proto.Armor_DTExplode + "/" + item.Proto.Armor_DRExplode;
             if (valid(equippedArmor) && item.Id != equippedArmor.Id) {
-                textComparison += "    \t" + (armorExplodeDTDiff < 0 ? ("|" + COLOR_DORANGE + " ") : ("|" + COLOR_GOLDEN_YELLOW + " +")) + armorExplodeDTDiff
-                     + "|" + COLOR_DGREEN + " /" + (armorExplodeDRDiff < 0 ? "|" + COLOR_DORANGE + " " : "|" + COLOR_GOLDEN_YELLOW + " +") + armorExplodeDRDiff + "|" + COLOR_GREEN + " \n";
+                int comparisonColorDT = armorExplodeDTDiff < 0 ? COLOR_DORANGE : (armorExplodeDTDiff > 0 ? COLOR_GOLDEN_YELLOW : COLOR_GREEN);
+                int comparisonColorDR = armorExplodeDRDiff < 0 ? COLOR_DORANGE : (armorExplodeDRDiff > 0 ? COLOR_GOLDEN_YELLOW : COLOR_GREEN);
+                string comparisonValueDT =  armorExplodeDTDiff < 0 ? ("" + armorExplodeDTDiff) : ("+" + armorExplodeDTDiff);
+                string comparisonValueDR =  armorExplodeDRDiff < 0 ? ("" + armorExplodeDRDiff) : ("+" + armorExplodeDRDiff);
+                if (armorExplodeDTDiff != 0 || armorExplodeDRDiff != 0) {
+                    textComparison += "    \t|" + comparisonColorDT + " " + comparisonValueDT + "|" + COLOR_DGREEN + " /|" + comparisonColorDR + " " + comparisonValueDR + "\n";
+                } else {
+                    textComparison += "\n";
+                }
             }
 
             inventoryTooltip.interfaceTextboxComparison.setText(textComparison);
@@ -2257,6 +2290,18 @@ void SetInventoryDetailText(ItemCl& item) {
             }
             text += "\n\tCrit chance mod: " + (item.Proto.Armor_CMCritChance);
             text += "\n\tCrit power mod: " + (item.Proto.Armor_CMCritPower);
+            if (item.GetProtoId() == PID_FRONT_PLATED_METAL_ARMOR || item.GetProtoId() == PID_FRONT_PLATED_METAL_HELMET) {
+                text += "\nBack:";
+                text += "\n\tNormal: \u00A0\u00A0\u00A0" + (item.Proto.Armor_DTNormal - 3) + "/" + (item.Proto.Armor_DRNormal - 10);
+                text += "\n\tLaser:     \u00A0" + (item.Proto.Armor_DTLaser - 3) + "/" + (item.Proto.Armor_DRLaser - 10);
+                text += "\n\tFire:         " + (item.Proto.Armor_DTFire - 3) + "/" + (item.Proto.Armor_DRFire - 10);
+                text += "\n\tPlasma:  \u00A0\u00A0" + (item.Proto.Armor_DTPlasma - 3) + "/" + (item.Proto.Armor_DRPlasma - 10);
+                text += "\n\tElectric:  \u00A0" + (item.Proto.Armor_DTElectr - 3) + "/" + (item.Proto.Armor_DRElectr - 10);
+                text += "\n\tExplode:  \u00A0" + (item.Proto.Armor_DTExplode - 3) + "/" + (item.Proto.Armor_DRExplode - 10);
+                text += "\n\tCrit chance mod: " + (item.Proto.Armor_CMCritChance + 10);
+                text += "\n\tCrit power mod: " + (item.Proto.Armor_CMCritPower + 10);
+            }
+
             text += "\n";
             if (item.GetProtoId() == PID_TESLA_ARMOR) {
                 text += "\nCharges: "+item.Charge+"/"+item.Proto.Misc_ChargeMax;
