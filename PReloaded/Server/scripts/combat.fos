@@ -1244,6 +1244,10 @@ void ApplyDamage(AttackStruct& attack, Critter& target, uint rounds, bool isCrit
     int      weaponPerk = attack.WeaponPerk;
     Critter@ attacker = attack.Attacker;
     bool     validAttacker = valid(attacker);
+    if (!validAttacker) {
+        Log("Invalid attacker in combat.fos, investigate. Target id: " + target.Id);
+        return;
+    }
     Map@     map = target.GetMap();
     bool     isBloodyMess = attack.BloodyMess;
     bool     isCombatText = attack.CombatMessage;
