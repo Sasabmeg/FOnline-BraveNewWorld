@@ -1235,6 +1235,10 @@ void CombatAttack(Critter& cr, Critter& target, ProtoItem& weapon, uint8 weaponM
 
 void ApplyDamage(AttackStruct& attack, Critter& target, uint rounds, bool isCritical, bool intentionally, array<CombatRes>& results, int CriticalChance)
 {
+    if (!valid(attack)) {
+        Log("Invalid attack structure in combat.fos, investigate.");
+        return;
+    }
 	Item@ usedArmor = _GetCritterArmor(target, attack.AimHead);
 
     int      dmgMul = attack.DmgMul;
@@ -1243,11 +1247,17 @@ void ApplyDamage(AttackStruct& attack, Critter& target, uint rounds, bool isCrit
     uint     msgEff = 0;
     int      weaponPerk = attack.WeaponPerk;
     Critter@ attacker = attack.Attacker;
+
     bool     validAttacker = valid(attacker);
+    if (!valid(target)) {
+        Log("Invalid target in combat.fos, investigate.");
+        return;
+    }
     if (!validAttacker) {
         Log("Invalid attacker in combat.fos, investigate. Target id: " + target.Id);
         return;
     }
+
     Map@     map = target.GetMap();
     bool     isBloodyMess = attack.BloodyMess;
     bool     isCombatText = attack.CombatMessage;
@@ -1256,14 +1266,16 @@ void ApplyDamage(AttackStruct& attack, Critter& target, uint rounds, bool isCrit
     uint     extraMessage = 0;
     uint     extraMessageSelf = 0;
 	bool     isHeadAttack = attack.AimHead;
-    bool     isShotgun = (valid(attack.Ammo) && (attack.Ammo.Ammo_Caliber == 11));
+    bool     isShotgun = (valid(attack.Ammo) && (attack.Ammo.Ammo_Caliber == CALIBER_12_GAUGE));
     bool     isBurst = (rounds > 1);
     bool     isGrenade = attack.WeaponSubtype == WS_THROWING && (attack.DmgType == DAMAGE_TYPE_PLASMA || attack.DmgType == DAMAGE_TYPE_EMP || attack.DmgType == DAMAGE_TYPE_EXPLODE || attack.DmgType == DAMAGE_TYPE_FIRE);   // like in fo2
 	bool     isSpearThrow = (valid(realWeapon) ? (realWeapon.Proto.ProtoId == PID_SHARPENED_POLE || realWeapon.Proto.ProtoId == PID_SPEAR || realWeapon.Proto.ProtoId == PID_SHARP_SPEAR) : false);
     bool     isHthAttack = (attack.WeaponSubtype == WS_UNARMED);
 	//bool     isFireGeckoShell = (valid(attack.Ammo) && (attack.Ammo.ProtoId == PID_SHOTGUN_DRAGON_BREATH_SHELLS));
 	uint16   ammoPid = attack.ammoPid;
-    if(valid(attack.Ammo)) ammoPid = attack.Ammo.ProtoId;
+    if (valid(attack.Ammo)) {
+        ammoPid = attack.Ammo.ProtoId;
+    }
 
 	// 24-05-2015 Cubik: wylaczone ban bronie w tym skrypcie. Nalezy uzywac komendy: `give PID -s cheats@weapon_disconnect
 	//bool     isBanhammer = (valid(realWeapon) ? realWeapon.Proto.ProtoId==PID_BAN_HAMMER : false);
@@ -1275,8 +1287,13 @@ void ApplyDamage(AttackStruct& attack, Critter& target, uint rounds, bool isCrit
 	bool     attackerIsPaszczur = (valid(attacker) ? attacker.GetProtoId()==NPC_PID_Pashtshuur : false);
 	uint16 	 weapPid = attack.weaponPid;
 
-	bool     isSwingThrustWeapon = (valid(realWeapon) ? (weapPid == 517 || weapPid == 160 || weapPid == 236 || weapPid == 530 || weapPid == 9676 || weapPid == 4 || weapPid == 116 || weapPid == 383 || weapPid == 6 || weapPid == 399 || weapPid == 115 || weapPid == 319 || weapPid == 622 || weapPid == 522 || weapPid == 600 || weapPid == 610 || weapPid == 289) : false);
-    bool     isThrustThrowWeapon = (valid(realWeapon) ? (weapPid == 9916 || weapPid == 618 || weapPid == 320 || weapPid == 280 || weapPid == 7) : false);
+	bool     isSwingThrustWeapon = (valid(realWeapon) ?
+                (weapPid == PID_LIL_JESUS_WEAPON || weapPid == PID_KNIFE || weapPid == PID_COMBAT_KNIFE || weapPid == PID_END_BOSS_KIFE
+                 || weapPid == PID_FAKE_SUPER_SLEDGE || weapPid == PID_SUPER_SLEDGE || weapPid == PID_RIPPER || weapPid == PID_SHIV || weapPid == PID_SLEDGEHAMMER
+                 || weapPid == PID_SUPER_CATTLE_PROD || weapPid == PID_CATTLE_PROD || weapPid == PID_SWITCHBLADE || weapPid == PID_TEST_KNIFE || weapPid == PID_WAKIZASHI_BLADE
+                 || weapPid == PID_OLD_SHOVEL || weapPid == PID_PLASMA_TORCH || weapPid == PID_SHOVEL) : false);
+    bool     isThrustThrowWeapon = (valid(realWeapon) ?
+                (weapPid == PID_FAKE_SPEAR || weapPid == PID_HOLY_SPEAR || weapPid == PID_SHARPENED_POLE || weapPid == PID_SHARP_SPEAR || weapPid == PID_SPEAR) : false);
 
 	//bool     isPrimitiveWeapon = (valid(realWeapon) ? (weapPid == PID_SPIKED_KNUCKLES || weapPid == PID_BRASS_KNUCKLES || weapPid == PID_LOUISVILLE_SLUGGER || weapPid == PID_SLEDGEHAMMER || weapPid == PID_WRENCH || weapPid == PID_WAKIZASHI_BLADE || weapPid == PID_SWITCHBLADE || weapPid == PID_SHIV || weapPid == PID_LIL_JESUS_WEAPON || weapPid == PID_COMBAT_KNIFE || weapPid == PID_ROCK || weapPid == PID_SPEAR || weapPid == PID_CLUB || weapPid == PID_KNIFE || weapPid == PID_CROWBAR) : false);
 

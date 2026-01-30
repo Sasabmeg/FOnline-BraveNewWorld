@@ -223,6 +223,7 @@
 
 #define PID_URANIUM_ORE                     (426) //Grouped - USED FOR MICRO FUSION CELL CRAFTING!!
 #define PID_REFINED_ORE                     (486) //Grouped - USED FOR MICRO FUSION CELL CRAFTING!!
+#define PID_TEST_KNIFE                      (622)
 #define PID_DYNACORD                        (1834) //Grouped
 #define PID_FAKE_FRAG_GRENADE               (9674) //Grouped
 #define PID_FAKE_PLASMA_GRENADE             (9675) //Grouped
