@@ -2471,6 +2471,8 @@ void ApplyDamage(AttackStruct& attack, Critter& target, uint rounds, bool isCrit
         }
 	}
 
+	int attackerTrapsSkill = (attacker.Skill[SK_TRAPS] * skillIntModPercent) / 100;
+
 	//   special case to handle rocket explosion, because Traps and Explosives skill increases armor piercing
 	if (ammoPid == PID_EXPLOSIVE_ROCKET || ammoPid == PID_ROCKET_AP || ammoPid == PID_40MM_GRENADE || isGrenade) {
         int rocketDRBonus = 0;
@@ -2483,7 +2485,7 @@ void ApplyDamage(AttackStruct& attack, Critter& target, uint rounds, bool isCrit
         }
         if (ammoPid == PID_EXPLOSIVE_ROCKET) {
             if (valid(attacker)) {
-                rocketDRBonus = 10 + CLAMP(attacker.Skill[SK_TRAPS]/15, 0, 20);
+                rocketDRBonus = 10 + CLAMP(attackerTrapsSkill/15, 0, 20);
             } else {
                 rocketDRBonus = 15;
             }
@@ -2494,7 +2496,7 @@ void ApplyDamage(AttackStruct& attack, Critter& target, uint rounds, bool isCrit
         }
         if (ammoPid == PID_ROCKET_AP) {
             if (valid(attacker)) {
-                rocketDRBonus = 10 + CLAMP(attacker.Skill[SK_TRAPS]/10, 0, 30);
+                rocketDRBonus = 10 + CLAMP(attackerTrapsSkill/10, 0, 30);
             } else {
                 rocketDRBonus = 25;
             }
@@ -2506,7 +2508,7 @@ void ApplyDamage(AttackStruct& attack, Critter& target, uint rounds, bool isCrit
         }
         if (ammoPid == PID_40MM_GRENADE) {
             if (valid(attacker)) {
-                grenadeLauncherBonus = 10 + CLAMP(attacker.Skill[SK_TRAPS]/15, 0, 20);
+                grenadeLauncherBonus = 10 + CLAMP(attackerTrapsSkill/15, 0, 20);
             } else {
                 grenadeLauncherBonus = 15;
             }
@@ -2518,7 +2520,7 @@ void ApplyDamage(AttackStruct& attack, Critter& target, uint rounds, bool isCrit
         if (isGrenade) {
             if (dmgType == DAMAGE_TYPE_EXPLODE || dmgType == DAMAGE_TYPE_FIRE || dmgType == DAMAGE_TYPE_PLASMA) {
                 if (valid(attacker)) {
-                    grenadeDRBonus = CLAMP(attacker.Skill[SK_TRAPS]/10, 0, 30);
+                    grenadeDRBonus = CLAMP(attackerTrapsSkill/10, 0, 30);
                 } else {
                     grenadeDRBonus = 15;
                 }
@@ -2922,7 +2924,7 @@ void ApplyDamage(AttackStruct& attack, Critter& target, uint rounds, bool isCrit
             int explosionDistance = 0;
             if (ammoPid == PID_EXPLOSIVE_ROCKET) {
                 if (valid(attacker)) {
-                    explosiveRocketPenalty = CLAMP(attacker.Skill[SK_TRAPS]/10, 0, 30);
+                    explosiveRocketPenalty = CLAMP(attackerTrapsSkill/10, 0, 30);
                 } else {
                     explosiveRocketPenalty = 15;
                 }
@@ -2932,7 +2934,7 @@ void ApplyDamage(AttackStruct& attack, Critter& target, uint rounds, bool isCrit
             }
             if (ammoPid == PID_ROCKET_AP) {
                 if (valid(attacker)) {
-                    armorPiercingRocketPenalty = CLAMP(15 - attacker.Skill[SK_TRAPS]/10, 0, 30);
+                    armorPiercingRocketPenalty = CLAMP(15 - attackerTrapsSkill/10, 0, 30);
                 } else {
                     armorPiercingRocketPenalty = 0;
                 }
