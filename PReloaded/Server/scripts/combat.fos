@@ -326,11 +326,21 @@ void CombatAttack(Critter& cr, Critter& target, ProtoItem& weapon, uint8 weaponM
     if (!cr.IsPlayer()) {
         isDummyTraining = false;
     }
-    if (valid(cr) && cr.IsPlayer() && target.IsPlayer() && target.GetAccess() >= ACCESS_TESTER) {
+
+    bool isTentLocation = false;
+    if (valid(map) && valid(map.GetLocation()) && map.GetLocation().IsTent()) {
+        isTentLocation = true;
+    }
+
+    if (isTentLocation && valid(cr) && cr.IsPlayer() && target.IsPlayer() && target.GetAccess() >= ACCESS_TESTER) {
         isDummyTraining = true;
     }
     //  this will allow players to use their alts as training dummy, only allow in test season
-    if (valid(cr) && cr.IsPlayer() && target.IsPlayer() && cr.GetIp() == target.GetIp()) {
+    if (isTentLocation && valid(cr) && cr.IsPlayer() && target.IsPlayer() && cr.GetIp() == target.GetIp()) {
+        isDummyTraining = true;
+    }
+    //  people asked for dummy training in tents, even on other characters, to find bugs faster while whole combat mechanics are a big mess for them
+    if (isTentLocation && valid(cr) && cr.IsPlayer() && target.IsPlayer()) {
         isDummyTraining = true;
     }
 
@@ -1379,15 +1389,27 @@ void ApplyDamage(AttackStruct& attack, Critter& target, uint rounds, bool isCrit
 	//}
 
 
+    //  BNW changes, to be able to have some training info, to make the dummy more useful, only allow for player and if critter is a training dummy
+    //  may add option later to disable this verbose message at the dummy dialog?
     bool isDummyTraining = target.CrType >= CRTYPE_DUMMY_STAND ? (target.CrType <= CRTYPE_DUMMY_POWER_ARMOR ? true : false) : false;
     if (validAttacker && !attacker.IsPlayer()) {
         isDummyTraining = false;
     }
-    if (validAttacker && attacker.IsPlayer() && target.IsPlayer() && target.GetAccess() >= ACCESS_TESTER) {
+
+    bool isTentLocation = false;
+    if (valid(map) && valid(map.GetLocation()) && map.GetLocation().IsTent()) {
+        isTentLocation = true;
+    }
+
+    if (isTentLocation && validAttacker && attacker.IsPlayer() && target.IsPlayer() && target.GetAccess() >= ACCESS_TESTER) {
         isDummyTraining = true;
     }
     //  this will allow players to use their alts as training dummy, only allow in test season
-    if (validAttacker && attacker.IsPlayer() && target.IsPlayer() && attacker.GetIp() == target.GetIp()) {
+    if (isTentLocation && validAttacker && attacker.IsPlayer() && target.IsPlayer() && attacker.GetIp() == target.GetIp()) {
+        isDummyTraining = true;
+    }
+    //  people asked for dummy training in tents, even on other characters, to find bugs faster while whole combat mechanics are a big mess for them
+    if (isTentLocation && validAttacker && attacker.IsPlayer() && target.IsPlayer()) {
         isDummyTraining = true;
     }
 
