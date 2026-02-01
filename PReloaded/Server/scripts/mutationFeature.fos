@@ -179,6 +179,14 @@ bool canSwapTag(Critter& player, uint skillIndex, string@ reason) {
         return false;
     }
 
+    //  Energy Girl requires energy weapon skill 75 (and level 6)
+    if (player.Perk[PE_ENERGY_GIRL] > 0) {
+        if ((currentTagIndex == SK_ENERGY_WEAPONS && player.Skill[skillIndex] < 75)
+                || (skillIndex == SK_ENERGY_WEAPONS && player.Skill[currentTagIndex] < 75)) {
+            reason = colorWarn + "Energy Girl" + colorNormal;
+            return false;
+        }
+    }
 
     if (isRangedSkill(skillIndex) && isRangedSkill(currentTagIndex)) {
         if (skillIndex == SK_THROWING || currentTagIndex == SK_THROWING) {
@@ -1706,6 +1714,14 @@ void dlg_RemovePerkList(Critter& player, Critter@ npc, string@ text) {
     }
 
     //  level 6 perks
+    if (player.Perk[PE_ENERGY_GIRL] > 0) {
+        str += listPrefix + "[Energy Girl: ";
+        if (canRemovePerk(player, PE_ENERGY_GIRL, reason)) {
+            str += removable + "]\n";
+        } else {
+            str += reason + "]\n";
+        }
+    }
     if (player.Perk[PE_EVEN_MORE_CRITICALS] > 0) {
         str += listPrefix + "[Even More Criticals: ";
         if (canRemovePerk(player, PE_EVEN_MORE_CRITICALS, reason)) {
@@ -2008,6 +2024,9 @@ void dlg_AvailablePerkList(Critter& player, Critter@ npc, string@ text) {
     }
 
     //  level 6 perks
+    if (player.Perk[PE_ENERGY_GIRL] > 0) {
+        str += listPrefix + "[Energy Girl]\n";
+    }
     if (player.Perk[PE_EVEN_MORE_CRITICALS] > 0) {
         str += listPrefix + "[Even More Criticals]\n";
     }
@@ -2313,6 +2332,12 @@ bool canAddPerk(Critter& player, uint perkIndex, string@ reason) {
             }
             return true;
         //  level 6 perks
+        case PE_ENERGY_GIRL:
+            if (player.Skill[SK_ENERGY_WEAPONS] < 75) {
+                reason = colorWarn + "Energy Weapons must be at least 75!" + colorNormal;
+                return false;
+            }
+            return true;
         case PE_EVEN_MORE_CRITICALS:
             if (!hasRangedSkillAtLeast(player, 75) && player.Skill[SK_UNARMED] < 75) {
                 reason = colorWarn + "One combat skill must be at least 75!" + colorNormal;
@@ -2775,7 +2800,7 @@ int levelOfPerk(uint perkIndex) {
 uint[] multiRankPerks = {PE_LIFEGIVER, PE_ACTION_BOY};
 
 uint[] level3Perks = {PE_MORE_CRITICALS, PE_WEAPON_HANDLING, PE_ADRENALINE_RUSH, PE_QUICK_RECOVERY, PE_LIVEWIRE, PE_WAY_OF_THE_FRUIT, PE_HEALER_II, PE_QUICK_POCKETS};
-uint[] level6Perks = {PE_EVEN_MORE_CRITICALS, PE_IN_YOUR_FACE, PE_SILENT_RUNNING, PE_TOUGHNESS, PE_SPRAY_AND_PRAY};
+uint[] level6Perks = {PE_ENERGY_GIRL, PE_EVEN_MORE_CRITICALS, PE_IN_YOUR_FACE, PE_SILENT_RUNNING, PE_TOUGHNESS, PE_SPRAY_AND_PRAY};
 uint[] level9Perks = {PE_MORE_RANGED_DAMAGE, PE_IRON_LIMBS, PE_STONEWALL, PE_SHARPSHOOTER, PE_BONUS_RANGED_DAMAGE, PE_PYROMANIAC, PE_EVEN_TOUGHER, PE_MEDIC, PE_HEAVE_HO, PE_CLOSE_COMBAT_MASTER};
 uint[] level12Perks = {PE_BETTER_CRITICALS, PE_LIFEGIVER, PE_GHOST, PE_ACTION_BOY, PE_GAIN_STRENGTH, PE_GAIN_PERCEPTION,
                        PE_GAIN_ENDURANCE, PE_GAIN_CHARISMA, PE_GAIN_INTELLIGENCE, PE_GAIN_AGILITY, PE_GAIN_LUCK};
@@ -2837,6 +2862,7 @@ string getPerkName(uint perkIndex) {
         case PE_HEALER_II:              return "Healer";
         case PE_QUICK_POCKETS:          return "Quick Pockets";
         //  level 6 perks
+        case PE_ENERGY_GIRL:            return "Energy Girl";
         case PE_EVEN_MORE_CRITICALS:    return "Even More Criticals";
         case PE_IN_YOUR_FACE:           return "In Your Face";
         case PE_SILENT_RUNNING:         return "Silent Running";
