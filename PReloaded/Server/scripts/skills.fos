@@ -98,7 +98,7 @@ bool UseFirstAidOnCritter(Critter& cr, Critter& targetCr, Item@ item)
 	int skillIntModPercent = skillIntModPercent = (20 + cr.Stat[ST_INTELLECT] - (_CritHasTrait(cr, TRAIT_GIFTED) ? 5 : 0 ) ) * 4;
 	firstAidSkill = (firstAidSkill * skillIntModPercent) / 100;
 
-    int itemFactor = 0;
+    int itemFactor = 1;
 
     @item = SelectSkillItem(cr, item, SK_FIRST_AID);
     if (!valid(item)) {
@@ -129,10 +129,10 @@ bool UseFirstAidOnCritter(Critter& cr, Critter& targetCr, Item@ item)
         }
         switch (item.GetProtoId()) {
             case PID_FIRST_AID_KIT:
-                itemFactor = 10;
+                itemFactor = 15;
                 break;
             case PID_FIELD_MEDIC_KIT:
-                itemFactor = 15;
+                itemFactor = 20;
                 break;
             default:
                 itemFactor = 10;
@@ -144,19 +144,19 @@ bool UseFirstAidOnCritter(Critter& cr, Critter& targetCr, Item@ item)
     int heal = 0;
     int healFactor = 100;
     if (isSelf) {
-        healFactor = 30;
+        healFactor = 40;
     } else {
-        healFactor = 45;
+        healFactor = 50;
     }
     if (isMedic) {
-        healFactor += 5;
+        healFactor += 10;
     }
     if (isFieldMedic) {
-        healFactor += 5;
+        healFactor += 10;
     }
     healFactor += itemFactor;
 
-    heal = CLAMP((maxHp - curHp) * healFactor / 100, 0, 20 + (cr.SkillBase[SK_FIRST_AID] / 4) + (isMedic ? 25 : 0) + (isFieldMedic ? 25 : 0) + itemFactor * 3);
+    heal = CLAMP((maxHp - curHp) * healFactor / 100, 0, 70 + (firstAidSkill / 4) + (isMedic ? 15 : 0) + (isFieldMedic ? 15 : 0) + itemFactor * 3);
     if (curHp + heal > maxHp) {
         heal = maxHp - curHp;
     }
@@ -208,7 +208,8 @@ bool UseFirstAidOnCritter(Critter& cr, Critter& targetCr, Item@ item)
     //  if TB then no heal over time from FA
     if (valid(cr.GetMap()) && !cr.GetMap().IsTurnBased()) {
         targetCr.EraseTimeEvents(CTE_FIRST_AID);
-        targetCr.AddTimeEvent("cte_FirstAid", REAL_SECOND(5), CTE_FIRST_AID, 4 * 10000 + heal / 4);
+        int faTickTimer = isFieldMedic ? 3 : isMedic ? 4 : 5;
+        targetCr.AddTimeEvent("cte_FirstAid", REAL_SECOND(faTickTimer), CTE_FIRST_AID, 4 * 10000 + 10 * (heal / 4) + faTickTimer);
     }
     //  Floating healing text.
     FloatingHealText(targetCr, heal, HEAL_TEXT_REASON_FIRSTAID, SKILL_CHECK_SUCCESS);
@@ -247,7 +248,8 @@ bool UseFirstAidOnCritter(Critter& cr, Critter& targetCr, Item@ item)
 
 uint cte_FirstAid(Critter& cr, int identifier, uint& rate) {
     //Log("cte_FirstAid :: identifier = " + identifier + ", rate = " + rate);
-    int heal = rate % 10000;
+    int heal = (rate / 10) % 1000;
+    int tickTimer = rate % 10;
     int curHp = cr.Stat[ST_CURRENT_HP];
     int maxHp = cr.Stat[ST_MAX_LIFE];
     if (curHp + heal > maxHp) {
@@ -265,8 +267,8 @@ uint cte_FirstAid(Critter& cr, int identifier, uint& rate) {
     if ((rate / 10000) - 1 <= 0) {
         return 0;
     } else {
-        rate = (((rate / 10000) - 1) * 10000) + heal;
-        return REAL_SECOND(5);
+        rate = (((rate / 10000) - 1) * 10000) + 10 * heal + tickTimer;
+        return REAL_SECOND(tickTimer);
     }
 }
 
@@ -333,7 +335,7 @@ bool UseDoctorOnCritter(Critter& cr, Critter& targetCr, Item@ item)
         @item = SelectSkillItemExt(cr, item, SK_DOCTOR);
     }
 
-    int itemFactor = 1;
+    int itemFactor = 3;
     if (valid(item)) {
         doctorSkill += item.Proto.Misc_ToolSkillBonus;
         GameVar@ doctorToolUseVar = GetLocalVar(LVAR_doctor_use, cr.Id);
@@ -359,13 +361,13 @@ bool UseDoctorOnCritter(Critter& cr, Critter& targetCr, Item@ item)
         }
         switch (item.GetProtoId()) {
             case PID_DOCTORS_BAG:
-                itemFactor = 3;
-                break;
-            case PID_PARAMEDICS_BAG:
                 itemFactor = 4;
                 break;
+            case PID_PARAMEDICS_BAG:
+                itemFactor = 5;
+                break;
             default:
-                itemFactor = 1;
+                itemFactor = 3;
         }
     }
 
