@@ -380,10 +380,10 @@ void CombatAttack(Critter& cr, Critter& target, ProtoItem& weapon, uint8 weaponM
                     for (uint i = 0; i < num; i++) {
                         if (_IsTrueNpc(critters[i])) {
                             if (target.Stat[ST_TEAM_ID] == critters[i].Stat[ST_TEAM_ID]) {
-                                critters[i].Say(SAY_NORM_ON_HEAD, "Team under attack.");
+                                //critters[i].Say(SAY_NORM_ON_HEAD, "Team under attack.");
                                 critters[i].AddEnemyInStack(cr.Id);
                             } else {
-                                critters[i].Say(SAY_NORM_ON_HEAD, "Not ours, go ahead.");
+                                //critters[i].Say(SAY_NORM_ON_HEAD, "Not ours, go ahead.");
                             }
                         }
                     }
@@ -3761,7 +3761,7 @@ void ApplyDamage(AttackStruct& attack, Critter& target, uint rounds, bool isCrit
 
     if (!isDead && !knockOut && attacker.Mode[MODE_HIDE] > 0) {
         //  here we need to disable sneak, because of new mechanics of SD
-        attacker.Say(SAY_SHOUT, "Desneak - No knockout, alive!");
+        //attacker.Say(SAY_SHOUT, "Desneak - No knockout, alive!");
         _Desneak(attacker);
 
         array<Critter@> critters;
@@ -3769,12 +3769,12 @@ void ApplyDamage(AttackStruct& attack, Critter& target, uint rounds, bool isCrit
         for (uint i = 0; i < num; i++) {
             if (_IsTrueNpc(critters[i])) {
                 if (target.Stat[ST_TEAM_ID] != 0 && target.Stat[ST_TEAM_ID] == critters[i].Stat[ST_TEAM_ID]) {
-                    critters[i].Say(SAY_NORM, "Team under attack.");
-                    Log("Team under attack. ID = " + critters[i].Stat[ST_TEAM_ID]);
+                    //critters[i].Say(SAY_NORM, "Team under attack.");
+                    //Log("Team under attack. ID = " + critters[i].Stat[ST_TEAM_ID]);
                     critters[i].AddEnemyInStack(attacker.Id);
                 } else {
-                    Log("Not ours, go ahead. ID = " + critters[i].Stat[ST_TEAM_ID]);
-                    critters[i].Say(SAY_NORM, "Not ours, go ahead.");
+                    //Log("Not ours, go ahead. ID = " + critters[i].Stat[ST_TEAM_ID]);
+                    //critters[i].Say(SAY_NORM, "Not ours, go ahead.");
                 }
             }
         }
