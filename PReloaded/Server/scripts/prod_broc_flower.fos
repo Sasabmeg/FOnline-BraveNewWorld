@@ -9,6 +9,8 @@
 #include "production_h.fos"
 
 import bool ShuffleItem(Item& item) from "shuffling_spawner";
+import void GainSkillXp(Critter& cr, uint skillNum, int xp) from "skills";
+
 
 #define PLANT_BROC_BATCH       (1)
 #define PLANT_BROC_CAPACITY    (4)
@@ -39,12 +41,20 @@ bool _SkillPlantBroc(Item& item, Critter& cr, int skill)
 
         cr.Say(SAY_NETMSG, "You have collected some Broc flowers.");
         cr.AddItem(PID_BROC_FLOWER, PLANT_BROC_BATCH);
+        if (cr.Skill[SK_OUTDOORSMAN] < 100) {
+            int xp = CLAMP((160 - cr.Skill[SK_OUTDOORSMAN]) / 20, 2, 8);
+            GainSkillXp(cr, SK_OUTDOORSMAN, Random(xp/2, xp));
+        }
     }
     else
     {
         DeleteItem(item);
         cr.Say(SAY_NETMSG, "You have collected some Broc flowers.");
         cr.AddItem(PID_BROC_FLOWER, 1);
+        if (cr.Skill[SK_OUTDOORSMAN] < 100) {
+            int xp = CLAMP((160 - cr.Skill[SK_OUTDOORSMAN]) / 20, 2, 8);
+            GainSkillXp(cr, SK_OUTDOORSMAN, Random(xp/2, xp));
+        }
     }
 
     return true;

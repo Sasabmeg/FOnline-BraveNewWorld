@@ -158,6 +158,16 @@ bool Gather(Item& item, Critter& cr, Item@ used_item, uint16 pid, uint batch,
                     int xp = CLAMP((130 - cr.Skill[SK_SCIENCE]) / 10, 2, 5);
                     GainSkillXp(cr, SK_SCIENCE, Random(1, xp));
                 }
+            } else if (pid == PID_FIREWOOD || pid == PID_MINERAL || pid == PID_METAL_ORE) {
+                if (cr.Skill[SK_OUTDOORSMAN] < 100) {
+                    int xp = CLAMP((120 - cr.Skill[SK_OUTDOORSMAN]) / 20, 1, 6);
+                    GainSkillXp(cr, SK_OUTDOORSMAN, Random(0, xp));
+                }
+            } else if (pid == PID_MINERALS2 || pid == PID_ORE2) {
+                if (cr.Skill[SK_OUTDOORSMAN] < 150) {
+                    int xp = CLAMP((160 - cr.Skill[SK_OUTDOORSMAN]) / 10, 1, 15);
+                    GainSkillXp(cr, SK_OUTDOORSMAN, Random(xp/2, xp));
+                }
             }
         }
         AMOUNT(item) -= batch;

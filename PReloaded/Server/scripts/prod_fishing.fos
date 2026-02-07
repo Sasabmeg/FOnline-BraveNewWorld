@@ -581,14 +581,14 @@ uint e_giveCaughtItem(array<uint>@ values) {
         player.Say(SAY_NETMSG, "Whoa! An Eight Ball!? How did that get stuck on the fishing spear?");
         player.AddItem(rewardPid, 1);
         player.StatBase[ST_EXPERIENCE] += Random(160, 250) * 10;
-        int xp = CLAMP((150 - player.Skill[SK_OUTDOORSMAN]) / 10, 50, 100);
-        GainSkillXp(player, SK_OUTDOORSMAN, Random(xp, xp * 5));
+        int xp = CLAMP((300 - player.Skill[SK_OUTDOORSMAN]), 100, 300);
+        GainSkillXp(player, SK_OUTDOORSMAN, Random(xp, xp * 2));
     } else if (rewardType == REWARD_TYPE_EPIC) {
         player.Say(SAY_NETMSG, "Hm, I caught something special!");
         player.AddItem(rewardPid, 1);
         player.StatBase[ST_EXPERIENCE] += Random(26, 150) * 10;
-        int xp = CLAMP((200 - player.Skill[SK_OUTDOORSMAN]) / 10, 1, 15);
-        GainSkillXp(player, SK_OUTDOORSMAN, Random(1, xp));
+        int xp = CLAMP((300 - player.Skill[SK_OUTDOORSMAN]) / 10, 10, 30);
+        GainSkillXp(player, SK_OUTDOORSMAN, Random(xp, xp * 2));
     } else if (rewardType == REWARD_TYPE_RARE) {
         player.Say(SAY_NETMSG, "Hm, I caught something rare! The fish got disturbed and swam away, but definitely worth it!");
         Item@ reward = player.AddItem(rewardPid, 1);
@@ -603,11 +603,11 @@ uint e_giveCaughtItem(array<uint>@ values) {
             } else if (Random(0, 100) < luckFactor * 4) {
                 AddArmorBonus(reward, 4);
             }
-            reward.BrokenCount = Random(60 - luckFactor * 2, 95 - luckFactor * 2);
+            reward.BrokenCount = Random(15 - luckFactor * 2, 55 - luckFactor * 2);
             reward.Deterioration = Random(reward.BrokenCount * 100, (MAX_DETERIORATION + reward.BrokenCount * 100) / 2);
             reward.Update();
-            int xp = CLAMP((150 - player.Skill[SK_OUTDOORSMAN]) / 10, 1, 10);
-            GainSkillXp(player, SK_OUTDOORSMAN, Random(1, xp));
+            int xp = CLAMP((300 - player.Skill[SK_OUTDOORSMAN]) / 10, 10, 30);
+            GainSkillXp(player, SK_OUTDOORSMAN, Random(xp, xp * 2));
         }
     } else if (rewardType == REWARD_TYPE_QUALITY) {
         player.Say(SAY_NETMSG, "Hm, I caught some quality stuff! The fish got disturbed and swam away, but who cares!");
@@ -619,11 +619,11 @@ uint e_giveCaughtItem(array<uint>@ values) {
             if (Random(0, 100) < luckFactor * 4) {
                 AddArmorBonus(reward, 3);
             }
-            reward.BrokenCount = Random(60 - luckFactor * 2, 95 - luckFactor * 2);
+            reward.BrokenCount = Random(15 - luckFactor * 2, 55 - luckFactor * 2);
             reward.Deterioration = Random(reward.BrokenCount * 100, (MAX_DETERIORATION + reward.BrokenCount * 100) / 2);
             reward.Update();
-            int xp = CLAMP((150 - player.Skill[SK_OUTDOORSMAN]) / 10, 1, 7);
-            GainSkillXp(player, SK_OUTDOORSMAN, Random(1, xp));
+            int xp = CLAMP((300 - player.Skill[SK_OUTDOORSMAN]) / 10, 10, 30);
+            GainSkillXp(player, SK_OUTDOORSMAN, Random(xp/2, xp));
         }
     } else if (rewardType == REWARD_TYPE_COMMON) {
         player.Say(SAY_NETMSG, "Hm, I caught something!  The fish got disturbed and swam away.");
@@ -639,15 +639,15 @@ uint e_giveCaughtItem(array<uint>@ values) {
                 SETFLAG(reward.BrokenFlags, BI_BROKEN);
             }
             reward.Update();
-            int xp = CLAMP((125 - player.Skill[SK_OUTDOORSMAN]) / 10, 1, 5);
+            int xp = CLAMP((300 - player.Skill[SK_OUTDOORSMAN]) / 10, 10, 30);
             GainSkillXp(player, SK_OUTDOORSMAN, Random(1, xp));
         }
     } else if (rewardType == REWARD_TYPE_JUNK) {
         player.Say(SAY_NETMSG, "Hm, I caught some junk! The fish got disturbed and swam away.");
         player.AddItem(rewardPid, 1);
         player.StatBase[ST_EXPERIENCE] += Random(1, 2) * 10;
-        int xp = CLAMP((100 - player.Skill[SK_OUTDOORSMAN]) / 10, 1, 5);
-        GainSkillXp(player, SK_OUTDOORSMAN, Random(0, xp));
+        int xp = CLAMP((300 - player.Skill[SK_OUTDOORSMAN]) / 10, 10, 30);
+        GainSkillXp(player, SK_OUTDOORSMAN, Random(1, xp/2));
     } else if (rewardType == REWARD_TYPE_FISH) {
         Map@ map = player.GetMap();
         if (valid(map)) {
@@ -658,12 +658,12 @@ uint e_giveCaughtItem(array<uint>@ values) {
             player.Say(SAY_NETMSG, "Oh look, what did this fish push ashore! A bottle with a paper in it!");
             player.AddItem(PID_MESSAGE_IN_A_BOTTLE, 1);
             player.StatBase[ST_EXPERIENCE] += Random(100, 500) * 10;
-            int xp = CLAMP((200 - player.Skill[SK_OUTDOORSMAN]) / 10, 1, 10);
+            int xp = CLAMP((300 - player.Skill[SK_OUTDOORSMAN]) / 2, 50, 150);
             GainSkillXp(player, SK_OUTDOORSMAN, Random(10 + xp, (10 + xp) * 2));
         } else {
             player.Say(SAY_NETMSG, "I caught some fish!");
             player.StatBase[ST_EXPERIENCE] += 75;
-            int xp = CLAMP((200 - player.Skill[SK_OUTDOORSMAN]) / 10, 1, 10);
+            int xp = CLAMP((300 - player.Skill[SK_OUTDOORSMAN]) / 10, 10, 30);
             GainSkillXp(player, SK_OUTDOORSMAN, Random(1, xp));
         }
     }
