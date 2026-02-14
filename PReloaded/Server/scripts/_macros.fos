@@ -317,4 +317,7 @@
 #define _IsTrueNpc                   # (cr)    (cr.IsNpc() && !_IsFollower(cr))
 
 #define _IsAttackFromBehind         #  (crDir, tDir) (crDir == tDir || ((crDir + 1) % 6) == tDir || ((crDir + 5) % 6) == tDir)
+
+#define _XpForNextSkill              # (skill)  (skill > 175 ? 180 : (skill > 150 ? 120 : (skill > 125 ? 90 : (skill > 100 ? 60 : (skill > 75 ? 40 : (skill > 50 ? 30 : (skill > 25 ? 20 : 10)))))))
+
 #endif // __MACROS__

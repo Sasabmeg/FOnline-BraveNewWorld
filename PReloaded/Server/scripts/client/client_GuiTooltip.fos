@@ -102,6 +102,14 @@ class CTooltips {
         string intellectExt = "";
         string agilityExt = "";
         string luckExt = "";
+
+        string lockpickExt = "";
+        string scienceExt = "";
+        string repairExt = "";
+        string barterExt = "";
+        string gamblingExt = "";
+        string outdoorsmanExt = "";
+
         string resistExt = "";
         string healingRateExt = "";
         string radiatedExt = "";
@@ -372,6 +380,13 @@ class CTooltips {
             luckExt = "\nCurrent:"
                     + "\n\u2022 Base: " + chosen.StatBase[ST_LUCK]
                     + "\n\u2022 Effects: " + (luckDif < 0 ? ("|" + COLOR_DEBUFF + " ") : ("|" + COLOR_BUFF + " +")) + luckDif + "|" + COLOR_REGULAR + " ";
+
+            lockpickExt = "\n\u2022 XP needed for next skill level: " + _XpForNextSkill(chosen.Skill[SK_LOCKPICK]) + "\n\n";
+            scienceExt = "\n\u2022 XP needed for next skill level: " + _XpForNextSkill(chosen.Skill[SK_SCIENCE]) + "\n\n";
+            repairExt = "\n\u2022 XP needed for next skill level: " + _XpForNextSkill(chosen.Skill[SK_REPAIR]) + "\n\n";
+            gamblingExt = "\n\u2022 XP needed for next skill level: " + _XpForNextSkill(chosen.Skill[SK_GAMBLING]) + "\n\n";
+            barterExt = "\n\u2022 XP needed for next skill level: " + _XpForNextSkill(chosen.Skill[SK_BARTER]) + "\n\n";
+            outdoorsmanExt = "\n\u2022 XP needed for next skill level: " + _XpForNextSkill(chosen.Skill[SK_OUTDOORSMAN]) + "\n\n";
 
             int maxLifeBase = chosen.StatBase[ST_MAX_LIFE] + chosen.Stat[ST_ENDURANCE]*3 + chosen.Stat[ST_STRENGTH]*2;
             int maxLifeDif = chosen.Stat[ST_MAX_LIFE] - maxLifeBase;
@@ -844,11 +859,10 @@ class CTooltips {
 
         tooltipsKey.insertLast(SK_LOCKPICK);
         tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(SK_LOCKPICK)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(SK_LOCKPICK))
-                                 + pipText);
+                                 + pipText + pipStatus + lockpickExt);
         tooltipsValueExt.insertLast(pipReference
                                  + notes
                                  + "\n\u2022 This is an active combat skill that you cannot specialize in."
-                                 + "\n\u2022 You can level this skill by spending Skill Points, up to a maximum of 200."
                                  + modifies
                                  + "\n\u2022 Chance to open locks.");
 
@@ -879,7 +893,7 @@ class CTooltips {
 
         tooltipsKey.insertLast(SK_SCIENCE);
         tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(SK_SCIENCE)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(SK_SCIENCE))
-                                 + pipText);
+                                 + pipText + pipStatus + scienceExt);
         tooltipsValueExt.insertLast(pipReference
                                  + notes
                                  + "\n\u2022 Passive non-combat skill, can be leveled by related activity up to a maximum of 200."
@@ -895,7 +909,7 @@ class CTooltips {
 
         tooltipsKey.insertLast(SK_REPAIR);
         tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(SK_REPAIR)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(SK_REPAIR))
-                                 + pipText);
+                                 + pipText + pipStatus + repairExt);
         tooltipsValueExt.insertLast(pipReference
                                  + notes
                                  + "\n\u2022 Passive non-combat skill, can be leveled by related activity up to a maximum of 200."
@@ -921,7 +935,7 @@ class CTooltips {
 
         tooltipsKey.insertLast(SK_BARTER);
         tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(SK_BARTER)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(SK_BARTER))
-                                 + pipText);
+                                 + pipText + pipStatus + barterExt);
         tooltipsValueExt.insertLast(pipReference
                                  + notes
                                  + "\n\u2022 Passive non-combat skill, can be leveled by related activity up to a maximum of 200."
@@ -932,7 +946,7 @@ class CTooltips {
 
         tooltipsKey.insertLast(SK_GAMBLING);
         tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(SK_GAMBLING)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(SK_GAMBLING))
-                                 + pipText);
+                                 + pipText + pipStatus + gamblingExt);
         tooltipsValueExt.insertLast(pipReference + notes
                                     + "\n\u2022 Passive non-combat skill, can be leveled by related activity up to a maximum of 200."
                                     + "\n\u2022 Raise this skill by:"
@@ -942,7 +956,7 @@ class CTooltips {
 
         tooltipsKey.insertLast(SK_OUTDOORSMAN);
         tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(SK_OUTDOORSMAN)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(SK_OUTDOORSMAN))
-                                    + pipText);
+                                 + pipText + pipStatus + outdoorsmanExt);
         tooltipsValueExt.insertLast(pipReference + notes
                                     + "\n\u2022 Passive non-combat skill, can be leveled by related activity up to a maximum of 200."
                                     + "\n\u2022 Raise this skill by:"
@@ -2648,10 +2662,18 @@ void SetInventoryDetailText(ItemCl& item) {
         uint craftXpSkillNum = GetCraftingSkillNumByCraftPid(item);
         if (craftXpSkillNum >= 200 && craftXpSkillNum <= 218) {
             text += "\nCraft passive skill gain: " + GetMsgStr(TEXTMSG_GAME, STR_SKILL_NAME(craftXpSkillNum));
-        }
-        uint craftXpValue = GetCraftXpByPid(item.GetProtoId());
-        if (craftXpValue > 0) {
-            text += "\nCraft material xp value: " + craftXpValue;
+            uint craftXpValue = GetCraftXpByPid(item.GetProtoId());
+            if (craftXpValue > 0) {
+                text += "\nCraft material base xp value: " + craftXpValue;
+                for (int skillNum = SK_LOCKPICK; skillNum <= SK_OUTDOORSMAN; skillNum++) {
+                    if (skillNum == SK_LOCKPICK || skillNum == SK_REPAIR || skillNum == SK_SCIENCE || skillNum == SK_OUTDOORSMAN) {
+                        int skill = chosen.Skill[skillNum];
+                        int componentDiminisher = (skill > 150 ? 5 : (skill > 125 ? 4 : (skill > 100 ? 3 : (skill > 75 ? 2 : (skill > 50 ? 1 : 0)))));
+                        int craftXpValueCurrent = CLAMP(craftXpValue - componentDiminisher, 0, 7);
+                        text += "\n\t\u2022 " + GetMsgStr(TEXTMSG_GAME, STR_SKILL_NAME(skillNum)) + ": " + craftXpValueCurrent;
+                    }
+                }
+            }
         }
 
         // Deterioration
@@ -3045,13 +3067,13 @@ int GetCraftXpByPid(uint pid) {
         case PID_HYPODERMIC_NEEDLE:
         case PID_MINERALS2:
         case PID_GUNPOWDER2:
+        case PID_ALLOYS:
+        case PID_ELECTRONIC_PARTS:
+        case PID_ORE2:
             return 3;
         case PID_BIO_GEL:
         case PID_BRAHMIN_HIDE:
         case PID_GOLDEN_GECKO_PELT:
-        case PID_ALLOYS:
-        case PID_ELECTRONIC_PARTS:
-        case PID_ORE2:
             return 4;
         case PID_FIBRE2:
         case PID_CHEMICALS2:

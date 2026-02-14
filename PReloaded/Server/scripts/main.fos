@@ -3525,7 +3525,7 @@ void items_crafted(array<Item@>& items, array<uint>& itemsCount, array<Item@>& r
 
     craftSkillNum = GetCraftingSkillNumByCraftPid(items[0]);
     skill = crafter.Skill[craftSkillNum];
-    int componentDiminisher = (skill > 150 ? 4 : (skill > 125 ? 3 : (skill > 75 ? 2 : (skill > 25 ? 1 : 0))));
+    int componentDiminisher = (skill > 150 ? 5 : (skill > 125 ? 4 : (skill > 100 ? 3 : (skill > 75 ? 2 : (skill > 50 ? 1 : 0)))));
     int diminishingReturns;
 
     //Log("craft XP skill number = " + craftSkillNum + ", skillvalue = " + skill + ", maxDiminisher = " + componentDiminisher);
@@ -3533,8 +3533,9 @@ void items_crafted(array<Item@>& items, array<uint>& itemsCount, array<Item@>& r
         int xp = 0;
         for (uint k = 0; k < multiplier; k++) {
             for (uint j = 0; j < recipeCnt[i]; j++) {
-                diminishingReturns = Random(componentDiminisher / 2, componentDiminisher);
-                xp += CLAMP(GetCraftXpByPid(recipePids[i]) - diminishingReturns, 0, 5);
+                //diminishingReturns = Random(componentDiminisher / 2, componentDiminisher);
+                diminishingReturns = componentDiminisher;
+                xp += CLAMP(GetCraftXpByPid(recipePids[i]) - diminishingReturns, 0, 7);
                 //Log("\t\trecipePid = " + recipePids[i] + ", DR = " + diminishingReturns + ", xp = " + CLAMP(GetCraftXpByPid(recipePids[i]) - diminishingReturns, 0, 5));
             }
         }

@@ -14,8 +14,6 @@
 #include "_colors.fos"
 #include "_vars.fos"
 
-#define _XpForNextSkill              # (skill)  (skill > 175 ? 180 : (skill > 150 ? 120 : (skill > 125 ? 90 : (skill > 100 ? 60 : (skill > 75 ? 40 : (skill > 50 ? 30 : (skill > 25 ? 20 : 10)))))))
-
 
 #define SKILLS_DEBUG_LOGGING_ALLOWED     (false)
 
@@ -531,13 +529,13 @@ int GetCraftXpByPid(uint pid) {
         case PID_HYPODERMIC_NEEDLE:
         case PID_MINERALS2:
         case PID_GUNPOWDER2:
+        case PID_ALLOYS:
+        case PID_ELECTRONIC_PARTS:
+        case PID_ORE2:
             return 3;
         case PID_BIO_GEL:
         case PID_BRAHMIN_HIDE:
         case PID_GOLDEN_GECKO_PELT:
-        case PID_ALLOYS:
-        case PID_ELECTRONIC_PARTS:
-        case PID_ORE2:
             return 4;
         case PID_FIBRE2:
         case PID_CHEMICALS2:
