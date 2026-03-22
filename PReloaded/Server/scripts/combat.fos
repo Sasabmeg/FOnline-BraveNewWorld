@@ -231,7 +231,14 @@ uint e_CombatAttack(array<uint>@ values) {
         return 0;
     }
 
-    CombatAttack(attacker, target, realWeaponProto, weaponMode, ammoProto);
+    //  cannot see target anymore, stop attack
+    if (attacker.IsSee(target)) {
+        CombatAttack(attacker, target, realWeaponProto, weaponMode, ammoProto);
+    } else {
+        if (attacker.IsPlayer()) {
+            attacker.Say(SAY_NETMSG, "Target not visible.");
+        }
+    }
     return 0;
 }
 
