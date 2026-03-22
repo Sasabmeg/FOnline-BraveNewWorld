@@ -658,17 +658,17 @@ void render_iface(uint layer)
                         if (cr.Timeout[TO_SK_DOCTOR] > 0) {
                             docTimeout = (cr.Timeout[TO_SK_DOCTOR]/__TimeMultiplier) + 1;
                         }
-                        if (cr.Param[TO_EX_IRREMEDIABLE] + PLASMA_EFFECT_LINGER_TIME > int(GetTick())) {
-                            plasmaTimeout = (cr.Param[TO_EX_IRREMEDIABLE] + PLASMA_EFFECT_LINGER_TIME - int(GetTick())) / 1000;
+                        if (_IsPlasmaBurnt(cr)) {
+                            plasmaTimeout = _GetPlasmaBurntTo(cr);
+                            if (_GetPlasmaBurntValue(cr) > 0) {
+                                plasmaValue = (cr.ParamBase[ST_EX_IRREMEDIABLE]);
+                            }
                         }
-                        if(cr.ParamBase[ST_EX_IRREMEDIABLE] > 0) {
-                            plasmaValue = (cr.ParamBase[ST_EX_IRREMEDIABLE]);
-                        }
-                        if (cr.Param[TO_EX_BURNT] + BURN_EFFECT_LINGER_TIME > int(GetTick())) {
-                            burntTimeout = (cr.Param[TO_EX_BURNT] + BURN_EFFECT_LINGER_TIME - int(GetTick())) / 1000;
-                        }
-                        if(cr.ParamBase[ST_EX_BURNT] > 0) {
-                            burntValue = (cr.ParamBase[ST_EX_BURNT]);
+                        if (_IsBurnt(cr)) {
+                            burntTimeout = _GetBurntTo(cr);
+                            if (_GetBurntValue(cr) > 0) {
+                                burntValue = _GetBurntValue(cr);
+                            }
                         }
 
                         string skillTimeout = "";

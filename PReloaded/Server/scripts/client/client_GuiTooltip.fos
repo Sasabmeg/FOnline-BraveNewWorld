@@ -1690,8 +1690,9 @@ class CTooltips {
         tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(PE_MAN_OF_STEEL)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(PE_MAN_OF_STEEL)) + pipText);
         tooltipsValueExt.insertLast(pipReference
                                      + notes
-                                     + "\n\u2022 -5 penalty to enemy critical chance."
-                                     + "\n\u2022 -5 penalty to enemy critical power roll."
+                                     + "\n\u2022 -10 penalty to enemy critical chance."
+                                     + "\n\u2022 -10 penalty to enemy critical power roll."
+                                     + "\n\u2022 +5 bonus to knockdown resist."
                                      + requirements
                                      + "\n\t\u2022 Endurance >= 6");
 

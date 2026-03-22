@@ -300,8 +300,9 @@ void CombatAttack(Critter& cr, Critter& target, ProtoItem& weapon, uint8 weaponM
 	bool isExplodeRocket = (ammoPid == PID_EXPLOSIVE_ROCKET) || (ammoPid == PID_40MM_GRENADE);
     bool isShotgun = weapon.Weapon_Caliber == 11;
 	bool isBozar = weapPid == PID_BOZAR;
-	bool isLSW = weapPid == PID_LIGHT_SUPPORT_WEAPON;
-    bool isNoSpread = (isShotgun || isBozar || isLSW || weapPid == PID_LASER_SUPPORT_WEAPON || weapPid == PID_FN_FAL || weapPid == PID_FN_FAL_HPFA);
+	bool isLSW = (weapPid == PID_LIGHT_SUPPORT_WEAPON || weapPid == PID_LASER_SUPPORT_WEAPON);
+	bool isFNFAL = (weapPid == PID_FN_FAL || weapPid == PID_FN_FAL_HPFA || weapPid == PID_FN_FAL_NIGHT_SCOPE);
+    bool isNoSpread = (isShotgun || isBozar || isLSW || isFNFAL);
 
 	if(ammoPid == PID_SHOTGUN_SHELLS_EMP) dmgType=DAMAGE_TYPE_EMP; // jesli uzywane ammo typu EMP to zmien dmtype broni
 	if(ammoPid == PID_SHOTGUN_DRAGON_BREATH_SHELLS) dmgType=DAMAGE_TYPE_FIRE; // jesli uzywane ammo typu EMP to zmien dmtype broni
@@ -891,7 +892,7 @@ void CombatAttack(Critter& cr, Critter& target, ProtoItem& weapon, uint8 weaponM
     } else {    // If hit
         isHit = true;
         int isCriticalRoll = Random(1, 100);
-        if (attack.Attacker.IsPlayer() && attack.Attacker.GetAccess() >= ACCESS_TESTER) {
+        if (attack.Attacker.IsPlayer() && (attack.Attacker.GetAccess() >= ACCESS_TESTER || isDummyTraining)) {
             int debugCriticalChanceRoll = GetLvar(attack.Attacker, LVAR_test_crit_chance_roll);
             if (debugCriticalChanceRoll > 0) {
                 isCriticalRoll = CLAMP(debugCriticalChanceRoll, 0, 100);
@@ -921,7 +922,7 @@ void CombatAttack(Critter& cr, Critter& target, ProtoItem& weapon, uint8 weaponM
             int critChanceFromAimStatFactor = cr.Trait[TRAIT_FAST_SHOT] != 0 ? (cr.Stat[ST_AGILITY] + attackerLuck) : (cr.Stat[ST_INTELLECT] * 2);
             int critChanceFromAim = (CLAMP(GetHitAim(aim), 0, 60) * (60 + 2 * critChanceFromAimStatFactor)) / 100;
             int finesseAdjustForBurst = ((cr.Trait[TRAIT_FINESSE] != 0 && isBurst) ? 10 : 0);
-            int manOfSteelReduce = target.Perk[PE_MAN_OF_STEEL] > 0 ? 5 : 0;
+            int manOfSteelReduce = target.Perk[PE_MAN_OF_STEEL] > 0 ? 10 : 0;
             int wastelandersResilienceReduce = target.Perk[PE_WASTELANDERS_RESILIENCE] > 0 ? 5 : 0;
             int chance = cr.Stat[ST_CRITICAL_CHANCE] + toHitOverflow + critChanceFromAim + attack.SelectWeaponBonus(BONUS_WEAPON_CRITICAL_CHANCE);
             chance -= (targetLuck / 2) + manOfSteelReduce + wastelandersResilienceReduce + finesseAdjustForBurst;
@@ -1544,7 +1545,7 @@ void ApplyDamage(AttackStruct& attack, Critter& target, uint rounds, bool isCrit
         }
 
         int roll = Random(0, 100);
-        if (attacker.IsPlayer() && attacker.GetAccess() >= ACCESS_TESTER) {
+        if (attacker.IsPlayer() && (attacker.GetAccess() >= ACCESS_TESTER || isDummyTraining)) {
             int debugCritPowerRoll = GetLvar(attacker, LVAR_test_crit_power_roll);
             if (debugCritPowerRoll > 0) {
                 roll = CLAMP(debugCritPowerRoll, 0, 100);
@@ -1574,9 +1575,9 @@ void ApplyDamage(AttackStruct& attack, Critter& target, uint rounds, bool isCrit
         }
 
         if (target.Perk[PE_MAN_OF_STEEL] > 0) {
-            roll -= 5;
+            roll -= 10;
             if (isDummyTraining) {
-                dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , Man of Steel = |" + COLOR_DTEXT_MALUS + " -5";
+                dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , Man of Steel = |" + COLOR_DTEXT_MALUS + " -10";
             }
         }
         if (target.Perk[PE_WASTELANDERS_RESILIENCE] > 0) {
@@ -2324,8 +2325,8 @@ void ApplyDamage(AttackStruct& attack, Critter& target, uint rounds, bool isCrit
         int knockdownRoll = Random(1, 100);
         int knockdownMagnitude = 0;
         int burntKdBonus = 0;
-        if (target.ParamBase[TO_EX_BURNT] + BURN_EFFECT_LINGER_TIME > int(GetTick())) {
-            burntKdBonus = target.Param[ST_EX_BURNT];
+        if (_IsBurnt(target)) {
+            burntKdBonus = _GetBurntValue(target);
         }
         if (weapPid == PID_FLAMER) {
             knockdownMagnitude = CLAMP(((target.Param[PE_WASTELANDERS_RESILIENCE] > 0 ? 25 : 75) + burntKdBonus) / (stonewallRank + 1), 0, (target.Param[PE_WASTELANDERS_RESILIENCE] > 0 ? 50 : 75));
@@ -2563,14 +2564,14 @@ void ApplyDamage(AttackStruct& attack, Critter& target, uint rounds, bool isCrit
         }
         //  reduce DR for lasers only
         if (dmgType == DAMAGE_TYPE_LASER) {
-            if (target.Param[TO_EX_IRREMEDIABLE] + PLASMA_EFFECT_LINGER_TIME > int(GetTick())) {
+            if (_IsPlasmaBurnt(target)) {
                 targetDR -= 5;
                 partialBypassDR -= 5;
                 if (isDummyTraining) {
                     dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , Perk Energy Girl Irremediable DR penalty: |" + COLOR_DTEXT_MALUS + " -5";
                 }
             }
-            if (target.Param[TO_EX_BURNT] + BURN_EFFECT_LINGER_TIME > int(GetTick())) {
+            if (_IsBurnt(target)) {
                 targetDR -= 5;
                 partialBypassDR -= 5;
                 if (isDummyTraining) {
@@ -2640,7 +2641,7 @@ void ApplyDamage(AttackStruct& attack, Critter& target, uint rounds, bool isCrit
 
     int debugDamageRollMode = 0;
     int debugDamageRollPercent = -1;
-	if (attacker.IsPlayer() && attacker.GetAccess() >= ACCESS_TESTER) {
+	if (attacker.IsPlayer() && (attacker.GetAccess() >= ACCESS_TESTER || isDummyTraining)) {
         debugDamageRollMode = GetLvar(attacker, LVAR_test_damage_roll);
         if (debugDamageRollMode == 1) {
             debugDamageRollPercent = 0;
@@ -2654,7 +2655,7 @@ void ApplyDamage(AttackStruct& attack, Critter& target, uint rounds, bool isCrit
             dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , Debug Damage percent: |" + COLOR_DTEXT_BONUS + " " + debugDamageRollPercent + "%";
         }
         if (target.IsPlayer() && target.GetAccess() == ACCESS_CLIENT) {
-            target.Say(SAY_NETMSG, "|" + COLOR_DTEXT_REGULAR + " Attacker is GM/TESTER. Debug Min-Max Damage percent: |" + COLOR_DTEXT_BONUS + " " + debugDamageRollPercent + "%");
+            target.Say(SAY_NETMSG, "|" + COLOR_DTEXT_REGULAR + " Attacker is GM/TESTER/DummyTraining. Debug Min-Max Damage percent: |" + COLOR_DTEXT_BONUS + " " + debugDamageRollPercent + "%");
         }
 	}
 
@@ -4350,7 +4351,49 @@ void AttackFlamer(AttackStruct& attack, Map& map, Critter& cr, Critter& realTarg
         NotifyMiss(cr, results);
 }
 
-void AttackBurst(AttackStruct& attack, Map& map, Critter& cr, Critter& realTarget, Critter& target, array<CombatRes>& results, int baseToHit, bool isHit, bool criticalHit, uint8 weaponSubtype, bool changedTarget, int wpnMaxDist, int acmod, int toHit, int ammoRound, bool isNoSpread, int CriticalChance) {
+void AttackBurst(AttackStruct& attack, Map& map, Critter& attacker, Critter& realTarget, Critter& target, array<CombatRes>& results, int baseToHit, bool isHit, bool criticalHit, uint8 weaponSubtype, bool changedTarget, int wpnMaxDist, int acmod, int toHit, int ammoRound, bool isNoSpread, int CriticalChance) {
+
+    //  BNW changes, to be able to have some training info, to make the dummy more useful, only allow for player and if critter is a training dummy
+    //  may add option later to disable this verbose message at the dummy dialog?
+    bool isDummyTraining = target.CrType >= CRTYPE_DUMMY_STAND ? (target.CrType <= CRTYPE_DUMMY_POWER_ARMOR ? true : false) : false;
+    bool validAttacker = valid(attacker);
+
+    if (!valid(attacker)) {
+        Log("Invalid target in combat.fos, investigate.");
+        return;
+    }
+    if (!validAttacker) {
+        Log("Invalid attacker in combat.fos, investigate. Target id: " + attacker.Id);
+        return;
+    }
+
+    if (validAttacker && !attacker.IsPlayer()) {
+        isDummyTraining = false;
+    }
+
+    bool isTentLocation = false;
+    if (valid(map) && valid(map.GetLocation()) && map.GetLocation().IsTent()) {
+        isTentLocation = true;
+    }
+
+    if (isTentLocation && validAttacker && attacker.IsPlayer() && target.IsPlayer() && target.GetAccess() >= ACCESS_TESTER) {
+        isDummyTraining = true;
+    }
+    //  this will allow players to use their alts as training dummy, only allow in test season
+    if (isTentLocation && validAttacker && attacker.IsPlayer() && target.IsPlayer() && attacker.GetIp() == target.GetIp()) {
+        isDummyTraining = true;
+    }
+    //  people asked for dummy training in tents, even on other characters, to find bugs faster while whole combat mechanics are a big mess for them
+    if (isTentLocation && validAttacker && attacker.IsPlayer() && target.IsPlayer()) {
+        isDummyTraining = true;
+    }
+
+    string dummyInfo = "";
+
+    if (isDummyTraining) {
+        dummyInfo += "|" + COLOR_DTEXT_CAPTION + " Burst Lines :: ";
+    }
+
     // Adjust toHit if random hit
     int distmod1 = 2;   // Used for initial weapon bonus
     int distmod2 = 0;   // Minimal distance
@@ -4360,7 +4403,12 @@ void AttackBurst(AttackStruct& attack, Map& map, Critter& cr, Critter& realTarge
         distmod1 = 5;
         distmod2 = 8;
     }
-    int accloss = (cr.IsPlayer() ? (cr.Stat[ST_PERCEPTION] - 2) * distmod1 : (cr.Stat[ST_PERCEPTION] * distmod1));
+    int accloss = (attacker.IsPlayer() ? (attacker.Stat[ST_PERCEPTION] - 2) * distmod1 : (attacker.Stat[ST_PERCEPTION] * distmod1));
+    if (isDummyTraining) {
+        dummyInfo += " |" + COLOR_DTEXT_REGULAR + " Distmod1 = |" + COLOR_DTEXT_BONUS + " " + distmod1;
+        dummyInfo += ", |" + COLOR_DTEXT_REGULAR + " Distmod2 = |" + COLOR_DTEXT_BONUS + " " + distmod2;
+        dummyInfo += ", |" + COLOR_DTEXT_REGULAR + " accloss = |" + COLOR_DTEXT_BONUS + " " + accloss;
+    }
 
     if (changedTarget) {
         int dist = GetDistantion(attack.Hx, attack.Hy, attack.Tx, attack.Ty);
@@ -4370,10 +4418,10 @@ void AttackBurst(AttackStruct& attack, Map& map, Critter& cr, Critter& realTarge
             acc += distmod2;
         else
             acc -= accloss;
-        if(-2 * cr.Stat[ST_PERCEPTION] > acc)
-            acc = -2 * cr.Stat[ST_PERCEPTION];
-        acc -= cr.Perk[PE_SHARPSHOOTER];
-        if(acc > 0 && cr.Param[DAMAGE_EYE] > 0)
+        if(-2 * attacker.Stat[ST_PERCEPTION] > acc)
+            acc = -2 * attacker.Stat[ST_PERCEPTION];
+        acc -= attacker.Perk[PE_SHARPSHOOTER];
+        if(acc > 0 && attacker.Param[DAMAGE_EYE] > 0)
             acc *= 3;
         acc *= -4;
         toHit += acc;
@@ -4390,7 +4438,7 @@ void AttackBurst(AttackStruct& attack, Map& map, Critter& cr, Critter& realTarge
         if(!realTarget.IsKnockout())
             blockers--;
         toHit -= 10 * blockers;
-        toHit = CLAMP(toHit, 5, _MaxToHit(cr));
+        toHit = CLAMP(toHit, 5, _MaxToHit(attacker));
         if(realTarget.Perk[PE_DODGER] > 0)
         {
             Item@ targetWeapon = _CritGetItemHand(realTarget);
@@ -4407,7 +4455,7 @@ void AttackBurst(AttackStruct& attack, Map& map, Critter& cr, Critter& realTarge
                 toHit -= realTarget.Perk[PE_DODGER]*5;
             }
         }
-        toHit = CLAMP(toHit, 5, _MaxToHit(cr));
+        toHit = CLAMP(toHit, 5, _MaxToHit(attacker));
         if(realTarget.Perk[PE_IN_YOUR_FACE] > 0 && dist < 3)
         {
             Item@ targetWeapon = _CritGetItemHand(realTarget);
@@ -4421,8 +4469,12 @@ void AttackBurst(AttackStruct& attack, Map& map, Critter& cr, Critter& realTarge
     }
 
     // Critical hit bonus, toHit can be increased over 95
-    if(criticalHit)
+    if (criticalHit) {
         toHit += 20;
+        if (isDummyTraining) {
+            dummyInfo += "|" + COLOR_DTEXT_REGULAR + "  Critical Hit: toHit + 20 = |" + COLOR_DTEXT_BONUS + " " + toHit;
+        }
+    }
 
     // Proceed with the burst attack
     uint rounds = ammoRound;
@@ -4436,10 +4488,24 @@ void AttackBurst(AttackStruct& attack, Map& map, Critter& cr, Critter& realTarge
     int volleyRounds = MAX((rounds / 6), 1);
 
     int curRounds = 0;
-    for(int i = 0; i < volleyRounds; i++)
-    {
-        if(Random(1, 100) <= toHit)
+    if (isDummyTraining) {
+        dummyInfo += "\n|" + COLOR_DTEXT_REGULAR + " volleyRounds (first central line) = |" + COLOR_DTEXT_BONUS + " " + volleyRounds;
+    }
+
+    for (int i = 0; i < volleyRounds; i++) {
+        int curRoundsRoll = Random(1, 100);
+        if (curRoundsRoll <= toHit) {
             curRounds++;
+            if (isDummyTraining) {
+                dummyInfo += "\n|" + COLOR_DTEXT_ROLL + " Round " + (i + 1) + ": |" +  COLOR_DTEXT_BONUS + " Hit - |" + COLOR_DTEXT_REGULAR + " toHit = |" + COLOR_DTEXT_BONUS + " " + toHit;
+                dummyInfo += "|" + COLOR_DTEXT_REGULAR + "  vs Roll = |" + COLOR_DTEXT_ROLL + " " + curRoundsRoll;
+            }
+        } else {
+            if (isDummyTraining) {
+                dummyInfo += "\n|" + COLOR_DTEXT_ROLL + " Round " + (i + 1) + ": |" +  COLOR_DTEXT_MALUS + " Miss - |" + COLOR_DTEXT_REGULAR + " toHit = |" + COLOR_DTEXT_BONUS + " " + toHit;
+                dummyInfo += "|" + COLOR_DTEXT_REGULAR + "  vs Roll = |" + COLOR_DTEXT_ROLL + " " + curRoundsRoll;
+            }
+        }
     }
 
     if(curRounds != 0)
@@ -4451,18 +4517,24 @@ void AttackBurst(AttackStruct& attack, Map& map, Critter& cr, Critter& realTarge
         len_++;
     }
     volleyRounds -= curRounds;
+    if (isDummyTraining) {
+        dummyInfo += "\n|" + COLOR_DTEXT_REGULAR + " New volleyRounds = |" + COLOR_DTEXT_BONUS + " " + volleyRounds;
+    }
 
     array<Critter@> lineCentral;
     map.GetCrittersPath(attack.Hx, attack.Hy, attack.Tx, attack.Ty, 0.0f, wpnMaxDist, FIND_LIFE_AND_KO, lineCentral);
+    if (isDummyTraining) {
+        dummyInfo += "|" + COLOR_DTEXT_REGULAR + " . Total critters on central line = |" + COLOR_DTEXT_BONUS + " " + lineCentral.length();
+    }
 
     // This never happens
     if(lineCentral.length() == 0)
     {
         Log("ERR: lineCentral.length()==0");
         Log("  " + attack.Hx + "," + attack.Hy + "," + attack.Tx + "," + attack.Ty + "," + wpnMaxDist + (changedTarget ? "changed" : "original"));
-        Log("  attacker " + cr.HexX + "," + cr.HexY);
-        Log("  target: " + target.HexX + "," + target.HexY + "," + GetDistantion(cr.HexX, cr.HexY, target.HexX, target.HexY) + "," + target.Cond);
-        Log("  realTarget: " + realTarget.HexX + "," + realTarget.HexY + "," + GetDistantion(cr.HexX, cr.HexY, realTarget.HexX, realTarget.HexY) + "," + realTarget.Cond);
+        Log("  attacker " + attacker.HexX + "," + attacker.HexY);
+        Log("  target: " + target.HexX + "," + target.HexY + "," + GetDistantion(attacker.HexX, attacker.HexY, target.HexX, target.HexY) + "," + target.Cond);
+        Log("  realTarget: " + realTarget.HexX + "," + realTarget.HexY + "," + GetDistantion(attacker.HexX, attacker.HexY, realTarget.HexX, realTarget.HexY) + "," + realTarget.Cond);
     }
 
     int bl = 0;
@@ -4482,10 +4554,10 @@ void AttackBurst(AttackStruct& attack, Map& map, Critter& cr, Critter& realTarge
             acc += distmod2;
         else
             acc -= accloss;
-        if(-2 * cr.Stat[ST_PERCEPTION] > acc)
-            acc = -2 * cr.Stat[ST_PERCEPTION];
-        acc -= cr.Perk[PE_SHARPSHOOTER];
-        if(acc > 0 && cr.Param[DAMAGE_EYE] > 0)
+        if(-2 * attacker.Stat[ST_PERCEPTION] > acc)
+            acc = -2 * attacker.Stat[ST_PERCEPTION];
+        acc -= attacker.Perk[PE_SHARPSHOOTER];
+        if(acc > 0 && attacker.Param[DAMAGE_EYE] > 0)
             acc *= 3;
         acc *= -4;
         toHit += acc;
@@ -4500,7 +4572,7 @@ void AttackBurst(AttackStruct& attack, Map& map, Critter& cr, Critter& realTarge
             bl++;
         if(lineCentral[i].GetMultihex() > 0)
             toHit += 15;
-        toHit = CLAMP(toHit, 5, _MaxToHit(cr));
+        toHit = CLAMP(toHit, 5, _MaxToHit(attacker));
     //Log("Combat attack, toHit1 = "+toHit);
         if(lineCentral[i].Perk[PE_DODGER] > 0)
         {
@@ -4518,7 +4590,7 @@ void AttackBurst(AttackStruct& attack, Map& map, Critter& cr, Critter& realTarge
                 toHit -= lineCentral[i].Perk[PE_DODGER]*5;
             }
         }
-        toHit = CLAMP(toHit, 5, _MaxToHit(cr));
+        toHit = CLAMP(toHit, 5, _MaxToHit(attacker));
     //Log("Combat attack, toHit2 = "+toHit);
         if(lineCentral[i].Perk[PE_IN_YOUR_FACE] > 0 && dist < 3)
         {
@@ -4555,11 +4627,22 @@ void AttackBurst(AttackStruct& attack, Map& map, Critter& cr, Critter& realTarge
             critsHitBullets[crIndex] += curRounds;
         }
     }
+    if (isDummyTraining) {
+        dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , volleyRounds after blockers = |" + COLOR_DTEXT_BONUS + " " + volleyRounds;
+    }
 
     // Now we are shooting the rest of the bullets (=rounds-MAX(1,rounds/6))
     int shotDist = GetDistantion(attack.Hx, attack.Hy, lineCentral[0].HexX, lineCentral[0].HexY);
-    int step = MAX((wpnMaxDist-11)/7, 1);
-    int sideMod =  37 - MIN(shotDist/step, 7);
+    //int step = MAX((wpnMaxDist-11)/7, 1);
+    //int sideMod =  37 - MIN(shotDist/step, 7);
+    //  overwrite sideMod so that we get 1 + round/3 main line and round/3 side lines, old behavior
+    if (isDummyTraining) {
+        dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , shotDist = |" + COLOR_DTEXT_BONUS + " " + shotDist;
+        dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , weapMaxDist = |" + COLOR_DTEXT_BONUS + " " + wpnMaxDist;
+        //dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , step = |" + COLOR_DTEXT_BONUS + " " + step;
+        //dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , sideMod = |" + COLOR_DTEXT_BONUS + " " + sideMod;
+    }
+
 
     ////////////////////////
     ////    1-hexing    ////
@@ -4611,6 +4694,16 @@ void AttackBurst(AttackStruct& attack, Map& map, Critter& cr, Critter& realTarge
         threeLinesBurst = false;
     }
 
+    if (threeLinesBurst) {
+        if (isDummyTraining) {
+            dummyInfo += "\n|" + COLOR_DTEXT_ROLL + " Three line burst! ";
+        }
+    } else {
+        if (isDummyTraining) {
+            dummyInfo += "\n|" + COLOR_DTEXT_ROLL + " One line burst attack! ";
+        }
+    }
+
     ////
 
     ////    use this to 1-hex with every weapon, and remove above
@@ -4622,17 +4715,42 @@ void AttackBurst(AttackStruct& attack, Map& map, Critter& cr, Critter& realTarge
     for(int lineCount = 0, lineMax = (threeLinesBurst ? 1 : 3); lineCount < lineMax; lineCount++)
     {
         // Rounds for central stack
-        if(lineCount == 0)
-        {
-            volleyRounds = rounds - (((rounds + 1) * 10 / sideMod) + (rounds * 10 / sideMod));         // Second voller along the central line, always
+        if(lineCount == 0) {
+            //volleyRounds = rounds - (((rounds + 1) * 10 / sideMod) + (rounds * 10 / sideMod));         // Second volley along the central line, always / Reloaded S3
+            //  reverted back for BNW
+            volleyRounds = rounds - (((rounds + 1) / 3) + (rounds / 3));
+            if (isDummyTraining) {
+                dummyInfo += "\n|" + COLOR_DTEXT_REGULAR + " Central Line:: ";
+                dummyInfo += "|" + COLOR_DTEXT_REGULAR + "  volley rounds = |" + COLOR_DTEXT_BONUS + " " + volleyRounds;
+                dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , already shot = |" + COLOR_DTEXT_BONUS + " " + (MAX(rounds / 6, 1));
+            }
             volleyRounds -= MAX(rounds / 6, 1);
-        }
-        else
-        {
-            if(lineCount == 1)
-                volleyRounds = (rounds + 1) *10  / sideMod;           // Left line
-            else
-                volleyRounds = rounds * 10 / sideMod;                 // Right line
+            // BNW: reducing by 1/5 central line rounds if distance is too far for spread weapons (non LSW/FNFAL/Shotgun burst basically)
+            if (threeLinesBurst && (shotDist > (wpnMaxDist * 3 / 4))) {
+                volleyRounds -= MAX(rounds/15, 1);
+                if (isDummyTraining) {
+                    dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , long range reduce rounds by = |" + COLOR_DTEXT_BONUS + " " + MAX(rounds/15, 1);
+                }
+            }
+            if (isDummyTraining) {
+                dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , remaining rounds = |" + COLOR_DTEXT_BONUS + " " + volleyRounds;
+            }
+        } else {
+            if (lineCount == 1) {
+                //  volleyRounds = (rounds + 1) *10  / sideMod;           // Left line [Relaoded S3]
+                volleyRounds = (rounds + 1) / 3;           // Left line
+                if (isDummyTraining) {
+                    dummyInfo += "\n|" + COLOR_DTEXT_REGULAR + " Left Line:: ";
+                    dummyInfo += "|" + COLOR_DTEXT_REGULAR + "  volley rounds = |" + COLOR_DTEXT_BONUS + " " + volleyRounds;
+                }
+            } else {
+                //  volleyRounds = rounds * 10 / sideMod;                 // Right line [Relaoded S3]
+                volleyRounds = rounds / 3;                 // Right line
+                if (isDummyTraining) {
+                    dummyInfo += "\n|" + COLOR_DTEXT_REGULAR + " Right Line:: ";
+                    dummyInfo += "|" + COLOR_DTEXT_REGULAR + "  volley rounds = |" + COLOR_DTEXT_BONUS + " " + volleyRounds;
+                }
+            }
         }
 
         if(volleyRounds == 0)
@@ -4642,6 +4760,10 @@ void AttackBurst(AttackStruct& attack, Map& map, Critter& cr, Critter& realTarge
         int bl = 0;           // No blockers
         for(int i = 0, j = lineCentral.length(); (i < j) && (volleyRounds > 0); i++)
         {
+            if (isDummyTraining) {
+                dummyInfo += "\n|" + COLOR_DTEXT_CAPTION + " Central Line:: ";
+                dummyInfo += "|" + COLOR_DTEXT_REGULAR + "  volley rounds = |" + COLOR_DTEXT_BONUS + " " + volleyRounds;
+            }
             // Adjust tohit
             toHit = baseToHit - 10 * bl;
             int dist = GetDistantion(attack.Hx, attack.Hy, lineCentral[i].HexX, lineCentral[i].HexY);
@@ -4650,10 +4772,10 @@ void AttackBurst(AttackStruct& attack, Map& map, Critter& cr, Critter& realTarge
                 acc += distmod2;
             else
                 acc -= accloss;
-            if(-2 * cr.Stat[ST_PERCEPTION] > acc)
-                acc = -2 * cr.Stat[ST_PERCEPTION];
-            acc -= cr.Perk[PE_SHARPSHOOTER];
-            if(acc > 0 && cr.Param[DAMAGE_EYE] > 0)
+            if(-2 * attacker.Stat[ST_PERCEPTION] > acc)
+                acc = -2 * attacker.Stat[ST_PERCEPTION];
+            acc -= attacker.Perk[PE_SHARPSHOOTER];
+            if(acc > 0 && attacker.Param[DAMAGE_EYE] > 0)
                 acc *= 3;
             acc *= -4;
             toHit += acc;
@@ -4666,7 +4788,7 @@ void AttackBurst(AttackStruct& attack, Map& map, Critter& cr, Critter& realTarge
                 toHit += 40;
             if(lineCentral[i].GetMultihex() > 0)
                 toHit += 15;
-            toHit = CLAMP(toHit, 5, _MaxToHit(cr));
+            toHit = CLAMP(toHit, 5, _MaxToHit(attacker));
         //Log("Combat attack, toHit1 = "+toHit);
             if(lineCentral[i].Perk[PE_DODGER] > 0)
             {
@@ -4684,7 +4806,7 @@ void AttackBurst(AttackStruct& attack, Map& map, Critter& cr, Critter& realTarge
                     toHit -= lineCentral[i].Perk[PE_DODGER]*5;
                 }
             }
-            toHit = CLAMP(toHit, 5, _MaxToHit(cr));
+            toHit = CLAMP(toHit, 5, _MaxToHit(attacker));
         //Log("Combat attack, toHit2 = "+toHit);
             if(lineCentral[i].Perk[PE_IN_YOUR_FACE] > 0 && dist < 3)
             {
@@ -4730,10 +4852,16 @@ void AttackBurst(AttackStruct& attack, Map& map, Critter& cr, Critter& realTarge
     if(threeLinesBurst)
     {
         // Rounds for the left stack
-        volleyRounds = (rounds + 1) * 10 / sideMod;
+        //  volleyRounds = (rounds + 1) * 10 / sideMod;     [Reloaded S3]
+        volleyRounds = (rounds + 1) / 3;           // Left line
+
 
         if(volleyRounds > 0)             // Real left
         {
+            if (isDummyTraining) {
+                dummyInfo += "\n|" + COLOR_DTEXT_CAPTION + " Left Line:: ";
+                dummyInfo += "|" + COLOR_DTEXT_REGULAR + "  volley rounds = |" + COLOR_DTEXT_BONUS + " " + volleyRounds;
+            }
             uint8  leftDir = GetOffsetDir(attack.Hx, attack.Hy, attack.Tx, attack.Ty, 89.0f);
             uint16 sx = attack.Hx;
             uint16 sy = attack.Hy;
@@ -4747,9 +4875,14 @@ void AttackBurst(AttackStruct& attack, Map& map, Critter& cr, Critter& realTarge
             map.GetCrittersPath(sx, sy, ex, ey, 0.0f, wpnMaxDist - 1, FIND_LIFE_AND_KO, lineLeft);
             int             leftStart = 0;
             int             leftLen = lineLeft.length();
+            if (isDummyTraining) {
+                dummyInfo += "\n|" + COLOR_DTEXT_REGULAR + " Critters in left line = |" + COLOR_DTEXT_BONUS + " " + lineLeft.length();
+            }
             while((leftStart < leftLen) && (GetDistantion(attack.Hx, attack.Hy, lineLeft[leftStart].HexX, lineLeft[leftStart].HexY)) < 3)
                 leftStart++;
-
+            if (isDummyTraining) {
+                dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , leftStart = |" + COLOR_DTEXT_BONUS + " " + leftStart;
+            }
             for(int i = leftStart, j = leftLen; (i < j) && (volleyRounds > 0); i++)
             {
                 // Adjust tohit
@@ -4761,10 +4894,10 @@ void AttackBurst(AttackStruct& attack, Map& map, Critter& cr, Critter& realTarge
                     acc += distmod2;
                 else
                     acc -= accloss;
-                if(-2 * cr.Stat[ST_PERCEPTION] > acc)
-                    acc = -2 * cr.Stat[ST_PERCEPTION];
-                acc -= cr.Perk[PE_SHARPSHOOTER];
-                if(acc > 0 && cr.Param[DAMAGE_EYE] > 0)
+                if(-2 * attacker.Stat[ST_PERCEPTION] > acc)
+                    acc = -2 * attacker.Stat[ST_PERCEPTION];
+                acc -= attacker.Perk[PE_SHARPSHOOTER];
+                if(acc > 0 && attacker.Param[DAMAGE_EYE] > 0)
                     acc *= 3;
                 acc *= -4;
                 toHit += acc;
@@ -4777,7 +4910,7 @@ void AttackBurst(AttackStruct& attack, Map& map, Critter& cr, Critter& realTarge
                     toHit += 40;
                 if(lineLeft[i].GetMultihex() > 0)
                     toHit += 15;
-                toHit = CLAMP(toHit, 5, _MaxToHit(cr));
+                toHit = CLAMP(toHit, 5, _MaxToHit(attacker));
             //Log("Combat attack, toHit1 = "+toHit);
                 if(lineLeft[i].Perk[PE_DODGER] > 0)
                 {
@@ -4795,7 +4928,7 @@ void AttackBurst(AttackStruct& attack, Map& map, Critter& cr, Critter& realTarge
                         toHit -= lineLeft[i].Perk[PE_DODGER]*5;
                     }
                 }
-                toHit = CLAMP(toHit, 5, _MaxToHit(cr));
+                toHit = CLAMP(toHit, 5, _MaxToHit(attacker));
             //Log("Combat attack, toHit2 = "+toHit);
                 if(lineLeft[i].Perk[PE_IN_YOUR_FACE] > 0 && dist < 3)
                 {
@@ -4836,10 +4969,15 @@ void AttackBurst(AttackStruct& attack, Map& map, Critter& cr, Critter& realTarge
 
 
         // Rounds for the right stack
-        volleyRounds = (rounds) * 10 / sideMod;
+        //  volleyRounds = rounds * 10 / sideMod;                 // Right line [Reloaded S3]
+        volleyRounds = rounds / 3;                 // Right line
 
         if(volleyRounds > 0)
         {
+            if (isDummyTraining) {
+                dummyInfo += "\n|" + COLOR_DTEXT_CAPTION + " Right Line:: ";
+                dummyInfo += "|" + COLOR_DTEXT_REGULAR + "  volley rounds = |" + COLOR_DTEXT_BONUS + " " + volleyRounds;
+            }
             uint8  rightDir = GetOffsetDir(attack.Hx, attack.Hy, attack.Tx, attack.Ty, -89.0f);
 
             uint16 sx = attack.Hx;
@@ -4854,8 +4992,14 @@ void AttackBurst(AttackStruct& attack, Map& map, Critter& cr, Critter& realTarge
             map.GetCrittersPath(sx, sy, ex, ey, 0.0f, wpnMaxDist - 1, FIND_LIFE_AND_KO, lineRight);
             int             rightStart = 0;
             int             rightLen = lineRight.length();
+            if (isDummyTraining) {
+                dummyInfo += "\n|" + COLOR_DTEXT_REGULAR + " Critters in right line = |" + COLOR_DTEXT_BONUS + " " + lineRight.length();
+            }
             while((rightStart < rightLen) && (GetDistantion(attack.Hx, attack.Hy, lineRight[rightStart].HexX, lineRight[rightStart].HexY)) < 3)
                 rightStart++;
+            if (isDummyTraining) {
+                dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , rightStart = |" + COLOR_DTEXT_BONUS + " " + rightStart;
+            }
             for(int i = rightStart, j = rightLen; (i < j) && (volleyRounds > 0); i++)
             {
                 // Adjust tohit
@@ -4867,10 +5011,10 @@ void AttackBurst(AttackStruct& attack, Map& map, Critter& cr, Critter& realTarge
                     acc += distmod2;
                 else
                     acc -= accloss;
-                if(-2 * cr.Stat[ST_PERCEPTION] > acc)
-                    acc = -2 * cr.Stat[ST_PERCEPTION];
-                acc -= cr.Perk[PE_SHARPSHOOTER];
-                if(acc > 0 && cr.Param[DAMAGE_EYE] > 0)
+                if(-2 * attacker.Stat[ST_PERCEPTION] > acc)
+                    acc = -2 * attacker.Stat[ST_PERCEPTION];
+                acc -= attacker.Perk[PE_SHARPSHOOTER];
+                if(acc > 0 && attacker.Param[DAMAGE_EYE] > 0)
                     acc *= 3;
                 acc *= -4;
                 toHit += acc;
@@ -4883,7 +5027,7 @@ void AttackBurst(AttackStruct& attack, Map& map, Critter& cr, Critter& realTarge
                     toHit += 40;
                 if(lineRight[i].GetMultihex() > 0)
                     toHit += 15;
-                toHit = CLAMP(toHit, 5, _MaxToHit(cr));
+                toHit = CLAMP(toHit, 5, _MaxToHit(attacker));
             //Log("Combat attack, toHit1 = "+toHit);
                 if(lineRight[i].Perk[PE_DODGER] > 0)
                 {
@@ -4901,7 +5045,7 @@ void AttackBurst(AttackStruct& attack, Map& map, Critter& cr, Critter& realTarge
                         toHit -= lineRight[i].Perk[PE_DODGER]*5;
                     }
                 }
-                toHit = CLAMP(toHit, 5, _MaxToHit(cr));
+                toHit = CLAMP(toHit, 5, _MaxToHit(attacker));
             //Log("Combat attack, toHit2 = "+toHit);
                 if(lineRight[i].Perk[PE_IN_YOUR_FACE] > 0 && dist < 3)
                 {
@@ -4941,12 +5085,22 @@ void AttackBurst(AttackStruct& attack, Map& map, Critter& cr, Critter& realTarge
         }             // Right line end
     }
 
+    if (isDummyTraining) {
+        dummyInfo += "\n|" + COLOR_DTEXT_REGULAR + " critsHit = |" + COLOR_DTEXT_BONUS + " " + critsHit.length();
+        dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , critsHitBullets = |" + COLOR_DTEXT_BONUS + " " + critsHit.length();
+    }
+
+
+    if (isDummyTraining && attacker.IsPlayer()) {
+        attacker.Say(SAY_NETMSG, dummyInfo);
+    }
+
     for (int i = 0, j = len_; i < j; i++) {
-        ApplyDamage(attack, critsHit[i], critsHitBullets[i], (realTarget.Id == critsHit[i].Id) && criticalHit, (!_IsTrueNpc(cr) && !changedTarget) || (_IsTrueNpc(cr) && critsHit[i].Id == target.Id), results, CriticalChance);
+        ApplyDamage(attack, critsHit[i], critsHitBullets[i], (realTarget.Id == critsHit[i].Id) && criticalHit, (!_IsTrueNpc(attacker) && !changedTarget) || (_IsTrueNpc(attacker) && critsHit[i].Id == target.Id), results, CriticalChance);
     }
 
     if (!changedTarget && !attack.TargetHit) {
-        NotifyMiss(cr, results);
+        NotifyMiss(attacker, results);
     }
 }
 

@@ -304,20 +304,39 @@
 
 // ext modes
 
-#define _CritHasExtMode              # (cr, mode)((cr.Mode[MODE_EXT] & (mode)) != 0)
-#define _CritSetExtMode              # (cr, mode)(cr.ModeBase[MODE_EXT] = cr.Mode[MODE_EXT] | (mode))
-#define _CritUnsetExtMode            # (cr, mode)(cr.ModeBase[MODE_EXT] = (cr.Mode[MODE_EXT] | (mode)) ^ (mode))
+#define _CritHasExtMode             # (cr, mode)((cr.Mode[MODE_EXT] & (mode)) != 0)
+#define _CritSetExtMode             # (cr, mode)(cr.ModeBase[MODE_EXT] = cr.Mode[MODE_EXT] | (mode))
+#define _CritUnsetExtMode           # (cr, mode)(cr.ModeBase[MODE_EXT] = (cr.Mode[MODE_EXT] | (mode)) ^ (mode))
 
-#define _IsTrader                    # (cr)     (_CritHasExtMode(cr, MODE_EXT_TRADER))
-#define _IsFollower                  # (cr)   (_CritHasExtMode(cr, MODE_EXT_FOLLOWER))
-#define _IsSlave                     # (cr)      (_CritHasExtMode(cr, MODE_EXT_FOLLOWER) && cr.Stat[ST_DIALOG_ID] == DIALOG_follower_slave)
-#define _IsBrahmin                     # (cr)      (_CritHasExtMode(cr, MODE_EXT_FOLLOWER) && cr.Stat[ST_DIALOG_ID] == DIALOG_follower_brahmin)
-#define _IsGuard                     # (cr)      (_CritHasExtMode(cr, MODE_EXT_GUARD))
+#define _IsTrader                   # (cr)     (_CritHasExtMode(cr, MODE_EXT_TRADER))
+#define _IsFollower                 # (cr)   (_CritHasExtMode(cr, MODE_EXT_FOLLOWER))
+#define _IsSlave                    # (cr)      (_CritHasExtMode(cr, MODE_EXT_FOLLOWER) && cr.Stat[ST_DIALOG_ID] == DIALOG_follower_slave)
+#define _IsBrahmin                  # (cr)      (_CritHasExtMode(cr, MODE_EXT_FOLLOWER) && cr.Stat[ST_DIALOG_ID] == DIALOG_follower_brahmin)
+#define _IsGuard                    # (cr)      (_CritHasExtMode(cr, MODE_EXT_GUARD))
 
-#define _IsTrueNpc                   # (cr)    (cr.IsNpc() && !_IsFollower(cr))
+#define _IsTrueNpc                  # (cr)    (cr.IsNpc() && !_IsFollower(cr))
 
 #define _IsAttackFromBehind         #  (crDir, tDir) (crDir == tDir || ((crDir + 1) % 6) == tDir || ((crDir + 5) % 6) == tDir)
 
-#define _XpForNextSkill              # (skill)  (skill > 175 ? 180 : (skill > 150 ? 120 : (skill > 125 ? 90 : (skill > 100 ? 60 : (skill > 75 ? 40 : (skill > 50 ? 30 : (skill > 25 ? 20 : 10)))))))
+#define _XpForNextSkill             # (skill)  (skill > 175 ? 180 : (skill > 150 ? 120 : (skill > 125 ? 90 : (skill > 100 ? 60 : (skill > 75 ? 40 : (skill > 50 ? 30 : (skill > 25 ? 20 : 10)))))))
+
+#define _IsBurnt                    # (cr)              (cr.ParamBase[TO_EX_BURNT] > int(ELAPSED_TIME))
+#define _IsShocked                  # (cr)              (cr.ParamBase[TO_EX_SHOCKED] > int(ELAPSED_TIME))
+#define _IsPlasmaBurnt              # (cr)              (cr.ParamBase[TO_EX_IRREMEDIABLE] > int(ELAPSED_TIME))
+
+#define _GetBurntTo                 # (cr)              (CLAMP(cr.ParamBase[TO_EX_BURNT] - ELAPSED_TIME, 0, BURN_EFFECT_LINGER_TIME))
+#define _GetShockedTo               # (cr)              (CLAMP(cr.ParamBase[TO_EX_SHOCKED] - ELAPSED_TIME, 0, SHOCK_EFFECT_LINGER_TIME))
+#define _GetPlasmaBurntTo           # (cr)              (CLAMP(cr.ParamBase[TO_EX_IRREMEDIABLE] - ELAPSED_TIME, 0, PLASMA_EFFECT_LINGER_TIME))
+#define _SetBurntTo                 # (cr, realSeconds) (cr.ParamBase[TO_EX_BURNT] = int(AFTER(REAL_SECOND(realSeconds))))
+#define _SetShockedTo               # (cr, realSeconds) (cr.ParamBase[TO_EX_SHOCKED] = int(AFTER(REAL_SECOND(realSeconds))))
+#define _SetPlasmaBurntTo           # (cr, realSeconds) (cr.ParamBase[TO_EX_IRREMEDIABLE] = int(AFTER(REAL_SECOND(realSeconds))))
+
+#define _GetBurntValue              # (cr)              (cr.ParamBase[ST_EX_BURNT])
+#define _GetShockedValue            # (cr)              (cr.ParamBase[ST_EX_SHOCKED])
+#define _GetPlasmaBurntValue        # (cr)              (cr.ParamBase[ST_EX_IRREMEDIABLE])
+#define _SetBurntValue              # (cr, value)       (cr.ParamBase[ST_EX_BURNT] = value)
+#define _SetShockedValue            # (cr, value)       (cr.ParamBase[ST_EX_SHOCKED] = value)
+#define _SetPlasmaBurntValue        # (cr, value)       (cr.ParamBase[ST_EX_IRREMEDIABLE] = value)
+
 
 #endif // __MACROS__

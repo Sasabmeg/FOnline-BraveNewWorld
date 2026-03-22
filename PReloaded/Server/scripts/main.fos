@@ -3206,6 +3206,19 @@ void map_critter_in(Map& map, Critter& cr)
         if (cr.ParamBase[TO_BATTLE] > int(AFTER(REAL_SECOND(7)))) {
             cr.ParamBase[TO_BATTLE] = 0;
         }
+        if (cr.ParamBase[TO_EX_BURNT] > int(AFTER(REAL_SECOND(BURN_EFFECT_LINGER_TIME)))) {
+            cr.ParamBase[TO_EX_BURNT] = 0;
+        }
+        if (cr.ParamBase[TO_EX_IRREMEDIABLE] > int(AFTER(REAL_SECOND(10)))) {
+            cr.ParamBase[TO_EX_IRREMEDIABLE] = 0;
+        }
+        if (cr.ParamBase[TO_EX_IRREMEDIABLE] > int(AFTER(REAL_SECOND(10)))) {
+            cr.ParamBase[TO_EX_IRREMEDIABLE] = 0;
+        }
+        if (cr.ParamBase[TO_EX_SHOCKED] > int(AFTER(REAL_SECOND(10)))) {
+            cr.ParamBase[TO_EX_SHOCKED] = 0;
+        }
+
         /*
         if (cr.ParamBase[ST_TO_MUTATE_TIMER] > int(AFTER(REAL_MINUTE(1)))) {
             Log("Mutate timer :: " + cr.ParamBase[ST_TO_MUTATE_TIMER]);
@@ -3371,8 +3384,15 @@ void map_critter_out(Map& map, Critter& cr)
         if (!isCharPointsChecksumOk(cr, reason)) {
             Log("MUTATION WARNING: " + reason);
         }
+        //  remove player as enemy from NPC
+        if (valid(map)) {
+            array<Critter@> crits;
+            uint num = map.GetCritters(0, FIND_ALL | FIND_ONLY_NPC, crits);
+            for (uint i = 0; i < num; i++) {
+                crits[i].EraseEnemyFromStack(cr.Id);
+            }
+        }
     }
-
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////

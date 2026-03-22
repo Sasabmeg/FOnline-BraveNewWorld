@@ -13,10 +13,11 @@ lang=engl
 13 2010 D _param p SK_OUTDOORSMAN } 50 #
 12 2020 D _param p SK_OUTDOORSMAN < 50 #
 10 2030 D _script map_tent@d_IsTentOwner 0  #
-5 2040 R _script map_tent@r_ThrowSomething 0  #
-300 2050 #
-6 2060 D _script map_tent@d_IsKnownLocation 0  D _script map_tent@d_IsNotTentOwner 0  R _script map_tent@r_ForgetLocation 0  #
-0 2070 @
+300 2040 #
+400 2050 #
+5 2060 R _script map_tent@r_ThrowSomething 0  #
+6 2070 D _script map_tent@d_IsKnownLocation 0  D _script map_tent@d_IsNotTentOwner 0  R _script map_tent@r_ForgetLocation 0  #
+0 2080 @
 6 3000 None 0 #
 0 3010 @
 10 4000 None 1 #
@@ -316,7 +317,25 @@ lang=engl
 313 47060 D _script mutationFeature@d_CanSwapTagSkill 1 207 D _script mutationFeature@d_HasItemExt 2 22065 1 R _script mutationFeature@r_SwapTagSkill 1 207 R _script mutationFeature@r_RemoveItemExt 2 22065 1 #
 313 47070 D _script mutationFeature@d_CanSwapTagSkill 1 208 D _script mutationFeature@d_HasItemExt 2 22066 1 R _script mutationFeature@r_SwapTagSkill 1 208 R _script mutationFeature@r_RemoveItemExt 2 22066 1 #
 313 47080 D _script mutationFeature@d_CanSwapTagSkill 1 211 D _script mutationFeature@d_HasItemExt 2 22069 1 R _script mutationFeature@r_SwapTagSkill 1 211 R _script mutationFeature@r_RemoveItemExt 2 22069 1 #
-300 47090 &
+300 47090 @
+400 48000 dialog@dlg_TestVarsList 0 #
+400 48010 R _script dialog@r_SetVarValue 2 4310 0 #
+400 48020 R _script dialog@r_SetVarValue 2 4310 1 #
+400 48030 R _script dialog@r_SetVarValue 2 4310 2 #
+400 48040 R _script dialog@r_SetVarValue 2 4310 3 #
+400 48050 R _script dialog@r_SetVarValue 2 4311 0 #
+400 48060 R _script dialog@r_SetVarValue 2 4311 1 #
+400 48070 R _script dialog@r_SetVarValue 2 4311 25 #
+400 48080 R _script dialog@r_SetVarValue 2 4311 50 #
+400 48090 R _script dialog@r_SetVarValue 2 4311 75 #
+400 48100 R _script dialog@r_SetVarValue 2 4311 100 #
+400 48110 R _script dialog@r_SetVarValue 2 4312 0 #
+400 48120 R _script dialog@r_SetVarValue 2 4312 25 #
+400 48130 R _script dialog@r_SetVarValue 2 4312 50 #
+400 48140 R _script dialog@r_SetVarValue 2 4312 75 #
+400 48150 R _script dialog@r_SetVarValue 2 4312 100 #
+5 48160 #
+0 48170 &
 
 [engl]
 {100}{}{none}
@@ -327,10 +346,11 @@ lang=engl
 {2010}{}{[Cooking]}
 {2020}{}{[Cooking]}
 {2030}{}{[Tent management]}
-{2040}{}{[Throw something into the fire]}
-{2050}{}{[Sit back and reflect on the past]}
-{2060}{}{[Forget location]}
-{2070}{}{[Exit]}
+{2040}{}{[Sit back and reflect on the past]}
+{2050}{}{[Configure your Pip-boy]}
+{2060}{}{[Throw something into the fire]}
+{2070}{}{[Forget location]}
+{2080}{}{[Exit]}
 {3000}{}{[You no longer know the way to this location]}
 {3010}{}{[Exit]}
 {4000}{}{[You sit by the fire and decide what to do next with the place]}
@@ -658,4 +678,25 @@ Make sure you secure all items and move all followers to other place before you 
 {47070}{}{Sneak. [Swap Tag skill to Sneak]}
 {47080}{}{Traps. [Swap Tag skill to Traps]}
 {47090}{}{[Back]}
+{48000}{}{~~Pip-boy aiming and damage testing assist~~
+@lex testVars@
+
+Do you want to change these settings?}
+{48010}{}{[Damage roll: random]}
+{48020}{}{[Damage roll: minimum]}
+{48030}{}{[Damage roll: average]}
+{48040}{}{[Damage roll: maximum]}
+{48050}{}{[Critical chance roll: random]}
+{48060}{}{[Critical chance roll: 1]}
+{48070}{}{[Critical chance roll: 25]}
+{48080}{}{[Critical chance roll: 50]}
+{48090}{}{[Critical chance roll: 75]}
+{48100}{}{[Critical chance roll: 100]}
+{48110}{}{[Critical power roll: random]}
+{48120}{}{[Critical power roll: 25]}
+{48130}{}{[Critical power roll: 50]}
+{48140}{}{[Critical power roll: 75]}
+{48150}{}{[Critical power roll: 100]}
+{48160}{}{[Back]}
+{48170}{}{[Exit]}
 

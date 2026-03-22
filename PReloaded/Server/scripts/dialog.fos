@@ -1855,4 +1855,58 @@ void r_GiveDeterioratedItem(Critter& player, Critter@ npc, int pid, int det)
     }
 }
 
+//  dummy training
+
+/**
+ * Show the SPECIALs the player currently has and the reason they can be decreased or increased. @lex testVars@ is used.
+ */
+void dlg_TestVarsList(Critter& player, Critter@ npc, string@ text) {
+    if (!IS_DIALOG_GENERATED(text))
+        return;
+
+    string str = "";
+
+    str += "- Damage roll: ";
+    int debugDamageRollMode = GetLvar(player, LVAR_test_damage_roll);
+    switch (debugDamageRollMode) {
+        case 1:
+            str += " minimum";
+            break;
+        case 2:
+            str += " average (halfway between min-max)";
+            break;
+        case 3:
+            str += " maximum";
+            break;
+        default:
+            str += " random";
+    }
+    str += "\n";
+
+    int debugCritChanceRoll = GetLvar(player, LVAR_test_crit_chance_roll);
+    str += "- Critical chance roll: " + (debugCritChanceRoll == 0 ? "random" : ("" + debugCritChanceRoll)) + "\n";
+
+    int debugCritPowerRoll = GetLvar(player, LVAR_test_crit_power_roll);
+    str += "- Critical power roll: " + (debugCritPowerRoll == 0 ? "random" : ("" + debugCritPowerRoll)) + "\n";
+
+    text = "$testVars " + str;
+    if (text.length() > 998) {
+        text = substring(text, 0, 998);
+    }
+}
+
+bool d_IsVarValue(Critter& player, Critter@ npc, int varId, int value) {
+    uint testVarValue = uint(varId);
+    int varValue = GetLvar(player, testVarValue);
+    return varValue == value;
+}
+
+void r_SetVarValue(Critter& player, Critter@ npc, int varId, int value) {
+    uint testVarValue = uint(varId);
+    int varValue = GetLvar(player, testVarValue);
+    SetLvar(player.Id, testVarValue, value);
+}
+
+
+
 #endif // __DIALOG__ //
