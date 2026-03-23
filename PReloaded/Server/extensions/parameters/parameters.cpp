@@ -378,7 +378,7 @@ EXPORT int getParam_MeleeDmg(CritterMutual& cr, uint)
 EXPORT int getParam_HealingRate(CritterMutual& cr, uint)
 {
 	int e = getParam_Endurance(cr, 0);
-	int val = cr.Params[ST_HEALING_RATE] + cr.Params[ST_HEALING_RATE_EXT] + 7 + e/2;
+	int val = cr.Params[ST_HEALING_RATE] + cr.Params[ST_HEALING_RATE_EXT] + (2 + e) / 3;
 
 	const Item* armor=cr.ItemSlotArmor;
 	val+=checkBonus(armor, BONUS_ARMOR_HEALING_RATE);
