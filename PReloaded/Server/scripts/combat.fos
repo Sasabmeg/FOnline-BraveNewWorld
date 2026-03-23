@@ -231,14 +231,45 @@ uint e_CombatAttack(array<uint>@ values) {
         return 0;
     }
 
+    //  if the target gets invalidated meantime
+    if (!valid(target)) {
+        if (attacker.IsPlayer()) {
+            attacker.Say(SAY_NETMSG, "Target not found.");
+        }
+        return 0;
+    }
+
+    //  target out of weapon range, stop attack
+	uint8 use = _WeaponModeUse(weaponMode);
+    int wpnMaxDist = _WeaponMaxDist(realWeaponProto, use);
+    Item@ realWeapon = _CritGetItemHand(attacker);
+    if (valid(realWeapon)) {
+		if(valid(realWeapon)) {
+			if (realWeapon.Val0 == BONUS_WEAPON_MAX_RANGE) wpnMaxDist += realWeapon.Val5;
+			if (realWeapon.Val1 == BONUS_WEAPON_MAX_RANGE) wpnMaxDist += realWeapon.Val6;
+			if (realWeapon.Val2 == BONUS_WEAPON_MAX_RANGE) wpnMaxDist += realWeapon.Val7;
+			if (realWeapon.Val3 == BONUS_WEAPON_MAX_RANGE) wpnMaxDist += realWeapon.Val8;
+			if (realWeapon.Val4 == BONUS_WEAPON_MAX_RANGE) wpnMaxDist += realWeapon.Val9;
+		}
+    }
+    int targetDist = GetDistantion(attacker.HexX, attacker.HexY, target.HexX, target.HexY);
+
+    if (targetDist > wpnMaxDist) {
+        if (attacker.IsPlayer()) {
+            attacker.Say(SAY_NETMSG, "Target out of range. Weapon max range: " + wpnMaxDist + ", target distance: " + targetDist);
+        }
+        return 0;
+    }
+
     //  cannot see target anymore, stop attack
-    if (attacker.IsSee(target)) {
-        CombatAttack(attacker, target, realWeaponProto, weaponMode, ammoProto);
-    } else {
+    if (!attacker.IsSee(target)) {
         if (attacker.IsPlayer()) {
             attacker.Say(SAY_NETMSG, "Target not visible.");
         }
+        return 0;
     }
+
+    CombatAttack(attacker, target, realWeaponProto, weaponMode, ammoProto);
     return 0;
 }
 
@@ -4542,6 +4573,7 @@ void AttackBurst(AttackStruct& attack, Map& map, Critter& attacker, Critter& rea
         Log("  attacker " + attacker.HexX + "," + attacker.HexY);
         Log("  target: " + target.HexX + "," + target.HexY + "," + GetDistantion(attacker.HexX, attacker.HexY, target.HexX, target.HexY) + "," + target.Cond);
         Log("  realTarget: " + realTarget.HexX + "," + realTarget.HexY + "," + GetDistantion(attacker.HexX, attacker.HexY, realTarget.HexX, realTarget.HexY) + "," + realTarget.Cond);
+        return;
     }
 
     int bl = 0;
