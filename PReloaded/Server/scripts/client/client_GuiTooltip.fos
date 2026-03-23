@@ -260,7 +260,6 @@ class CTooltips {
             int intDif = chosen.Stat[ST_INTELLECT] - chosen.StatBase[ST_INTELLECT];
             int agiDif = chosen.Stat[ST_AGILITY] - chosen.StatBase[ST_AGILITY];
             int luckDif = chosen.Stat[ST_LUCK] - chosen.StatBase[ST_LUCK];
-            //Message("healing rate: " + chosen.StatBase[ST_HEALING_RATE] + ", 7, " + chosen.Stat[ST_ENDURANCE] / 2);
             int radiationLevel = chosen.Stat[ST_RADIATION_LEVEL];
             int poisoningLevel = chosen.Stat[ST_POISONING_LEVEL];
             int carryWeightBase = chosen.StatBase[ST_CARRY_WEIGHT] + chosen.StatBase[ST_CARRY_WEIGHT_EXT];
@@ -412,26 +411,29 @@ class CTooltips {
             maxLifeExt += "\n\u2022 Effects: " + (maxLifeDif < 0 ? ("|" + COLOR_DEBUFF + " ") : ("|" + COLOR_BUFF + " +")) + maxLifeDif + "|" + COLOR_GREEN + " ";
                         maxLifeExt += "\n\n";
 
-            int healingRateBase = chosen.StatBase[ST_HEALING_RATE] + 7 + chosen.Stat[ST_ENDURANCE] / 2;
+            int healingRateBase = chosen.StatBase[ST_HEALING_RATE] + (2 + chosen.Stat[ST_ENDURANCE]) / 3;
             int healingRateDif = chosen.Stat[ST_HEALING_RATE] - healingRateBase;
             healingRateExt = "\nCurrent: " + "|" + COLOR_BUFF + " " +  CLAMP(chosen.Stat[ST_HEALING_RATE], 3, 10) + "% |" + COLOR_REGULAR + " max life every ";
                             if (chosen.Param[TRAIT_FAST_METABOLISM] > 0) {
                                 if (chosen.Param[PE_WAY_OF_THE_FRUIT] > 0) {
-                                    healingRateExt += "|" + COLOR_BUFF + " 20 seconds|" + COLOR_REGULAR + "  (if recently eaten fruit)";
+                                    healingRateExt += "|" + COLOR_BUFF + " 10 seconds|" + COLOR_REGULAR + "  (if recently eaten fruit)";
                                 } else {
-                                    healingRateExt += "|" + COLOR_BUFF + " 30 seconds|" + COLOR_REGULAR + " ";
+                                    healingRateExt += "|" + COLOR_BUFF + " 20 seconds|" + COLOR_REGULAR + " ";
                                 }
                             } else {
                                 if (chosen.Param[PE_WAY_OF_THE_FRUIT] > 0) {
-                                    healingRateExt += "|" + COLOR_BUFF + " 40 seconds |" + COLOR_REGULAR + " (if recently eaten fruit)";
+                                    healingRateExt += "|" + COLOR_BUFF + " 20 seconds |" + COLOR_REGULAR + " (if recently eaten fruit)";
                                 } else {
-                                    healingRateExt += "|" + COLOR_BUFF + " 60 seconds |" + COLOR_REGULAR + " ";
+                                    healingRateExt += "|" + COLOR_BUFF + " 40 seconds |" + COLOR_REGULAR + " ";
                                 }
                             }
-            healingRateExt += "\n\u2022 Base: " + "|" + COLOR_BUFF + " " + healingRateBase + "% |" + COLOR_REGULAR + " max life every |" + COLOR_BUFF + " 60 seconds|" + COLOR_REGULAR + " "
-                            + "\n\t\u2022 " + "|" + COLOR_BUFF + " +" + 7 + "% |" + COLOR_REGULAR + "  from Base"
-                            + "\n\t\u2022 " + "|" + COLOR_BUFF + " +" + (chosen.Stat[ST_ENDURANCE]/2) + "% |" + COLOR_REGULAR + "  from Endurance"
-                            + "\n\u2022 Effects: " + (healingRateDif < 0 ? ("|" + COLOR_DEBUFF + " ") : ("|" + COLOR_BUFF + " +")) + healingRateDif + "% |" + COLOR_REGULAR + " ";
+            healingRateExt += "\n\u2022 Base: " + "|" + COLOR_BUFF + " " + healingRateBase + "% |" + COLOR_REGULAR + " max life every |" + COLOR_BUFF + " 40 seconds|" + COLOR_REGULAR + " "
+                            + "\n\t\u2022 " + "|" + COLOR_BUFF + " +" + 1 + "% |" + COLOR_REGULAR + "  from Base"
+                            + "\n\t\u2022 " + "|" + COLOR_BUFF + " +" + ((chosen.Stat[ST_ENDURANCE] - 1) / 3) + "% |" + COLOR_REGULAR + "  from Endurance";
+                            if (chosen.Param[PE_FASTER_HEALING] > 0) {
+                                healingRateExt += "\n\t\u2022 " + "|" + COLOR_BUFF + " +" + ((chosen.Stat[ST_ENDURANCE] - 1) / 3) + "% |" + COLOR_REGULAR + "  from Faster Healing";
+                            }
+            healingRateExt += "\n\u2022 Effects: " + (healingRateDif < 0 ? ("|" + COLOR_DEBUFF + " ") : ("|" + COLOR_BUFF + " +")) + healingRateDif + "% |" + COLOR_REGULAR + " ";
                             if (radiationLevel > 0) {
                                 int statLoss = GetStatLossForRadiationLevel(RADIATION_HR_INDEX, radiationLevel);
                                 healingRateExt += "\n\t\u2022 " + (statLoss > 0 ? ("|" + COLOR_DEBUFF + " -" + statLoss + "%"):("|" + COLOR_BUFF + " " + statLoss + "%")) + "|" + COLOR_REGULAR + "  from radiation";
@@ -443,7 +445,7 @@ class CTooltips {
                                 healingRateExt += "\n\t\u2022 reached minimum cap" + "|" + COLOR_BUFF + "  3%|" + COLOR_REGULAR + "  of max life";
                             }
                             if (chosen.Param[TRAIT_FAST_METABOLISM] > 0) {
-                                healingRateExt += "\n\t\u2022 " + "|" + COLOR_BUFF + " -30 seconds|" + COLOR_REGULAR + "  because of Fast Metabolism";
+                                healingRateExt += "\n\t\u2022 " + "|" + COLOR_BUFF + " -20 seconds|" + COLOR_REGULAR + "  because of Fast Metabolism";
                             }
                             if (chosen.Param[PE_WAY_OF_THE_FRUIT] > 0) {
                                 if (chosen.Param[TRAIT_FAST_METABOLISM] > 0) {
@@ -1115,8 +1117,10 @@ class CTooltips {
                                  + pipStatus + healingRateExt);
         tooltipsValueExt.insertLast(pipReference
                                      + notes
-                                     + "\n\u2022 Base Healing Rate frequency: 60 sec"
-                                     + "\n\t\u2022 Eating Mutated Fruit further reduces this: 60 sec -> 40 sec."
+                                     + "\n\u2022 Base Healing Rate frequency: 40 sec"
+                                     + "\n\t\u2022 Fast Metabolism further reduces this: 40 sec -> 20 sec."
+                                     + "\n\t\u2022 Way of the Fruit further reduces this: 40 sec -> 20 sec."
+                                     + "\n\t\u2022 Both Fast Metabolism and Way of the Fruit: 40 sec -> 10 sec."
                                      + "\n\u2022 Healing Rate min is 3% of max hp per tick."
                                      + "\n\u2022 Healing Rate caps at 10% of max hp per tick."
                                      + "\n\u2022 You will get '+[HealAmount]' text over head and the message 'Regeneration' when this happens.");

@@ -893,8 +893,8 @@
 #define TRANSFER_TIMEOUT                         # (cr)      (REAL_SECOND(30))                                                                                                                                     // 1/2 min
 #define WEAKENED_TIMEOUT                         # (cr)          (REAL_MINUTE((16 - Random(1, cr.Stat[ST_LUCK])) / 2))
 #define HEALING_TIMEOUT                          # (cr)     (cr.Trait[TRAIT_FAST_METABOLISM] > 0 ? \
-                                                                REAL_SECOND(30 - (cr.Timeout[TO_FRUIT] > 0 ? 10 : 0)) : \
-                                                                REAL_SECOND(60 - (cr.Timeout[TO_FRUIT] > 0 ? 20 : 0)))
+                                                                REAL_SECOND(20 - (cr.Timeout[TO_FRUIT] > 0 ? 10 : 0)) : \
+                                                                REAL_SECOND(40 - (cr.Timeout[TO_FRUIT] > 0 ? 20 : 0)))
 #define IS_TURN_BASED_TIMEOUT                    # (cr) (cr.Timeout[TO_BATTLE] > 100000)
 #define MAXIMUM_TIMEOUT                          (10000000)                                                                                                                                                        // more than most expensive items timeouts
 #define SLEEPY_DEATH_IMMUNITY                    # (cr)     (REAL_SECOND(300))

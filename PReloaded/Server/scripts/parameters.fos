@@ -477,7 +477,7 @@ void CritterGenerate(array<int>& data)     // Export to client_main@player_data_
     _param_[ST_POISON_RESISTANCE] += _param_[ST_ENDURANCE] * 3;
     _param_[ST_RADIATION_RESISTANCE] += _param_[ST_ENDURANCE] * 2;
     _param_[ST_SEQUENCE] += _param_[ST_PERCEPTION] * 2 + 2;
-    _param_[ST_HEALING_RATE] += 7 + _param_[ST_ENDURANCE] / 2;
+    _param_[ST_HEALING_RATE] += (_param_[ST_ENDURANCE] + 2) / 3;
     //if(_param_[TRAIT_FAST_METABOLISM] != 0)
     //    _param_[ST_HEALING_RATE] += (_param_[ST_ENDURANCE] + 1) / 2;
     _param_[ST_CRITICAL_CHANCE] += _param_[ST_LUCK];
