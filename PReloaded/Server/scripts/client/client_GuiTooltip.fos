@@ -351,6 +351,17 @@ class CTooltips {
                                 agilityExt += "\n\t\u2022 " + "|" + COLOR_DEBUFF + " AG 1 " + "|" + COLOR_REGULAR + " because both arms crippled";
                             }
                         }
+                        if (chosen.Param[PE_BONUS_RATE_OF_ATTACK] > 0) {
+                            agilityExt += "\n\t\u2022 AP cost reduce by " + "|" + COLOR_BUFF + " 1 AP" + "|" + COLOR_REGULAR + "  from BRoA";
+                        } else {
+                            string apReduce;
+                            if (chosen.Stat[ST_AGILITY] > 9) {
+                                apReduce = "1";
+                            } else {
+                                apReduce = "0." + chosen.Stat[ST_AGILITY];
+                            }
+                            agilityExt += "\n\t\u2022 AP cost reduce by " + "|" + COLOR_BUFF + "  " + apReduce + "|" + COLOR_REGULAR + "  from Agility";
+                        }
                         if (valid(bodyArmor)) {
                             if (chosen.Param[ST_CURRENT_ARMOR_PERK] > 0) {
                                 switch(chosen.Param[ST_CURRENT_ARMOR_PERK]) {
@@ -659,6 +670,8 @@ class CTooltips {
                                  + jjText + pipStatus + agilityExt);
         tooltipsValueExt.insertLast(pipReference
                                  + "\n\u2022 Armor Class: +3*AG (double with Livewire perk)"
+                                 + "\n\u2022 Each Agility reduces cost of attack by 0.1 Action Points."
+                                 + "\n\t\u2022 Note: this does not stack with Bonus Rate of Attack."
                                  + "\n\u2022 Action Points calculation changed:"
                                  + "\n\t\u2022 Final AG = 1     -> 9 base AP"
                                  + "\n\t\u2022 Final AG = 2-9 -> 10 base AP"
@@ -1726,6 +1739,7 @@ class CTooltips {
         tooltipsValueExt.insertLast(pipReference
                                      + notes
                                      + "\n\u2022 -1 AP cost for all attacks."
+                                     + "\n\u2022 It does not stack with AP cost reduction from Agility."
                                      + requirements
                                      + "\n\t\u2022  One ranged combat skill or Close Combat >= 175");
 
