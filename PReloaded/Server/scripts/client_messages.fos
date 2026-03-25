@@ -61,6 +61,9 @@ class CMessagesConfig
     string  HealOverHeadStimpak = "";
     string  HealOverHeadSuperStimpak = "";
     string  HealOverHeadHypo = "";
+    string  HealOverHeadRegeneration = "";
+    string  HealOverHeadPoisonedRegen = "";
+    string  HealOverHeadPoison = "";
 
     string  StatusOverHeadShocked = "";
 
@@ -139,6 +142,18 @@ void ClientMessagesConfig(string& customConfig) {
             if(var.GetName() == "HealOverHeadHypo") {
                 MessagesConfig.HealOverHeadHypo = var.GetValue();
                 Log("ClientMessagesConfig() - HealOverHeadHypo = " + MessagesConfig.HealOverHeadHypo);
+            }
+            if(var.GetName() == "HealOverHeadRegeneration") {
+                MessagesConfig.HealOverHeadRegeneration = var.GetValue();
+                Log("ClientMessagesConfig() - HealOverHeadRegeneration = " + MessagesConfig.HealOverHeadRegeneration);
+            }
+            if(var.GetName() == "HealOverHeadPoisonedRegen") {
+                MessagesConfig.HealOverHeadPoisonedRegen = var.GetValue();
+                Log("ClientMessagesConfig() - HealOverHeadPoisonedRegen = " + MessagesConfig.HealOverHeadPoisonedRegen);
+            }
+            if(var.GetName() == "HealOverHeadPoison") {
+                MessagesConfig.HealOverHeadPoison = var.GetValue();
+                Log("ClientMessagesConfig() - HealOverHeadPoison = " + MessagesConfig.HealOverHeadPoison);
             }
             if(var.GetName() == "StatusOverHeadShocked") {
                 MessagesConfig.StatusOverHeadShocked = var.GetValue();
@@ -1276,6 +1291,9 @@ void sayEx(int type, int crId, int, string@ text, array<int>@)
 #define HEAL_TEXT_REASON_STIMPAK            (4)
 #define HEAL_TEXT_REASON_SUPERSTIMPAK       (5)
 #define HEAL_TEXT_REASON_HYPO               (6)
+#define HEAL_TEXT_REASON_REGEN              (7)
+#define HEAL_TEXT_REASON_POISONED_REGEN     (8)
+#define HEAL_TEXT_REASON_POISON             (9)
 #define STATUS_TEXT_REASON_SHOCKED          (10)
 #define MISC_TEXT_REASON_XP                 (20)
 
@@ -1358,6 +1376,33 @@ void mapMessage(int type, int hx, int hy, string@ text, array<int>@ data)
                 case HEAL_TEXT_REASON_HYPO:
                     if (MessagesConfig.HealOverHeadHypo.length() > 0) {
                         reasonText = MessagesConfig.HealOverHeadHypo;
+                    } else if (MessagesConfig.HealOverHeadVerbosity == 1){
+                        reasonText = "HY";
+                    } else if (MessagesConfig.HealOverHeadVerbosity == 2) {
+                        reasonText = "Hypo";
+                    }
+                    break;
+                case HEAL_TEXT_REASON_REGEN:
+                    if (MessagesConfig.HealOverHeadRegeneration.length() > 0) {
+                        reasonText = MessagesConfig.HealOverHeadRegeneration;
+                    } else if (MessagesConfig.HealOverHeadVerbosity == 1){
+                        reasonText = "Regen";
+                    } else if (MessagesConfig.HealOverHeadVerbosity == 2) {
+                        reasonText = "Regeneration";
+                    }
+                    break;
+                case HEAL_TEXT_REASON_POISONED_REGEN:
+                    if (MessagesConfig.HealOverHeadPoisonedRegen.length() > 0) {
+                        reasonText = MessagesConfig.HealOverHeadPoisonedRegen;
+                    } else if (MessagesConfig.HealOverHeadVerbosity == 1){
+                        reasonText = "PR";
+                    } else if (MessagesConfig.HealOverHeadVerbosity == 2) {
+                        reasonText = "Poisoned Regen";
+                    }
+                    break;
+                case HEAL_TEXT_REASON_POISON:
+                    if (MessagesConfig.HealOverHeadPoison.length() > 0) {
+                        reasonText = MessagesConfig.HealOverHeadPoison;
                     } else if (MessagesConfig.HealOverHeadVerbosity == 1){
                         reasonText = "HY";
                     } else if (MessagesConfig.HealOverHeadVerbosity == 2) {

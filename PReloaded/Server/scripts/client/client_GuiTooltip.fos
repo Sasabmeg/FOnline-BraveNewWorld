@@ -460,9 +460,9 @@ class CTooltips {
                             }
                             if (chosen.Param[PE_WAY_OF_THE_FRUIT] > 0) {
                                 if (chosen.Param[TRAIT_FAST_METABOLISM] > 0) {
-                                    healingRateExt += "\n\t\u2022 " + "|" + COLOR_BUFF + " -10 seconds|" + COLOR_REGULAR + "  because of Way of the Fruit (if recently eaten fruit)";
+                                    healingRateExt += "\n\t\u2022 " + "|" + COLOR_BUFF + " -10 seconds|" + COLOR_REGULAR + "  because of Fast Metabolism and recently eaten fruit";
                                 } else {
-                                    healingRateExt += "\n\t\u2022 " + "|" + COLOR_BUFF + " -20 seconds|" + COLOR_REGULAR + "  because of Way of the Fruit (if recently eaten fruit)";
+                                    healingRateExt += "\n\t\u2022 " + "|" + COLOR_BUFF + " -20 seconds|" + COLOR_REGULAR + "  because of recently eaten fruit";
                                 }
                             }
                             healingRateExt += "\n\n";
@@ -1132,11 +1132,13 @@ class CTooltips {
                                      + notes
                                      + "\n\u2022 Base Healing Rate frequency: 40 sec"
                                      + "\n\t\u2022 Fast Metabolism further reduces this: 40 sec -> 20 sec."
-                                     + "\n\t\u2022 Way of the Fruit further reduces this: 40 sec -> 20 sec."
-                                     + "\n\t\u2022 Both Fast Metabolism and Way of the Fruit: 40 sec -> 10 sec."
+                                     + "\n\t\u2022 Recently eaten fruit further reduces this: 40 sec -> 20 sec."
+                                     + "\n\t\u2022 Both Fast Metabolism and recently eaten fruit: 40 sec -> 10 sec."
                                      + "\n\u2022 Healing Rate min is 3% of max hp per tick."
                                      + "\n\u2022 Healing Rate caps at 10% of max hp per tick."
-                                     + "\n\u2022 You will get '+[HealAmount]' text over head and the message 'Regeneration' when this happens.");
+                                     + "\n\u2022 You will get '+[HealAmount]' text over head and the message 'Regeneration' when this happens."
+                                     + "\n\u2022 Healing Rate value is reduced by (poisoning_level/3)+1"
+                                     + "\n\t\u2022 If poison too strong, poisoned regeneration will happen hurting player.");
 
         tooltipsKey.insertLast(ST_CRITICAL_CHANCE);
         tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(ST_CRITICAL_CHANCE)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(ST_CRITICAL_CHANCE)) + pipText);
@@ -1172,8 +1174,8 @@ class CTooltips {
         tooltipsValueExt.insertLast(pipReference
                                      + notes
                                      + "\n\u2022 Half duration of drug effects."
-                                     + "\n\u2022 Healing Rate frequency: 60 sec -> 30 sec."
-                                     + "\n\t\u2022 Eating Mutated Fruit further reduces this: 30 sec -> 20 sec."
+                                     + "\n\u2022 Healing Rate frequency: 40 sec -> 20 sec."
+                                     + "\n\t\u2022 Eating Mutated Fruit further reduces this: 20 sec -> 10 sec."
                                      + "\n\u2022 Healing Rate min is 3% of max hp per tick."
                                      + "\n\u2022 Healing Rate caps at 10% of max hp per tick."
                                      + "\n\u2022 You will get '+[HealAmount]' text over head and the message 'Regeneration' when this happens.");

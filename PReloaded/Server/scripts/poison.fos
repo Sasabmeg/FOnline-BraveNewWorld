@@ -12,8 +12,13 @@
 // import void DropPoison(Critter& cr) from "poison";
 
 #include "_macros.fos"
+#include "_colors.fos"
+#include "utils_h.fos"
+
 
 import void WearHandsOnDeath(Critter& cr) from "repair";
+//import void FloatingHealText(Critter& cr, int healAmount, int reason, int successType = SKILL_CHECK_SUCCESS) from "utils";
+
 
 #define POISON_BASE_DURATION    (505)  // In game seconds, need div on 60
 #define POISON_DURATION_SUB     (5)    // In game seconds, need div on 60
@@ -118,7 +123,9 @@ uint cte_Poison(Critter& cr, int identifier, uint& rate)
         //Old cr.StatBase[ST_CURRENT_HP]--;
         int poisonDamage = (cr.StatBase[ST_POISONING_LEVEL] / 3) + 1;
 		cr.StatBase[ST_CURRENT_HP] -= poisonDamage; //New, more painful
-        cr.Say(SAY_NETMSG, "You take " + poisonDamage + " damage from poison.");
+        cr.Say(SAY_NETMSG, "You take |" + COLOR_POISON + " " + poisonDamage + "|" + COLOR_SYSTEM + "  damage from poison.");
+        FloatingHealText(cr, -poisonDamage, HEAL_TEXT_REASON_POISON, SKILL_CHECK_DOES_NOTHING);
+
         if(cr.Stat[ST_CURRENT_HP] <= 0)
         {
           WearHandsOnDeath(cr);

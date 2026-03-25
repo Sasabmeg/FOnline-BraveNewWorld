@@ -90,13 +90,23 @@ uint __GetColor(int r, int g, int b, int a = 0xFF)
 #define COLOR_HEAL_TEXT_CRIT_SUCCESS    (COLOR_RGB(0, 0xFF, 0))
 #define COLOR_HEAL_TEXT_SUCCESS         (COLOR_RGB(0, 0xCC, 0))
 #define COLOR_HEAL_TEXT_FAILURE         (COLOR_RGB(0, 0xA5, 0x88))
+#define COLOR_HEAL_TEXT_REGEN           (COLOR_GREEN)
+#define COLOR_HEAL_TEXT_POISON          (COLOR_DDGREEN)
 
 #define COLOR_STATUS_TEXT_SHOCKED       (COLOR_TEXT_WHITE)
 
 #define COLOR_MISC_TEXT_EXPERIENCE      (COLOR_TEAL)
 
+#define COLOR_SYSTEM            (COLOR_LGREEN)
 #define COLOR_REGULAR           (COLOR_GREEN)
 #define COLOR_BUFF              (COLOR_LYELLOW)
 #define COLOR_DEBUFF            (COLOR_DORANGE)
+#define COLOR_POISON            (COLOR_DDGREEN)
+
+#define COLOR_DTEXT_BONUS       (COLOR_LGREEN)
+#define COLOR_DTEXT_MALUS       (COLOR_WRED)
+#define COLOR_DTEXT_ROLL        (COLOR_YELLOW)
+#define COLOR_DTEXT_CAPTION     (COLOR_TEXT_WHITE)
+#define COLOR_DTEXT_REGULAR     (COLOR_TEXT_DDGREEN)
 
 #endif // __COLORS__

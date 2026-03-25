@@ -71,11 +71,16 @@ void FloatingHealText(Critter& cr, int healAmount, int reason, int successType =
             color = COLOR_HEAL_TEXT_CRIT_SUCCESS;
             break;
     }
+    if (reason == HEAL_TEXT_REASON_POISON || reason == HEAL_TEXT_REASON_POISONED_REGEN) {
+        color = COLOR_HEAL_TEXT_POISON;
+    }
     //  Just in case critical failure hurts later.
-    if(healAmount >= 0)
+    if (healAmount >= 0) {
         text = "+ " + healAmount + " " + reason;
-    else
-        text = "- " + healAmount + " " + reason;
+    } else {
+        color = COLOR_HEAL_TEXT_POISON;
+        text = "- " + (-healAmount) + " " + reason;
+    }
 
     Map@   map = cr.GetMap();
     if (!valid(map)) {

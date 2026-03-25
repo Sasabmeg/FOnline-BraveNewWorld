@@ -30,13 +30,6 @@
 #include "_colors.fos"
 #include "drugs_h.fos"
 
-#define COLOR_DTEXT_BONUS       (COLOR_LGREEN)
-#define COLOR_DTEXT_MALUS       (COLOR_WRED)
-#define COLOR_DTEXT_ROLL        (COLOR_YELLOW)
-#define COLOR_DTEXT_CAPTION     (COLOR_TEXT_WHITE)
-#define COLOR_DTEXT_REGULAR     (COLOR_TEXT_DDGREEN)
-
-
 import void AffectPoison(Critter& cr, int value) from "poison";
 import void AffectRadiation(Critter& cr, int value) from "radiation";
 import void PlaySound(Critter& cr, string& soundName) from "media";
