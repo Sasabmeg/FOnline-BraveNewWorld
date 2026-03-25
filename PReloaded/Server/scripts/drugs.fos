@@ -436,7 +436,7 @@ void SetDrug(Critter& cr, uint16 drugPid, int bonus) {
         }
     }
 
-    if (drugPid == PID_WATERBAG || drugPid == PID_BOTTLE_FULL) {
+    if (drugPid == PID_WATERBAG || drugPid == PID_BOTTLE_FULL || drugPid == PID_NUKA_COLA) {
         array<int>  identifiers;
         array<uint> rates;
         uint        count = cr.GetTimeEvents(DrugsIdentifiers, identifiers, null, null, rates);
