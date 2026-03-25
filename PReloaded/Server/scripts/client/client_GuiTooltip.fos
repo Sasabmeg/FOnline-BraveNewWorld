@@ -1476,6 +1476,7 @@ class CTooltips {
         tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(PE_SPRAY_AND_PRAY)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(PE_SPRAY_AND_PRAY)) + pipText);
         tooltipsValueExt.insertLast(pipReference
                                      + notes
+                                     + "\n\u2022 Your burst attacks ignore half of the target armors critical hit chance protection."
                                      + "\n\u2022 Your burst attacks that are not critical can do 20% bonus damage."
                                      + "\n\t\u2022 Chance: (5 + CH + LK)%"
                                      + "\n\t\u2022 Final damage is increased by 20% and not per bullet."

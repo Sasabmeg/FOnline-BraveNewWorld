@@ -1014,6 +1014,13 @@ void CombatAttack(Critter& cr, Critter& target, ProtoItem& weapon, uint8 weaponM
                 //if(cr.Perk[PE_SPRAY_AND_PRAY] != 0 && (attack.Aim == HIT_LOCATION_UNCALLED || attack.Aim == HIT_LOCATION_NONE))
                 //    addchance = 0;
                 //else
+
+                if (cr.Perk[PE_SPRAY_AND_PRAY] > 0 && isBurst) {
+                    addchance /= 2;
+                    if (isDummyTraining) {
+                        dummyText += "|" + COLOR_DTEXT_REGULAR + " , Spray and Pray ignore half of target armor critical protection: crit chance /= |" + COLOR_DTEXT_MALUS + " 2";
+                    }
+                }
                 bool isFrontPlatedArmor = false;
                 if (valid(usedArmor)) {
                     switch (usedArmor.GetProtoId()) {
@@ -1026,17 +1033,14 @@ void CombatAttack(Critter& cr, Critter& target, ProtoItem& weapon, uint8 weaponM
                 if (isFrontPlatedArmor && !IsFrontal(cr, target)) {
                     addchance -= 10;
                     if (isDummyTraining) {
-                        dummyInfo += "|" + COLOR_DTEXT_REGULAR + " , Front Plated from back penalty: ";
-                        dummyInfo += "|" + COLOR_DTEXT_REGULAR + " Crit chance += |" + COLOR_DTEXT_MALUS + " +10";
+                        dummyText += "|" + COLOR_DTEXT_REGULAR + " , Front Plated from back penalty: ";
+                        dummyText += "|" + COLOR_DTEXT_REGULAR + " Crit chance += |" + COLOR_DTEXT_MALUS + " +10";
                     }
                 }
 
                 if (isDummyTraining) {
-                    dummyText += "|" + COLOR_DTEXT_REGULAR + " , Target Armor modifier = |" + COLOR_DTEXT_MALUS + " " + usedArmor.Proto.Armor_CMCritChance;
+                    dummyText += "|" + COLOR_DTEXT_REGULAR + " , Target Armor modifier = |" + COLOR_DTEXT_MALUS + " " + addchance;
                 }
-
-                //  TODO: BNW: fixed a bug? (to be tested) this line was missing???
-                //addchance += usedArmor.Proto.Armor_CMCritChance;
 
                 if (cr.Trait[TRAIT_FINESSE] != 0 && !isBurst) {
                     addchance -= usedArmor.Proto.Armor_CMCritChance / 4;
