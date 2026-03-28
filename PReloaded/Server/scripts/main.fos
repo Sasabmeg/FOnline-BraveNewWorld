@@ -276,11 +276,13 @@ bool start()
     // Perks for client_combat hit chance
     SetSendParameter(PE_DODGER, true);
     SetSendParameter(PE_IN_YOUR_FACE, true);
+    /*
     SetSendParameter(PE_TOUGHNESS, true);
     SetSendParameter(PE_EVEN_TOUGHER, true);
     SetSendParameter(PE_MAN_OF_STEEL, true);
     SetSendParameter(PE_STONEWALL, true);
     SetSendParameter(PE_IRON_LIMBS, true);
+    */
     SetSendParameter(PE_WASTELANDERS_RESILIENCE, true);
     // Agility
     SetSendParameter(ST_AGILITY, true);
@@ -2455,32 +2457,139 @@ void critter_finish(Critter& cr, bool toDelete)
 #define REPUTATION_DECAY_TIME    (REAL_DAY(1) / REPUTATION_DECAY)
 void critter_idle(Critter& cr)
 {
+    //   fix HP being higher than max
+    if (cr.StatBase[ST_CURRENT_HP] > cr.Stat[ST_MAX_LIFE]) {
+        cr.StatBase[ST_CURRENT_HP] = cr.Stat[ST_MAX_LIFE];
+    }
+    int healTimeout = HEALING_TIMEOUT(cr);
     // Healing
-    if(cr.Timeout[TO_HEALING] == 0) {
-        if(!cr.IsDead() && cr.Mode[MODE_NO_HEAL] == 0 && cr.Stat[ST_CURRENT_HP] < cr.Stat[ST_MAX_LIFE]) {
-            int heal = 0;
-            if (cr.Stat[ST_HEALING_RATE] > 0) {
-                heal = CLAMP(MAX(cr.Stat[ST_HEALING_RATE] * cr.Stat[ST_MAX_LIFE] / 100, 3), 0, cr.Stat[ST_MAX_LIFE] - cr.StatBase[ST_CURRENT_HP]);
-                heal = CLAMP(heal, 0, cr.Stat[ST_MAX_LIFE] * 0.1);
-            } else {
-                heal = cr.Stat[ST_HEALING_RATE];
+    if (cr.Timeout[TO_HEALING] == 0) {
+        if (cr.IsPlayer()) {
+            if (!cr.IsDead() && cr.Mode[MODE_NO_HEAL] == 0 && cr.Stat[ST_CURRENT_HP] < cr.Stat[ST_MAX_LIFE]) {
+                int heal = 0;
+                if (cr.Stat[ST_HEALING_RATE] > 0) {
+                    heal = CLAMP(MAX(cr.Stat[ST_HEALING_RATE] * cr.Stat[ST_MAX_LIFE] / 100, 3), 0, cr.Stat[ST_MAX_LIFE] - cr.Stat[ST_CURRENT_HP]);
+                    heal = CLAMP(heal, 0, cr.Stat[ST_MAX_LIFE] * 0.1);
+                } else {
+                    heal = cr.Stat[ST_HEALING_RATE];
+                }
+                if (cr.Stat[ST_POISONING_LEVEL] > 0) {
+                    heal -= cr.Stat[ST_POISONING_LEVEL] / 3 + 1;
+                }
+                if (cr.Param[TO_EX_IRREMEDIABLE] + PLASMA_EFFECT_LINGER_TIME > ELAPSED_TIME) {
+                    if (cr.ParamBase[ST_EX_IRREMEDIABLE] > 0) {
+                        float healFactor = float(CLAMP(100 - cr.Param[ST_EX_IRREMEDIABLE], 50, 100)) / 100;
+                        heal = heal * healFactor;
+                    }
+                }
+                cr.StatBase[ST_CURRENT_HP] += heal;
+                if (heal > 0) {
+                    cr.Say(SAY_NETMSG, "Regeneration: +" + heal);
+                    FloatingHealText(cr, heal, HEAL_TEXT_REASON_REGEN, SKILL_CHECK_DOES_NOTHING);
+                } else {
+                    cr.Say(SAY_NETMSG, "Poisoned regeneration: |" + COLOR_DEBUFF + " " + heal + "|" + COLOR_LGREEN + " ");
+                    FloatingHealText(cr, heal, HEAL_TEXT_REASON_POISONED_REGEN, SKILL_CHECK_DOES_NOTHING);
+                }
+                if (cr.StatBase[ST_CURRENT_HP] > cr.Stat[ST_MAX_LIFE]) {
+                    cr.StatBase[ST_CURRENT_HP] = cr.Stat[ST_MAX_LIFE];
+                }
             }
-            if (cr.Stat[ST_POISONING_LEVEL] > 0) {
-                heal -= cr.Stat[ST_POISONING_LEVEL] / 3 + 1;
-            }
-            cr.StatBase[ST_CURRENT_HP] += heal;
-            if (heal > 0) {
-                cr.Say(SAY_NETMSG, "Regeneration: +" + heal);
-                FloatingHealText(cr, heal, HEAL_TEXT_REASON_REGEN, SKILL_CHECK_DOES_NOTHING);
-            } else {
-                cr.Say(SAY_NETMSG, "Poisoned regeneration: |" + COLOR_DEBUFF + " " + heal + "|" + COLOR_LGREEN + " ");
-                FloatingHealText(cr, heal, HEAL_TEXT_REASON_POISONED_REGEN, SKILL_CHECK_DOES_NOTHING);
-            }
-            if (cr.StatBase[ST_CURRENT_HP] > cr.Stat[ST_MAX_LIFE]) {
-                cr.StatBase[ST_CURRENT_HP] = cr.Stat[ST_MAX_LIFE];
+        } else {
+            //  NPC
+            if (!cr.IsDead() && cr.Mode[MODE_NO_HEAL] == 0) {
+                //  boss
+                if (cr.Perk[PE_WASTELANDERS_RESILIENCE] > 0) {
+                    healTimeout = cr.Trait[TRAIT_FAST_METABOLISM] > 0 ? 9 : 19;
+                    int heal = 0;
+                    if (cr.Stat[ST_HEALING_RATE] > 0) {
+                        heal = CLAMP(MAX(cr.Stat[ST_HEALING_RATE] * cr.Stat[ST_MAX_LIFE] / 100, 3), 0, cr.Stat[ST_MAX_LIFE] - cr.Stat[ST_CURRENT_HP]);
+                        heal = CLAMP(heal, 0, cr.Stat[ST_MAX_LIFE] * 0.1);
+                    } else {
+                        heal = cr.Stat[ST_HEALING_RATE];
+                    }
+                    if (cr.Stat[ST_CURRENT_HP] < cr.Stat[ST_MAX_LIFE]) {
+                        //  try to heal
+                        int regenCripple = 0;
+                        if (heal > 100) {
+                            heal = 100;
+                            int diminishingReturnsTreshold = 66 - cr.Stat[ST_POISONING_LEVEL] / 2;
+                            for (int damageIndex = DAMAGE_EYE; damageIndex <= DAMAGE_LEFT_LEG; damageIndex++) {
+                                if (cr.Damage[damageIndex] > 0 && Random(1, 100) < diminishingReturnsTreshold) {
+                                    cr.DamageBase[damageIndex] = 0;
+                                    diminishingReturnsTreshold /= 2;
+                                    regenCripple++;
+                                }
+                            }
+                        }
+                        if (cr.Stat[ST_POISONING_LEVEL] > 0) {
+                            heal -= cr.Stat[ST_POISONING_LEVEL] + 1;
+                        }
+                        if (cr.Param[TO_EX_IRREMEDIABLE] + PLASMA_EFFECT_LINGER_TIME > ELAPSED_TIME) {
+                            if (cr.ParamBase[ST_EX_IRREMEDIABLE] > 0) {
+                                float healFactor = float(CLAMP(100 - cr.Param[ST_EX_IRREMEDIABLE], 50, 100)) / 100;
+                                heal = heal * healFactor;
+                            }
+                        }
+
+                        cr.StatBase[ST_CURRENT_HP] += heal;
+                        if (heal > 0) {
+                            if (regenCripple > 0) {
+                                FloatingHealText(cr, heal, HEAL_TEXT_REASON_REGEN_CRIPPLE, SKILL_CHECK_DOES_NOTHING);
+                            } else {
+                                FloatingHealText(cr, heal, HEAL_TEXT_REASON_REGEN_BOSS, SKILL_CHECK_DOES_NOTHING);
+                            }
+                        } else {
+                            if (regenCripple > 0) {
+                                FloatingHealText(cr, heal, HEAL_TEXT_REASON_REGEN_CRIPPLE, SKILL_CHECK_DOES_NOTHING);
+                            } else {
+                                FloatingHealText(cr, heal, HEAL_TEXT_REASON_POISONED_REGEN, SKILL_CHECK_DOES_NOTHING);
+                            }
+                        }
+                        if (cr.StatBase[ST_CURRENT_HP] > cr.Stat[ST_MAX_LIFE]) {
+                            cr.StatBase[ST_CURRENT_HP] = cr.Stat[ST_MAX_LIFE];
+                        }
+                    } else {
+                        //  if regen on full HP, regen all cripples, soft reset boss
+                        int regenCripple = 0;
+                        for (int damageIndex = DAMAGE_EYE; damageIndex <= DAMAGE_LEFT_LEG; damageIndex++) {
+                            if (cr.Damage[damageIndex] > 0) {
+                                cr.DamageBase[damageIndex] = 0;
+                                regenCripple++;
+                            }
+                        }
+                        if (regenCripple > 0) {
+                            FloatingHealText(cr, regenCripple, HEAL_TEXT_REASON_REGEN_CRIPPLE, SKILL_CHECK_DOES_NOTHING);
+                        }
+                    }
+                } else {
+                    //  regular NPC
+                    healTimeout = cr.Trait[TRAIT_FAST_METABOLISM] > 0 ? 19 : 39;
+                    if (cr.Stat[ST_CURRENT_HP] < cr.Stat[ST_MAX_LIFE]) {
+                        int heal = 0;
+                        if (cr.Stat[ST_HEALING_RATE] > 0) {
+                            heal = CLAMP(MAX(cr.Stat[ST_HEALING_RATE] * cr.Stat[ST_MAX_LIFE] / 100, 3), 0, cr.Stat[ST_MAX_LIFE] - cr.Stat[ST_CURRENT_HP]);
+                            heal = CLAMP(heal, 0, cr.Stat[ST_MAX_LIFE] * 0.1);
+                            heal = CLAMP(heal, 0, 20);
+                        } else {
+                            heal = cr.Stat[ST_HEALING_RATE];
+                        }
+                        if (cr.Stat[ST_POISONING_LEVEL] > 0) {
+                            heal -= cr.Stat[ST_POISONING_LEVEL] / 3 + 1;
+                        }
+                        cr.StatBase[ST_CURRENT_HP] += heal;
+                        if (heal > 0) {
+                            FloatingHealText(cr, heal, HEAL_TEXT_REASON_REGEN, SKILL_CHECK_DOES_NOTHING);
+                        } else {
+                            FloatingHealText(cr, heal, HEAL_TEXT_REASON_POISONED_REGEN, SKILL_CHECK_DOES_NOTHING);
+                        }
+                        if (cr.StatBase[ST_CURRENT_HP] > cr.Stat[ST_MAX_LIFE]) {
+                            cr.StatBase[ST_CURRENT_HP] = cr.Stat[ST_MAX_LIFE];
+                        }
+                    }
+                }
             }
         }
-        _SetTimeout(cr, TO_HEALING, HEALING_TIMEOUT(cr));
+        _SetTimeout(cr, TO_HEALING, healTimeout);
     }
 
     // try to heal injuries

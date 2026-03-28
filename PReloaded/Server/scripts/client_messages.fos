@@ -69,6 +69,9 @@ class CMessagesConfig
 
     string  MiscOverHeadExperience = "";
 
+    string  HealOverHeadRegenBoss = "";
+    string  HealOverHeadRegenCripple = "";
+
     int     FloatTextFromX = MESSAGES_FLOAT_TEXT_INVALID;
     int     FloatTextFromY = MESSAGES_FLOAT_TEXT_INVALID;
     int     FloatTextToX = MESSAGES_FLOAT_TEXT_INVALID;
@@ -162,6 +165,14 @@ void ClientMessagesConfig(string& customConfig) {
             if(var.GetName() == "MiscOverHeadExperience") {
                 MessagesConfig.MiscOverHeadExperience = var.GetValue();
                 Log("ClientMessagesConfig() - MiscOverHeadExperience = " + MessagesConfig.MiscOverHeadExperience);
+            }
+            if(var.GetName() == "HealOverHeadRegenBoss") {
+                MessagesConfig.HealOverHeadRegenBoss = var.GetValue();
+                Log("ClientMessagesConfig() - HealOverHeadRegenBoss = " + MessagesConfig.HealOverHeadRegenBoss);
+            }
+            if(var.GetName() == "HealOverHeadRegenCripple") {
+                MessagesConfig.HealOverHeadRegenCripple = var.GetValue();
+                Log("ClientMessagesConfig() - HealOverHeadRegenCripple = " + MessagesConfig.HealOverHeadRegenCripple);
             }
             if(var.GetName() == "FloatTextFromX") {
                 MessagesConfig.FloatTextFromX = string2int(var.GetValue());
@@ -1296,6 +1307,8 @@ void sayEx(int type, int crId, int, string@ text, array<int>@)
 #define HEAL_TEXT_REASON_POISON             (9)
 #define STATUS_TEXT_REASON_SHOCKED          (10)
 #define MISC_TEXT_REASON_XP                 (20)
+#define HEAL_TEXT_REASON_REGEN_BOSS         (30)
+#define HEAL_TEXT_REASON_REGEN_CRIPPLE      (31)
 
 void mapMessage(int type, int hx, int hy, string@ text, array<int>@ data)
 {
@@ -1428,6 +1441,24 @@ void mapMessage(int type, int hx, int hy, string@ text, array<int>@ data)
                         reasonText = "Experience";
                     }
                     formattedText = vals[0] + "" + vals[1];
+                    break;
+                case HEAL_TEXT_REASON_REGEN_BOSS:
+                    if (MessagesConfig.HealOverHeadRegenBoss.length() > 0) {
+                        reasonText = MessagesConfig.HealOverHeadRegenBoss;
+                    } else if (MessagesConfig.HealOverHeadVerbosity == 1){
+                        reasonText = "Reg";
+                    } else if (MessagesConfig.HealOverHeadVerbosity == 2) {
+                        reasonText = "Boss Regeneration";
+                    }
+                    break;
+                case HEAL_TEXT_REASON_REGEN_CRIPPLE:
+                    if (MessagesConfig.HealOverHeadRegenCripple.length() > 0) {
+                        reasonText = MessagesConfig.HealOverHeadRegenCripple;
+                    } else if (MessagesConfig.HealOverHeadVerbosity == 1){
+                        reasonText = "Regen Cripple";
+                    } else if (MessagesConfig.HealOverHeadVerbosity == 2) {
+                        reasonText = "Cripple Regeneration";
+                    }
                     break;
             }
             formattedText = reasonText + "  " + formattedText;
