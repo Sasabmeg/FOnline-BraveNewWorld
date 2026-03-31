@@ -126,7 +126,7 @@ string[] commandlist =
     "cleartimeouts", "clone", "condition", "controlmobs", "controlnpc", "corecheats",
     "countitems", "createlocation", "crinfo", "criticalchance", "critterinfo",
     "cto",
-    "damage", "deathincarnate", "deathmatch", "deletelocation", "devenable",
+    "damage", "deathincarnate", "deathmatch", "deletelocation", "devenable", "devinfo",
     "dialog", "disguise", "disabledismantling", "disablegrids", "disablepvp",
     "disabletb", "disguiseinfo", "dismiss", "dismissteam", "dropalltimeouts",
     "dropdrugs", "dropitems",
@@ -6430,6 +6430,20 @@ void ExecDevEnableCommand(array<string@>@ command, Critter@ player)
         player.RunClientScript("client_dev_menu@Authorize", 0, 0, 0, null, null);
 }
 
+void ExecDevInfoCommand(array<string@>@ command, Critter@ player) {
+    if (player.GetAccess() >= ACCESS_TESTER) {
+        player.Say(SAY_NETMSG, "|" + COLOR_DTEXT_CAPTION + " Dev info:");
+        uint tick = GetTick();
+        player.Say(SAY_NETMSG, "Server tick = " + tick);
+        player.Say(SAY_NETMSG, "|" + COLOR_DTEXT_ROLL + " Server tick = " + (tick/86400000) + " " + ((tick/3600000)%24) + ":" + ((tick/60000)%60) + ":" + ((tick/1000)%60) + "." +  (tick%1000));
+        player.Say(SAY_NETMSG, "Server elapsed = " + ELAPSED_TIME);
+        player.Say(SAY_NETMSG, "Server elapsed = " + (ELAPSED_TIME/86400) + " " + ((ELAPSED_TIME/3600)%24) + ":" + ((ELAPSED_TIME/60)%60) + ":" + (ELAPSED_TIME%60));
+        uint realElapsed = ELAPSED_TIME / __TimeMultiplier;
+        player.Say(SAY_NETMSG, "Server REAL = " + (realElapsed/86400) + " " + ((realElapsed/3600)%24) + ":" + ((realElapsed/60)%60) + ":" + (realElapsed%60) + "." + ((ELAPSED_TIME * 1000 / __TimeMultiplier)%1000) );
+        player.RunClientScript("client_dev_menu@DevInfo", 0, 0, 0, null, null);
+    }
+}
+
 void ExecAntiblockCommand(array<string@>@ command, Critter@ player)
 {
     if(ItemOnHex(PID_TRIGGER, player.GetMap(), player.HexX, player.HexY))
@@ -10017,6 +10031,10 @@ bool ExecCommand(Critter& player, string@ commandString)
     else if(command[1] == "devenable")
     {
         ExecDevEnableCommand(command, player);
+    }
+    else if(command[1] == "devinfo")
+    {
+        ExecDevInfoCommand(command, player);
     }
     else if(command[1] == "dialog")
     {

@@ -142,8 +142,12 @@ bool UseBearTrap(Critter& cr, Item& trap) {
         return true;
     }
 
-    if (cr.Timeout[TO_BATTLE] > 0) {
-        cr.Say(SAY_NETMSG, "Cannot set up bear trap while in combat.");
+    if (cr.Timeout[TO_BATTLE] > ((__TimeoutBattle * cr.Skill[SK_TRAPS]) / 400)) {
+        if (cr.GetAccess() > ACCESS_CLIENT) {
+            cr.Say(SAY_NETMSG, "TO_BATTLE = " + cr.Timeout[TO_BATTLE] + ", __timeoutBattle = " + __TimeoutBattle + ", margin = " + (__TimeoutBattle * cr.Skill[SK_TRAPS] / 400) + ". Cannot set up bear trap while in combat.");
+        } else {
+            cr.Say(SAY_NETMSG, "You cannot set up bear trap yet.");
+        }
         return true;
     }
 
