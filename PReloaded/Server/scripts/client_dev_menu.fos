@@ -19,10 +19,22 @@
 # include "client_gui_ex.fos"
 # include "client_spawn_npc.fos"
 # include "client_utils_h.fos"
+# include "_colors.fos"
 
 // for devmenu (can be hacked, but it really doesn't change anything)
 bool Authorized = false;
 bool IsAuthorized() { return Authorized; }
+
+void DevInfo(int p0, int p1, int p2, string@ + p3, array<int>@ + p4) {
+    uint tick = GetTick();
+    Message("Client tick = " + tick);
+    Message("|" + COLOR_DTEXT_ROLL + " Client tick = " + (tick/86400000) + " " + ((tick/3600000)%24) + ":" + ((tick/60000)%60) + ":" + ((tick/1000)%60) + "." +  (tick%1000));
+
+    Message("Client elapsed = " + ELAPSED_TIME);
+    Message("Client elapsed = " + (ELAPSED_TIME/86400) + " " + ((ELAPSED_TIME/3600)%24) + ":" + ((ELAPSED_TIME/60)%60) + ":" + (ELAPSED_TIME%60));
+    uint realElapsed = ELAPSED_TIME / __TimeMultiplier;
+    Message("Client REAL = " + (realElapsed/86400) + " " + ((realElapsed/3600)%24) + ":" + ((realElapsed/60)%60) + ":" + (realElapsed%60) + "." + ((ELAPSED_TIME * 1000 / __TimeMultiplier)%1000) );
+}
 
 void Authorize(int p0, int p1, int p2, string@ + p3, array<int>@ + p4)
 {
@@ -692,4 +704,6 @@ class CContextMenu : Window
         screen.Size(Width(), top + 30);
     }
 };
+
+
 #endif // __CLIENT_DEV_MENU__
