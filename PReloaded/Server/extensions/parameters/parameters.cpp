@@ -400,7 +400,7 @@ EXPORT int getParam_MaxCritical(CritterMutual& cr, uint)
 
 int GetAC(CritterMutual& cr, bool head)
 {
-	int val = cr.Params[ST_ARMOR_CLASS] + cr.Params[ST_ARMOR_CLASS_EXT] + 3*getParam_Agility(cr, 0);
+	int val = cr.Params[ST_ARMOR_CLASS] + cr.Params[ST_ARMOR_CLASS_EXT] + 5*getParam_Agility(cr, 0);
 
 	while(cr.Params[PE_LIVEWIRE])
 	{
@@ -412,14 +412,14 @@ int GetAC(CritterMutual& cr, bool head)
 		if(weapon->IsWeapon() && weapon->Proto->Weapon_Skill[0]!=SK_UNARMED && weapon->Proto->Weapon_Skill[0]!=SK_THROWING && FLAG(weapon->Proto->Flags,ITEM_FLAG_TWO_HANDS))
 			break; // 2-handed sg/bg/ew
 
-		val += 3*getParam_Agility(cr, 0);
+		val += 5*getParam_Agility(cr, 0);
 		break;
 	}
 
 	const Item* armor = head ? GetHeadArmor(cr) : cr.ItemSlotArmor;
 	if(armor->GetId() && armor->IsArmor()) val += armor->Proto->Armor_AC;
 
-	return CLAMP(val, 0, 90);
+	return CLAMP(val, 0, 150);
 }
 
 EXPORT int getParam_Ac(CritterMutual& cr, uint)
@@ -664,16 +664,14 @@ uint GetUseApCost(CritterMutual& cr, Item& item, uint8 mode)
 	else if(use == USE_RELOAD)
 	{
 		if(cr.Params[PE_QUICK_POCKETS]) return 1;
-		if (cr.ItemSlotArmor != NULL && apCost > 2) {
+		if (cr.ItemSlotArmor != NULL && apCost >= 1) {
 			//Log("ARMOR SLOT EXISTS\n");
 			if ((cr.ItemSlotArmor->Proto->Armor_Perk >= ARMOR_PERK_LIGHT_START && cr.ItemSlotArmor->Proto->Armor_Perk <= ARMOR_PERK_LIGHT_END)
-				|| cr.ItemSlotArmor->Proto->Armor_Perk == ARMOR_PERK_LIGHT) {
-				uint proto = item.GetProtoId();
-				if (proto == PID_SUPER_STIMPAK || proto == PID_STIMPAK || proto == PID_ANTIDOTE || proto == PID_WEAK_HEALING_POWDER
-					|| proto == PID_HEALING_POWDER || proto == PID_HYPO || proto == PID_BLOODPACK) {
-					return 1;
-					//Log("ARMOR SLOT LIGHT AND HEALING DRUG\n");
-				}
+					|| cr.ItemSlotArmor->Proto->Armor_Perk == ARMOR_PERK_LIGHT) {
+
+				//std::string str1 = "Armor Proto PERK = " + std::to_string((long long)cr.ItemSlotArmor->Proto->Armor_Perk);
+				//Log(str1.c_str());
+				return 1;
 			}
 		}
 		if(TB_BATTLE_TIMEOUT_CHECK(getParam_Timeout(cr, TO_BATTLE)))
