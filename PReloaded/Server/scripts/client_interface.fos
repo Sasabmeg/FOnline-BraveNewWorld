@@ -661,7 +661,7 @@ void render_iface(uint layer)
                         if (_IsPlasmaBurnt(cr)) {
                             plasmaTimeout = _GetPlasmaBurntTo(cr);
                             if (_GetPlasmaBurntValue(cr) > 0) {
-                                plasmaValue = (cr.ParamBase[ST_EX_IRREMEDIABLE]);
+                                plasmaValue = _GetPlasmaBurntValue(cr);
                             }
                         }
                         if (_IsBurnt(cr)) {

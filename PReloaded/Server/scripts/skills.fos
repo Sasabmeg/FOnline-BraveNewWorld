@@ -160,17 +160,17 @@ bool UseFirstAidOnCritter(Critter& cr, Critter& targetCr, Item@ item)
     }
     //  BNW MECHANICS CHANGE: see issue #110 https://github.com/Sasabmeg/FOnline-BraveNewWorld/issues/110
     //  Plasma damage will reduce healing for a short period of time
-    if (targetCr.ParamBase[TO_EX_IRREMEDIABLE] + PLASMA_EFFECT_LINGER_TIME > int(GetTick())) {
-        if (targetCr.ParamBase[ST_EX_IRREMEDIABLE] > 0) {
-            int healReduce = CLAMP(targetCr.ParamBase[ST_EX_IRREMEDIABLE], 0, 75);
+    if (_IsPlasmaBurnt(targetCr)) {
+        if (_GetPlasmaBurntValue(targetCr) > 0) {
+            int healReduce = CLAMP(_GetPlasmaBurntValue(targetCr), 0, 75);
             int mdc = cr.Perk[PE_MEDIC] > 0 ? 1 : 0;
             int fmdc = cr.Perk[PE_FIELD_MEDIC] > 0 ? 1 : 0;
             healReduce = (healReduce * (3 - mdc - fmdc)) / 3;
             float healFactor2 = float(CLAMP(100 - healReduce, 25, 100)) / 100;
             int oldAmount = heal;
             heal = heal * healFactor2;
-            //cr.Say(SAY_NETMSG, "Heal factor = " + healFactor2 + ", healReduce = " + healReduce + ", irremediable% = " + targetCr.ParamBase[ST_EX_IRREMEDIABLE] + ", oldAmount = " + oldAmount + ", newAmount = " + heal);
-            //Log("Heal factor = " + healFactor2 + "healReduce = " + healReduce + ", irremediable% = " + targetCr.ParamBase[ST_EX_IRREMEDIABLE] + ", oldAmount = " + oldAmount + ", newAmount = " + heal);
+            //cr.Say(SAY_NETMSG, "Heal factor = " + healFactor2 + ", healReduce = " + healReduce + ", irremediable% = " + _GetPlasmaBurntValue(targetCr) + ", oldAmount = " + oldAmount + ", newAmount = " + heal);
+            //Log("Heal factor = " + healFactor2 + "healReduce = " + healReduce + ", irremediable% = " + _GetPlasmaBurntValue(targetCr) + ", oldAmount = " + oldAmount + ", newAmount = " + heal);
         }
     }
     //  BNW MECHANICS CHANGE END

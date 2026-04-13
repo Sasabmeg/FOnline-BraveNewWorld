@@ -77,7 +77,6 @@ import void   AddPlayerDeaths() from "cavelog";
 import void   ApplyTimeout(array<Item@>& items, array<uint>& itemsCount, array<Item@>& resources, Critter& crafter) from "fix_boy";
 //import void   CheckBountyHunters(Critter& cr, Critter@ killer) from "bounties";
 import uint   CheckPlayerName( const string& name ) from "parameters";
-import void   CombatAttack(Critter& cr, Critter& target, ProtoItem& weapon, uint8 weaponMode, ProtoItem@ ammo) from "combat";
 import void   CombatAttackStartAnimation(Critter& cr, Critter& target, ProtoItem& weapon, uint8 weaponMode, ProtoItem@ ammo) from "combat";
 import void   CritterGenerate(Critter& cr) from "parameters";
 import void   CritterDescription_Set(Critter& player, int& description1, int& description2) from "critter_description";
@@ -2476,9 +2475,9 @@ void critter_idle(Critter& cr)
                 if (cr.Stat[ST_POISONING_LEVEL] > 0) {
                     heal -= cr.Stat[ST_POISONING_LEVEL] / 3 + 1;
                 }
-                if (cr.Param[TO_EX_IRREMEDIABLE] + PLASMA_EFFECT_LINGER_TIME > ELAPSED_TIME) {
-                    if (cr.ParamBase[ST_EX_IRREMEDIABLE] > 0) {
-                        float healFactor = float(CLAMP(100 - cr.Param[ST_EX_IRREMEDIABLE], 50, 100)) / 100;
+                if (_IsPlasmaBurnt(cr)) {
+                    if (_GetPlasmaBurntValue(cr) > 0) {
+                        float healFactor = float(CLAMP(100 - _GetPlasmaBurntValue(cr), 50, 100)) / 100;
                         heal = heal * healFactor;
                     }
                 }
@@ -2524,9 +2523,9 @@ void critter_idle(Critter& cr)
                         if (cr.Stat[ST_POISONING_LEVEL] > 0) {
                             heal -= cr.Stat[ST_POISONING_LEVEL] + 1;
                         }
-                        if (cr.Param[TO_EX_IRREMEDIABLE] + PLASMA_EFFECT_LINGER_TIME > ELAPSED_TIME) {
-                            if (cr.ParamBase[ST_EX_IRREMEDIABLE] > 0) {
-                                float healFactor = float(CLAMP(100 - cr.Param[ST_EX_IRREMEDIABLE], 50, 100)) / 100;
+                        if (_IsPlasmaBurnt(cr)) {
+                            if (_GetPlasmaBurntValue(cr) > 0) {
+                                float healFactor = float(CLAMP(100 - _GetPlasmaBurntValue(cr), 50, 100)) / 100;
                                 heal = heal * healFactor;
                             }
                         }
@@ -3304,6 +3303,13 @@ void map_critter_in(Map& map, Critter& cr)
         for (uint i = TO_SK_FIRST_AID; i <= TO_SK_DOCTOR; i++) {
             if (cr.ParamBase[i] > int(AFTER(REAL_MINUTE(3)))) {
                 cr.ParamBase[i] = int(AFTER(REAL_MINUTE(3)));
+            } else {
+                /*
+                if (cr.IsPlayer()) {
+                    cr.Say(SAY_NETMSG, "Timeout - ParamBase[" + i + "] = " + cr.ParamBase[i]);
+                    cr.Say(SAY_NETMSG, "Timeout - Param[" + i + "] = " + cr.Param[i]);
+                }
+                */
             }
         }
         //  timeouts with max possible value 30 seconds
@@ -3318,19 +3324,20 @@ void map_critter_in(Map& map, Critter& cr)
             }
         }
         if (cr.ParamBase[TO_BATTLE] > int(AFTER(REAL_SECOND(7)))) {
-            cr.ParamBase[TO_BATTLE] = 0;
+            cr.ParamBase[TO_BATTLE] = int(AFTER(REAL_SECOND(7)));
+        } /*else {
+            if (cr.IsPlayer()) {
+                cr.Say(SAY_NETMSG, "Battle Timeout = " + cr.ParamBase[TO_BATTLE]);
+            }
+        }*/
+        if (_GetBurntTo(cr) > BURN_EFFECT_LINGER_TIME) {
+            _SetBurntToDefault(cr);
         }
-        if (cr.ParamBase[TO_EX_BURNT] > int(AFTER(REAL_SECOND(BURN_EFFECT_LINGER_TIME)))) {
-            cr.ParamBase[TO_EX_BURNT] = 0;
+        if (_GetPlasmaBurntTo(cr) > PLASMA_EFFECT_LINGER_TIME) {
+            _SetPlasmaBurntToDefault(cr);
         }
-        if (cr.ParamBase[TO_EX_IRREMEDIABLE] > int(AFTER(REAL_SECOND(10)))) {
-            cr.ParamBase[TO_EX_IRREMEDIABLE] = 0;
-        }
-        if (cr.ParamBase[TO_EX_IRREMEDIABLE] > int(AFTER(REAL_SECOND(10)))) {
-            cr.ParamBase[TO_EX_IRREMEDIABLE] = 0;
-        }
-        if (cr.ParamBase[TO_EX_SHOCKED] > int(AFTER(REAL_SECOND(10)))) {
-            cr.ParamBase[TO_EX_SHOCKED] = 0;
+        if (_GetShockedTo(cr) > SHOCK_EFFECT_LINGER_TIME) {
+            _SetShockedToDefault(cr);
         }
 
         /*

@@ -330,6 +330,9 @@
 #define _SetBurntTo                 # (cr, realSeconds) (cr.ParamBase[TO_EX_BURNT] = int(AFTER(REAL_SECOND(realSeconds))))
 #define _SetShockedTo               # (cr, realSeconds) (cr.ParamBase[TO_EX_SHOCKED] = int(AFTER(REAL_SECOND(realSeconds))))
 #define _SetPlasmaBurntTo           # (cr, realSeconds) (cr.ParamBase[TO_EX_IRREMEDIABLE] = int(AFTER(REAL_SECOND(realSeconds))))
+#define _SetBurntToDefault          # (cr)              (_SetBurntTo(cr, BURN_EFFECT_LINGER_TIME))
+#define _SetShockedToDefault        # (cr)              (_SetShockedTo(cr, SHOCK_EFFECT_LINGER_TIME))
+#define _SetPlasmaBurntToDefault    # (cr)              (_SetPlasmaBurntTo(cr, PLASMA_EFFECT_LINGER_TIME))
 
 #define _GetBurntValue              # (cr)              (cr.ParamBase[ST_EX_BURNT])
 #define _GetShockedValue            # (cr)              (cr.ParamBase[ST_EX_SHOCKED])
