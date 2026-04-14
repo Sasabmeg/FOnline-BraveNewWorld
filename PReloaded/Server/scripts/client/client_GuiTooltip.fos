@@ -1253,7 +1253,17 @@ class CTooltips {
         tooltipsValueExt.insertLast(pipReference
                                      + notes
                                      + "\n\u2022 +1 Agility bonus"
-                                     + "\n\u2022 Other effects of this trait have not been implemented yet!"
+                                     + "\n\u2022 Second attack can put player into negative AP"
+                                     + "\n\u2022 Second attack AP cost is half of weapon attack cost (modified by aim)"
+                                     + "\n\u2022 Second shot has a chance to hit the same location as first shot"
+                                     + "\n\t\u2022 Chance depends on Agility and distance from target"
+                                     + "\n\t\u2022 Formula: ( 1D100 ) vs ( 45 + 5 * AG - 2 * dist )"
+                                     + "\n\t\u2022 If above roll fails, aim location will be downgraded to uncalled"
+                                     + "\n\t\u2022 Even if above roll succeeds, eye shot will downgrade to head shots"
+                                     + "\n\u2022 Only specific one handed guns can be double tapped:"
+                                     + "\n\t\u2022 SG: 9mm Mauser, 10mm Pistol, Desert Eagles, 14mm Pistol, Gauss Pistol"
+                                     + "\n\t\u2022 EW: Laser Pistol, Magneto Laser Pistol, Solar Scorcher"
+                                     + "\n\t\u2022 These guns were selected based on good (animation) sync with the feature"
                                      + "\n\u2022 Excludes other traits: Finesse, Kamikaze, Fast Shot and Cautious Nature.");
 
         tooltipsKey.insertLast(TRAIT_BLOODY_MESS);
