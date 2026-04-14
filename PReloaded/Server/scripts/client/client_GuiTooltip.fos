@@ -146,6 +146,7 @@ class CTooltips {
                 stonewallRankHead = 1;
             }
             int thermalLeatherArmorFlamerResist = 1;
+            int healingRateArmorBonus = 0;
 
             ItemCl@ helmet = chosen.GetItem(0, SLOT_HEAD);
             ItemCl@ bodyArmor = chosen.GetItem(0, SLOT_ARMOR);
@@ -178,6 +179,7 @@ class CTooltips {
                 if (bodyArmor.GetProtoId() == PID_THERMAL_LEATHER_ARMOR) {
                     thermalLeatherArmorFlamerResist = 3;
                 }
+                healingRateArmorBonus = _CheckBonus(bodyArmor, BONUS_ARMOR_HEALING_RATE);
             }
             if (valid(helmet)) {
                 helmetNormalDT += helmet.Proto.Armor_DTNormal;
@@ -443,6 +445,9 @@ class CTooltips {
                             + "\n\t\u2022 " + "|" + COLOR_BUFF + " +" + ((chosen.Stat[ST_ENDURANCE] - 1) / 3) + "% |" + COLOR_REGULAR + "  from Endurance";
                             if (chosen.Param[PE_FASTER_HEALING] > 0) {
                                 healingRateExt += "\n\t\u2022 " + "|" + COLOR_BUFF + " +" + ((chosen.Stat[ST_ENDURANCE] - 1) / 3) + "% |" + COLOR_REGULAR + "  from Faster Healing";
+                            }
+                            if (healingRateArmorBonus > 0) {
+                                healingRateExt += "\n\t\u2022 " + "|" + COLOR_BUFF + " +" + healingRateArmorBonus + "% |" + COLOR_REGULAR + "  from Armor Bonus";
                             }
             healingRateExt += "\n\u2022 Effects: " + (healingRateDif < 0 ? ("|" + COLOR_DEBUFF + " ") : ("|" + COLOR_BUFF + " +")) + healingRateDif + "% |" + COLOR_REGULAR + " ";
                             if (radiationLevel > 0) {

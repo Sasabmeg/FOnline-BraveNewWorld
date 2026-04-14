@@ -342,4 +342,13 @@
 #define _SetPlasmaBurntValue        # (cr, value)       (cr.ParamBase[ST_EX_IRREMEDIABLE] = value)
 
 
+#define _CheckBonus                  # (item, bonusType)                                     \
+                                        (!valid(item) ? 0 :                                 \
+                                            item.Val0 == bonusType ? item.Val5 :            \
+                                            item.Val1 == bonusType ? item.Val6 :            \
+                                            item.Val2 == bonusType ? item.Val7 :            \
+                                            item.Val3 == bonusType ? item.Val8 :            \
+                                            item.Val4 == bonusType ? item.Val9 : 0          \
+                                        )
+
 #endif // __MACROS__
