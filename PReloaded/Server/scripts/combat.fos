@@ -121,6 +121,10 @@ void CombatAttackStartAnimation(Critter& attacker, Critter& target, ProtoItem& w
     //Log("CombatAttackStartAnimation :: attacker.Id = " + attacker.Id + ", target.Id = " + target.Id);
     uint weaponProtoId = 0, ammoProtoId = 0, anim1 = 0, animationDelay = 0;
     uint8 use = _WeaponModeUse(weaponMode);
+    uint16	rounds = _WeaponRound(weapon, use);
+    bool isBurst = rounds > 1;
+    bool isInstantAttack = false;
+
     //  for now every animation is considered 400 ms, that is basically prepare weapon and first frame of attack anim?
     bool playSoundEarly = false;
     if (valid(weapon)) {
@@ -128,35 +132,46 @@ void CombatAttackStartAnimation(Critter& attacker, Critter& target, ProtoItem& w
         switch (weapon.Weapon_Anim1) {
             case ANIM1_FALLOUT_UNARMED:
             case ANIM1_FALLOUT_KNIFE:
+                if (weapon.ProtoId == PID_ROCK || weapon.ProtoId == PID_GOLD_NUGGET || weapon.ProtoId == PID_THROWING_KNIFE || weapon.ProtoId == PID_POISONED_THROWING_KNIFE) {
+                    if (use == 0) {
+                        animationDelay = ANIM_ACTION_TIME_DEFAULT;
+                        if (attacker.Param[TRAIT_FAST_SHOT] > 0 && !isBurst) {
+                            animationDelay /= 2;
+                        }
+                    } else {
+                        isInstantAttack = true;
+                    }
+                } else {
+                    isInstantAttack = true;
+                }
+                break;
             case ANIM1_FALLOUT_CLUB:
             case ANIM1_FALLOUT_HAMMER:
                 playSoundEarly = true;
-                animationDelay = ANIM_ACTION_TIME_DEFAULT;
+                isInstantAttack = true;
                 break;
             case ANIM1_FALLOUT_SPEAR:
                 //  throw or melee
                 playSoundEarly = true;
                 if (use == 1) {
                     animationDelay = ANIM_ACTION_TIME_THROW_SPEAR;
+                    if (attacker.Param[TRAIT_FAST_SHOT] > 0 && !isBurst) {
+                        animationDelay /= 2;
+                    }
                 } else {
-                    animationDelay = ANIM_ACTION_TIME_DEFAULT;
+                    isInstantAttack = true;
                 }
                 break;
             case ANIM1_FALLOUT_PISTOL:
-                animationDelay = ANIM_ACTION_TIME_DEFAULT;
-                break;
             case ANIM1_FALLOUT_UZI:
-                animationDelay = ANIM_ACTION_TIME_DEFAULT;
-                break;
             case ANIM1_FALLOUT_SHOOTGUN:
-                animationDelay = ANIM_ACTION_TIME_DEFAULT;
-                break;
             case ANIM1_FALLOUT_RIFLE:
                 animationDelay = ANIM_ACTION_TIME_DEFAULT;
+                if (attacker.Param[TRAIT_FAST_SHOT] > 0 && !isBurst) {
+                    animationDelay /= 2;
+                }
                 break;
             case ANIM1_FALLOUT_MINIGUN:
-                animationDelay = ANIM_ACTION_TIME_DEFAULT;
-                break;
             case ANIM1_FALLOUT_ROCKET_LAUNCHER:
                 animationDelay = ANIM_ACTION_TIME_DEFAULT;
                 break;
@@ -180,8 +195,20 @@ void CombatAttackStartAnimation(Critter& attacker, Critter& target, ProtoItem& w
     }
 
     attacker.StatBase[ST_CURRENT_AP] -= 100;
-    uint[] values = { attacker.Id, target.Id, weaponProtoId, weaponMode, ammoProtoId, 0 };
-    attacker.ParamBase[ST_EX_ATTACK_EVENT_ID] = CreateTimeEvent(AFTER(REAL_MS(animationDelay)), "e_CombatAttack", values, false);
+    if (attacker.IsNpc() && target.IsNpc()) {
+        isInstantAttack = true;
+    }
+    if (isInstantAttack) {
+        animationDelay = 0;
+        //Log("Instant attack -> animation delay = " + animationDelay);
+        uint[] values = { attacker.Id, target.Id, weaponProtoId, weaponMode, ammoProtoId, 0 };
+        //attacker.ParamBase[ST_EX_ATTACK_EVENT_ID] = CreateTimeEvent(AFTER(REAL_MS(animationDelay)), "e_CombatAttack", values, false);
+        e_CombatAttack(values);
+    } else {
+        //Log("Attack with prepared animation -> animation delay = " + animationDelay);
+        uint[] values = { attacker.Id, target.Id, weaponProtoId, weaponMode, ammoProtoId, 0 };
+        attacker.ParamBase[ST_EX_ATTACK_EVENT_ID] = CreateTimeEvent(AFTER(REAL_MS(animationDelay)), "e_CombatAttack", values, false);
+    }
 
     bool isDoubleTap = false;
     uint weapPid = weaponProtoId;
@@ -200,7 +227,7 @@ void CombatAttackStartAnimation(Critter& attacker, Critter& target, ProtoItem& w
         }
     }
     if (attacker.IsPlayer()) {
-        Log("isDoubleTap = " + (isDoubleTap ? "true" : "false"));
+        //Log("isDoubleTap = " + (isDoubleTap ? "true" : "false"));
     }
 
     if (isDoubleTap) {
@@ -250,7 +277,7 @@ uint e_CombatAttack(array<uint>@ values) {
         }
         int targetDist = GetDistantion(attacker.HexX, attacker.HexY, target.HexX, target.HexY);
 
-        if (targetDist > wpnMaxDist) {
+        if ((targetDist > wpnMaxDist && targetDist > 3) || (targetDist > wpnMaxDist + 1)) {
             if (attacker.IsPlayer()) {
                 attacker.Say(SAY_NETMSG, "Target out of range. Weapon max range: " + wpnMaxDist + ", target distance: " + targetDist);
             }
@@ -568,9 +595,10 @@ void CombatAttack(Critter& attacker, Critter& target, ProtoItem& weapon, uint8 w
     } else {
         //  we took this at the animation part
         apCost -= 1;
-        apCost += GetAimApCost(aim);
+        apCost += attacker.Param[TRAIT_FAST_SHOT] > 0 ? -1 : GetAimApCost(aim);
         int actualApCost = apCost * 100 - (attacker.Perk[PE_BONUS_RATE_OF_ATTACK] > 0 ? 100 : (10 * attacker.Stat[ST_AGILITY]));
-        Log("AP cost first attack = " + actualApCost + ", current AP = " + attacker.StatBase[ST_CURRENT_AP] + ", AP cost weapon = " + (_WeaponApCost(weapon, use)));
+        Log("AP cost first attack = " + actualApCost + ", current AP = " + attacker.StatBase[ST_CURRENT_AP] + ", AP cost weapon = " + (_WeaponApCost(weapon, use))
+            + ", Fast Shot = " + (attacker.Param[TRAIT_FAST_SHOT] > 0 ? 1 : 0) + ", BRoA = " + (attacker.Perk[PE_BONUS_RATE_OF_ATTACK] > 0 ? 1 : 0) + ", Aim[" + aim + "] cost= " + GetAimApCost(aim));
         attacker.StatBase[ST_CURRENT_AP] -= actualApCost;
     }
 
