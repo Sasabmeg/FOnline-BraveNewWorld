@@ -189,7 +189,10 @@ void CombatAttackStartAnimation(Critter& attacker, Critter& target, ProtoItem& w
     //  not supported pistols bc of bad animation sequence or some kind of bug, so they do not feel good
     //  PID_44_MAGNUM_REVOLVER, PID_44_MAGNUM_SPEEDLOADER, PID_223_PISTOL, PID_PLASMA_PISTOL, PID_PLASMA_PISTOL_EXT_CART, PID_YK32_PULSE_PISTOL
     if (valid(realWeapon)) {
-        if (weapPid == PID_9MM_MAUSER || weapPid == PID_10MM_PISTOL || weapPid == PID_DESERT_EAGLE || weapPid == PID_DESERT_EAGLE_EXT_MAG || weapPid == PID_14MM_PISTOL
+        if (weapPid == PID_9MM_MAUSER || weapPid == PID_10MM_PISTOL || weapPid == PID_44_MAGNUM_REVOLVER || weapPid == PID_44_MAGNUM_SPEEDLOADER || weapPid == PID_14MM_PISTOL
+                || weapPid == PID_DESERT_EAGLE || weapPid == PID_DESERT_EAGLE_EXT_MAG || weapPid == PID_223_PISTOL
+                || weapPid == PID_NEEDLER_PISTOL
+                || weapPid == PID_PLASMA_PISTOL || weapPid == PID_PLASMA_PISTOL_EXT_CART
                 || weapPid == PID_PK12_GAUSS_PISTOL || weapPid == PID_LASER_PISTOL || weapPid == PID_MAGNETO_LASER_PISTOL || weapPid == PID_SOLAR_SCORCHER) {
             if (attacker.Trait[TRAIT_DOUBLE_TAP] > 0 && realWeapon.AmmoCount > 1) {
                 isDoubleTap = true;
@@ -284,21 +287,6 @@ uint e_CombatAttack(array<uint>@ values) {
 void CombatAttack(Critter& attacker, Critter& target, ProtoItem& weapon, uint8 weaponMode, ProtoItem@ ammo, bool isDoubleTap)   // Export
 {
 	uint8 use = _WeaponModeUse(weaponMode);
-
-	//  we used up 1 AP to start animation, rest of the AP cost needs to be subtracted
-	//  BNW Mechanics change: reduced AP cost of attack by 0.1 AP per 1 AG, non stacking with BRoA
-    int apCost = (_WeaponApCost(weapon, use));
-    if (isDoubleTap) {
-        int actualApCost = apCost * 50 - (attacker.Perk[PE_BONUS_RATE_OF_ATTACK] > 0 ? 50 : (5 * attacker.Stat[ST_AGILITY]));
-        //Log("AP cost second attack = " + actualApCost + ", current AP = " + attacker.StatBase[ST_CURRENT_AP] + ", AP cost weapon = " + (_WeaponApCost(weapon, use)));
-        attacker.StatBase[ST_CURRENT_AP] -= actualApCost;
-    } else {
-        //  we took this at the animation part
-        apCost -= 1;
-        int actualApCost = apCost * 100 - (attacker.Perk[PE_BONUS_RATE_OF_ATTACK] > 0 ? 100 : (10 * attacker.Stat[ST_AGILITY]));
-        //Log("AP cost first attack = " + actualApCost + ", current AP = " + attacker.StatBase[ST_CURRENT_AP] + ", AP cost weapon = " + (_WeaponApCost(weapon, use)));
-        attacker.StatBase[ST_CURRENT_AP] -= actualApCost;
-    }
 
 	//if(attacker.IsPlayer())
 	//{
@@ -496,9 +484,9 @@ void CombatAttack(Critter& attacker, Critter& target, ProtoItem& weapon, uint8 w
         }
         if (!isHthAttack) {
             //  cannot aim eyes, without sharpshooter
-            if (attacker.Param[PE_SHARPSHOOTER] == 0) {
+            if (attacker.Param[PE_SHARPSHOOTER] == 0 && dist > attacker.Stat[ST_PERCEPTION]) {
                 if (isDummyTraining) {
-                    dummyInfo += "|" + COLOR_DTEXT_REGULAR + " Cannot hit eyes without sharpshooter. ";
+                    dummyInfo += "|" + COLOR_DTEXT_REGULAR + " Cannot aim eyes without sharpshooter at distances further than Perception. ";
                 }
                 aim = HIT_LOCATION_HEAD;
             }
@@ -510,7 +498,7 @@ void CombatAttack(Critter& attacker, Critter& target, ProtoItem& weapon, uint8 w
     //  there is a chance the second attack (this attack) miss or downgrades to a larger body part, eyes -> head, limbs -> torso, head -> torso, groin -> torso
     if (isDoubleTap) {
         int doubleTapRoll = Random(0, 99);
-        int doubleTapThreshold = 45 + 5 * attacker.Stat[ST_AGILITY] - dist * 2;
+        int doubleTapThreshold = 45 + 2 * attacker.Stat[ST_PERCEPTION] + 5 * attacker.Stat[ST_AGILITY] - dist * 2;
         if (isDummyTraining) {
             dummyInfo += "|" + COLOR_DTEXT_REGULAR + "  DoubleTapThreshold = |" + COLOR_DTEXT_BONUS + " " + doubleTapThreshold + " vs ";
             dummyInfo += "|" + COLOR_DTEXT_ROLL + " " + doubleTapRoll + " |" + COLOR_DTEXT_REGULAR + " = DoubleTapRoll,  ";
@@ -568,6 +556,22 @@ void CombatAttack(Critter& attacker, Critter& target, ProtoItem& weapon, uint8 w
             case HIT_LOCATION_GROIN: dummyInfo += "|" + COLOR_DTEXT_BONUS + "  GROIN."; break;
             default: dummyInfo += "|" + COLOR_DTEXT_MALUS + "  UNCALLED."; break;
         }
+    }
+
+	//  we used up 1 AP to start animation, rest of the AP cost needs to be subtracted
+	//  BNW Mechanics change: reduced AP cost of attack by 0.1 AP per 1 AG, non stacking with BRoA
+    int apCost = (_WeaponApCost(weapon, use));
+    if (isDoubleTap) {
+        int actualApCost = apCost * 50 - (attacker.Perk[PE_BONUS_RATE_OF_ATTACK] > 0 ? 50 : (5 * attacker.Stat[ST_AGILITY]));
+        Log("AP cost second attack = " + actualApCost + ", current AP = " + attacker.StatBase[ST_CURRENT_AP] + ", AP cost weapon = " + (_WeaponApCost(weapon, use)));
+        attacker.StatBase[ST_CURRENT_AP] -= actualApCost;
+    } else {
+        //  we took this at the animation part
+        apCost -= 1;
+        apCost += GetAimApCost(aim);
+        int actualApCost = apCost * 100 - (attacker.Perk[PE_BONUS_RATE_OF_ATTACK] > 0 ? 100 : (10 * attacker.Stat[ST_AGILITY]));
+        Log("AP cost first attack = " + actualApCost + ", current AP = " + attacker.StatBase[ST_CURRENT_AP] + ", AP cost weapon = " + (_WeaponApCost(weapon, use)));
+        attacker.StatBase[ST_CURRENT_AP] -= actualApCost;
     }
 
     if(attacker.Timeout[TO_BATTLE] < int(__TimeoutBattle))
@@ -1024,7 +1028,7 @@ void CombatAttack(Critter& attacker, Critter& target, ProtoItem& weapon, uint8 w
             }
         } else {
             int critChanceFromAimStatFactor = attacker.Trait[TRAIT_FAST_SHOT] != 0 ? (attacker.Stat[ST_AGILITY] + attackerLuck) : (attacker.Stat[ST_INTELLECT] * 2);
-            int critChanceFromAim = (CLAMP(GetHitAim(aim), 0, 60) * (60 + 2 * critChanceFromAimStatFactor)) / 100;
+            int critChanceFromAim = (CLAMP(GetHitAim(aim), 0, 75) * (60 + 2 * critChanceFromAimStatFactor)) / 100;
             int finesseAdjustForBurst = ((attacker.Trait[TRAIT_FINESSE] != 0 && isBurst) ? 10 : 0);
             int manOfSteelReduce = target.Perk[PE_MAN_OF_STEEL] > 0 ? 10 : 0;
             int wastelandersResilienceReduce = target.Perk[PE_WASTELANDERS_RESILIENCE] > 0 ? 5 : 0;
