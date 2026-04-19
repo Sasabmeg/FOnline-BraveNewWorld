@@ -185,6 +185,7 @@ EXPORT int getParam_Strength(CritterMutual& cr, uint)
 {
 	int val = cr.Params[ST_STRENGTH] + cr.Params[ST_STRENGTH_EXT];
 
+	//	only body armor can have ST bonus
 	const Item* armor=cr.ItemSlotArmor;
 	if(checkBonus(armor, BONUS_ARMOR_STRENGTH)!=0) val++;
 
@@ -209,8 +210,13 @@ EXPORT int getParam_Perception(CritterMutual& cr, uint)
 	int val = (cr.Params[DAMAGE_EYE] ? 1 : cr.Params[ST_PERCEPTION] + cr.Params[ST_PERCEPTION_EXT]);
 	//if(cr.Params[TRAIT_NIGHT_PERSON]) val += GetNightPersonBonus();
 
-	const Item* armor=cr.ItemSlotArmor;
-	if(checkBonus(armor, BONUS_ARMOR_PERCEPTION)!=0) val++;
+	//	only helmets can have PE bonus, players only for optimization
+	if (!cr.CritterIsNpc) {
+		const Item* helmet = GetHeadArmor(cr);
+		if (helmet != NULL && checkBonus(helmet, BONUS_ARMOR_PERCEPTION) != 0) {
+			val++;
+		}
+	}
 
 	return CLAMP(val, 1, 10);
 }
@@ -219,6 +225,7 @@ EXPORT int getParam_Endurance(CritterMutual& cr, uint)
 {
 	int val = cr.Params[ST_ENDURANCE] + cr.Params[ST_ENDURANCE_EXT];
 
+	//	only body armor can have EN bonus
 	const Item* armor=cr.ItemSlotArmor;
 	if(checkBonus(armor, BONUS_ARMOR_ENDURANCE)!=0) val++;
 	
@@ -231,8 +238,17 @@ EXPORT int getParam_Charisma(CritterMutual& cr, uint)
 {
 	int val = cr.Params[ST_CHARISMA] + cr.Params[ST_CHARISMA_EXT];
 
+	//	both body armor and helmets can have CH bonus
 	const Item* armor=cr.ItemSlotArmor;
 	if(checkBonus(armor, BONUS_ARMOR_CHARISMA)!=0) val++;
+
+	//	Helmet -> players only for optimization
+	if (!cr.CritterIsNpc) {
+		const Item* helmet = GetHeadArmor(cr);
+		if (helmet != NULL && checkBonus(helmet, BONUS_ARMOR_CHARISMA) != 0) {
+			val++;
+		}
+	}
 
 	return CLAMP(val, 1, 10);
 }
@@ -242,8 +258,13 @@ EXPORT int getParam_Intellegence(CritterMutual& cr, uint)
 	int val = cr.Params[ST_INTELLECT] + cr.Params[ST_INTELLECT_EXT];
 	//if(cr.Params[TRAIT_NIGHT_PERSON]) val += GetNightPersonBonus();
 
-	const Item* armor=cr.ItemSlotArmor;
-	if(checkBonus(armor, BONUS_ARMOR_INTELLIGENCE)!=0) val++;
+	//	only helmets can have IN bonus, players only for optimization
+	if (!cr.CritterIsNpc) {
+		const Item* helmet = GetHeadArmor(cr);
+		if (helmet != NULL && checkBonus(helmet, BONUS_ARMOR_INTELLIGENCE) != 0) {
+			val++;
+		}
+	}
 
 	return CLAMP(val, 1, 10);
 }
@@ -252,6 +273,7 @@ EXPORT int getParam_Agility(CritterMutual& cr, uint)
 {
 	int val = cr.Params[ST_AGILITY] + cr.Params[ST_AGILITY_EXT];
 
+	//	only body armors can have AG bonus
 	const Item* armor=cr.ItemSlotArmor;
 	if (checkBonus(armor, BONUS_ARMOR_AGILITY) != 0) 
 		val++;
@@ -285,8 +307,17 @@ EXPORT int getParam_Luck(CritterMutual& cr, uint)
 {
 	int val = cr.Params[ST_LUCK] + cr.Params[ST_LUCK_EXT];
 
+	//	both body armor and helmets can have LK bonus
 	const Item* armor=cr.ItemSlotArmor;
 	if(checkBonus(armor, BONUS_ARMOR_LUCK)!=0) val++;
+
+	//	Helmet -> players only for optimization
+	if (!cr.CritterIsNpc) {
+		const Item* helmet = GetHeadArmor(cr);
+		if (helmet != NULL && checkBonus(helmet, BONUS_ARMOR_LUCK) != 0) {
+			val++;
+		}
+	}
 
 	return CLAMP(val, 1, 10);
 }

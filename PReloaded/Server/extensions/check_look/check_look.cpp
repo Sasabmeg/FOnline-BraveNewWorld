@@ -172,8 +172,8 @@ EXPORT bool check_look(Map& map, Critter& cr, Critter& opponent)
 	/*if (!cr.CritterIsNpc) {
 		Log("CHECK LOOK :: hour<%u> nightMalus<%u>\n", hour, nightMalus);
 	}*/
-	const Item* armor = GetHeadArmor(cr);
-	if (armor != NULL && armor->Proto->Armor_Perk == HELMET_PERK_NIGHT_SIGHT) {
+	const Item* helmet = GetHeadArmor(cr);
+	if (helmet != NULL && helmet->Proto->Armor_Perk == HELMET_PERK_NIGHT_SIGHT) {
 		nightMalus = 0;
 	}
 	if (cr.ItemSlotMain != NULL && cr.ItemSlotMain->Proto->Weapon_Perk == WEAPON_PERK_NIGHT_SIGHT) {
