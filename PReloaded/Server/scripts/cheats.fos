@@ -135,7 +135,7 @@ string[] commandlist =
     "factioninfo", "factionnews", "factiononline", "findchars", "finditems",
     "findnpc", "flash", /*"foart",*/
     "gainskillxp", "gaintowncontrol", "gameinfo", "getclaim", "getclaimtime", "getcolor",
-    "getitems", "getleader", "getleadertime", "getuvar", "getvar", "gettime", "give",
+    "getitems", "getitembonuses", "getleader", "getleadertime", "getuvar", "getvar", "gettime", "give",
     "givekey", "goto", "gototeam",
     "heal", "healall", "help", "hideloc", "hidemap",
     "id2name", "iddqd", "idkfa", "inspect", "irradiate", "itemflags", "itemlight",
@@ -8141,6 +8141,63 @@ void ExecGetItemsCommand(array<string@>@ command, Critter@ player, Critter@ targ
         player.Say(SAY_NETMSG, target.Name + " has no items in given slot(s)");
 }
 
+void ExecGetItemBonusesCommand(array<string@>@ command, Critter@ player, Critter@ target)
+{
+    string[] sarmor = { "-a", "-armor", "-all" };
+    string[] shead  = { "-h", "-head", "-helmet", "-all" };
+    string[] shand1 = { "-h1", "-hand1", "-hands", "-all" };
+    string[] shand2 = { "-h2", "-hand2", "-hands", "-all" };
+
+    bool armor              = (GetIndexOfString(command, sarmor) != -1);
+    bool head               = (GetIndexOfString(command, shead) != -1);
+    bool hand1              = (GetIndexOfString(command, shand1) != -1);
+    bool hand2              = (GetIndexOfString(command, shand2) != -1);
+
+    if(!armor && !hand1 && !hand2 && !head)
+    {
+        player.Say(SAY_NETMSG, "Nothing to list. Try: -all switch.");
+        return;
+    }
+
+    #ifdef __DEBUG__
+    player.Say(SAY_NETMSG, "ExecGetItemBonusesCommand:" + (head ? " helmet" : "") + (armor ? " armor" : "") + (hand1 ? "hand1" : "") + (hand2 ? "hand2" : ""));
+    #endif
+
+    array<Item@> items;
+    uint         count = 0;
+
+    if (armor) count += player.GetItems(SLOT_ARMOR, items);
+    if (head)  count += player.GetItems(SLOT_HEAD, items);
+    if (hand1) count += player.GetItems(SLOT_HAND1, items);
+    if (hand2) count += player.GetItems(SLOT_HAND2, items);
+
+    if (count > 0) {
+        player.Say(SAY_NETMSG, "Listing  " + count + "  items on " + player.Name + ":");
+        for (uint i = 0; i < count; i++) {
+            string str;
+            str += "PID = " + (items[i].Proto.ProtoId) + "\n";
+            if (items[i].Val0 > 0) {
+                    str += "\t" + items[i].Val0 + " = " + items[i].Val5 + "\n";
+            }
+            if (items[i].Val1 > 0) {
+                    str += "\t" + items[i].Val1 + " = " + items[i].Val6 + "\n";
+            }
+            if (items[i].Val2 > 0) {
+                    str += "\t" + items[i].Val2 + " = " + items[i].Val7 + "\n";
+            }
+            if (items[i].Val3 > 0) {
+                    str += "\t" + items[i].Val3 + " = " + items[i].Val8 + "\n";
+            }
+            if (items[i].Val4 > 0) {
+                    str += "\t" + items[i].Val4 + " = " + items[i].Val9 + "\n";
+            }
+            player.Say(SAY_NETMSG, str);
+        }
+    } else {
+        player.Say(SAY_NETMSG, player.Name + " has no items in given slot(s)");
+    }
+}
+
 // built-in client cheats
 void ExecCoreCheats(array<string@>@ command, Critter@ player)
 {
@@ -10191,6 +10248,10 @@ bool ExecCommand(Critter& player, string@ commandString)
     else if(command[1] == "getitems")
     {
         ExecGetItemsCommand(command, player, target);
+    }
+    else if(command[1] == "getitembonuses")
+    {
+        ExecGetItemBonusesCommand(command, player, target);
     }
     else if(command[1] == "getleadertime")
     {

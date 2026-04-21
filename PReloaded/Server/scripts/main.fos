@@ -132,7 +132,7 @@ import bool GuardNotLegit(Critter@ cr, Item@ item, bool deleteItem) from "cheats
 import void RemoveNotLegit(Critter@ cr) from "cheats";
 import bool IsReadableBook(uint16 pid) from "books";
 import void TryReadBook(Critter& cr, Item& book) from "books";
-import void AddBonuses(Item@ item, string@ crafter) from "item_bonus";
+import void AddBonuses(Item@ item, string@ crafter, int qualityRollBonus, int minQuality, int maxQuality, int effectValueRollPercent) from "item_bonus";
 import uint BonusNumber(Item@ item) from "item_bonus";
 
 import void UpdateDrugs(Critter& cr) from "drugs";
@@ -3764,11 +3764,70 @@ void items_crafted(array<Item@>& items, array<uint>& itemsCount, array<Item@>& r
                 }
             }
             string@ crafterName=""+crafter.Name;
-            if(!upgradedWeapon)
-                AddBonuses(item, crafterName);
-            else
-                if(!item.IsStackable())
+            if (!upgradedWeapon) {
+                int qualityRollBonus = 0, minQuality = 0, maxQuality = 5, effectValueRollPercent = 100;
+                Map@ map = crafter.GetMap();
+                if (valid(map)) {
+                    if (IsTent(map)) {
+                        qualityRollBonus = -5;
+                        minQuality = 0;
+                        maxQuality = 3;
+                        effectValueRollPercent = 80;
+                        //Log("Craft location - Tent: PID = " + map.GetLocation().GetProtoId() + ", rollBonus = " + qualityRollBonus + ", minQ = " + minQuality + ", maxQ = " + maxQuality + ", bonusPercent = " + effectValueRollPercent);
+                    } else if (IsBase(map)) {
+                        qualityRollBonus = 0;
+                        minQuality = 0;
+                        maxQuality = 4;
+                        effectValueRollPercent = 100;
+                        //Log("Craft location - Base: PID = " + map.GetLocation().GetProtoId() + ", rollBonus = " + qualityRollBonus + ", minQ = " + minQuality + ", maxQ = " + maxQuality + ", bonusPercent = " + effectValueRollPercent);
+                    } else if (IsTCTown(map)) {
+                        qualityRollBonus = 10;
+                        minQuality = 1;
+                        maxQuality = 4;
+                        effectValueRollPercent = 120;
+                        //Log("Craft location - TC Town: PID = " + map.GetLocation().GetProtoId() + ", rollBonus = " + qualityRollBonus + ", minQ = " + minQuality + ", maxQ = " + maxQuality + ", bonusPercent = " + effectValueRollPercent);
+                    } else if (IsTown(map)) {
+                        qualityRollBonus = 5;
+                        minQuality = 0;
+                        maxQuality = 4;
+                        effectValueRollPercent = 110;
+                        //Log("Craft location - Town: PID = " + map.GetLocation().GetProtoId() + ", rollBonus = " + qualityRollBonus + ", minQ = " + minQuality + ", maxQ = " + maxQuality + ", bonusPercent = " + effectValueRollPercent);
+                    } else {
+                        //  add dangerous location ID here for bonus
+                        switch (map.GetLocation().GetProtoId()) {
+                            case LOCATION_Vault13:
+                            case LOCATION_Vault15:
+                                qualityRollBonus = 10;
+                                minQuality = 1;
+                                maxQuality = 5;
+                                effectValueRollPercent = 130;
+                                //Log("Craft location - Semi-Dangerous location: PID = " + map.GetLocation().GetProtoId() + ", rollBonus = " + qualityRollBonus + ", minQ = " + minQuality + ", maxQ = " + maxQuality + ", bonusPercent = " + effectValueRollPercent);
+                                break;
+                            case LOCATION_Sierra:
+                            case LOCATION_SierraCaves:
+                            case LOCATION_MariposaMilitaryBase:
+                                qualityRollBonus = 15;
+                                minQuality = 1;
+                                maxQuality = 5;
+                                effectValueRollPercent = 150;
+                                //Log("Craft location - Dangerous location: PID = " + map.GetLocation().GetProtoId() + ", rollBonus = " + qualityRollBonus + ", minQ = " + minQuality + ", maxQ = " + maxQuality + ", bonusPercent = " + effectValueRollPercent);
+                                break;
+                            default:
+                                qualityRollBonus = -5;
+                                minQuality = 0;
+                                maxQuality = 3;
+                                effectValueRollPercent = 80;
+                                //Log("Craft location - Uncategorized location: PID = " + map.GetLocation().GetProtoId() + ", rollBonus = " + qualityRollBonus + ", minQ = " + minQuality + ", maxQ = " + maxQuality + ", bonusPercent = " + effectValueRollPercent);
+                        }
+                    }
+                }
+
+                AddBonuses(item, crafterName, qualityRollBonus, minQuality, maxQuality, effectValueRollPercent);
+            } else {
+                if (!item.IsStackable()) {
                     SetLexem(item, "$crafter", crafterName);
+                }
+            }
 
             uint score=BonusNumber(item);
             if(item.GetType()==ITEM_TYPE_ARMOR)

@@ -590,15 +590,15 @@ void CombatAttack(Critter& attacker, Critter& target, ProtoItem& weapon, uint8 w
     int apCost = (_WeaponApCost(weapon, use));
     if (isDoubleTap) {
         int actualApCost = apCost * 50 - (attacker.Perk[PE_BONUS_RATE_OF_ATTACK] > 0 ? 50 : (5 * attacker.Stat[ST_AGILITY]));
-        Log("AP cost second attack = " + actualApCost + ", current AP = " + attacker.StatBase[ST_CURRENT_AP] + ", AP cost weapon = " + (_WeaponApCost(weapon, use)));
+        //Log("AP cost second attack = " + actualApCost + ", current AP = " + attacker.StatBase[ST_CURRENT_AP] + ", AP cost weapon = " + (_WeaponApCost(weapon, use)));
         attacker.StatBase[ST_CURRENT_AP] -= actualApCost;
     } else {
         //  we took this at the animation part
         apCost -= 1;
         apCost += attacker.Param[TRAIT_FAST_SHOT] > 0 ? -1 : GetAimApCost(aim);
         int actualApCost = apCost * 100 - (attacker.Perk[PE_BONUS_RATE_OF_ATTACK] > 0 ? 100 : (10 * attacker.Stat[ST_AGILITY]));
-        Log("AP cost first attack = " + actualApCost + ", current AP = " + attacker.StatBase[ST_CURRENT_AP] + ", AP cost weapon = " + (_WeaponApCost(weapon, use))
-            + ", Fast Shot = " + (attacker.Param[TRAIT_FAST_SHOT] > 0 ? 1 : 0) + ", BRoA = " + (attacker.Perk[PE_BONUS_RATE_OF_ATTACK] > 0 ? 1 : 0) + ", Aim[" + aim + "] cost= " + GetAimApCost(aim));
+        //Log("AP cost first attack = " + actualApCost + ", current AP = " + attacker.StatBase[ST_CURRENT_AP] + ", AP cost weapon = " + (_WeaponApCost(weapon, use))
+        //    + ", Fast Shot = " + (attacker.Param[TRAIT_FAST_SHOT] > 0 ? 1 : 0) + ", BRoA = " + (attacker.Perk[PE_BONUS_RATE_OF_ATTACK] > 0 ? 1 : 0) + ", Aim[" + aim + "] cost= " + GetAimApCost(aim));
         attacker.StatBase[ST_CURRENT_AP] -= actualApCost;
     }
 

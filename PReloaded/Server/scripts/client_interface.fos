@@ -103,7 +103,7 @@ import uint GetBodyId() from "client_container_addons";
 import void SmartCursorDraw( uint layer ) from "client/smart_cursor";
 import void CursorExtDraw( uint layer ) from "client/client_cursorExt";
 
-import string itemBonusColor(uint bonusType, int value) from "item_bonus";
+import string itemBonusColor(uint itemType, uint bonusType, int value) from "item_bonus";
 
 import CMiscConfig@ getMiscConfig() from "client/client_miscConfig";
 
@@ -1785,41 +1785,41 @@ string showItemBonus(ItemCl& it, int type, int value) {
         return result;
     if (it.GetType() == ITEM_TYPE_ARMOR) {
         switch(type) {
-            case 100: {result="\nCrit Chance " + itemBonusColor(type, value) + "-" + value + "|" + COLOR_LGREEN + " ";break;}
-            case 101: {result="\nCrit Power " + itemBonusColor(type, value) + "-" + value + "|" + COLOR_LGREEN + " ";break;}
-            case 102: {result="\nNormal DT " + itemBonusColor(type, value) + "+" + value + "|" + COLOR_LGREEN + " ";break;}
-            case 103: {result="\nLaser DT " + itemBonusColor(type, value) + "+" + value + "|" + COLOR_LGREEN + " ";break;}
-            case 104: {result="\nFire DT " + itemBonusColor(type, value) + "+" + value + "|" + COLOR_LGREEN + " ";break;}
-            case 105: {result="\nPlasma DT " + itemBonusColor(type, value) + "+" + value + "|" + COLOR_LGREEN + " ";break;}
-            case 106: {result="\nNormal DR " + itemBonusColor(type, value) + "+" + value + "|" + COLOR_LGREEN + " ";break;}
-            case 107: {result="\nLaser DR " + itemBonusColor(type, value) + "+" + value + "|" + COLOR_LGREEN + " ";break;}
-            case 108: {result="\nFire DR " + itemBonusColor(type, value) + "+" + value + "|" + COLOR_LGREEN + " ";break;}
-            case 109: {result="\nPlasma DR " + itemBonusColor(type, value) + "+" + value + "|" + COLOR_LGREEN + " ";break;}
-            case 110: {result="\nExplode DT " + itemBonusColor(type, value) + "+" + value + "|" + COLOR_LGREEN + " ";break;}
-            case 111: {result="\nExplode DR " + itemBonusColor(type, value) + "+" + value + "|" + COLOR_LGREEN + " ";break;}
-            case 112: {result="\nAction Points " + itemBonusColor(type, value) + "+" + value + "|" + COLOR_LGREEN + " ";break;}
-            case 113: {result="\nRad Resist " + itemBonusColor(type, value) + "+" + value + "|" + COLOR_LGREEN + " ";break;}
-            case 114: {result="\nPoison Resist " + itemBonusColor(type, value) + "+" + value + "|" + COLOR_LGREEN + " ";break;}
-            case 115: {result="\nStrength " + itemBonusColor(type, value) + "+" + value + "|" + COLOR_LGREEN + " ";break;}
-            case 116: {result="\nPerception " + itemBonusColor(type, value) + "+" + value + "|" + COLOR_LGREEN + " ";break;}
-            case 117: {result="\nEndurance " + itemBonusColor(type, value) + "+" + value + "|" + COLOR_LGREEN + " ";break;}
-            case 118: {result="\nCharisma " + itemBonusColor(type, value) + "+" + value + "|" + COLOR_LGREEN + " ";break;}
-            case 119: {result="\nIntelligence " + itemBonusColor(type, value) + "+" + value + "|" + COLOR_LGREEN + " ";break;}
-            case 120: {result="\nAgility " + itemBonusColor(type, value) + "+" + value + "|" + COLOR_LGREEN + " ";break;}
-            case 121: {result="\nLuck " + itemBonusColor(type, value) + "+" + value + "|" + COLOR_LGREEN + " ";break;}
-            case 122: {result="\nCarry Weight " + itemBonusColor(type, value) + "+" + value + "|" + COLOR_LGREEN + " ";break;}
-            case 123: {result="\nHealing Rate " + itemBonusColor(type, value) + "+" + value + "|" + COLOR_LGREEN + " ";break;}
+            case 100: {result="\nCrit Chance "  + itemBonusColor(ITEM_TYPE_ARMOR, type, value) + "-" + value + "|" + COLOR_LGREEN + " ";break;}
+            case 101: {result="\nCrit Power "   + itemBonusColor(ITEM_TYPE_ARMOR, type, value) + "-" + value + "|" + COLOR_LGREEN + " ";break;}
+            case 102: {result="\nNormal DT "    + itemBonusColor(ITEM_TYPE_ARMOR, type, value) + "+" + value + "|" + COLOR_LGREEN + " ";break;}
+            case 103: {result="\nLaser DT "     + itemBonusColor(ITEM_TYPE_ARMOR, type, value) + "+" + value + "|" + COLOR_LGREEN + " ";break;}
+            case 104: {result="\nFire DT "      + itemBonusColor(ITEM_TYPE_ARMOR, type, value) + "+" + value + "|" + COLOR_LGREEN + " ";break;}
+            case 105: {result="\nPlasma DT "    + itemBonusColor(ITEM_TYPE_ARMOR, type, value) + "+" + value + "|" + COLOR_LGREEN + " ";break;}
+            case 106: {result="\nNormal DR "    + itemBonusColor(ITEM_TYPE_ARMOR, type, value) + "+" + value + "|" + COLOR_LGREEN + " ";break;}
+            case 107: {result="\nLaser DR "     + itemBonusColor(ITEM_TYPE_ARMOR, type, value) + "+" + value + "|" + COLOR_LGREEN + " ";break;}
+            case 108: {result="\nFire DR "      + itemBonusColor(ITEM_TYPE_ARMOR, type, value) + "+" + value + "|" + COLOR_LGREEN + " ";break;}
+            case 109: {result="\nPlasma DR "    + itemBonusColor(ITEM_TYPE_ARMOR, type, value) + "+" + value + "|" + COLOR_LGREEN + " ";break;}
+            case 110: {result="\nExplode DT "   + itemBonusColor(ITEM_TYPE_ARMOR, type, value) + "+" + value + "|" + COLOR_LGREEN + " ";break;}
+            case 111: {result="\nExplode DR "   + itemBonusColor(ITEM_TYPE_ARMOR, type, value) + "+" + value + "|" + COLOR_LGREEN + " ";break;}
+            case 112: {result="\nAction Points " + itemBonusColor(ITEM_TYPE_ARMOR, type, value) + "+" + value + "|" + COLOR_LGREEN + " ";break;}
+            case 113: {result="\nRad Resist "   + itemBonusColor(ITEM_TYPE_ARMOR, type, value) + "+" + value + "|" + COLOR_LGREEN + " ";break;}
+            case 114: {result="\nPoison Resist " + itemBonusColor(ITEM_TYPE_ARMOR, type, value) + "+" + value + "|" + COLOR_LGREEN + " ";break;}
+            case 115: {result="\nStrength "     + itemBonusColor(ITEM_TYPE_ARMOR, type, value) + "+" + value + "|" + COLOR_LGREEN + " ";break;}
+            case 116: {result="\nPerception "   + itemBonusColor(ITEM_TYPE_ARMOR, type, value) + "+" + value + "|" + COLOR_LGREEN + " ";break;}
+            case 117: {result="\nEndurance "    + itemBonusColor(ITEM_TYPE_ARMOR, type, value) + "+" + value + "|" + COLOR_LGREEN + " ";break;}
+            case 118: {result="\nCharisma "     + itemBonusColor(ITEM_TYPE_ARMOR, type, value) + "+" + value + "|" + COLOR_LGREEN + " ";break;}
+            case 119: {result="\nIntelligence " + itemBonusColor(ITEM_TYPE_ARMOR, type, value) + "+" + value + "|" + COLOR_LGREEN + " ";break;}
+            case 120: {result="\nAgility "      + itemBonusColor(ITEM_TYPE_ARMOR, type, value) + "+" + value + "|" + COLOR_LGREEN + " ";break;}
+            case 121: {result="\nLuck "         + itemBonusColor(ITEM_TYPE_ARMOR, type, value) + "+" + value + "|" + COLOR_LGREEN + " ";break;}
+            case 122: {result="\nCarry Weight " + itemBonusColor(ITEM_TYPE_ARMOR, type, value) + "+" + value + "|" + COLOR_LGREEN + " ";break;}
+            case 123: {result="\nHealing Rate " + itemBonusColor(ITEM_TYPE_ARMOR, type, value) + "+" + value + "|" + COLOR_LGREEN + " ";break;}
             default: break;
         }
     } else if (it.GetType() == ITEM_TYPE_WEAPON) {
         switch(type) {
-            case 100: {result="\nCrit Power " + itemBonusColor(type, value) + "+" + value + "|" + COLOR_LGREEN + " ";break;}
-            case 101: {result="\nCrit Chance " + itemBonusColor(type, value) + "+" + value + "|" + COLOR_LGREEN + " ";break;}
-            case 102: {result="\nMin dmg " + itemBonusColor(type, value) + "+" + value + "%|" + COLOR_LGREEN + " ";break;}
-            case 103: {result="\nMax dmg " + itemBonusColor(type, value) + "+" + value + "%|" + COLOR_LGREEN + " ";break;}
-            case 104: {result="\nAccuracy " + itemBonusColor(type, value) + "+" + value + "|" + COLOR_LGREEN + " ";break;}
-            case 105: {result="\nAction points " + itemBonusColor(type, value) + "+" + value + "|" + COLOR_LGREEN + " ";break;}
-            case 106: {result="\nRange " + itemBonusColor(type, value) + "+" + value + "|" + COLOR_LGREEN + " ";break;}
+            case 100: {result="\nCrit Power "       + itemBonusColor(ITEM_TYPE_WEAPON, type, value) + "+" + value + "|" + COLOR_LGREEN + " ";break;}
+            case 101: {result="\nCrit Chance "      + itemBonusColor(ITEM_TYPE_WEAPON, type, value) + "+" + value + "|" + COLOR_LGREEN + " ";break;}
+            case 102: {result="\nMin dmg "          + itemBonusColor(ITEM_TYPE_WEAPON, type, value) + "+" + value + "%|" + COLOR_LGREEN + " ";break;}
+            case 103: {result="\nMax dmg "          + itemBonusColor(ITEM_TYPE_WEAPON, type, value) + "+" + value + "%|" + COLOR_LGREEN + " ";break;}
+            case 104: {result="\nAccuracy "         + itemBonusColor(ITEM_TYPE_WEAPON, type, value) + "+" + value + "|" + COLOR_LGREEN + " ";break;}
+            case 105: {result="\nAction points "    + itemBonusColor(ITEM_TYPE_WEAPON, type, value) + "+" + value + "|" + COLOR_LGREEN + " ";break;}
+            case 106: {result="\nRange "            + itemBonusColor(ITEM_TYPE_WEAPON, type, value) + "+" + value + "|" + COLOR_LGREEN + " ";break;}
             default: break;
         }
     }

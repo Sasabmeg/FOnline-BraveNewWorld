@@ -23,11 +23,18 @@ uint BonusNumber(Item@ it)
 	else return 0;
 }
 
-string itemBonusColor(uint bonusType, int value) {
+string itemBonusColor(uint itemType, uint bonusType, int value) {
     string result = "";
     int minRoll = 0;
     int maxRoll = 0;
-    if (getMinMaxRoll(bonusType, minRoll, maxRoll) > 0) {
+    int roll = 0;
+    if (itemType == ITEM_TYPE_ARMOR) {
+        roll = getMinMaxRollArmor(bonusType, minRoll, maxRoll, 100);
+    }
+    if (itemType == ITEM_TYPE_WEAPON) {
+        roll = getMinMaxRollWeapon(bonusType, minRoll, maxRoll, 100);
+    }
+    if (roll > 0) {
         int dif = maxRoll - minRoll + 1;
         if (value < minRoll + (dif * 25) / 100) {
             result = "|" + COLOR_GRAY + " ";
@@ -44,22 +51,23 @@ string itemBonusColor(uint bonusType, int value) {
     return result;
 }
 
-int getMinMaxRoll(uint bonusType, int& minRoll, int& maxRoll) {
+int getMinMaxRollArmor(uint bonusType, int& minRoll, int& maxRoll, int effectValueRollPercent) {
     minRoll = 1;
     maxRoll = 0;
+    int bonus = 0;
     //  armors
-	switch(bonusType) {
+	switch (bonusType) {
 		// Armors and helmets
-		case BONUS_ARMOR_CRIT_CHANCE:   {minRoll=2; maxRoll=6; break;}
-		case BONUS_ARMOR_CRIT_POWER:    {minRoll=2; maxRoll=6; break;}
-		case BONUS_ARMOR_NORMAL_DT:     {minRoll=2; maxRoll=6; break;}
-		case BONUS_ARMOR_LASER_DT:      {minRoll=2; maxRoll=6; break;}
-		case BONUS_ARMOR_FIRE_DT:       {minRoll=2; maxRoll=6; break;}
-		case BONUS_ARMOR_PLASMA_DT:     {minRoll=2; maxRoll=6; break;}
-		case BONUS_ARMOR_NORMAL_DR:     {minRoll=2; maxRoll=6; break;}
-		case BONUS_ARMOR_LASER_DR:      {minRoll=2; maxRoll=6; break;}
-		case BONUS_ARMOR_FIRE_DR:       {minRoll=2; maxRoll=6; break;}
-		case BONUS_ARMOR_PLASMA_DR:     {minRoll=2; maxRoll=6; break;}
+		case BONUS_ARMOR_CRIT_CHANCE:   {minRoll=2; maxRoll=6; bonus = 1; break;}
+		case BONUS_ARMOR_CRIT_POWER:    {minRoll=2; maxRoll=6; bonus = 1; break;}
+		case BONUS_ARMOR_NORMAL_DT:     {minRoll=2; maxRoll=6; bonus = 1; break;}
+		case BONUS_ARMOR_LASER_DT:      {minRoll=2; maxRoll=6; bonus = 1; break;}
+		case BONUS_ARMOR_FIRE_DT:       {minRoll=2; maxRoll=6; bonus = 1; break;}
+		case BONUS_ARMOR_PLASMA_DT:     {minRoll=2; maxRoll=6; bonus = 1; break;}
+		case BONUS_ARMOR_NORMAL_DR:     {minRoll=2; maxRoll=6; bonus = 1; break;}
+		case BONUS_ARMOR_LASER_DR:      {minRoll=2; maxRoll=6; bonus = 1; break;}
+		case BONUS_ARMOR_FIRE_DR:       {minRoll=2; maxRoll=6; bonus = 1; break;}
+		case BONUS_ARMOR_PLASMA_DR:     {minRoll=2; maxRoll=6; bonus = 1; break;}
 		case BONUS_ARMOR_PERCEPTION:    {minRoll=1; maxRoll=1; break;}
 		case BONUS_ARMOR_INTELLIGENCE:  {minRoll=1; maxRoll=1; break;}
 
@@ -68,8 +76,8 @@ int getMinMaxRoll(uint bonusType, int& minRoll, int& maxRoll) {
 		case BONUS_ARMOR_LUCK:          {minRoll=1; maxRoll=1; break;}
 
 		// Only armors
-		case BONUS_ARMOR_EXPLODE_DT:    {minRoll=3; maxRoll=9; break;}
-		case BONUS_ARMOR_EXPLODE_DR:    {minRoll=3; maxRoll=9; break;}
+		case BONUS_ARMOR_EXPLODE_DT:    {minRoll=3; maxRoll=9; bonus = 2; break;}
+		case BONUS_ARMOR_EXPLODE_DR:    {minRoll=3; maxRoll=9; bonus = 2; break;}
 		case BONUS_ARMOR_MAX_AP:        {minRoll=1; maxRoll=1; break;}
 		case BONUS_ARMOR_RAD_RES:       {minRoll=10;maxRoll=30;break;}
 		case BONUS_ARMOR_POISON_RES:    {minRoll=10;maxRoll=30;break;}
@@ -77,28 +85,70 @@ int getMinMaxRoll(uint bonusType, int& minRoll, int& maxRoll) {
 		case BONUS_ARMOR_ENDURANCE:     {minRoll=1; maxRoll=1; break;}
 		case BONUS_ARMOR_AGILITY:       {minRoll=1; maxRoll=1; break;}
 		case BONUS_ARMOR_CARRY_WEIGHT:  {minRoll=20;maxRoll=60;break;}
-		case BONUS_ARMOR_HEALING_RATE:  {minRoll=2; maxRoll=6; break;}
+		case BONUS_ARMOR_HEALING_RATE:  {minRoll=2; maxRoll=6; bonus = 1; break;}
 		default: break;
 	}
-	//  weapons
-    switch(bonusType)
-	{
-		case BONUS_WEAPON_CRITICAL_ROLL:    {minRoll=2; maxRoll=6; break;}
-		case BONUS_WEAPON_CRITICAL_CHANCE:  {minRoll=2; maxRoll=6; break;}
+
+	if (maxRoll > minRoll) {
+        int roll = Random(minRoll, maxRoll);
+        int rollWithBonus = roll;
+        if (bonus > 0) {
+            rollWithBonus = roll + bonus;
+        } else {
+            rollWithBonus = roll * effectValueRollPercent / 100;
+        }
+        Log("\tArmor bonus roll = " + roll + ", rollWithBonus = " + rollWithBonus);
+        return CLAMP(rollWithBonus, minRoll, maxRoll);
+	} else {
+	    return minRoll;
+	}
+}
+
+int getMinMaxRollWeapon(uint bonusType, int& minRoll, int& maxRoll, int effectValueRollPercent) {
+    minRoll = 1;
+    maxRoll = 0;
+    int bonus = 0;
+    switch (bonusType) {
+		case BONUS_WEAPON_CRITICAL_ROLL:    {minRoll=2; maxRoll=6; bonus = 1; break;}
+		case BONUS_WEAPON_CRITICAL_CHANCE:  {minRoll=2; maxRoll=6; bonus = 1; break;}
 		case BONUS_WEAPON_MIN_DMG:          {minRoll=10;maxRoll=25;break;}
 		case BONUS_WEAPON_MAX_DMG:          {minRoll=10;maxRoll=25;break;}
 		case BONUS_WEAPON_ACCURACY:         {minRoll=10;maxRoll=25;break;}
-		case BONUS_WEAPON_MAX_RANGE:        {minRoll=1; maxRoll=3; break;}
+		case BONUS_WEAPON_MAX_RANGE:        {minRoll=1; maxRoll=3; bonus = 1; break;}
 		case BONUS_WEAPON_MAX_AP:           {minRoll=1; maxRoll=1; break;}
 		default: break;
 	}
 
 	if (maxRoll > minRoll) {
-        return Random(maxRoll, minRoll);
+        int roll = Random(minRoll, maxRoll);
+        int rollWithBonus = roll;
+        if (bonus > 0) {
+            rollWithBonus = roll + bonus;
+        } else {
+            rollWithBonus = roll * effectValueRollPercent / 100;
+        }
+        Log("\tWeapon bonus roll = " + roll + ", rollWithBonus = " + rollWithBonus);
+        return CLAMP(rollWithBonus, minRoll, maxRoll);
 	} else {
 	    return minRoll;
 	}
 }
+
+string getWeaponBonusName(uint bonusType) {
+	switch (bonusType) {
+		case BONUS_WEAPON_CRITICAL_ROLL:    return "Critical Power";
+		case BONUS_WEAPON_CRITICAL_CHANCE:  return "Critical Chance";
+		case BONUS_WEAPON_MIN_DMG:          return "Minimum Damage";
+		case BONUS_WEAPON_MAX_DMG:          return "Maximum Damage";
+		case BONUS_WEAPON_ACCURACY:         return "Accuracy";
+		case BONUS_WEAPON_MAX_RANGE:        return "Maximum Range";
+		case BONUS_WEAPON_MAX_AP:           return "Action Points";
+		default:
+		    break;
+	}
+	return "Unknown";
+}
+
 
 bool isBonusForBodyArmor(uint bonusType) {
 	switch (bonusType) {
@@ -136,29 +186,29 @@ bool isBonusForBodyArmor(uint bonusType) {
 
 uint getRandomBodyArmorBonusType() {
     int roll = Random(0, 21);
-	switch (bonusType) {
-		case 0:  return BONUS_ARMOR_CRIT_CHANCE:
-		case 1:  return BONUS_ARMOR_CRIT_POWER:
-		case 2:  return BONUS_ARMOR_NORMAL_DT:
-		case 3:  return BONUS_ARMOR_LASER_DT:
-		case 4:  return BONUS_ARMOR_FIRE_DT:
-		case 5:  return BONUS_ARMOR_PLASMA_DT:
-		case 6:  return BONUS_ARMOR_NORMAL_DR:
-		case 7:  return BONUS_ARMOR_LASER_DR:
-		case 8:  return BONUS_ARMOR_FIRE_DR:
-		case 9:  return BONUS_ARMOR_PLASMA_DR:
-		case 10: return BONUS_ARMOR_CHARISMA:
-		case 11: return BONUS_ARMOR_LUCK:
-		case 12: return BONUS_ARMOR_EXPLODE_DT:
-		case 13: return BONUS_ARMOR_EXPLODE_DR:
-		case 14: return BONUS_ARMOR_MAX_AP:
-		case 15: return BONUS_ARMOR_RAD_RES:
-		case 16: return BONUS_ARMOR_POISON_RES:
-		case 17: return BONUS_ARMOR_STRENGTH:
-		case 18: return BONUS_ARMOR_ENDURANCE:
-		case 19: return BONUS_ARMOR_AGILITY:
-		case 20: return BONUS_ARMOR_CARRY_WEIGHT:
-		case 21: return BONUS_ARMOR_HEALING_RATE:
+	switch (roll) {
+		case 0:  return BONUS_ARMOR_CRIT_CHANCE;
+		case 1:  return BONUS_ARMOR_CRIT_POWER;
+		case 2:  return BONUS_ARMOR_NORMAL_DT;
+		case 3:  return BONUS_ARMOR_LASER_DT;
+		case 4:  return BONUS_ARMOR_FIRE_DT;
+		case 5:  return BONUS_ARMOR_PLASMA_DT;
+		case 6:  return BONUS_ARMOR_NORMAL_DR;
+		case 7:  return BONUS_ARMOR_LASER_DR;
+		case 8:  return BONUS_ARMOR_FIRE_DR;
+		case 9:  return BONUS_ARMOR_PLASMA_DR;
+		case 10: return BONUS_ARMOR_CHARISMA;
+		case 11: return BONUS_ARMOR_LUCK;
+		case 12: return BONUS_ARMOR_EXPLODE_DT;
+		case 13: return BONUS_ARMOR_EXPLODE_DR;
+		case 14: return BONUS_ARMOR_MAX_AP;
+		case 15: return BONUS_ARMOR_RAD_RES;
+		case 16: return BONUS_ARMOR_POISON_RES;
+		case 17: return BONUS_ARMOR_STRENGTH;
+		case 18: return BONUS_ARMOR_ENDURANCE;
+		case 19: return BONUS_ARMOR_AGILITY;
+		case 20: return BONUS_ARMOR_CARRY_WEIGHT;
+		case 21: return BONUS_ARMOR_HEALING_RATE;
 		default:
 		    break;
 	}
@@ -191,25 +241,57 @@ bool isBonusForHelmet(uint bonusType) {
 
 uint getRandomHelmetBonusType() {
     int roll = Random(0, 13);
-	switch (bonusType) {
+	switch (roll) {
 		case 0:  return BONUS_ARMOR_CRIT_CHANCE;
 		case 1:  return BONUS_ARMOR_CRIT_POWER;
-		case 2:  return BONUS_ARMOR_NORMAL_DT:
-		case 3:  return BONUS_ARMOR_LASER_DT:
-		case 4:  return BONUS_ARMOR_FIRE_DT:
-		case 5:  return BONUS_ARMOR_PLASMA_DT:
-		case 6:  return BONUS_ARMOR_NORMAL_DR:
-		case 7:  return BONUS_ARMOR_LASER_DR:
-		case 8:  return BONUS_ARMOR_FIRE_DR:
-		case 9:  return BONUS_ARMOR_PLASMA_DR:
-		case 10: return BONUS_ARMOR_PERCEPTION:
-		case 11: return BONUS_ARMOR_CHARISMA:
-		case 12: return BONUS_ARMOR_INTELLIGENCE:
-		case 13: return BONUS_ARMOR_LUCK:
+		case 2:  return BONUS_ARMOR_NORMAL_DT;
+		case 3:  return BONUS_ARMOR_LASER_DT;
+		case 4:  return BONUS_ARMOR_FIRE_DT;
+		case 5:  return BONUS_ARMOR_PLASMA_DT;
+		case 6:  return BONUS_ARMOR_NORMAL_DR;
+		case 7:  return BONUS_ARMOR_LASER_DR;
+		case 8:  return BONUS_ARMOR_FIRE_DR;
+		case 9:  return BONUS_ARMOR_PLASMA_DR;
+		case 10: return BONUS_ARMOR_PERCEPTION;
+		case 11: return BONUS_ARMOR_CHARISMA;
+		case 12: return BONUS_ARMOR_INTELLIGENCE;
+		case 13: return BONUS_ARMOR_LUCK;
 		default:
 		    break;
 	}
     return BONUS_ARMOR_CRIT_CHANCE;
+}
+
+string getArmorBonusName(uint bonusType) {
+	switch (bonusType) {
+		case BONUS_ARMOR_CRIT_CHANCE:  return "Critical Chance";
+		case BONUS_ARMOR_CRIT_POWER:  return "Critical Power";
+		case BONUS_ARMOR_NORMAL_DT:  return "Normal DT";
+		case BONUS_ARMOR_LASER_DT:  return "Laser DT";
+		case BONUS_ARMOR_FIRE_DT:  return "Fire DT";
+		case BONUS_ARMOR_PLASMA_DT:  return "Plasma DT";
+		case BONUS_ARMOR_NORMAL_DR:  return "Normal DR";
+		case BONUS_ARMOR_LASER_DR:  return "Laser DR";
+		case BONUS_ARMOR_FIRE_DR:  return "Fire DR";
+		case BONUS_ARMOR_PLASMA_DR:  return "Plasma DR";
+		case BONUS_ARMOR_PERCEPTION: return "Perception";
+		case BONUS_ARMOR_CHARISMA: return "Charisma";
+		case BONUS_ARMOR_INTELLIGENCE: return "Intelligence";
+		case BONUS_ARMOR_LUCK: return "Luck";
+		case BONUS_ARMOR_EXPLODE_DT: return "Explode DT";
+		case BONUS_ARMOR_EXPLODE_DR: return "Explode DR";
+		case BONUS_ARMOR_MAX_AP: return "Action Points";
+		case BONUS_ARMOR_RAD_RES: return "Radiation Resist";
+		case BONUS_ARMOR_POISON_RES: return "Poison Resist";
+		case BONUS_ARMOR_STRENGTH: return "Strength";
+		case BONUS_ARMOR_ENDURANCE: return "Endurance";
+		case BONUS_ARMOR_AGILITY: return "Agility";
+		case BONUS_ARMOR_CARRY_WEIGHT: return "Carry Weight";
+		case BONUS_ARMOR_HEALING_RATE: return "Healing Rate";
+		default:
+		    break;
+	}
+	return "Unknown";
 }
 
 
@@ -239,11 +321,11 @@ void AddSpecialBonusRaidersFarm(Item@ it)
 	if(it.GetType() == ITEM_TYPE_WEAPON && !it.IsStackable())
 	{
 	int roll = Random(0,99);
-	if(roll>=0) AddWeaponBonus(it, 1, true); // 100%
-	if(roll>34)	AddWeaponBonus(it, 2, true); // 65%
-	if(roll>59)	AddWeaponBonus(it, 3, true); // 40%
-	if(roll>74)	AddWeaponBonus(it, 4, true); // 25%
-	if(roll>84) AddWeaponBonus(it, 5, true); // 15%
+	if(roll>=0) AddWeaponBonus(it, 1, 100, true); // 100%
+	if(roll>34)	AddWeaponBonus(it, 2, 100, true); // 65%
+	if(roll>59)	AddWeaponBonus(it, 3, 100, true); // 40%
+	if(roll>74)	AddWeaponBonus(it, 4, 100, true); // 25%
+	if(roll>84) AddWeaponBonus(it, 5, 100, true); // 15%
 	}
 
 	else if(it.GetType() == ITEM_TYPE_ARMOR)
@@ -264,11 +346,11 @@ void AddSpecialBonusEncounterBoss(Item@ it)
 	if(it.GetType() == ITEM_TYPE_WEAPON && !it.IsStackable())
 	{
         int roll = Random(0,99);
-        if(roll>=0) AddWeaponBonus(it, 1, true); // 100%
-        if(roll>29)	AddWeaponBonus(it, 2, true); // 70%
-        if(roll>59)	AddWeaponBonus(it, 3, true); // 40%
-        if(roll>89)	AddWeaponBonus(it, 4, true); // 10%
-        if(roll>94) AddWeaponBonus(it, 5, true); // 5%
+        if(roll>=0) AddWeaponBonus(it, 1, 100, true); // 100%
+        if(roll>29)	AddWeaponBonus(it, 2, 100, true); // 70%
+        if(roll>59)	AddWeaponBonus(it, 3, 100, true); // 40%
+        if(roll>89)	AddWeaponBonus(it, 4, 100, true); // 10%
+        if(roll>94) AddWeaponBonus(it, 5, 100, true); // 5%
 	}
 
 	else if(it.GetType() == ITEM_TYPE_ARMOR)
@@ -330,28 +412,54 @@ void AddSpecialBonus(Item@ it)
 	}
 	return;
 }
+/***
+ *  qualityRollBonus - if crafted in danger zone, add some bonus
+ *  minQuality - if crafted in danger zone or event, do not allow to be normal item
+ *  maxQuality - if crafted in safe zone, like a tent, do not allow to be high rarity item
+ *  effectValueRollPercent - if crafted in danger zone or event, allow to never be normal item
+*/
 
-void AddBonuses(Item@ it, string@ crafter)
-{
-	if(it.GetType() == ITEM_TYPE_WEAPON && !it.IsStackable())
-	{
-		int roll = Random(0,99);
-		if(roll>55) AddWeaponBonus(it, 1, true);
-		if(roll>76)	AddWeaponBonus(it, 2, true);
-		if(roll>88)	AddWeaponBonus(it, 3, true);
-		if(roll>95)	AddWeaponBonus(it, 4, true);
-		if(roll==99) AddWeaponBonus(it, 5, true);
+void AddBonuses(Item@ it, string@ crafter, int qualityRollBonus, int minQuality, int maxQuality, int effectValueRollPercent) {
+    int tresholdQuality = 50;
+    int tresholdImproved = 75;
+    int tresholdSuperior = 87;
+    int tresholdAdvanced = 95;
+    int tresholdUnique = 99;
+    qualityRollBonus = CLAMP(qualityRollBonus, -99, 99);
+    minQuality = CLAMP(minQuality, 0, 5);
+    maxQuality = CLAMP(maxQuality, 0, 5);
+    effectValueRollPercent = CLAMP(effectValueRollPercent, 0, 1000);
+
+    int roll = Random(1, 100);
+    roll = CLAMP(roll + qualityRollBonus, 1, 100);
+    switch (minQuality) {
+        case 1: roll = CLAMP(roll, tresholdQuality + 1, 100); break;
+        case 2: roll = CLAMP(roll, tresholdImproved + 1, 100); break;
+        case 3: roll = CLAMP(roll, tresholdSuperior + 1, 100); break;
+        case 4: roll = CLAMP(roll, tresholdAdvanced + 1, 100); break;
+        case 5: roll = CLAMP(roll, tresholdUnique + 1, 100); break;
+    }
+    switch (maxQuality) {
+        case 1: roll = CLAMP(roll, 1, tresholdQuality + 1); break;
+        case 2: roll = CLAMP(roll, 1, tresholdImproved + 1); break;
+        case 3: roll = CLAMP(roll, 1, tresholdSuperior + 1); break;
+        case 4: roll = CLAMP(roll, 1, tresholdAdvanced + 1); break;
+        case 5: roll = CLAMP(roll, 1, tresholdUnique + 1); break;
+    }
+
+	if (it.GetType() == ITEM_TYPE_WEAPON && !it.IsStackable()) {
+		if (roll > tresholdQuality) AddWeaponBonus(it, 1, effectValueRollPercent, true);
+		if (roll > tresholdImproved) AddWeaponBonus(it, 2, effectValueRollPercent, true);
+		if (roll > tresholdSuperior) AddWeaponBonus(it, 3, effectValueRollPercent, true);
+		if (roll > tresholdAdvanced) AddWeaponBonus(it, 4, effectValueRollPercent, true);
+		if (roll > tresholdUnique) AddWeaponBonus(it, 5, effectValueRollPercent, true);
 		SetLexem(it, "$crafter", crafter);
-	}
-
-	else if(it.GetType() == ITEM_TYPE_ARMOR)
-	{
-		int roll = Random(0,99);
-		if(roll>55) AddArmorBonus(it, 1);   //  44%
-		if(roll>76)	AddArmorBonus(it, 2);   //  23%
-		if(roll>88)	AddArmorBonus(it, 3);   //  11%
-		if(roll>95)	AddArmorBonus(it, 4);   //  4%
-		if(roll==99) AddArmorBonus(it, 5);  //  1%
+	} else if (it.GetType() == ITEM_TYPE_ARMOR) {
+		if (roll > tresholdQuality) AddArmorBonus(it, 1, effectValueRollPercent);
+		if (roll > tresholdImproved) AddArmorBonus(it, 2, effectValueRollPercent);
+		if (roll > tresholdSuperior) AddArmorBonus(it, 3, effectValueRollPercent);
+		if (roll > tresholdAdvanced) AddArmorBonus(it, 4, effectValueRollPercent);
+		if (roll > tresholdUnique) AddArmorBonus(it, 5, effectValueRollPercent);
 		SetLexem(it, "$crafter", crafter);
 	}
 	return;
@@ -369,28 +477,21 @@ bool AddAnotherBonus(Item@ it)
 	++bonusCnt;
 
 	if(it.GetType() == ITEM_TYPE_WEAPON && !it.IsStackable())
-		AddWeaponBonus(it, bonusCnt, true);
+		AddWeaponBonus(it, bonusCnt, 100, true);
 	else if(it.GetType() == ITEM_TYPE_ARMOR)
-		AddArmorBonus(it, bonusCnt);
+		AddArmorBonus(it, bonusCnt, 100);
 	else
 		return false;
 
 	return true;
 }
 
-void AddArmorBonus(Item@ it, int number)
+void AddArmorBonus(Item@ it, int number, int effectValueRollPercent = 100)
 {
 	int minRoll = 1;
 	int maxRoll = 1;
-
 	uint bonusType = 0;
-	uint maxBonusType = BONUS_ARMOR_HEALING_RATE; // for armors
-
 	bool isHelmet = (it.GetProtoId()>=725 && it.GetProtoId()<=741);
-	// If helmet, adjust bonus type range
-	if (isHelmet) {
-        maxBonusType=BONUS_ARMOR_PLASMA_DR;
-	}
 
 	// Choose which bonus and specify bonus value range
 	do {
@@ -401,11 +502,10 @@ void AddArmorBonus(Item@ it, int number)
         }
 	} while (HasBonusAlready(it, bonusType));
 
-    int roll = getMinMaxRoll(bonusType, minRoll, maxRoll);
+    int roll = getMinMaxRollArmor(bonusType, minRoll, maxRoll, effectValueRollPercent);
 
 	// Choose which value
-	switch(number)
-	{
+	switch(number) {
 		case 1: {it.Val0=bonusType; it.Val5=roll;break;}
 		case 2: {it.Val1=bonusType; it.Val6=roll;break;}
 		case 3: {it.Val2=bonusType; it.Val7=roll;break;}
@@ -413,37 +513,32 @@ void AddArmorBonus(Item@ it, int number)
 		case 5: {it.Val4=bonusType; it.Val9=roll;break;}
 		default: break;
 	}
-	//Log("Armor bonus: " + bonusType + " Value: " + roll);
+	Log("Armor bonus: " + getArmorBonusName(bonusType) + ", Value: " + roll + ", Slot number: " + number);
 	it.Update();
     return;
 }
 
 
-void AddWeaponBonus(Item@ it, int number, bool isCrafting = false)
-{
-
+void AddWeaponBonus(Item@ it, int number, int effectValueRollPercent = 100, bool isCrafting = false) {
 	int minRoll=1;
 	int maxRoll=1;
-
 	uint bonusType=0;
 
 	int skillNum = it.Proto.Weapon_Skill_0;
     bool isRangeWeapon = (skillNum == SK_SMALL_GUNS || skillNum == SK_BIG_GUNS || skillNum == SK_ENERGY_WEAPONS);
 	// Choose which bonus and specify bonus value range
-	do
-	{
-		if(isRangeWeapon)
+	do {
+		if (isRangeWeapon) {
 			bonusType=Random(100, BONUS_WEAPON_MAX_RANGE);
-		else
+		} else {
 			bonusType=Random(100, BONUS_WEAPON_MAX_AP);
-	}
-	while (HasBonusAlready(it,bonusType) || IsBonusExcluded(isCrafting, bonusType));
+		}
+	} while (HasBonusAlready(it,bonusType) || IsBonusExcluded(isCrafting, bonusType));
 
-    uint roll = getMinMaxRoll(bonusType, minRoll, maxRoll);
+    uint roll = getMinMaxRollWeapon(bonusType, minRoll, maxRoll, effectValueRollPercent);
 
 	// Choose which value
-	switch(number)
-	{
+	switch(number) {
 		case 1: {it.Val0=bonusType; it.Val5=roll;break;}
 		case 2: {it.Val1=bonusType; it.Val6=roll;break;}
 		case 3: {it.Val2=bonusType; it.Val7=roll;break;}
@@ -451,7 +546,7 @@ void AddWeaponBonus(Item@ it, int number, bool isCrafting = false)
 		case 5: {it.Val4=bonusType; it.Val9=roll;break;}
 		default: break;
 	}
-	//Log("Weapon bonus: " + bonusType + " Value: " + roll);
+	Log("Weapon bonus: " + getWeaponBonusName(bonusType) + ", Value: " + roll + ", Slot number: " + number);
 	it.Update();
     return;
 }
