@@ -116,6 +116,38 @@ const Item* GetHeadArmor(CritterMutual& cr)
 
 #define WEAPON_PERK_NIGHT_SIGHT                 (7)
 #define HELMET_PERK_NIGHT_SIGHT                 (9)
+
+#ifndef BONUS_ARMOR_PERCEPTION
+#define BONUS_ARMOR_PERCEPTION                  (116)
+#endif
+
+inline static int CheckItemBonusLocal(const Item* item, int bonusType)
+{
+	if (item == NULL)
+		return 0;
+
+	if (item->Data.ScriptValues[0] == bonusType) return item->Data.ScriptValues[5];
+	if (item->Data.ScriptValues[1] == bonusType) return item->Data.ScriptValues[6];
+	if (item->Data.ScriptValues[2] == bonusType) return item->Data.ScriptValues[7];
+	if (item->Data.ScriptValues[3] == bonusType) return item->Data.ScriptValues[8];
+	if (item->Data.ScriptValues[4] == bonusType) return item->Data.ScriptValues[9];
+	return 0;
+}
+
+inline static int GetEffectiveLookPerception(Critter& cr)
+{
+	int perception = (cr.Params[DAMAGE_EYE] != 0) ? 1 : CLAMP((cr.Params[ST_PERCEPTION] + cr.Params[ST_PERCEPTION_EXT]), 1, 10);
+
+	if (!cr.CritterIsNpc)
+	{
+		const Item* helmet = GetHeadArmor(cr);
+		if (helmet != NULL && CheckItemBonusLocal(helmet, BONUS_ARMOR_PERCEPTION) != 0)
+			perception++;
+	}
+
+	return CLAMP(perception, 1, 10);
+}
+
 EXPORT bool check_look(Map& map, Critter& cr, Critter& opponent)
 {
 	if (!Init) InitLook();
@@ -377,7 +409,8 @@ EXPORT bool check_look(Map& map, Critter& cr, Critter& opponent)
 
 int GetEngineLook(Critter& cr)
 {
-	int look=(cr.Params[DAMAGE_EYE]!=0)?1:(CLAMP((cr.Params[ST_PERCEPTION]+cr.Params[ST_PERCEPTION_EXT]),1,10));
+	int look = GetEffectiveLookPerception(cr);
+	//int look=(cr.Params[DAMAGE_EYE]!=0)?1:(CLAMP((cr.Params[ST_PERCEPTION]+cr.Params[ST_PERCEPTION_EXT]),1,10));
     look*=3;
     look+= cr.Params[ST_BONUS_LOOK];
 	look+=(int)(FOClassic->LookNormal);
@@ -389,7 +422,8 @@ int GetEngineLook(Critter& cr)
 EXPORT bool check_trap_look(Map& map, Critter& cr, Item& trap)
 {
 	int dist = GetDistantion(cr.HexX,cr.HexY,trap.AccHex.HexX,trap.AccHex.HexY);
-	int perception = CLAMP(cr.Params[ST_PERCEPTION]+cr.Params[ST_PERCEPTION_EXT], 1, 10);
+	int perception = GetEffectiveLookPerception(cr);
+	//int perception = CLAMP(cr.Params[ST_PERCEPTION]+cr.Params[ST_PERCEPTION_EXT], 1, 10);
 	int max_range = TraceWall(cr.HexX, cr.HexY, trap.AccHex.HexX, trap.AccHex.HexY, map, max_range); // in case wall is blocking
 	if (dist > max_range) {
 		return false;
