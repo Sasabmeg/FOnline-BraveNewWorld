@@ -3766,6 +3766,7 @@ void items_crafted(array<Item@>& items, array<uint>& itemsCount, array<Item@>& r
             string@ crafterName=""+crafter.Name;
             if (!upgradedWeapon) {
                 int qualityRollBonus = 0, minQuality = 0, maxQuality = 5, effectValueRollPercent = 100;
+                string craftMessage = "|" + COLOR_DTEXT_CAPTION + " ::Pip-Boy:: |" + COLOR_LGREEN + " \t";
                 Map@ map = crafter.GetMap();
                 if (valid(map)) {
                     if (IsTent(map)) {
@@ -3774,24 +3775,36 @@ void items_crafted(array<Item@>& items, array<uint>& itemsCount, array<Item@>& r
                         maxQuality = 3;
                         effectValueRollPercent = 80;
                         //Log("Craft location - Tent: PID = " + map.GetLocation().GetProtoId() + ", rollBonus = " + qualityRollBonus + ", minQ = " + minQuality + ", maxQ = " + maxQuality + ", bonusPercent = " + effectValueRollPercent);
+                        if (crafter.Param[TO_SK_REPAIR] == 0) {
+                            craftMessage += "Poorly equipped craft location. Receiving worse chances on bonus crafts.";
+                        }
                     } else if (IsBase(map)) {
                         qualityRollBonus = 0;
                         minQuality = 0;
                         maxQuality = 4;
                         effectValueRollPercent = 100;
                         //Log("Craft location - Base: PID = " + map.GetLocation().GetProtoId() + ", rollBonus = " + qualityRollBonus + ", minQ = " + minQuality + ", maxQ = " + maxQuality + ", bonusPercent = " + effectValueRollPercent);
+                        if (crafter.Param[TO_SK_REPAIR] == 0) {
+                            craftMessage += "Average craft location. Receiving regular chances on bonus crafts.";
+                        }
                     } else if (IsTCTown(map)) {
                         qualityRollBonus = 10;
                         minQuality = 1;
                         maxQuality = 4;
                         effectValueRollPercent = 120;
                         //Log("Craft location - TC Town: PID = " + map.GetLocation().GetProtoId() + ", rollBonus = " + qualityRollBonus + ", minQ = " + minQuality + ", maxQ = " + maxQuality + ", bonusPercent = " + effectValueRollPercent);
+                        if (crafter.Param[TO_SK_REPAIR] == 0) {
+                            craftMessage += "Quality craft location. Receiving better chances on bonus crafts.";
+                        }
                     } else if (IsTown(map)) {
                         qualityRollBonus = 5;
                         minQuality = 0;
                         maxQuality = 4;
-                        effectValueRollPercent = 110;
+                        effectValueRollPercent = 100;
                         //Log("Craft location - Town: PID = " + map.GetLocation().GetProtoId() + ", rollBonus = " + qualityRollBonus + ", minQ = " + minQuality + ", maxQ = " + maxQuality + ", bonusPercent = " + effectValueRollPercent);
+                        if (crafter.Param[TO_SK_REPAIR] == 0) {
+                            craftMessage += "Average craft location. Receiving slightly better chances on bonus crafts.";
+                        }
                     } else {
                         //  add dangerous location ID here for bonus
                         switch (map.GetLocation().GetProtoId()) {
@@ -3802,6 +3815,9 @@ void items_crafted(array<Item@>& items, array<uint>& itemsCount, array<Item@>& r
                                 maxQuality = 5;
                                 effectValueRollPercent = 130;
                                 //Log("Craft location - Semi-Dangerous location: PID = " + map.GetLocation().GetProtoId() + ", rollBonus = " + qualityRollBonus + ", minQ = " + minQuality + ", maxQ = " + maxQuality + ", bonusPercent = " + effectValueRollPercent);
+                                if (crafter.Param[TO_SK_REPAIR] == 0) {
+                                    craftMessage += "Quality craft location. Receiving better chances on bonus crafts.";
+                                }
                                 break;
                             case LOCATION_Sierra:
                             case LOCATION_SierraCaves:
@@ -3811,6 +3827,9 @@ void items_crafted(array<Item@>& items, array<uint>& itemsCount, array<Item@>& r
                                 maxQuality = 5;
                                 effectValueRollPercent = 150;
                                 //Log("Craft location - Dangerous location: PID = " + map.GetLocation().GetProtoId() + ", rollBonus = " + qualityRollBonus + ", minQ = " + minQuality + ", maxQ = " + maxQuality + ", bonusPercent = " + effectValueRollPercent);
+                                if (crafter.Param[TO_SK_REPAIR] == 0) {
+                                    craftMessage += "Advanced craft location. Receiving better chances on bonus crafts.";
+                                }
                                 break;
                             default:
                                 qualityRollBonus = -5;
@@ -3818,8 +3837,33 @@ void items_crafted(array<Item@>& items, array<uint>& itemsCount, array<Item@>& r
                                 maxQuality = 3;
                                 effectValueRollPercent = 80;
                                 //Log("Craft location - Uncategorized location: PID = " + map.GetLocation().GetProtoId() + ", rollBonus = " + qualityRollBonus + ", minQ = " + minQuality + ", maxQ = " + maxQuality + ", bonusPercent = " + effectValueRollPercent);
+                                if (crafter.Param[TO_SK_REPAIR] == 0) {
+                                    craftMessage += "Uncategorized craft location. Receiving worse chances on bonus crafts.";
+                                }
                         }
                     }
+                } else {
+                    qualityRollBonus = -5;
+                    minQuality = 0;
+                    maxQuality = 3;
+                    effectValueRollPercent = 80;
+                    //Log("Craft location - Uncategorized location: PID = " + map.GetLocation().GetProtoId() + ", rollBonus = " + qualityRollBonus + ", minQ = " + minQuality + ", maxQ = " + maxQuality + ", bonusPercent = " + effectValueRollPercent);
+                    if (crafter.Param[TO_SK_REPAIR] == 0) {
+                        craftMessage += "Uncategorized craft location. Receiving worse chances on bonus crafts.";
+                    }
+                }
+                if (crafter.Param[TO_SK_REPAIR] == 0) {
+                    _SetTimeout(crafter, TO_SK_REPAIR, REAL_SECOND(3));
+                    craftMessage += "|" + COLOR_GREEN + "  (rollBonus: " + (qualityRollBonus < 100 ? ("|" + COLOR_DTEXT_MALUS + " ") : qualityRollBonus > 100 ? ("|" + COLOR_LYELLOW + " ") : ("|" + COLOR_LGREEN + " "))
+                                + " " + qualityRollBonus + "%|" + COLOR_GREEN + " , minQuality: "
+                                + (minQuality < 1 ? ("|" + COLOR_LGREEN + " Regular") : minQuality < 2 ? ("|" + COLOR_GRAY + " Quality") : minQuality < 3 ? ("|" + COLOR_LGRAY + " Improved") :
+                                   minQuality < 4 ? ("|" + COLOR_WHITE + " Superior") : minQuality < 5 ? ("|" + COLOR_GREEN_RED + " Advanced") : ("|" + COLOR_SAND + " Unique"))
+                                + "|" + COLOR_GREEN + " , maxQuality: "
+                                + (maxQuality < 1 ? ("|" + COLOR_LGREEN + " Regular") : maxQuality < 2 ? ("|" + COLOR_GRAY + " Quality") : maxQuality < 3 ? ("|" + COLOR_LGRAY + " Improved") :
+                                   maxQuality < 4 ? ("|" + COLOR_WHITE + " Superior") : maxQuality < 5 ? ("|" + COLOR_GREEN_RED + " Advanced") : ("|" + COLOR_SAND + " Unique"))
+                                + "|" + COLOR_GREEN + " , Value Percentage: " + (effectValueRollPercent < 100 ? ("|" + COLOR_DTEXT_MALUS + " ") : effectValueRollPercent > 100 ? ("|" + COLOR_LYELLOW + " ") : ("|" + COLOR_LGREEN + " "))
+                                + effectValueRollPercent + "%|" + COLOR_GREEN + " )";
+                    crafter.Say(SAY_NETMSG, craftMessage);
                 }
 
                 AddBonuses(item, crafterName, qualityRollBonus, minQuality, maxQuality, effectValueRollPercent);
