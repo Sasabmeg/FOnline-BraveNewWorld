@@ -16,6 +16,7 @@
 import bool LockerClose(Item& item) from "lockers";
 import void AddSpecialBonus(Item@ it) from "item_bonus";
 import void AddSpecialBonusLow(Item@ it) from "item_bonus";
+import void AddBonuses(Item@ item, string@ crafter, int qualityRollBonus, int minQuality, int maxQuality, int effectValueRollPercent) from "item_bonus";
 import void ClearContainer(Item@container) from "utils";
 import void SetWear(Item& item, int wearProcent) from "repair";
 import void SetMinWear(Item& item, int wearProcent) from "repair";
@@ -48,6 +49,11 @@ class ItemSpawner : IItemSpawner
 	bool			     Bonus;
 	bool			     BonusLow;
     bool                 ClearAtSpawn;
+    int                  QualityRollBonus;          //  BNW - see item bonuses (higher chance to roll rare)
+    int                  MinQuality;                //  BNW - see item bonuses (minimum number of bonuses)
+    int                  MaxQuality;                //  BNW - see item bonuses (maximum number of bonuses)
+    int                  EffectValueRollPercent;    //  BNW - see item bonuses (bonus value increase by this percent)
+    bool                 AdvancedFill;              //  BNW - it will generate random weapons and their respective AMMO, in some cases
 
     ItemSpawner()
     {
@@ -60,6 +66,11 @@ class ItemSpawner : IItemSpawner
 		Bonus = false;
 		BonusLow = false;
         ClearAtSpawn = false;
+        AdvancedFill = false;
+        QualityRollBonus = 0;
+        MinQuality = 0;
+        MaxQuality = 5;
+        EffectValueRollPercent = 100;
     }
 
     uint GetSpawnTime()
@@ -95,31 +106,46 @@ class ItemSpawner : IItemSpawner
     {
         return AddItem(pid, chance, 1, 1);
     }
-	
+
     IItemSpawner@ SetSeparate(bool separate)
     {
         Separate = separate;
         return this;
     }
-	
+
     IItemSpawner@ SetBonus(bool bonus)
     {
         Bonus = bonus;
         return this;
-    }	
+    }
 
     IItemSpawner@ SetBonusLow(bool bonusLow)
     {
         BonusLow = bonusLow;
         return this;
-    }	
+    }
 
     IItemSpawner@ SetClearAtSpawn(bool clearSpawn)
     {
         ClearAtSpawn = clearSpawn;
         return this;
-    } 
-	
+    }
+
+    IItemSpawner@ SetBonusRolls(int qualityRollBonus, int minQuality, int maxQuality, int effectValueRollPercent)
+    {
+        QualityRollBonus = qualityRollBonus;
+        MinQuality = minQuality;
+        MaxQuality = maxQuality;
+        EffectValueRollPercent = effectValueRollPercent;
+        return this;
+    }
+
+    IItemSpawner@ SetAdvancedFill(bool advancedFill)
+    {
+        AdvancedFill = advancedFill;
+        return this;
+    }
+
     IItemSpawner@ Clear()
     {
         SumChance = 0;
@@ -140,7 +166,7 @@ class ItemSpawner : IItemSpawner
         {
             ClearContainer(item);
         }
-        
+
         if(!Separate)
         {
             uint num = Random(1, SumChance);
@@ -148,7 +174,7 @@ class ItemSpawner : IItemSpawner
             while(num > items[idx].Chance)
                 num -= items[idx++].Chance;
             ItemInstance@ spawnitem = items[idx];
-			
+
             Item@ it = item.AddItem(spawnitem.Pid, Random(spawnitem.Min, spawnitem.Max), 0);
 
             if(valid(it) && it.IsDeteriorable() && !it.IsStackable())
@@ -158,15 +184,21 @@ class ItemSpawner : IItemSpawner
                 SetWear(it, wear+Random(10, 20));
             }
 
-            if(Bonus)
-            {                   
+            if (Bonus) {
                 AddSpecialBonus(it);
                 //Log("!Separate i niby dodaje Bonusa do itema " + it.GetType());
-            }
-            else if(BonusLow)
-            {
+            } else if (BonusLow) {
                 AddSpecialBonusLow(it);
                 //Log("!Separate i niby dodaje Bonusa Low do itema " + it.GetType());
+            } else if (AdvancedFill){
+                //  add bonuses
+                AddBonuses(it, null, QualityRollBonus, MinQuality, MaxQuality, EffectValueRollPercent);
+                //  in case of weapons, add ammo for them
+                //  in case of weapons, add ammo for them
+                //Log("NOT SEPARATE :: Add ammo to V15 container. AmmoPid = " + it.AmmoPid + ", ammoCount = " + it.AmmoCount);
+                if (it.AmmoPid != 0) {
+                    item.AddItem(it.AmmoPid, Random(it.AmmoCount, 5 * it.AmmoCount), 0);
+                }
             }
         }
         else
@@ -185,16 +217,21 @@ class ItemSpawner : IItemSpawner
                         SetWear(it, wear+Random(10, 20));
                     }
 
-					if(Bonus)
-					{					
-						AddSpecialBonus(it);
-						//Log("!Separate i niby dodaje Bonusa do itema " + it.GetType());
-					}
-					else if(BonusLow)
-					{
-						AddSpecialBonusLow(it);
-						//Log("!Separate i niby dodaje Bonusa Low do itema " + it.GetType());
-					}
+                    if (Bonus) {
+                        AddSpecialBonus(it);
+                        //Log("!Separate i niby dodaje Bonusa do itema " + it.GetType());
+                    } else if (BonusLow) {
+                        AddSpecialBonusLow(it);
+                        //Log("!Separate i niby dodaje Bonusa Low do itema " + it.GetType());
+                    } else if (AdvancedFill){
+                        //  add bonuses
+                        AddBonuses(it, null, QualityRollBonus, MinQuality, MaxQuality, EffectValueRollPercent);
+                        //  in case of weapons, add ammo for them
+                        //Log("SEPARATE :: Add ammo to V15 container. AmmoPid = " + it.AmmoPid + ", ammoCount = " + it.AmmoCount);
+                        if (it.AmmoPid != 0) {
+                            item.AddItem(it.AmmoPid, Random(it.AmmoCount, 5 * it.AmmoCount), 0);
+                        }
+                    }
 				}
             }
         }
@@ -273,7 +310,7 @@ void ItemSpawnInit() // export
 		    AddItem(PID_AVENGER_MINIGUN, 1)
                     );
 
-    ADD_ITEMSPAWNER(energy_weapons_1, 
+    ADD_ITEMSPAWNER(energy_weapons_1,
                     SpawnTime(15, 120).Lock(0, 120).SetSeparate(true).SetBonusLow(true).SetClearAtSpawn(true).
                     AddItem(PID_SMALL_ENERGY_CELL, 60, 50, 200).
                     AddItem(PID_MICRO_FUSION_CELL, 40, 50, 200).
@@ -283,7 +320,7 @@ void ItemSpawnInit() // export
                   //  AddItem(PID_GATLING_LASER, 1)
                     );
 
-    ADD_ITEMSPAWNER(small_guns_2, 
+    ADD_ITEMSPAWNER(small_guns_2,
                     SpawnTime(24, 120).Lock(0, 90).SetSeparate(true).SetBonusLow(true).SetClearAtSpawn(true).
                     AddItem(PID_ASSAULT_RIFLE_EXT_MAG, 55).
                     AddItem(PID_HK_CAWS, 25).
@@ -292,20 +329,20 @@ void ItemSpawnInit() // export
                     AddItem(PID_HK_P90C, 15)
                     );
 
-    ADD_ITEMSPAWNER(grenades_3, 
+    ADD_ITEMSPAWNER(grenades_3,
                     SpawnTime(30, 120).Lock(0, 60).SetSeparate(true).SetClearAtSpawn(true).
                     AddItem(PID_PLASMA_GRENADE, 2, 8, 50).
                     AddItem(PID_FRAG_GRENADE, 1, 10, 50).
                     AddItem(PID_PULSE_GRENADE, 0, 2, 10)
                     );
 
-    ADD_ITEMSPAWNER(ammo_4, 
+    ADD_ITEMSPAWNER(ammo_4,
                     SpawnTime(10, 60).Lock(0, 60).
                     AddItem(PID_5MM_JHP, 1, 10, 10).
                     AddItem(PID_5MM_AP, 1, 10, 10)
                     );
 
-    ADD_ITEMSPAWNER(combat_armor_5, 
+    ADD_ITEMSPAWNER(combat_armor_5,
                     SpawnTime(30,120).Lock(0, 140).SetSeparate(true).SetBonusLow(true).SetClearAtSpawn(true).
                     AddItem(PID_COMBAT_ARMOR, 30).
                     AddItem(PID_COMBAT_ARMOR_MK_II, 10).
@@ -313,19 +350,19 @@ void ItemSpawnInit() // export
         	    AddItem(PID_TESLA_ARMOR, 20)
                     );
 
-    ADD_ITEMSPAWNER(ec_ammo_6, 
+    ADD_ITEMSPAWNER(ec_ammo_6,
                     SpawnTime(300, 300).Lock(0, 90).
                     AddItem(PID_2MM_EC_AMMO, 1, 10, 10)
                     );
 
-    ADD_ITEMSPAWNER(hth_7, 
+    ADD_ITEMSPAWNER(hth_7,
                     SpawnTime(24, 120).Lock(0, 140).SetSeparate(true).SetBonusLow(true).SetClearAtSpawn(true).
                     AddItem(PID_MEGA_POWER_FIST, 30).
                     AddItem(PID_SUPER_SLEDGE, 20).
 		    AddItem(PID_SUPER_CATTLE_PROD, 10)
                     );
 
-    /*2*/ ADD_ITEMSPAWNER(drug_8, 
+    /*2*/ ADD_ITEMSPAWNER(drug_8,
                     SpawnTime(80, 200).Lock(0, 100).
                     AddItem(PID_BIO_GEL, 25).
                     AddItem(PID_RADAWAY, 15).
@@ -334,7 +371,7 @@ void ItemSpawnInit() // export
                     AddItem(PID_PARAMEDICS_BAG, 1)
                     );
 
-    /*2*/ ADD_ITEMSPAWNER(electronic_9, 
+    /*2*/ ADD_ITEMSPAWNER(electronic_9,
                     SpawnTime(2500, 4000).Lock(0, 150).
                     AddItem(PID_STEALTH_BOY, 1).
                     AddItem(PID_MOTION_SENSOR, 1)
@@ -404,7 +441,7 @@ void ItemSpawnInit() // export
         		    AddItem(PID_BIG_BOOK_OF_SCIENCE, 9).
         			AddItem(PID_FIRST_AID_BOOK, 10).
         			AddItem(PID_GUNS_AND_BULLETS, 10).
-        			AddItem(PID_BARTER_BOOK, 10).			
+        			AddItem(PID_BARTER_BOOK, 10).
         		    AddItem(PID_CHEMICALS, 20, 2, 8).
         		    AddItem(PID_BIO_GEL, 15, 2, 8).
                     AddItem(PID_RADIO, 20)
@@ -455,9 +492,9 @@ void ItemSpawnInit() // export
         		    AddItem(PID_LOUISVILLE_SLUGGER, 1).
         			AddItem(PID_BALL_GAG, 5).
         			AddItem(PID_GOGGLES, 5).
-        			AddItem(PID_FLARE, 3). 
-        			AddItem(PID_FLARE_GREEN, 3). 
-        			AddItem(PID_FLARE_WHITE, 3). 
+        			AddItem(PID_FLARE, 3).
+        			AddItem(PID_FLARE_GREEN, 3).
+        			AddItem(PID_FLARE_WHITE, 3).
         			AddItem(PID_FLARE_YELLOW, 3).
                     AddItem(PID_BLUEPRINT_RANDOM_2, 12)
                     // Clothes:
@@ -496,9 +533,9 @@ void ItemSpawnInit() // export
 					AddItem(PID_GOGGLES, 8).
         		// AddItem(PID_BROTHERHOOD_COMBAT_ARMOR, 1).
         		// AddItem(PID_NCR_ARMOR, 1).
-        		// AddItem(PID_NCR_HELMET, 1).	
+        		// AddItem(PID_NCR_HELMET, 1).
         		    AddItem(PID_MIRROR_SHADES, 1).
-				    AddItem(PID_OIL_CAN, 1).	
+				    AddItem(PID_OIL_CAN, 1).
         		// AddItem(PID_ENCLAVE_COMBAT_ARMOR, 1).
         		// AddItem(PID_BRIDGEKEEPER_ROBE, 1).
         		// AddItem(PID_BROTHERHOOD_HELMET, 1).
@@ -568,8 +605,8 @@ void ItemSpawnInit() // export
                     SpawnTime(24, 120).SetSeparate(true).Lock(0, 50).
                     AddItem(PID_BOTTLE_CAPS, 100, 1, 5).
                     AddItem(PID_BLUEPRINT_RANDOM_1, 1).
-        			AddItem(PID_FLARE_GREEN, 3). 
-        			AddItem(PID_FLARE_WHITE, 3). 
+        			AddItem(PID_FLARE_GREEN, 3).
+        			AddItem(PID_FLARE_WHITE, 3).
         			AddItem(PID_FLARE_YELLOW, 3)
                     );
     ADD_ITEMSPAWNER(blueprint_container_med_16,
@@ -1770,7 +1807,7 @@ void ItemSpawnInit() // export
                     AddItem(PID_PLASMA_RIFLE, 5).
                     AddItem(PID_NCR_ARMOR, 5).
 					AddItem(PID_NCR_HELMET, 5).
-					AddItem(PID_MIRROR_SHADES, 1).					
+					AddItem(PID_MIRROR_SHADES, 1).
                     AddItem(PID_COMBAT_ARMOR_MK_II, 5).
                     AddItem(PID_BROTHERHOOD_COMBAT_ARMOR, 5).
                     AddItem(PID_ENCLAVE_COMBAT_ARMOR, 5).
@@ -1790,8 +1827,8 @@ void ItemSpawnInit() // export
                     AddItem(PID_PLASMA_TORCH, 1).
                     AddItem(PID_HOLY_HAND_GRENADE, 1)
                     );
-					
-							
+
+
     ADD_ITEMSPAWNER(warehouse_basement_box_BG_high_bonus_96,
                     SpawnTime(40, 90).SetBonus(true).Lock(50, 95).
 
@@ -1805,7 +1842,7 @@ void ItemSpawnInit() // export
                     AddItem(PID_FLAMETHROWER_FUEL_MK_II	, 40, 5, 20).
                     AddItem(PID_ROCKET_AP				, 30, 5, 10)
                     );
-					
+
     ADD_ITEMSPAWNER(warehouse_basement_box_EW_high_bonus_97,
                     SpawnTime(40, 90).SetBonus(true).Lock(50, 95).
 
@@ -1815,10 +1852,10 @@ void ItemSpawnInit() // export
                     AddItem(PID_PLASMA_RIFLE, 5).
                     AddItem(PID_SMALL_ENERGY_CELL, 80, 25, 50).
                     AddItem(PID_MICRO_FUSION_CELL, 60, 25, 50)
-                    );	
+                    );
 
     ADD_ITEMSPAWNER(v15_container_weapon_bonus_LOW_98,
-                    SpawnTime(40, 90).SetBonusLow(true).Lock(25, 75).
+                    SpawnTime(10, 15).SetBonusLow(true).SetClearAtSpawn(true).Lock(25, 75).
 
 					AddItem(PID_14MM_PISTOL			, 10).
 					AddItem(PID_DESERT_EAGLE_EXT_MAG, 10).
@@ -1837,20 +1874,20 @@ void ItemSpawnInit() // export
 					AddItem(PID_RIPPER              , 10).
 					AddItem(PID_CATTLE_PROD         , 10).
 					AddItem(PID_POWER_FIST          , 10).
-                    			AddItem(PID_DESERT_EAGLE        , 10).
-					
+                    AddItem(PID_DESERT_EAGLE        , 10).
+
 					AddItem(PID_14MM_AP				, 40, 50, 100).
 					AddItem(PID_SMALL_ENERGY_CELL	, 80, 25, 100).
                     AddItem(PID_44_MAGNUM_JHP		, 40, 55, 125).
                     AddItem(PID_44_MAGNUM_FMJ		, 10, 55, 125).
                     AddItem(PID_45_CALIBER_AMMO		, 20, 100, 200).
                     AddItem(PID_10MM_AP				, 10, 100, 210).
-                    AddItem(PID_5MM_AP				, 15, 150, 290).                    
+                    AddItem(PID_5MM_AP				, 15, 150, 290).
                     AddItem(PID_7_62MM_AMMO			, 15, 100, 210).
                     AddItem(PID_SHOTGUN_SHELLS		, 30, 75, 150)
-                    );						
+                    );
 
-			
+
 
     ADD_ITEMSPAWNER(v15_container_armor_bonus_LOW_99,
                     SpawnTime(40, 90).SetBonusLow(true).Lock(25, 75).
@@ -1867,7 +1904,7 @@ void ItemSpawnInit() // export
 					AddItem(PID_METAL_HELMET_MK2            , 10)
                     );
 
-					
+
     ADD_ITEMSPAWNER(tanker_container_weapon_bonus_LOW_100,
                     SpawnTime(0, 0).SetBonusLow(true).Lock(0, 50).
 
@@ -1895,7 +1932,7 @@ void ItemSpawnInit() // export
 					AddItem(PID_LASER_RIFLE          	, 10)
                     );
 
-					
+
     ADD_ITEMSPAWNER(tanker_container_armor_bonus_LOW_101,
                     SpawnTime(0, 0).SetBonusLow(true).Lock(0, 50).
 
@@ -1911,8 +1948,8 @@ void ItemSpawnInit() // export
 					AddItem(PID_COMBAT_HELMET                , 10)
 					//AddItem(PID_COMBAT_ARMOR_MK_II           , 10).
 					//AddItem(PID_COMBAT_HELMET_MK_II          , 10)
-                    );					
-					
+                    );
+
     ADD_ITEMSPAWNER(gunrunner_crv_container_weapon_bonus_LOW_102,
                     SpawnTime(0, 0).SetBonusLow(true).Lock(0, 10).
 
@@ -1941,7 +1978,7 @@ void ItemSpawnInit() // export
 					AddItem(PID_ROCKET_LAUNCHER      , 10)
                     );
 
-					
+
     ADD_ITEMSPAWNER(gunrunner_crv_container_armor_bonus_LOW_103,
                     SpawnTime(0, 0).SetBonusLow(true).Lock(0, 10).
 
@@ -1957,10 +1994,392 @@ void ItemSpawnInit() // export
 					AddItem(PID_COMBAT_HELMET                , 10)
 					//AddItem(PID_COMBAT_ARMOR_MK_II           , 10).
 					//AddItem(PID_COMBAT_HELMET_MK_II          , 10)
-                    );						
-					
+                    );
 
-					
+    //  BNW additions
+    //  Generic Vault Containers (used in vault 15)
+
+    ADD_ITEMSPAWNER(vault_container_drugs_LOW_104,
+                    SpawnTime(12, 17).SetSeparate(true).SetAdvancedFill(true).SetClearAtSpawn(true).Lock(5, 10).SetBonusRolls(10, 1, 5, 130).
+                    //  drugs
+                    AddItem(PID_STIMPAK             , 75, 1, 3).
+                    AddItem(PID_STIMPAK             , 50, 3, 9).
+                    AddItem(PID_SUPER_STIMPAK       , 25, 2, 6).
+                    AddItem(PID_ANTIDOTE            , 10, 1, 3).
+                    AddItem(PID_RADAWAY             , 10, 1, 3).
+                    AddItem(PID_NUKA_COLA           , 5, 1, 3).
+                    AddItem(PID_CIGARETTES          , 5, 1, 3).
+                    AddItem(PID_RAD_X               , 5, 1, 2).
+                    AddItem(PID_MENTATS             , 5, 1, 2).
+                    AddItem(PID_BUFFOUT             , 5, 1, 2).
+                    AddItem(PID_PSYCHO              , 1, 1, 1).
+                    //  tools
+                    AddItem(PID_DOCTORS_BAG         , 25, 1, 2).
+                    AddItem(PID_FIRST_AID_KIT       , 25, 1, 2).
+                    AddItem(PID_PARAMEDICS_BAG      ,  5, 1, 1).
+                    AddItem(PID_FIELD_MEDIC_KIT     ,  5, 1, 1).
+                    //  books
+                    AddItem(PID_FIRST_AID_BOOK      , 5, 1, 1).
+                    AddItem(PID_BOOK_DOCTOR         , 5, 1, 1).
+                    //  components
+                    AddItem(PID_BIO_GEL             , 5, 3, 9).
+                    AddItem(PID_CHEMICALS           , 5, 2, 2).
+                    AddItem(PID_CHEMICALS2          , 5, 1, 3)
+
+                    );
+    ADD_ITEMSPAWNER(vault_container_drugs_MEDIUM_105,
+                    SpawnTime(12, 17).SetSeparate(true).SetAdvancedFill(true).SetClearAtSpawn(true).Lock(10, 25).SetBonusRolls(10, 1, 5, 130).
+                    //  drugs
+                    AddItem(PID_STIMPAK             , 75, 5, 15).
+                    AddItem(PID_SUPER_STIMPAK       , 50, 3, 9).
+                    AddItem(PID_NUKA_COLA           , 25, 2, 6).
+                    AddItem(PID_CIGARETTES          , 25, 2, 6).
+                    AddItem(PID_ANTIDOTE            , 25, 1, 3).
+                    AddItem(PID_RADAWAY             , 25, 1, 3).
+                    AddItem(PID_RAD_X               , 10, 1, 2).
+                    AddItem(PID_MENTATS             , 10, 1, 2).
+                    AddItem(PID_BUFFOUT             , 10, 1, 2).
+                    AddItem(PID_PSYCHO              ,  5, 1, 1).
+                    //  tools
+                    AddItem(PID_DOCTORS_BAG         , 50, 1, 2).
+                    AddItem(PID_FIRST_AID_KIT       , 50, 1, 2).
+                    AddItem(PID_PARAMEDICS_BAG      , 10, 1, 1).
+                    AddItem(PID_FIELD_MEDIC_KIT     , 10, 1, 1).
+                    //  books
+                    AddItem(PID_FIRST_AID_BOOK      , 25, 1, 1).
+                    AddItem(PID_BOOK_DOCTOR         , 25, 1, 1).
+                    //  components
+                    AddItem(PID_BIO_GEL             , 25, 3, 9).
+                    AddItem(PID_CHEMICALS           , 25, 2, 2).
+                    AddItem(PID_CHEMICALS2          , 25, 1, 3)
+                    );
+
+    ADD_ITEMSPAWNER(vault_container_drugs_HIGH_106,
+                    SpawnTime(12, 17).SetSeparate(true).SetAdvancedFill(true).SetClearAtSpawn(true).Lock(25, 75).SetBonusRolls(10, 1, 5, 130).
+                    //  drugs
+                    AddItem(PID_STIMPAK             , 75, 5, 15).
+                    AddItem(PID_SUPER_STIMPAK       , 75, 3, 9).
+                    AddItem(PID_ANTIDOTE            , 50, 1, 3).
+                    AddItem(PID_RADAWAY             , 50, 1, 3).
+                    AddItem(PID_NUKA_COLA           , 50, 1, 3).
+                    AddItem(PID_CIGARETTES          , 50, 1, 3).
+                    AddItem(PID_RAD_X               , 50, 1, 2).
+                    AddItem(PID_MENTATS             , 50, 1, 2).
+                    AddItem(PID_BUFFOUT             , 50, 1, 2).
+                    AddItem(PID_PSYCHO              , 25, 1, 1).
+                    //  tools
+                    AddItem(PID_DOCTORS_BAG         , 75, 1, 3).
+                    AddItem(PID_FIRST_AID_KIT       , 75, 1, 3).
+                    AddItem(PID_PARAMEDICS_BAG      , 50, 1, 2).
+                    AddItem(PID_FIELD_MEDIC_KIT     , 50, 1, 2).
+                    //  books
+                    AddItem(PID_FIRST_AID_BOOK      , 50, 1, 3).
+                    AddItem(PID_BOOK_DOCTOR         , 50, 1, 2).
+                    //  components
+                    AddItem(PID_BIO_GEL             , 75, 5, 15).
+                    AddItem(PID_CHEMICALS           , 75, 5, 15).
+                    AddItem(PID_CHEMICALS2          , 75, 3, 9)
+                    );
+
+    ADD_ITEMSPAWNER(vault_container_weapon_with_ammo_LOW_107,
+                    SpawnTime(12, 17).SetSeparate(true).SetAdvancedFill(true).SetClearAtSpawn(true).Lock(5, 10).SetBonusRolls(0, 0, 5, 100).
+                    //  pistols
+                    AddItem(PID_10MM_PISTOL             , 20).
+					AddItem(PID_LASER_PISTOL            , 20).
+					AddItem(PID_44_MAGNUM_REVOLVER      , 20).
+					AddItem(PID_MAGNETO_LASER_PISTOL    , 5).
+                    //  shotguns/flamers
+					AddItem(PID_FLAMER                  , 20).
+					AddItem(PID_SAWED_OFF_SHOTGUN       , 20).
+					AddItem(PID_SHOTGUN                 , 20).
+					AddItem(PID_COMBAT_SHOTGUN          , 5).
+                    //  SMG's
+					AddItem(PID_10MM_SMG                , 20).
+					//  rifles
+					AddItem(PID_LASER_RIFLE             , 5).
+					AddItem(PID_PLASMA_RIFLE            , 5).
+                    //  melee
+					AddItem(PID_BRASS_KNUCKLES          , 20).
+					AddItem(PID_CLUB                    , 20).
+					AddItem(PID_SLEDGEHAMMER            , 20).
+					AddItem(PID_COMBAT_KNIFE            , 10).
+					AddItem(PID_RIPPER                  , 5).
+                    //  book
+                    AddItem(PID_GUNS_AND_BULLETS        , 5, 1, 1).
+                    AddItem(PID_BOOK_BIG_GUNS           , 5, 1, 1).
+                    AddItem(PID_BOOK_ENERGY_WEAPONS     , 5, 1, 1).
+                    AddItem(PID_BOOK_CLOSE_COMBAT       , 5, 1, 1).
+                    AddItem(PID_BOOK_THROWING           , 5, 1, 1)
+                    );
+    ADD_ITEMSPAWNER(vault_container_weapon_with_ammo_MEDIUM_108,
+                    SpawnTime(12, 17).SetSeparate(true).SetAdvancedFill(true).SetClearAtSpawn(true).Lock(10, 25).SetBonusRolls(10, 1, 5, 120).
+                    //  pistols
+                    AddItem(PID_10MM_PISTOL             , 20).
+					AddItem(PID_LASER_PISTOL            , 20).
+					AddItem(PID_44_MAGNUM_REVOLVER      , 20).
+					AddItem(PID_MAGNETO_LASER_PISTOL    , 10).
+					AddItem(PID_NEEDLER_PISTOL          , 10).
+					AddItem(PID_14MM_PISTOL             , 5).
+					AddItem(PID_PLASMA_PISTOL           , 5).
+                    //  shotguns/flamers
+					AddItem(PID_FLAMER                  , 20).
+					AddItem(PID_SAWED_OFF_SHOTGUN       , 20).
+					AddItem(PID_SHOTGUN                 , 20).
+					AddItem(PID_COMBAT_SHOTGUN          , 10).
+					AddItem(PID_IMPROVED_FLAMETHROWER   , 5).
+					AddItem(PID_HK_CAWS                 , 5).
+                    //  SMG's
+					AddItem(PID_10MM_SMG                , 20).
+					AddItem(PID_HK_P90C                 , 5).
+					//  rifles
+					AddItem(PID_LASER_RIFLE             , 10).
+					AddItem(PID_PLASMA_RIFLE            , 10).
+					AddItem(PID_SNIPER_RIFLE            , 1).
+                    //  MG's
+					AddItem(PID_MINIGUN                 , 5).
+					AddItem(PID_GATLING_LASER           , 1).
+					AddItem(PID_AVENGER_MINIGUN         , 1).
+                    //  melee
+					AddItem(PID_CLUB                    , 20).
+					AddItem(PID_SLEDGEHAMMER            , 20).
+					AddItem(PID_COMBAT_KNIFE            , 10).
+					AddItem(PID_RIPPER                  , 5).
+					AddItem(PID_CATTLE_PROD             , 5).
+					AddItem(PID_SUPER_SLEDGE            , 5).
+					AddItem(PID_POWER_FIST              , 5).
+					AddItem(PID_MEGA_POWER_FIST         , 1).
+					AddItem(PID_SUPER_CATTLE_PROD       , 1).
+                    //  books
+                    AddItem(PID_GUNS_AND_BULLETS        , 10, 1, 1).
+                    AddItem(PID_BOOK_BIG_GUNS           , 10, 1, 1).
+                    AddItem(PID_BOOK_ENERGY_WEAPONS     , 10, 1, 1).
+                    AddItem(PID_BOOK_CLOSE_COMBAT       , 10, 1, 1).
+                    AddItem(PID_BOOK_THROWING           , 10, 1, 1)
+                    );
+
+    ADD_ITEMSPAWNER(vault_container_weapon_with_ammo_HIGH_109,
+                    SpawnTime(12, 17).SetSeparate(true).SetAdvancedFill(true).SetClearAtSpawn(true).Lock(25, 75).SetBonusRolls(15, 1, 5, 130).
+                    //  pistols
+					AddItem(PID_NEEDLER_PISTOL          , 25).
+					AddItem(PID_MAGNETO_LASER_PISTOL    , 25).
+					AddItem(PID_PLASMA_PISTOL_EXT_CART  , 25).
+					AddItem(PID_14MM_PISTOL             , 10).
+                    //  shotguns/flamers
+					AddItem(PID_IMPROVED_FLAMETHROWER   , 25).
+					AddItem(PID_HK_CAWS                 , 25).
+					AddItem(PID_PANCOR_JACKHAMMER       , 10).
+                    //  SMG's
+					AddItem(PID_10MM_SMG                , 25).
+					AddItem(PID_HK_P90C                 , 10).
+					//  rifles
+					AddItem(PID_LASER_RIFLE_EXT_CAP     , 25).
+					AddItem(PID_SNIPER_RIFLE            , 25).
+					AddItem(PID_TURBO_PLASMA_RIFLE      , 10).
+					AddItem(PID_INDEPENDENT             , 10).
+                    //  MG's
+					AddItem(PID_MINIGUN                 , 25).
+					AddItem(PID_GATLING_LASER           , 25).
+					AddItem(PID_AVENGER_MINIGUN         , 10).
+                    //  melee
+					AddItem(PID_RIPPER                  , 25).
+					AddItem(PID_SUPER_SLEDGE            , 25).
+					AddItem(PID_MEGA_POWER_FIST         , 10).
+					AddItem(PID_SUPER_CATTLE_PROD       , 10).
+                    //  books
+                    AddItem(PID_BOOK_SNEAKING           , 25, 1, 2).
+                    AddItem(PID_BOOK_TRAPS              , 25, 1, 2).
+                    AddItem(PID_GUNS_AND_BULLETS        , 25, 1, 2).
+                    AddItem(PID_BOOK_BIG_GUNS           , 25, 1, 2).
+                    AddItem(PID_BOOK_ENERGY_WEAPONS     , 25, 1, 2).
+                    AddItem(PID_BOOK_CLOSE_COMBAT       , 25, 1, 2).
+                    AddItem(PID_BOOK_THROWING           , 25, 1, 2)
+                    );
+
+    ADD_ITEMSPAWNER(vault_container_armor_LOW_110,
+                    SpawnTime(12, 17).SetSeparate(true).SetAdvancedFill(true).SetClearAtSpawn(true).Lock(5, 10).SetBonusRolls(0, 0, 5, 100).
+                    //  armors
+                    AddItem(PID_LEATHER_ARMOR           , 20).
+                    AddItem(PID_LEATHER_ARMOR_HELMET    , 20).
+                    AddItem(PID_LEATHER_JACKET          , 20).
+                    AddItem(PID_LEATHER_JACKET_HELMET   , 20).
+					AddItem(PID_COMBAT_ARMOR            , 20).
+                    AddItem(PID_COMBAT_HELMET           , 20).
+					AddItem(PID_METAL_ARMOR             , 20).
+                    AddItem(PID_METAL_HELMET            , 20).
+                    //  books
+                    AddItem(PID_BOOK_LOCKPICKING        ,  5, 1, 1).
+                    AddItem(PID_BOOK_SPEECH             ,  5, 1, 1).
+                    AddItem(PID_BOOK_STEALING           ,  5, 1, 1).
+                    AddItem(PID_DEANS_ELECTRONICS       ,  5, 1, 1).
+                    AddItem(PID_BIG_BOOK_OF_SCIENCE     ,  5, 1, 1)
+                    );
+
+    ADD_ITEMSPAWNER(vault_container_armor_MEDIUM_111,
+                    SpawnTime(12, 17).SetSeparate(true).SetAdvancedFill(true).SetClearAtSpawn(true).Lock(10, 25).SetBonusRolls(10, 1, 5, 120).
+                    //  armors
+                    AddItem(PID_LEATHER_ARMOR           , 20).
+                    AddItem(PID_LEATHER_ARMOR_HELMET    , 20).
+                    AddItem(PID_LEATHER_JACKET          , 20).
+                    AddItem(PID_LEATHER_JACKET_HELMET   , 20).
+					AddItem(PID_COMBAT_ARMOR            , 20).
+                    AddItem(PID_COMBAT_HELMET           , 20).
+					AddItem(PID_METAL_ARMOR             , 20).
+                    AddItem(PID_METAL_HELMET            , 20).
+					AddItem(PID_LEATHER_ARMOR_MK_II     , 5).
+					AddItem(PID_LEATHER_ARMOR_HELMET_MK2, 5).
+					AddItem(PID_COMBAT_ARMOR_MK_II      , 5).
+					AddItem(PID_COMBAT_HELMET_MK_II     , 5).
+					AddItem(PID_METAL_ARMOR_MK_II       , 5).
+					AddItem(PID_METAL_HELMET_MK2        , 5).
+                    //  books
+                    AddItem(PID_BOOK_LOCKPICKING        , 10, 1, 1).
+                    AddItem(PID_BOOK_SPEECH             , 10, 1, 1).
+                    AddItem(PID_BOOK_STEALING           , 10, 1, 1).
+                    AddItem(PID_DEANS_ELECTRONICS       , 10, 1, 1).
+                    AddItem(PID_BIG_BOOK_OF_SCIENCE     , 10, 1, 1)
+                    );
+
+
+    ADD_ITEMSPAWNER(vault_container_armor_HIGH_112,
+                    SpawnTime(12, 17).SetSeparate(true).SetAdvancedFill(true).SetClearAtSpawn(true).Lock(25, 75).SetBonusRolls(15, 1, 5, 130).
+                    //  armors
+					AddItem(PID_LEATHER_ARMOR_MK_II         , 25).
+					AddItem(PID_LEATHER_ARMOR_HELMET_MK2    , 25).
+					AddItem(PID_CURED_LEATHER_ARMOR         , 25).
+					AddItem(PID_COMBAT_LEATHER_JACKET_HELMET, 25).
+					AddItem(PID_THERMAL_LEATHER_ARMOR       , 25).
+					AddItem(PID_COMBAT_ARMOR_MK_II          , 25).
+					AddItem(PID_COMBAT_HELMET_MK_II         , 25).
+					AddItem(PID_METAL_ARMOR_MK_II           , 25).
+					AddItem(PID_METAL_HELMET_MK2            , 25).
+                    //  books
+                    AddItem(PID_BOOK_LOCKPICKING            , 25, 1, 2).
+                    AddItem(PID_BOOK_SPEECH                 , 25, 1, 2).
+                    AddItem(PID_BOOK_STEALING               , 25, 1, 2).
+                    AddItem(PID_DEANS_ELECTRONICS           , 25, 1, 2).
+                    AddItem(PID_BIG_BOOK_OF_SCIENCE         , 25, 1, 2)
+                    );
+
+    ADD_ITEMSPAWNER(vault_container_misc_LOW_113,
+                    SpawnTime(12, 17).SetSeparate(true).SetAdvancedFill(true).SetClearAtSpawn(true).Lock(5, 10).SetBonusRolls(0, 0, 5, 100).
+					AddItem(PID_JUNK                        , 25, 5, 15).
+					AddItem(PID_FIREWOOD                    , 25, 4, 12).
+					AddItem(PID_METAL_PARTS                 , 25, 4, 12).
+					AddItem(PID_ALLOYS                      , 25, 3,  9).
+					AddItem(PID_ELECTRONIC_PARTS            , 25, 4, 12).
+					AddItem(PID_METAL_PARTS2                ,  5, 1,  2).
+					AddItem(PID_ALLOYS2                     ,  5, 1,  2).
+					AddItem(PID_ELECTRONIC_PARTS2           ,  5, 1,  2).
+                    //  tools
+					AddItem(PID_CROWBAR                     , 20, 1,  1).
+					AddItem(PID_WRENCH                      , 20, 1,  1).
+					AddItem(PID_MULTI_TOOL                  , 20, 1,  1).
+					AddItem(PID_LOCKPICKS                   , 20, 1,  1).
+                    //  books
+                    AddItem(PID_SCOUT_HANDBOOK              ,  5, 1, 1).
+                    AddItem(PID_BARTER_BOOK                 ,  5, 1, 1).
+                    AddItem(PID_DEANS_ELECTRONICS           ,  5, 1, 1).
+                    AddItem(PID_BIG_BOOK_OF_SCIENCE         ,  5, 1, 1)
+                    );
+
+    ADD_ITEMSPAWNER(vault_container_misc_MEDIUM_114,
+                    SpawnTime(12, 17).SetSeparate(true).SetAdvancedFill(true).SetClearAtSpawn(true).Lock(10, 25).SetBonusRolls(10, 1, 5, 120).
+					AddItem(PID_JUNK                        , 25, 5, 15).
+					AddItem(PID_FIREWOOD                    , 25, 4, 12).
+					AddItem(PID_METAL_PARTS                 , 25, 4, 12).
+					AddItem(PID_ALLOYS                      , 25, 4, 12).
+					AddItem(PID_ELECTRONIC_PARTS            , 25, 4, 12).
+					AddItem(PID_METAL_PARTS2                , 10, 2,  6).
+					AddItem(PID_ALLOYS2                     , 10, 2,  6).
+					AddItem(PID_ELECTRONIC_PARTS2           , 10, 2,  6).
+                    AddItem(PID_BIO_GEL                     , 10, 3,  9).
+                    AddItem(PID_CHEMICALS                   , 10, 3,  9).
+                    AddItem(PID_CHEMICALS2                  , 10, 2,  6).
+                    //  tools
+					AddItem(PID_CROWBAR                     , 20, 1,  1).
+					AddItem(PID_WRENCH                      , 20, 1,  1).
+					AddItem(PID_MULTI_TOOL                  , 20, 1,  1).
+					AddItem(PID_LOCKPICKS                   , 20, 1,  1).
+					AddItem(PID_ELECTRONIC_LOCKPICKS        , 10, 1,  1).
+					AddItem(PID_SUPER_TOOL_KIT              , 10, 1,  1).
+                    //  books
+                    AddItem(PID_SCOUT_HANDBOOK              , 10, 1, 1).
+                    AddItem(PID_BARTER_BOOK                 , 10, 1, 1).
+                    AddItem(PID_DEANS_ELECTRONICS           , 10, 1, 1).
+                    AddItem(PID_BIG_BOOK_OF_SCIENCE         , 10, 1, 1)
+                    );
+
+
+    ADD_ITEMSPAWNER(vault_container_misc_HIGH_115,
+                    SpawnTime(12, 17).SetSeparate(true).SetAdvancedFill(true).SetClearAtSpawn(true).Lock(25, 75).SetBonusRolls(15, 1, 5, 130).
+					AddItem(PID_JUNK                        , 25, 5, 15).
+					AddItem(PID_FIREWOOD                    , 25, 4, 12).
+					AddItem(PID_METAL_PARTS                 , 25, 4, 12).
+					AddItem(PID_ALLOYS                      , 25, 4, 12).
+					AddItem(PID_ELECTRONIC_PARTS            , 25, 4, 12).
+					AddItem(PID_METAL_PARTS2                , 50, 3,  9).
+					AddItem(PID_ALLOYS2                     , 50, 3,  9).
+					AddItem(PID_ELECTRONIC_PARTS2           , 50, 3,  9).
+                    AddItem(PID_BIO_GEL                     , 50, 5, 15).
+                    AddItem(PID_CHEMICALS                   , 50, 5, 15).
+                    AddItem(PID_CHEMICALS2                  , 50, 3,  9).
+                    //  tools
+					AddItem(PID_CROWBAR                     , 20, 1,  1).
+					AddItem(PID_WRENCH                      , 20, 1,  1).
+					AddItem(PID_MULTI_TOOL                  , 20, 1,  1).
+					AddItem(PID_LOCKPICKS                   , 20, 1,  2).
+					AddItem(PID_EXP_LOCKPICK_SET            , 20, 1,  2).
+					AddItem(PID_ELECTRONIC_LOCKPICKS        , 20, 1,  2).
+					AddItem(PID_ELEC_LOCKPICK_MKII          , 20, 1,  2).
+					AddItem(PID_SUPER_TOOL_KIT              , 20, 1,  2).
+					AddItem(PID_OIL_CAN                     ,  1, 1,  1).
+                    //  books
+                    AddItem(PID_SCOUT_HANDBOOK              , 25, 1, 2).
+                    AddItem(PID_BARTER_BOOK                 , 25, 1, 2).
+                    AddItem(PID_DEANS_ELECTRONICS           , 25, 1, 2).
+                    AddItem(PID_BIG_BOOK_OF_SCIENCE         , 25, 1, 2)
+                    );
+
+    ADD_ITEMSPAWNER(vault_container_body_116,
+                    SpawnTime(12, 17).SetSeparate(true).SetAdvancedFill(true).SetClearAtSpawn(true).Lock(0, 0).SetBonusRolls(15, 1, 5, 130).
+                    //  tools
+					AddItem(PID_FLARE                       , 50, 1,  2).
+					AddItem(PID_MULTI_TOOL                  , 10, 1,  1).
+					AddItem(PID_LOCKPICKS                   , 10, 1,  1).
+					AddItem(PID_EXP_LOCKPICK_SET            , 10, 1,  1).
+					AddItem(PID_ELECTRONIC_LOCKPICKS        , 10, 1,  1).
+					AddItem(PID_ELEC_LOCKPICK_MKII          , 10, 1,  1).
+					AddItem(PID_SUPER_TOOL_KIT              , 10, 1,  1).
+					AddItem(PID_FLARE_GREEN                 ,  5, 1,  1).
+					AddItem(PID_FLARE_WHITE                 ,  5, 1,  1).
+					AddItem(PID_FLARE_YELLOW                ,  5, 1,  1).
+					AddItem(PID_OIL_CAN                     ,  1, 1,  1).
+                    //  weapons
+					AddItem(PID_SPIKED_KNUCKLES             , 30, 1,  1).
+					AddItem(PID_COMBAT_KNIFE                , 20, 1,  1).
+					AddItem(PID_RIPPER                      , 10, 1,  1).
+					AddItem(PID_WAKIZASHI_BLADE             ,  5, 1,  1).
+					AddItem(PID_LIL_JESUS_WEAPON            ,  1, 1,  1).
+
+                    //  books
+                    AddItem(PID_FIRST_AID_BOOK              ,  5, 1, 1).
+                    AddItem(PID_BOOK_DOCTOR                 ,  5, 1, 1).
+                    AddItem(PID_BOOK_SNEAKING               ,  5, 1, 1).
+                    AddItem(PID_BOOK_TRAPS                  ,  5, 1, 1).
+                    AddItem(PID_GUNS_AND_BULLETS            ,  5, 1, 1).
+                    AddItem(PID_BOOK_BIG_GUNS               ,  5, 1, 1).
+                    AddItem(PID_BOOK_ENERGY_WEAPONS         ,  5, 1, 1).
+                    AddItem(PID_BOOK_CLOSE_COMBAT           ,  5, 1, 1).
+                    AddItem(PID_BOOK_THROWING               ,  5, 1, 1).
+                    AddItem(PID_BOOK_LOCKPICKING            ,  5, 1, 1).
+                    AddItem(PID_BOOK_SPEECH                 ,  5, 1, 1).
+                    AddItem(PID_BOOK_STEALING               ,  5, 1, 1).
+                    AddItem(PID_SCOUT_HANDBOOK              ,  5, 1, 1).
+                    AddItem(PID_BARTER_BOOK                 ,  5, 1, 1).
+                    AddItem(PID_DEANS_ELECTRONICS           ,  5, 1, 1).
+                    AddItem(PID_BIG_BOOK_OF_SCIENCE         ,  5, 1, 1)
+                    );
+
     #ifdef __DEBUG__
     for(uint i = 0, j = spawners.length(); i < j; i++)
         spawners[i].LogValue("spawner " + i);

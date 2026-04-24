@@ -3816,19 +3816,28 @@ void items_crafted(array<Item@>& items, array<uint>& itemsCount, array<Item@>& r
                                 effectValueRollPercent = 130;
                                 //Log("Craft location - Semi-Dangerous location: PID = " + map.GetLocation().GetProtoId() + ", rollBonus = " + qualityRollBonus + ", minQ = " + minQuality + ", maxQ = " + maxQuality + ", bonusPercent = " + effectValueRollPercent);
                                 if (crafter.Param[TO_SK_REPAIR] == 0) {
-                                    craftMessage += "Quality craft location. Receiving better chances on bonus crafts.";
+                                    craftMessage += "Superior craft location. Receiving better chances on bonus crafts.";
                                 }
                                 break;
-                            case LOCATION_Sierra:
-                            case LOCATION_SierraCaves:
                             case LOCATION_MariposaMilitaryBase:
                                 qualityRollBonus = 15;
-                                minQuality = 1;
+                                minQuality = 2;
                                 maxQuality = 5;
                                 effectValueRollPercent = 150;
                                 //Log("Craft location - Dangerous location: PID = " + map.GetLocation().GetProtoId() + ", rollBonus = " + qualityRollBonus + ", minQ = " + minQuality + ", maxQ = " + maxQuality + ", bonusPercent = " + effectValueRollPercent);
                                 if (crafter.Param[TO_SK_REPAIR] == 0) {
                                     craftMessage += "Advanced craft location. Receiving better chances on bonus crafts.";
+                                }
+                                break;
+                            case LOCATION_Sierra:
+                            case LOCATION_SierraCaves:
+                                qualityRollBonus = 25;
+                                minQuality = 3;
+                                maxQuality = 5;
+                                effectValueRollPercent = 175;
+                                //Log("Craft location - Dangerous location: PID = " + map.GetLocation().GetProtoId() + ", rollBonus = " + qualityRollBonus + ", minQ = " + minQuality + ", maxQ = " + maxQuality + ", bonusPercent = " + effectValueRollPercent);
+                                if (crafter.Param[TO_SK_REPAIR] == 0) {
+                                    craftMessage += "Uniquely equipped craft location. Receiving significantly better chances on bonus crafts.";
                                 }
                                 break;
                             default:

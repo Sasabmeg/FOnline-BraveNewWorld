@@ -31,7 +31,7 @@
 #define SPAWNER_CONTAINER_BLUEPRINT_HIGH      (17)
 
 #define SPAWNER_CONTAINER_SEWER_TRASH         (18)
-#define SPAWNER_CONTAINER_AMMO_47MM	      (19) // 4.7mm 
+#define SPAWNER_CONTAINER_AMMO_47MM	      (19) // 4.7mm
 
 #define SPAWNER_RESERVED_MAX                  (30)
 // above that can be used runtime
@@ -167,7 +167,7 @@
 #define WAREHOUSE_BASEMENT_BOX_EW_HIGH_BONUS  (97)
 
 #define V15_CONTAINER_WEAPON_BONUS_LOW        (98)
-#define V15_CONTAINER_ARMOR_BONUS_LOW         (99) 
+#define V15_CONTAINER_ARMOR_BONUS_LOW         (99)
 
 
 #define TANKER_CONTAINER_WEAPON_BONUS_LOW     (100)
@@ -188,6 +188,9 @@ shared interface IItemSpawner
 	IItemSpawner@ SetBonusLow(bool bonus);
 	IItemSpawner@ SetClearAtSpawn(bool clearSpawn);
     IItemSpawner@ Clear();
+    IItemSpawner@ SetBonusRolls(int qualityRollBonus, int minQuality, int maxQuality, int effectValueRollPercent);
+    IItemSpawner@ SetAdvancedFill(bool advancedFill);
+
 };
 
 #ifndef __SPAWNER_CONTAINER_MODULE__

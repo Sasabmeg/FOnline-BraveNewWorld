@@ -97,7 +97,7 @@ int getMinMaxRollArmor(uint bonusType, int& minRoll, int& maxRoll, int effectVal
         } else {
             rollWithBonus = roll * effectValueRollPercent / 100;
         }
-        Log("\tArmor bonus roll = " + roll + ", rollWithBonus = " + rollWithBonus);
+        //Log("\tArmor bonus roll = " + roll + ", rollWithBonus = " + rollWithBonus);
         return CLAMP(rollWithBonus, minRoll, maxRoll);
 	} else {
 	    return minRoll;
@@ -127,7 +127,7 @@ int getMinMaxRollWeapon(uint bonusType, int& minRoll, int& maxRoll, int effectVa
         } else {
             rollWithBonus = roll * effectValueRollPercent / 100;
         }
-        Log("\tWeapon bonus roll = " + roll + ", rollWithBonus = " + rollWithBonus);
+        //Log("\tWeapon bonus roll = " + roll + ", rollWithBonus = " + rollWithBonus);
         return CLAMP(rollWithBonus, minRoll, maxRoll);
 	} else {
 	    return minRoll;
@@ -453,14 +453,18 @@ void AddBonuses(Item@ it, string@ crafter, int qualityRollBonus, int minQuality,
 		if (roll > tresholdSuperior) AddWeaponBonus(it, 3, effectValueRollPercent, true);
 		if (roll > tresholdAdvanced) AddWeaponBonus(it, 4, effectValueRollPercent, true);
 		if (roll > tresholdUnique) AddWeaponBonus(it, 5, effectValueRollPercent, true);
-		SetLexem(it, "$crafter", crafter);
+		if (valid(crafter)) {
+            SetLexem(it, "$crafter", crafter);
+		}
 	} else if (it.GetType() == ITEM_TYPE_ARMOR) {
 		if (roll > tresholdQuality) AddArmorBonus(it, 1, effectValueRollPercent);
 		if (roll > tresholdImproved) AddArmorBonus(it, 2, effectValueRollPercent);
 		if (roll > tresholdSuperior) AddArmorBonus(it, 3, effectValueRollPercent);
 		if (roll > tresholdAdvanced) AddArmorBonus(it, 4, effectValueRollPercent);
 		if (roll > tresholdUnique) AddArmorBonus(it, 5, effectValueRollPercent);
-		SetLexem(it, "$crafter", crafter);
+		if (valid(crafter)) {
+            SetLexem(it, "$crafter", crafter);
+		}
 	}
 	return;
 }
@@ -513,7 +517,7 @@ void AddArmorBonus(Item@ it, int number, int effectValueRollPercent = 100)
 		case 5: {it.Val4=bonusType; it.Val9=roll;break;}
 		default: break;
 	}
-	Log("Armor bonus: " + getArmorBonusName(bonusType) + ", Value: " + roll + ", Slot number: " + number);
+	//Log("Armor bonus: " + getArmorBonusName(bonusType) + ", Value: " + roll + ", Slot number: " + number);
 	it.Update();
     return;
 }
@@ -546,7 +550,7 @@ void AddWeaponBonus(Item@ it, int number, int effectValueRollPercent = 100, bool
 		case 5: {it.Val4=bonusType; it.Val9=roll;break;}
 		default: break;
 	}
-	Log("Weapon bonus: " + getWeaponBonusName(bonusType) + ", Value: " + roll + ", Slot number: " + number);
+	//Log("Weapon bonus: " + getWeaponBonusName(bonusType) + ", Value: " + roll + ", Slot number: " + number);
 	it.Update();
     return;
 }
