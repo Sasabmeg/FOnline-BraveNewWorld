@@ -1785,41 +1785,60 @@ string showItemBonus(ItemCl& it, int type, int value) {
         return result;
     if (it.GetType() == ITEM_TYPE_ARMOR) {
         switch(type) {
-            case 100: {result="\nCrit Chance "  + itemBonusColor(ITEM_TYPE_ARMOR, type, value) + "-" + value + "|" + COLOR_LGREEN + " ";break;}
-            case 101: {result="\nCrit Power "   + itemBonusColor(ITEM_TYPE_ARMOR, type, value) + "-" + value + "|" + COLOR_LGREEN + " ";break;}
-            case 102: {result="\nNormal DT "    + itemBonusColor(ITEM_TYPE_ARMOR, type, value) + "+" + value + "|" + COLOR_LGREEN + " ";break;}
-            case 103: {result="\nLaser DT "     + itemBonusColor(ITEM_TYPE_ARMOR, type, value) + "+" + value + "|" + COLOR_LGREEN + " ";break;}
-            case 104: {result="\nFire DT "      + itemBonusColor(ITEM_TYPE_ARMOR, type, value) + "+" + value + "|" + COLOR_LGREEN + " ";break;}
-            case 105: {result="\nPlasma DT "    + itemBonusColor(ITEM_TYPE_ARMOR, type, value) + "+" + value + "|" + COLOR_LGREEN + " ";break;}
-            case 106: {result="\nNormal DR "    + itemBonusColor(ITEM_TYPE_ARMOR, type, value) + "+" + value + "|" + COLOR_LGREEN + " ";break;}
-            case 107: {result="\nLaser DR "     + itemBonusColor(ITEM_TYPE_ARMOR, type, value) + "+" + value + "|" + COLOR_LGREEN + " ";break;}
-            case 108: {result="\nFire DR "      + itemBonusColor(ITEM_TYPE_ARMOR, type, value) + "+" + value + "|" + COLOR_LGREEN + " ";break;}
-            case 109: {result="\nPlasma DR "    + itemBonusColor(ITEM_TYPE_ARMOR, type, value) + "+" + value + "|" + COLOR_LGREEN + " ";break;}
-            case 110: {result="\nExplode DT "   + itemBonusColor(ITEM_TYPE_ARMOR, type, value) + "+" + value + "|" + COLOR_LGREEN + " ";break;}
-            case 111: {result="\nExplode DR "   + itemBonusColor(ITEM_TYPE_ARMOR, type, value) + "+" + value + "|" + COLOR_LGREEN + " ";break;}
-            case 112: {result="\nAction Points " + itemBonusColor(ITEM_TYPE_ARMOR, type, value) + "+" + value + "|" + COLOR_LGREEN + " ";break;}
-            case 113: {result="\nRad Resist "   + itemBonusColor(ITEM_TYPE_ARMOR, type, value) + "+" + value + "|" + COLOR_LGREEN + " ";break;}
-            case 114: {result="\nPoison Resist " + itemBonusColor(ITEM_TYPE_ARMOR, type, value) + "+" + value + "|" + COLOR_LGREEN + " ";break;}
-            case 115: {result="\nStrength "     + itemBonusColor(ITEM_TYPE_ARMOR, type, value) + "+" + value + "|" + COLOR_LGREEN + " ";break;}
-            case 116: {result="\nPerception "   + itemBonusColor(ITEM_TYPE_ARMOR, type, value) + "+" + value + "|" + COLOR_LGREEN + " ";break;}
-            case 117: {result="\nEndurance "    + itemBonusColor(ITEM_TYPE_ARMOR, type, value) + "+" + value + "|" + COLOR_LGREEN + " ";break;}
-            case 118: {result="\nCharisma "     + itemBonusColor(ITEM_TYPE_ARMOR, type, value) + "+" + value + "|" + COLOR_LGREEN + " ";break;}
-            case 119: {result="\nIntelligence " + itemBonusColor(ITEM_TYPE_ARMOR, type, value) + "+" + value + "|" + COLOR_LGREEN + " ";break;}
-            case 120: {result="\nAgility "      + itemBonusColor(ITEM_TYPE_ARMOR, type, value) + "+" + value + "|" + COLOR_LGREEN + " ";break;}
-            case 121: {result="\nLuck "         + itemBonusColor(ITEM_TYPE_ARMOR, type, value) + "+" + value + "|" + COLOR_LGREEN + " ";break;}
-            case 122: {result="\nCarry Weight " + itemBonusColor(ITEM_TYPE_ARMOR, type, value) + "+" + value + "|" + COLOR_LGREEN + " ";break;}
-            case 123: {result="\nHealing Rate " + itemBonusColor(ITEM_TYPE_ARMOR, type, value) + "+" + value + "|" + COLOR_LGREEN + " ";break;}
+            case BONUS_ARMOR_CRIT_CHANCE:   {result="\nCrit Chance: "  + itemBonusColor(ITEM_TYPE_ARMOR, type, value) + "-" + value + "|" + COLOR_LGREEN + " ";break;}
+            case BONUS_ARMOR_CRIT_POWER:    {result="\nCrit Power: "   + itemBonusColor(ITEM_TYPE_ARMOR, type, value) + "-" + value + "|" + COLOR_LGREEN + " ";break;}
+            case BONUS_ARMOR_NORMAL_DT:     {result="\nNormal DT: "    + itemBonusColor(ITEM_TYPE_ARMOR, type, value) + "+" + value + "|" + COLOR_LGREEN + " ";break;}
+            case BONUS_ARMOR_LASER_DT:      {result="\nLaser DT: "     + itemBonusColor(ITEM_TYPE_ARMOR, type, value) + "+" + value + "|" + COLOR_LGREEN + " ";break;}
+            case BONUS_ARMOR_FIRE_DT:       {result="\nFire DT: "      + itemBonusColor(ITEM_TYPE_ARMOR, type, value) + "+" + value + "|" + COLOR_LGREEN + " ";break;}
+            case BONUS_ARMOR_PLASMA_DT:     {result="\nPlasma DT: "    + itemBonusColor(ITEM_TYPE_ARMOR, type, value) + "+" + value + "|" + COLOR_LGREEN + " ";break;}
+            case BONUS_ARMOR_NORMAL_DR:     {result="\nNormal DR: "    + itemBonusColor(ITEM_TYPE_ARMOR, type, value) + "+" + value + "|" + COLOR_LGREEN + " ";break;}
+            case BONUS_ARMOR_LASER_DR:      {result="\nLaser DR: "     + itemBonusColor(ITEM_TYPE_ARMOR, type, value) + "+" + value + "|" + COLOR_LGREEN + " ";break;}
+            case BONUS_ARMOR_FIRE_DR:       {result="\nFire DR: "      + itemBonusColor(ITEM_TYPE_ARMOR, type, value) + "+" + value + "|" + COLOR_LGREEN + " ";break;}
+            case BONUS_ARMOR_PLASMA_DR:     {result="\nPlasma DR: "    + itemBonusColor(ITEM_TYPE_ARMOR, type, value) + "+" + value + "|" + COLOR_LGREEN + " ";break;}
+            case BONUS_ARMOR_EXPLODE_DT:    {result="\nExplode DT: "   + itemBonusColor(ITEM_TYPE_ARMOR, type, value) + "+" + value + "|" + COLOR_LGREEN + " ";break;}
+            case BONUS_ARMOR_EXPLODE_DR:    {result="\nExplode DR: "   + itemBonusColor(ITEM_TYPE_ARMOR, type, value) + "+" + value + "|" + COLOR_LGREEN + " ";break;}
+            case BONUS_ARMOR_MAX_AP:        {result="\nAction Points: "+ itemBonusColor(ITEM_TYPE_ARMOR, type, value) + "+" + value + "|" + COLOR_LGREEN + " ";break;}
+            case BONUS_ARMOR_RAD_RES:       {result="\nRad Resist: "   + itemBonusColor(ITEM_TYPE_ARMOR, type, value) + "+" + value + "|" + COLOR_LGREEN + " ";break;}
+            case BONUS_ARMOR_POISON_RES:    {result="\nPoison Resist: "+ itemBonusColor(ITEM_TYPE_ARMOR, type, value) + "+" + value + "|" + COLOR_LGREEN + " ";break;}
+            case BONUS_ARMOR_STRENGTH:      {result="\nStrength: "     + itemBonusColor(ITEM_TYPE_ARMOR, type, value) + "+" + value + "|" + COLOR_LGREEN + " ";break;}
+            case BONUS_ARMOR_PERCEPTION:    {result="\nPerception: "   + itemBonusColor(ITEM_TYPE_ARMOR, type, value) + "+" + value + "|" + COLOR_LGREEN + " ";break;}
+            case BONUS_ARMOR_ENDURANCE:     {result="\nEndurance: "    + itemBonusColor(ITEM_TYPE_ARMOR, type, value) + "+" + value + "|" + COLOR_LGREEN + " ";break;}
+            case BONUS_ARMOR_CHARISMA:      {result="\nCharisma: "     + itemBonusColor(ITEM_TYPE_ARMOR, type, value) + "+" + value + "|" + COLOR_LGREEN + " ";break;}
+            case BONUS_ARMOR_INTELLIGENCE:  {result="\nIntelligence: " + itemBonusColor(ITEM_TYPE_ARMOR, type, value) + "+" + value + "|" + COLOR_LGREEN + " ";break;}
+            case BONUS_ARMOR_AGILITY:       {result="\nAgility: "      + itemBonusColor(ITEM_TYPE_ARMOR, type, value) + "+" + value + "|" + COLOR_LGREEN + " ";break;}
+            case BONUS_ARMOR_LUCK:          {result="\nLuck: "         + itemBonusColor(ITEM_TYPE_ARMOR, type, value) + "+" + value + "|" + COLOR_LGREEN + " ";break;}
+            case BONUS_ARMOR_CARRY_WEIGHT:  {result="\nCarry Weight: " + itemBonusColor(ITEM_TYPE_ARMOR, type, value) + "+" + value + "|" + COLOR_LGREEN + " ";break;}
+            case BONUS_ARMOR_HEALING_RATE:  {result="\nHealing Rate: " + itemBonusColor(ITEM_TYPE_ARMOR, type, value) + "+" + value + "|" + COLOR_LGREEN + " ";break;}
             default: break;
         }
     } else if (it.GetType() == ITEM_TYPE_WEAPON) {
         switch(type) {
-            case 100: {result="\nCrit Power "       + itemBonusColor(ITEM_TYPE_WEAPON, type, value) + "+" + value + "|" + COLOR_LGREEN + " ";break;}
-            case 101: {result="\nCrit Chance "      + itemBonusColor(ITEM_TYPE_WEAPON, type, value) + "+" + value + "|" + COLOR_LGREEN + " ";break;}
-            case 102: {result="\nMin dmg "          + itemBonusColor(ITEM_TYPE_WEAPON, type, value) + "+" + value + "%|" + COLOR_LGREEN + " ";break;}
-            case 103: {result="\nMax dmg "          + itemBonusColor(ITEM_TYPE_WEAPON, type, value) + "+" + value + "%|" + COLOR_LGREEN + " ";break;}
-            case 104: {result="\nAccuracy "         + itemBonusColor(ITEM_TYPE_WEAPON, type, value) + "+" + value + "|" + COLOR_LGREEN + " ";break;}
-            case 105: {result="\nAction points "    + itemBonusColor(ITEM_TYPE_WEAPON, type, value) + "+" + value + "|" + COLOR_LGREEN + " ";break;}
-            case 106: {result="\nRange "            + itemBonusColor(ITEM_TYPE_WEAPON, type, value) + "+" + value + "|" + COLOR_LGREEN + " ";break;}
+            case BONUS_WEAPON_CRITICAL_ROLL:    { result = "\nCritical Power: " + itemBonusColor(ITEM_TYPE_WEAPON, type, value) + "+" + value +  "|" + COLOR_LGREEN + " "; break; }
+            case BONUS_WEAPON_CRITICAL_CHANCE:  { result = "\nCritical Chance: "+ itemBonusColor(ITEM_TYPE_WEAPON, type, value) + "+" + value + "%|" + COLOR_LGREEN + " "; break; }
+            case BONUS_WEAPON_MIN_DMG:          { result = "\nMin damage: "     + itemBonusColor(ITEM_TYPE_WEAPON, type, value) + "+" + value + "%|" + COLOR_LGREEN + " "; break; }
+            case BONUS_WEAPON_MAX_DMG:          { result = "\nMax damage: "     + itemBonusColor(ITEM_TYPE_WEAPON, type, value) + "+" + value + "%|" + COLOR_LGREEN + " "; break; }
+            case BONUS_WEAPON_ACCURACY:         { result = "\nAccuracy: "       + itemBonusColor(ITEM_TYPE_WEAPON, type, value) + "+" + value +  "|" + COLOR_LGREEN + " "; break; }
+            case BONUS_WEAPON_MAX_AP:           { result = "\nAction points: "  + itemBonusColor(ITEM_TYPE_WEAPON, type, value) + "+" + value +  "|" + COLOR_LGREEN + " "; break; }
+            case BONUS_WEAPON_MAX_RANGE:        { result = "\nRange: "          + itemBonusColor(ITEM_TYPE_WEAPON, type, value) + "+" + value +  "|" + COLOR_LGREEN + " "; break; }
+            default: break;
+        }
+    }
+    return result;
+}
+
+string showWeaponUpgradeBonus(int type, int value) {
+    string result = "";
+    if (type == 0) {
+        return result;
+    } else {
+        switch(type) {
+            case BONUS_WEAPON_CRITICAL_ROLL:    { result = "\nCritical Power: " + itemBonusColor(ITEM_TYPE_WEAPON, type, value) + "+" + value +  "|" + COLOR_LGREEN + " "; break; }
+            case BONUS_WEAPON_CRITICAL_CHANCE:  { result = "\nCritical Chance: "+ itemBonusColor(ITEM_TYPE_WEAPON, type, value) + "+" + value + "%|" + COLOR_LGREEN + " "; break; }
+            case BONUS_WEAPON_MIN_DMG:          { result = "\nMin damage: "     + itemBonusColor(ITEM_TYPE_WEAPON, type, value) + "+" + value + "%|" + COLOR_LGREEN + " "; break; }
+            case BONUS_WEAPON_MAX_DMG:          { result = "\nMax damage: "     + itemBonusColor(ITEM_TYPE_WEAPON, type, value) + "+" + value + "%|" + COLOR_LGREEN + " "; break; }
+            case BONUS_WEAPON_ACCURACY:         { result = "\nAccuracy: "       + itemBonusColor(ITEM_TYPE_WEAPON, type, value) + "+" + value +  "|" + COLOR_LGREEN + " "; break; }
+            case BONUS_WEAPON_MAX_AP:           { result = "\nAction points: "  + itemBonusColor(ITEM_TYPE_WEAPON, type, value) + "+" + value +  "|" + COLOR_LGREEN + " "; break; }
+            case BONUS_WEAPON_MAX_RANGE:        { result = "\nRange: "          + itemBonusColor(ITEM_TYPE_WEAPON, type, value) + "+" + value +  "|" + COLOR_LGREEN + " "; break; }
             default: break;
         }
     }

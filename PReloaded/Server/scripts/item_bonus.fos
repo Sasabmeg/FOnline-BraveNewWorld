@@ -141,8 +141,8 @@ string getWeaponBonusName(uint bonusType) {
 		case BONUS_WEAPON_MIN_DMG:          return "Minimum Damage";
 		case BONUS_WEAPON_MAX_DMG:          return "Maximum Damage";
 		case BONUS_WEAPON_ACCURACY:         return "Accuracy";
-		case BONUS_WEAPON_MAX_RANGE:        return "Maximum Range";
 		case BONUS_WEAPON_MAX_AP:           return "Action Points";
+		case BONUS_WEAPON_MAX_RANGE:        return "Maximum Range";
 		default:
 		    break;
 	}
@@ -294,6 +294,185 @@ string getArmorBonusName(uint bonusType) {
 	return "Unknown";
 }
 
+array<array<uint16>> WeaponUpgrades = {
+    //  pistols                     Range                           Accuracy                    Max AP                      Critical Chance          Critical Power             Minimum Damage              Maximum Damage
+    {PID_9MM_MAUSER,                PID_WU_BARREL_SUPPORT_M,        PID_WU_RECOIL_SPRINGS,      PID_WU_SMALL_GRIP_STRAPS,   PID_WU_SHORT_REAR_SIGHT, PID_WU_SHORT_FRONT_SIGHT,  PID_WU_HAMMER,              PID_WU_MUZZLE_M         },
+    {PID_10MM_PISTOL,               PID_WU_BARREL_SUPPORT_M,        PID_WU_RECOIL_SPRINGS,      PID_WU_SMALL_GRIP_STRAPS,   PID_WU_SHORT_REAR_SIGHT, PID_WU_SHORT_FRONT_SIGHT,  PID_WU_HAMMER,              PID_WU_MUZZLE_M         },
+    {PID_44_MAGNUM_REVOLVER,        PID_WU_BARREL_SUPPORT_L,        PID_WU_RECOIL_SPRINGS,      PID_WU_SMALL_GRIP_STRAPS,   PID_WU_SHORT_REAR_SIGHT, PID_WU_SHORT_FRONT_SIGHT,  PID_WU_HAMMER,              PID_WU_MUZZLE_L         },
+    {PID_44_MAGNUM_SPEEDLOADER,     PID_WU_BARREL_SUPPORT_L,        PID_WU_RECOIL_SPRINGS,      PID_WU_SMALL_GRIP_STRAPS,   PID_WU_SHORT_REAR_SIGHT, PID_WU_SHORT_FRONT_SIGHT,  PID_WU_HAMMER,              PID_WU_MUZZLE_L         },
+    {PID_DESERT_EAGLE,              PID_WU_BARREL_SUPPORT_L,        PID_WU_RECOIL_SPRINGS,      PID_WU_SMALL_GRIP_STRAPS,   PID_WU_SHORT_REAR_SIGHT, PID_WU_SHORT_FRONT_SIGHT,  PID_WU_HAMMER,              PID_WU_MUZZLE_L         },
+    {PID_DESERT_EAGLE_EXT_MAG,      PID_WU_BARREL_SUPPORT_L,        PID_WU_RECOIL_SPRINGS,      PID_WU_SMALL_GRIP_STRAPS,   PID_WU_SHORT_REAR_SIGHT, PID_WU_SHORT_FRONT_SIGHT,  PID_WU_HAMMER,              PID_WU_MUZZLE_L         },
+    {PID_14MM_PISTOL,               PID_WU_BARREL_SUPPORT_L,        PID_WU_RECOIL_SPRINGS,      PID_WU_SMALL_GRIP_STRAPS,   PID_WU_SHORT_REAR_SIGHT, PID_WU_SHORT_FRONT_SIGHT,  PID_WU_HAMMER,              PID_WU_MUZZLE_L         },
+    {PID_223_PISTOL,                PID_WU_BARREL_SUPPORT_S,        PID_WU_RECOIL_SPRINGS,      PID_WU_SMALL_GRIP_STRAPS,   PID_WU_SHORT_REAR_SIGHT, PID_WU_SHORT_FRONT_SIGHT,  PID_WU_HAMMER,              PID_WU_MUZZLE_S         },
+    {PID_WS_M350_LEGEND,            PID_WU_BARREL_SUPPORT_L,        PID_WU_RECOIL_SPRINGS,      PID_WU_SMALL_GRIP_STRAPS,   PID_WU_SHORT_REAR_SIGHT, PID_WU_SHORT_FRONT_SIGHT,  PID_WU_HAMMER,              PID_WU_MUZZLE_L         },
+    {PID_PK12_GAUSS_PISTOL,         PID_WU_BARREL_SUPPORT_XS,       PID_WU_RECOIL_SPRINGS,      PID_WU_PRIMARY_COIL,        PID_WU_CONTROL_SYSTEM,   PID_WU_SHORT_FRONT_SIGHT,  PID_WU_HAMMER,              PID_WU_MUZZLE_XS        },
+    {PID_LASER_PISTOL,              PID_WU_FOCUSING_ARRAY_SUPPORT,  PID_WU_RECOIL_SPRINGS,      PID_WU_PRIMARY_COIL,        PID_WU_CONTROL_SYSTEM,   PID_WU_CAPACITOR,          PID_WU_HEAT_VENT,           PID_BOLT_COMPRESSOR     },
+    {PID_MAGNETO_LASER_PISTOL,      PID_WU_FOCUSING_ARRAY_SUPPORT,  PID_WU_RECOIL_SPRINGS,      PID_WU_PRIMARY_COIL,        PID_WU_CONTROL_SYSTEM,   PID_WU_CAPACITOR,          PID_WU_HEAT_VENT,           PID_BOLT_COMPRESSOR     },
+    {PID_PLASMA_PISTOL,             PID_WU_FOCUSING_ARRAY_SUPPORT,  PID_WU_RECOIL_SPRINGS,      PID_WU_PRIMARY_COIL,        PID_WU_CONTROL_SYSTEM,   PID_WU_CAPACITOR,          PID_WU_HEAT_VENT,           PID_BOLT_COMPRESSOR     },
+    {PID_PLASMA_PISTOL_EXT_CART,    PID_WU_FOCUSING_ARRAY_SUPPORT,  PID_WU_RECOIL_SPRINGS,      PID_WU_PRIMARY_COIL,        PID_WU_CONTROL_SYSTEM,   PID_WU_CAPACITOR,          PID_WU_HEAT_VENT,           PID_BOLT_COMPRESSOR     },
+    {PID_YK32_PULSE_PISTOL,         PID_WU_FOCUSING_ARRAY_SUPPORT,  PID_WU_RECOIL_SPRINGS,      PID_WU_PRIMARY_COIL,        PID_WU_CONTROL_SYSTEM,   PID_WU_CAPACITOR,          PID_WU_HEAT_VENT,           PID_BOLT_COMPRESSOR     },
+
+    //  single shot rifles
+    {PID_HUNTING_RIFLE,             PID_WU_BARREL_SUPPORT_S,        PID_WU_STOCK_STRAPS,        PID_WU_BOLT_HANDLE,         PID_WU_LONG_REAR_SIGHT,  PID_WU_LONG_FRONT_SIGHT,   PID_WU_BOLT_HAMMER,         PID_WU_MUZZLE_S         },
+    {PID_SCOPED_HUNTING_RIFLE,      PID_WU_BARREL_SUPPORT_S,        PID_WU_STOCK_STRAPS,        PID_WU_BOLT_HANDLE,         PID_WU_TELESCOPE_LENSES, PID_WU_ANTI_GLARE,         PID_WU_BOLT_HAMMER,         PID_WU_MUZZLE_S         },
+    {PID_SNIPER_RIFLE,              PID_WU_BARREL_SUPPORT_S,        PID_WU_STOCK_STRAPS,        PID_WU_BOLT_HANDLE,         PID_WU_TELESCOPE_LENSES, PID_WU_ANTI_GLARE,         PID_WU_BOLT_HAMMER,         PID_WU_MUZZLE_S         },
+    {PID_LASER_RIFLE,               PID_WU_FOCUSING_ARRAY_SUPPORT,  PID_WU_BUTT_PLATE_STRAPS,   PID_WU_PRIMARY_COIL,        PID_WU_CONTROL_SYSTEM,   PID_WU_CAPACITOR,          PID_WU_HEAT_VENT,           PID_BOLT_COMPRESSOR     },
+    {PID_LASER_RIFLE_EXT_CAP,       PID_WU_FOCUSING_ARRAY_SUPPORT,  PID_WU_BUTT_PLATE_STRAPS,   PID_WU_PRIMARY_COIL,        PID_WU_CONTROL_SYSTEM,   PID_WU_CAPACITOR,          PID_WU_HEAT_VENT,           PID_BOLT_COMPRESSOR     },
+    {PID_PLASMA_RIFLE,              PID_WU_FOCUSING_ARRAY_SUPPORT,  PID_WU_BUTT_PLATE_STRAPS,   PID_WU_PRIMARY_COIL,        PID_WU_CONTROL_SYSTEM,   PID_WU_CAPACITOR,          PID_WU_HEAT_VENT,           PID_BOLT_COMPRESSOR     },
+    {PID_TURBO_PLASMA_RIFLE,        PID_WU_FOCUSING_ARRAY_SUPPORT,  PID_WU_BUTT_PLATE_STRAPS,   PID_WU_PRIMARY_COIL,        PID_WU_CONTROL_SYSTEM,   PID_WU_CAPACITOR,          PID_WU_HEAT_VENT,           PID_BOLT_COMPRESSOR     },
+    {PID_YK42B_PULSE_RIFLE,         PID_WU_FOCUSING_ARRAY_SUPPORT,  PID_WU_BUTT_PLATE_STRAPS,   PID_WU_PRIMARY_COIL,        PID_WU_CONTROL_SYSTEM,   PID_WU_CAPACITOR,          PID_WU_HEAT_VENT,           PID_BOLT_COMPRESSOR     },
+    {PID_M72_GAUSS_RIFLE,           PID_WU_BARREL_SUPPORT_XS,       PID_WU_BUTT_PLATE_STRAPS,   PID_WU_TRIGGER,             PID_WU_LONG_REAR_SIGHT,  PID_WU_LONG_FRONT_SIGHT,   PID_WU_RECEIVER_ASSIST,     PID_WU_MUZZLE_XS        },
+
+    //  SMGs
+    {PID_10MM_SMG,                  PID_WU_BARREL_SUPPORT_M,        PID_WU_BUTT_PLATE_STRAPS,   PID_WU_TRIGGER,             PID_WU_SHORT_REAR_SIGHT, PID_WU_SHORT_FRONT_SIGHT,  PID_WU_RECEIVER_ASSIST,     PID_WU_MUZZLE_M         },
+    {PID_GREASE_GUN,                PID_WU_BARREL_SUPPORT_L,        PID_WU_BUTT_PLATE_STRAPS,   PID_WU_TRIGGER,             PID_WU_SHORT_REAR_SIGHT, PID_WU_SHORT_FRONT_SIGHT,  PID_WU_RECEIVER_ASSIST,     PID_WU_MUZZLE_L         },
+    {PID_HK_P90C,                   PID_WU_BARREL_SUPPORT_M,        PID_WU_BUTT_PLATE_STRAPS,   PID_WU_TRIGGER,             PID_WU_SHORT_REAR_SIGHT, PID_WU_SHORT_FRONT_SIGHT,  PID_WU_RECEIVER_ASSIST,     PID_WU_MUZZLE_M         },
+    {PID_LASER_SMG,                 PID_WU_FOCUSING_ARRAY_SUPPORT,  PID_WU_BUTT_PLATE_STRAPS,   PID_WU_PRIMARY_COIL,        PID_WU_CONTROL_SYSTEM,   PID_WU_CAPACITOR,          PID_WU_HEAT_VENT,           PID_BOLT_COMPRESSOR     },
+
+    //  shotguns
+    {PID_SHOTGUN,                   PID_WU_BARREL_SUPPORT_XL,       PID_WU_STOCK_STRAPS,        PID_WU_ACTION_RECEIVER,     PID_WU_LONG_REAR_SIGHT,  PID_WU_LONG_FRONT_SIGHT,   PID_WU_FIRING_PINS,         PID_WU_MUZZLE_XL        },
+    {PID_SAWED_OFF_SHOTGUN,         PID_WU_BARREL_SUPPORT_XL,       PID_WU_STOCK_STRAPS,        PID_WU_ACTION_RECEIVER,     PID_WU_SHORT_REAR_SIGHT, PID_WU_SHORT_FRONT_SIGHT,  PID_WU_FIRING_PINS,         PID_WU_MUZZLE_XL        },
+    {PID_COMBAT_SHOTGUN,            PID_WU_BARREL_SUPPORT_XL,       PID_WU_STOCK_STRAPS,        PID_WU_ACTION_RECEIVER,     PID_WU_LONG_REAR_SIGHT,  PID_WU_LONG_FRONT_SIGHT,   PID_WU_FIRING_PINS,         PID_WU_MUZZLE_XL        },
+    {PID_HK_CAWS,                   PID_WU_BARREL_SUPPORT_XL,       PID_WU_STOCK_STRAPS,        PID_WU_ACTION_RECEIVER,     PID_WU_LONG_REAR_SIGHT,  PID_WU_LONG_FRONT_SIGHT,   PID_WU_FIRING_PINS,         PID_WU_MUZZLE_XL        },
+    {PID_PANCOR_JACKHAMMER,         PID_WU_BARREL_SUPPORT_XL,       PID_WU_STOCK_STRAPS,        PID_WU_ACTION_RECEIVER,     PID_WU_LONG_REAR_SIGHT,  PID_WU_LONG_FRONT_SIGHT,   PID_WU_FIRING_PINS,         PID_WU_MUZZLE_XL        },
+
+    //  assault rifles
+    {PID_TOMMY_GUN,                 PID_WU_BARREL_SUPPORT_L,        PID_WU_STOCK_STRAPS,        PID_WU_TRIGGER,             PID_WU_LONG_REAR_SIGHT,  PID_WU_LONG_FRONT_SIGHT,   PID_WU_RECEIVER_ASSIST,     PID_WU_MUZZLE_L         },
+    {PID_ASSAULT_RIFLE,             PID_WU_BARREL_SUPPORT_XS,       PID_WU_STOCK_STRAPS,        PID_WU_TRIGGER,             PID_WU_LONG_REAR_SIGHT,  PID_WU_LONG_FRONT_SIGHT,   PID_WU_RECEIVER_ASSIST,     PID_WU_MUZZLE_XS        },
+    {PID_ASSAULT_RIFLE_EXT_MAG,     PID_WU_BARREL_SUPPORT_XS,       PID_WU_STOCK_STRAPS,        PID_WU_TRIGGER,             PID_WU_LONG_REAR_SIGHT,  PID_WU_LONG_FRONT_SIGHT,   PID_WU_RECEIVER_ASSIST,     PID_WU_MUZZLE_XS        },
+    {PID_FN_FAL,                    PID_WU_BARREL_SUPPORT_S,        PID_WU_STOCK_STRAPS,        PID_WU_TRIGGER,             PID_WU_LONG_REAR_SIGHT,  PID_WU_LONG_FRONT_SIGHT,   PID_WU_RECEIVER_ASSIST,     PID_WU_MUZZLE_S         },
+    {PID_FN_FAL_NIGHT_SCOPE,        PID_WU_BARREL_SUPPORT_S,        PID_WU_STOCK_STRAPS,        PID_WU_TRIGGER,             PID_WU_TELESCOPE_LENSES, PID_WU_ANTI_GLARE,         PID_WU_RECEIVER_ASSIST,     PID_WU_MUZZLE_S         },
+    {PID_FN_FAL_HPFA,               PID_WU_BARREL_SUPPORT_S,        PID_WU_STOCK_STRAPS,        PID_WU_TRIGGER,             PID_WU_LONG_REAR_SIGHT,  PID_WU_LONG_FRONT_SIGHT,   PID_WU_RECEIVER_ASSIST,     PID_WU_MUZZLE_S         },
+    {PID_INDEPENDENT,               PID_WU_BARREL_SUPPORT_XS,       PID_WU_STOCK_STRAPS,        PID_WU_TRIGGER,             PID_WU_TELESCOPE_LENSES, PID_WU_ANTI_GLARE,         PID_WU_RECEIVER_ASSIST,     PID_WU_MUZZLE_XS        },
+    {PID_HK_G11,                    PID_WU_BARREL_SUPPORT_XS,       PID_WU_STOCK_STRAPS,        PID_WU_TRIGGER,             PID_WU_TELESCOPE_LENSES, PID_WU_ANTI_GLARE,         PID_WU_RECEIVER_ASSIST,     PID_WU_MUZZLE_XS        },
+    {PID_HK_G11E,                   PID_WU_BARREL_SUPPORT_XS,       PID_WU_STOCK_STRAPS,        PID_WU_TRIGGER,             PID_WU_TELESCOPE_LENSES, PID_WU_ANTI_GLARE,         PID_WU_RECEIVER_ASSIST,     PID_WU_MUZZLE_XS        },
+
+    //  MGs
+    {PID_M60,                       PID_WU_BARREL_SUPPORT_S,        PID_WU_BUTT_PLATE_STRAPS,   PID_WU_TRIGGER,             PID_WU_REAR_SIGHT_BASE,  PID_WU_FRONT_SIGHT_BLADE,  PID_WU_BOLT_LATCH,          PID_WU_MUZZLE_COMPENSATOR   },
+    {PID_LIGHT_SUPPORT_WEAPON,      PID_WU_BARREL_SUPPORT_S,        PID_WU_BUTT_PLATE_STRAPS,   PID_WU_TRIGGER,             PID_WU_REAR_SIGHT_BASE,  PID_WU_FRONT_SIGHT_BLADE,  PID_WU_BOLT_LATCH,          PID_WU_MUZZLE_COMPENSATOR   },
+    {PID_LASER_SUPPORT_WEAPON,      PID_WU_FOCUSING_ARRAY_SUPPORT,  PID_WU_BUTT_PLATE_STRAPS,   PID_WU_PRIMARY_COIL,        PID_WU_CONTROL_SYSTEM,   PID_WU_CAPACITOR,          PID_WU_HEAT_VENT,           PID_BOLT_COMPRESSOR         },
+    {PID_MINIGUN,                   PID_WU_BARREL_CLAMP,            PID_WU_SPADE_GRIP_STRAPS,   PID_WU_FRONT_ROTOR,         PID_WU_BOLT_TRACKS,      PID_WU_BOLT_ASSEMBLIES,    PID_WU_FIRE_CONTROL_UNIT,   PID_WU_FLASH_SUPPRESSOR     },
+    {PID_AVENGER_MINIGUN,           PID_WU_BARREL_CLAMP,            PID_WU_SPADE_GRIP_STRAPS,   PID_WU_FRONT_ROTOR,         PID_WU_BOLT_TRACKS,      PID_WU_BOLT_ASSEMBLIES,    PID_WU_FIRE_CONTROL_UNIT,   PID_WU_FLASH_SUPPRESSOR     },
+    {PID_VINDICATOR_MINIGUN,        PID_WU_BARREL_CLAMP,            PID_WU_SPADE_GRIP_STRAPS,   PID_WU_FRONT_ROTOR,         PID_WU_BOLT_TRACKS,      PID_WU_BOLT_ASSEMBLIES,    PID_WU_FIRE_CONTROL_UNIT,   PID_WU_FLASH_SUPPRESSOR     },
+    {PID_GATLING_LASER,             PID_WU_BARREL_CLAMP,            PID_WU_SPADE_GRIP_STRAPS,   PID_WU_FRONT_ROTOR,         PID_WU_CONTROL_SYSTEM,   PID_WU_CAPACITOR,          PID_WU_HEAT_VENT,           PID_BOLT_COMPRESSOR         },
+    {PID_PLASMA_GATLING,            PID_WU_BARREL_CLAMP,            PID_WU_SPADE_GRIP_STRAPS,   PID_WU_FRONT_ROTOR,         PID_WU_CONTROL_SYSTEM,   PID_WU_CAPACITOR,          PID_WU_HEAT_VENT,           PID_BOLT_COMPRESSOR         },
+    {PID_BOZAR,                     PID_WU_BARREL_SUPPORT_S,        PID_WU_SPADE_GRIP_STRAPS,   PID_WU_TRIGGER,             PID_WU_TELESCOPE_LENSES, PID_WU_ANTI_GLARE,         PID_WU_BOLT_LATCH,          PID_WU_MUZZLE_COMPENSATOR   }
+};
+
+array<array<uint16>> UpgradeTypes = {
+
+    //  Maximum Range (7)
+    {PID_WU_BARREL_SUPPORT_XS,          BONUS_WEAPON_MAX_RANGE},
+    {PID_WU_BARREL_SUPPORT_S,           BONUS_WEAPON_MAX_RANGE},
+    {PID_WU_BARREL_SUPPORT_M,           BONUS_WEAPON_MAX_RANGE},
+    {PID_WU_BARREL_SUPPORT_L,           BONUS_WEAPON_MAX_RANGE},
+    {PID_WU_BARREL_SUPPORT_XL,          BONUS_WEAPON_MAX_RANGE},
+    {PID_WU_BARREL_CLAMP,               BONUS_WEAPON_MAX_RANGE},
+    {PID_WU_FOCUSING_ARRAY_SUPPORT,     BONUS_WEAPON_MAX_RANGE},
+
+    //  Accuracy (4)
+    {PID_WU_RECOIL_SPRINGS,             BONUS_WEAPON_ACCURACY},
+    {PID_WU_BUTT_PLATE_STRAPS,          BONUS_WEAPON_ACCURACY},
+    {PID_WU_STOCK_STRAPS,               BONUS_WEAPON_ACCURACY},
+    {PID_WU_SPADE_GRIP_STRAPS,          BONUS_WEAPON_ACCURACY},
+
+    //  Max Action Points (6)
+    {PID_WU_SMALL_GRIP_STRAPS,          BONUS_WEAPON_MAX_AP},
+    {PID_WU_ACTION_RECEIVER,            BONUS_WEAPON_MAX_AP},
+    {PID_WU_BOLT_HANDLE,                BONUS_WEAPON_MAX_AP},
+    {PID_WU_TRIGGER,                    BONUS_WEAPON_MAX_AP},
+    {PID_WU_FRONT_ROTOR,                BONUS_WEAPON_MAX_AP},
+    {PID_WU_PRIMARY_COIL,               BONUS_WEAPON_MAX_AP},
+
+    //  Critical Chance (6)
+    {PID_WU_SHORT_REAR_SIGHT,           BONUS_WEAPON_CRITICAL_CHANCE},
+    {PID_WU_LONG_REAR_SIGHT,            BONUS_WEAPON_CRITICAL_CHANCE},
+    {PID_WU_TELESCOPE_LENSES,           BONUS_WEAPON_CRITICAL_CHANCE},
+    {PID_WU_REAR_SIGHT_BASE,            BONUS_WEAPON_CRITICAL_CHANCE},
+    {PID_WU_BOLT_TRACKS,                BONUS_WEAPON_CRITICAL_CHANCE},
+    {PID_WU_CONTROL_SYSTEM,             BONUS_WEAPON_CRITICAL_CHANCE},
+
+    //  Critical Power (6)
+    {PID_WU_SHORT_FRONT_SIGHT,          BONUS_WEAPON_CRITICAL_ROLL},
+    {PID_WU_LONG_FRONT_SIGHT,           BONUS_WEAPON_CRITICAL_ROLL},
+    {PID_WU_ANTI_GLARE,                 BONUS_WEAPON_CRITICAL_ROLL},
+    {PID_WU_FRONT_SIGHT_BLADE,          BONUS_WEAPON_CRITICAL_ROLL},
+    {PID_WU_BOLT_ASSEMBLIES,            BONUS_WEAPON_CRITICAL_ROLL},
+    {PID_WU_CAPACITOR,                  BONUS_WEAPON_CRITICAL_ROLL},
+
+    //  Minimum Damage (7)
+    {PID_WU_HAMMER,                     BONUS_WEAPON_MIN_DMG},
+    {PID_WU_FIRING_PINS,                BONUS_WEAPON_MIN_DMG},
+    {PID_WU_BOLT_HAMMER,                BONUS_WEAPON_MIN_DMG},
+    {PID_WU_RECEIVER_ASSIST,            BONUS_WEAPON_MIN_DMG},
+    {PID_WU_BOLT_LATCH,                 BONUS_WEAPON_MIN_DMG},
+    {PID_WU_FIRE_CONTROL_UNIT,          BONUS_WEAPON_MIN_DMG},
+    {PID_WU_HEAT_VENT,                  BONUS_WEAPON_MIN_DMG},
+
+    //  Maximum Damage (7)
+    {PID_WU_MUZZLE_XS,                  BONUS_WEAPON_MAX_DMG},
+    {PID_WU_MUZZLE_S,                   BONUS_WEAPON_MAX_DMG},
+    {PID_WU_MUZZLE_M,                   BONUS_WEAPON_MAX_DMG},
+    {PID_WU_MUZZLE_L,                   BONUS_WEAPON_MAX_DMG},
+    {PID_WU_MUZZLE_XL,                  BONUS_WEAPON_MAX_DMG},
+    {PID_WU_MUZZLE_COMPENSATOR,         BONUS_WEAPON_MAX_DMG},
+    {PID_WU_FLASH_SUPPRESSOR,           BONUS_WEAPON_MAX_DMG},
+    {PID_BOLT_COMPRESSOR,               BONUS_WEAPON_MAX_DMG}
+};
+
+
+uint getWeaponsUpgradeType(uint upgradePid, uint weaponPid) {
+
+    int index = -1;
+    for (uint i = 0; i < WeaponUpgrades.length(); i++) {
+        if (WeaponUpgrades[i][0] == weaponPid) {
+            index = int(i);
+        }
+    }
+    if (index >= 0) {
+        int foundIndex = WeaponUpgrades[index].find(upgradePid);
+        switch (foundIndex) {
+            case 1: return BONUS_WEAPON_MAX_RANGE;
+            case 2: return BONUS_WEAPON_ACCURACY;
+            case 3: return BONUS_WEAPON_MAX_AP;
+            case 4: return BONUS_WEAPON_CRITICAL_CHANCE;
+            case 5: return BONUS_WEAPON_CRITICAL_ROLL;
+            case 6: return BONUS_WEAPON_MIN_DMG;
+            case 7: return BONUS_WEAPON_MAX_DMG;
+        }
+    }
+    return 0;
+}
+
+uint getUpgradeType(uint upgradeWeaponPartPid) {
+    for (uint i = 0; i < UpgradeTypes.length(); i++) {
+        if (UpgradeTypes[i][0] == upgradeWeaponPartPid) {
+            return UpgradeTypes[i][1];
+        }
+    }
+    return 0;
+}
+
+uint getDecraftComponentPid(uint weaponPid, uint bonusType) {
+    int index = -1;
+    for (uint i = 0; i < WeaponUpgrades.length(); i++) {
+        if (WeaponUpgrades[i][0] == weaponPid) {
+            index = int(i);
+        }
+    }
+    if (index >= 0) {
+        switch (bonusType) {
+            case BONUS_WEAPON_MAX_RANGE:        return WeaponUpgrades[index][1];
+            case BONUS_WEAPON_ACCURACY:         return WeaponUpgrades[index][2];
+            case BONUS_WEAPON_MAX_AP:           return WeaponUpgrades[index][3];
+            case BONUS_WEAPON_CRITICAL_CHANCE:  return WeaponUpgrades[index][4];
+            case BONUS_WEAPON_CRITICAL_ROLL:    return WeaponUpgrades[index][5];
+            case BONUS_WEAPON_MIN_DMG:          return WeaponUpgrades[index][6];
+            case BONUS_WEAPON_MAX_DMG:          return WeaponUpgrades[index][7];
+        }
+    }
+    return 0;
+}
 
 //  this part is not shared with client, server only
 
@@ -555,6 +734,61 @@ void AddWeaponBonus(Item@ it, int number, int effectValueRollPercent = 100, bool
     return;
 }
 
+uint UpgradeWeaponWithBonus(Item@ weapon, Item@ upgrade) {
+
+    uint bonusType = getWeaponsUpgradeType(upgrade.GetProtoId(), weapon.GetProtoId());
+
+    //  already has that bonus
+	if (HasBonusAlready(weapon, bonusType)) {
+        return 1;
+	}
+
+	int number = -1;
+    if (weapon.Val0 == 0) {
+        number = 0;
+    } else if (weapon.Val1 == 0) {
+        number = 1;
+    } else if (weapon.Val2 == 0) {
+        number = 2;
+    } else if (weapon.Val3 == 0) {
+        number = 3;
+    } else if (weapon.Val4 == 0) {
+        number = 4;
+    }
+
+    //  no free slots for bonus
+    if (number < 0) {
+        return 2;
+    }
+	int minRoll = 1;
+	int maxRoll = 1;
+    uint roll = getMinMaxRollWeapon(bonusType, minRoll, maxRoll, 100);
+    if (upgrade.Val0 > 0) {
+        roll = CLAMP(upgrade.Val0, minRoll, maxRoll);
+        int percentMin = CLAMP(100 - upgrade.Val1, 25, 75);
+        int percentMax = CLAMP(100 - upgrade.Val2 + 25, 50, 125);
+        int successPercent = Random(percentMin, percentMax);
+        roll = CLAMP(roll * successPercent / 100, minRoll, maxRoll);
+        Log("successPercent = " + successPercent + ", (" + (percentMin) + " - " + (percentMax) + ") FINAL ROLL = " + roll);
+    }
+
+	// Choose which value
+	switch (number) {
+		case 0: { weapon.Val0 = bonusType; weapon.Val5 = roll; break; }
+		case 1: { weapon.Val1 = bonusType; weapon.Val6 = roll; break; }
+		case 2: { weapon.Val2 = bonusType; weapon.Val7 = roll; break; }
+		case 3: { weapon.Val3 = bonusType; weapon.Val8 = roll; break; }
+		case 4: { weapon.Val4 = bonusType; weapon.Val9 = roll; break; }
+		default: break;
+	}
+
+	//Log("Weapon ID: " + weapon.Id + ", PID:" + weapon.GetProtoId() + ", Weapon bonus: " + getWeaponBonusName(bonusType) + ", Value: " + roll + ", Slot number: " + number);
+	//Log("\tWeapon ID: " + weapon.Id + ", PID:" + weapon.GetProtoId() + ", Weapon bonus at slot[" + number + "]: " + getWeaponBonusName(weapon.Val0) + ", Value: " + weapon.Val5);
+	DeleteItem(upgrade);
+	weapon.Update();
+    return 0;
+}
+
 // Checks if given bonus is allowed - used to exclude some bonuses from crafting
 bool IsBonusExcluded(bool isCrafting, int bonusType)
 {
@@ -590,4 +824,81 @@ int checkBonus(Item@ it, int bonusType)
 	return 0;
 }
 
-#endif //__CLIENT
+
+//  BNW: Weapon Upgrade components
+
+void _UpgradeInit(Item& item, bool firstTime) {
+    /*
+    if (firstTime) {
+        Log("Upgrade components: FIRSTIME");
+    } else {
+        Log("Upgrade components.");
+    }*/
+    item.SetEvent(ITEM_EVENT_USE, "_UseUpgradeComponent");
+    //item.SetEvent(ITEM_EVENT_USE_ON_ME, "_UseItemOnUpgradeComponent");
+}
+
+bool _UseUpgradeComponent(Item& component, Critter& player, Critter@ onCritter, Item@ onItem, Scenery@ onScenery) {
+    //Log("Use upgrade component!");
+    if (valid(onCritter) || valid(onItem) || valid(onScenery)) {
+        if (player.GetAccess() > ACCESS_CLIENT) {
+            player.Say(SAY_NETMSG, "Can only be used without target, affecting the weapon in main hand.");
+        }
+        return false;
+    }
+    if (player.GetAccess() > ACCESS_CLIENT) {
+        player.Say(SAY_NETMSG, "Component used: " + component.GetProtoId());
+    }
+
+    Item@ targetWeapon = player.GetItem(0, SLOT_HAND1);
+    if (!valid(targetWeapon)) {
+        player.Say(SAY_NETMSG, "|" + COLOR_DTEXT_CAPTION + " ::Pip-Boy:: |" + COLOR_DYELLOW + " To enhance a weapon with an upgrade component, equip the weapon in the active hand slot.");
+        return true;
+    }
+
+    if (targetWeapon.GetType() != ITEM_TYPE_WEAPON) {
+        player.Say(SAY_NETMSG, "|" + COLOR_DTEXT_CAPTION + " ::Pip-Boy:: |" + COLOR_DYELLOW + " Only weapons can be enhanced with such upgrade components! You must have the weapon in the active hand slot.");
+        return true;
+    }
+
+    uint bonusType = getWeaponsUpgradeType(component.GetProtoId(), targetWeapon.GetProtoId());
+    if (bonusType > 0) {
+        if (HasBonusAlready(targetWeapon, bonusType)) {
+            player.Say(SAY_NETMSG, "|" + COLOR_DTEXT_CAPTION + " ::Pip-Boy:: |" + COLOR_DYELLOW + " Your weapon already has this type of bonus: " + getWeaponBonusName(bonusType));
+        } else {
+            int errorCode = UpgradeWeaponWithBonus(targetWeapon, component);
+            if (errorCode == 0) {
+                player.Say(SAY_NETMSG, "|" + COLOR_DTEXT_CAPTION + " ::Pip-Boy:: |" + COLOR_DTEXT_BONUS + " Your upgraded your weapon with: " + getWeaponBonusName(bonusType));
+            } else {
+                if (errorCode == 2) {
+                    player.Say(SAY_NETMSG, "|" + COLOR_DTEXT_CAPTION + " ::Pip-Boy:: |" + COLOR_DYELLOW + " Your weapon already has the maximum number of bonuses.");
+                } else {
+                    player.Say(SAY_NETMSG, "|" + COLOR_DTEXT_CAPTION + " ::Pip-Boy:: |" + COLOR_DYELLOW + " You failed up upgrade your weapon for an unknown reason with bonus: " + getWeaponBonusName(bonusType));
+                }
+            }
+        }
+    } else {
+        player.Say(SAY_NETMSG, "|" + COLOR_DTEXT_CAPTION + " ::Pip-Boy:: |" + COLOR_DYELLOW + " This upgrade component does not match your weapon. Try a different weapon or different upgrade component. ");
+    }
+
+    player.PlaySound("CARREPAR.ACM", true);
+    return true;
+}
+
+//  not used
+bool _UseItemOnUpgradeComponent(Item& component, Critter& player, Item@ item) {
+    if (!valid(item)) {
+        return false;
+    }
+    if (player.GetAccess() > ACCESS_CLIENT) {
+        player.Say(SAY_NETMSG, "Item used on component: " + item.GetProtoId());
+    }
+    player.PlaySound("GEIGER.ACM", true);
+    return true;
+}
+
+
+
+
+
+#endif //__NO-CLIENT

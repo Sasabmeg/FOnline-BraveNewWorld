@@ -14,6 +14,7 @@ import bool ConsumedBlueprintForPid(Critter& player, uint pid) from "blueprints"
 import void CloneWear(Item& to, Item& from) from "repair";
 import int  GetWearProcent(Item& item) from "repair";
 import void TC_CraftExpReward(Critter& player, int exp) from "town";
+import uint getDecraftComponentPid(uint weaponPid, uint bonusType) from "item_bonus";
 
 /*
    #define FIXBOY_ALLOW_CRAFT         (0x0001)
@@ -657,7 +658,7 @@ bool ReverseItemCrafted(Critter& cr, Item& item, bool isMassScience)
     bool receipContainMetalAlloyOrTwoJunks = false;
     bool addedJunk = false;
     int receipJunkCount = 0;
-
+    bool containsWeaponOrArmor = false;
     for (uint i = 0, j = craft.GetNeedItems(items, counts, ors); i < j; i++) {
         ProtoItem@ proto = GetProtoItem(items[i]);
         if (proto.ProtoId == PID_JUNK) {
@@ -667,6 +668,9 @@ bool ReverseItemCrafted(Critter& cr, Item& item, bool isMassScience)
             receipContainMetalAlloyOrTwoJunks = true;
         }
         bool force = proto.Type == ITEM_TYPE_WEAPON || proto.Type == ITEM_TYPE_ARMOR;
+        if (force) {
+            containsWeaponOrArmor = true;
+        }
         for (uint j = 0; j < counts[i] * scienceTimes; j++) {
             if (force || Random(1, 1000) < factor) {
                 Item@ addedItem = cr.AddItem(items[i], 1);
@@ -687,6 +691,81 @@ bool ReverseItemCrafted(Critter& cr, Item& item, bool isMassScience)
     if (!added && receipContainMetalAlloyOrTwoJunks) {
         cr.AddItem(PID_JUNK, 1);
         addedJunk = true;
+    }
+    //  BNW: Weapon Upgrade Components
+    if (!containsWeaponOrArmor && item.GetType() == ITEM_TYPE_WEAPON) {
+        uint weaponUpgradePid;
+        Item@ weaponUpgrade;
+        if (item.Val0 > 0) {
+            uint chanceToGetComponent = CLAMP(33 + (cr.Param[SK_REPAIR] / 10) + (cr.Param[PE_DISMANTLER] > 0 ? 14 : 0), 30, 60);
+            if (cr.GetAccess() > ACCESS_CLIENT) {
+                cr.Say(SAY_NETMSG, "Chance to get upgrade component: " + chanceToGetComponent + "%");
+            }
+            weaponUpgradePid = getDecraftComponentPid(item.GetProtoId(), item.Val0);
+            if (weaponUpgradePid > 0 && Random(0, 99) < chanceToGetComponent) {
+                @weaponUpgrade = cr.AddItem(weaponUpgradePid, 1);
+                weaponUpgrade.Val0 = item.Val5;
+                weaponUpgrade.Val1 = item.Deterioration;
+                weaponUpgrade.Val2 = item.BrokenCount;
+                weaponUpgrade.Update();
+                if (cr.GetAccess() > ACCESS_CLIENT) {
+                    cr.Say(SAY_NETMSG, "Receiving upgrade component: " + weaponUpgradePid + ", Val0: " + weaponUpgrade.Val0 + ", Val1: " + weaponUpgrade.Val1);
+                }
+
+            }
+            if (item.Val1 > 0 && Random(0, 99) < chanceToGetComponent) {
+                weaponUpgradePid = getDecraftComponentPid(item.GetProtoId(), item.Val1);
+                if (weaponUpgradePid > 0) {
+                    @weaponUpgrade = cr.AddItem(weaponUpgradePid, 1);
+                    weaponUpgrade.Val0 = item.Val6;
+                    weaponUpgrade.Val1 = item.Deterioration;
+                    weaponUpgrade.Val2 = item.BrokenCount;
+                    weaponUpgrade.Update();
+                    if (cr.GetAccess() > ACCESS_CLIENT) {
+                        cr.Say(SAY_NETMSG, "Receiving upgrade component: " + weaponUpgradePid + ", Val0: " + weaponUpgrade.Val0 + ", Val1: " + weaponUpgrade.Val1);
+                    }
+                }
+            }
+            if (item.Val2 > 0 && Random(0, 99) < chanceToGetComponent) {
+                weaponUpgradePid = getDecraftComponentPid(item.GetProtoId(), item.Val2);
+                if (weaponUpgradePid > 0) {
+                    @weaponUpgrade = cr.AddItem(weaponUpgradePid, 1);
+                    weaponUpgrade.Val0 = item.Val7;
+                    weaponUpgrade.Val1 = item.Deterioration;
+                    weaponUpgrade.Val2 = item.BrokenCount;
+                    weaponUpgrade.Update();
+                    if (cr.GetAccess() > ACCESS_CLIENT) {
+                        cr.Say(SAY_NETMSG, "Receiving upgrade component: " + weaponUpgradePid + ", Val0: " + weaponUpgrade.Val0 + ", Val1: " + weaponUpgrade.Val1);
+                    }
+                }
+            }
+            if (item.Val3 > 0 && Random(0, 99) < chanceToGetComponent) {
+                weaponUpgradePid = getDecraftComponentPid(item.GetProtoId(), item.Val3);
+                if (weaponUpgradePid > 0) {
+                    @weaponUpgrade = cr.AddItem(weaponUpgradePid, 1);
+                    weaponUpgrade.Val0 = item.Val8;
+                    weaponUpgrade.Val1 = item.Deterioration;
+                    weaponUpgrade.Val2 = item.BrokenCount;
+                    weaponUpgrade.Update();
+                    if (cr.GetAccess() > ACCESS_CLIENT) {
+                        cr.Say(SAY_NETMSG, "Receiving upgrade component: " + weaponUpgradePid + ", Val0: " + weaponUpgrade.Val0 + ", Val1: " + weaponUpgrade.Val1);
+                    }
+                }
+            }
+            if (item.Val4 > 0 && Random(0, 99) < chanceToGetComponent) {
+                weaponUpgradePid = getDecraftComponentPid(item.GetProtoId(), item.Val4);
+                if (weaponUpgradePid > 0) {
+                    @weaponUpgrade = cr.AddItem(weaponUpgradePid, 1);
+                    weaponUpgrade.Val0 = item.Val9;
+                    weaponUpgrade.Val1 = item.Deterioration;
+                    weaponUpgrade.Val2 = item.BrokenCount;
+                    weaponUpgrade.Update();
+                    if (cr.GetAccess() > ACCESS_CLIENT) {
+                        cr.Say(SAY_NETMSG, "Receiving upgrade component: " + weaponUpgradePid + ", Val0: " + weaponUpgrade.Val0 + ", Val1: " + weaponUpgrade.Val1);
+                    }
+                }
+            }
+        }
     }
 
     string type = "something";

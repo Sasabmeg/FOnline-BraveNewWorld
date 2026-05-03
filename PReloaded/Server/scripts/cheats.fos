@@ -6350,24 +6350,57 @@ void ExecRespawnCommand(array<string@>@ command, Critter@ player, Critter@ targe
 
 void ExecRepairCommand(array<string@>@ command, Critter@ player, Critter@ target) {
     player.Say(SAY_NETMSG, "Repairing equipped items!");
+    int wear = 0;
+    string[] swear = { "-w", "-wear" };
+    if (StrToInt(GetParameterString(command, swear), wear)) {
+        wear = CLAMP(wear, 0, 100);
+        player.Say(SAY_NETMSG, "Changing wear to: " + wear + "%");
+    }
+    int maxWear = 0;
+    string[] smaxWear = { "-m", "-max" };
+    if (StrToInt(GetParameterString(command, smaxWear), maxWear)) {
+        maxWear = CLAMP(maxWear, 0, 100);
+        player.Say(SAY_NETMSG, "Changing max wear to: " + maxWear);
+    }
+
     Item@ head = _CritGetItemHead(player);
     if (valid(head)) {
-        SetWear(head, 0);
+        if (wear == 0) {
+            SetWear(head, 0);
+        } else {
+            SetWear(head, wear);
+            head.BrokenCount = CLAMP(maxWear, 0, 100);
+        }
         head.Update();
     }
     Item@ armor = _CritGetItemArmor(player);
     if (valid(armor)) {
-        SetWear(armor, 0);
+        if (wear == 0) {
+            SetWear(armor, 0);
+        } else {
+            SetWear(armor, wear);
+            armor.BrokenCount = CLAMP(maxWear, 0, 100);
+        }
         armor.Update();
     }
     Item@ hand1 = _CritGetItemHand(player);
     if (valid(hand1)) {
-        SetWear(hand1, 0);
+        if (wear == 0) {
+            SetWear(hand1, 0);
+        } else {
+            SetWear(hand1, wear);
+            hand1.BrokenCount = CLAMP(maxWear, 0, 100);
+        }
         hand1.Update();
     }
     Item@ hand2 = _CritGetItemHandExt(player);
     if (valid(hand2)) {
-        SetWear(hand2, 0);
+        if (wear == 0) {
+            SetWear(hand2, 0);
+        } else {
+            SetWear(hand2, wear);
+            hand2.BrokenCount = CLAMP(maxWear, 0, 100);
+        }
         hand2.Update();
     }
 }

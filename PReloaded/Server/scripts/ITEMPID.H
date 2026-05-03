@@ -1391,6 +1391,74 @@
 #define PID_DYN_ENV_BRICK_WALL_SE_GOOD_1        (28211)
 #define PID_DYN_ENV_BRICK_WALL_SE_HOLE_1        (28212)
 
+/******************************************************************
+***************     New Weapons and Armors (29)     ***************
+******************************************************************/
+
+#define PID_WS_M350_LEGEND                      (29001)
+
+/******************************************************************
+***************    Weapon Upgrade Components (30)   ***************
+******************************************************************/
+
+//  Maximum Range -> 29100, 29101, 29102, 29103, 29104, 29105, 29106
+#define PID_WU_BARREL_SUPPORT_XS                (29100)
+#define PID_WU_BARREL_SUPPORT_S                 (29101)
+#define PID_WU_BARREL_SUPPORT_M                 (29102)
+#define PID_WU_BARREL_SUPPORT_L                 (29103)
+#define PID_WU_BARREL_SUPPORT_XL                (29104)
+#define PID_WU_BARREL_CLAMP                     (29105)
+#define PID_WU_FOCUSING_ARRAY_SUPPORT           (29106)
+
+//  Accuracy -> 29110, 29111, 29111, 29113
+#define PID_WU_RECOIL_SPRINGS                   (29110)
+#define PID_WU_STOCK_STRAPS                     (29111)
+#define PID_WU_BUTT_PLATE_STRAPS                (29112)
+#define PID_WU_SPADE_GRIP_STRAPS                (29113)
+
+//  Max Action Points -> 29120, 29121, 29121, 29123, 29124, 29125
+#define PID_WU_SMALL_GRIP_STRAPS                (29120)
+#define PID_WU_ACTION_RECEIVER                  (29121)
+#define PID_WU_BOLT_HANDLE                      (29122)
+#define PID_WU_TRIGGER                          (29123)
+#define PID_WU_FRONT_ROTOR                      (29124)
+#define PID_WU_PRIMARY_COIL                     (29125)
+
+//  Critical Chance -> 29130, 29131, 29131, 29133, 29134, 29135
+#define PID_WU_SHORT_REAR_SIGHT                 (29130)
+#define PID_WU_LONG_REAR_SIGHT                  (29131)
+#define PID_WU_TELESCOPE_LENSES                 (29132)
+#define PID_WU_REAR_SIGHT_BASE                  (29133)
+#define PID_WU_BOLT_TRACKS                      (29134)
+#define PID_WU_CONTROL_SYSTEM                   (29135)
+
+//  Critical Power -> 29140, 29141, 29141, 29143, 29144, 29145
+#define PID_WU_SHORT_FRONT_SIGHT                (29140)
+#define PID_WU_LONG_FRONT_SIGHT                 (29141)
+#define PID_WU_ANTI_GLARE                       (29142)
+#define PID_WU_FRONT_SIGHT_BLADE                (29143)
+#define PID_WU_BOLT_ASSEMBLIES                  (29144)
+#define PID_WU_CAPACITOR                        (29145)
+
+//  Minimum Damage -> 29150, 29151, 29152, 29153, 29154, 29155, 29156
+#define PID_WU_HAMMER                           (29150)
+#define PID_WU_FIRING_PINS                      (29151)
+#define PID_WU_BOLT_HAMMER                      (29152)
+#define PID_WU_RECEIVER_ASSIST                  (29153)
+#define PID_WU_BOLT_LATCH                       (29154)
+#define PID_WU_FIRE_CONTROL_UNIT                (29155)
+#define PID_WU_HEAT_VENT                        (29156)
+
+//  Maximum Damage -> 29160, 29161, 29162, 29163, 29164, 29165, 29166
+#define PID_WU_MUZZLE_XS                        (29160)
+#define PID_WU_MUZZLE_S                         (29161)
+#define PID_WU_MUZZLE_M                         (29162)
+#define PID_WU_MUZZLE_L                         (29163)
+#define PID_WU_MUZZLE_XL                        (29164)
+#define PID_WU_MUZZLE_COMPENSATOR               (29165)
+#define PID_WU_FLASH_SUPPRESSOR                 (29166)
+#define PID_BOLT_COMPRESSOR                     (29167)
+
 
 /*
 PID_BONES

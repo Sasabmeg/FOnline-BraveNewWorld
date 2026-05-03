@@ -7674,6 +7674,11 @@ a58ew64v}
 {1101300}{}{Random Blueprints ammo (low)}
 {1101400}{}{Random Blueprints ammo (medium)}
 {1101500}{}{Random Blueprints ammo (high)}
+
+#====================
+# 11355 to 11405 are tiles! next proto can start at 11406!
+#====================
+
 {2000000}{}{PID_DYNAMIC_NONE}
 {2000100}{}{PID_DYNAMIC_ARMOR}
 {2000200}{}{PID_DYNAMIC_DRUG}
@@ -9892,7 +9897,113 @@ a58ew64v}
 {2821200}{}{Brick wall hole}
 {2821201}{}{Looks like someone or something tore a hole in this brick wall.}
 
-#====================
-# 11355 to 11405 are tiles! next proto can start at 11406!
-#====================
+#===========================================================#
+#   New Weapons: 29001 - 29099                              #
+#===========================================================#
 
+{2900100}{}{SW M350 Legend}
+{2900101}{}{An ancient looking Smith & Wesson Model 350 Legend X-Frame. Modified during the war to shoot military rounds. It's a legendary piece that got a reputation of ending mole rats in one shot, even though the Legend carved on the barrel is pre-war design.}
+
+#===========================================================#
+#   Weapon upgrade components: 29100 - 29179                #
+#===========================================================#
+
+#   Maximum Range upgrades/components
+{2910000}{}{Barrel Support (XS)}
+{2910001}{}{Barrel support for miniature-bore barrels. It can increase the maximum range of Handguns, SMGs, Rifles and Assault Rifles. Compatible ammo calibers: BB's, 5mm, 2, EC and 4.7mm Caseless.}
+{2910100}{}{Barrel Support (S)}
+{2910101}{}{Barrel support for small-bore barrels. It can increase the maximum range of Handguns, SMGs, Rifles, Assault Rifles and even Machine Guns. Compatible ammo calibers: .223 FMJ, 7.62mm.}
+{2910200}{}{Barrel Support (M)}
+{2910201}{}{Barrel support for medium-bore barrels. It can increase the maximum range of Handguns and SMGs. Compatible ammo calibers: 9mm and 10mm.}
+{2910300}{}{Barrel Support (L)}
+{2910301}{}{Barrel support for large-bore barrels. It can increase the maximum range of Handguns, SMGs, Rifles, Assault Rifles and Shotguns. Compatible ammo calibers: .44 Magnum, .45 cal and 14mm.}
+{2910400}{}{Barrel Support (XL)}
+{2910401}{}{Barrel support for extra large-bore barrels. It can increase the maximum range of Shotguns. Compatible ammo calibers: 12ga. Shotgun Shells.}
+{2910500}{}{Barrel Clamp}
+{2910501}{}{Barrel Clamp for weapons with rotating barrels. It can increase the maximum range of Miniguns, Gatling Lasers and Gatling Plasma Weapons.}
+{2910600}{}{Focusing Array Support}
+{2910601}{}{Focusing Array Support for most energy based weapons. It can increase the maximum range of Laser Pistols, Plasma Pistols, Pulse Pistols, Laser Rifles, Plasma Rifles, Pulse Rifles, Laser SMGs and Laser Support Weapons.}
+
+#   Accuracy upgrades/components
+{2911000}{}{Recoil Springs}
+{2911001}{}{Recoil Springs for most Handguns. It can increase the accuracy of Handguns, Laser Pistols, Plasma Pistols and Pulse Pistols.}
+{2911100}{}{Stock Straps}
+{2911101}{}{Stock Straps. It can increase the accuracy of Rifles, Assault Rifles.}
+{2911200}{}{Butt Plate Straps}
+{2911201}{}{Butt Plate Straps. It can increase the accuracy of SMGs, MGs, and Energy Rifles.}
+{2911300}{}{Spade Grip Straps}
+{2911301}{}{Spade Grip Straps is specific to Minigun like weapons. It can increase the accuracy of Miniguns and Gatling Energy Weapons.}
+
+#   Max Action Points upgrades/components
+{2912000}{}{Small Grip Straps}
+{2912001}{}{Small Grip Straps for most Handguns. It can increase the maximum Action Points when using a Handgun, both normal and energy based.}
+{2912100}{}{Action Receiver}
+{2912101}{}{Action Receivers are a common part of most Shotguns. It can increase the maximum Action Points when using any Shotgun.}
+{2912200}{}{Bolt Handle}
+{2912201}{}{Bolt Handle for single shot or bolt action rifles. It can increase the maximum Action Points when using a Hunting Rifle or a Scoped Rifle.}
+{2912300}{}{Trigger}
+{2912301}{}{Trigger for automatic weapons. It can increase the maximum Action Points when using a SMG, Assault Rifle or Machine Gun. }
+{2912400}{}{Front Rotor}
+{2912401}{}{Front Rotor is a specific part of weapons with a rotating barrel. It can increase the maximum Action Points when using a Minigun or a Gatling Energy Weapon.}
+{2912500}{}{Primary Coil}
+{2912501}{}{Primary Coil is a common part of Energy Weapons. It can increase the maximum Action Points when using Energy Pistols or Energy Rifles.}
+
+#   Critical Chance upgrades/components
+{2913000}{}{Short Rear Sight}
+{2913001}{}{Short Rear Sight for short barrel weapons. It can increase the Critical Chance of any Handgun or SMG.}
+{2913100}{}{Long Rear Sight}
+{2913101}{}{Long Rear Sight for long barrel weapons. It can increase the Critical Chance of any non-scoped Rifle or Assault Rifle.}
+{2913200}{}{Telescopes}
+{2913201}{}{Telescopes for long range weapons with scope. It can increase the Critical Chance of any Sniper Rifle or Scoped Hunting Rifle.}
+{2913300}{}{Rear Sight Base}
+{2913301}{}{Rear Sight Base is a specific part of a Machine Gun. It can increase the Critical Chance of any Machine Gun.}
+{2913400}{}{Bolt Tracks}
+{2913401}{}{Bolt Tracks is a specific part of Miniguns. It can increase the Critical Chance of any Minigun.}
+{2913500}{}{Control System}
+{2913501}{}{Control System is a common part of Energy Weapons. It can increase the Critical Chance of any Laser, Plasma or Pulse ranged weapon.}
+
+#   Critical Power upgrades/components
+{2914000}{}{Short Front Sight}
+{2914001}{}{Short Front Sight for short barrel weapons. It can increase the Critical Power of any Handgun or SMG.}
+{2914100}{}{Long Front Sight}
+{2914101}{}{Long Front Sight for long barrel weapons. It can increase the Critical Power of any non-scoped Rifle or Assault Rifle.}
+{2914200}{}{Anti-glare}
+{2914201}{}{Anti-glare for scoped weapons. It can increase the Critical Power of any Sniper Rifle or Scoped Hunting Rifle.}
+{2914300}{}{Front Sight Blade}
+{2914301}{}{Front Sight Blade is a specific part of a Machine Gun. It can increase the Critical Power of any Machine Gun.}
+{2914400}{}{Bolt Assemblies}
+{2914401}{}{Bolt Assemblies is a specific part of Miniguns. It can increase the Critical Power of any Minigun.}
+{2914500}{}{Capacitor}
+{2914501}{}{Capacitor is a common part of Energy Weapons. It can increase the Critical Power of any Laser, Plasma or Pulse ranged weapon.}
+
+#   Minimum Damage upgrades/components
+{2915000}{}{Hammer}
+{2915001}{}{Hammer is a common part of most Handguns. It can increase the Minimum Damage of any Handgun.}
+{2915100}{}{Firing Pins}
+{2915101}{}{Firing Pins are a common part of most Shotguns. It can increase the Minimum Damage of any Shotgun.}
+{2915200}{}{Bolt Handle}
+{2915201}{}{Bolt Handle for Bolt Action Rifles. It can increase the Minimum Damage of any single-shot Rifle.}
+{2915300}{}{Receiver Assist}
+{2915301}{}{Receiver Assists are most commonly found in SMGs or Assault Rifles. It can increase the Minimum Damage of any SMGs or Assault Rifle.}
+{2915400}{}{Bolt Latch}
+{2915401}{}{Bolt Latch is a common part of a Machine Gun. It can increase the Minimum Damage of any Machine Gun.}
+{2915500}{}{Fire Control Unit}
+{2915501}{}{Fire Control Units are specific parts of Miniguns. It can increase the Minimum Damage of any Minigun.}
+{2915600}{}{Heat Vent}
+{2915601}{}{Heat Vents are a common part of Energy Weapons. It can increase the Minimum Damage of any Laser, Plasma or Pulse ranged weapon.}
+
+#   Maximum Damage upgrades/components
+{2916000}{}{Muzzle (XS)}
+{2916001}{}{Muzzle for miniature-bore barrels. It can increase the Maximum Damage of Handguns, SMGs, Rifles and Assault Rifles. Compatible ammo calibers: BB's, 5mm, 2, EC and 4.7mm Caseless.}
+{2916100}{}{Muzzle (S)}
+{2916101}{}{Muzzle for small-bore barrels. It can increase the Maximum Damage of Handguns, SMGs, Rifles, Assault Rifles and even Machine Guns. Compatible ammo calibers: .223 FMJ, 7.62mm.}
+{2916200}{}{Muzzle (M)}
+{2916201}{}{Muzzle for medium-bore barrels. It can increase the Maximum Damage of Handguns and SMGs. Compatible ammo calibers: 9mm and 10mm.}
+{2916300}{}{Muzzle (L)}
+{2916301}{}{Muzzle for large-bore barrels. It can increase the Maximum Damage of Handguns, SMGs, Rifles, Assault Rifles and Shotguns. Compatible ammo calibers: .44 Magnum, .45 cal and 14mm.}
+{2916400}{}{Muzzle (XL)}
+{2916401}{}{Muzzle for extra large-bore barrels. It can increase the Maximum Damage of Shotguns. Compatible ammo calibers: 12ga. Shotgun Shells.}
+{2916500}{}{Muzzle Compensator}
+{2916501}{}{Muzzle Compensators are a specific part of Machine Guns. It can increase the Maximum Damage of any Machine Gun.}
+{2916600}{}{Flash Suppressor}
+{2916601}{}{Flash Suppressor is a common part of Energy Weapons. It can increase the Maximum Damage of any Laser, Plasma or Pulse ranged weapon.}
