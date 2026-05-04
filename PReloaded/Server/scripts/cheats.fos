@@ -88,6 +88,8 @@ import int             stringReplaceText(string& s, string@ f, string@ t) from "
 import array<Critter@> WorldmapGetPlayers(uint zx, uint zy) from "worldmap_players";
 import int             WorldmapGetTotalValue() from "worldmap";
 import void            GainSkillXp(Critter& cr, uint skillNum, int xp) from "skills";
+import void            AddBonuses(Item@ item, string@ crafter, int qualityRollBonus, int minQuality, int maxQuality, int effectValueRollPercent) from "item_bonus";
+
 
 
 #define _SetSpawner                      \
@@ -1088,6 +1090,12 @@ void ExecGiveCommand(array<string@>@ command, Critter@ player, Critter@ target)
         string[] strapValue = { "-tv", "-trapValue" };
         if (StrToInt(GetParameterString(command, strapValue), val)) {
             item.set_TrapValue(val);
+            item.Update();
+            player.Say(SAY_NETMSG, "Changed Trap Value to: " + item.get_TrapValue());
+        }
+        string[] sRandomCraft = { "-rc", "-RandomCraft" };
+        if (StrToInt(GetParameterString(command, sRandomCraft), val)) {
+            AddBonuses(item, "GM TEST", 0, CLAMP(val, 0, 5), CLAMP(val, 0, 5), 100);
             item.Update();
             player.Say(SAY_NETMSG, "Changed Trap Value to: " + item.get_TrapValue());
         }

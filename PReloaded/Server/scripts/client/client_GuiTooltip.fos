@@ -24,6 +24,9 @@
 #include "client_buffs_h.fos"
 
 import string showItemBonus(ItemCl& it, int type, int value) from "client_interface";
+import string showWeaponUpgradeBonus(int type, int value) from "client_interface";
+import uint getUpgradeType(uint upgradeWeaponPartPid) from "item_bonus";
+
 import bool IsDetectHiddenWeapon(ItemMutual& item) from "hexThrow";
 
 /*
@@ -1328,9 +1331,9 @@ class CTooltips {
         tooltipsValue.insertLast("\t\t\t" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_NAME(TRAIT_GIFTED)) + "\n\n" + GetMsgStr(TEXTMSG_GAME, STR_PARAM_DESC(TRAIT_GIFTED)) + pipText);
         tooltipsValueExt.insertLast(pipReference
                                      + notes
-                                     + "\n\u2022 +1 bonus to all S.P.E.C.I.A.L. stats."
+                                     + "\n\u2022 +1 bonus to ST, PE, EN and AG."
                                      + "\n\u2022 20% skill check penalty for combat calculations."
-                                     + "\n\t\u2022 ex: 200 Small Guns skill looses 20% and becomes 160 Small Guns skill when determining hit chance."
+                                     + "\n\t\u2022 ex: 200 Small Guns skill looses 20% and is counted 160 Small Guns skill when determining hit chance."
                                      + "\n\u2022 Cannot take other traits.");
 
         tooltipsKey.insertLast(TRAIT_LONER);
@@ -2677,14 +2680,52 @@ void SetInventoryDetailText(ItemCl& item) {
             text += "\n\t";
         }
 
-        // Show bonuses
-        if (item.Val0 != 0) {
-            text += "\n";
-            text += showItemBonus(item, item.Val0, item.Val5);
-            text += showItemBonus(item, item.Val1, item.Val6);
-            text += showItemBonus(item, item.Val2, item.Val7);
-            text += showItemBonus(item, item.Val3, item.Val8);
-            text += showItemBonus(item, item.Val4, item.Val9);
+        //  weapon upgrades bonuses
+        if (item.GetProtoId() >= PID_WU_BARREL_SUPPORT_XS && item.GetProtoId() <= PID_WU_BARREL_SUPPORT_XS + 100) {
+            if (item.Val0 != 0) {
+                text += "\n";
+                text += showWeaponUpgradeBonus(getUpgradeType(item.GetProtoId()), item.Val0);
+                int deterCurrent = 100 - item.Val1 * 100 / MAX_DETERIORATION;
+                int deterMax = 100 - item.Val2;
+                int percentMin = CLAMP(deterCurrent, 25, 75);
+                int percentMax = CLAMP(deterMax + 25, 50, 125);
+
+                string currentColor = "";
+                if (deterCurrent > 75) {
+                    currentColor = " |" + COLOR_LGREEN;
+                } else if (deterCurrent > 50) {
+                    currentColor = " |" + COLOR_YELLOW;
+                } else if (deterCurrent > 25) {
+                    currentColor = " |" + COLOR_ORANGE;
+                } else {
+                    currentColor = " |" + COLOR_DORANGE;
+                }
+                currentColor += " " + percentMin;
+                string maxColor = "";
+                if (deterMax > 75) {
+                    maxColor = "|" + COLOR_LGREEN;
+                } else if (deterMax > 50) {
+                    maxColor = "|" + COLOR_YELLOW;
+                } else if (deterMax > 25) {
+                    maxColor = "|" + COLOR_ORANGE;
+                } else {
+                    maxColor = "|" + COLOR_DORANGE;
+                }
+                maxColor += " " + percentMax;
+                string defaultColor = "|" + COLOR_LGREEN + " ";
+                text += "\nUpgrade success chance: " + currentColor + "% - " + maxColor + "%" + defaultColor;
+                text += "\n";
+            }
+        } else {
+            // Show bonuses
+            if (item.Val0 != 0) {
+                text += "\n";
+                text += showItemBonus(item, item.Val0, item.Val5);
+                text += showItemBonus(item, item.Val1, item.Val6);
+                text += showItemBonus(item, item.Val2, item.Val7);
+                text += showItemBonus(item, item.Val3, item.Val8);
+                text += showItemBonus(item, item.Val4, item.Val9);
+            }
         }
 
         //Achievement book levels
