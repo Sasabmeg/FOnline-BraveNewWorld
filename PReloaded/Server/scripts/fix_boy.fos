@@ -757,7 +757,7 @@ bool decraftUpgradeComponents(Critter& cr, Item& item) {
         uint weaponUpgradePid;
         Item@ weaponUpgrade;
         if (item.Val0 > 0) {
-            int chanceToGetComponent = CLAMP(33 + (cr.Param[SK_REPAIR] / 10) + (cr.Param[PE_DISMANTLER] > 0 ? 14 : 0), 30, 60);
+            int chanceToGetComponent = CLAMP(33 + (cr.Param[SK_REPAIR] / 10) + (cr.Param[PE_DISMANTLER] > 0 ? 14 : 0), 30, 67);
             if (cr.GetAccess() > ACCESS_CLIENT) {
                 //chanceToGetComponent = 100;
                 cr.Say(SAY_NETMSG, "Chance to get upgrade component: " + chanceToGetComponent + "%");
