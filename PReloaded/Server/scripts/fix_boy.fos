@@ -754,15 +754,12 @@ bool ReverseItemCrafted(Critter& cr, Item& item, bool isMassScience)
 bool decraftUpgradeComponents(Critter& cr, Item& item) {
 
     if (item.GetType() == ITEM_TYPE_WEAPON) {
-        if (cr.GetAccess() > ACCESS_CLIENT) {
-            cr.Say(SAY_NETMSG, "DDD");
-        }
         uint weaponUpgradePid;
         Item@ weaponUpgrade;
         if (item.Val0 > 0) {
             int chanceToGetComponent = CLAMP(33 + (cr.Param[SK_REPAIR] / 10) + (cr.Param[PE_DISMANTLER] > 0 ? 14 : 0), 30, 60);
             if (cr.GetAccess() > ACCESS_CLIENT) {
-                chanceToGetComponent = 100;
+                //chanceToGetComponent = 100;
                 cr.Say(SAY_NETMSG, "Chance to get upgrade component: " + chanceToGetComponent + "%");
                 cr.Say(SAY_NETMSG, "Item bonuses: \n\tval0 = " + item.Val0 + ", val5 = " + item.Val5
                                                + "\n\tval1 = " + item.Val1 + ", val6 = " + item.Val6
