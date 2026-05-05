@@ -734,7 +734,7 @@ void AddWeaponBonus(Item@ it, int number, int effectValueRollPercent = 100, bool
     return;
 }
 
-uint UpgradeWeaponWithBonus(Item@ weapon, Item@ upgrade) {
+uint UpgradeWeaponWithBonus(Critter& player, Item@ weapon, Item@ upgrade, int& oldValue, int& newValue) {
 
     uint bonusType = getWeaponsUpgradeType(upgrade.GetProtoId(), weapon.GetProtoId());
 
@@ -768,8 +768,13 @@ uint UpgradeWeaponWithBonus(Item@ weapon, Item@ upgrade) {
         int percentMin = CLAMP(100 - upgrade.Val1, 25, 75);
         int percentMax = CLAMP(100 - upgrade.Val2 + 25, 50, 125);
         int successPercent = Random(percentMin, percentMax);
+        oldValue = roll;
         roll = CLAMP(roll * successPercent / 100, minRoll, maxRoll);
-        Log("successPercent = " + successPercent + ", (" + (percentMin) + " - " + (percentMax) + ") FINAL ROLL = " + roll);
+        newValue = roll;
+        if (player.GetAccess() > ACCESS_CLIENT) {
+            Log("successPercent = " + successPercent + ", (" + (percentMin) + " - " + (percentMax) + "), oldValue = " + oldValue + "    FINAL VALUE = " + roll);
+            player.Say(SAY_NETMSG, "successPercent = " + successPercent + ", (" + (percentMin) + " - " + (percentMax) + "), oldValue = " + oldValue + "    FINAL VALUE = " + roll);
+        }
     }
 
 	// Choose which value
@@ -866,9 +871,17 @@ bool _UseUpgradeComponent(Item& component, Critter& player, Critter@ onCritter, 
         if (HasBonusAlready(targetWeapon, bonusType)) {
             player.Say(SAY_NETMSG, "|" + COLOR_DTEXT_CAPTION + " ::Pip-Boy:: |" + COLOR_DYELLOW + " Your weapon already has this type of bonus: " + getWeaponBonusName(bonusType));
         } else {
-            int errorCode = UpgradeWeaponWithBonus(targetWeapon, component);
+            int oldValue = 0;
+            int newValue = 0;
+            int errorCode = UpgradeWeaponWithBonus(player, targetWeapon, component, oldValue, newValue);
             if (errorCode == 0) {
-                player.Say(SAY_NETMSG, "|" + COLOR_DTEXT_CAPTION + " ::Pip-Boy:: |" + COLOR_DTEXT_BONUS + " Your upgraded your weapon with: " + getWeaponBonusName(bonusType));
+                if (newValue == oldValue) {
+                    player.Say(SAY_NETMSG, "|" + COLOR_DTEXT_CAPTION + " ::Pip-Boy:: |" + COLOR_DTEXT_BONUS + " The upgrade went without any issues and you upgraded your weapon with " + getWeaponBonusName(bonusType) + " bonus.");
+                } else if (newValue > oldValue) {
+                    player.Say(SAY_NETMSG, "|" + COLOR_DTEXT_CAPTION + " ::Pip-Boy:: |" + COLOR_DTEXT_BONUS + " The upgrade went smoother than expected and you upgraded your weapon with " + getWeaponBonusName(bonusType) + " bonus.");
+                } else {
+                    player.Say(SAY_NETMSG, "|" + COLOR_DTEXT_CAPTION + " ::Pip-Boy:: |" + COLOR_DTEXT_BONUS + " The upgrade went worse than usual but you were able to upgrade your weapon with " + getWeaponBonusName(bonusType) + " bonus.");
+                }
             } else {
                 if (errorCode == 2) {
                     player.Say(SAY_NETMSG, "|" + COLOR_DTEXT_CAPTION + " ::Pip-Boy:: |" + COLOR_DYELLOW + " Your weapon already has the maximum number of bonuses.");
@@ -897,8 +910,19 @@ bool _UseItemOnUpgradeComponent(Item& component, Critter& player, Item@ item) {
     return true;
 }
 
-
-
-
+void CloneItemBonus(Item& from, Item& to) {
+    to.Val0 = from.Val0;
+    to.Val1 = from.Val1;
+    to.Val2 = from.Val2;
+    to.Val3 = from.Val3;
+    to.Val4 = from.Val4;
+    to.Val5 = from.Val5;
+    to.Val6 = from.Val6;
+    to.Val7 = from.Val7;
+    to.Val8 = from.Val8;
+    to.Val9 = from.Val9;
+    // TODO SetPictureWear( to );
+    to.Update();
+}
 
 #endif //__NO-CLIENT

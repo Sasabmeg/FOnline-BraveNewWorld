@@ -1093,16 +1093,25 @@ void ExecGiveCommand(array<string@>@ command, Critter@ player, Critter@ target)
             item.Update();
             player.Say(SAY_NETMSG, "Changed Trap Value to: " + item.get_TrapValue());
         }
+        bool randomCraftBonuses = false;
         string[] sRandomCraft = { "-rc", "-RandomCraft" };
         if (StrToInt(GetParameterString(command, sRandomCraft), val)) {
-            AddBonuses(item, "GM TEST", 0, CLAMP(val, 0, 5), CLAMP(val, 0, 5), 100);
+            randomCraftBonuses = true;
+            AddBonuses(item, "via GM command by \'" + player.Name + "\'", 0, CLAMP(val, 0, 5), CLAMP(val, 0, 5), 100);
             item.Update();
-            player.Say(SAY_NETMSG, "Changed Trap Value to: " + item.get_TrapValue());
+            player.Say(SAY_NETMSG, "Item bonuses: \n\tval0 = " + item.Val0 + ", val5 = " + item.Val5
+                                               + "\n\tval1 = " + item.Val1 + ", val6 = " + item.Val6
+                                               + "\n\tval2 = " + item.Val2 + ", val7 = " + item.Val7
+                                               + "\n\tval3 = " + item.Val3 + ", val8 = " + item.Val8
+                                               + "\n\tval4 = " + item.Val4 + ", val9 = " + item.Val9
+                      );
         }
         if(legit)     // record spawner id
         {
             ILog("legitspawn", AuthedInfo(player.Id) + " gave legit item " +  "(Id:" + item.Id + ") to critter " + target.Id);
-            _SetSpawnerLegit(item, player);
+            if (!randomCraftBonuses) {
+                _SetSpawnerLegit(item, player);
+            }
         }
         else
         {

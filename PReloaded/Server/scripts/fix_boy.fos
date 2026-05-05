@@ -15,6 +15,7 @@ import void CloneWear(Item& to, Item& from) from "repair";
 import int  GetWearProcent(Item& item) from "repair";
 import void TC_CraftExpReward(Critter& player, int exp) from "town";
 import uint getDecraftComponentPid(uint weaponPid, uint bonusType) from "item_bonus";
+import void CloneItemBonus(Item& from, Item& to) from "item_bonus";
 
 /*
    #define FIXBOY_ALLOW_CRAFT         (0x0001)
@@ -623,11 +624,24 @@ bool ReverseItem(Critter& cr, Item& item)   // export
 bool ReverseItemCrafted(Critter& cr, Item& item, bool isMassScience)
 {
     uint16 pid = item.GetProtoId();
-    if(pid >= PidRecipe.length())
+    //Log("A - pid = " + pid + ", PidRecipe.length() = " + PidRecipe.length());
+    if (pid >= PidRecipe.length()) {
+        //  allow decraft of weapons to item bonuses that are too high pid values to be on the crafting table
+        if (pid == PID_WS_M350_LEGEND || pid == PID_PLASMA_GATLING) {
+            decraftUpgradeComponents(cr, item);
+        }
         return false;
+    }
     CraftItem@ craft = GetCraftItem(PidRecipe[pid]);
-    if(!valid(craft))
+    if (!valid(craft)) {
+        //  allow decraft of weapons not on the crafting list, only to be able to get back upgrade components
+        if (pid == PID_PK12_GAUSS_PISTOL || pid == PID_TURBO_PLASMA_RIFLE || pid == PID_YK42B_PULSE_RIFLE || pid == PID_M72_GAUSS_RIFLE
+            || pid == PID_FN_FAL_NIGHT_SCOPE || pid == PID_HK_G11 || pid == PID_HK_G11E
+            || pid == PID_VINDICATOR_MINIGUN || pid == PID_BOZAR || pid == PID_GATLING_LASER) {
+            decraftUpgradeComponents(cr, item);
+        }
         return false;
+    }
     array<uint16> items;
     array<uint>   counts;
     array<bool>   ors;
@@ -655,10 +669,10 @@ bool ReverseItemCrafted(Critter& cr, Item& item, bool isMassScience)
         scienceTimes = item.GetCount()/ammoBatch;
     }
 
+    bool containsWeaponOrArmor = false;
     bool receipContainMetalAlloyOrTwoJunks = false;
     bool addedJunk = false;
     int receipJunkCount = 0;
-    bool containsWeaponOrArmor = false;
     for (uint i = 0, j = craft.GetNeedItems(items, counts, ors); i < j; i++) {
         ProtoItem@ proto = GetProtoItem(items[i]);
         if (proto.ProtoId == PID_JUNK) {
@@ -670,12 +684,16 @@ bool ReverseItemCrafted(Critter& cr, Item& item, bool isMassScience)
         bool force = proto.Type == ITEM_TYPE_WEAPON || proto.Type == ITEM_TYPE_ARMOR;
         if (force) {
             containsWeaponOrArmor = true;
+            if (cr.GetAccess() > ACCESS_CLIENT) {
+                cr.Say(SAY_NETMSG, "Crafting recipe contains weapon or armor!");
+            }
         }
         for (uint j = 0; j < counts[i] * scienceTimes; j++) {
             if (force || Random(1, 1000) < factor) {
                 Item@ addedItem = cr.AddItem(items[i], 1);
                 if (deteriorate && addedItem.IsDeteriorable()) {
                     CloneWear(addedItem, item);
+                    CloneItemBonus(item, addedItem);
                     if (proto.Type == ITEM_TYPE_WEAPON && addedItem.AmmoPid != 0) {
                         addedItem.AmmoCount = 0;
                     }
@@ -692,14 +710,65 @@ bool ReverseItemCrafted(Critter& cr, Item& item, bool isMassScience)
         cr.AddItem(PID_JUNK, 1);
         addedJunk = true;
     }
+
     //  BNW: Weapon Upgrade Components
     if (!containsWeaponOrArmor && item.GetType() == ITEM_TYPE_WEAPON) {
+        decraftUpgradeComponents(cr, item);
+    }
+
+    string type = "something";
+    switch(item.GetType())
+    {
+        case ITEM_TYPE_WEAPON: type = "the weapon"; break;
+        case ITEM_TYPE_ARMOR: type = "the armor"; break;
+        case ITEM_TYPE_AMMO: type = "ammo"; break;
+    }
+	uint protoItemCost = item.Proto.Cost;
+    if(item.GetProtoId() == PID_RADIO)
+        type = "the Radio";
+
+    if (item.GetType() == ITEM_TYPE_AMMO && item.GetCount() > ammoBatch*scienceTimes) {
+        item.SetCount(item.GetCount() - (ammoBatch*scienceTimes));
+    } else {
+        DeleteItem(item);
+    }
+
+    if (!isMassScience) {
+        if (added) {
+            cr.Say(SAY_NETMSG, "You've disassembled " + type + ".");
+        } else if (addedJunk) {
+            cr.Say(SAY_NETMSG, "You've disassembled " + type + ", but were only able to obtain some junk.");
+        } else {
+            cr.Say(SAY_NETMSG, "You've disassembled " + type + ", but were unable to obtain anything.");
+        }
+	}
+    uint expAmount = 25+protoItemCost/100;
+    if(item.GetType() == ITEM_TYPE_AMMO)
+        expAmount *= scienceTimes;
+	AddScienceExperience(cr, expAmount);
+    if(!isMassScience)
+        cr.PlaySound("CARREPAR.ACM", true);
+    return true;
+}
+
+bool decraftUpgradeComponents(Critter& cr, Item& item) {
+
+    if (item.GetType() == ITEM_TYPE_WEAPON) {
+        if (cr.GetAccess() > ACCESS_CLIENT) {
+            cr.Say(SAY_NETMSG, "DDD");
+        }
         uint weaponUpgradePid;
         Item@ weaponUpgrade;
         if (item.Val0 > 0) {
-            uint chanceToGetComponent = CLAMP(33 + (cr.Param[SK_REPAIR] / 10) + (cr.Param[PE_DISMANTLER] > 0 ? 14 : 0), 30, 60);
+            int chanceToGetComponent = CLAMP(33 + (cr.Param[SK_REPAIR] / 10) + (cr.Param[PE_DISMANTLER] > 0 ? 14 : 0), 30, 60);
             if (cr.GetAccess() > ACCESS_CLIENT) {
+                chanceToGetComponent = 100;
                 cr.Say(SAY_NETMSG, "Chance to get upgrade component: " + chanceToGetComponent + "%");
+                cr.Say(SAY_NETMSG, "Item bonuses: \n\tval0 = " + item.Val0 + ", val5 = " + item.Val5
+                                               + "\n\tval1 = " + item.Val1 + ", val6 = " + item.Val6
+                                               + "\n\tval2 = " + item.Val2 + ", val7 = " + item.Val7
+                                               + "\n\tval3 = " + item.Val3 + ", val8 = " + item.Val8
+                                               + "\n\tval4 = " + item.Val4 + ", val9 = " + item.Val9);
             }
             weaponUpgradePid = getDecraftComponentPid(item.GetProtoId(), item.Val0);
             if (weaponUpgradePid > 0 && Random(0, 99) < chanceToGetComponent) {
@@ -767,39 +836,6 @@ bool ReverseItemCrafted(Critter& cr, Item& item, bool isMassScience)
             }
         }
     }
-
-    string type = "something";
-    switch(item.GetType())
-    {
-        case ITEM_TYPE_WEAPON: type = "the weapon"; break;
-        case ITEM_TYPE_ARMOR: type = "the armor"; break;
-        case ITEM_TYPE_AMMO: type = "ammo"; break;
-    }
-	uint protoItemCost = item.Proto.Cost;
-    if(item.GetProtoId() == PID_RADIO)
-        type = "the Radio";
-
-    if (item.GetType() == ITEM_TYPE_AMMO && item.GetCount() > ammoBatch*scienceTimes) {
-        item.SetCount(item.GetCount() - (ammoBatch*scienceTimes));
-    } else {
-        DeleteItem(item);
-    }
-
-    if (!isMassScience) {
-        if (added) {
-            cr.Say(SAY_NETMSG, "You've disassembled " + type + ".");
-        } else if (addedJunk) {
-            cr.Say(SAY_NETMSG, "You've disassembled " + type + ", but were only able to obtain some junk.");
-        } else {
-            cr.Say(SAY_NETMSG, "You've disassembled " + type + ", but were unable to obtain anything.");
-        }
-	}
-    uint expAmount = 25+protoItemCost/100;
-    if(item.GetType() == ITEM_TYPE_AMMO)
-        expAmount *= scienceTimes;
-	AddScienceExperience(cr, expAmount);
-    if(!isMassScience)
-        cr.PlaySound("CARREPAR.ACM", true);
     return true;
 }
 
