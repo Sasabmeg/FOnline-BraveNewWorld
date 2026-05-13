@@ -2338,6 +2338,8 @@ void Script::BeginExecution()
 
 void Script::EndExecution()
 {
+	//	Uncomment this line to allow Profiler to work, and only build the Server, not everything, because client build will fail
+	//CheckProfiler();
     #ifdef SCRIPT_MULTITHREADING
     if( !LogicMT )
         return;
