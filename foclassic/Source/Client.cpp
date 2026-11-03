@@ -8312,17 +8312,23 @@ label_EndMove:
 			}
 
             int usei = use;                                                                             // Avoid 'warning: comparison is always true due to limited range of data type' for GCC
-			if (usei >= USE_PRIMARY && use <= USE_THIRD)
-                Chosen->Action( CRITTER_ACTION_USE_WEAPON, rate, item );
+            if (usei >= USE_PRIMARY && use <= USE_THIRD)
+            {
+                // Real attacks are animated from the server's prepare/confirm actions.
+                // Keep local playback only for non-critter weapon uses.
+                if (!is_attack)
+                    Chosen->Action( CRITTER_ACTION_USE_WEAPON, rate, item );
+            }
             else if( use == USE_RELOAD )
                 Chosen->Action( CRITTER_ACTION_RELOAD_WEAPON, 0, item );
             else
                 Chosen->Action( CRITTER_ACTION_USE_ITEM, 0, item );
 
-			//	 to allow animation canceling, AP cost will be subtracted AS side
-			if (!is_attack) {
+			// Attack AP is authoritative on the server. Predicting the script's
+			// one-AP reservation here makes the interface spend AP in two visible
+			// stages and leaves a fake deduction when the server rejects the shot.
+			if (!is_attack)
 				Chosen->SubAp(ap_cost);
-			}
 
             if( is_attack && !aim && Keyb::ShiftDwn )           // Continue battle after attack
             {

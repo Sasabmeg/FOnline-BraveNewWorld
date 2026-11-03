@@ -1457,6 +1457,7 @@ void FOServer::Process( ClientPtr& cl )
 {
     if( cl->IsOffline() || cl->IsNotValid )
     {
+        cl->ClearDeferredMove();
         cl->Bin.LockReset();
         return;
     }
@@ -1576,6 +1577,7 @@ void FOServer::Process( ClientPtr& cl )
     else if( cl->GameState == STATE_PLAYING )
     {
         #define MESSAGES_PER_CYCLE    (5)
+        #define MOVE_BUSY_GRACE_MS    (25)
         #define CHECK_BUSY_AND_LIFE                                                                                            \
             if( !cl->IsLife() )                                                                                                \
                 break; if( cl->IsBusy() && !Singleplayer ) { cl->Bin.MoveReadPos( -int(sizeof(msg) ) ); BIN_END( cl ); return; \
@@ -1595,9 +1597,51 @@ void FOServer::Process( ClientPtr& cl )
         #define CHECK_REAL_AP( ap )                                                                                          \
             if( !Singleplayer ) { if( !cl->IsTurnBased() ) { if( (int)(ap) > cl->GetParam( ST_ACTION_POINTS ) * AP_DIVIDER ) \
                                                                  break; if( (int)(ap) > cl->GetRealAp() ) { cl->Bin.MoveReadPos( -int(sizeof(msg) ) ); BIN_END( cl ); return; } } }
+        // Preserve the existing turn-based boundary handling. Real-time
+        // movement is parsed by Process_Move and can defer one short step
+        // outside Bin, so even its grace period cannot hold up a PING.
+        #define CHECK_MOVE_BUSY_AND_LIFE                                                                                      \
+            if( !cl->IsLife() ) { cl->Bin.SkipMsg( msg ); cl->Send_MoveCorrection(); BIN_END( cl ); continue; }                \
+            if( cl->IsBusy() && !Singleplayer ) {                                                                          \
+                const uint move_busy_elapsed = Timer::GameTick() - cl->startBreakTime;                                         \
+                const uint move_busy_left = move_busy_elapsed < cl->breakTime ? cl->breakTime - move_busy_elapsed : 0;         \
+                const int move_action = cl->GetCurrentAction();                                                                \
+                if( move_busy_left && move_busy_left <= MOVE_BUSY_GRACE_MS &&                                                  \
+                    (move_action == CRITTER_ACTION_MOVE || move_action == CRITTER_ACTION_RUN) ) {                              \
+                    cl->Bin.MoveReadPos( -int(sizeof(msg) ) ); BIN_END( cl ); return;                                           \
+                }                                                                                                              \
+                if( move_busy_left ) { cl->Bin.SkipMsg( msg ); cl->Send_MoveCorrection(); BIN_END( cl ); continue; }           \
+            }
+        // Combat input is predicted by the client as well: the local attack
+        // animation can already be visible when the authoritative server is
+        // still busy or has less AP. Do not keep such a stale command at the
+        // head of the binary input queue, because it would delay PING and every
+        // later message and then execute as an unexpected late attack.
+        #define CHECK_COMBAT_BUSY_AND_LIFE                                                                                   \
+            if( !cl->IsLife() || (cl->IsBusy() && !Singleplayer) ) { cl->Bin.SkipMsg( msg );                                 \
+                if( cl->IsLife() ) cl->Send_Param( ST_CURRENT_AP ); BIN_END( cl ); continue; }
+        // CHECK_AP_MSG has already consumed the AP byte. Move back to the
+        // position directly after the message header before SkipMsg(), which
+        // always skips a complete packet starting from that position.
+        #define CHECK_COMBAT_AP_MSG                                                                                          \
+            uint8 ap; cl->Bin >> ap; if( !Singleplayer && !cl->IsTurnBased() ) {                                             \
+                if( ap > cl->GetParam( ST_ACTION_POINTS ) ) { cl->Bin.MoveReadPos( -int(sizeof(ap)) ); cl->Bin.SkipMsg( msg ); \
+                                                               cl->Send_Param( ST_CURRENT_AP ); BIN_END( cl ); continue; }    \
+                if( (int)ap > cl->GetParam( ST_CURRENT_AP ) ) { cl->Bin.MoveReadPos( -int(sizeof(ap)) ); cl->Bin.SkipMsg( msg ); \
+                                                                 cl->Send_Param( ST_CURRENT_AP ); BIN_END( cl ); continue; } }
+        // A direction packet can be emitted immediately before an attack.
+        // Reject it while busy instead of letting it block the attack/ping
+        // stream, then restore the authoritative facing on the client.
+        #define CHECK_COMBAT_DIR_BUSY_AND_LIFE                                                                               \
+            if( !cl->IsLife() || (cl->IsBusy() && !Singleplayer) ) { cl->Bin.SkipMsg( msg );                                  \
+                if( cl->IsLife() ) cl->Send_Dir( cl ); BIN_END( cl ); continue; }
 
         for( int i = 0; i < MESSAGES_PER_CYCLE; i++ )
         {
+            // Also runs when Bin is empty: completion needs no new packet.
+            Process_DeferredMove( cl );
+            if( cl->GameState != STATE_PLAYING )
+                return;
             BIN_BEGIN( cl );
             if( cl->Bin.IsEmpty() )
                 cl->Bin.Reset();
@@ -1608,6 +1652,21 @@ void FOServer::Process( ClientPtr& cl )
                 break;
             }
             cl->Bin >> msg;
+
+            // Only explicit player actions cancel a pending prediction. PING,
+            // queries and periodic script messages must keep flowing normally.
+            // Script-side state changes are rechecked by TakeDeferredMove.
+            if( cl->HasDeferredMove() &&
+                (msg == NETMSG_DIR || msg == NETMSG_SEND_USE_ITEM || msg == NETMSG_SEND_PICK_ITEM ||
+                 msg == NETMSG_SEND_PICK_CRITTER || msg == NETMSG_SEND_ITEM_CONT || msg == NETMSG_SEND_CHANGE_ITEM ||
+                 msg == NETMSG_SEND_USE_SKILL || msg == NETMSG_SEND_TALK_NPC || msg == NETMSG_SEND_SAY_NPC ||
+                 msg == NETMSG_SEND_BARTER || msg == NETMSG_PLAYERS_BARTER || msg == NETMSG_SEND_CRAFT ||
+                 msg == NETMSG_SEND_COMBAT || msg == NETMSG_SEND_SET_USER_HOLO_STR) )
+            {
+                cl->TraceMove( "new_action", cl->GetHexX(), cl->GetHexY() );
+                cl->ClearDeferredMove();
+                cl->Send_MoveCorrection();
+            }
 
             uint tick = Timer::FastTick();
             switch( msg )
@@ -1660,7 +1719,7 @@ void FOServer::Process( ClientPtr& cl )
                 }
                 case NETMSG_DIR:
                 {
-                    CHECK_BUSY_AND_LIFE;
+                    CHECK_COMBAT_DIR_BUSY_AND_LIFE;
                     CHECK_NO_GLOBAL;
                     Process_Dir( cl );
                     BIN_END( cl );
@@ -1668,26 +1727,28 @@ void FOServer::Process( ClientPtr& cl )
                 }
                 case NETMSG_SEND_MOVE_WALK:
                 {
-                    CHECK_BUSY_AND_LIFE;
-                    CHECK_NO_GLOBAL;
-                    CHECK_REAL_AP( cl->GetApCostCritterMove( false ) );
+                    if( cl->IsTurnBased() )
+                    {
+                        CHECK_MOVE_BUSY_AND_LIFE;
+                    }
                     Process_Move( cl );
                     BIN_END( cl );
                     continue;
                 }
                 case NETMSG_SEND_MOVE_RUN:
                 {
-                    CHECK_BUSY_AND_LIFE;
-                    CHECK_NO_GLOBAL;
-                    CHECK_REAL_AP( cl->GetApCostCritterMove( true ) );
+                    if( cl->IsTurnBased() )
+                    {
+                        CHECK_MOVE_BUSY_AND_LIFE;
+                    }
                     Process_Move( cl );
                     BIN_END( cl );
                     continue;
                 }
                 case NETMSG_SEND_USE_ITEM:
                 {
-                    CHECK_BUSY_AND_LIFE;
-                    CHECK_AP_MSG;
+                    CHECK_COMBAT_BUSY_AND_LIFE;
+                    CHECK_COMBAT_AP_MSG;
                     Process_UseItem( cl );
                     BIN_END( cl );
                     continue;

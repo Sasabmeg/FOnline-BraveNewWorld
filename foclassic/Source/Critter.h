@@ -609,6 +609,14 @@ public:
     void Send_RemoveCritter( Critter* cr );
     void Send_LoadMap( Map* map );
     void Send_XY( Critter* cr );
+    void Send_MoveCorrection();
+    // One short RT prediction, held outside the network input buffer.
+    bool DeferMove( uint move_params, uint16 hx, uint16 hy, uint tick );
+    int TakeDeferredMove( uint& move_params, uint16& hx, uint16& hy );
+    bool HasDeferredMove() const { return deferredMove.Active; }
+    void ClearDeferredMove() { deferredMove.Active = false; }
+    void StopDeferredMove();
+    void TraceMove( const char* reason, uint16 hx, uint16 hy );
     void Send_AddItemOnMap( Item* item );
     void Send_ChangeItemOnMap( Item* item );
     void Send_EraseItemFromMap( Item* item );
@@ -708,6 +716,23 @@ public:
 
     // Screen callback
     int ScreenCallbackBindId;
+
+private:
+    // Keep engine-only networking state at the end of Client. This preserves
+    // the complete Critter layout expected by prebuilt dynamic extensions.
+    uint lastMoveCorrectionTick;
+
+    struct DeferredMove
+    {
+        bool Active;
+        uint Params, MapId, BreakStart, BreakDuration, QueuedTick;
+        uint16 HexX, HexY, FromHexX, FromHexY;
+        DeferredMove() : Active( false ) {}
+    } deferredMove;
+    bool moveSyncTrace;
+    uint lastMoveTraceTick;
+
+public:
 
     Client();
     ~Client();

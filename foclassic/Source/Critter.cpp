@@ -5,6 +5,7 @@
 #include "CritterManager.h"
 #include "CritterType.h"
 #include "Exception.h"
+#include "Ini.h"
 #include "ItemManager.h"
 #include "Log.h"
 #include "MapManager.h"
@@ -3616,7 +3617,9 @@ Client::SendCallback Client::SendData = NULL;
 Client::Client() : ZstrmInit( false ), Access( ACCESS_DEFAULT ), pingOk( true ), LanguageMsg( 0 ),
     GameState( STATE_NONE ), IsDisconnected( false ), DisconnectTick( 0 ), DisableZlib( false ),
     LastSendScoresTick( 0 ), LastSendCraftTick( 0 ), LastSendEntrancesTick( 0 ), LastSendEntrancesLocId( 0 ),
-    ScreenCallbackBindId( 0 ), ConnectTime( 0 ), LastSendedMapTick( 0 ), RadioMessageSended( 0 )
+    ScreenCallbackBindId( 0 ), ConnectTime( 0 ), LastSendedMapTick( 0 ), RadioMessageSended( 0 ),
+    lastMoveCorrectionTick( 0 ),
+    moveSyncTrace( ConfigFile && ConfigFile->GetBool( SECTION_SERVER, "MoveSyncTrace", false ) ), lastMoveTraceTick( 0 )
 {
     CritterIsNpc = false;
     MEMORY_PROCESS( MEMORY_CLIENT, sizeof(Client) + sizeof(GlobalMapGroup) + 40 + sizeof(Item) * 2 );
@@ -3866,6 +3869,7 @@ void Client::Send_RemoveCritter( Critter* cr )
 
 void Client::Send_LoadMap( Map* map )
 {
+    ClearDeferredMove();
     if( IsSendDisabled() || IsOffline() )
         return;
 
@@ -4416,6 +4420,9 @@ void Client::Send_GlobalMapFog( uint16 zx, uint16 zy, uint8 fog )
 
 void Client::Send_XY( Critter* cr )
 {
+    // A forced position update invalidates any prediction from the old position.
+    if( cr == this )
+        ClearDeferredMove();
     if( IsSendDisabled() || IsOffline() )
         return;
 
@@ -4426,6 +4433,89 @@ void Client::Send_XY( Critter* cr )
     Bout << cr->GetHexY();
     Bout << cr->GetDir();
     BOUT_END( this );
+}
+
+void Client::Send_MoveCorrection()
+{
+    // Do not flood the client with authoritative XY resets while it keeps
+    // clicking during one server-side action lock. A correction already clears
+    // predicted movement and applies a short client-side resync delay.
+    const uint tick = Timer::FastTick();
+    const uint interval = GameOpt.Breaktime ? GameOpt.Breaktime : 200;
+    if( lastMoveCorrectionTick && tick - lastMoveCorrectionTick < interval )
+        return;
+
+    lastMoveCorrectionTick = tick;
+    Send_XY( this );
+}
+
+bool Client::DeferMove( uint move_params, uint16 hx, uint16 hy, uint tick )
+{
+    const uint elapsed = tick - startBreakTime;
+    const uint remaining = elapsed < breakTime ? breakTime - elapsed : 0;
+    // Never shorten the action or admit a backlog of steps. 100 ms also covers
+    // modest packet-spacing jitter after reload/use/pick, not just WALK/RUN.
+    if( !remaining || remaining > 100 || IsTurnBased() || !IsLife() || !GetMap() )
+        return false;
+    if( deferredMove.Active )
+        return deferredMove.Params == move_params && deferredMove.HexX == hx && deferredMove.HexY == hy;
+
+    deferredMove.Params = move_params;
+    deferredMove.HexX = hx;
+    deferredMove.HexY = hy;
+    deferredMove.MapId = GetMap();
+    deferredMove.FromHexX = GetHexX();
+    deferredMove.FromHexY = GetHexY();
+    deferredMove.BreakStart = startBreakTime;
+    deferredMove.BreakDuration = breakTime;
+    deferredMove.QueuedTick = tick;
+    deferredMove.Active = true;
+    return true;
+}
+
+int Client::TakeDeferredMove( uint& move_params, uint16& hx, uint16& hy )
+{
+    if( !deferredMove.Active )
+        return 0;
+    move_params = deferredMove.Params;
+    hx = deferredMove.HexX;
+    hy = deferredMove.HexY;
+    // Recheck identity, position, life and timer: a knockback, transfer or new
+    // script Wait must not turn this into a delayed unsolicited movement.
+    if( IsOffline() || IsNotValid || GameState != STATE_PLAYING || !IsLife() || IsTurnBased() ||
+        GetMap() != deferredMove.MapId || GetHexX() != deferredMove.FromHexX || GetHexY() != deferredMove.FromHexY ||
+        startBreakTime != deferredMove.BreakStart || breakTime != deferredMove.BreakDuration ||
+        Timer::GameTick() - deferredMove.QueuedTick > 250 )
+    {
+        ClearDeferredMove();
+        return -1;
+    }
+    if( IsBusy() )
+        return 0;
+    ClearDeferredMove();
+    return 1;
+}
+
+void Client::StopDeferredMove()
+{
+    // STOP ends the advertised path; it does not undo the already predicted
+    // current step. Keep that one step and discard its observer look-ahead.
+    if( deferredMove.Active )
+        deferredMove.Params &= MOVE_PARAM_RUN;
+}
+
+void Client::TraceMove( const char* reason, uint16 hx, uint16 hy )
+{
+    if( !moveSyncTrace )
+        return;
+    const uint tick = Timer::FastTick();
+    if( lastMoveTraceTick && tick - lastMoveTraceTick < 250 )
+        return;
+    lastMoveTraceTick = tick;
+    const uint elapsed = Timer::GameTick() - startBreakTime;
+    const uint remaining = elapsed < breakTime ? breakTime - elapsed : 0;
+    WriteLog( "MoveSync: %s id<%u> map<%u> from<%u,%u> to<%u,%u> action<%d> busy_left_ms<%u> real_ap<%d>.\n",
+              reason, GetId(), GetMap(), GetHexX(), GetHexY(), hx, hy, GetCurrentAction(), remaining, GetRealAp() );
 }
 
 void Client::Send_AllParams()
