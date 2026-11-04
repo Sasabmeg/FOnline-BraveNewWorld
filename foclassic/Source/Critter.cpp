@@ -4453,9 +4453,14 @@ bool Client::DeferMove( uint move_params, uint16 hx, uint16 hy, uint tick )
 {
     const uint elapsed = tick - startBreakTime;
     const uint remaining = elapsed < breakTime ? breakTime - elapsed : 0;
-    // Never shorten the action or admit a backlog of steps. 100 ms also covers
-    // modest packet-spacing jitter after reload/use/pick, not just WALK/RUN.
-    if( !remaining || remaining > 100 || IsTurnBased() || !IsLife() || !GetMap() )
+    // WALK/RUN packets can arrive together after script/scheduler/network delay.
+    // Keep one predicted successor for the full current movement interval;
+    // do not reject a legitimate step solely because more than 100 ms remains.
+    // Other actions (reload/use/pick etc.) retain their original 100 ms grace.
+    const int action = GetCurrentAction();
+    const bool movement_lock = action == CRITTER_ACTION_MOVE || action == CRITTER_ACTION_RUN;
+    const uint early_limit = movement_lock ? breakTime : 100;
+    if( !remaining || remaining > early_limit || IsTurnBased() || !IsLife() || !GetMap() )
         return false;
     if( deferredMove.Active )
         return deferredMove.Params == move_params && deferredMove.HexX == hx && deferredMove.HexY == hy;
@@ -4480,12 +4485,17 @@ int Client::TakeDeferredMove( uint& move_params, uint16& hx, uint16& hy )
     move_params = deferredMove.Params;
     hx = deferredMove.HexX;
     hy = deferredMove.HexY;
+    // Expire relative to the authoritative lock's end, not a fixed 250 ms
+    // from arrival: a valid slow WALK may itself last longer than 250 ms.
+    const uint lock_elapsed = Timer::GameTick() - deferredMove.BreakStart;
+    const bool expired = lock_elapsed > deferredMove.BreakDuration &&
+                         lock_elapsed - deferredMove.BreakDuration > 250;
     // Recheck identity, position, life and timer: a knockback, transfer or new
     // script Wait must not turn this into a delayed unsolicited movement.
     if( IsOffline() || IsNotValid || GameState != STATE_PLAYING || !IsLife() || IsTurnBased() ||
         GetMap() != deferredMove.MapId || GetHexX() != deferredMove.FromHexX || GetHexY() != deferredMove.FromHexY ||
         startBreakTime != deferredMove.BreakStart || breakTime != deferredMove.BreakDuration ||
-        Timer::GameTick() - deferredMove.QueuedTick > 250 )
+        expired )
     {
         ClearDeferredMove();
         return -1;
