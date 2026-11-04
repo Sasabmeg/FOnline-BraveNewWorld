@@ -674,6 +674,11 @@ bool FOServer::Act_Attack( Critter* cr, uint8 rate_weap, uint target_id )
     if( !ammo_round )
         ammo_round = 1;
 
+    // Detect handlers that consume the request without starting an attack.
+    // In that case, resend the unchanged authoritative AP value so the client
+    // cannot retain a stale combat state.
+    const int ap_before_dispatch = cr->GetRealAp();
+
     // Script events
     bool event_result = (weap->GetId() ? weap->EventAttack( cr, t_cr ) : false);
     if( !event_result )
@@ -685,6 +690,8 @@ bool FOServer::Act_Attack( Critter* cr, uint8 rate_weap, uint target_id )
 		//cr->SubAp( ap_cost );
         if( map->IsTurnBasedOn && !cr->GetAllAp() )
             map->EndCritterTurn();
+        if( cr->GetRealAp() == ap_before_dispatch )
+            cr->Send_Param( ST_CURRENT_AP );
         return true;
     }
 
@@ -695,6 +702,7 @@ bool FOServer::Act_Attack( Critter* cr, uint8 rate_weap, uint target_id )
         map->EndCritterTurn();
 
     // Run script
+    bool attack_script_started = false;
     if( Script::PrepareContext( ServerFunctions.CritterAttack, _FUNC_, cr->GetInfo() ) )
     {
         Script::SetArgObject( cr );
@@ -702,8 +710,10 @@ bool FOServer::Act_Attack( Critter* cr, uint8 rate_weap, uint target_id )
         Script::SetArgObject( weap->Proto );
         Script::SetArgUChar( MAKE_ITEM_MODE( use, aim ) );
         Script::SetArgObject( ammo );
-        Script::RunPrepared();
+        attack_script_started = Script::RunPrepared();
     }
+    if( !attack_script_started || cr->GetRealAp() == ap_before_dispatch )
+        cr->Send_Param( ST_CURRENT_AP );
     return true;
 }
 
@@ -2533,6 +2543,7 @@ void FOServer::Process_ParseToGame( Client* cl )
 {
     if( !cl->GetId() || !CrMngr.GetPlayer( cl->GetId(), false ) )
         return;
+    cl->ClearDeferredMove();
     cl->SetBreakTime( GameOpt.Breaktime );
 
     #ifdef DEV_VERSION
@@ -2808,11 +2819,56 @@ void FOServer::Process_Move( Client* cl )
     if( !cl->GetMap() )
         return;
 
-    // The player informs that has stopped
+    // STOP carries no new step or AP cost. Do not reject it as a busy move.
     if( FLAG( move_params, MOVE_PARAM_STEP_DISALLOW ) )
     {
-        // cl->Send_XY(cl);
-        cl->SendA_XY();
+        if( cl->HasDeferredMove() )
+            cl->StopDeferredMove();
+        else
+            cl->SendA_XY();
+        return;
+    }
+
+    Process_MoveStep( cl, move_params, hx, hy );
+}
+
+void FOServer::Process_DeferredMove( Client* cl )
+{
+    uint move_params;
+    uint16 hx, hy;
+    const int result = cl->TakeDeferredMove( move_params, hx, hy );
+    if( result < 0 )
+    {
+        cl->TraceMove( "deferred_invalidated", hx, hy );
+        if( cl->GameState == STATE_PLAYING && !cl->IsOffline() )
+            cl->Send_MoveCorrection();
+    }
+    else if( result > 0 )
+        Process_MoveStep( cl, move_params, hx, hy );
+}
+
+void FOServer::Process_MoveStep( Client* cl, uint move_params, uint16 hx, uint16 hy )
+{
+    if( !cl->GetMap() )
+        return;
+    if( !cl->IsLife() )
+    {
+        cl->ClearDeferredMove();
+        cl->TraceMove( "not_alive", hx, hy );
+        cl->Send_MoveCorrection();
+        return;
+    }
+    // Use one timer sample for admission and deferral. Crossing the final
+    // millisecond between two clock reads must not turn a valid step into BUSY.
+    const uint move_tick = Timer::GameTick();
+    if( !Singleplayer && move_tick - cl->startBreakTime < cl->breakTime )
+    {
+        if( !cl->IsTurnBased() && (hx != cl->GetHexX() || hy != cl->GetHexY()) &&
+            CheckDist( cl->GetHexX(), cl->GetHexY(), hx, hy, 1 ) && cl->DeferMove( move_params, hx, hy, move_tick ) )
+            return;
+        cl->ClearDeferredMove();
+        cl->TraceMove( "busy", hx, hy );
+        cl->Send_MoveCorrection();
         return;
     }
 
@@ -2862,12 +2918,24 @@ void FOServer::Process_Move( Client* cl )
     // Check dist
     if( !CheckDist( cl->GetHexX(), cl->GetHexY(), hx, hy, 1 ) )
     {
+        cl->TraceMove( "distance", hx, hy );
         cl->Send_XY( cl );
         return;
     }
 
-    // Try move
-    Act_Move( cl, hx, hy, move_params );
+    // Revalidate AP at execution, including after a deferred step. Use the
+    // effective run/walk mode, after all authoritative movement restrictions.
+    if( !Singleplayer && !cl->IsTurnBased() && cl->GetRealAp() < cl->GetApCostCritterMove( is_run ) )
+    {
+        cl->TraceMove( "ap", hx, hy );
+        cl->Send_Param( ST_CURRENT_AP );
+        cl->Send_MoveCorrection();
+        return;
+    }
+
+    // Act_Move still owns collision, turn, AP deduction and movement timing.
+    if( !Act_Move( cl, hx, hy, move_params ) )
+        cl->TraceMove( "act_move_rejected", hx, hy );
 }
 
 void FOServer::Process_ChangeItem( Client* cl )
@@ -3009,7 +3077,8 @@ void FOServer::Process_UseItem( Client* cl )
                     cl->ItemSlotMain->Init( unarmed );
                 }
 
-				Act_Attack( cl, rate, target_id );
+				if( !Act_Attack( cl, rate, target_id ) )
+					cl->Send_Param( ST_CURRENT_AP );
                 break;
             case USE_RELOAD:
                 Act_Reload( cl, item->GetId(), target_id );

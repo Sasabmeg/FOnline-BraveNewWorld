@@ -47,6 +47,8 @@ public:
     // Net proccess
     static void Process_ParseToGame( Client* cl );
     static void Process_Move( Client* cl );
+    static void Process_MoveStep( Client* cl, uint move_params, uint16 hx, uint16 hy );
+    static void Process_DeferredMove( Client* cl );
     static bool Process_UserConnect( Client* cl );
     static void Process_UserRegister( Client* cl );
     static void Process_UserLogin( ClientPtr& cl );
